@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:m4_mobile/presentation/screens/home/dashboard_screen.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
+import 'package:m4_mobile/presentation/screens/communities/community_list_screen.dart';
+import 'package:m4_mobile/presentation/screens/custom_views/custom_views_screen.dart';
+import 'package:m4_mobile/presentation/screens/notifications/notification_list_screen.dart';
+import 'package:m4_mobile/presentation/screens/support/support_screen.dart';
 import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
+
+
 import 'package:m4_mobile/presentation/widgets/sidebar_menu.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final navigationProvider = StateProvider<int>((ref) => 0);
+final inquiryScrollTriggerProvider = StateProvider<int>((ref) => 0);
 
 class MainShell extends ConsumerStatefulWidget {
   const MainShell({super.key});
@@ -18,11 +25,17 @@ class MainShell extends ConsumerStatefulWidget {
 class _MainShellState extends ConsumerState<MainShell> {
 
   final List<Widget> _screens = [
-    const DashboardScreen(),
-    const ProjectListScreen(),
-    const PlaceholderScreen(title: 'Support'),
-    const PlaceholderScreen(title: 'Profile'),
-];
+    const DashboardScreen(), // 0: Home
+    const ProjectListScreen(), // 1: Explore
+    const NotificationListScreen(), // 2: Notifications
+    const PlaceholderScreen(title: 'Profile'), // 3: Profile
+    const CommunityListScreen(), // 4: Sidebar only
+    const CustomViewsScreen(), // 5: Sidebar only
+    const SupportScreen(), // 6: Sidebar only
+
+  ];
+
+
 
   @override
   Widget build(BuildContext context) {

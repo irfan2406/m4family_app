@@ -21,21 +21,21 @@ class NavigationPill extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
       padding: const EdgeInsets.symmetric(horizontal: 25),
       decoration: BoxDecoration(
-        color: M4Theme.surface.withOpacity(0.6),
+        color: const Color(0xFF09090B).withOpacity(0.9), // Deep Navy/Black
         borderRadius: BorderRadius.circular(35),
-        border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
+        border: Border.all(color: Colors.white.withOpacity(0.05), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.4),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+            color: Colors.black.withOpacity(0.5),
+            blurRadius: 30,
+            offset: const Offset(0, 15),
           ),
         ],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(35),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -50,7 +50,7 @@ class NavigationPill extends StatelessWidget {
               onTap: () => onTap(1),
             ),
             _NavItem(
-              icon: LucideIcons.messageSquare,
+              icon: LucideIcons.bell,
               isActive: currentIndex == 2,
               onTap: () => onTap(2),
             ),
@@ -59,6 +59,7 @@ class NavigationPill extends StatelessWidget {
               isActive: currentIndex == 3,
               onTap: () => onTap(3),
             ),
+
             ],
           ),
         ),
@@ -87,16 +88,16 @@ class _NavItem extends StatelessWidget {
         children: [
           Icon(
             icon,
-            color: isActive ? M4Theme.premiumBlue : Colors.white24,
+            color: isActive ? Colors.white : Colors.white.withOpacity(0.3),
             size: 24,
           ),
           if (isActive)
             Container(
               margin: const EdgeInsets.only(top: 4),
-              width: 4,
-              height: 4,
+              width: 5,
+              height: 5,
               decoration: const BoxDecoration(
-                color: M4Theme.premiumBlue,
+                color: Colors.white,
                 shape: BoxShape.circle,
               ),
             ).animate().scale(duration: 200.ms),

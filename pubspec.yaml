@@ -55,10 +55,16 @@ dependencies:
   # Local Storage & Security
   flutter_secure_storage: ^9.0.0
   shared_preferences: ^2.2.2
+  url_launcher: ^6.3.1
+
+
 
   # Data Modeling
   freezed_annotation: ^2.4.1
   json_annotation: ^4.8.1
+  intl: ^0.19.0
+  file_picker: ^10.3.10
+
 
 dev_dependencies:
   flutter_test:
