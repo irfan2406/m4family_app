@@ -12,6 +12,7 @@ import 'package:m4_mobile/presentation/screens/support/contact_support_screen.da
 import 'package:m4_mobile/presentation/screens/careers/careers_screen.dart';
 import 'package:m4_mobile/presentation/screens/investor/investor_relations_screen.dart';
 import 'package:m4_mobile/presentation/screens/pages/pages_list_screen.dart';
+import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
 
 
 
@@ -87,20 +88,22 @@ class SidebarMenu extends ConsumerWidget {
                       _SidebarItem(
                         icon: LucideIcons.building2,
                         label: 'Communities',
-                        isActive: currentIndex == 4,
-                        onTap: () => navigateTo(4),
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.layoutGrid,
-                        label: 'Properties',
                         isActive: currentIndex == 1,
                         onTap: () => navigateTo(1),
                       ),
                       _SidebarItem(
+                        icon: LucideIcons.layoutGrid,
+                        label: 'Properties',
+                        onTap: () {
+                          Navigator.pop(context);
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => ProjectListScreen()));
+                        },
+                      ),
+                      _SidebarItem(
                         icon: LucideIcons.sparkles, 
                         label: 'Custom Views',
-                        isActive: currentIndex == 5,
-                        onTap: () => navigateTo(5),
+                        isActive: currentIndex == 4,
+                        onTap: () => navigateTo(4),
                       ),
                       _SidebarItem(icon: LucideIcons.fileText, label: 'Selection Logs'),
                       _SidebarItem(
@@ -112,8 +115,8 @@ class SidebarMenu extends ConsumerWidget {
                       _SidebarItem(
                         icon: LucideIcons.headphones, 
                         label: 'Support',
-                        isActive: currentIndex == 6,
-                        onTap: () => navigateTo(6),
+                        isActive: currentIndex == 5,
+                        onTap: () => navigateTo(5),
                       ),
 
                       _SidebarItem(

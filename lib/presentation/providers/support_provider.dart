@@ -1,25 +1,30 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m4_mobile/data/models/ticket_model.dart';
+import 'package:m4_mobile/core/models/activity_log.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 
 class SupportState {
   final List<TicketModel> tickets;
+  final List<ActivityLog> logs;
   final bool isLoading;
   final String? error;
 
   SupportState({
     this.tickets = const [],
+    this.logs = const [],
     this.isLoading = false,
     this.error,
   });
 
   SupportState copyWith({
     List<TicketModel>? tickets,
+    List<ActivityLog>? logs,
     bool? isLoading,
     String? error,
   }) {
     return SupportState(
       tickets: tickets ?? this.tickets,
+      logs: logs ?? this.logs,
       isLoading: isLoading ?? this.isLoading,
       error: error,
     );
@@ -54,6 +59,36 @@ class SupportNotifier extends StateNotifier<SupportState> {
         state = state.copyWith(
           isLoading: false,
           error: 'Failed to load tickets',
+        );
+      }
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      );
+    }
+  }
+
+  Future<void> fetchLogs() async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final apiClient = _ref.read(apiClientProvider);
+      final response = await apiClient.getLogs();
+      
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final List<dynamic> data = response.data['data'] ?? [];
+        final List<ActivityLog> logs = data
+            .map((json) => ActivityLog.fromJson(json))
+            .toList();
+        
+        state = state.copyWith(
+          logs: logs,
+          isLoading: false,
+        );
+      } else {
+        state = state.copyWith(
+          isLoading: false,
+          error: 'Failed to load logs',
         );
       }
     } catch (e) {

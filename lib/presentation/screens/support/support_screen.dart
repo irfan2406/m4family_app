@@ -6,6 +6,7 @@ import 'package:m4_mobile/presentation/providers/support_provider.dart';
 import 'package:m4_mobile/presentation/screens/support/create_ticket_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/schedule_visit_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/help_center_screen.dart';
+import 'package:m4_mobile/presentation/screens/support/support_logs_screen.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 
 
@@ -26,7 +27,10 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => ref.read(supportProvider.notifier).fetchTickets());
+    Future.microtask(() {
+      ref.read(supportProvider.notifier).fetchTickets();
+      ref.read(supportProvider.notifier).fetchLogs();
+    });
   }
 
   @override
@@ -62,13 +66,15 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
                       const SizedBox(height: 40),
                       _buildOperationalLogsHeader(),
                       const SizedBox(height: 20),
-                      if (state.isLoading && state.tickets.isEmpty)
-                        const Center(child: CircularProgressIndicator(color: Colors.white))
-                      else if (state.tickets.isEmpty)
+                      if (state.isLoading && state.logs.isEmpty)
+                        const Center(child: Padding(
+                          padding: EdgeInsets.all(40.0),
+                          child: CircularProgressIndicator(color: Colors.white24),
+                        ))
+                      else if (state.logs.isEmpty)
                         _buildEmptyState()
                       else
-                        ...state.tickets.map((ticket) => _TicketItem(ticket: ticket))
-                            .toList(),
+                        ...state.logs.take(3).map((log) => _LogPreviewItem(log: log)).toList(),
                       const SizedBox(height: 120), // Bottom padding
 
                     ],
@@ -219,23 +225,46 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
   }
 
   Widget _buildOperationalLogsHeader() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Text(
-          'OPERATIONAL LOGS',
-          style: GoogleFonts.montserrat(
-            fontSize: 12,
-            fontWeight: FontWeight.w900,
-            color: Colors.white70,
-            letterSpacing: 2,
-          ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'OPERATIONAL LOGS',
+              style: GoogleFonts.montserrat(
+                fontSize: 12,
+                fontWeight: FontWeight.w900,
+                color: Colors.white70,
+                letterSpacing: 2,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Container(
+              width: 40,
+              height: 2,
+              color: Colors.white24,
+            ),
+          ],
         ),
-        const SizedBox(height: 4),
-        Container(
-          width: 40,
-          height: 2,
-          color: Colors.white24,
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const SupportLogsScreen()),
+            );
+          },
+          child: Text(
+            'VIEW ALL LOGS',
+            style: GoogleFonts.montserrat(
+              fontSize: 9,
+              fontWeight: FontWeight.w900,
+              color: Colors.white38,
+              letterSpacing: 2,
+            ),
+          ),
         ),
       ],
     );
@@ -328,22 +357,19 @@ class _MatrixItem extends StatelessWidget {
 }
 
 
-class _TicketItem extends StatelessWidget {
-  final ticket;
+class _LogPreviewItem extends StatelessWidget {
+  final dynamic log;
 
-  const _TicketItem({required this.ticket});
+  const _LogPreviewItem({required this.log});
 
   @override
   Widget build(BuildContext context) {
-    final dateFormat = DateFormat('MMM d, yyyy');
-    final String dateStr = dateFormat.format(ticket.createdAt);
-
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.04),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
       child: Row(
@@ -353,68 +379,85 @@ class _TicketItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'TICKET ID: ${ticket.id.substring(max(0, ticket.id.length - 8))}',
-                      style: GoogleFonts.montserrat(
-                        color: Colors.blueAccent.withOpacity(0.7),
-                        fontWeight: FontWeight.w900,
-                        fontSize: 8,
-                        letterSpacing: 1,
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.blueAccent.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        log.displayId,
+                        style: GoogleFonts.montserrat(
+                          color: Colors.blueAccent,
+                          fontSize: 8,
+                          fontWeight: FontWeight.w900,
+                        ),
                       ),
                     ),
-                    _buildStatusChip(ticket.status),
+                    const SizedBox(width: 8),
+                    Text(
+                      log.title.toUpperCase(),
+                      style: GoogleFonts.montserrat(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ],
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  ticket.subject,
-                  style: GoogleFonts.montserrat(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  dateStr,
-                  style: GoogleFonts.montserrat(
-                    color: Colors.white38,
-                    fontSize: 10,
-                  ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    const Icon(LucideIcons.clock, size: 12, color: Colors.white24),
+                    const SizedBox(width: 6),
+                    Text(
+                      _getTimeAgo(log.createdAt).toUpperCase(),
+                      style: GoogleFonts.montserrat(
+                        color: Colors.white24,
+                        fontSize: 9,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 12),
-          const Icon(LucideIcons.chevronRight, color: Colors.white10, size: 16),
+          _buildStatusBadge(log.status),
         ],
       ),
     );
   }
 
-  Widget _buildStatusChip(String status) {
-    final bool isOpen = status.toLowerCase() == 'open';
+  Widget _buildStatusBadge(String status) {
+    final bool isPositive = ['completed', 'verified', 'success', 'sent'].contains(status.toLowerCase());
+    final color = isPositive ? Colors.greenAccent : Colors.blueAccent;
+    
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: (isOpen ? Colors.green : Colors.orange).withOpacity(0.1),
+        color: color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: (isOpen ? Colors.green : Colors.orange).withOpacity(0.2),
-        ),
       ),
       child: Text(
         status.toUpperCase(),
         style: GoogleFonts.montserrat(
-          color: isOpen ? Colors.greenAccent : Colors.orangeAccent,
+          color: color,
           fontSize: 8,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w900,
         ),
       ),
     );
   }
 
-  int max(int a, int b) => a > b ? a : b;
+  String _getTimeAgo(DateTime dateTime) {
+    final duration = DateTime.now().difference(dateTime);
+    if (duration.inMinutes < 60) return '${duration.inMinutes} mins ago';
+    if (duration.inHours < 24) return '${duration.inHours} hours ago';
+    return DateFormat('MMM d').format(dateTime);
+  }
 }
+

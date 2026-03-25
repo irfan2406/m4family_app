@@ -26,13 +26,11 @@ class _MainShellState extends ConsumerState<MainShell> {
 
   final List<Widget> _screens = [
     const DashboardScreen(), // 0: Home
-    const ProjectListScreen(), // 1: Explore
-    const NotificationListScreen(), // 2: Notifications
-    const PlaceholderScreen(title: 'Profile'), // 3: Profile
-    const CommunityListScreen(), // 4: Sidebar only
-    const CustomViewsScreen(), // 5: Sidebar only
-    const SupportScreen(), // 6: Sidebar only
-
+    const CommunityListScreen(), // 1: Compass (Communities)
+    const NotificationListScreen(), // 2: MessageSquare (Alerts)
+    const PlaceholderScreen(title: 'Profile'), // 3: User/Profile
+    const CustomViewsScreen(), // 4: Sidebar only
+    const SupportScreen(), // 5: Sidebar only
   ];
 
 

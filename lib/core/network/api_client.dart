@@ -4,14 +4,15 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class ApiClient {
   final Dio dio;
+  final String baseUrl;
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
-  ApiClient({required String baseUrl})
+  ApiClient({required this.baseUrl})
       : dio = Dio(
           BaseOptions(
             baseUrl: baseUrl,
-            connectTimeout: const Duration(seconds: 15),
-            receiveTimeout: const Duration(seconds: 15),
+            connectTimeout: const Duration(seconds: 30),
+            receiveTimeout: const Duration(seconds: 30),
             headers: {
               'Content-Type': 'application/json',
               'Accept': 'application/json',
@@ -108,6 +109,11 @@ class ApiClient {
     return dio.patch('/api/notifications/mark-all-read');
   }
 
+  // System Logs
+  Future<Response> getLogs() async {
+    return dio.get('/api/logs');
+  }
+
   // Support Tickets
   Future<Response> getTickets() async {
     return dio.get('/api/tickets');
@@ -153,6 +159,20 @@ class ApiClient {
 
   Future<Response> applyJob(Map<String, dynamic> data) async {
     return dio.post('/api/careers/apply', data: data);
+  }
+
+  String resolveUrl(String? url) {
+    if (url == null || url.isEmpty) {
+      return 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80';
+    }
+    if (url.startsWith('http')) return url;
+
+    String root = baseUrl;
+    if (root.endsWith('/api')) root = root.substring(0, root.length - 4);
+    if (root.endsWith('/')) root = root.substring(0, root.length - 1);
+
+    final path = url.startsWith('/') ? url : '/$url';
+    return '$root$path';
   }
 }
 

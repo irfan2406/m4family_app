@@ -6,6 +6,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_detail_screen.dart';
+import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 
 
 class ProjectListScreen extends ConsumerWidget {
@@ -56,6 +57,8 @@ class ProjectListScreen extends ConsumerWidget {
     final filteredProjects = ref.watch(filteredProjectsProvider);
     final currentFilter = ref.watch(projectFilterProvider);
     final isGridView = ref.watch(projectLayoutProvider);
+
+    final apiClient = ref.watch(apiClientProvider);
 
     return Scaffold(
       backgroundColor: M4Theme.background,
@@ -179,6 +182,7 @@ class ProjectListScreen extends ConsumerWidget {
                   itemBuilder: (context, index) {
                     final project = filteredProjects[index];
                     final projectId = project['_id']?.toString() ?? '';
+                    final imageUrl = apiClient.resolveUrl(project['heroImage']?.toString() ?? project['images']?[0]?.toString());
                     return GestureDetector(
                       onTap: () {
                         if (projectId.isNotEmpty) {
@@ -193,9 +197,9 @@ class ProjectListScreen extends ConsumerWidget {
                           );
                         }
                       },
-                      child: isGridView 
-                          ? _ProjectListItem(project: project) 
-                          : _ProjectListRowItem(project: project),
+                      child: isGridView
+                          ? _ProjectGridItem(project: project, imageUrl: imageUrl)
+                          : _ProjectListRowItem(project: project, imageUrl: imageUrl),
                     );
                   },
                 ),
@@ -213,9 +217,10 @@ class ProjectListScreen extends ConsumerWidget {
 // ==========================================
 // LARGE GRID/FEED CARD (Default 'Grid' View)
 // ==========================================
-class _ProjectListItem extends StatelessWidget {
+class _ProjectGridItem extends StatelessWidget {
   final dynamic project;
-  const _ProjectListItem({required this.project});
+  final String imageUrl;
+  const _ProjectGridItem({required this.project, required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -226,11 +231,7 @@ class _ProjectListItem extends StatelessWidget {
         color: M4Theme.surface,
         borderRadius: BorderRadius.circular(40),
         image: DecorationImage(
-          image: NetworkImage(
-            project['heroImages'] != null && project['heroImages'].isNotEmpty
-                ? project['heroImages'][0]
-                : 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80', // Fallback
-          ),
+          image: NetworkImage(imageUrl),
           fit: BoxFit.cover,
         ),
       ),
@@ -252,7 +253,7 @@ class _ProjectListItem extends StatelessWidget {
               ),
             ),
           ),
-          
+
           // Top Badges
           Positioned(
             top: 20,
@@ -266,7 +267,7 @@ class _ProjectListItem extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // Bottom Content
           Positioned(
             bottom: 24,
@@ -315,9 +316,9 @@ class _ProjectListItem extends StatelessWidget {
                     ],
                   ),
                 ),
-                
+
                 const SizedBox(width: 16),
-                
+
                 // Action Arrow Button
                 Container(
                   padding: const EdgeInsets.all(16),
@@ -342,7 +343,8 @@ class _ProjectListItem extends StatelessWidget {
 // ==========================================
 class _ProjectListRowItem extends StatelessWidget {
   final dynamic project;
-  const _ProjectListRowItem({required this.project});
+  final String imageUrl;
+  const _ProjectListRowItem({required this.project, required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -363,11 +365,7 @@ class _ProjectListRowItem extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               image: DecorationImage(
-                image: NetworkImage(
-                  project['heroImages'] != null && project['heroImages'].isNotEmpty
-                      ? project['heroImages'][0]
-                      : 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80',
-                ),
+                image: NetworkImage(imageUrl),
                 fit: BoxFit.cover,
               ),
             ),

@@ -12,9 +12,9 @@ class SupportHandlers {
   static const String corporateAddress = '604, 6th Floor, M4 Aura Heights, Maulana Shaukat Ali Road, Grant Road, Mumbai - 400007';
 
 
-  static Future<void> launchWhatsApp() async {
+  static Future<void> launchWhatsApp([String? phone]) async {
     // Using the full api.whatsapp.com link for better reliability
-    final Uri url = Uri.parse('https://api.whatsapp.com/send?phone=$whatsappNumber');
+    final Uri url = Uri.parse('https://api.whatsapp.com/send?phone=${phone ?? whatsappNumber}');
     if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
       debugPrint('Could not launch $url');
     }

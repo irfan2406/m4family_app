@@ -12,6 +12,7 @@ import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/screens/pages/pages_list_screen.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_detail_screen.dart';
+import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
 
 
 class DashboardScreen extends ConsumerStatefulWidget {
@@ -58,9 +59,18 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         });
       } else {
         setState(() => _projectsLoading = false);
+        final msg = response.data['message'] ?? 'Unknown error';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('API Error: $msg'), backgroundColor: Colors.orangeAccent),
+        );
       }
-    } catch (_) {
-      setState(() => _projectsLoading = false);
+    } catch (e) {
+      if (mounted) {
+        setState(() => _projectsLoading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to load projects: $e'), backgroundColor: Colors.redAccent),
+        );
+      }
     }
   }
 
@@ -130,6 +140,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final apiClient = ref.watch(apiClientProvider);
+
+    // Listen for external scroll triggers (e.g., from Sidebar)
     // Listen for external scroll triggers (e.g., from Sidebar)
     ref.listen(inquiryScrollTriggerProvider, (previous, next) {
       if (next > 0) {
@@ -144,136 +157,204 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       body: CustomScrollView(
         controller: _scrollController,
         slivers: [
-          // 1. 🔝 Stage 1: Global Header (Restored Menu Bar)
+          // ⭐️ Stage 1: Fullscreen Hero Stack (Web Parity Overlaid Design)
           SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(30, 20, 30, 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Builder(
+              builder: (context) {
+                final featured = (_projects.isNotEmpty)
+                    ? _projects.firstWhere((p) => p['featured'] == true, orElse: () => _projects[0])
+                    : null;
+                
+                final mainImage = (featured != null)
+                    ? (featured['heroImage'] != null
+                        ? featured['heroImage'].toString()
+                        : (featured['images'] is List && (featured['images'] as List).isNotEmpty
+                            ? featured['images'][0].toString()
+                            : 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80'))
+                    : 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80';
+
+                return Container(
+                  height: 650,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(image: NetworkImage(apiClient.resolveUrl(mainImage)), fit: BoxFit.cover),
+                  ),
+                  child: Stack(
                     children: [
-                      Text(
-                        'DISCOVER',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white.withOpacity(0.4),
-                          letterSpacing: 2,
+                        // 1. Gradient Overlay
+                        Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.black.withOpacity(0.5),
+                                Colors.transparent,
+                                Colors.black.withOpacity(0.95),
+                              ],
+                              stops: const [0.0, 0.5, 1.0],
+                            ),
+                          ),
                         ),
-                      ),
-                      GestureDetector(
-                        onTap: () => _scaffoldKey.currentState?.openDrawer(),
-                        child: const Icon(LucideIcons.menu, color: Colors.white, size: 24),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    'M4 Projects',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 32,
-                      fontWeight: FontWeight.w900,
-                      color: Colors.white,
-                    ),
-                  ),
-                      const SizedBox(height: 25),
-                      // Search & Filter (GLASS)
-                      Row(
-                        children: [
-                          Expanded(
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(16),
-                              child: BackdropFilter(
-                                filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-                                child: Container(
-                                  height: 55,
-                                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.03),
-                                    borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(color: Colors.white.withOpacity(0.08)),
+                        
+                        // 2. Global Header & Search (Top) - ALWAYS VISIBLE
+                        Positioned(
+                          top: 60,
+                          left: 25,
+                          right: 25,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'DISCOVER',
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white.withOpacity(0.6),
+                                      letterSpacing: 2,
+                                    ),
                                   ),
-                                  child: Row(
+                                  _GlassIconButton(
+                                    icon: LucideIcons.menu, 
+                                    onTap: () => _scaffoldKey.currentState?.openDrawer(),
+                                    size: 45,
+                                  ),
+                                ],
+                              ),
+                              Text(
+                                'M4 Projects',
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 42,
+                                  fontWeight: FontWeight.w900,
+                                  color: Colors.white,
+                                  letterSpacing: -1,
+                                ),
+                              ),
+                              const SizedBox(height: 30),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: _GlassSearchField(
+                                      onChanged: (val) => setState(() => _searchQuery = val),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 15),
+                                  _GlassIconButton(
+                                    icon: LucideIcons.slidersHorizontal,
+                                    size: 60,
+                                    onTap: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        backgroundColor: Colors.transparent,
+                                        isScrollControlled: true,
+                                        builder: (context) => _QuickFilterSheet(),
+                                      );
+                                    },
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 20),
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: [
+                                    _CategoryChip(
+                                      label: 'ALL', 
+                                      isActive: _selectedCategory == 'ALL', 
+                                      onTap: () => setState(() => _selectedCategory = 'ALL'),
+                                    ),
+                                    const SizedBox(width: 15),
+                                    _CategoryChip(
+                                      label: 'ONGOING', 
+                                      isActive: _selectedCategory == 'ONGOING', 
+                                      onTap: () => setState(() => _selectedCategory = 'ONGOING'),
+                                    ),
+                                    const SizedBox(width: 15),
+                                    _CategoryChip(
+                                      label: 'UPCOMING', 
+                                      isActive: _selectedCategory == 'UPCOMING', 
+                                      onTap: () => setState(() => _selectedCategory = 'UPCOMING'),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        
+                        // 3. Featured Project Info or Loading/Empty indicator
+                        if (_projectsLoading)
+                           const Center(child: CircularProgressIndicator(color: Colors.white24))
+                        else if (_projects.isEmpty)
+                           Center(child: Text('No projects found.', style: GoogleFonts.montserrat(color: Colors.white24, fontSize: 14)))
+                        else if (featured != null)
+                          Positioned(
+                            bottom: 40,
+                            left: 30,
+                            child: GestureDetector(
+                              onTap: () {
+                                final projectId = featured['_id']?.toString() ?? '';
+                                if (projectId.isNotEmpty) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ProjectDetailScreen(
+                                        projectId: projectId,
+                                        projectData: featured,
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
                                     children: [
-                                      const Icon(LucideIcons.search, color: Colors.white24, size: 20),
-                                      const SizedBox(width: 12),
-                                      Expanded(
-                                        child: TextField(
-                                          onChanged: (val) => setState(() => _searchQuery = val),
-                                          style: const TextStyle(color: Colors.white),
-                                          decoration: InputDecoration(
-                                            hintText: 'Search residences...',
-                                            hintStyle: GoogleFonts.montserrat(color: Colors.white24, fontSize: 13),
-                                            border: InputBorder.none,
-                                          ),
-                                        ),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                        decoration: BoxDecoration(color: M4Theme.premiumBlue.withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
+                                        child: Text('FEATURED', style: GoogleFonts.montserrat(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Container(width: 6, height: 6, decoration: const BoxDecoration(color: M4Theme.premiumBlue, shape: BoxShape.circle)),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    featured['title']?.toString().toUpperCase() ?? 'M4 PROJECT',
+                                    style: GoogleFonts.montserrat(color: Colors.white, fontSize: 48, fontWeight: FontWeight.w900, letterSpacing: -2),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Row(
+                                    children: [
+                                      const Icon(LucideIcons.mapPin, color: Colors.white60, size: 14),
+                                      const SizedBox(width: 5),
+                                      Text(
+                                        featured['location']?['name'] ?? 'MUMBAI',
+                                        style: GoogleFonts.montserrat(color: Colors.white60, fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 1),
+                                      ),
+                                      const SizedBox(width: 20),
+                                      Text(
+                                        featured['startingPrice'] != null && featured['startingPrice'] != "N/A" 
+                                          ? '₹ ${featured['startingPrice']}' 
+                                          : 'Price on Request',
+                                        style: GoogleFonts.montserrat(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
                                       ),
                                     ],
                                   ),
-                                ),
+                                ],
                               ),
                             ),
                           ),
-                          const SizedBox(width: 15),
-                          GestureDetector(
-                            onTap: () {
-                              showModalBottomSheet(
-                                context: context,
-                                backgroundColor: Colors.transparent,
-                                isScrollControlled: true,
-                                builder: (context) => _QuickFilterSheet(),
-                              );
-                            },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(16),
-                              child: BackdropFilter(
-                                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                                child: Container(
-                                  height: 55,
-                                  width: 55,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.03),
-                                    borderRadius: BorderRadius.circular(16),
-                                    border: Border.all(color: Colors.white.withOpacity(0.08)),
-                                  ),
-                                  child: const Icon(LucideIcons.slidersHorizontal, color: Colors.white, size: 20),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      // Category Pills
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: [
-                            _CategoryChip(
-                              label: 'ALL', 
-                              isActive: _selectedCategory == 'ALL', 
-                              onTap: () => setState(() => _selectedCategory = 'ALL'),
-                            ),
-                            const SizedBox(width: 12),
-                            _CategoryChip(
-                              label: 'ONGOING', 
-                              isActive: _selectedCategory == 'ONGOING', 
-                              onTap: () => setState(() => _selectedCategory = 'ONGOING'),
-                            ),
-                            const SizedBox(width: 12),
-                            _CategoryChip(
-                              label: 'UPCOMING', 
-                              isActive: _selectedCategory == 'UPCOMING', 
-                              onTap: () => setState(() => _selectedCategory = 'UPCOMING'),
-                            ),
-                          ],
-                        ),
-                      ),
                     ],
                   ),
-                ),
-              ),
+                );
+              },
+            ),
+          ),
 
           // ⭐️ Stage 2: Recommended for You (Relocated below Search like web)
           SliverToBoxAdapter(
@@ -323,13 +404,17 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             final locData = project['location'];
                             final locationName = (locData is Map) ? locData['name']?.toString() ?? '' : '';
                             
+                            final imageUrl = project['heroImage'] != null
+                                ? project['heroImage'].toString()
+                                : (project['images'] is List && (project['images'] as List).isNotEmpty
+                                    ? project['images'][0].toString()
+                                    : '');
+
                             return _ProjectCard(
                               title: project['title']?.toString() ?? 'Untitled',
                               location: locationName,
                               status: project['status']?.toString() ?? '',
-                              imageUrl: (project['images'] is List && (project['images'] as List).isNotEmpty)
-                                  ? project['images'][0].toString()
-                                  : (project['heroImage']?.toString() ?? ''),
+                              imageUrl: apiClient.resolveUrl(imageUrl),
                               startingPrice: project['startingPrice']?.toString() ?? '',
                               onTap: () {
                                 final projectId = project['_id']?.toString() ?? '';
@@ -353,132 +438,68 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   ),
           ),
 
-          // 2. 🏙️ Stage 3: Featured Promotional Card
-          SliverToBoxAdapter(
-            child: _projectsLoading || _projects.isEmpty
-                ? const SizedBox.shrink()
-                : Builder(
-                    builder: (context) {
-                      final featured = _projects.firstWhere((p) => p['featured'] == true, orElse: () => _projects[0]);
-                      final mainImage = (featured['images'] is List && (featured['images'] as List).isNotEmpty)
-                          ? featured['images'][0].toString()
-                          : (featured['heroImage']?.toString() ?? 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80');
-                      final locData = featured['location'];
-                      final locationName = (locData is Map) ? locData['name']?.toString() ?? '' : '';
-
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-                        child: GestureDetector(
-                          onTap: () {
-                            final projectId = featured['_id']?.toString() ?? '';
-                            if (projectId.isNotEmpty) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ProjectDetailScreen(
-                                    projectId: projectId,
-                                    projectData: featured,
-                                  ),
-                                ),
-                              );
-                            }
-                          },
-                          child: Container(
-                            height: 300,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(30),
-                              image: DecorationImage(
-                                image: NetworkImage(mainImage),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30),
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
-                                ),
-                              ),
-                              padding: const EdgeInsets.all(25),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                    decoration: BoxDecoration(color: Colors.blue.withOpacity(0.8), borderRadius: BorderRadius.circular(8)),
-                                    child: Text('FEATURED', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.white)),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    featured['title']?.toString().toUpperCase() ?? 'UNTITLED',
-                                    style: GoogleFonts.montserrat(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.white),
-                                  ),
-                                  Row(
-                                    children: [
-                                      const Icon(LucideIcons.mapPin, color: Colors.white54, size: 12),
-                                      const SizedBox(width: 5),
-                                      Text(locationName.toUpperCase(), style: GoogleFonts.montserrat(fontSize: 10, color: Colors.white54, fontWeight: FontWeight.w600)),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-          ),
-
-          // 4. ⚡️ Stage 4: Latest Updates Grid
+          // 4. ⚡️ Stage 4: Latest Updates / Quick Nav (Web Parity text tabs)
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(25, 20, 25, 30),
-              child: Column(
+              padding: const EdgeInsets.fromLTRB(30, 20, 0, 30),
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'LATEST UPDATES',
-                    style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.white54, letterSpacing: 1.5),
+                  SizedBox(
+                    width: 100,
+                    child: Text(
+                      'LATEST\nUPDATES',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 11, 
+                        fontWeight: FontWeight.w900, 
+                        color: Colors.white, 
+                        letterSpacing: 2, 
+                        height: 1.5,
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _QuickAction(
-                        icon: LucideIcons.image, 
-                        label: 'MEDIA', 
-                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PagesListScreen())),
+                  const SizedBox(width: 15),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      child: Row(
+                        children: [
+                          _TextTab(
+                            label: 'PROPERTIES', 
+                            isActive: true, 
+                            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ProjectListScreen())),
+                          ),
+                          _TextTab(
+                            label: 'BLOGS', 
+                            isActive: false, 
+                            onTap: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Blogs coming soon!'))),
+                          ),
+                          _TextTab(
+                            label: 'COMMUNITIES', 
+                            isActive: false, 
+                            onTap: () => ref.read(navigationProvider.notifier).state = 1,
+                          ),
+                          _TextTab(
+                            label: 'MEDIA', 
+                            isActive: false, 
+                            onTap: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Media coming soon!'))),
+                          ),
+                          _TextTab(
+                            label: 'ENQUIRY', 
+                            isActive: false, 
+                            onTap: _scrollToInquiry,
+                          ),
+                          const SizedBox(width: 30),
+                        ],
                       ),
-                      _QuickAction(
-                        icon: LucideIcons.home, 
-                        label: 'PROPERTIES', 
-                        onTap: () => ref.read(navigationProvider.notifier).state = 1,
-                      ),
-                      _QuickAction(
-                        icon: LucideIcons.newspaper, 
-                        label: 'BLOGS', 
-                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PagesListScreen())),
-                      ),
-                      _QuickAction(
-                        icon: LucideIcons.mail, 
-                        label: 'ENQUIRY', 
-                        onTap: _scrollToInquiry,
-                      ),
-                      _QuickAction(
-                        icon: LucideIcons.users, 
-                        label: 'COMMUNITIES', 
-                        onTap: () => ref.read(navigationProvider.notifier).state = 4,
-                      ),
-                    ],
+                    ),
                   ),
                 ],
               ),
             ),
           ),
+
 
           // 5. 📜 Stage 5: Our Philosophy
           SliverToBoxAdapter(
@@ -531,33 +552,39 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 25),
               child: SizedBox(
                 height: 420,
-                child: _projectsLoading || _projects.isEmpty
+                child: _projectsLoading
                     ? const Center(child: CircularProgressIndicator(color: Colors.white24))
-                    : PageView.builder(
+                    : _projects.isEmpty
+                        ? const Center(child: Text('No featured properties', style: TextStyle(color: Colors.white24)))
+                        : PageView.builder(
                         controller: _featuredController,
                         itemCount: _projects.length > 5 ? 5 : _projects.length,
                         onPageChanged: (index) => setState(() => _currentHeroIndex = index),
                         itemBuilder: (context, index) {
                           final project = _projects[index];
-                          final imageUrl = (project['images'] is List && (project['images'] as List).isNotEmpty)
-                              ? project['images'][0].toString()
-                              : (project['heroImage']?.toString() ?? '');
+                          final imageUrl = project['heroImage'] != null
+                              ? project['heroImage'].toString()
+                              : (project['images'] is List && (project['images'] as List).isNotEmpty
+                                  ? project['images'][0].toString()
+                                  : '');
 
-                          return Stack(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(40),
-                                child: imageUrl.isNotEmpty
-                                    ? Image.network(
-                                        imageUrl,
-                                        height: 420,
-                                        width: double.infinity,
-                                        fit: BoxFit.cover,
-                                        errorBuilder: (context, error, stackTrace) => Container(
-                                          color: Colors.white10,
-                                          child: const Center(child: Icon(LucideIcons.image, color: Colors.white24)),
-                                        ),
-                                      )
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Stack(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(40),
+                                  child: imageUrl.isNotEmpty
+                                      ? Container(
+                                          height: 420,
+                                          width: double.infinity,
+                                          decoration: BoxDecoration(
+                                            image: DecorationImage(
+                                              image: NetworkImage(apiClient.resolveUrl(imageUrl)),
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        )
                                     : Container(
                                         color: Colors.white10,
                                         child: const Center(child: Icon(LucideIcons.image, color: Colors.white24)),
@@ -597,8 +624,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                 ),
                               ),
                             ],
-                          );
-                        },
+                          ),
+                        );
+                      },
                       ),
               ),
             ),
@@ -931,11 +959,17 @@ class _ProjectCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(15),
                     border: Border.all(color: Colors.white.withOpacity(0.08)),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('STARTING FROM', style: TextStyle(color: Colors.white38, fontSize: 7, fontWeight: FontWeight.bold)),
-                      Text(displayPrice, style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white)),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('STARTING FROM', style: TextStyle(color: Colors.white38, fontSize: 7, fontWeight: FontWeight.bold)),
+                          Text(displayPrice, style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white)),
+                        ],
+                      ),
+                      const Icon(LucideIcons.arrowRight, color: Colors.white10, size: 14),
                     ],
                   ),
                 ),
@@ -1336,6 +1370,109 @@ class _PremiumFormField extends StatelessWidget {
                 Text(label, style: GoogleFonts.montserrat(color: Colors.white30, fontSize: 13, fontWeight: FontWeight.w500)),
                 if (hasDropdown) const Icon(LucideIcons.chevronDown, color: Colors.white30, size: 16),
               ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+class _GlassSearchField extends StatelessWidget {
+  final Function(String) onChanged;
+  const _GlassSearchField({required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(20),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+        child: Container(
+          height: 60,
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.25),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.white.withOpacity(0.3)),
+          ),
+          child: Row(
+            children: [
+              const Icon(LucideIcons.search, color: Colors.white, size: 20),
+              const SizedBox(width: 15),
+              Expanded(
+                child: TextField(
+                  onChanged: onChanged,
+                  style: GoogleFonts.montserrat(color: Colors.white, fontSize: 14),
+                  decoration: InputDecoration(
+                    hintText: 'Search residences...',
+                    hintStyle: GoogleFonts.montserrat(color: Colors.white70, fontSize: 13),
+                    border: InputBorder.none,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _GlassIconButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+  final double size;
+  const _GlassIconButton({required this.icon, required this.onTap, this.size = 60});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 25, sigmaY: 25),
+          child: Container(
+            height: size,
+            width: size,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.25),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.white.withOpacity(0.3)),
+            ),
+            child: Icon(icon, color: Colors.white, size: 20),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TextTab extends StatelessWidget {
+  final String label;
+  final bool isActive;
+  final VoidCallback onTap;
+
+  const _TextTab({required this.label, this.isActive = false, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.only(right: 25),
+        child: Container(
+          padding: const EdgeInsets.only(bottom: 6),
+          decoration: BoxDecoration(
+            border: isActive ? const Border(bottom: BorderSide(color: Colors.white, width: 2)) : null,
+          ),
+          child: Text(
+            label,
+            style: GoogleFonts.montserrat(
+              color: isActive ? Colors.white : Colors.white60,
+              fontSize: 11,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1.5,
             ),
           ),
         ),

@@ -17,16 +17,12 @@ class NavigationPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 70,
       margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
-      padding: const EdgeInsets.symmetric(horizontal: 25),
       decoration: BoxDecoration(
-        color: const Color(0xFF09090B).withOpacity(0.9), // Deep Navy/Black
         borderRadius: BorderRadius.circular(35),
-        border: Border.all(color: Colors.white.withOpacity(0.05), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.5),
+            color: Colors.black.withOpacity(0.4),
             blurRadius: 30,
             offset: const Offset(0, 15),
           ),
@@ -35,32 +31,40 @@ class NavigationPill extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(35),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-            _NavItem(
-              icon: LucideIcons.home,
-              isActive: currentIndex == 0,
-              onTap: () => onTap(0),
+          filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+          child: Container(
+            height: 70,
+            padding: const EdgeInsets.symmetric(horizontal: 25),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.04), 
+              borderRadius: BorderRadius.circular(35),
+              border: Border.all(color: Colors.white.withOpacity(0.08), width: 1),
             ),
-            _NavItem(
-              icon: LucideIcons.compass,
-              isActive: currentIndex == 1,
-              onTap: () => onTap(1),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _NavItem(
+                  icon: LucideIcons.home,
+                  isActive: currentIndex == 0,
+                  onTap: () => onTap(0),
+                ),
+                _NavItem(
+                  icon: LucideIcons.compass,
+                  isActive: currentIndex == 1,
+                  onTap: () => onTap(1),
+                ),
+                _NavItem(
+                  icon: LucideIcons.messageSquare,
+                  isActive: currentIndex == 2,
+                  onTap: () => onTap(2),
+                ),
+                _NavItem(
+                  icon: LucideIcons.user,
+                  isActive: currentIndex == 3,
+                  onTap: () => onTap(3),
+                ),
+              ],
             ),
-            _NavItem(
-              icon: LucideIcons.bell,
-              isActive: currentIndex == 2,
-              onTap: () => onTap(2),
-            ),
-            _NavItem(
-              icon: LucideIcons.user,
-              isActive: currentIndex == 3,
-              onTap: () => onTap(3),
-            ),
-
-            ],
           ),
         ),
       ),
