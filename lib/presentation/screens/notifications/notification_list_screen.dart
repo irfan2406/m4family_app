@@ -16,18 +16,9 @@ class NotificationListScreen extends ConsumerWidget {
     final state = ref.watch(notificationProvider);
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF0F1115), // Deep dark blue-grey
-              Color(0xFF050505), // Near pure black
-            ],
-          ),
-        ),
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: SafeArea(
           child: Column(
             children: [
@@ -44,7 +35,7 @@ class NotificationListScreen extends ConsumerWidget {
                           onPressed: () {
                             ref.read(navigationProvider.notifier).state = 0; // Go back to Home
                           },
-                          icon: const Icon(LucideIcons.chevronLeft, color: Colors.white70),
+                          icon: Icon(LucideIcons.chevronLeft, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
                         ),
                         const SizedBox(width: 4),
                         Flexible(
@@ -56,7 +47,7 @@ class NotificationListScreen extends ConsumerWidget {
                                 style: GoogleFonts.montserrat(
                                   fontSize: 24,
                                   fontWeight: FontWeight.w300,
-                                  color: Colors.white,
+                                  color: Theme.of(context).colorScheme.onSurface,
                                   letterSpacing: 2,
                                 ),
                                 overflow: TextOverflow.ellipsis,
@@ -66,7 +57,7 @@ class NotificationListScreen extends ConsumerWidget {
                                 style: GoogleFonts.montserrat(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w900,
-                                  color: Colors.white54,
+                                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                                   letterSpacing: 4,
                                 ),
                                 overflow: TextOverflow.ellipsis,
@@ -86,7 +77,7 @@ class NotificationListScreen extends ConsumerWidget {
                         style: GoogleFonts.montserrat(
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
-                          color: Colors.white70,
+                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                           letterSpacing: 1,
                         ),
                       ),
@@ -100,9 +91,9 @@ class NotificationListScreen extends ConsumerWidget {
               // Notifications List
               Expanded(
                 child: state.isLoading && state.notifications.isEmpty
-                    ? const Center(child: CircularProgressIndicator(color: Colors.white))
+                    ? Center(child: CircularProgressIndicator(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1)))
                     : state.notifications.isEmpty
-                        ? _buildEmptyState()
+                        ? _buildEmptyState(context)
                         : RefreshIndicator(
                             onRefresh: () => ref.read(notificationProvider.notifier).fetchNotifications(),
                             color: Colors.black,
@@ -131,19 +122,19 @@ class NotificationListScreen extends ConsumerWidget {
 
 
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(LucideIcons.bellOff, size: 64, color: Colors.white.withOpacity(0.1)),
+          Icon(LucideIcons.bellOff, size: 64, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1)),
           const SizedBox(height: 24),
           Text(
             'NO NOTIFICATIONS',
             style: GoogleFonts.montserrat(
               fontSize: 12,
               fontWeight: FontWeight.w900,
-              color: Colors.white24,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
               letterSpacing: 2,
             ),
           ),
@@ -152,7 +143,7 @@ class NotificationListScreen extends ConsumerWidget {
             'We\'ll notify you when something important happens.',
             style: GoogleFonts.montserrat(
               fontSize: 10,
-              color: Colors.white10,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
             ),
           ),
         ],
@@ -168,19 +159,18 @@ class _NotificationItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final dateFormat = DateFormat('M/d/yyyy, h:mm a');
     final String timeStr = dateFormat.format(notification.createdAt);
 
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.04),
-        borderRadius: BorderRadius.circular(16), // Changed to 16
-        border: Border.fromBorderSide( // Changed to Border.fromBorderSide
-          BorderSide(
-            color: notification.read ? Colors.white10 : Colors.white24,
-            width: 0.5,
-          ),
+        color: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: (isDark ? Colors.white : Colors.black).withOpacity(notification.read ? 0.05 : 0.1),
+          width: 0.5,
         ),
       ),
       child: Row(
@@ -215,7 +205,7 @@ class _NotificationItem extends StatelessWidget {
                         style: GoogleFonts.montserrat(
                           fontSize: 12,
                           fontWeight: FontWeight.w900,
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.onSurface,
                           letterSpacing: 0.5,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -230,7 +220,7 @@ class _NotificationItem extends StatelessWidget {
                           timeStr,
                           style: GoogleFonts.montserrat(
                             fontSize: 8,
-                            color: Colors.white38,
+                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
                           ),
                         ),
                         if (!notification.read) ...[
@@ -253,7 +243,7 @@ class _NotificationItem extends StatelessWidget {
                   notification.message,
                   style: GoogleFonts.montserrat(
                     fontSize: 11,
-                    color: Colors.white70,
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                     height: 1.5,
                   ),
                 ),

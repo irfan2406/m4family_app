@@ -25,21 +25,21 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(LucideIcons.chevronLeft, color: Colors.white70),
+          icon: const Icon(LucideIcons.chevronLeft, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
       ),
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF0F1115), Color(0xFF050505)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.white, Colors.black.withOpacity(0.02)],
           ),
         ),
         child: SingleChildScrollView(
@@ -73,7 +73,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
           style: GoogleFonts.montserrat(
             fontSize: 24,
             fontWeight: FontWeight.w300,
-            color: Colors.white,
+            color: Colors.black,
             letterSpacing: 2,
           ),
         ),
@@ -82,7 +82,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
           style: GoogleFonts.montserrat(
             fontSize: 9,
             fontWeight: FontWeight.w900,
-            color: Colors.white54,
+            color: Colors.black.withOpacity(0.5),
             letterSpacing: 4,
           ),
         ),
@@ -91,23 +91,24 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
   }
 
   Widget _buildSearchBar() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.03),
+            color: Colors.white.withOpacity(0.6),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.white10),
+            border: Border.all(color: Colors.white.withOpacity(0.6)),
           ),
           child: TextField(
             controller: _searchController,
-            style: GoogleFonts.montserrat(color: Colors.white, fontSize: 13),
+            style: GoogleFonts.montserrat(color: Colors.black, fontSize: 13),
             decoration: InputDecoration(
               hintText: 'SEARCH FOR HELP...',
-              hintStyle: GoogleFonts.montserrat(color: Colors.white24, fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1),
-              prefixIcon: const Icon(LucideIcons.search, color: Colors.white24, size: 18),
+              hintStyle: GoogleFonts.montserrat(color: Colors.black.withOpacity(0.2), fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1),
+              prefixIcon: Icon(LucideIcons.search, color: Colors.black.withOpacity(0.2), size: 18),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(vertical: 16),
             ),
@@ -126,7 +127,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
           style: GoogleFonts.montserrat(
             fontSize: 9,
             fontWeight: FontWeight.w900,
-            color: Colors.white38,
+            color: Colors.black.withOpacity(0.4),
             letterSpacing: 2,
           ),
         ),
@@ -165,7 +166,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
               style: GoogleFonts.montserrat(
                 fontSize: 9,
                 fontWeight: FontWeight.w900,
-                color: Colors.white38,
+                color: Colors.black.withOpacity(0.4),
                 letterSpacing: 2,
               ),
             ),
@@ -190,18 +191,33 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
         const SizedBox(height: 32),
         _FAQCategory(
           title: 'PAYMENTS',
-          questions: [
-            'How do I make a maintenance payment?',
-            'Where can I find payment receipts?',
-            'Can I schedule auto-debit?',
+          questions: const [
+            {
+              'q': 'How do I make a maintenance payment?',
+              'a': 'You can pay via the \'Payments\' section in your dashboard. Select your project and follow the on-screen instructions for secure transaction.'
+            },
+            {
+              'q': 'Where can I find payment receipts?',
+              'a': 'All receipts are automatically generated and stored under the \'Documents\' section of each project. You can view or download them anytime.'
+            },
+            {
+              'q': 'Can I schedule auto-debit?',
+              'a': 'Yes, you can enable auto-debit from the \'Settings\' tab in your profile. Select your preferred bank account and authorization method.'
+            },
           ],
         ),
         const SizedBox(height: 24),
         _FAQCategory(
           title: 'BOOKINGS & SITE VISITS',
-          questions: [
-            'How do I schedule a site visit?',
-            'What is the token amount for booking?',
+          questions: const [
+            {
+              'q': 'How do I schedule a site visit?',
+              'a': 'Use the \'Schedule Visit\' option in the Support Hub. Choose your preferred project, date, and time, and our manager will confirm within 2 hours.'
+            },
+            {
+              'q': 'What is the token amount for booking?',
+              'a': 'Token amounts vary by project and unit type. Generally, it starts from ₹50,000. Exact details are available in the pricing sheet of each project.'
+            },
           ],
         ),
       ],
@@ -209,6 +225,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
   }
 
   Widget _buildNeedHelpSection() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return ClipRRect(
       borderRadius: BorderRadius.circular(24),
       child: BackdropFilter(
@@ -217,19 +234,19 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.02),
+            color: Colors.white.withOpacity(0.6),
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: Colors.white.withOpacity(0.05)),
+            border: Border.all(color: Colors.white.withOpacity(0.6)),
           ),
           child: Column(
             children: [
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.05),
+                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(LucideIcons.helpCircle, color: Colors.white, size: 24),
+                child: Icon(LucideIcons.helpCircle, color: Colors.black, size: 24),
               ),
               const SizedBox(height: 24),
               Text(
@@ -237,7 +254,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                 style: GoogleFonts.montserrat(
                   fontSize: 18,
                   fontWeight: FontWeight.w900,
-                  color: Colors.white,
+                  color: Colors.black,
                   letterSpacing: 1,
                 ),
               ),
@@ -247,7 +264,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                 style: GoogleFonts.montserrat(
                   fontSize: 9,
                   fontWeight: FontWeight.w600,
-                  color: Colors.white38,
+                  color: Colors.black.withOpacity(0.4),
                   letterSpacing: 1,
                 ),
               ),
@@ -263,8 +280,8 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.black,
+                    backgroundColor: Colors.black,
+                    foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   child: Text(
@@ -299,6 +316,7 @@ class _GuideCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return ClipRRect(
       borderRadius: BorderRadius.circular(24),
       child: BackdropFilter(
@@ -307,9 +325,9 @@ class _GuideCard extends StatelessWidget {
           width: 160,
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.03),
+            color: Colors.white.withOpacity(0.6),
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: Colors.white.withOpacity(0.05)),
+            border: Border.all(color: Colors.white.withOpacity(0.6)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -317,16 +335,16 @@ class _GuideCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.05),
+                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(icon, color: Colors.white70, size: 20),
+                child: Icon(icon, color: Colors.black.withOpacity(0.7), size: 20),
               ),
               const SizedBox(height: 24),
               Text(
                 title,
                 style: GoogleFonts.montserrat(
-                  color: Colors.white,
+                  color: Colors.black,
                   fontWeight: FontWeight.w900,
                   fontSize: 10,
                   letterSpacing: 1,
@@ -336,7 +354,7 @@ class _GuideCard extends StatelessWidget {
               Text(
                 readingTime,
                 style: GoogleFonts.montserrat(
-                  color: Colors.white24,
+                  color: Colors.black.withOpacity(0.2),
                   fontSize: 8,
                   fontWeight: FontWeight.bold,
                 ),
@@ -351,7 +369,7 @@ class _GuideCard extends StatelessWidget {
 
 class _FAQCategory extends StatelessWidget {
   final String title;
-  final List<String> questions;
+  final List<Map<String, String>> questions;
 
   const _FAQCategory({
     required this.title,
@@ -368,8 +386,8 @@ class _FAQCategory extends StatelessWidget {
             Container(
               width: 4,
               height: 4,
-              decoration: const BoxDecoration(
-                color: Colors.white24,
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.2),
                 shape: BoxShape.circle,
               ),
             ),
@@ -379,14 +397,14 @@ class _FAQCategory extends StatelessWidget {
               style: GoogleFonts.montserrat(
                 fontSize: 8,
                 fontWeight: FontWeight.w900,
-                color: Colors.white38,
+                color: Colors.black.withOpacity(0.4),
                 letterSpacing: 1,
               ),
             ),
           ],
         ),
         const SizedBox(height: 16),
-        ...questions.map((q) => _FAQTile(question: q)).toList(),
+        ...questions.map((q) => _FAQTile(question: q['q']!, answer: q['a']!)).toList(),
       ],
     );
   }
@@ -394,8 +412,9 @@ class _FAQCategory extends StatelessWidget {
 
 class _FAQTile extends StatefulWidget {
   final String question;
+  final String answer;
 
-  const _FAQTile({required this.question});
+  const _FAQTile({required this.question, required this.answer});
 
   @override
   State<_FAQTile> createState() => _FAQTileState();
@@ -409,9 +428,9 @@ class _FAQTileState extends State<_FAQTile> {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.02),
+        color: Colors.black.withOpacity(0.02),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        border: Border.all(color: Colors.black.withOpacity(0.05)),
       ),
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
@@ -421,7 +440,7 @@ class _FAQTileState extends State<_FAQTile> {
           title: Text(
             widget.question.toUpperCase(),
             style: GoogleFonts.montserrat(
-              color: Colors.white,
+              color: Colors.black,
               fontWeight: FontWeight.bold,
               fontSize: 10,
               letterSpacing: 0.5,
@@ -429,16 +448,16 @@ class _FAQTileState extends State<_FAQTile> {
           ),
           trailing: Icon(
             _isExpanded ? LucideIcons.chevronUp : LucideIcons.chevronDown,
-            color: Colors.white24,
+            color: Colors.black.withOpacity(0.2),
             size: 16,
           ),
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               child: Text(
-                'Placeholder answer for high-fidelity demonstration. This content can be linked to the backend CMS in the next phase.',
+                widget.answer,
                 style: GoogleFonts.montserrat(
-                  color: Colors.white54,
+                  color: Colors.black.withOpacity(0.5),
                   fontSize: 10,
                   height: 1.5,
                 ),

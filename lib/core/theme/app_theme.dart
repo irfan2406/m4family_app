@@ -11,6 +11,53 @@ class M4Theme {
   static const Color textSecondary = Color(0xFFA1A1AA); // Zinc-400
   static const Color border = Color(0xFF27272A);      // Zinc-800
 
+  static ThemeData lightTheme = ThemeData(
+    useMaterial3: true,
+    brightness: Brightness.light,
+    scaffoldBackgroundColor: Colors.white,
+    colorScheme: const ColorScheme.light(
+      primary: premiumBlue,
+      secondary: premiumBlue,
+      surface: Colors.white,
+      background: Color(0xFFF8FAFC),
+      onPrimary: Colors.white,
+      onSurface: Color(0xFF09090B),
+    ),
+    textTheme: GoogleFonts.montserratTextTheme().copyWith(
+      displayLarge: GoogleFonts.montserrat(
+        fontSize: 32,
+        fontWeight: FontWeight.bold,
+        color: const Color(0xFF09090B),
+        letterSpacing: -0.5,
+      ),
+      headlineMedium: GoogleFonts.montserrat(
+        fontSize: 24,
+        fontWeight: FontWeight.w600,
+        color: const Color(0xFF09090B),
+      ),
+      bodyLarge: GoogleFonts.montserrat(
+        fontSize: 16,
+        color: const Color(0xFF09090B),
+      ),
+      bodyMedium: GoogleFonts.montserrat(
+        fontSize: 14,
+        color: const Color(0xFF71717A), // Zinc-500
+      ),
+    ),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      centerTitle: true,
+      titleTextStyle: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+        color: Color(0xFF09090B),
+        letterSpacing: 1.2,
+      ),
+      iconTheme: IconThemeData(color: Color(0xFF09090B)),
+    ),
+  );
+
   static ThemeData darkTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,

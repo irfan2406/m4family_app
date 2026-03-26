@@ -152,7 +152,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: M4Theme.background,
+      backgroundColor: Colors.white,
       drawer: const SidebarMenu(),
       body: CustomScrollView(
         controller: _scrollController,
@@ -162,7 +162,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             child: Builder(
               builder: (context) {
                 final featured = (_projects.isNotEmpty)
-                    ? _projects.firstWhere((p) => p['featured'] == true, orElse: () => _projects[0])
+                    ? _projects.firstWhere((p) => p['featured'] == true, orElse: () => _projects.isNotEmpty ? _projects[0] : null)
                     : null;
                 
                 final mainImage = (featured != null)
@@ -187,11 +187,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [
-                                Colors.black.withOpacity(0.5),
+                                Colors.black.withOpacity(0.3),
                                 Colors.transparent,
-                                Colors.black.withOpacity(0.95),
+                                Colors.black.withOpacity(0.4),
                               ],
-                              stops: const [0.0, 0.5, 1.0],
+                              stops: const [0.0, 0.4, 1.0],
                             ),
                           ),
                         ),
@@ -325,7 +325,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                   const SizedBox(height: 10),
                                   Text(
                                     featured['title']?.toString().toUpperCase() ?? 'M4 PROJECT',
-                                    style: GoogleFonts.montserrat(color: Colors.white, fontSize: 48, fontWeight: FontWeight.w900, letterSpacing: -2),
+                                    style: GoogleFonts.montserrat(color: Colors.white, fontSize: 44, fontWeight: FontWeight.w900, letterSpacing: -1.5),
                                   ),
                                   const SizedBox(height: 5),
                                   Row(
@@ -365,11 +365,21 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 children: [
                    Text(
                     'RECOMMENDED FOR YOU',
-                    style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.white54, letterSpacing: 1.5),
+                    style: GoogleFonts.montserrat(
+                      fontSize: 10, 
+                      fontWeight: FontWeight.w900, 
+                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), 
+                      letterSpacing: 1.5
+                    ),
                   ),
                   Text(
                     'VIEW ALL',
-                    style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1.5),
+                    style: GoogleFonts.montserrat(
+                      fontSize: 10, 
+                      fontWeight: FontWeight.w900, 
+                      color: Theme.of(context).colorScheme.onSurface, 
+                      letterSpacing: 1.5
+                    ),
                   ),
                 ],
               ),
@@ -452,7 +462,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       style: GoogleFonts.montserrat(
                         fontSize: 11, 
                         fontWeight: FontWeight.w900, 
-                        color: Colors.white, 
+                        color: Theme.of(context).colorScheme.onSurface, 
                         letterSpacing: 2, 
                         height: 1.5,
                       ),
@@ -513,7 +523,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     style: GoogleFonts.montserrat(
                       fontSize: 28, 
                       fontWeight: FontWeight.w900, 
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onSurface,
                       letterSpacing: -0.5,
                     ),
                   ),
@@ -522,7 +532,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     'To redefine modern luxury living by crafting homes with cutting edge design, enduring quality and thoughtful amenities delivered with trust, transparency, timeliness, and a human touch that creates lasting value for every homeowner.',
                     textAlign: TextAlign.justify,
                     style: GoogleFonts.montserrat(
-                      color: Colors.white.withOpacity(0.6), 
+                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6), 
                       fontSize: 14, 
                       height: 1.8,
                     ),
@@ -541,7 +551,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 style: GoogleFonts.montserrat(
                   fontSize: 18,
                   fontWeight: FontWeight.w400,
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.onSurface,
                   letterSpacing: 2,
                 ),
               ),
@@ -597,8 +607,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                   gradient: LinearGradient(
                                     begin: Alignment.topCenter,
                                     end: Alignment.bottomCenter,
-                                    colors: [Colors.transparent, Colors.black.withOpacity(0.9)],
-                                    stops: const [0.7, 1.0],
+                                    colors: [Colors.transparent, Colors.black.withOpacity(0.4)],
+                                    stops: const [0.6, 1.0],
                                   ),
                                 ),
                               ),
@@ -641,7 +651,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     style: GoogleFonts.montserrat(
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white.withOpacity(0.4),
+                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
                       letterSpacing: 2,
                     ),
                   ),
@@ -653,7 +663,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     style: GoogleFonts.montserrat(
                       fontSize: 42,
                       fontWeight: FontWeight.w900,
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 35),
@@ -687,13 +697,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 45, vertical: 15),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: Colors.black,
                             borderRadius: BorderRadius.circular(35),
                           ),
                           child: Text(
                             'EXPLORE NOW',
                             style: GoogleFonts.montserrat(
-                              color: Colors.black,
+                              color: Colors.white,
                               fontWeight: FontWeight.w900,
                               fontSize: 11,
                               letterSpacing: 1.5,
@@ -774,18 +784,19 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             child: Container(
               padding: const EdgeInsets.fromLTRB(30, 80, 30, 60),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.02),
+                color: Colors.black.withOpacity(0.02),
                 borderRadius: const BorderRadius.only(topLeft: Radius.circular(50), topRight: Radius.circular(50)),
+                border: Border.all(color: Colors.black.withOpacity(0.04)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'REGISTER YOUR\nINTEREST',
-                    style: GoogleFonts.montserrat(fontSize: 32, fontWeight: FontWeight.w300, color: Colors.white, height: 1.1),
+                    style: GoogleFonts.montserrat(fontSize: 32, fontWeight: FontWeight.w300, color: Theme.of(context).colorScheme.onSurface, height: 1.1),
                   ),
                   const SizedBox(height: 8),
-                  const Text('OFFICIAL INQUIRY FORM', style: TextStyle(color: Colors.white54, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 2)),
+                  Text('OFFICIAL INQUIRY FORM', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 2)),
                   const SizedBox(height: 48),
                   _PremiumInputField(label: 'Full Name *', controller: _nameController),
                   _PremiumInputField(label: 'Email Address *', controller: _emailController, keyboardType: TextInputType.emailAddress),
@@ -833,19 +844,24 @@ class _CategoryChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
         decoration: BoxDecoration(
-          color: isActive ? Colors.white : Colors.white.withOpacity(0.05),
+          color: isActive 
+              ? (isDark ? Colors.white : Colors.black) 
+              : (isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
           borderRadius: BorderRadius.circular(30),
-          border: Border.all(color: Colors.white10),
+          border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
         ),
         child: Text(
           label,
           style: GoogleFonts.montserrat(
-            color: isActive ? Colors.black : Colors.white38,
+            color: isActive 
+                ? (isDark ? Colors.black : Colors.white) 
+                : (isDark ? Colors.white38 : Colors.black38),
             fontSize: 10,
             fontWeight: FontWeight.bold,
             letterSpacing: 2,
@@ -917,11 +933,11 @@ class _ProjectCard extends StatelessWidget {
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.3), 
+                            color: Colors.white.withOpacity(0.4), 
                             borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.white.withOpacity(0.1)),
+                            border: Border.all(color: Colors.white.withOpacity(0.4)),
                           ),
-                          child: Text(displayStatus, style: const TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold)),
+                          child: Text(displayStatus, style: const TextStyle(color: Colors.black, fontSize: 8, fontWeight: FontWeight.bold)),
                         ),
                       ),
                     ),
@@ -932,17 +948,21 @@ class _ProjectCard extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               title.toUpperCase(),
-              style: GoogleFonts.montserrat(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+              style: GoogleFonts.montserrat(
+                fontSize: 16, 
+                fontWeight: FontWeight.bold, 
+                color: Theme.of(context).colorScheme.onSurface
+              ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
             Row(
               children: [
-                const Icon(LucideIcons.mapPin, color: Colors.white54, size: 10),
+                Icon(LucideIcons.mapPin, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), size: 10),
                 const SizedBox(width: 4),
                 Expanded(
                   child: Text(displayLocation, 
-                    style: GoogleFonts.montserrat(color: Colors.white54, fontSize: 10),
+                    style: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), fontSize: 10),
                     maxLines: 1, overflow: TextOverflow.ellipsis),
                 ),
               ],
@@ -955,9 +975,9 @@ class _ProjectCard extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.05), 
+                    color: Colors.white.withOpacity(0.6), 
                     borderRadius: BorderRadius.circular(15),
-                    border: Border.all(color: Colors.white.withOpacity(0.08)),
+                    border: Border.all(color: Colors.white.withOpacity(0.6)),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -965,11 +985,11 @@ class _ProjectCard extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('STARTING FROM', style: TextStyle(color: Colors.white38, fontSize: 7, fontWeight: FontWeight.bold)),
-                          Text(displayPrice, style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white)),
+                          Text('STARTING FROM', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3), fontSize: 7, fontWeight: FontWeight.bold)),
+                          Text(displayPrice, style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
                         ],
                       ),
-                      const Icon(LucideIcons.arrowRight, color: Colors.white10, size: 14),
+                      Icon(LucideIcons.arrowRight, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2), size: 14),
                     ],
                   ),
                 ),
@@ -991,6 +1011,7 @@ class _QuickAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -1003,11 +1024,11 @@ class _QuickAction extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.05),
+                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.white.withOpacity(0.08)),
+                  border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.08)),
                 ),
-                child: Icon(icon, color: Colors.white, size: 24),
+                child: Icon(icon, color: Theme.of(context).colorScheme.onSurface, size: 24),
               ),
             ),
           ),
@@ -1017,7 +1038,7 @@ class _QuickAction extends StatelessWidget {
             style: GoogleFonts.montserrat(
               fontSize: 8,
               fontWeight: FontWeight.w900,
-              color: Colors.white54,
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
               letterSpacing: 1,
             ),
           ),
@@ -1037,6 +1058,7 @@ class _LargeActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
       child: ClipRRect(
@@ -1046,9 +1068,9 @@ class _LargeActionCard extends StatelessWidget {
           child: Container(
             height: 140,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.03), 
+              color: (isDark ? Colors.white : Colors.black).withOpacity(0.03), 
               borderRadius: BorderRadius.circular(35),
-              border: Border.all(color: Colors.white.withOpacity(0.08)),
+              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.08)),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -1057,9 +1079,9 @@ class _LargeActionCard extends StatelessWidget {
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Colors.white.withOpacity(0.05),
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
                   ),
-                  child: Icon(icon, color: Colors.white, size: 24),
+                  child: Icon(icon, color: Theme.of(context).colorScheme.onSurface, size: 24),
                 ),
                 const SizedBox(height: 12),
                 Text(
@@ -1067,7 +1089,7 @@ class _LargeActionCard extends StatelessWidget {
                   style: GoogleFonts.montserrat(
                     fontSize: 13, 
                     fontWeight: FontWeight.w900, 
-                    color: Colors.white, 
+                    color: Theme.of(context).colorScheme.onSurface, 
                     letterSpacing: 1.5,
                   ),
                 ),
@@ -1076,7 +1098,7 @@ class _LargeActionCard extends StatelessWidget {
                   subtitle, 
                   style: GoogleFonts.montserrat(
                     fontSize: 8, 
-                    color: Colors.white38, 
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4), 
                     fontWeight: FontWeight.w900,
                     letterSpacing: 0.5,
                   ),
@@ -1093,10 +1115,11 @@ class _LargeActionCard extends StatelessWidget {
 class _QuickFilterSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      decoration: const BoxDecoration(
-        color: Color(0xFF070708),
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(35), topRight: Radius.circular(35)),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF070708) : Colors.white,
+        borderRadius: const BorderRadius.only(topLeft: Radius.circular(35), topRight: Radius.circular(35)),
       ),
       padding: const EdgeInsets.fromLTRB(25, 15, 25, 40),
       child: Column(
@@ -1107,7 +1130,7 @@ class _QuickFilterSheet extends StatelessWidget {
             child: Container(
               width: 40,
               height: 4,
-              decoration: BoxDecoration(color: Colors.white24, borderRadius: BorderRadius.circular(2)),
+              decoration: BoxDecoration(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2), borderRadius: BorderRadius.circular(2)),
             ),
           ),
           const SizedBox(height: 25),
@@ -1119,7 +1142,7 @@ class _QuickFilterSheet extends StatelessWidget {
                 style: GoogleFonts.montserrat(
                   fontSize: 18, 
                   fontWeight: FontWeight.w900, 
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.onSurface,
                   letterSpacing: 1,
                 ),
               ),
@@ -1127,8 +1150,8 @@ class _QuickFilterSheet extends StatelessWidget {
                 onTap: () => Navigator.pop(context),
                 child: Container(
                   padding: const EdgeInsets.all(8),
-                  decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0xFF1C1C1E)),
-                  child: const Icon(LucideIcons.x, color: Colors.white, size: 18),
+                  decoration: BoxDecoration(shape: BoxShape.circle, color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
+                  child: Icon(LucideIcons.x, color: Theme.of(context).colorScheme.onSurface, size: 18),
                 ),
               ),
             ],
@@ -1144,14 +1167,14 @@ class _QuickFilterSheet extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 20),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: isDark ? Colors.white : Colors.black,
                 borderRadius: BorderRadius.circular(35),
               ),
               child: Center(
                 child: Text(
                   'SHOW RESULTS',
                   style: GoogleFonts.montserrat(
-                    color: Colors.black,
+                    color: isDark ? Colors.black : Colors.white,
                     fontWeight: FontWeight.w900,
                     fontSize: 12,
                     letterSpacing: 1.5,
@@ -1174,6 +1197,7 @@ class _FilterSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1182,7 +1206,7 @@ class _FilterSection extends StatelessWidget {
           style: GoogleFonts.montserrat(
             fontSize: 10,
             fontWeight: FontWeight.w900,
-            color: Colors.white54,
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
             letterSpacing: 1.5,
           ),
         ),
@@ -1193,14 +1217,14 @@ class _FilterSection extends StatelessWidget {
           children: options.map((opt) => Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             decoration: BoxDecoration(
-              color: const Color(0xFF101012),
+              color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.white.withOpacity(0.05)),
+              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
             ),
             child: Text(
               opt,
               style: GoogleFonts.montserrat(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 9,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1,
@@ -1220,6 +1244,7 @@ class _SliderNavButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
       child: ClipRRect(
@@ -1230,10 +1255,10 @@ class _SliderNavButton extends StatelessWidget {
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white.withOpacity(0.05),
-              border: Border.all(color: Colors.white.withOpacity(0.1)),
+              color: Colors.white.withOpacity(0.4),
+              border: Border.all(color: Colors.white.withOpacity(0.4)),
             ),
-            child: Icon(icon, color: Colors.white, size: 18),
+            child: Icon(icon, color: Colors.black, size: 18),
           ),
         ),
       ),
@@ -1256,6 +1281,7 @@ class _PremiumInputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       child: ClipRRect(
@@ -1265,18 +1291,18 @@ class _PremiumInputField extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.03),
+              color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
               borderRadius: BorderRadius.circular(15),
-              border: Border.all(color: Colors.white.withOpacity(0.05)),
+              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
             ),
             child: TextFormField(
               controller: controller,
               keyboardType: keyboardType,
               maxLines: maxLines,
-              style: GoogleFonts.montserrat(color: Colors.white, fontSize: 13),
+              style: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface, fontSize: 13),
               decoration: InputDecoration(
                 labelText: label,
-                labelStyle: GoogleFonts.montserrat(color: Colors.white30, fontSize: 13),
+                labelStyle: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3), fontSize: 13),
                 border: InputBorder.none,
                 floatingLabelBehavior: FloatingLabelBehavior.auto,
               ),
@@ -1303,6 +1329,7 @@ class _PremiumDropdownField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       child: ClipRRect(
@@ -1312,19 +1339,19 @@ class _PremiumDropdownField extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.03),
+              color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
               borderRadius: BorderRadius.circular(15),
-              border: Border.all(color: Colors.white.withOpacity(0.05)),
+              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButtonFormField<String>(
                 value: value,
-                dropdownColor: const Color(0xFF0F0F11),
-                style: GoogleFonts.montserrat(color: Colors.white, fontSize: 13),
-                icon: const Icon(LucideIcons.chevronDown, color: Colors.white30, size: 16),
+                dropdownColor: isDark ? const Color(0xFF0F0F11) : Colors.white,
+                style: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface, fontSize: 13),
+                icon: Icon(LucideIcons.chevronDown, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3), size: 16),
                 decoration: InputDecoration(
                   labelText: label,
-                  labelStyle: GoogleFonts.montserrat(color: Colors.white30, fontSize: 13),
+                  labelStyle: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3), fontSize: 13),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.zero,
                 ),
@@ -1349,7 +1376,7 @@ class _PremiumFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-// ... existing placeholder code ...
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
@@ -1360,15 +1387,15 @@ class _PremiumFormField extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.03),
+              color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
               borderRadius: BorderRadius.circular(15),
-              border: Border.all(color: Colors.white.withOpacity(0.05)),
+              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(label, style: GoogleFonts.montserrat(color: Colors.white30, fontSize: 13, fontWeight: FontWeight.w500)),
-                if (hasDropdown) const Icon(LucideIcons.chevronDown, color: Colors.white30, size: 16),
+                Text(label, style: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3), fontSize: 13, fontWeight: FontWeight.w500)),
+                if (hasDropdown) Icon(LucideIcons.chevronDown, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3), size: 16),
               ],
             ),
           ),
@@ -1391,9 +1418,9 @@ class _GlassSearchField extends StatelessWidget {
           height: 60,
           padding: const EdgeInsets.symmetric(horizontal: 20),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.25),
+            color: Colors.white.withOpacity(0.4),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.white.withOpacity(0.3)),
+            border: Border.all(color: Colors.white.withOpacity(0.4)),
           ),
           child: Row(
             children: [
@@ -1402,10 +1429,10 @@ class _GlassSearchField extends StatelessWidget {
               Expanded(
                 child: TextField(
                   onChanged: onChanged,
-                  style: GoogleFonts.montserrat(color: Colors.white, fontSize: 14),
+                  style: GoogleFonts.montserrat(color: Colors.black, fontSize: 14),
                   decoration: InputDecoration(
                     hintText: 'Search residences...',
-                    hintStyle: GoogleFonts.montserrat(color: Colors.white70, fontSize: 13),
+                    hintStyle: GoogleFonts.montserrat(color: Colors.black45, fontSize: 13),
                     border: InputBorder.none,
                   ),
                 ),
@@ -1436,11 +1463,11 @@ class _GlassIconButton extends StatelessWidget {
             height: size,
             width: size,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.25),
+              color: Colors.white.withOpacity(0.4),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.white.withOpacity(0.3)),
+              border: Border.all(color: Colors.white.withOpacity(0.4)),
             ),
-            child: Icon(icon, color: Colors.white, size: 20),
+            child: Icon(icon, color: Colors.black, size: 20),
           ),
         ),
       ),
@@ -1457,6 +1484,7 @@ class _TextTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
       child: Padding(
@@ -1464,12 +1492,12 @@ class _TextTab extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.only(bottom: 6),
           decoration: BoxDecoration(
-            border: isActive ? const Border(bottom: BorderSide(color: Colors.white, width: 2)) : null,
+            border: isActive ? Border(bottom: BorderSide(color: isDark ? Colors.white : Colors.black, width: 2)) : null,
           ),
           child: Text(
             label,
             style: GoogleFonts.montserrat(
-              color: isActive ? Colors.white : Colors.white60,
+              color: isActive ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white60 : Colors.black54),
               fontSize: 11,
               fontWeight: FontWeight.w900,
               letterSpacing: 1.5,

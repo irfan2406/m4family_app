@@ -34,11 +34,11 @@ class SidebarMenu extends ConsumerWidget {
       backgroundColor: Colors.transparent,
       child: Stack(
         children: [
-          // Solid/Glass Background (Match Web Portal Image 3)
+          // Solid/Glass Background
           BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 50, sigmaY: 50),
             child: Container(
-              color: const Color(0xFF070708).withOpacity(0.98), // Near solid Zinc-950
+              color: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.95),
             ),
           ),
           
@@ -54,17 +54,17 @@ class SidebarMenu extends ConsumerWidget {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.05),
+                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.white10),
+                          border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1)),
                         ),
-                        child: const Icon(LucideIcons.sparkles, color: Colors.white, size: 18),
+                        child: Icon(LucideIcons.sparkles, color: Theme.of(context).colorScheme.onSurface, size: 18),
                       ),
                       const SizedBox(width: 16),
                       Text(
                         'MENU',
                         style: GoogleFonts.montserrat(
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontSize: 14,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 4,
@@ -88,35 +88,38 @@ class SidebarMenu extends ConsumerWidget {
                       _SidebarItem(
                         icon: LucideIcons.building2,
                         label: 'Communities',
+                        isActive: currentIndex == 4,
+                        onTap: () => navigateTo(4),
+                      ),
+                      _SidebarItem(
+                        icon: LucideIcons.layoutGrid,
+                        label: 'Projects',
                         isActive: currentIndex == 1,
                         onTap: () => navigateTo(1),
                       ),
                       _SidebarItem(
-                        icon: LucideIcons.layoutGrid,
-                        label: 'Properties',
-                        onTap: () {
-                          Navigator.pop(context);
-                          Navigator.push(context, MaterialPageRoute(builder: (_) => ProjectListScreen()));
-                        },
-                      ),
-                      _SidebarItem(
                         icon: LucideIcons.sparkles, 
                         label: 'Custom Views',
-                        isActive: currentIndex == 4,
-                        onTap: () => navigateTo(4),
+                        isActive: currentIndex == 6,
+                        onTap: () => navigateTo(6),
                       ),
-                      _SidebarItem(icon: LucideIcons.fileText, label: 'Selection Logs'),
+                      _SidebarItem(
+                        icon: LucideIcons.fileText, 
+                        label: 'Selection Logs',
+                        isActive: currentIndex == 7,
+                        onTap: () => navigateTo(7),
+                      ),
                       _SidebarItem(
                         icon: LucideIcons.bell, 
                         label: 'Notifications',
-                        isActive: currentIndex == 2,
-                        onTap: () => navigateTo(2),
+                        isActive: currentIndex == 5,
+                        onTap: () => navigateTo(5),
                       ),
                       _SidebarItem(
                         icon: LucideIcons.headphones, 
                         label: 'Support',
-                        isActive: currentIndex == 5,
-                        onTap: () => navigateTo(5),
+                        isActive: currentIndex == 2,
+                        onTap: () => navigateTo(2),
                       ),
 
                       _SidebarItem(
@@ -186,7 +189,7 @@ class SidebarMenu extends ConsumerWidget {
                         child: Text(
                           'QUICK ACTIONS',
                           style: GoogleFonts.montserrat(
-                            color: Colors.white38,
+                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 3,
@@ -399,7 +402,9 @@ class _SidebarItem extends StatelessWidget {
             title: Text(
               label,
               style: GoogleFonts.montserrat(
-                color: isActive ? Colors.white : Colors.white54,
+                color: isActive 
+                    ? Theme.of(context).colorScheme.onSurface 
+                    : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                 fontSize: 15,
                 fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
                 letterSpacing: 0.8,

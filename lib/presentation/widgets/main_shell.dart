@@ -5,11 +5,10 @@ import 'package:m4_mobile/presentation/screens/communities/community_list_screen
 import 'package:m4_mobile/presentation/screens/custom_views/custom_views_screen.dart';
 import 'package:m4_mobile/presentation/screens/notifications/notification_list_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/support_screen.dart';
+import 'package:m4_mobile/presentation/screens/profile/profile_screen.dart';
+import 'package:m4_mobile/presentation/screens/selection_logs/selection_logs_screen.dart';
 import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
-
-
 import 'package:m4_mobile/presentation/widgets/sidebar_menu.dart';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final navigationProvider = StateProvider<int>((ref) => 0);
@@ -26,11 +25,13 @@ class _MainShellState extends ConsumerState<MainShell> {
 
   final List<Widget> _screens = [
     const DashboardScreen(), // 0: Home
-    const CommunityListScreen(), // 1: Compass (Communities)
-    const NotificationListScreen(), // 2: MessageSquare (Alerts)
-    const PlaceholderScreen(title: 'Profile'), // 3: User/Profile
-    const CustomViewsScreen(), // 4: Sidebar only
-    const SupportScreen(), // 5: Sidebar only
+    const ProjectListScreen(), // 1: Compass (Projects)
+    const SupportScreen(), // 2: MessageSquare (Support)
+    const ProfileScreen(), // 3: User (Profile)
+    const CommunityListScreen(), // 4: Sidebar only
+    const NotificationListScreen(), // 5: Sidebar only
+    const CustomViewsScreen(), // 6: Sidebar only
+    const SelectionLogsScreen(), // 7: Sidebar only
   ];
 
 

@@ -46,7 +46,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: Column(
@@ -54,21 +54,21 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
           children: [
             Text('CONTACT US', 
                 style: GoogleFonts.montserrat(
-                  color: Colors.white, 
+                  color: Colors.black, 
                   fontWeight: FontWeight.bold, 
                   fontSize: 20, 
                   letterSpacing: 1
                 )),
             Text('INSTITUTIONAL SUPPORT', 
                 style: GoogleFonts.montserrat(
-                  color: Colors.white54, 
+                  color: Colors.black54, 
                   fontWeight: FontWeight.w900, 
                   fontSize: 10, 
                   letterSpacing: 4
                 )),
           ],
         ),
-        backgroundColor: Colors.black.withOpacity(0.8),
+        backgroundColor: Colors.white.withOpacity(0.8),
         flexibleSpace: ClipRRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
@@ -77,22 +77,15 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
         ),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(LucideIcons.arrowLeft, color: Colors.white70),
+          icon: const Icon(LucideIcons.arrowLeft, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
       ),
       body: Container(
-        decoration: const BoxDecoration(
-          color: Colors.black,
-          gradient: RadialGradient(
-            center: Alignment.topCenter,
-            radius: 2.0,
-            colors: [Color(0xFF0F1115), Colors.black],
-          ),
-        ),
+        color: Colors.white,
         child: SafeArea(
           child: _isLoading
-              ? const Center(child: CircularProgressIndicator(color: Colors.white24))
+              ? const Center(child: CircularProgressIndicator(color: Colors.black26))
               : SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
                   child: Column(
@@ -149,9 +142,9 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
         child: Container(
           padding: const EdgeInsets.all(28),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.04),
+            color: Colors.black.withOpacity(0.04),
             borderRadius: BorderRadius.circular(32),
-            border: Border.all(color: Colors.white.withOpacity(0.05)),
+            border: Border.all(color: Colors.black.withOpacity(0.05)),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -163,17 +156,17 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.03),
+                      color: Colors.black.withOpacity(0.03),
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.white.withOpacity(0.05)),
+                      border: Border.all(color: Colors.black.withOpacity(0.05)),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.5),
+                          color: Colors.black.withOpacity(0.05),
                           blurRadius: 20,
                         )
                       ],
                     ),
-                    child: const Icon(LucideIcons.mapPin, color: Colors.white, size: 20),
+                    child: const Icon(LucideIcons.mapPin, color: Colors.black, size: 20),
                   ),
                   const SizedBox(width: 20),
                   Expanded(
@@ -183,7 +176,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
                         Text(
                           title.toUpperCase(),
                           style: GoogleFonts.montserrat(
-                            color: Colors.white,
+                            color: Colors.black,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 0.5,
@@ -193,7 +186,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
                         Text(
                           address,
                           style: GoogleFonts.montserrat(
-                            color: Colors.white54,
+                            color: Colors.black54,
                             fontSize: 11,
                             fontWeight: FontWeight.w500,
                             height: 1.6,
@@ -213,9 +206,9 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
                       icon: const Icon(LucideIcons.externalLink, size: 14),
                       label: const Text('DIRECTIONS'),
                       style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.white,
+                        foregroundColor: Colors.black,
                         padding: const EdgeInsets.symmetric(vertical: 16),
-                        side: BorderSide(color: Colors.white.withOpacity(0.1)),
+                        side: BorderSide(color: Colors.black.withOpacity(0.1)),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         textStyle: GoogleFonts.montserrat(
                           fontSize: 9,
@@ -233,8 +226,8 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
                       icon: const Icon(LucideIcons.phone, size: 14),
                       label: const Text('CALL NOW'),
                       style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.black,
-                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.black,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         elevation: 10,
@@ -267,7 +260,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
           child: Text(
             'GET IN TOUCH',
             style: GoogleFonts.montserrat(
-              color: Colors.white38,
+              color: Colors.black.withOpacity(0.38),
               fontSize: 9,
               fontWeight: FontWeight.bold,
               letterSpacing: 3,
@@ -281,9 +274,9 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.04),
+                color: Colors.black.withOpacity(0.04),
                 borderRadius: BorderRadius.circular(32),
-                border: Border.all(color: Colors.white.withOpacity(0.05)),
+                border: Border.all(color: Colors.black.withOpacity(0.05)),
               ),
               child: Column(
                 children: [
@@ -293,7 +286,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
                     subtitle: 'SALES & ENQUIRIES',
                     onTap: () => SupportHandlers.launchEmail(contactEmail),
                   ),
-                  Divider(color: Colors.white.withOpacity(0.05), height: 1),
+                  Divider(color: Colors.black.withOpacity(0.05), height: 1),
                   _ContactRowItem(
                     icon: LucideIcons.phone,
                     title: contactPhone,
@@ -330,7 +323,7 @@ class _ContactRowItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      splashColor: Colors.white.withOpacity(0.05),
+      splashColor: Colors.black.withOpacity(0.05),
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Row(
@@ -339,11 +332,11 @@ class _ContactRowItem extends StatelessWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.03),
+                color: Colors.black.withOpacity(0.03),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white.withOpacity(0.05)),
+                border: Border.all(color: Colors.black.withOpacity(0.05)),
               ),
-              child: Icon(icon, color: Colors.white, size: 20),
+              child: Icon(icon, color: Colors.black, size: 20),
             ),
             const SizedBox(width: 20),
             Expanded(
@@ -353,7 +346,7 @@ class _ContactRowItem extends StatelessWidget {
                   Text(
                     title,
                     style: GoogleFonts.montserrat(
-                      color: Colors.white,
+                      color: Colors.black,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
@@ -362,7 +355,7 @@ class _ContactRowItem extends StatelessWidget {
                   Text(
                     subtitle,
                     style: GoogleFonts.montserrat(
-                      color: Colors.white38,
+                      color: Colors.black.withOpacity(0.38),
                       fontSize: 9,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 2,

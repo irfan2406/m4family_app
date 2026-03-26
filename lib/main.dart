@@ -6,10 +6,22 @@ import 'package:m4_mobile/presentation/screens/auth/login_screen.dart';
 import 'package:m4_mobile/presentation/screens/auth/onboarding_screen.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 
-void main() {
+import 'package:m4_mobile/core/providers/theme_provider.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  const storage = FlutterSecureStorage();
+  final themeStr = await storage.read(key: 'app_theme');
+  final initialTheme = themeStr == 'light' ? ThemeMode.light : ThemeMode.dark;
+
   runApp(
-    const ProviderScope(
-      child: M4FamilyApp(),
+    ProviderScope(
+      overrides: [
+        themeProvider.overrideWith((ref) => ThemeNotifier(initialTheme))
+      ],
+      child: const M4FamilyApp(),
     ),
   );
 }
@@ -19,10 +31,14 @@ class M4FamilyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeProvider);
+    
     return MaterialApp.router(
       title: 'M4 Family',
       debugShowCheckedModeBanner: false,
-      theme: M4Theme.darkTheme,
+      theme: M4Theme.lightTheme,
+      darkTheme: M4Theme.darkTheme,
+      themeMode: themeMode,
       routerConfig: _router,
     );
   }

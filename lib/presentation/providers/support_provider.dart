@@ -6,12 +6,14 @@ import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 class SupportState {
   final List<TicketModel> tickets;
   final List<ActivityLog> logs;
+  final List<dynamic> documents;
   final bool isLoading;
   final String? error;
 
   SupportState({
     this.tickets = const [],
     this.logs = const [],
+    this.documents = const [],
     this.isLoading = false,
     this.error,
   });
@@ -19,12 +21,14 @@ class SupportState {
   SupportState copyWith({
     List<TicketModel>? tickets,
     List<ActivityLog>? logs,
+    List<dynamic>? documents,
     bool? isLoading,
     String? error,
   }) {
     return SupportState(
       tickets: tickets ?? this.tickets,
       logs: logs ?? this.logs,
+      documents: documents ?? this.documents,
       isLoading: isLoading ?? this.isLoading,
       error: error,
     );
@@ -130,6 +134,32 @@ class SupportNotifier extends StateNotifier<SupportState> {
         error: e.toString(),
       );
       return false;
+    }
+  }
+
+  Future<void> fetchDocuments() async {
+    state = state.copyWith(isLoading: true, error: null);
+    try {
+      final apiClient = _ref.read(apiClientProvider);
+      final response = await apiClient.getMySupportDocuments();
+      
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final List<dynamic> documents = response.data['data'] ?? [];
+        state = state.copyWith(
+          documents: documents,
+          isLoading: false,
+        );
+      } else {
+        state = state.copyWith(
+          isLoading: false,
+          error: 'Failed to load documents',
+        );
+      }
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: e.toString(),
+      );
     }
   }
 }

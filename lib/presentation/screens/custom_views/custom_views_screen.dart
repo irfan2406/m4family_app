@@ -7,6 +7,7 @@ import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 
 class CustomViewsScreen extends ConsumerWidget {
   const CustomViewsScreen({super.key});
@@ -17,7 +18,7 @@ class CustomViewsScreen extends ConsumerWidget {
     final isSubmitted = false; // We can add an isSubmitted state later if needed
 
     return Scaffold(
-      backgroundColor: M4Theme.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: [
@@ -31,17 +32,18 @@ class CustomViewsScreen extends ConsumerWidget {
                       if (currentStep > 0) {
                         ref.read(customViewsStepProvider.notifier).state = currentStep - 1;
                       } else {
-                        // Let the shell handle back navigation
+                        // Return to Home tab
+                        ref.read(navigationProvider.notifier).state = 0;
                       }
                     },
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.05),
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.white10),
+                        border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1)),
                       ),
-                      child: const Icon(LucideIcons.arrowLeft, size: 20, color: Colors.white),
+                      child: Icon(LucideIcons.arrowLeft, size: 20, color: Theme.of(context).colorScheme.onSurface),
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -54,7 +56,7 @@ class CustomViewsScreen extends ConsumerWidget {
                           style: GoogleFonts.montserrat(
                             fontSize: 16,
                             fontWeight: FontWeight.w900,
-                            color: Colors.white,
+                            color: Theme.of(context).colorScheme.onSurface,
                             letterSpacing: 0,
                           ),
                         ),
@@ -63,7 +65,7 @@ class CustomViewsScreen extends ConsumerWidget {
                           style: GoogleFonts.montserrat(
                             fontSize: 8,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white54,
+                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                             letterSpacing: 3,
                           ),
                         ),
@@ -106,9 +108,9 @@ class CustomViewsScreen extends ConsumerWidget {
                       margin: const EdgeInsets.symmetric(horizontal: 24),
                       padding: const EdgeInsets.all(24),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.03),
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.03),
                         borderRadius: BorderRadius.circular(40),
-                        border: Border.all(color: Colors.white.withOpacity(0.05)),
+                        border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05)),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,7 +133,7 @@ class CustomViewsScreen extends ConsumerWidget {
                                     style: GoogleFonts.montserrat(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w900,
-                                      color: currentStep > 0 ? Colors.white70 : Colors.transparent,
+                                      color: currentStep > 0 ? Theme.of(context).colorScheme.onSurface.withOpacity(0.7) : Colors.transparent,
                                       letterSpacing: 2,
                                     ),
                                   ),
@@ -206,7 +208,7 @@ class CustomViewsScreen extends ConsumerWidget {
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
                                     decoration: BoxDecoration(
-                                      color: Colors.white,
+                                      color: Theme.of(context).colorScheme.onBackground,
                                       borderRadius: BorderRadius.circular(16),
                                     ),
                                     child: Text(
@@ -214,7 +216,7 @@ class CustomViewsScreen extends ConsumerWidget {
                                       style: GoogleFonts.montserrat(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w900,
-                                        color: Colors.black,
+                                        color: Theme.of(context).colorScheme.background,
                                         letterSpacing: 1,
                                       ),
                                     ),
@@ -278,6 +280,7 @@ class _StepIndicator extends ConsumerWidget {
     final currentStep = ref.watch(customViewsStepProvider);
     final isActive = currentStep >= index;
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: () {
         if (index > 0 && ref.read(customViewsProjectProvider) == null) {
@@ -299,27 +302,26 @@ class _StepIndicator extends ConsumerWidget {
               width: 52,
               height: 52,
               decoration: BoxDecoration(
-                color: isActive ? Colors.white : Colors.transparent,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: isActive ? Colors.white : Colors.white10,
-                  width: 2,
-                ),
+                color: isActive ? M4Theme.premiumBlue : (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                shape: BoxShape.circle,
+                boxShadow: isActive ? [
+                  BoxShadow(color: M4Theme.premiumBlue.withOpacity(0.3), blurRadius: 12, spreadRadius: 2)
+                ] : [],
               ),
               child: Icon(
                 icon,
                 size: 20,
-                color: isActive ? Colors.black : Colors.white54,
+                color: isActive ? Colors.white : Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
               ),
             ),
             const SizedBox(height: 12),
             Text(
-              title.toUpperCase(),
+              title,
               style: GoogleFonts.montserrat(
                 fontSize: 8,
                 fontWeight: FontWeight.w900,
-                letterSpacing: 1.5,
-                color: isActive ? Colors.white : Colors.white54,
+                letterSpacing: 1,
+                color: isActive ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
               ),
             ),
           ],
@@ -344,21 +346,21 @@ class _ProjectSelectionStep extends ConsumerWidget {
       children: [
         Text(
           'PROJECT &\nUNIT',
-          style: GoogleFonts.montserrat(fontSize: 28, fontWeight: FontWeight.w300, color: Colors.white, height: 1.1),
+          style: GoogleFonts.montserrat(fontSize: 28, fontWeight: FontWeight.w300, color: Theme.of(context).colorScheme.onSurface, height: 1.1),
         ),
         const SizedBox(height: 12),
         Text(
           'Select your project and unit\nconfiguration',
-          style: GoogleFonts.montserrat(fontSize: 12, color: Colors.white54, height: 1.5),
+          style: GoogleFonts.montserrat(fontSize: 12, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), height: 1.5),
         ),
         const SizedBox(height: 40),
 
         // Projects List
         Row(
           children: [
-            const Icon(LucideIcons.building2, size: 14, color: Colors.white70),
+            Icon(LucideIcons.building2, size: 14, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
             const SizedBox(width: 8),
-            Text('PROJECT SELECTION', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2, color: Colors.white)),
+            Text('PROJECT SELECTION', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2, color: Theme.of(context).colorScheme.onSurface)),
           ],
         ),
         const SizedBox(height: 16),
@@ -366,15 +368,16 @@ class _ProjectSelectionStep extends ConsumerWidget {
           data: (projects) => Column(
             children: projects.map<Widget>((p) {
               final isSelected = selectedProject == p['_id'];
+              final isDark = Theme.of(context).brightness == Brightness.dark;
               return GestureDetector(
                 onTap: () => ref.read(customViewsProjectProvider.notifier).state = p['_id'],
                 child: Container(
                   margin: const EdgeInsets.only(bottom: 12),
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                   decoration: BoxDecoration(
-                    color: isSelected ? Colors.white : Colors.white.withOpacity(0.04),
+                    color: isSelected ? Theme.of(context).colorScheme.onBackground : (isDark ? Colors.white : Colors.black).withOpacity(0.04),
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: isSelected ? Colors.white : Colors.white10),
+                    border: Border.all(color: isSelected ? Theme.of(context).colorScheme.onBackground : (isDark ? Colors.white : Colors.black).withOpacity(0.08)),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -387,7 +390,7 @@ class _ProjectSelectionStep extends ConsumerWidget {
                             style: GoogleFonts.montserrat(
                               fontSize: 14,
                               fontWeight: FontWeight.w900,
-                              color: isSelected ? Colors.black : Colors.white,
+                              color: isSelected ? Theme.of(context).colorScheme.background : Theme.of(context).colorScheme.onSurface,
                               letterSpacing: 0.5,
                             ),
                           ),
@@ -398,12 +401,12 @@ class _ProjectSelectionStep extends ConsumerWidget {
                               fontSize: 8,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 2,
-                              color: isSelected ? Colors.black54 : Colors.white54,
+                              color: isSelected ? Theme.of(context).colorScheme.background.withOpacity(0.7) : Theme.of(context).colorScheme.onSurface.withOpacity(0.54),
                             ),
                           ),
                         ],
                       ),
-                      if (isSelected) const Icon(LucideIcons.check, color: Colors.black, size: 20),
+                      if (isSelected) Icon(LucideIcons.check, color: Theme.of(context).colorScheme.background, size: 20),
                     ],
                   ),
                 ),
@@ -419,9 +422,9 @@ class _ProjectSelectionStep extends ConsumerWidget {
         // Unit Config
         Row(
           children: [
-            const Icon(LucideIcons.layoutGrid, size: 14, color: Colors.white70),
+            Icon(LucideIcons.layoutGrid, size: 14, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
             const SizedBox(width: 8),
-            Text('UNIT CONFIGURATION', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2, color: Colors.white)),
+            Text('UNIT CONFIGURATION', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2, color: Theme.of(context).colorScheme.onSurface)),
           ],
         ),
         const SizedBox(height: 16),
@@ -430,14 +433,15 @@ class _ProjectSelectionStep extends ConsumerWidget {
           runSpacing: 12,
           children: ['1 BHK', '2 BHK', '3 BHK', '5 BHK'].map((unit) {
             final isSelected = selectedUnit == unit;
+            final isDark = Theme.of(context).brightness == Brightness.dark;
             return GestureDetector(
               onTap: () => ref.read(customViewsUnitProvider.notifier).state = unit,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
                 decoration: BoxDecoration(
-                  color: isSelected ? Colors.white : Colors.white.withOpacity(0.04),
+                  color: isSelected ? Theme.of(context).colorScheme.onBackground : (isDark ? Colors.white : Colors.black).withOpacity(0.04),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: isSelected ? Colors.white : Colors.white10),
+                  border: Border.all(color: isSelected ? Theme.of(context).colorScheme.onBackground : (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
                 ),
                 child: Text(
                   unit,
@@ -445,7 +449,7 @@ class _ProjectSelectionStep extends ConsumerWidget {
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1,
-                    color: isSelected ? Colors.black : Colors.white,
+                    color: isSelected ? Theme.of(context).colorScheme.background : Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ),
@@ -470,12 +474,12 @@ class _SpaceSelectionStep extends ConsumerWidget {
       children: [
         Text(
           'SELECT\nSPACE',
-          style: GoogleFonts.montserrat(fontSize: 28, fontWeight: FontWeight.w300, color: Colors.white, height: 1.1),
+          style: GoogleFonts.montserrat(fontSize: 28, fontWeight: FontWeight.w300, color: Theme.of(context).colorScheme.onSurface, height: 1.1),
         ),
         const SizedBox(height: 12),
         Text(
           'Choose the area you want to personalise',
-          style: GoogleFonts.montserrat(fontSize: 12, color: Colors.white54),
+          style: GoogleFonts.montserrat(fontSize: 12, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.54)),
         ),
         const SizedBox(height: 40),
         GridView.count(
@@ -487,6 +491,7 @@ class _SpaceSelectionStep extends ConsumerWidget {
           childAspectRatio: 1.4,
           children: ['Master Bedroom', 'Living Hall', 'Kitchen Space', 'Guest Suite'].map((space) {
             final isSelected = selections['space'] == space;
+            final isDark = Theme.of(context).brightness == Brightness.dark;
             return GestureDetector(
               onTap: () {
                 final newSelections = Map<String, dynamic>.from(selections);
@@ -496,9 +501,9 @@ class _SpaceSelectionStep extends ConsumerWidget {
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: isSelected ? Colors.white : Colors.transparent,
+                  color: isSelected ? Theme.of(context).colorScheme.onBackground : Colors.transparent,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: isSelected ? Colors.white : Colors.white10),
+                  border: Border.all(color: isSelected ? Theme.of(context).colorScheme.onBackground : (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
                 ),
                 alignment: Alignment.center,
                 child: Text(
@@ -508,7 +513,7 @@ class _SpaceSelectionStep extends ConsumerWidget {
                     fontSize: 11,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1,
-                    color: isSelected ? Colors.black : Colors.white,
+                    color: isSelected ? Theme.of(context).colorScheme.background : Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ),
@@ -541,12 +546,12 @@ class _MaterialsSelectionStep extends ConsumerWidget {
       children: [
         Text(
           'CHOOSE\nMATERIALS',
-          style: GoogleFonts.montserrat(fontSize: 28, fontWeight: FontWeight.w300, color: Colors.white, height: 1.1),
+          style: GoogleFonts.montserrat(fontSize: 28, fontWeight: FontWeight.w300, color: Theme.of(context).colorScheme.onSurface, height: 1.1),
         ),
         const SizedBox(height: 12),
         Text(
           'Select from our curated collection',
-          style: GoogleFonts.montserrat(fontSize: 12, color: Colors.white54),
+          style: GoogleFonts.montserrat(fontSize: 12, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.54)),
         ),
         const SizedBox(height: 40),
         optionsAsync.when(
@@ -591,7 +596,7 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: isSelected ? Colors.white : Colors.transparent, width: 2),
+                              border: Border.all(color: isSelected ? Theme.of(context).colorScheme.onBackground : Colors.transparent, width: 2),
                             ),
                             clipBehavior: Clip.antiAlias,
                             child: Stack(
@@ -603,7 +608,7 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                                   Image.network(opt['image'], fit: BoxFit.cover)
                                 else
                                   Container(
-                                    color: Colors.white.withOpacity(0.05),
+                                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
                                     alignment: Alignment.center,
                                     child: Text(opt['name'], textAlign: TextAlign.center),
                                   ),
@@ -613,11 +618,11 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                                   child: Container(
                                     width: double.infinity,
                                     padding: const EdgeInsets.symmetric(vertical: 10),
-                                    color: Colors.black.withOpacity(0.6),
+                                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                                     child: Text(
                                       opt['name']?.toUpperCase() ?? '',
                                       textAlign: TextAlign.center,
-                                      style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 1, color: Colors.white),
+                                      style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 1, color: Theme.of(context).colorScheme.background),
                                     ),
                                   ),
                                 ),
@@ -628,8 +633,8 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                                     right: 12,
                                     child: Container(
                                       padding: const EdgeInsets.all(4),
-                                      decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                                      child: const Icon(LucideIcons.check, size: 14, color: Colors.black),
+                                      decoration: BoxDecoration(color: Theme.of(context).colorScheme.background, shape: BoxShape.circle),
+                                      child: Icon(LucideIcons.check, size: 14, color: Theme.of(context).colorScheme.onBackground),
                                     ),
                                   ),
                               ],
@@ -669,19 +674,19 @@ class _FinaliseStep extends ConsumerWidget {
       children: [
         Text(
           'FINALISE',
-          style: GoogleFonts.montserrat(fontSize: 28, fontWeight: FontWeight.w300, color: Colors.white),
+          style: GoogleFonts.montserrat(fontSize: 28, fontWeight: FontWeight.w300, color: Theme.of(context).colorScheme.onSurface),
         ),
         const SizedBox(height: 12),
         Text(
           'Confirm your selections',
-          style: GoogleFonts.montserrat(fontSize: 12, color: Colors.white54),
+          style: GoogleFonts.montserrat(fontSize: 12, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.54)),
         ),
         const SizedBox(height: 40),
 
         Container(
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.02),
-            border: Border.all(color: Colors.white10),
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.02),
+            border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1)),
             borderRadius: BorderRadius.circular(24),
           ),
           clipBehavior: Clip.antiAlias,
@@ -689,12 +694,12 @@ class _FinaliseStep extends ConsumerWidget {
             children: [
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                color: Colors.white.withOpacity(0.05),
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('ITEM', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2, color: Colors.white54)),
-                    Text('SELECTION', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2, color: Colors.white54)),
+                    Text('ITEM', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.54))),
+                    Text('SELECTION', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.54))),
                   ],
                 ),
               ),
@@ -731,8 +736,8 @@ class _FinaliseStep extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.05),
-                  border: const Border(top: BorderSide(color: Colors.white10)),
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
+                  border: Border(top: BorderSide(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1))),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -743,7 +748,7 @@ class _FinaliseStep extends ConsumerWidget {
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 2,
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     Builder(builder: (context) {
@@ -758,7 +763,7 @@ class _FinaliseStep extends ConsumerWidget {
                         style: GoogleFonts.montserrat(
                           fontSize: 24,
                           fontWeight: FontWeight.w300,
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       );
                     }),
@@ -782,21 +787,22 @@ class _SummaryRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      decoration: const BoxDecoration(
-        border: Border(top: BorderSide(color: Colors.white10)),
+      decoration: BoxDecoration(
+        border: Border(top: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05))),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(child: Text(label, style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.white70))),
+          Expanded(child: Text(label, style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)))),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(value.toUpperCase(), style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white, letterSpacing: 0)),
+              Text(value.toUpperCase(), style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface, letterSpacing: 0)),
               if (subValue != null)
-                Text(subValue!, style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.bold, color: Colors.greenAccent)),
+                Text(subValue!, style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.tertiary)),
             ],
           ),
         ],
@@ -834,13 +840,13 @@ class _PremiumMaterialsSection extends StatelessWidget {
       children: [
         Text(
           'THE COLLECTION',
-          style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 4, color: Colors.white54),
+          style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 4, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.54)),
         ),
         const SizedBox(height: 8),
         Text(
           'PREMIUM\nMATERIALS',
           textAlign: TextAlign.center,
-          style: GoogleFonts.montserrat(fontSize: 32, fontWeight: FontWeight.w300, color: Colors.white, height: 1.1),
+          style: GoogleFonts.montserrat(fontSize: 32, fontWeight: FontWeight.w300, color: Theme.of(context).colorScheme.onSurface, height: 1.1),
         ),
         const SizedBox(height: 48),
         SizedBox(
@@ -867,7 +873,7 @@ class _PremiumMaterialsSection extends StatelessWidget {
                     gradient: LinearGradient(
                       begin: Alignment.bottomCenter,
                       end: Alignment.topCenter,
-                      colors: [Colors.black.withOpacity(0.8), Colors.transparent],
+                      colors: [Theme.of(context).colorScheme.onSurface.withOpacity(0.8), Colors.transparent],
                     ),
                   ),
                   padding: const EdgeInsets.all(16),
@@ -877,12 +883,12 @@ class _PremiumMaterialsSection extends StatelessWidget {
                       Text(
                         mat['title']!,
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
+                        style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.background),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         mat['count']!,
-                        style: GoogleFonts.montserrat(fontSize: 7, fontWeight: FontWeight.bold, color: Colors.white54, letterSpacing: 1.5),
+                        style: GoogleFonts.montserrat(fontSize: 7, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.background.withOpacity(0.54), letterSpacing: 1.5),
                       ),
                     ],
                   ),
@@ -915,9 +921,9 @@ class _ConsultationSection extends ConsumerWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: const Color(0xFF1A1A1A),
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(32),
-              border: Border.all(color: Colors.white10),
+              border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1)),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -931,12 +937,12 @@ class _ConsultationSection extends ConsumerWidget {
                       style: GoogleFonts.montserrat(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     GestureDetector(
                       onTap: () => Navigator.pop(context),
-                      child: const Icon(LucideIcons.x, color: Colors.white54, size: 20),
+                      child: Icon(LucideIcons.x, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.54), size: 20),
                     ),
                   ],
                 ),
@@ -945,28 +951,29 @@ class _ConsultationSection extends ConsumerWidget {
                   'Leave your details with us and our elite interior design team will be in touch shortly.',
                   style: GoogleFonts.montserrat(
                     fontSize: 10,
-                    color: Colors.white54,
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.54),
                     height: 1.5,
                   ),
                 ),
                 const SizedBox(height: 32),
-                _DialogTextField(
-                  label: 'FULL NAME',
-                  placeholder: 'Your Name',
-                  controller: nameController,
+                _buildField(
+                  context,
+                  'FULL NAME',
+                  LucideIcons.user,
+                  nameController,
                 ),
-                const SizedBox(height: 20),
-                _DialogTextField(
-                  label: 'PHONE NUMBER',
-                  placeholder: 'Mobile Number',
-                  controller: phoneController,
+                _buildField(
+                  context,
+                  'PHONE NUMBER',
+                  LucideIcons.phone,
+                  phoneController,
                   keyboardType: TextInputType.phone,
                 ),
-                const SizedBox(height: 20),
-                _DialogTextField(
-                  label: 'EMAIL (OPTIONAL)',
-                  placeholder: 'Email Address',
-                  controller: emailController,
+                _buildField(
+                  context,
+                  'EMAIL (OPTIONAL)',
+                  LucideIcons.mail,
+                  emailController,
                   keyboardType: TextInputType.emailAddress,
                 ),
                 const SizedBox(height: 32),
@@ -994,18 +1001,18 @@ class _ConsultationSection extends ConsumerWidget {
                             if (context.mounted) {
                               Navigator.pop(context);
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Consultation request sent successfully!'),
-                                  backgroundColor: Colors.green,
+                                SnackBar(
+                                  content: Text('Consultation request sent successfully!', style: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.background)),
+                                  backgroundColor: Theme.of(context).colorScheme.onBackground,
                                 ),
                               );
                             }
                           } catch (e) {
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Failed to submit request. Please try again.'),
-                                  backgroundColor: Colors.red,
+                                SnackBar(
+                                  content: Text('Failed to submit request. Please try again.', style: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onError)),
+                                  backgroundColor: Theme.of(context).colorScheme.error,
                                 ),
                               );
                             }
@@ -1017,22 +1024,22 @@ class _ConsultationSection extends ConsumerWidget {
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 18),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onSurface,
                       borderRadius: BorderRadius.circular(16),
                     ),
                     alignment: Alignment.center,
                     child: isLoading
-                        ? const SizedBox(
+                        ? SizedBox(
                             height: 20,
                             width: 20,
-                            child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2),
+                            child: CircularProgressIndicator(color: Theme.of(context).colorScheme.surface, strokeWidth: 2),
                           )
                         : Text(
                             'SEND REQUEST',
                             style: GoogleFonts.montserrat(
                               fontSize: 12,
                               fontWeight: FontWeight.w900,
-                              color: Colors.black,
+                              color: Theme.of(context).colorScheme.surface,
                               letterSpacing: 2,
                             ),
                           ),
@@ -1046,32 +1053,55 @@ class _ConsultationSection extends ConsumerWidget {
     );
   }
 
+  Widget _buildField(BuildContext context, String label, IconData icon, TextEditingController controller, {TextInputType keyboardType = TextInputType.text}) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.04),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.08)),
+      ),
+      child: TextField(
+        controller: controller,
+        keyboardType: keyboardType,
+        style: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface, fontSize: 13),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.38), fontSize: 11),
+          prefixIcon: Icon(icon, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.24), size: 18),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 24),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(40),
       ),
       child: Column(
         children: [
           Text(
             'GET IN TOUCH',
-            style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 4, color: Colors.black45),
+            style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 4, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.45)),
           ),
           const SizedBox(height: 16),
           Text(
             'READY TO\nSTART\nYOUR\nJOURNEY?',
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(fontSize: 32, fontWeight: FontWeight.w300, color: Colors.black, height: 1.1),
+            style: GoogleFonts.montserrat(fontSize: 32, fontWeight: FontWeight.w300, color: Theme.of(context).colorScheme.onSurface, height: 1.1),
           ),
           const SizedBox(height: 24),
           Text(
             'Schedule a private session with our interior consultants at our Experience Centre in South Mumbai.',
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(fontSize: 12, color: Colors.black54, height: 1.5),
+            style: GoogleFonts.montserrat(fontSize: 12, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.54), height: 1.5),
           ),
           const SizedBox(height: 40),
           GestureDetector(
@@ -1080,18 +1110,18 @@ class _ConsultationSection extends ConsumerWidget {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 16),
               decoration: BoxDecoration(
-                color: Colors.black,
+                color: Theme.of(context).colorScheme.onSurface,
                 borderRadius: BorderRadius.circular(20),
               ),
               alignment: Alignment.center,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(LucideIcons.phone, size: 16, color: Colors.white),
+                  Icon(LucideIcons.phone, size: 16, color: Theme.of(context).colorScheme.surface),
                   const SizedBox(width: 8),
                   Text(
                     'BOOK A CONSULTATION',
-                    style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1),
+                    style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: Theme.of(context).colorScheme.surface, letterSpacing: 1),
                   ),
                 ],
               ),
@@ -1102,57 +1132,3 @@ class _ConsultationSection extends ConsumerWidget {
     );
   }
 }
-
-class _DialogTextField extends StatelessWidget {
-  final String label;
-  final String placeholder;
-  final TextEditingController controller;
-  final TextInputType keyboardType;
-
-  const _DialogTextField({
-    required this.label,
-    required this.placeholder,
-    required this.controller,
-    this.keyboardType = TextInputType.text,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: GoogleFonts.montserrat(
-            fontSize: 9,
-            fontWeight: FontWeight.w900,
-            color: Colors.white54,
-            letterSpacing: 2,
-          ),
-        ),
-        const SizedBox(height: 10),
-        TextField(
-          controller: controller,
-          keyboardType: keyboardType,
-          style: GoogleFonts.montserrat(color: Colors.white, fontSize: 13),
-          decoration: InputDecoration(
-            hintText: placeholder,
-            hintStyle: GoogleFonts.montserrat(color: Colors.white24, fontSize: 13),
-            filled: true,
-            fillColor: Colors.white.withOpacity(0.05),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Colors.white10),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Colors.white24),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-

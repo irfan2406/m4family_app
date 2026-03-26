@@ -130,7 +130,7 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: Column(

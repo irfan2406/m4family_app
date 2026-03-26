@@ -16,13 +16,14 @@ class NavigationPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(35),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.4),
+            color: Colors.black.withOpacity(isDark ? 0.4 : 0.08),
             blurRadius: 30,
             offset: const Offset(0, 15),
           ),
@@ -36,9 +37,11 @@ class NavigationPill extends StatelessWidget {
             height: 70,
             padding: const EdgeInsets.symmetric(horizontal: 25),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.04), 
+              color: isDark 
+                  ? const Color(0xFF080A0E) 
+                  : Colors.white.withOpacity(0.4), 
               borderRadius: BorderRadius.circular(35),
-              border: Border.all(color: Colors.white.withOpacity(0.08), width: 1),
+              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05), width: 1),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -92,7 +95,9 @@ class _NavItem extends StatelessWidget {
         children: [
           Icon(
             icon,
-            color: isActive ? Colors.white : Colors.white.withOpacity(0.3),
+            color: isActive 
+                ? Theme.of(context).colorScheme.onSurface 
+                : Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
             size: 24,
           ),
           if (isActive)
@@ -100,8 +105,8 @@ class _NavItem extends StatelessWidget {
               margin: const EdgeInsets.only(top: 4),
               width: 5,
               height: 5,
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.onSurface,
                 shape: BoxShape.circle,
               ),
             ).animate().scale(duration: 200.ms),

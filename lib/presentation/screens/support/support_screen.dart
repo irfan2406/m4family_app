@@ -38,13 +38,13 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
     final state = ref.watch(supportProvider);
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Colors.white,
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF0F1115), Color(0xFF050505)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.white, Colors.black.withOpacity(0.02)],
           ),
         ),
         child: SafeArea(
@@ -110,6 +110,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
   }
 
   Widget _buildHeader(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: Row(
@@ -120,9 +121,9 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
               children: [
                 IconButton(
                   onPressed: () {
-                    ref.read(navigationProvider.notifier).state = 0; // Back to Home
+                    ref.read(navigationProvider.notifier).state = 0;
                   },
-                  icon: const Icon(LucideIcons.chevronLeft, color: Colors.white70),
+                  icon: Icon(LucideIcons.chevronLeft, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
                 ),
                 const SizedBox(width: 4),
                 Flexible(
@@ -134,7 +135,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
                         style: GoogleFonts.montserrat(
                           fontSize: 24,
                           fontWeight: FontWeight.w300,
-                          color: Colors.white,
+                          color: Colors.black,
                           letterSpacing: 2,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -144,7 +145,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
                         style: GoogleFonts.montserrat(
                           fontSize: 9,
                           fontWeight: FontWeight.w900,
-                          color: Colors.white54,
+                          color: Colors.black.withOpacity(0.5),
                           letterSpacing: 4,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -159,11 +160,11 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
+              color: Colors.black.withOpacity(0.05),
               shape: BoxShape.circle,
-              border: Border.all(color: Colors.white10),
+              border: Border.all(color: Colors.black.withOpacity(0.1)),
             ),
-            child: const Icon(LucideIcons.headphones, color: Colors.white70, size: 20),
+            child: Icon(LucideIcons.headphones, color: Colors.black.withOpacity(0.7), size: 20),
           ),
         ],
       ),
@@ -237,7 +238,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
               style: GoogleFonts.montserrat(
                 fontSize: 12,
                 fontWeight: FontWeight.w900,
-                color: Colors.white70,
+                color: Colors.black.withOpacity(0.7),
                 letterSpacing: 2,
               ),
             ),
@@ -245,7 +246,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
             Container(
               width: 40,
               height: 2,
-              color: Colors.white24,
+              color: Colors.black.withOpacity(0.2),
             ),
           ],
         ),
@@ -261,7 +262,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
             style: GoogleFonts.montserrat(
               fontSize: 9,
               fontWeight: FontWeight.w900,
-              color: Colors.white38,
+              color: Colors.black.withOpacity(0.4),
               letterSpacing: 2,
             ),
           ),
@@ -271,13 +272,14 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
   }
 
   Widget _buildEmptyState() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.02),
+        color: (isDark ? Colors.white : Colors.black).withOpacity(0.02),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
       ),
       child: Center(
         child: Text(
@@ -285,7 +287,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
           style: GoogleFonts.montserrat(
             fontSize: 13,
             fontWeight: FontWeight.w500,
-            color: Colors.white24,
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
           ),
         ),
       ),
@@ -311,6 +313,7 @@ class _MatrixItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
@@ -321,9 +324,9 @@ class _MatrixItem extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.03),
+              color: Colors.white.withOpacity(0.6),
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: Colors.white.withOpacity(0.08)),
+              border: Border.all(color: Colors.white.withOpacity(0.6)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -334,7 +337,7 @@ class _MatrixItem extends StatelessWidget {
                 Text(
                   title,
                   style: GoogleFonts.montserrat(
-                    color: Colors.white,
+                    color: Colors.black,
                     fontWeight: FontWeight.w700,
                     fontSize: 13,
                   ),
@@ -343,7 +346,7 @@ class _MatrixItem extends StatelessWidget {
                 Text(
                   subtitle,
                   style: GoogleFonts.montserrat(
-                    color: Colors.white38,
+                    color: Colors.black.withOpacity(0.4),
                     fontSize: 9,
                   ),
                 ),
@@ -364,70 +367,77 @@ class _LogPreviewItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.04),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Colors.blueAccent.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        log.displayId,
-                        style: GoogleFonts.montserrat(
-                          color: Colors.blueAccent,
-                          fontSize: 8,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      log.title.toUpperCase(),
-                      style: GoogleFonts.montserrat(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 13,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    const Icon(LucideIcons.clock, size: 12, color: Colors.white24),
-                    const SizedBox(width: 6),
-                    Text(
-                      _getTimeAgo(log.createdAt).toUpperCase(),
-                      style: GoogleFonts.montserrat(
-                        color: Colors.white24,
-                        fontSize: 9,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(24),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.6),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: Colors.white.withOpacity(0.6)),
           ),
-          _buildStatusBadge(log.status),
-        ],
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.blueAccent.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            log.displayId,
+                            style: GoogleFonts.montserrat(
+                              color: Colors.blueAccent,
+                              fontSize: 8,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          log.title.toUpperCase(),
+                          style: GoogleFonts.montserrat(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 13,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Icon(LucideIcons.clock, size: 12, color: Colors.black.withOpacity(0.2)),
+                        const SizedBox(width: 6),
+                        Text(
+                          _getTimeAgo(log.createdAt).toUpperCase(),
+                          style: GoogleFonts.montserrat(
+                            color: Colors.black.withOpacity(0.2),
+                            fontSize: 9,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              _buildStatusBadge(log.status),
+            ],
+          ),
+        ),
       ),
     );
   }

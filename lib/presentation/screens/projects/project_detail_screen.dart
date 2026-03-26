@@ -31,17 +31,15 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
   List<dynamic> _updates = [];
   List<dynamic> _inventory = [];
   bool _isLoading = true;
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
 
   final List<String> _tabs = [
     'OVERVIEW',
-    'AMENITIES',
-    'PRICING',
-    'INVENTORY',
-    'UPDATES',
     'LOCATION',
-    'PLANNING',
+    'AMENITIES',
+    'PLANS',
     'MEDIA',
-    'DOCUMENTS',
   ];
 
   @override
@@ -102,6 +100,8 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
   @override
   void dispose() {
     _tabController.dispose();
+    _nameController.dispose();
+    _phoneController.dispose();
     super.dispose();
   }
 
@@ -109,14 +109,14 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
   Widget build(BuildContext context) {
     final project = _fullProject ?? widget.projectData;
     if (project == null && _isLoading) {
-      return const Scaffold(
-        backgroundColor: M4Theme.background,
-        body: Center(child: CircularProgressIndicator(color: Colors.white24)),
+      return Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        body: const Center(child: CircularProgressIndicator(color: Colors.white24)),
       );
     }
 
     return Scaffold(
-      backgroundColor: M4Theme.background,
+      backgroundColor: Colors.white,
       body: Stack(
         children: [
           NestedScrollView(
@@ -130,14 +130,10 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
               controller: _tabController,
               children: [
                 _buildOverview(project),
-                _buildAmenities(project),
-                _buildPricing(project),
-                _buildInventory(project),
-                _buildUpdates(project),
                 _buildLocation(project),
-                _buildPlanning(project),
+                _buildAmenities(project),
+                _buildPlanning(project), // Planning is Plans in Web
                 _buildMedia(project),
-                _buildDocuments(project),
               ],
             ),
           ),
@@ -153,16 +149,17 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
                   child: Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.35),
+                      color: Colors.white.withOpacity(0.8),
                       borderRadius: BorderRadius.circular(15),
-                      border: Border.all(color: Colors.white.withOpacity(0.1)),
+                      border: Border.all(color: Colors.black.withOpacity(0.05)),
                     ),
-                    child: const Icon(LucideIcons.chevronLeft, color: Colors.white, size: 20),
+                    child: const Icon(LucideIcons.chevronLeft, color: Colors.black, size: 20),
                   ),
                 ),
               ),
             ),
           ),
+          _buildBottomActions(project),
         ],
       ),
     );
@@ -179,7 +176,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
 
     return SliverAppBar(
       expandedHeight: 450,
-      backgroundColor: M4Theme.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       automaticallyImplyLeading: false,
       pinned: true,
       flexibleSpace: FlexibleSpaceBar(
@@ -193,9 +190,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.black.withOpacity(0.4),
+                    Colors.black.withOpacity(0.1),
                     Colors.transparent,
-                    M4Theme.background,
+                    Colors.white,
                   ],
                   stops: const [0.0, 0.5, 1.0],
                 ),
@@ -203,40 +200,50 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
             ),
             Positioned(
               bottom: 40,
-              left: 30,
-              right: 30,
+              left: 24,
+              right: 24,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       _Badge(text: project?['status']?.toUpperCase() ?? 'ONGOING'),
-                      const SizedBox(width: 10),
+                      const SizedBox(width: 8),
                       const _Badge(text: 'ARTISTIC IMPRESSION', isOutline: true),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
                   Text(
                     project?['title']?.toUpperCase() ?? 'M4 PROJECT',
                     style: GoogleFonts.montserrat(
-                      fontSize: 36,
+                      fontSize: 32,
                       fontWeight: FontWeight.w900,
-                      color: Colors.white,
+                      color: Colors.black,
                       height: 1.1,
-                      letterSpacing: -1,
+                      letterSpacing: -0.5,
                     ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(LucideIcons.mapPin, color: Colors.black.withOpacity(0.4), size: 14),
+                      const SizedBox(width: 6),
+                      Text(
+                        project?['location']?['name']?.toUpperCase() ?? 'MUMBAI, INDIA',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black.withOpacity(0.4),
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 24),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: [
-                        _HeaderStatCard(
-                          label: 'COMPLETION', 
-                          value: '${project?['completionPercentage'] ?? 0}%',
-                          icon: LucideIcons.loader,
-                        ),
-                        const SizedBox(width: 12),
                         _HeaderStatCard(
                           label: 'CONFIG', 
                           value: project?['config'] ?? '3 & 4 BHK',
@@ -249,6 +256,14 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
                           icon: LucideIcons.video,
                           isAction: true,
                           onTap: () => _launchAction('Connecting to Video Call...', project?['videoCallUrl']),
+                        ),
+                         const SizedBox(width: 12),
+                        _HeaderStatCard(
+                          label: 'SITE VISIT', 
+                          value: 'SCHEDULE',
+                          icon: LucideIcons.calendar,
+                          isAction: true,
+                          onTap: () => _launchAction('Opening Schedule Flow...', project?['siteVisitUrl']),
                         ),
                       ],
                     ),
@@ -263,14 +278,15 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
   }
 
   Widget _buildSliverTabBar() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return SliverPersistentHeader(
       pinned: true,
       delegate: _SliverAppBarDelegate(
         TabBar(
           controller: _tabController,
           isScrollable: true,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white38,
+          labelColor: Colors.black,
+          unselectedLabelColor: Colors.black.withOpacity(0.38),
           indicatorWeight: 3,
           indicatorColor: M4Theme.premiumBlue,
           indicatorPadding: const EdgeInsets.symmetric(horizontal: 10),
@@ -286,43 +302,86 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'THE RESIDENCE',
-                style: GoogleFonts.montserrat(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w900,
-                  color: M4Theme.premiumBlue,
-                  letterSpacing: 2,
-                ),
-              ),
-              const _Badge(text: 'LIVE ESTATE', isOutline: true),
-            ],
+          Text(
+            'ABOUT THE RESIDENCE',
+            style: GoogleFonts.montserrat(
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
+              color: M4Theme.premiumBlue,
+              letterSpacing: 2,
+            ),
           ),
           const SizedBox(height: 16),
           Text(
             project?['description'] ?? 'Experience luxurious living redefined with M4 Family. Our projects blend architectural excellence with modern comforts to create homes that inspire.',
             style: GoogleFonts.montserrat(
               fontSize: 14,
-              color: Colors.white.withOpacity(0.7),
+              color: Colors.black.withOpacity(0.7),
               height: 1.8,
             ),
           ),
           const SizedBox(height: 32),
+          // Brochure Card
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.04),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: Colors.black.withOpacity(0.05)),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(color: Colors.black.withOpacity(0.05), borderRadius: BorderRadius.circular(12)),
+                  child: const Icon(LucideIcons.fileText, color: Colors.black, size: 20),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('E-BROCHURE', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1)),
+                      Text('PDF • 4.2 MB', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.white54)),
+                    ],
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () => _launchAction('Brochure not available yet', project?['brochureUrl']),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black.withOpacity(0.05),
+                    foregroundColor: Colors.black,
+                    side: BorderSide(color: Colors.black.withOpacity(0.05)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                  ),
+                  child: Text('DOWNLOAD', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 1)),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
           GridView.count(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             crossAxisCount: 2,
             mainAxisSpacing: 16,
             crossAxisSpacing: 16,
-            childAspectRatio: 2.2,
+            childAspectRatio: 1.1,
             children: [
-              _OverviewActionCard(icon: LucideIcons.fileText, label: 'E-BROCHURE', onTap: () => _launchAction('Brochure not available yet', project?['brochureUrl'])),
-              _OverviewActionCard(icon: LucideIcons.box, label: '3D VIEW', onTap: () => _launchAction('3D View coming soon', project?['view3dUrl'])),
-              _OverviewActionCard(icon: LucideIcons.glasses, label: 'VR TOUR', onTap: () => _launchAction('VR Tour being prepared', project?['vrTourUrl'])),
-              _OverviewActionCard(icon: LucideIcons.video, label: 'PROJECT FILM', onTap: () => _launchAction('Project Film in production', project?['videoUrl'])),
+              _OverviewPremiumCard(
+                icon: LucideIcons.box, 
+                title: '3D VIEW', 
+                subtitle: 'Interactive Model',
+                onTap: () => _launchAction('3D View coming soon', project?['view3dUrl'])
+              ),
+              _OverviewPremiumCard(
+                icon: LucideIcons.glasses, 
+                title: 'VR TOUR', 
+                subtitle: 'Immersive Experience',
+                onTap: () => _launchAction('VR Tour being prepared', project?['vrTourUrl'])
+              ),
             ],
           ),
         ],
@@ -361,17 +420,17 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
                       width: 60,
                       height: 60,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.04),
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.04),
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.white.withOpacity(0.05)),
+                        border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05)),
                       ),
-                      child: Icon(_getAmenityIcon(name), color: Colors.white, size: 24),
+                      child: Icon(_getAmenityIcon(name), color: Theme.of(context).colorScheme.onSurface, size: 24),
                     ),
                     const SizedBox(height: 10),
                     Text(
                       name.toUpperCase(),
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w700, color: Colors.white54, letterSpacing: 0.5),
+                      style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w700, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.54), letterSpacing: 0.5),
                     ),
                   ],
                 );
@@ -415,7 +474,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
           if (project?['paymentPlans'] != null)
              ...((project?['paymentPlans'] as List).map((plan) => _PaymentPlanCard(plan: plan)).toList())
           else
-            const _PaymentPlanCard(
+          _PaymentPlanCard(
               plan: {
                 'name': '80/20 STANDARD PLAN',
                 'status': 'Active',
@@ -441,7 +500,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
           if (_inventory.isEmpty && !_isLoading)
             const _EmptyTabContent(message: 'Inventory data coming soon')
           else if (_isLoading)
-            const Center(child: CircularProgressIndicator(color: Colors.white10))
+            Center(child: CircularProgressIndicator(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1)))
           else
             ..._inventory.map((unit) => _InventoryItem(unit: unit)).toList(),
         ],
@@ -466,7 +525,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
           if (_updates.isEmpty && !_isLoading)
             const _EmptyTabContent(message: 'Construction is scheduled to begin soon')
           else if (_isLoading)
-            const Center(child: CircularProgressIndicator(color: Colors.white10))
+            Center(child: CircularProgressIndicator(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1)))
           else
             ..._updates.map((update) => _ConstructionUpdateCard(
               update: update,
@@ -489,7 +548,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
             height: 200,
             width: double.infinity,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
               borderRadius: BorderRadius.circular(25),
               image: DecorationImage(
                 image: NetworkImage(apiClient.resolveUrl(project?['locationMapUrl'] ?? 'https://images.unsplash.com/photo-1526778548025-fa2f459cd5ce?auto=format&fit=crop&q=80')),
@@ -497,7 +556,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
                 opacity: 0.4,
               ),
             ),
-            child: const Center(child: Icon(LucideIcons.map, color: Colors.white24, size: 40)),
+            child: Icon(LucideIcons.map, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.24), size: 40),
           ),
           const SizedBox(height: 32),
           const _LocationLandmark(icon: LucideIcons.plane, title: 'Mumbai International Airport', distance: '12.4 KM'),
@@ -570,8 +629,8 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
                         apiClient.resolveUrl(uniqueGallery[index]), 
                         fit: BoxFit.cover, height: double.infinity, width: double.infinity,
                         errorBuilder: (context, error, stackTrace) => Container(
-                          color: Colors.white10,
-                          child: const Center(child: Icon(LucideIcons.image, color: Colors.white24)),
+                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
+                          child: Center(child: Icon(LucideIcons.image, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.24))),
                         ),
                       ),
                     ),
@@ -594,7 +653,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
           _SectionHeader(title: 'LEGAL & COMPLIANCE'),
           const SizedBox(height: 24),
           if (docs.isEmpty)
-             const _DocumentItem(title: 'RERA Registration Certificate', size: '1.2 MB', type: 'LEGAL')
+              _DocumentItem(title: 'RERA Registration Certificate', size: '1.2 MB', type: 'LEGAL')
           else
             ...docs.map((doc) => _DocumentItem(
               title: doc['name'] ?? 'Document', 
@@ -614,45 +673,47 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
   }
 
   Widget _buildBottomActions(dynamic project) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(30),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.5),
-            borderRadius: BorderRadius.circular(30),
-            border: Border.all(color: Colors.white.withOpacity(0.1)),
-          ),
-          child: Row(
-            children: [
-              _BottomIconAction(icon: LucideIcons.phone, onTap: () => SupportHandlers.launchCall(project?['phoneNumber'] ?? project?['phone'])),
-              const SizedBox(width: 8),
-              _BottomIconAction(icon: LucideIcons.messageSquare, onTap: () => SupportHandlers.launchWhatsApp(project?['phoneNumber'] ?? project?['phone'])),
-              const SizedBox(width: 12),
-              Expanded(
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                    _showInquiryDialog(project);
-                  },
-                  child: Container(
-                    height: 56,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(colors: [M4Theme.premiumBlue, Color(0xFF60A5FA)]),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'BOOK NOW',
-                        style: GoogleFonts.montserrat(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 2),
+    return Positioned(
+      bottom: 30,
+      left: 20,
+      right: 20,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(30),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.4),
+              borderRadius: BorderRadius.circular(30),
+              border: Border.all(color: Colors.white.withOpacity(0.4)),
+            ),
+            child: Row(
+              children: [
+                _BottomIconAction(icon: LucideIcons.phone, onTap: () => SupportHandlers.launchCall(project?['phoneNumber'] ?? project?['phone'])),
+                const SizedBox(width: 8),
+                _BottomIconAction(icon: LucideIcons.messageSquare, onTap: () => SupportHandlers.launchWhatsApp(project?['phoneNumber'] ?? project?['phone'])),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => _showInquiryDialog(project),
+                    child: Container(
+                      height: 56,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'INQUIRE NOW',
+                          style: GoogleFonts.montserrat(color: Colors.black, fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 2),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -666,54 +727,80 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
       backgroundColor: Colors.transparent,
       builder: (context) => Container(
         padding: EdgeInsets.fromLTRB(24, 32, 24, MediaQuery.of(context).viewInsets.bottom + 32),
-        decoration: const BoxDecoration(
-          color: Color(0xFF0F1012),
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: const BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('INTERESTED IN ${project?['title']?.toUpperCase() ?? 'PROJECT'}?', 
-              style: GoogleFonts.montserrat(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 1)),
+              style: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface, fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 1)),
             const SizedBox(height: 8),
-            const Text('Share your details for a personalized presentation', style: TextStyle(color: Colors.white38, fontSize: 12)),
+            Text('Share your details for a personalized presentation', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.38), fontSize: 12)),
             const SizedBox(height: 24),
             TextFormField(
+              controller: _nameController,
               decoration: InputDecoration(
                 labelText: 'Full Name',
-                labelStyle: const TextStyle(color: Colors.white38),
+                labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.38)),
                 filled: true,
-                fillColor: Colors.white.withOpacity(0.03),
+                fillColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.03),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
               ),
-              style: const TextStyle(color: Colors.white),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
             ),
             const SizedBox(height: 16),
             TextFormField(
+              controller: _phoneController,
               decoration: InputDecoration(
                 labelText: 'Phone Number',
-                labelStyle: const TextStyle(color: Colors.white38),
+                labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.38)),
                 filled: true,
-                fillColor: Colors.white.withOpacity(0.03),
+                fillColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.03),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
               ),
-              style: const TextStyle(color: Colors.white),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
             ),
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
               height: 56,
               child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _launchAction('Thank you! Our advisor will call you shortly.');
+                onPressed: () async {
+                  final name = _nameController.text;
+                  final phone = _phoneController.text;
+                  
+                  if (name.isEmpty || phone.isEmpty) {
+                    _launchAction('Please fill in all details');
+                    return;
+                  }
+
+                  try {
+                    await ref.read(apiClientProvider).submitLead({
+                      'name': name,
+                      'phone': phone,
+                      'project': project?['title'] ?? 'General Inquiry',
+                      'projectId': widget.projectId,
+                      'source': 'Mobile App'
+                    });
+                    
+                    if (mounted) {
+                      Navigator.pop(context);
+                      _nameController.clear();
+                      _phoneController.clear();
+                      _launchAction('Enquiry submitted successfully!');
+                    }
+                  } catch (e) {
+                    _launchAction('Failed to submit enquiry. Please try again.');
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: M4Theme.premiumBlue,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                 ),
-                child: const Text('SUBMIT ENQUIRY', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2)),
+                child: Text('SUBMIT ENQUIRY', style: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onPrimary, fontWeight: FontWeight.bold, letterSpacing: 2)),
               ),
             ),
           ],
@@ -759,22 +846,22 @@ class _HeaderStatCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: isAction ? M4Theme.premiumBlue.withOpacity(0.1) : Colors.white.withOpacity(0.05),
+          color: isAction ? M4Theme.premiumBlue.withOpacity(0.1) : Colors.white.withOpacity(0.6),
           borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: isAction ? M4Theme.premiumBlue.withOpacity(0.3) : Colors.white.withOpacity(0.05)),
+          border: Border.all(color: isAction ? M4Theme.premiumBlue.withOpacity(0.2) : Colors.white.withOpacity(0.6)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                Icon(icon, color: isAction ? M4Theme.premiumBlue : Colors.white38, size: 10),
+                Icon(icon, color: isAction ? M4Theme.premiumBlue : Colors.black.withOpacity(0.38), size: 10),
                 const SizedBox(width: 6),
-                Text(label, style: GoogleFonts.montserrat(color: Colors.white38, fontSize: 8, fontWeight: FontWeight.bold, letterSpacing: 0.5)),
+                Text(label, style: GoogleFonts.montserrat(color: Colors.black.withOpacity(0.38), fontSize: 8, fontWeight: FontWeight.bold, letterSpacing: 0.5)),
               ],
             ),
             const SizedBox(height: 4),
-            Text(value, style: GoogleFonts.montserrat(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w900, letterSpacing: 0.5)),
+            Text(value, style: GoogleFonts.montserrat(color: Colors.black, fontSize: 13, fontWeight: FontWeight.w900, letterSpacing: 0.5)),
           ],
         ),
       ),
@@ -790,43 +877,162 @@ class _Badge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: isOutline ? Colors.transparent : Colors.white,
+        color: Colors.white.withOpacity(0.4),
         borderRadius: BorderRadius.circular(10),
-        border: isOutline ? Border.all(color: Colors.white30) : null,
+        border: Border.all(color: Colors.white.withOpacity(0.4)),
       ),
-      child: Text(text, style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isOutline ? Colors.white70 : Colors.black, letterSpacing: 1)),
+      child: Text(
+        text,
+        style: GoogleFonts.montserrat(
+          fontSize: 8,
+          fontWeight: FontWeight.w900,
+          color: Colors.black.withOpacity(0.7),
+          letterSpacing: 1.0,
+        ),
+      ),
     );
   }
 }
 
-class _OverviewActionCard extends StatelessWidget {
+class _OverviewPremiumCard extends StatelessWidget {
   final IconData icon;
-  final String label;
+  final String title;
+  final String subtitle;
   final VoidCallback onTap;
-  const _OverviewActionCard({required this.icon, required this.label, required this.onTap});
+
+  const _OverviewPremiumCard({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.03),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withOpacity(0.05)),
+          color: Colors.white.withOpacity(0.6),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: Colors.white.withOpacity(0.6)),
         ),
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: Colors.white38, size: 16),
-            const SizedBox(width: 10),
-            Text(label, style: GoogleFonts.montserrat(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 1)),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(color: M4Theme.premiumBlue.withOpacity(0.05), borderRadius: BorderRadius.circular(10)),
+              child: Icon(icon, color: M4Theme.premiumBlue, size: 20),
+            ),
+            const SizedBox(height: 16),
+            Text(title, style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, color: Colors.black, letterSpacing: 1)),
+            const SizedBox(height: 4),
+            Text(subtitle, style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.black.withOpacity(0.4))),
           ],
         ),
       ),
     );
+  }
+}
+
+class _BottomIconAction extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+  const _BottomIconAction({required this.icon, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 56,
+        height: 56,
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.black.withOpacity(0.05)),
+        ),
+        child: Center(child: Icon(icon, color: Colors.black, size: 20)),
+      ),
+    );
+  }
+}
+
+class _SectionHeader extends StatelessWidget {
+  final String title;
+  const _SectionHeader({required this.title});
+  @override
+  Widget build(BuildContext context) {
+    return Text(title, style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 2));
+  }
+}
+
+class _LocationLandmark extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String distance;
+  const _LocationLandmark({required this.icon, required this.title, required this.distance});
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(color: Colors.black.withOpacity(0.04), borderRadius: BorderRadius.circular(15)),
+            child: Icon(icon, color: Colors.black.withOpacity(0.4), size: 20),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black)),
+                Text(distance, style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.black.withOpacity(0.38))),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FloorPlanItem extends StatelessWidget {
+  final dynamic plan;
+  final String imageUrl;
+  const _FloorPlanItem({required this.plan, required this.imageUrl});
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+       margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(color: Colors.black.withOpacity(0.04), borderRadius: BorderRadius.circular(24), border: Border.all(color: Colors.black.withOpacity(0.05))),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(borderRadius: BorderRadius.circular(16), child: Image.network(imageUrl, fit: BoxFit.cover, height: 200, width: double.infinity)),
+          const SizedBox(height: 16),
+          Text(plan['title'] ?? 'Floor Plan', style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black)),
+          Text(plan['area'] ?? '', style: GoogleFonts.montserrat(fontSize: 12, color: Colors.black.withOpacity(0.4))),
+        ],
+      ),
+    );
+  }
+}
+
+class _EmptyTabContent extends StatelessWidget {
+  final String message;
+  const _EmptyTabContent({required this.message});
+  @override
+  Widget build(BuildContext context) {
+     return Center(child: Text(message, textAlign: TextAlign.center, style: GoogleFonts.montserrat(fontSize: 12, color: Colors.black.withOpacity(0.24))));
   }
 }
 
@@ -839,25 +1045,41 @@ class _PricingCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.03),
-        borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        color: Colors.white.withOpacity(0.6),
+        borderRadius: BorderRadius.circular(30),
+        border: Border.all(color: Colors.white.withOpacity(0.6)),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(config, style: GoogleFonts.montserrat(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
-          Text(area, style: GoogleFonts.montserrat(color: Colors.white38, fontSize: 12)),
-          const SizedBox(height: 20),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(price, style: GoogleFonts.montserrat(color: M4Theme.premiumBlue, fontSize: 22, fontWeight: FontWeight.w900)),
-              const Icon(LucideIcons.chevronRight, color: Colors.white10),
+              Text(config.toUpperCase(), style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w900, color: Colors.black)),
+              const _Badge(text: 'BOOKING OPEN'),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Divider(color: Colors.black.withOpacity(0.05)),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('STARTING FROM', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.black.withOpacity(0.38), letterSpacing: 1)),
+                  Text(price, style: GoogleFonts.montserrat(fontSize: 20, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue)),
+                ],
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text('SBA RANGE', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.black.withOpacity(0.38), letterSpacing: 1)),
+                  Text(area, style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black.withOpacity(0.7))),
+                ],
+              ),
             ],
           ),
         ],
@@ -877,9 +1099,9 @@ class _PaymentPlanCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.03),
-        borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        color: Colors.black.withOpacity(0.04),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.black.withOpacity(0.05)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -887,18 +1109,18 @@ class _PaymentPlanCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(plan['name']?.toUpperCase() ?? 'PAYMENT PLAN', style: GoogleFonts.montserrat(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
-              _Badge(text: plan['status'] ?? 'ACTIVE', isOutline: true),
+              Text(plan['name']?.toString().toUpperCase() ?? 'PLAN', style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, color: Colors.black)),
+              _Badge(text: plan['status']?.toString().toUpperCase() ?? 'ACTIVE', isOutline: true),
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
           ...steps.map((step) => Padding(
             padding: const EdgeInsets.only(bottom: 12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(step['label'] ?? 'Step', style: const TextStyle(color: Colors.white38, fontSize: 12)),
-                Text(step['value'] ?? '0%', style: GoogleFonts.montserrat(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold)),
+                Text(step['label']?.toString() ?? '', style: GoogleFonts.montserrat(fontSize: 11, color: Colors.black.withOpacity(0.4))),
+                Text(step['value']?.toString() ?? '', style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black)),
               ],
             ),
           )).toList(),
@@ -914,29 +1136,32 @@ class _InventoryItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final config = unit['config'] ?? 'Unit';
-    final area = unit['area'] != null ? '${unit['area']} Sq.Ft.' : 'N/A';
-    final price = unit['price'] != null ? '₹ ${unit['price']}' : 'Contact Us';
-
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.03),
+        color: Colors.white.withOpacity(0.6),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        border: Border.all(color: Colors.white.withOpacity(0.6)),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('UNIT ${unit['unitNumber']}', style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w900, color: Colors.black)),
+                Text('${unit['type']} • ${unit['area']} SQFT', style: GoogleFonts.montserrat(fontSize: 11, color: Colors.black.withOpacity(0.38))),
+              ],
+            ),
+          ),
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(config, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-              Text(area, style: const TextStyle(color: Colors.white38, fontSize: 12)),
+              Text('₹ ${unit['price']}', style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue)),
+              Text('EXCL. TAXES', style: TextStyle(fontSize: 8, color: Colors.black.withOpacity(0.24), fontWeight: FontWeight.bold)),
             ],
           ),
-          Text(price, style: GoogleFonts.montserrat(color: M4Theme.premiumBlue, fontWeight: FontWeight.w900)),
         ],
       ),
     );
@@ -952,46 +1177,36 @@ class _ConstructionUpdateCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: Image.network(imageUrl, height: 200, width: double.infinity, fit: BoxFit.cover,
-              errorBuilder: (_,__,___) => Container(color: Colors.white10, height: 200, width: double.infinity, child: const Center(child: Icon(LucideIcons.image, color: Colors.white24)))),
-          ),
-          const SizedBox(height: 16),
-          Text(update['date'] ?? 'March 2024', style: GoogleFonts.montserrat(color: M4Theme.premiumBlue, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1)),
-          const SizedBox(height: 8),
-          Text(update['title'] ?? 'Title', style: GoogleFonts.montserrat(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900)),
-          const SizedBox(height: 8),
-          Text(update['content'] ?? '', style: const TextStyle(color: Colors.white54, fontSize: 13, height: 1.5)),
-        ],
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.04),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.black.withOpacity(0.05)),
       ),
-    );
-  }
-}
-
-class _FloorPlanItem extends StatelessWidget {
-  final dynamic plan;
-  final String imageUrl;
-  const _FloorPlanItem({required this.plan, required this.imageUrl});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: Image.network(imageUrl, height: 300, width: double.infinity, fit: BoxFit.contain,
-              errorBuilder: (_,__,___) => Container(color: Colors.white10, height: 300, width: double.infinity, child: const Center(child: Icon(LucideIcons.layout, color: Colors.white24)))),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            child: Image.network(imageUrl, height: 180, width: double.infinity, fit: BoxFit.cover, 
+              errorBuilder: (context, error, stackTrace) => Container(height: 180, color: Colors.black.withOpacity(0.05), child: Center(child: Icon(LucideIcons.image, color: Colors.black.withOpacity(0.1))))),
           ),
-          const SizedBox(height: 16),
-          Text(plan['title']?.toString() ?? 'Floor Plan', style: GoogleFonts.montserrat(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
-          Text(plan['area']?.toString() ?? '', style: const TextStyle(color: Colors.white38, fontSize: 12)),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(update['title']?.toString().toUpperCase() ?? 'UPDATE', style: GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w900, color: Colors.black)),
+                    Text(update['date']?.toString() ?? '', style: GoogleFonts.montserrat(fontSize: 10, color: Colors.black.withOpacity(0.4))),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text(update['description'] ?? '', style: GoogleFonts.montserrat(fontSize: 11, color: Colors.black.withOpacity(0.6), height: 1.5)),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -1008,99 +1223,30 @@ class _DocumentItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.03),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        color: Colors.white.withOpacity(0.6),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withOpacity(0.6)),
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(color: M4Theme.premiumBlue.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
-            child: const Icon(LucideIcons.fileText, color: M4Theme.premiumBlue, size: 20),
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(color: M4Theme.premiumBlue.withOpacity(0.05), borderRadius: BorderRadius.circular(10)),
+            child: const Icon(LucideIcons.fileText, color: M4Theme.premiumBlue, size: 18),
           ),
-          const SizedBox(width: 20),
-          Expanded(
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
-              const SizedBox(height: 4),
-              Text('$type • $size', style: const TextStyle(color: Colors.white38, fontSize: 10)),
-            ]),
-          ),
-          const Icon(LucideIcons.download, color: Colors.white24, size: 20),
-        ],
-      ),
-    );
-  }
-}
-
-class _BottomIconAction extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback onTap;
-  const _BottomIconAction({required this.icon, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 56,
-        width: 56,
-        decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(20), border: Border.all(color: Colors.white.withOpacity(0.05))),
-        child: Icon(icon, color: Colors.white, size: 20),
-      ),
-    );
-  }
-}
-
-class _SectionHeader extends StatelessWidget {
-  final String title;
-  const _SectionHeader({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(title, style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 2));
-  }
-}
-
-class _EmptyTabContent extends StatelessWidget {
-  final String message;
-  const _EmptyTabContent({required this.message});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const SizedBox(height: 40),
-          Icon(LucideIcons.info, color: Colors.white.withOpacity(0.05), size: 48),
-          const SizedBox(height: 16),
-          Text(message, textAlign: TextAlign.center, style: const TextStyle(color: Colors.white24, fontSize: 12)),
-        ],
-      ),
-    );
-  }
-}
-
-class _LocationLandmark extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String distance;
-  const _LocationLandmark({required this.icon, required this.title, required this.distance});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
-      child: Row(
-        children: [
-          Icon(icon, color: Colors.white38, size: 16),
           const SizedBox(width: 16),
-          Expanded(child: Text(title, style: const TextStyle(color: Colors.white, fontSize: 13))),
-          Text(distance, style: GoogleFonts.montserrat(color: M4Theme.premiumBlue, fontSize: 11, fontWeight: FontWeight.bold)),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title.toUpperCase(), style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: Colors.black)),
+                Text('$type • $size', style: GoogleFonts.montserrat(fontSize: 9, color: Colors.black.withOpacity(0.4), fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ),
+          Icon(LucideIcons.download, color: Colors.black.withOpacity(0.24), size: 18),
         ],
       ),
     );
@@ -1108,19 +1254,17 @@ class _LocationLandmark extends StatelessWidget {
 }
 
 class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-  final TabBar _tabBar;
-  _SliverAppBarDelegate(this._tabBar);
+  final TabBar tabBar;
+  _SliverAppBarDelegate(this.tabBar);
   @override
-  double get minExtent => _tabBar.preferredSize.height;
+  double get minExtent => tabBar.preferredSize.height;
   @override
-  double get maxExtent => _tabBar.preferredSize.height;
+  double get maxExtent => tabBar.preferredSize.height;
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return ClipRRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(color: M4Theme.background.withOpacity(0.8), child: _tabBar),
-      ),
+    return Container(
+      color: Colors.white,
+      child: tabBar,
     );
   }
   @override

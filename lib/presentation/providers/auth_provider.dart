@@ -12,6 +12,7 @@ class AuthState {
   final String? identifier;
   final String? devOtp;
   final String? role;
+  final Map<String, dynamic>? user;
 
   AuthState({
     this.status = AuthStatus.initial,
@@ -19,6 +20,7 @@ class AuthState {
     this.identifier,
     this.devOtp,
     this.role,
+    this.user,
   });
 
   AuthState copyWith({
@@ -27,6 +29,7 @@ class AuthState {
     String? identifier,
     String? devOtp,
     String? role,
+    Map<String, dynamic>? user,
   }) {
     return AuthState(
       status: status ?? this.status,
@@ -34,6 +37,7 @@ class AuthState {
       identifier: identifier ?? this.identifier,
       devOtp: devOtp ?? this.devOtp,
       role: role ?? this.role,
+      user: user ?? this.user,
     );
   }
 }
@@ -42,7 +46,30 @@ class AuthNotifier extends StateNotifier<AuthState> {
   final ApiClient _apiClient;
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
-  AuthNotifier(this._apiClient) : super(AuthState());
+  AuthNotifier(this._apiClient) : super(AuthState()) {
+    _checkToken();
+  }
+
+  Future<void> _checkToken() async {
+    final token = await _storage.read(key: 'jwt_token');
+    if (token != null) {
+      await fetchMe();
+    }
+  }
+
+  Future<void> fetchMe() async {
+    try {
+      final response = await _apiClient.getCurrentUser();
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        state = state.copyWith(
+          status: AuthStatus.authenticated,
+          user: response.data['data'] ?? response.data,
+        );
+      }
+    } catch (_) {
+      // If fetchMe fails, might need to logout but for now just ignore
+    }
+  }
 
   Future<void> sendOtp(String identifier, String role) async {
     state = state.copyWith(status: AuthStatus.loading);
@@ -72,13 +99,27 @@ class AuthNotifier extends StateNotifier<AuthState> {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final token = response.data['data']['accessToken']; 
         await _storage.write(key: 'jwt_token', value: token);
-        state = state.copyWith(status: AuthStatus.authenticated);
+        
+        // Fetch user data FIRST
+        final userResponse = await _apiClient.getCurrentUser();
+        final userData = userResponse.data['data'] ?? userResponse.data;
+        
+        // THEN update state with BOTH status and user
+        state = state.copyWith(
+          status: AuthStatus.authenticated,
+          user: userData,
+        );
       } else {
         state = state.copyWith(status: AuthStatus.error, error: 'Invalid OTP');
       }
     } catch (e) {
       state = state.copyWith(status: AuthStatus.error, error: e.toString());
     }
+  }
+
+  Future<void> logout() async {
+    await _storage.delete(key: 'jwt_token');
+    state = AuthState(status: AuthStatus.initial);
   }
 
   void reset() {

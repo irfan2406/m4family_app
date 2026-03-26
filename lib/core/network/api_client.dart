@@ -62,6 +62,10 @@ class ApiClient {
     });
   }
 
+  Future<Response> getCurrentUser() async {
+    return dio.get('/api/auth/me');
+  }
+
   // Catalog Methods
   Future<Response> getProjects() async {
     return dio.get('/api/catalog/projects');
@@ -90,14 +94,48 @@ class ApiClient {
     return dio.get('/api/catalog/customization-options');
   }
 
+  Future<Response> getCommunities() async {
+    return dio.get('/api/catalog/communities');
+  }
+
   // Custom Views Methods
   Future<Response> submitCustomViews(Map<String, dynamic> data) async {
     return dio.post('/api/custom-views', data: data);
   }
 
+  Future<Response> getMyCustomViews() async {
+    return dio.get('/api/custom-views/my');
+  }
+
+  // Lead Generation
   // Lead Generation
   Future<Response> submitLead(Map<String, dynamic> data) async {
     return dio.post('/api/leads', data: data);
+  }
+
+  // Profile Management
+  Future<Response> updateMe(Map<String, dynamic> data) async {
+    return dio.patch('/api/auth/me', data: data);
+  }
+
+  Future<Response> deleteMe() async {
+    return dio.delete('/api/auth/me');
+  }
+
+  Future<Response> uploadAvatar(String filePath) async {
+    final fileName = filePath.split('/').last;
+    final formData = FormData.fromMap({
+      'file': await MultipartFile.fromFile(filePath, filename: fileName),
+    });
+    return dio.post(
+      '/api/upload',
+      data: formData,
+      options: Options(
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      ),
+    );
   }
 
   // Notifications
@@ -159,6 +197,45 @@ class ApiClient {
 
   Future<Response> applyJob(Map<String, dynamic> data) async {
     return dio.post('/api/careers/apply', data: data);
+  }
+
+  // User Preferences & Theme
+  Future<Response> updateTheme(String theme) async {
+    return dio.patch('/api/user/theme', data: {'theme': theme});
+  }
+
+  Future<Response> getMyPreferences() async {
+    return dio.get('/api/user/preferences');
+  }
+
+  // Investor & Referrals
+  Future<Response> getInvestorWallet() async {
+    return dio.get('/api/investor/wallet');
+  }
+
+  Future<Response> getInvestorReferrals() async {
+    return dio.get('/api/investor/referrals');
+  }
+
+  Future<Response> submitReferral(Map<String, dynamic> data) async {
+    return dio.post('/api/user/referrals', data: data);
+  }
+
+  Future<Response> redeemPoints(Map<String, dynamic> data) async {
+    return dio.post('/api/user/referrals/redeem', data: data);
+  }
+
+  // Site Visits & Bookings
+  Future<Response> scheduleSiteVisit(Map<String, dynamic> data) async {
+    return dio.post('/api/user/site-visit', data: data);
+  }
+
+  Future<Response> getMyBookings() async {
+    return dio.get('/api/user/bookings');
+  }
+
+  Future<Response> getMySupportDocuments() async {
+    return dio.get('/api/user/documents');
   }
 
   String resolveUrl(String? url) {

@@ -7,45 +7,121 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_detail_screen.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 
 
 class ProjectListScreen extends ConsumerWidget {
   const ProjectListScreen({super.key});
 
-  void _showFilterBottomSheet(BuildContext context) {
+  void _showFilterBottomSheet(BuildContext context, WidgetRef ref) {
+    final locations = ref.read(projectLocationsProvider);
+    final categories = ref.read(projectCategoriesProvider);
+    final selectedLocs = ref.watch(selectedLocationsProvider);
+    final selectedBudgets = ref.watch(selectedBudgetsProvider);
+    final selectedTypes = ref.watch(selectedTypesProvider);
+
+    final budgetOptions = ["< 5 Cr", "5 - 10 Cr", "10 - 20 Cr", "20 Cr +"];
+
     showModalBottomSheet(
       context: context,
-      backgroundColor: M4Theme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (context) {
-        return Container(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'FILTER PROJECTS',
-                style: GoogleFonts.montserrat(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w900,
-                  color: Colors.white,
-                  letterSpacing: 1,
-                ),
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Container(
+              height: MediaQuery.of(context).size.height * 0.85,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
               ),
-              const SizedBox(height: 24),
-              // Placeholder for future filter options (e.g., location, price)
-              Text(
-                'Filter options coming soon.',
-                style: GoogleFonts.montserrat(
-                  color: Colors.white70,
-                ),
+              child: Column(
+                children: [
+                  const SizedBox(height: 12),
+                  Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.black12, borderRadius: BorderRadius.circular(2))),
+                  const SizedBox(height: 24),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('REFINE SEARCH', style: GoogleFonts.montserrat(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black, letterSpacing: -0.5)),
+                        IconButton(
+                          onPressed: () => Navigator.pop(context),
+                          icon: const Icon(LucideIcons.x, color: Colors.black),
+                          style: IconButton.styleFrom(backgroundColor: Colors.black.withOpacity(0.05), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  Expanded(
+                    child: ListView(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      children: [
+                        _FilterSection(
+                          title: 'LOCATION',
+                          options: locations,
+                          selectedOptions: selectedLocs,
+                          onToggle: (val) {
+                            final current = List<String>.from(ref.read(selectedLocationsProvider));
+                            if (current.contains(val)) current.remove(val); else current.add(val);
+                            ref.read(selectedLocationsProvider.notifier).state = current;
+                            setModalState(() {});
+                          },
+                        ),
+                        const SizedBox(height: 32),
+                        _FilterSection(
+                          title: 'BUDGET RANGE',
+                          options: budgetOptions,
+                          selectedOptions: selectedBudgets,
+                          onToggle: (val) {
+                            final current = List<String>.from(ref.read(selectedBudgetsProvider));
+                            if (current.contains(val)) current.remove(val); else current.add(val);
+                            ref.read(selectedBudgetsProvider.notifier).state = current;
+                            setModalState(() {});
+                          },
+                        ),
+                        const SizedBox(height: 32),
+                        _FilterSection(
+                          title: 'PROPERTY TYPE',
+                          options: categories,
+                          selectedOptions: selectedTypes,
+                          onToggle: (val) {
+                            final current = List<String>.from(ref.read(selectedTypesProvider));
+                            if (current.contains(val)) current.remove(val); else current.add(val);
+                            ref.read(selectedTypesProvider.notifier).state = current;
+                            setModalState(() {});
+                          },
+                        ),
+                        const SizedBox(height: 48),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 48),
+                    child: SizedBox(
+                      width: double.infinity,
+                      height: 64,
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.pop(context),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                          elevation: 0,
+                        ),
+                        child: Text(
+                          'APPLY SEARCH MATRIX',
+                          style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 1),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 48),
-            ],
-          ),
+            );
+          }
         );
       },
     );
@@ -61,7 +137,7 @@ class ProjectListScreen extends ConsumerWidget {
     final apiClient = ref.watch(apiClientProvider);
 
     return Scaffold(
-      backgroundColor: M4Theme.background,
+      backgroundColor: const Color(0xFFF8F9FA), // Premium light grey background
       body: SafeArea(
         child: Column(
           children: [
@@ -72,26 +148,47 @@ class ProjectListScreen extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  Row(
                     children: [
-                      Text(
-                        'DISCOVER',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white54,
-                          letterSpacing: 2,
-                        ),
+                      IconButton(
+                        onPressed: () => ref.read(navigationProvider.notifier).state = 0,
+                        icon: const Icon(LucideIcons.arrowLeft, color: Colors.black, size: 24),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
                       ),
-                      Text(
-                        'M4 PROJECTS',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.white,
-                          letterSpacing: -1,
-                        ),
+                      const SizedBox(width: 16),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'DISCOVER',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.black.withOpacity(0.2),
+                              letterSpacing: 3,
+                            ),
+                          ),
+                          Text(
+                            'M4 PROJECTS',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.black,
+                              letterSpacing: -1,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '${filteredProjects.length} PROPERTIES AVAILABLE',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w900,
+                              color: M4Theme.premiumBlue,
+                              letterSpacing: 1.5,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -99,15 +196,15 @@ class ProjectListScreen extends ConsumerWidget {
                     children: [
                       // Filter Icon
                       GestureDetector(
-                        onTap: () => _showFilterBottomSheet(context),
+                        onTap: () => _showFilterBottomSheet(context, ref),
                         child: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.05),
+                            color: Colors.black.withOpacity(0.05),
                             borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.white10),
+                            border: Border.all(color: Colors.black.withOpacity(0.05)),
                           ),
-                          child: const Icon(LucideIcons.slidersHorizontal, size: 16, color: Colors.white),
+                          child: const Icon(LucideIcons.slidersHorizontal, size: 16, color: Colors.black),
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -141,7 +238,7 @@ class ProjectListScreen extends ConsumerWidget {
               decoration: BoxDecoration(
                 color: Colors.transparent,
                 borderRadius: BorderRadius.circular(30),
-                border: Border.all(color: Colors.white10),
+                border: Border.all(color: Colors.black.withOpacity(0.08)),
               ),
               child: Row(
                 children: ['Ongoing', 'Upcoming', 'Completed'].map((filter) {
@@ -149,7 +246,9 @@ class ProjectListScreen extends ConsumerWidget {
                   return Expanded(
                     child: GestureDetector(
                       onTap: () => ref.read(projectFilterProvider.notifier).state = filter,
-                      child: Container(
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           color: isSelected ? Colors.white : Colors.transparent,
@@ -160,7 +259,7 @@ class ProjectListScreen extends ConsumerWidget {
                           style: GoogleFonts.montserrat(
                             fontSize: 10,
                             fontWeight: isSelected ? FontWeight.w900 : FontWeight.bold,
-                            color: isSelected ? Colors.black : Colors.white70,
+                            color: isSelected ? Colors.black : Colors.black.withOpacity(0.35),
                             letterSpacing: 1,
                           ),
                         ),
@@ -182,7 +281,11 @@ class ProjectListScreen extends ConsumerWidget {
                   itemBuilder: (context, index) {
                     final project = filteredProjects[index];
                     final projectId = project['_id']?.toString() ?? '';
-                    final imageUrl = apiClient.resolveUrl(project['heroImage']?.toString() ?? project['images']?[0]?.toString());
+                    final images = project['images'] as List?;
+                    final imageUrl = apiClient.resolveUrl(
+                      project['heroImage']?.toString() ?? 
+                      ((images != null && images.isNotEmpty) ? images[0].toString() : null)
+                    );
                     return GestureDetector(
                       onTap: () {
                         if (projectId.isNotEmpty) {
@@ -226,10 +329,13 @@ class _ProjectGridItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
-      height: 480, // Premium tall aspect ratio
+      height: 240, // Match Web 16:10 aspect ratio better
       decoration: BoxDecoration(
-        color: M4Theme.surface,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(40),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20, offset: const Offset(0, 10)),
+        ],
         image: DecorationImage(
           image: NetworkImage(imageUrl),
           fit: BoxFit.cover,
@@ -238,18 +344,18 @@ class _ProjectGridItem extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: Stack(
         children: [
-          // Gradient Overlay
+          // Subtle Gradient Overlay for text readability on images
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.black.withOpacity(0.3),
+                  Colors.black.withOpacity(0.1),
                   Colors.transparent,
-                  Colors.black.withOpacity(0.9),
+                  Colors.black.withOpacity(0.6),
                 ],
-                stops: const [0.0, 0.5, 1.0],
+                stops: const [0.0, 0.4, 1.0],
               ),
             ),
           ),
@@ -352,9 +458,12 @@ class _ProjectListRowItem extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: M4Theme.surface,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 20, offset: const Offset(0, 4)),
+        ],
+        border: Border.all(color: Colors.black.withOpacity(0.05)),
       ),
       child: Row(
         children: [
@@ -384,7 +493,7 @@ class _ProjectListRowItem extends StatelessWidget {
                   style: GoogleFonts.montserrat(
                     fontSize: 16,
                     fontWeight: FontWeight.w900,
-                    color: Colors.white,
+                    color: Colors.black,
                     letterSpacing: -0.5,
                   ),
                   maxLines: 1,
@@ -393,14 +502,14 @@ class _ProjectListRowItem extends StatelessWidget {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    const Icon(LucideIcons.mapPin, size: 12, color: Colors.white70),
+                    Icon(LucideIcons.mapPin, size: 12, color: Colors.black.withOpacity(0.4)),
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
                         project['location']?['name'] ?? 'N/A',
                         style: GoogleFonts.montserrat(
                           fontSize: 11,
-                          color: Colors.white70,
+                          color: Colors.black.withOpacity(0.4),
                           fontWeight: FontWeight.w600,
                         ),
                         maxLines: 1,
@@ -417,10 +526,10 @@ class _ProjectListRowItem extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
+              color: Colors.black.withOpacity(0.05),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(LucideIcons.chevronRight, color: Colors.white, size: 18),
+            child: const Icon(LucideIcons.chevronRight, color: Colors.black, size: 18),
           ),
         ],
       ),
@@ -430,25 +539,86 @@ class _ProjectListRowItem extends StatelessWidget {
 
 class _Badge extends StatelessWidget {
   final String text;
-  const _Badge({required this.text});
+  final bool isOutline;
+  const _Badge({required this.text, this.isOutline = false});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.85),
-        borderRadius: BorderRadius.circular(12),
+        color: Colors.white.withOpacity(0.4),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.white.withOpacity(0.4)),
       ),
       child: Text(
         text,
         style: GoogleFonts.montserrat(
           fontSize: 8,
           fontWeight: FontWeight.w900,
-          color: Colors.black87,
+          color: Colors.black,
           letterSpacing: 1.0,
         ),
       ),
+    );
+  }
+}
+
+class _FilterSection extends StatelessWidget {
+  final String title;
+  final List<String> options;
+  final List<String> selectedOptions;
+  final Function(String) onToggle;
+
+  const _FilterSection({
+    required this.title,
+    required this.options,
+    required this.selectedOptions,
+    required this.onToggle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title, 
+          style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black.withOpacity(0.3), letterSpacing: 2)
+        ),
+        const SizedBox(height: 16),
+        Wrap(
+          spacing: 8,
+          runSpacing: 12,
+          children: options.map((opt) {
+            final isSelected = selectedOptions.contains(opt);
+            return GestureDetector(
+              onTap: () => onToggle(opt),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                decoration: BoxDecoration(
+                  color: isSelected ? Colors.black : Colors.black.withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(15),
+                  border: Border.all(color: isSelected ? Colors.black : Colors.black.withOpacity(0.08)),
+                  boxShadow: isSelected ? [
+                    BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 20, spreadRadius: -5)
+                  ] : null,
+                ),
+                child: Text(
+                  opt.toUpperCase(),
+                  style: GoogleFonts.montserrat(
+                    fontSize: 9, 
+                    fontWeight: FontWeight.w900, 
+                    color: isSelected ? Colors.white : Colors.black.withOpacity(0.4),
+                    letterSpacing: 1,
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 }
