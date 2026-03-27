@@ -51,6 +51,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   Image.network(
                     _pages[index].imageUrl,
                     fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      color: Colors.black.withOpacity(0.1),
+                      child: const Center(child: Icon(LucideIcons.image, color: Colors.white24, size: 50)),
+                    ),
                   ),
                   // Dark Overlay Gradient
                   Container(

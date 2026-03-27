@@ -175,34 +175,41 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
                 return Container(
                   height: 650,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(image: NetworkImage(apiClient.resolveUrl(mainImage)), fit: BoxFit.cover),
-                  ),
                   child: Stack(
                     children: [
-                        // 1. Gradient Overlay
-                        Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Colors.black.withOpacity(0.3),
-                                Colors.transparent,
-                                Colors.black.withOpacity(0.4),
-                              ],
-                              stops: const [0.0, 0.4, 1.0],
-                            ),
+                      Positioned.fill(
+                        child: Image.network(
+                          apiClient.resolveUrl(mainImage),
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) => Container(
+                            color: Colors.black.withOpacity(0.1),
+                            child: const Center(child: Icon(LucideIcons.image, color: Colors.white24, size: 50)),
                           ),
                         ),
-                        
-                        // 2. Global Header & Search (Top) - ALWAYS VISIBLE
-                        Positioned(
-                          top: 60,
-                          left: 25,
-                          right: 25,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                      ),
+                      // 1. Gradient Overlay
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.black.withOpacity(0.3),
+                              Colors.transparent,
+                              Colors.black.withOpacity(0.4),
+                            ],
+                            stops: const [0.0, 0.4, 1.0],
+                          ),
+                        ),
+                      ),
+                      
+                      // 2. Global Header & Search (Top) - ALWAYS VISIBLE
+                      Positioned(
+                        top: 60,
+                        left: 25,
+                        right: 25,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -585,14 +592,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(40),
                                   child: imageUrl.isNotEmpty
-                                      ? Container(
+                                      ? Image.network(
+                                          apiClient.resolveUrl(imageUrl), 
+                                          fit: BoxFit.cover,
                                           height: 420,
                                           width: double.infinity,
-                                          decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                              image: NetworkImage(apiClient.resolveUrl(imageUrl)),
-                                              fit: BoxFit.cover,
-                                            ),
+                                          errorBuilder: (context, error, stackTrace) => Container(
+                                            height: 420,
+                                            width: double.infinity,
+                                            color: Colors.white.withOpacity(0.05),
+                                            child: const Center(child: Icon(LucideIcons.image, color: Colors.white10)),
                                           ),
                                         )
                                     : Container(

@@ -605,7 +605,12 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                                 if (opt['colorCode'] != null)
                                   Container(color: _hexToColor(opt['colorCode']))
                                 else if (opt['image'] != null)
-                                  Image.network(opt['image'], fit: BoxFit.cover)
+                                  Image.network(opt['image'], fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) => Container(
+                                      color: Colors.black.withOpacity(0.05),
+                                      child: const Center(child: Icon(LucideIcons.image, color: Colors.black12)),
+                                    ),
+                                  )
                                 else
                                   Container(
                                     color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
@@ -860,38 +865,47 @@ class _PremiumMaterialsSection extends StatelessWidget {
               final mat = materials[index];
               return Container(
                 width: 120, // Arch shape mimicking web
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(60), bottom: Radius.circular(60)),
-                  image: DecorationImage(
-                    image: NetworkImage(mat['img']!),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(60), bottom: Radius.circular(60)),
-                    gradient: LinearGradient(
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.topCenter,
-                      colors: [Theme.of(context).colorScheme.onSurface.withOpacity(0.8), Colors.transparent],
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    ClipRRect(
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(60), bottom: Radius.circular(60)),
+                      child: Image.network(
+                        mat['img']!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Container(
+                          color: Colors.black.withOpacity(0.05),
+                          child: const Center(child: Icon(LucideIcons.image, color: Colors.black12)),
+                        ),
+                      ),
                     ),
-                  ),
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        mat['title']!,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.background),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.vertical(top: Radius.circular(60), bottom: Radius.circular(60)),
+                        gradient: LinearGradient(
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                          colors: [Theme.of(context).colorScheme.onSurface.withOpacity(0.8), Colors.transparent],
+                        ),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        mat['count']!,
-                        style: GoogleFonts.montserrat(fontSize: 7, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.background.withOpacity(0.54), letterSpacing: 1.5),
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            mat['title']!,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.background),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            mat['count']!,
+                            style: GoogleFonts.montserrat(fontSize: 7, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.background.withOpacity(0.54), letterSpacing: 1.5),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               );
             },

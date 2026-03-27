@@ -42,6 +42,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           Image.network(
             'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=1000&auto=format&fit=crop',
             fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => Container(color: Colors.black),
           ),
           // Dark Overlay
           Container(

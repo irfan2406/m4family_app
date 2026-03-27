@@ -210,7 +210,7 @@ class ProfileScreen extends ConsumerWidget {
                 padding: const EdgeInsets.symmetric(vertical: 15),
                 child: Divider(height: 1, color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
               ),
-              _buildInfoRow(LucideIcons.calendar, 'DATE OF BIRTH', user?['dob'] ?? 'Not provided', isDark),
+              _buildInfoRow(LucideIcons.calendar, 'DATE OF BIRTH', _formatDate(user?['dob']), isDark),
             ],
           ),
         ),
@@ -285,7 +285,7 @@ class ProfileScreen extends ConsumerWidget {
                           Text((member['relation'] ?? 'MEMBER').toString().toUpperCase(), style: GoogleFonts.montserrat(color: isDark ? Colors.white24 : Colors.black26, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1)),
                           const SizedBox(height: 4),
                           Text(member['name'] ?? 'Unknown', style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 14, fontWeight: FontWeight.w900)),
-                          Text('DOB: ${member['dob'] ?? 'N/A'}', style: GoogleFonts.montserrat(color: isDark ? Colors.white38 : Colors.black38, fontSize: 10, fontWeight: FontWeight.w700)),
+                          Text('DOB: ${_formatDate(member['dob'])}', style: GoogleFonts.montserrat(color: isDark ? Colors.white38 : Colors.black38, fontSize: 10, fontWeight: FontWeight.w700)),
                         ],
                       ),
                     ),
@@ -608,5 +608,21 @@ class ProfileScreen extends ConsumerWidget {
       trailing: isSelected ? Icon(LucideIcons.check, color: isDark ? Colors.white : Colors.black, size: 20) : null,
       onTap: () => Navigator.pop(context),
     );
+  }
+
+  String _formatDate(String? dateStr) {
+    if (dateStr == null || dateStr == 'Not provided' || dateStr == 'N/A' || dateStr.isEmpty) {
+      return dateStr ?? 'Not provided';
+    }
+    try {
+      // Handle formatting if it looks like an ISO string
+      if (dateStr.contains('T')) {
+        final dateTime = DateTime.parse(dateStr);
+        return DateFormat('dd MMM yyyy').format(dateTime); // e.g., 06 Jul 2003
+      }
+      return dateStr;
+    } catch (e) {
+      return dateStr;
+    }
   }
 }

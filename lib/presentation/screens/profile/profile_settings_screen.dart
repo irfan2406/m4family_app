@@ -235,7 +235,12 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
               child: _pickedImage != null 
                 ? Image.file(_pickedImage!, fit: BoxFit.cover)
                 : currentAvatarUrl.isNotEmpty
-                  ? Image.network(ref.read(apiClientProvider).resolveUrl(currentAvatarUrl), fit: BoxFit.cover)
+                  ? Image.network(ref.read(apiClientProvider).resolveUrl(currentAvatarUrl), fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        color: Colors.black.withOpacity(0.05),
+                        child: const Center(child: Icon(LucideIcons.user, color: Colors.black12, size: 40)),
+                      ),
+                    )
                   : Container(
                       color: (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black).withOpacity(0.03),
                       child: Center(

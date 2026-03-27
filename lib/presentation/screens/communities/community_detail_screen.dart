@@ -40,6 +40,10 @@ class CommunityDetailScreen extends ConsumerWidget {
                    Image.network(
                     heroImageUrl,
                     fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      color: Colors.black.withOpacity(0.1),
+                      child: const Center(child: Icon(LucideIcons.image, color: Colors.white24, size: 50)),
+                    ),
                   ),
                   Container(
                     decoration: BoxDecoration(

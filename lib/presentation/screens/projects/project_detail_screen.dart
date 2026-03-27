@@ -10,6 +10,7 @@ import 'dart:ui';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ProjectDetailScreen extends ConsumerStatefulWidget {
   final dynamic projectData; 
@@ -33,13 +34,20 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
   bool _isLoading = true;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  bool _isFavorited = false;
+  String _mediaFilter = 'ALL';
 
   final List<String> _tabs = [
     'OVERVIEW',
+    'PRICING',
+    'INVENTORY',
     'LOCATION',
     'AMENITIES',
-    'PLANS',
+    'PLANNING',
+    'UPDATES',
     'MEDIA',
+    'DOCUMENTS',
   ];
 
   @override
@@ -102,6 +110,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
     _tabController.dispose();
     _nameController.dispose();
     _phoneController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
@@ -130,33 +139,50 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
               controller: _tabController,
               children: [
                 _buildOverview(project),
+                _buildPricing(project),
+                _buildInventory(project),
                 _buildLocation(project),
                 _buildAmenities(project),
-                _buildPlanning(project), // Planning is Plans in Web
+                _buildPlanning(project),
+                _buildUpdates(project),
                 _buildMedia(project),
+                _buildDocuments(project),
               ],
             ),
           ),
           Positioned(
             top: MediaQuery.of(context).padding.top + 10,
             left: 20,
-            child: GestureDetector(
-              onTap: () => Navigator.pop(context),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(15),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.8),
-                      borderRadius: BorderRadius.circular(15),
-                      border: Border.all(color: Colors.black.withOpacity(0.05)),
-                    ),
-                    child: const Icon(LucideIcons.chevronLeft, color: Colors.black, size: 20),
-                  ),
+            child: _TopIconButton(
+              icon: LucideIcons.chevronLeft, 
+              onTap: () => Navigator.pop(context)
+            ),
+          ),
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 10,
+            right: 20,
+            child: Row(
+              children: [
+                _TopIconButton(
+                  icon: LucideIcons.share2, 
+                  onTap: () {
+                    final title = project?['title'] ?? 'M4 Project';
+                    final location = project?['location']?['name'] ?? 'Mumbai, India';
+                    Share.share('Check out this premium project: $title in $location via M4 Family App!');
+                  },
                 ),
-              ),
+                const SizedBox(width: 12),
+                _TopIconButton(
+                  icon: _isFavorited ? LucideIcons.star : LucideIcons.star,
+                  color: _isFavorited ? Colors.amber : Colors.black,
+                  onTap: () {
+                    setState(() => _isFavorited = !_isFavorited);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(_isFavorited ? 'Added to favorites' : 'Removed from favorites'))
+                    );
+                  },
+                ),
+              ],
             ),
           ),
           _buildBottomActions(project),
@@ -183,7 +209,8 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
         background: Stack(
           fit: StackFit.expand,
           children: [
-            Image.network(apiClient.resolveUrl(heroImage), fit: BoxFit.cover),
+            Image.network(apiClient.resolveUrl(heroImage), fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => Container(color: Colors.black.withOpacity(0.1), child: const Center(child: Icon(LucideIcons.image, color: Colors.black12, size: 50)))),
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -215,12 +242,12 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
                   const SizedBox(height: 16),
                   Text(
                     project?['title']?.toUpperCase() ?? 'M4 PROJECT',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 32,
-                      fontWeight: FontWeight.w900,
+                    style: GoogleFonts.dmSerifDisplay(
+                      fontSize: 40,
+                      fontWeight: FontWeight.normal,
                       color: Colors.black,
-                      height: 1.1,
-                      letterSpacing: -0.5,
+                      height: 1.0,
+                      letterSpacing: 0,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -341,22 +368,22 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('E-BROCHURE', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1)),
-                      Text('PDF • 4.2 MB', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.white54)),
+                      Text('E-BROCHURE', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.black87, letterSpacing: 1)),
+                      Text('PDF • 4.2 MB', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.black38)),
                     ],
                   ),
                 ),
-                ElevatedButton(
-                  onPressed: () => _launchAction('Brochure not available yet', project?['brochureUrl']),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black.withOpacity(0.05),
-                    foregroundColor: Colors.black,
-                    side: BorderSide(color: Colors.black.withOpacity(0.05)),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    elevation: 0,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                _ScaleButton(
+                  onTap: () => _launchAction('Brochure not available yet', project?['brochureUrl']),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.black.withOpacity(0.05)),
+                    ),
+                    child: Text('DOWNLOAD', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 1, color: Colors.black)),
                   ),
-                  child: Text('DOWNLOAD', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 1)),
                 ),
               ],
             ),
@@ -370,18 +397,38 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
             crossAxisSpacing: 16,
             childAspectRatio: 1.1,
             children: [
-              _OverviewPremiumCard(
-                icon: LucideIcons.box, 
-                title: '3D VIEW', 
-                subtitle: 'Interactive Model',
-                onTap: () => _launchAction('3D View coming soon', project?['view3dUrl'])
+              _ScaleButton(
+                onTap: () => _launchAction('3D View coming soon', project?['view3dUrl']),
+                child: _OverviewPremiumCard(
+                  icon: LucideIcons.box, 
+                  title: '3D VIEW', 
+                  subtitle: 'Interactive Model',
+                  onTap: () {}, // Handled by wrapper
+                ),
               ),
-              _OverviewPremiumCard(
-                icon: LucideIcons.glasses, 
-                title: 'VR TOUR', 
-                subtitle: 'Immersive Experience',
-                onTap: () => _launchAction('VR Tour being prepared', project?['vrTourUrl'])
+              _ScaleButton(
+                onTap: () => _launchAction('VR Tour being prepared', project?['vrTourUrl']),
+                child: _OverviewPremiumCard(
+                  icon: LucideIcons.glasses, 
+                  title: 'VR TOUR', 
+                  subtitle: 'Immersive Experience',
+                  onTap: () {}, // Handled by wrapper
+                ),
               ),
+            ],
+          ),
+          const SizedBox(height: 32),
+          Text('CONNECT WITH US', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.black38, letterSpacing: 2)),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              _SocialIconButton(icon: LucideIcons.instagram, onTap: () => _launchAction('Opening Instagram', project?['social']?['instagram'])),
+              const SizedBox(width: 12),
+              _SocialIconButton(icon: LucideIcons.facebook, onTap: () => _launchAction('Opening Facebook', project?['social']?['facebook'])),
+              const SizedBox(width: 12),
+              _SocialIconButton(icon: LucideIcons.linkedin, onTap: () => _launchAction('Opening LinkedIn', project?['social']?['linkedin'])),
+              const SizedBox(width: 12),
+              _SocialIconButton(icon: LucideIcons.youtube, onTap: () => _launchAction('Opening YouTube', project?['social']?['youtube'])),
             ],
           ),
         ],
@@ -471,8 +518,11 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
           const SizedBox(height: 48),
           _SectionHeader(title: 'PAYMENT PLANS'),
           const SizedBox(height: 24),
-          if (project?['paymentPlans'] != null)
-             ...((project?['paymentPlans'] as List).map((plan) => _PaymentPlanCard(plan: plan)).toList())
+          if (project?['paymentPlans'] != null && (project?['paymentPlans'] as List).isNotEmpty)
+             ...((project?['paymentPlans'] as List).map((plan) => _PaymentPlanCard(
+               plan: plan, 
+               onRequestDetails: () => _showRequestDetailsDialog(project, plan),
+             )).toList())
           else
           _PaymentPlanCard(
               plan: {
@@ -484,7 +534,36 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
                   {'label': 'On Handover', 'value': '40%'},
                 ]
               },
+              onRequestDetails: () => _showRequestDetailsDialog(project, {'name': '80/20 STANDARD PLAN'}),
             ),
+          const SizedBox(height: 32),
+          // Disclaimer Note
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.04),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(LucideIcons.info, color: Colors.black.withOpacity(0.4), size: 16),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'PRICES AND PAYMENT TERMS ARE SUBJECT TO CHANGE BY THE DEVELOPER. FINAL TERMS WILL BE OUTLINED IN THE SALES AND PURCHASE AGREEMENT (SPA).',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 9,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black.withOpacity(0.6),
+                      height: 1.5,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -495,7 +574,13 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _SectionHeader(title: 'AVAILABLE INVENTORY'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _SectionHeader(title: 'AVAILABLE INVENTORY'),
+              const _Badge(text: 'LIVE INVENTORY', isOutline: true),
+            ],
+          ),
           const SizedBox(height: 24),
           if (_inventory.isEmpty && !_isLoading)
             const _EmptyTabContent(message: 'Inventory data coming soon')
@@ -556,12 +641,12 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
                 opacity: 0.4,
               ),
             ),
-            child: Icon(LucideIcons.map, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.24), size: 40),
+            child: const Center(child: Icon(LucideIcons.map, color: Colors.black12, size: 40)),
           ),
           const SizedBox(height: 32),
-          const _LocationLandmark(icon: LucideIcons.plane, title: 'Mumbai International Airport', distance: '12.4 KM'),
-          const _LocationLandmark(icon: LucideIcons.train, title: 'Grant Road Railway Station', distance: '1.2 KM'),
-          const _LocationLandmark(icon: LucideIcons.building, title: 'Bandra-Kurla Complex (BKC)', distance: '8.5 KM'),
+          const _LocationLandmark(icon: LucideIcons.plane, title: 'Mumbai International Airport', distance: '12.4 KM • 15 MINS'),
+          const _LocationLandmark(icon: LucideIcons.train, title: 'Metro Station', distance: '1.2 KM • 5 MINS'),
+          const _LocationLandmark(icon: LucideIcons.building, title: 'City Mall', distance: '8.5 KM • 10 MINS'),
         ],
       ),
     );
@@ -579,6 +664,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
             ...((project['plans'] as List).map((plan) => _FloorPlanItem(
               plan: plan, 
               imageUrl: apiClient.resolveUrl(plan['image']?.toString()),
+              onLaunch: _launchAction,
             )).toList())
           else
             const _EmptyTabContent(message: 'Floor plans and layouts are being finalized'),
@@ -601,14 +687,61 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
     }
     final uniqueGallery = gallery.toSet().toList();
 
+    final allMedia = project?['media'] as List? ?? [];
+    
+    final List<dynamic> filteredMedia = allMedia.where((item) {
+      if (_mediaFilter == 'ALL') return true;
+      if (_mediaFilter == 'PHOTOS') return item['type'] == 'Image';
+      if (_mediaFilter == 'VIDEOS') return item['type'] == 'Video';
+      if (_mediaFilter == '3D') return item['type'] == '3D';
+      return true;
+    }).toList();
+
     return _buildTabContent(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _SectionHeader(title: 'PROJECT GALLERY'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _SectionHeader(title: 'PROJECT GALLERY'),
+              _Badge(text: '${filteredMedia.length} ITEMS', isOutline: true),
+            ],
+          ),
           const SizedBox(height: 24),
-          if (uniqueGallery.isEmpty)
-            const _EmptyTabContent(message: 'New photos and videos coming soon')
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                _FilterChip(
+                  label: 'ALL', 
+                  isActive: _mediaFilter == 'ALL', 
+                  onTap: () => setState(() => _mediaFilter = 'ALL'),
+                ),
+                const SizedBox(width: 12),
+                _FilterChip(
+                  label: 'PHOTOS', 
+                  isActive: _mediaFilter == 'PHOTOS', 
+                  onTap: () => setState(() => _mediaFilter = 'PHOTOS'),
+                ),
+                const SizedBox(width: 12),
+                _FilterChip(
+                  label: 'VIDEOS', 
+                  isActive: _mediaFilter == 'VIDEOS', 
+                  onTap: () => setState(() => _mediaFilter = 'VIDEOS'),
+                ),
+                const SizedBox(width: 12),
+                _FilterChip(
+                  label: '3D', 
+                  isActive: _mediaFilter == '3D', 
+                  onTap: () => setState(() => _mediaFilter = '3D'),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+          if (filteredMedia.isEmpty)
+            const _EmptyTabContent(message: 'No media items found for this category')
           else
             GridView.builder(
               shrinkWrap: true,
@@ -619,23 +752,42 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
                 crossAxisSpacing: 16,
                 childAspectRatio: 1,
               ),
-              itemCount: uniqueGallery.length,
+              itemCount: filteredMedia.length,
               itemBuilder: (context, index) {
-                return Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Image.network(
-                        apiClient.resolveUrl(uniqueGallery[index]), 
-                        fit: BoxFit.cover, height: double.infinity, width: double.infinity,
-                        errorBuilder: (context, error, stackTrace) => Container(
-                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
-                          child: Center(child: Icon(LucideIcons.image, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.24))),
+                final item = filteredMedia[index];
+                final url = item['url']?.toString() ?? '';
+                final type = item['type']?.toString().toUpperCase() ?? 'IMAGE';
+                
+                return GestureDetector(
+                  onTap: () => _showMediaLightbox(url, type),
+                  child: Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Image.network(
+                          apiClient.resolveUrl(url), 
+                          fit: BoxFit.cover, height: double.infinity, width: double.infinity,
+                          errorBuilder: (context, error, stackTrace) => Container(
+                            color: Colors.black.withOpacity(0.05),
+                            child: const Center(child: Icon(LucideIcons.image, color: Colors.black26)),
+                          ),
                         ),
                       ),
-                    ),
-                    const Positioned(top: 10, left: 10, child: _Badge(text: 'IMAGE', isOutline: true)),
-                  ],
+                      Positioned(
+                        top: 10, 
+                        left: 10, 
+                        child: _Badge(text: type, isOutline: true),
+                      ),
+                      if (type == 'VIDEO')
+                        Center(
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(color: Colors.white.withOpacity(0.6), shape: BoxShape.circle),
+                            child: const Icon(LucideIcons.play, color: Colors.black, size: 20),
+                          ),
+                        ),
+                    ],
+                  ),
                 );
               },
             ),
@@ -653,15 +805,66 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
           _SectionHeader(title: 'LEGAL & COMPLIANCE'),
           const SizedBox(height: 24),
           if (docs.isEmpty)
-              _DocumentItem(title: 'RERA Registration Certificate', size: '1.2 MB', type: 'LEGAL')
+              _DocumentItem(title: 'RERA Registration Certificate', size: '1.2 MB', type: 'LEGAL', onLaunch: _launchAction)
           else
             ...docs.map((doc) => _DocumentItem(
               title: doc['name'] ?? 'Document', 
               size: doc['size'] ?? 'N/A',
               type: doc['type'] ?? 'GENERAL',
+              onLaunch: _launchAction,
             )).toList(),
         ],
       ),
+    );
+  }
+
+  void _showMediaLightbox(String url, String type) {
+    final apiClient = ref.read(apiClientProvider);
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'Media',
+      pageBuilder: (context, anim1, anim2) => Scaffold(
+        backgroundColor: Colors.black,
+        body: Stack(
+          children: [
+            Center(
+              child: InteractiveViewer(
+                child: Image.network(apiClient.resolveUrl(url)),
+              ),
+            ),
+            Positioned(
+              top: 60,
+              right: 20,
+              child: GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), shape: BoxShape.circle),
+                  child: const Icon(LucideIcons.x, color: Colors.white, size: 20),
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 60,
+              left: 24,
+              right: 24,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _Badge(text: '${type.toUpperCase()} MODE', isOutline: true),
+                  const SizedBox(height: 12),
+                  const _Badge(text: 'VISUAL ASSET • HIGH RESOLUTION'),
+                  const SizedBox(height: 16),
+                  Text('ASSET PREVIEW', style: GoogleFonts.montserrat(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                  const SizedBox(height: 4),
+                  Text('Captured by M4 Creative Team', style: GoogleFonts.montserrat(color: Colors.white.withOpacity(0.4), fontSize: 10, fontWeight: FontWeight.bold)),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ).animate().fadeIn(),
     );
   }
 
@@ -695,18 +898,18 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
                 _BottomIconAction(icon: LucideIcons.messageSquare, onTap: () => SupportHandlers.launchWhatsApp(project?['phoneNumber'] ?? project?['phone'])),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: GestureDetector(
-                    onTap: () => _showInquiryDialog(project),
+                  child: _ScaleButton(
+                    onTap: () => _showRequestDetailsDialog(project, null),
                     child: Container(
                       height: 56,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Colors.black, // Premium Dark CTA to match web luxury feel
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Center(
                         child: Text(
-                          'INQUIRE NOW',
-                          style: GoogleFonts.montserrat(color: Colors.black, fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 2),
+                          'BOOK NOW',
+                          style: GoogleFonts.montserrat(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 2),
                         ),
                       ),
                     ),
@@ -720,7 +923,10 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
     );
   }
 
-  void _showInquiryDialog(dynamic project) {
+  void _showRequestDetailsDialog(dynamic project, dynamic? plan) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -728,42 +934,51 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
       builder: (context) => Container(
         padding: EdgeInsets.fromLTRB(24, 32, 24, MediaQuery.of(context).viewInsets.bottom + 32),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
+          color: theme.scaffoldBackgroundColor,
           borderRadius: const BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
+          boxShadow: [
+             BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 20,
+              offset: const Offset(0, -5),
+            )
+          ]
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('INTERESTED IN ${project?['title']?.toUpperCase() ?? 'PROJECT'}?', 
-              style: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface, fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 1)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('REQUEST DETAILS', 
+                  style: GoogleFonts.montserrat(color: theme.colorScheme.onSurface, fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Icon(LucideIcons.x, color: theme.colorScheme.onSurface.withOpacity(0.5), size: 20),
+                ),
+              ],
+            ),
             const SizedBox(height: 8),
-            Text('Share your details for a personalized presentation', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.38), fontSize: 12)),
-            const SizedBox(height: 24),
-            TextFormField(
-              controller: _nameController,
-              decoration: InputDecoration(
-                labelText: 'Full Name',
-                labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.38)),
-                filled: true,
-                fillColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.03),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
-              ),
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
-              controller: _phoneController,
-              decoration: InputDecoration(
-                labelText: 'Phone Number',
-                labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.38)),
-                filled: true,
-                fillColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.03),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
-              ),
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-            ),
-            const SizedBox(height: 24),
+            Text('INQUIRY FOR "${plan?['name']?.toString().toUpperCase() ?? 'SELECTED'}" PAYMENT PLAN', 
+              style: GoogleFonts.montserrat(color: theme.colorScheme.onSurface.withOpacity(0.5), fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 0.5)),
+            const SizedBox(height: 32),
+            
+            _buildFieldLabel('FULL NAME *', theme),
+            const SizedBox(height: 8),
+            _buildThemedField(_nameController, 'Your full name', theme),
+            const SizedBox(height: 20),
+            
+            _buildFieldLabel('PHONE NUMBER *', theme),
+            const SizedBox(height: 8),
+            _buildThemedField(_phoneController, '+971 50 XXX XXXX', theme),
+            const SizedBox(height: 20),
+            
+            _buildFieldLabel('EMAIL (OPTIONAL)', theme),
+            const SizedBox(height: 8),
+            _buildThemedField(_emailController, 'irfan12@gmail.com', theme),
+            
+            const SizedBox(height: 32),
             SizedBox(
               width: double.infinity,
               height: 56,
@@ -771,9 +986,10 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
                 onPressed: () async {
                   final name = _nameController.text;
                   final phone = _phoneController.text;
+                  final email = _emailController.text;
                   
                   if (name.isEmpty || phone.isEmpty) {
-                    _launchAction('Please fill in all details');
+                    _launchAction('Please fill in all required fields');
                     return;
                   }
 
@@ -781,31 +997,71 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
                     await ref.read(apiClientProvider).submitLead({
                       'name': name,
                       'phone': phone,
+                      'email': email,
                       'project': project?['title'] ?? 'General Inquiry',
                       'projectId': widget.projectId,
-                      'source': 'Mobile App'
+                      'paymentPlan': plan?['name'] ?? 'Custom Plan',
+                      'source': 'Mobile App Payment Plan'
                     });
                     
                     if (mounted) {
                       Navigator.pop(context);
                       _nameController.clear();
                       _phoneController.clear();
-                      _launchAction('Enquiry submitted successfully!');
+                      _emailController.clear();
+                      _launchAction('Inquiry submitted successfully!');
                     }
                   } catch (e) {
-                    _launchAction('Failed to submit enquiry. Please try again.');
+                    _launchAction('Failed to submit inquiry. Please try again.');
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: M4Theme.premiumBlue,
+                  backgroundColor: theme.colorScheme.onSurface,
+                  foregroundColor: theme.scaffoldBackgroundColor,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                  elevation: 0,
                 ),
-                child: Text('SUBMIT ENQUIRY', style: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onPrimary, fontWeight: FontWeight.bold, letterSpacing: 2)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('SUBMIT INQUIRY', style: GoogleFonts.montserrat(fontWeight: FontWeight.w900, letterSpacing: 2, fontSize: 13)),
+                    const SizedBox(width: 8),
+                    const Icon(LucideIcons.arrowUpRight, size: 16),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Center(
+              child: Text(
+                'OUR ADVISOR WILL CONTACT YOU WITHIN 24 HOURS',
+                style: GoogleFonts.montserrat(color: theme.colorScheme.onSurface.withOpacity(0.3), fontSize: 8, fontWeight: FontWeight.bold, letterSpacing: 0.5),
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildFieldLabel(String label, ThemeData theme) {
+    return Text(label, style: GoogleFonts.montserrat(color: theme.colorScheme.onSurface, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 0.5));
+  }
+
+  Widget _buildThemedField(TextEditingController controller, String hint, ThemeData theme) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.2), fontSize: 14),
+        filled: true,
+        fillColor: theme.colorScheme.onSurface.withOpacity(0.03),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide(color: theme.colorScheme.onSurface.withOpacity(0.1))),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide(color: theme.colorScheme.onSurface.withOpacity(0.1))),
+        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide(color: theme.colorScheme.onSurface)),
+      ),
+      style: TextStyle(color: theme.colorScheme.onSurface, fontSize: 14),
     );
   }
 
@@ -910,31 +1166,29 @@ class _OverviewPremiumCard extends StatelessWidget {
   });
 
   @override
+  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.6),
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: Colors.white.withOpacity(0.6)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: M4Theme.premiumBlue.withOpacity(0.05), borderRadius: BorderRadius.circular(10)),
-              child: Icon(icon, color: M4Theme.premiumBlue, size: 20),
-            ),
-            const SizedBox(height: 16),
-            Text(title, style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, color: Colors.black, letterSpacing: 1)),
-            const SizedBox(height: 4),
-            Text(subtitle, style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.black.withOpacity(0.4))),
-          ],
-        ),
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.6),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: Colors.white.withOpacity(0.6)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(color: M4Theme.premiumBlue.withOpacity(0.05), borderRadius: BorderRadius.circular(10)),
+            child: Icon(icon, color: M4Theme.premiumBlue, size: 20),
+          ),
+          const SizedBox(height: 16),
+          Text(title, style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, color: Colors.black, letterSpacing: 1)),
+          const SizedBox(height: 4),
+          Text(subtitle, style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.black.withOpacity(0.4))),
+        ],
       ),
     );
   }
@@ -947,7 +1201,7 @@ class _BottomIconAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return _ScaleButton(
       onTap: onTap,
       child: Container(
         width: 56,
@@ -1007,21 +1261,39 @@ class _LocationLandmark extends StatelessWidget {
 class _FloorPlanItem extends StatelessWidget {
   final dynamic plan;
   final String imageUrl;
-  const _FloorPlanItem({required this.plan, required this.imageUrl});
+  final Function(String, String?) onLaunch;
+  const _FloorPlanItem({required this.plan, required this.imageUrl, required this.onLaunch});
   @override
   Widget build(BuildContext context) {
-    return Container(
-       margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(color: Colors.black.withOpacity(0.04), borderRadius: BorderRadius.circular(24), border: Border.all(color: Colors.black.withOpacity(0.05))),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(borderRadius: BorderRadius.circular(16), child: Image.network(imageUrl, fit: BoxFit.cover, height: 200, width: double.infinity)),
-          const SizedBox(height: 16),
-          Text(plan['title'] ?? 'Floor Plan', style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black)),
-          Text(plan['area'] ?? '', style: GoogleFonts.montserrat(fontSize: 12, color: Colors.black.withOpacity(0.4))),
-        ],
+    return _ScaleButton(
+      onTap: () => onLaunch('Opening Floor Plan...', plan['fileUrl']),
+      child: Container(
+         margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(color: Colors.black.withOpacity(0.04), borderRadius: BorderRadius.circular(24), border: Border.all(color: Colors.black.withOpacity(0.05))),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(borderRadius: BorderRadius.circular(16), child: Image.network(imageUrl, fit: BoxFit.cover, height: 200, width: double.infinity,
+              errorBuilder: (context, error, stackTrace) => Container(height: 200, color: Colors.black.withOpacity(0.05), child: Center(child: Icon(LucideIcons.image, color: Colors.black.withOpacity(0.1)))))),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(plan['title'] ?? 'Floor Plan', style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black)),
+                      Text(plan['area'] ?? '', style: GoogleFonts.montserrat(fontSize: 12, color: Colors.black.withOpacity(0.4))),
+                    ],
+                  ),
+                ),
+                Icon(LucideIcons.download, color: Colors.black.withOpacity(0.24), size: 18),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1040,10 +1312,16 @@ class _PricingCard extends StatelessWidget {
   final String config;
   final String price;
   final String area;
-  const _PricingCard({required this.config, required this.price, required this.area});
+  final String currency;
+  const _PricingCard({required this.config, required this.price, required this.area, this.currency = 'AED'});
 
   @override
   Widget build(BuildContext context) {
+    // If price already contains a currency symbol, we don't need to prepend another one
+    final displayPrice = price.contains('₹') || price.contains('AED') || price.contains('\$') 
+        ? price 
+        : '$currency $price';
+
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -1056,8 +1334,13 @@ class _PricingCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(config.toUpperCase(), style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w900, color: Colors.black)),
-              const _Badge(text: 'BOOKING OPEN'),
+              Expanded(
+                child: Text(config.toUpperCase(), 
+                  style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w900, color: Colors.black),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              _Badge(text: 'BOOKING OPEN', isOutline: true),
             ],
           ),
           const SizedBox(height: 12),
@@ -1065,20 +1348,28 @@ class _PricingCard extends StatelessWidget {
           const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('STARTING FROM', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.black.withOpacity(0.38), letterSpacing: 1)),
-                  Text(price, style: GoogleFonts.montserrat(fontSize: 20, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue)),
-                ],
+              Expanded(
+                flex: 3,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('STARTING FROM', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.black.withOpacity(0.38), letterSpacing: 1)),
+                    Text(displayPrice, style: GoogleFonts.montserrat(fontSize: 18, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue)),
+                  ],
+                ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text('SBA RANGE', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.black.withOpacity(0.38), letterSpacing: 1)),
-                  Text(area, style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black.withOpacity(0.7))),
-                ],
+              const SizedBox(width: 8),
+              Expanded(
+                flex: 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text('SBA RANGE', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.black.withOpacity(0.38), letterSpacing: 1)),
+                    Text(area, textAlign: TextAlign.right, style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black.withOpacity(0.7))),
+                  ],
+                ),
               ),
             ],
           ),
@@ -1090,41 +1381,89 @@ class _PricingCard extends StatelessWidget {
 
 class _PaymentPlanCard extends StatelessWidget {
   final dynamic plan;
-  const _PaymentPlanCard({required this.plan});
+  final VoidCallback onRequestDetails;
+  const _PaymentPlanCard({required this.plan, required this.onRequestDetails});
 
   @override
   Widget build(BuildContext context) {
     final steps = plan['steps'] as List? ?? [];
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.04),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.black.withOpacity(0.05)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(plan['name']?.toString().toUpperCase() ?? 'PLAN', style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, color: Colors.black)),
-              _Badge(text: plan['status']?.toString().toUpperCase() ?? 'ACTIVE', isOutline: true),
-            ],
-          ),
-          const SizedBox(height: 20),
-          ...steps.map((step) => Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Row(
+    return _ScaleButton(
+      onTap: onRequestDetails,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.04),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: Colors.black.withOpacity(0.05)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(step['label']?.toString() ?? '', style: GoogleFonts.montserrat(fontSize: 11, color: Colors.black.withOpacity(0.4))),
-                Text(step['value']?.toString() ?? '', style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black)),
+                Text(plan['name']?.toString().toUpperCase() ?? 'PLAN', style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, color: Colors.black)),
+                _Badge(text: plan['status']?.toString().toUpperCase() ?? 'ACTIVE', isOutline: true),
               ],
             ),
-          )).toList(),
-        ],
+            const SizedBox(height: 20),
+            ...List.generate(steps.length, (index) {
+              final step = steps[index];
+              final isLast = index == steps.length - 1;
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
+                    children: [
+                      Container(
+                        width: 10,
+                        height: 10,
+                        decoration: const BoxDecoration(color: M4Theme.premiumBlue, shape: BoxShape.circle),
+                      ),
+                      if (!isLast)
+                        Container(
+                          width: 1,
+                          height: 30,
+                          color: M4Theme.premiumBlue.withOpacity(0.2),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(step['label']?.toString() ?? '', style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.black.withOpacity(0.6))),
+                          Text(step['value']?.toString() ?? '', style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: Colors.black)),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }),
+            const SizedBox(height: 24),
+            Container(
+              width: double.infinity,
+              height: 48,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('REQUEST DETAILS', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2, color: Colors.black)),
+                  const SizedBox(width: 8),
+                  const Icon(LucideIcons.arrowUpRight, size: 14, color: Colors.black),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1136,33 +1475,59 @@ class _InventoryItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.6),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withOpacity(0.6)),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    final currency = unit['currency'] ?? 'AED';
+    return _ScaleButton(
+      onTap: () {}, // TODO: Connect to booking/inquiry logic
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.6),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: Colors.white.withOpacity(0.6)),
+        ),
+        child: Column(
+          children: [
+            Row(
               children: [
-                Text('UNIT ${unit['unitNumber']}', style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w900, color: Colors.black)),
-                Text('${unit['type']} • ${unit['area']} SQFT', style: GoogleFonts.montserrat(fontSize: 11, color: Colors.black.withOpacity(0.38))),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(color: Colors.black.withOpacity(0.04), borderRadius: BorderRadius.circular(15)),
+                  child: const Icon(LucideIcons.home, color: Colors.black, size: 20),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('UNIT ${unit['unitNumber']}', style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w900, color: Colors.black)),
+                      Text('${unit['type']} • ${unit['area']} SQFT', style: GoogleFonts.montserrat(fontSize: 11, color: Colors.black.withOpacity(0.38), fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text('$currency ${unit['price']}', style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue)),
+                    Text('EXCL. TAXES', style: GoogleFonts.montserrat(fontSize: 8, color: Colors.black.withOpacity(0.24), fontWeight: FontWeight.bold, letterSpacing: 0.5)),
+                  ],
+                ),
               ],
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text('₹ ${unit['price']}', style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue)),
-              Text('EXCL. TAXES', style: TextStyle(fontSize: 8, color: Colors.black.withOpacity(0.24), fontWeight: FontWeight.bold)),
-            ],
-          ),
-        ],
+            const SizedBox(height: 16),
+            Container(
+              width: double.infinity,
+              height: 45,
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Center(
+                child: Text('BOOK NOW', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2, color: Colors.black)),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1175,6 +1540,7 @@ class _ConstructionUpdateCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final progress = double.tryParse(update['progress']?.toString() ?? '0') ?? 10.0;
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
       decoration: BoxDecoration(
@@ -1187,8 +1553,17 @@ class _ConstructionUpdateCard extends StatelessWidget {
         children: [
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-            child: Image.network(imageUrl, height: 180, width: double.infinity, fit: BoxFit.cover, 
-              errorBuilder: (context, error, stackTrace) => Container(height: 180, color: Colors.black.withOpacity(0.05), child: Center(child: Icon(LucideIcons.image, color: Colors.black.withOpacity(0.1))))),
+            child: Stack(
+              children: [
+                Image.network(imageUrl, height: 180, width: double.infinity, fit: BoxFit.cover, 
+                  errorBuilder: (context, error, stackTrace) => Container(height: 180, color: Colors.black.withOpacity(0.05), child: Center(child: Icon(LucideIcons.image, color: Colors.black.withOpacity(0.1))))),
+                Positioned(
+                  top: 15,
+                  right: 15,
+                  child: _Badge(text: '${progress.toInt()}% COMPLETE'),
+                ),
+              ],
+            ),
           ),
           Padding(
             padding: const EdgeInsets.all(20),
@@ -1198,12 +1573,37 @@ class _ConstructionUpdateCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(update['title']?.toString().toUpperCase() ?? 'UPDATE', style: GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w900, color: Colors.black)),
+                    Expanded(
+                      child: Text(
+                        update['title']?.toString().toUpperCase() ?? 'UPDATE', 
+                        style: GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w900, color: Colors.black),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
                     Text(update['date']?.toString() ?? '', style: GoogleFonts.montserrat(fontSize: 10, color: Colors.black.withOpacity(0.4))),
                   ],
                 ),
                 const SizedBox(height: 8),
                 Text(update['description'] ?? '', style: GoogleFonts.montserrat(fontSize: 11, color: Colors.black.withOpacity(0.6), height: 1.5)),
+                const SizedBox(height: 20),
+                // Progress Bar
+                Stack(
+                  children: [
+                    Container(
+                      height: 4,
+                      width: double.infinity,
+                      decoration: BoxDecoration(color: Colors.black.withOpacity(0.05), borderRadius: BorderRadius.circular(2)),
+                    ),
+                    FractionallySizedBox(
+                      widthFactor: progress / 100,
+                      child: Container(
+                        height: 4,
+                        decoration: BoxDecoration(color: M4Theme.premiumBlue, borderRadius: BorderRadius.circular(2)),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -1217,37 +1617,41 @@ class _DocumentItem extends StatelessWidget {
   final String title;
   final String size;
   final String type;
-  const _DocumentItem({required this.title, required this.size, required this.type});
+  final Function(String, String?) onLaunch;
+  const _DocumentItem({required this.title, required this.size, required this.type, required this.onLaunch});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.6),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.6)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(color: M4Theme.premiumBlue.withOpacity(0.05), borderRadius: BorderRadius.circular(10)),
-            child: const Icon(LucideIcons.fileText, color: M4Theme.premiumBlue, size: 18),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title.toUpperCase(), style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: Colors.black)),
-                Text('$type • $size', style: GoogleFonts.montserrat(fontSize: 9, color: Colors.black.withOpacity(0.4), fontWeight: FontWeight.bold)),
-              ],
+    return _ScaleButton(
+      onTap: () => onLaunch('Downloading Document...', null),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.6),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.white.withOpacity(0.6)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(color: M4Theme.premiumBlue.withOpacity(0.05), borderRadius: BorderRadius.circular(10)),
+              child: const Icon(LucideIcons.fileText, color: M4Theme.premiumBlue, size: 18),
             ),
-          ),
-          Icon(LucideIcons.download, color: Colors.black.withOpacity(0.24), size: 18),
-        ],
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title.toUpperCase(), style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: Colors.black)),
+                  Text('$type • $size', style: GoogleFonts.montserrat(fontSize: 9, color: Colors.black.withOpacity(0.4), fontWeight: FontWeight.bold)),
+                ],
+              ),
+            ),
+            Icon(LucideIcons.download, color: Colors.black.withOpacity(0.24), size: 18),
+          ],
+        ),
       ),
     );
   }
@@ -1269,4 +1673,115 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   }
   @override
   bool shouldRebuild(_SliverAppBarDelegate oldDelegate) => false;
+}
+
+class _FilterChip extends StatelessWidget {
+  final String label;
+  final bool isActive;
+  final VoidCallback onTap;
+
+  const _FilterChip({required this.label, required this.isActive, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isActive ? M4Theme.premiumBlue : Colors.black.withOpacity(0.04),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: isActive ? M4Theme.premiumBlue : Colors.black.withOpacity(0.05)),
+        ),
+        child: Text(
+          label,
+          style: GoogleFonts.montserrat(
+            fontSize: 9,
+            fontWeight: FontWeight.w900,
+            color: isActive ? Colors.white : Colors.black.withOpacity(0.4),
+            letterSpacing: 1.0,
+          ),
+        ),
+      ).animate(target: isActive ? 1 : 0).scale(duration: 100.ms, end: const Offset(0.95, 0.95)),
+    );
+  }
+}
+
+class _TopIconButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+  final Color color;
+
+  const _TopIconButton({required this.icon, required this.onTap, this.color = Colors.black});
+
+  @override
+  Widget build(BuildContext context) {
+    return _ScaleButton(
+      onTap: onTap,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(15),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.8),
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(color: Colors.black.withOpacity(0.05)),
+            ),
+            child: Icon(icon, color: color, size: 20),
+          ),
+        ),
+      ),
+    );
+  }
+}
+class _ScaleButton extends StatefulWidget {
+  final Widget child;
+  final VoidCallback onTap;
+  const _ScaleButton({required this.child, required this.onTap});
+
+  @override
+  State<_ScaleButton> createState() => _ScaleButtonState();
+}
+
+class _ScaleButtonState extends State<_ScaleButton> {
+  bool _isPressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => setState(() => _isPressed = true),
+      onTapUp: (_) => setState(() => _isPressed = false),
+      onTapCancel: () => setState(() => _isPressed = false),
+      onTap: widget.onTap,
+      child: AnimatedScale(
+        scale: _isPressed ? 0.95 : 1.0,
+        duration: const Duration(milliseconds: 100),
+        child: widget.child,
+      ),
+    );
+  }
+}
+
+class _SocialIconButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+  const _SocialIconButton({required this.icon, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return _ScaleButton(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(0.04),
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: Colors.black.withOpacity(0.05)),
+        ),
+        child: Icon(icon, color: Colors.black, size: 20),
+      ),
+    );
+  }
 }
