@@ -398,15 +398,6 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
             childAspectRatio: 1.1,
             children: [
               _ScaleButton(
-                onTap: () => _launchAction('3D View coming soon', project?['view3dUrl']),
-                child: _OverviewPremiumCard(
-                  icon: LucideIcons.box, 
-                  title: '3D VIEW', 
-                  subtitle: 'Interactive Model',
-                  onTap: () {}, // Handled by wrapper
-                ),
-              ),
-              _ScaleButton(
                 onTap: () => _launchAction('VR Tour being prepared', project?['vrTourUrl']),
                 child: _OverviewPremiumCard(
                   icon: LucideIcons.glasses, 
@@ -693,7 +684,6 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
       if (_mediaFilter == 'ALL') return true;
       if (_mediaFilter == 'PHOTOS') return item['type'] == 'Image';
       if (_mediaFilter == 'VIDEOS') return item['type'] == 'Video';
-      if (_mediaFilter == '3D') return item['type'] == '3D';
       return true;
     }).toList();
 
@@ -729,12 +719,6 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
                   label: 'VIDEOS', 
                   isActive: _mediaFilter == 'VIDEOS', 
                   onTap: () => setState(() => _mediaFilter = 'VIDEOS'),
-                ),
-                const SizedBox(width: 12),
-                _FilterChip(
-                  label: '3D', 
-                  isActive: _mediaFilter == '3D', 
-                  onTap: () => setState(() => _mediaFilter = '3D'),
                 ),
               ],
             ),
