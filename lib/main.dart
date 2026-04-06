@@ -4,6 +4,13 @@ import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:go_router/go_router.dart';
 import 'package:m4_mobile/presentation/screens/auth/login_screen.dart';
 import 'package:m4_mobile/presentation/screens/auth/onboarding_screen.dart';
+import 'package:m4_mobile/presentation/screens/profile/profile_settings_screen.dart';
+import 'package:m4_mobile/presentation/screens/profile/referral_screen.dart';
+import 'package:m4_mobile/presentation/screens/support/schedule_visit_screen.dart';
+import 'package:m4_mobile/presentation/screens/support/support_logs_screen.dart';
+import 'package:m4_mobile/presentation/screens/support/support_screen.dart';
+import 'package:m4_mobile/presentation/screens/profile/my_property_screen.dart';
+import 'package:m4_mobile/presentation/screens/profile/legal_vault_screen.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 
 import 'package:m4_mobile/core/providers/theme_provider.dart';
@@ -47,7 +54,7 @@ class M4FamilyApp extends ConsumerWidget {
 
 // Basic router configuration
 final GoRouter _router = GoRouter(
-  initialLocation: '/home',
+  initialLocation: '/onboarding',
   routes: [
     GoRoute(
       path: '/onboarding',
@@ -64,6 +71,38 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/home',
       builder: (context, state) => const MainShell(),
+    ),
+    GoRoute(
+      path: '/profile/settings',
+      builder: (context, state) => const ProfileSettingsScreen(),
+    ),
+    GoRoute(
+      path: '/profile/referral',
+      builder: (context, state) => const ReferralScreen(),
+    ),
+    GoRoute(
+      path: '/support/schedule-visit',
+      builder: (context, state) => const ScheduleVisitScreen(),
+    ),
+    GoRoute(
+      path: '/support/logs',
+      builder: (context, state) => const SupportLogsScreen(initialIndex: 0),
+    ),
+    GoRoute(
+      path: '/support/documents',
+      builder: (context, state) => const SupportLogsScreen(initialIndex: 1),
+    ),
+    GoRoute(
+      path: '/profile/my-property',
+      builder: (context, state) => const MyPropertyScreen(),
+    ),
+    GoRoute(
+      path: '/profile/legal-vault',
+      builder: (context, state) => const LegalVaultScreen(),
+    ),
+    GoRoute(
+      path: '/support',
+      builder: (context, state) => const SupportScreen(),
     ),
   ],
 );

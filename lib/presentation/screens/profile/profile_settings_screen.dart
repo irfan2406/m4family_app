@@ -9,6 +9,7 @@ import 'dart:ui';
 import 'package:image_picker/image_picker.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
+import 'package:m4_mobile/core/providers/theme_provider.dart';
 
 class ProfileSettingsScreen extends ConsumerStatefulWidget {
   const ProfileSettingsScreen({super.key});
@@ -18,362 +19,386 @@ class ProfileSettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
-  late TextEditingController _firstNameController;
-  late TextEditingController _lastNameController;
+  late TextEditingController _nameController;
   late TextEditingController _emailController;
   late TextEditingController _phoneController;
+  late TextEditingController _dobController;
   late TextEditingController _addressController;
-  late DateTime? _dob;
-  
-  List<Map<String, dynamic>> _familyMembers = [];
-  bool _isEditing = false;
+  late TextEditingController _panController;
+  late TextEditingController _aadharController;
+
+  bool _pushNotifications = true;
+  bool _emailUpdates = true;
+  bool _smsAlerts = true;
   bool _isSaving = false;
-  File? _pickedImage;
-  final _picker = ImagePicker();
+  bool _isEditing = false;
+  DateTime? _selectedDob;
+  List<Map<String, dynamic>> _familyMembers = [];
 
   @override
   void initState() {
     super.initState();
+    _loadUserData();
+  }
+
+  void _loadUserData() {
     final user = ref.read(authProvider).user;
-    _firstNameController = TextEditingController(text: user?['firstName'] ?? '');
-    _lastNameController = TextEditingController(text: user?['lastName'] ?? '');
+    final ownerDetails = _normalizeOwnerDetails(user?['ownerDetails']);
+    
+    _nameController = TextEditingController(text: user?['fullName'] ?? '${user?['firstName'] ?? ''} ${user?['lastName'] ?? ''}'.trim());
     _emailController = TextEditingController(text: user?['email'] ?? '');
     _phoneController = TextEditingController(text: user?['phone'] ?? '');
     _addressController = TextEditingController(text: user?['address'] ?? '');
-    _dob = user?['dob'] != null ? DateTime.parse(user?['dob']) : null;
+    _panController = TextEditingController(text: ownerDetails['PAN'] ?? '');
+    _aadharController = TextEditingController(text: ownerDetails['AADHAR'] ?? '');
     
-    if (user?['familyDetails'] != null && user?['familyDetails'] is List) {
-      _familyMembers = List<Map<String, dynamic>>.from(user!['familyDetails']);
+    if (user?['dob'] != null) {
+      try {
+        _selectedDob = DateTime.parse(user?['dob']);
+        _dobController = TextEditingController(text: DateFormat('yyyy-MM-dd').format(_selectedDob!));
+      } catch (e) {
+        _dobController = TextEditingController(text: user?['dob'] ?? '');
+      }
+    } else {
+      _dobController = TextEditingController();
     }
+
+    _pushNotifications = user?['pushNotifications'] ?? true;
+    _emailUpdates = user?['emailUpdates'] ?? true;
+    _smsAlerts = user?['smsAlerts'] ?? true;
+    
+    _familyMembers = List<Map<String, dynamic>>.from(user?['familyMembers'] ?? user?['familyDetails'] ?? []);
+  }
+
+  Map<String, String> _normalizeOwnerDetails(dynamic raw) {
+    if (raw == null || raw is! Map) return {'PAN': '', 'AADHAR': ''};
+    final map = Map<String, dynamic>.from(raw);
+    return {
+      'PAN': map['PAN']?.toString() ?? map['pan']?.toString() ?? '',
+      'AADHAR': map['AADHAR']?.toString() ?? map['aadhaar']?.toString() ?? map['aadhar']?.toString() ?? '',
+    };
   }
 
   @override
   void dispose() {
-    _firstNameController.dispose();
-    _lastNameController.dispose();
+    _nameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
+    _dobController.dispose();
     _addressController.dispose();
+    _panController.dispose();
+    _aadharController.dispose();
     super.dispose();
   }
 
-  Future<void> _pickImage() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
+  Future<void> _selectDate() async {
+    if (!_isEditing) return;
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDob ?? DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+      builder: (context, child) => Theme(
+        data: Theme.of(context).copyWith(
+          colorScheme: const ColorScheme.dark(
+            primary: Colors.white,
+            onPrimary: Colors.black,
+            surface: Color(0xFF18181B),
+            onSurface: Colors.white,
+          ),
+        ),
+        child: child!,
+      ),
+    );
+    if (picked != null) {
       setState(() {
-        _pickedImage = File(image.path);
+        _selectedDob = picked;
+        _dobController.text = DateFormat('yyyy-MM-dd').format(picked);
       });
     }
   }
 
-  Future<void> _saveProfile() async {
+  Future<void> _handleSave() async {
     setState(() => _isSaving = true);
     try {
-      final apiClient = ref.read(apiClientProvider);
-      
-      // 1. Upload Avatar if picked
-      String? avatarUrl;
-      if (_pickedImage != null) {
-        final response = await apiClient.uploadAvatar(_pickedImage!.path);
-        if (response.data['status'] == true) {
-          avatarUrl = response.data['data']['url'];
-        }
-      }
+      final nameParts = _nameController.text.trim().split(" ");
+      final firstName = nameParts[0];
+      final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(" ") : "";
 
-      // 2. Update Profile
-      final Map<String, dynamic> updateData = {
-        'firstName': _firstNameController.text,
-        'lastName': _lastNameController.text,
+      final updateData = {
+        'firstName': firstName,
+        'lastName': lastName,
         'email': _emailController.text,
+        'phone': _phoneController.text,
         'address': _addressController.text,
-        'dob': _dob?.toIso8601String(),
+        'dob': _selectedDob?.toIso8601String(),
         'familyDetails': _familyMembers,
+        'familyMembers': _familyMembers,
+        'ownerDetails': {
+          'PAN': _panController.text,
+          'AADHAR': _aadharController.text,
+        },
+        'pushNotifications': _pushNotifications,
+        'emailUpdates': _emailUpdates,
+        'smsAlerts': _smsAlerts,
       };
       
-      if (avatarUrl != null) updateData['avatarUrl'] = avatarUrl;
-
-      await apiClient.updateMe(updateData);
-      
-      // 3. Refresh Auth State
-      await ref.read(authProvider.notifier).fetchMe();
-
-      if (mounted) {
-        setState(() {
-          _isEditing = false;
-          _isSaving = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Profile updated successfully!'), backgroundColor: Colors.green),
-        );
+      final res = await ref.read(apiClientProvider).updateMe(updateData);
+      if (res.data['status'] == true) {
+        await ref.read(authProvider.notifier).fetchMe();
+        setState(() => _isEditing = false);
       }
     } catch (e) {
-      if (mounted) {
-        setState(() => _isSaving = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to update profile: $e')),
-        );
-      }
+      // Handle error
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(authProvider).user;
-    final String currentAvatarUrl = user?['avatarUrl'] ?? '';
-
+    final themeMode = ref.watch(themeProvider);
+    final isDark = themeMode == ThemeMode.dark;
+    
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: Container(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        child: SafeArea(
-          child: Column(
-            children: [
-              _buildHeader(),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 20),
-                      _buildAvatarSection(currentAvatarUrl),
-                      const SizedBox(height: 40),
-                      _buildFormSection(),
-                      const SizedBox(height: 30),
-                      _buildFamilySection(),
-                      const SizedBox(height: 40),
-                      _buildSecurityActions(),
-                      const SizedBox(height: 100),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: Icon(LucideIcons.chevronLeft, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
-              ),
-              const SizedBox(width: 4),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'SETTINGS',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w300,
-                      color: Theme.of(context).colorScheme.onSurface,
-                      letterSpacing: 2,
-                    ),
-                  ),
-                  Text(
-                    'MANAGE ACCOUNT',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 9,
-                      fontWeight: FontWeight.w900,
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                      letterSpacing: 4,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          IconButton(
-            onPressed: () {
-              if (_isEditing) {
-                _saveProfile();
-              } else {
-                setState(() => _isEditing = true);
-              }
-            },
-            icon: _isSaving 
-              ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Theme.of(context).colorScheme.onSurface))
-              : Icon(_isEditing ? LucideIcons.check : LucideIcons.pencil, 
-                     color: _isEditing ? Colors.greenAccent : Theme.of(context).colorScheme.onSurface.withOpacity(0.7), size: 20),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAvatarSection(String currentAvatarUrl) {
-    final String initial = _firstNameController.text.isNotEmpty ? _firstNameController.text[0] : 'U';
-
-    return Center(
-      child: Stack(
-        alignment: Alignment.bottomRight,
-        children: [
-          Container(
-            width: 130,
-            height: 130,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black).withOpacity(0.08), width: 4),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 30,
-                ),
-              ],
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(65),
-              child: _pickedImage != null 
-                ? Image.file(_pickedImage!, fit: BoxFit.cover)
-                : currentAvatarUrl.isNotEmpty
-                  ? Image.network(ref.read(apiClientProvider).resolveUrl(currentAvatarUrl), fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
-                        color: Colors.black.withOpacity(0.05),
-                        child: const Center(child: Icon(LucideIcons.user, color: Colors.black12, size: 40)),
-                      ),
-                    )
-                  : Container(
-                      color: (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black).withOpacity(0.03),
-                      child: Center(
-                        child: Text(
-                          initial.toUpperCase(),
-                          style: GoogleFonts.montserrat(
-                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.12),
-                            fontSize: 48,
-                            fontWeight: FontWeight.w300,
-                          ),
-                        ),
-                      ),
-                    ),
-            ),
-          ),
-          if (_isEditing)
-            GestureDetector(
-              onTap: _pickImage,
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(LucideIcons.camera, color: Colors.black, size: 18),
-              ),
-            ),
-        ],
-      ),
-    ).animate().scale(delay: 200.ms);
-  }
-
-  Widget _buildFormSection() {
-    return Column(
-      children: [
-        _buildGlassField('First Name', _firstNameController, LucideIcons.user),
-        const SizedBox(height: 20),
-        _buildGlassField('Last Name', _lastNameController, LucideIcons.user),
-        const SizedBox(height: 20),
-        _buildGlassField('Email Address', _emailController, LucideIcons.mail, enabled: _isEditing),
-        const SizedBox(height: 20),
-        _buildGlassField('Phone Number', _phoneController, LucideIcons.phone, enabled: false), // Phone usually fixed to account
-        const SizedBox(height: 20),
-        _buildDatePickerField(),
-        const SizedBox(height: 20),
-        _buildGlassField('Current Address', _addressController, LucideIcons.mapPin, maxLines: 3),
-      ],
-    );
-  }
-
-  Widget _buildGlassField(String label, TextEditingController controller, IconData icon, {bool enabled = true, int maxLines = 1}) {
-    final bool canEdit = _isEditing && enabled;
-    
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      decoration: BoxDecoration(
-        color: (isDark ? Colors.white : Colors.black).withOpacity(0.02),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(canEdit ? 0.1 : 0.04)),
-      ),
-      child: TextField(
-        controller: controller,
-        enabled: canEdit,
-        maxLines: maxLines,
-        style: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface, fontSize: 14),
-        decoration: InputDecoration(
-          labelText: label.toUpperCase(),
-          labelStyle: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3), fontSize: 10, fontWeight: FontWeight.w800),
-          prefixIcon: Icon(icon, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2), size: 18),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-          floatingLabelBehavior: FloatingLabelBehavior.always,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDatePickerField() {
-    final String dateStr = _dob != null ? DateFormat('MMM dd, yyyy').format(_dob!) : 'NOT PROVIDED';
-    
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return GestureDetector(
-      onTap: _isEditing ? () async {
-        final date = await showDatePicker(
-          context: context,
-          initialDate: _dob ?? DateTime.now(),
-          firstDate: DateTime(1900),
-          lastDate: DateTime.now(),
-          builder: (context, child) => Theme(
-            data: Theme.of(context).copyWith(
-              colorScheme: Theme.of(context).colorScheme.copyWith(
-                primary: Theme.of(context).colorScheme.onSurface,
-                onPrimary: Theme.of(context).colorScheme.surface,
-              ),
-            ),
-            child: child!,
-          ),
-        );
-        if (date != null) setState(() => _dob = date);
-      } : null,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-        decoration: BoxDecoration(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.02),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(_isEditing ? 0.1 : 0.04)),
-        ),
-        child: Row(
+      backgroundColor: isDark ? const Color(0xFF09090B) : const Color(0xFFF8FAFC),
+      body: SafeArea(
+        child: Column(
           children: [
-            const Icon(LucideIcons.calendar, color: Colors.white24, size: 18),
-            const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'DATE OF BIRTH',
-                  style: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3), fontSize: 10, fontWeight: FontWeight.w800),
+            _buildHeader(isDark),
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildField("FULL NAME", _nameController, isDark, enabled: _isEditing),
+                    const SizedBox(height: 24),
+                    _buildField("EMAIL ADDRESS", _emailController, isDark, enabled: _isEditing),
+                    const SizedBox(height: 24),
+                    _buildField("PHONE NUMBER", _phoneController, isDark, enabled: _isEditing),
+                    const SizedBox(height: 24),
+                    _buildDateField("DATE OF BIRTH", _dobController, isDark),
+                    const SizedBox(height: 24),
+                    _buildField("CURRENT ADDRESS", _addressController, isDark, enabled: _isEditing),
+                    const SizedBox(height: 24),
+                    _buildField("PAN", _panController, isDark, enabled: _isEditing),
+                    const SizedBox(height: 24),
+                    _buildField("AADHAAR", _aadharController, isDark, enabled: _isEditing),
+                    const SizedBox(height: 40),
+                    _buildNotificationPreferences(isDark),
+                    const SizedBox(height: 32),
+                    _buildFamilyDetailsSection(isDark),
+                    const SizedBox(height: 32),
+                    _buildAccountManagement(isDark),
+                    const SizedBox(height: 100),
+                  ],
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  dateStr.toUpperCase(),
-                  style: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface, fontSize: 14),
-                ),
-              ],
+              ),
             ),
           ],
         ),
       ),
+      bottomNavigationBar: _isSaving ? LinearProgressIndicator(minHeight: 2, backgroundColor: Colors.transparent, color: isDark ? Colors.white24 : Colors.black26) : null,
     );
   }
 
-  Widget _buildFamilySection() {
+  Widget _buildHeader(bool isDark) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Row(
+        children: [
+          _IconButton(
+            icon: LucideIcons.chevronLeft,
+            isDark: isDark,
+            onTap: () => Navigator.pop(context),
+          ),
+          Expanded(
+            child: Center(
+              child: Text(
+                'SETTINGS',
+                style: GoogleFonts.montserrat(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w800,
+                  color: isDark ? Colors.white : Colors.black,
+                  letterSpacing: 2,
+                ),
+              ),
+            ),
+          ),
+          if (!_isEditing)
+            _IconButton(
+              icon: LucideIcons.edit2,
+              isDark: isDark,
+              onTap: () => setState(() => _isEditing = true),
+            )
+          else
+            TextButton(
+              onPressed: _handleSave,
+              style: TextButton.styleFrom(
+                backgroundColor: isDark ? Colors.white : Colors.black,
+                foregroundColor: isDark ? Colors.black : Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              child: Text(
+                'SAVE',
+                style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildField(String label, TextEditingController controller, bool isDark, {bool enabled = true}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 8),
+          child: Text(
+            label,
+            style: GoogleFonts.montserrat(
+              fontSize: 8,
+              fontWeight: FontWeight.w800,
+              color: isDark ? Colors.white38 : Colors.black38,
+              letterSpacing: 1,
+            ),
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF18181B) : Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+            boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))],
+          ),
+          child: TextField(
+            controller: controller,
+            enabled: enabled,
+            style: GoogleFonts.montserrat(
+              fontSize: 12,
+              fontWeight: FontWeight.w800,
+              color: enabled ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white24 : Colors.black26),
+            ),
+            decoration: const InputDecoration(
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDateField(String label, TextEditingController controller, bool isDark) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 8),
+          child: Text(
+            label,
+            style: GoogleFonts.montserrat(
+              fontSize: 8,
+              fontWeight: FontWeight.w800,
+              color: isDark ? Colors.white38 : Colors.black38,
+              letterSpacing: 1,
+            ),
+          ),
+        ),
+        GestureDetector(
+          onTap: _selectDate,
+          child: Container(
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF18181B) : Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+              boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))],
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                    child: Text(
+                      controller.text.isEmpty ? "SELECT DATE" : controller.text,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                        color: _isEditing ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white24 : Colors.black26),
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 20),
+                  child: Icon(LucideIcons.calendar, color: isDark ? Colors.white38 : Colors.black38, size: 16),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNotificationPreferences(bool isDark) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "NOTIFICATION PREFERENCES",
+          style: GoogleFonts.montserrat(
+            fontSize: 9,
+            fontWeight: FontWeight.w800,
+            color: isDark ? Colors.white38 : Colors.black38,
+            letterSpacing: 1.5,
+          ),
+        ),
+        const SizedBox(height: 16),
+        _buildToggleTile("PUSH NOTIFICATIONS", "RECEIVE ALERTS ON YOUR DEVICE", _pushNotifications, isDark, (val) => setState(() => _pushNotifications = val)),
+        const SizedBox(height: 12),
+        _buildToggleTile("EMAIL UPDATES", "PROPERTY NEWS AND OFFERS", _emailUpdates, isDark, (val) => setState(() => _emailUpdates = val)),
+        const SizedBox(height: 12),
+        _buildToggleTile("SMS ALERTS", "PAYMENT AND BOOKING UPDATES", _smsAlerts, isDark, (val) => setState(() => _smsAlerts = val)),
+      ],
+    );
+  }
+
+  Widget _buildToggleTile(String title, String subtitle, bool value, bool isDark, Function(bool) onChanged) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF18181B) : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w800, color: isDark ? Colors.white : Colors.black)),
+                Text(subtitle, style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w700, color: isDark ? Colors.white38 : Colors.black38)),
+              ],
+            ),
+          ),
+          Switch(
+            value: value,
+            onChanged: _isEditing ? onChanged : null,
+            activeColor: isDark ? Colors.white : Colors.black,
+            activeTrackColor: isDark ? Colors.white24 : Colors.black12,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFamilyDetailsSection(bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -382,200 +407,190 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           children: [
             Text(
               'FAMILY DETAILS',
-              style: GoogleFonts.montserrat(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
-                fontSize: 10,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 2,
-              ),
+              style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w800, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1.5),
             ),
             if (_isEditing)
-              IconButton(
+              TextButton(
                 onPressed: _addFamilyMember,
-                icon: Icon(LucideIcons.plusCircle, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7), size: 20),
+                child: Text('ADD MEMBER', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w800, color: Colors.blue)),
               ),
           ],
         ),
-        const SizedBox(height: 15),
-        ..._familyMembers.map((member) => _buildFamilyMemberItem(member)).toList(),
+        const SizedBox(height: 12),
+        if (_familyMembers.isEmpty)
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1), style: BorderStyle.solid), // Should be dashed if possible
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Center(child: Text("NO FAMILY MEMBERS REGISTERED", style: GoogleFonts.montserrat(fontSize: 10, color: isDark ? Colors.white24 : Colors.black26))),
+          )
+        else
+          ..._familyMembers.map((member) => _buildFamilyMemberCard(member, isDark)).toList(),
       ],
     );
   }
 
-  Widget _buildFamilyMemberItem(Map<String, dynamic> member) {
-    final int index = _familyMembers.indexOf(member);
-    
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+  Widget _buildFamilyMemberCard(Map<String, dynamic> member, bool isDark) {
+    final index = _familyMembers.indexOf(member);
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(15),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.white : Colors.black).withOpacity(0.02),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.04)),
+        color: isDark ? const Color(0xFF18181B) : Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
       ),
-      child: Row(
+      child: Column(
         children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(LucideIcons.users, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), size: 18),
+          Row(
+            children: [
+              Expanded(child: _buildFamilyField("NAME", member['name'] ?? '', isDark, (val) => setState(() => _familyMembers[index]['name'] = val))),
+              const SizedBox(width: 12),
+              Expanded(child: _buildFamilyRelationDropdown(member['relation'] ?? '', isDark, (val) => setState(() => _familyMembers[index]['relation'] = val))),
+            ],
           ),
-          const SizedBox(width: 15),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  (member['name'] ?? 'MEMBER').toString().toUpperCase(),
-                  style: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface, fontSize: 13, fontWeight: FontWeight.w800),
-                ),
-                Text(
-                  (member['relation'] ?? 'Relation').toString().toUpperCase(),
-                  style: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4), fontSize: 10, fontWeight: FontWeight.w600),
-                ),
-              ],
-            ),
-          ),
+          const SizedBox(height: 12),
+          _buildFamilyDateField("DATE OF BIRTH", member['dob'] ?? '', isDark, (val) => setState(() => _familyMembers[index]['dob'] = val)),
           if (_isEditing)
-            IconButton(
-              onPressed: () => setState(() => _familyMembers.removeAt(index)),
-              icon: const Icon(LucideIcons.trash2, color: Colors.redAccent, size: 16),
+            Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                icon: const Icon(LucideIcons.x, color: Colors.redAccent, size: 16),
+                onPressed: () => setState(() => _familyMembers.removeAt(index)),
+              ),
             ),
         ],
       ),
+    );
+  }
+
+  Widget _buildFamilyField(String label, String value, bool isDark, Function(String) onChanged) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w800, color: isDark ? Colors.white38 : Colors.black38)),
+        const SizedBox(height: 4),
+        TextField(
+          controller: TextEditingController(text: value)..selection = TextSelection.collapsed(offset: value.length),
+          enabled: _isEditing,
+          onChanged: onChanged,
+          style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black),
+          decoration: InputDecoration(
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+            filled: true,
+            fillColor: isDark ? Colors.white.withOpacity(0.02) : Colors.black.withOpacity(0.02),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFamilyRelationDropdown(String value, bool isDark, Function(String?) onChanged) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("RELATION", style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w800, color: isDark ? Colors.white38 : Colors.black38)),
+        const SizedBox(height: 4),
+        DropdownButtonFormField<String>(
+          value: ['Spouse', 'Son', 'Daughter', 'Parent'].contains(value) ? value : null,
+          items: ['Spouse', 'Son', 'Daughter', 'Parent'].map((e) => DropdownMenuItem(value: e, child: Text(e, style: const TextStyle(fontSize: 10)))).toList(),
+          onChanged: _isEditing ? onChanged : null,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+            filled: true,
+            fillColor: isDark ? Colors.white.withOpacity(0.02) : Colors.black.withOpacity(0.02),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+          ),
+          dropdownColor: isDark ? const Color(0xFF18181B) : Colors.white,
+          style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFamilyDateField(String label, String value, bool isDark, Function(String) onChanged) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w800, color: isDark ? Colors.white38 : Colors.black38)),
+        const SizedBox(height: 4),
+        GestureDetector(
+          onTap: () async {
+            if (!_isEditing) return;
+            final date = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(1900), lastDate: DateTime.now());
+            if (date != null) onChanged(DateFormat('yyyy-MM-dd').format(date));
+          },
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            decoration: BoxDecoration(
+              color: isDark ? Colors.white.withOpacity(0.02) : Colors.black.withOpacity(0.02),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(value.isEmpty ? "SELECT DATE" : value, style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black)),
+          ),
+        ),
+      ],
     );
   }
 
   void _addFamilyMember() {
-    final nameCtrl = TextEditingController();
-    String relation = 'Spouse';
-
-    showDialog(
-      context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          title: Text('ADD FAMILY MEMBER', 
-                style: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface, fontSize: 14, fontWeight: FontWeight.w900)),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameCtrl,
-                style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-                decoration: InputDecoration(
-                  labelText: 'Name', 
-                  labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4)),
-                  enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1))),
-                ),
-              ),
-              const SizedBox(height: 20),
-              DropdownButtonFormField<String>(
-                value: relation,
-                dropdownColor: Theme.of(context).scaffoldBackgroundColor,
-                style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-                decoration: InputDecoration(
-                  labelText: 'Relation', 
-                  labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4)),
-                  enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1))),
-                ),
-                items: ['Spouse', 'Son', 'Daughter', 'Parent', 'Other']
-                    .map((r) => DropdownMenuItem(value: r, child: Text(r)))
-                    .toList(),
-                onChanged: (val) => setDialogState(() => relation = val!),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.pop(context), child: const Text('CANCEL')),
-            TextButton(
-              onPressed: () {
-                if (nameCtrl.text.isNotEmpty) {
-                  setState(() {
-                    _familyMembers.add({'name': nameCtrl.text, 'relation': relation});
-                  });
-                  Navigator.pop(context);
-                }
-              },
-              child: const Text('ADD'),
-            ),
-          ],
-        ),
-      ),
-    );
+    setState(() {
+      _familyMembers.add({'name': '', 'relation': 'Spouse', 'dob': ''});
+    });
   }
 
-  Widget _buildSecurityActions() {
+  Widget _buildAccountManagement(bool isDark) {
     return Column(
       children: [
-        _buildActionButton(LucideIcons.lock, 'UPDATE SECURITY PASSWORD', Theme.of(context).colorScheme.onSurface, () {}),
-        const SizedBox(height: 15),
-        _buildActionButton(LucideIcons.userX, 'DEACTIVATE ACCOUNT', Colors.redAccent, _showDeactivateDialog),
+        _buildActionButton("UPDATE SECURITY PASSWORD", LucideIcons.shieldCheck, isDark, () {}),
+        const SizedBox(height: 12),
+        _buildActionButton("DEACTIVATE ACCOUNT", LucideIcons.userX, isDark, () {}, isDestructive: true),
       ],
     );
   }
 
-  Widget _buildActionButton(IconData icon, String label, Color color, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.05),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: color.withOpacity(0.1)),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: color.withOpacity(0.7), size: 18),
-            const SizedBox(width: 15),
-            Text(
-              label,
-              style: GoogleFonts.montserrat(
-                color: color,
-                fontSize: 11,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 1,
-              ),
-            ),
-          ],
+  Widget _buildActionButton(String label, IconData icon, bool isDark, VoidCallback onTap, {bool isDestructive = false}) {
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: onTap,
+        icon: Icon(icon, size: 16),
+        label: Text(label, style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
+        style: OutlinedButton.styleFrom(
+          foregroundColor: isDestructive ? Colors.redAccent.withOpacity(0.6) : (isDark ? Colors.white38 : Colors.black38),
+          side: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          backgroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
         ),
       ),
     );
   }
+}
 
-  void _showDeactivateDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        title: Text('DEACTIVATE ACCOUNT', style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-        content: Text('Are you sure you want to deactivate your account? This action cannot be undone.', 
-                 style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7))),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('CANCEL')),
-          TextButton(
-            onPressed: () async {
-              try {
-                await ref.read(apiClientProvider).deleteMe();
-                // Logout and navigate home
-                await ref.read(authProvider.notifier).logout();
-                if (mounted) {
-                   Navigator.of(context).popUntil((route) => route.isFirst);
-                }
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
-              }
-            },
-            child: const Text('DEACTIVATE', style: TextStyle(color: Colors.redAccent)),
-          ),
-        ],
+class _IconButton extends StatelessWidget {
+  final IconData icon;
+  final bool isDark;
+  final VoidCallback onTap;
+  const _IconButton({required this.icon, required this.isDark, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF18181B) : Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+        ),
+        child: Icon(icon, color: isDark ? Colors.white54 : Colors.black54, size: 20),
       ),
     );
   }

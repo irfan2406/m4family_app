@@ -121,7 +121,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
               children: [
                 IconButton(
                   onPressed: () {
-                    ref.read(navigationProvider.notifier).state = 0;
+                    Navigator.of(context).pop();
                   },
                   icon: Icon(LucideIcons.chevronLeft, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
                 ),

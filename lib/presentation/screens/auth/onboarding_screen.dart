@@ -12,170 +12,229 @@ class OnboardingScreen extends StatefulWidget {
   State<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen> {
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
+class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
 
-  final List<OnboardingData> _pages = [
-    OnboardingData(
-      title: 'DISCOVER FUTURE\nLIVING',
-      subtitle: 'Experience visionary high-rise living with signature architecture and panoramic sea views.',
-      imageUrl: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?q=80&w=1000&auto=format&fit=crop',
-    ),
-    OnboardingData(
-      title: 'CRAFT YOUR\nSANCTUARY',
-      subtitle: 'Bespoke interiors designed with premium finishes and smart home technology.',
-      imageUrl: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?q=80&w=1000&auto=format&fit=crop',
-    ),
-    OnboardingData(
-      title: 'ELEVATED\nLIFESTYLE',
-      subtitle: 'Access world-class amenities including an infinity pool and exclusive premium lounge.',
-      imageUrl: 'https://images.unsplash.com/photo-1572120360610-d971b9d7767c?q=80&w=1000&auto=format&fit=crop',
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 5),
+    )..forward().then((_) {
+        if (mounted) {
+          context.go('/login');
+        }
+      });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       body: Stack(
+        fit: StackFit.expand,
         children: [
-          // Background PageView
-          PageView.builder(
-            controller: _pageController,
-            itemCount: _pages.length,
-            onPageChanged: (index) => setState(() => _currentPage = index),
-            itemBuilder: (context, index) {
-              return Stack(
-                fit: StackFit.expand,
-                children: [
-                  Image.network(
-                    _pages[index].imageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      color: Colors.black.withOpacity(0.1),
-                      child: const Center(child: Icon(LucideIcons.image, color: Colors.white24, size: 50)),
-                    ),
+          // Background Image with Subtle Zoom
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.6,
+              child: Image.asset(
+                'assets/login-bg.png',
+                fit: BoxFit.cover,
+              )
+                  .animate(onPlay: (controller) => controller.repeat(reverse: true))
+                  .scale(
+                    begin: const Offset(1.1, 1.1),
+                    end: const Offset(1.0, 1.0),
+                    duration: 10.seconds,
+                    curve: Curves.easeInOut,
                   ),
-                  // Dark Overlay Gradient
-                  Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.black.withOpacity(0.3),
-                          Colors.black.withOpacity(0.8),
+            ),
+          ),
+          
+          // Gradient Overlay
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black.withOpacity(0.0),
+                  Colors.black.withOpacity(0.4),
+                  Colors.black,
+                ],
+                stops: const [0, 0.4, 1],
+              ),
+            ),
+          ),
+
+          // Main Animation Stack
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Rotating Majesty Light Rays
+                    SizedBox(
+                      width: 400,
+                      height: 400,
+                      child: CustomPaint(
+                        painter: RotatingRaysPainter(),
+                      ),
+                    ).animate(onPlay: (controller) => controller.repeat())
+                     .rotate(duration: 30.seconds),
+
+                    // Floating Premium Particles
+                    ...List.generate(8, (index) => FloatingParticle(index: index)),
+
+                    // Logo Container
+                    Container(
+                      padding: const EdgeInsets.all(48),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          // Soft Pulse Glow
+                          Container(
+                            width: 150,
+                            height: 150,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: const Color(0xFFC6A355).withOpacity(0.1),
+                                  blurRadius: 50,
+                                  spreadRadius: 20,
+                                ),
+                              ],
+                            ),
+                          ).animate(onPlay: (controller) => controller.repeat(reverse: true))
+                           .scale(begin: const Offset(1, 1), end: const Offset(1.3, 1.3), duration: 4.seconds),
+
+                          // Main Gold Logo
+                          Image.asset(
+                            'assets/m4-logo-gold.png',
+                            width: 280,
+                            fit: BoxFit.contain,
+                          )
+                              .animate()
+                              .fadeIn(duration: 2.seconds, curve: Curves.easeOut)
+                              .scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1), duration: 2.seconds, curve: const Cubic(0.16, 1, 0.3, 1))
+                              .moveY(begin: 20, end: 0, duration: 2.seconds)
+                              .animate(onPlay: (controller) => controller.repeat(reverse: true))
+                              .moveY(begin: -10, end: 10, duration: 6.seconds, curve: Curves.easeInOut),
+
+                          // Sweep Light Effect
+                          ClipRect(
+                            child: AnimatedBuilder(
+                              animation: _controller,
+                              builder: (context, child) {
+                                return Transform.translate(
+                                  offset: Offset((_controller.value * 2.5 - 1.25) * 280, 0),
+                                  child: child,
+                                );
+                              },
+                              child: Transform.rotate(
+                                angle: -30 * 3.14159 / 180,
+                                child: Container(
+                                  width: 100,
+                                  height: 300,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        Colors.white.withOpacity(0),
+                                        Colors.white.withOpacity(0.4),
+                                        Colors.white.withOpacity(0),
+                                      ],
+                                      stops: const [0.4, 0.5, 0.6],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ).animate().fadeIn(delay: 500.ms, duration: 500.ms),
                         ],
                       ),
                     ),
-                  ),
-                ],
-              );
-            },
+                  ],
+                ),
+              ],
+            ),
           ),
 
-          // Content
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Spacer(flex: 3),
-                  
-                  // Progress Indicators
-                  Row(
-                    children: List.generate(_pages.length, (index) {
-                      return AnimatedContainer(
-                        duration: 300.ms,
-                        margin: const EdgeInsets.only(right: 8),
-                        height: 2,
-                        width: index == _currentPage ? 40 : 20,
-                        color: index == _currentPage ? M4Theme.premiumBlue : Colors.white30,
-                      );
-                    }),
-                  ).animate().fadeIn(delay: 200.ms),
-                  
-                  const SizedBox(height: 32),
-                  
-                  // Title
-                  Text(
-                    _pages[_currentPage].title,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      height: 1.1,
-                      letterSpacing: 1,
-                    ),
-                  ).animate(key: ValueKey('title_$_currentPage')).fadeIn(duration: 600.ms).slideX(begin: 0.1, end: 0),
-                  
-                  const SizedBox(height: 24),
-                  
-                  // Subtitle
-                  Text(
-                    _pages[_currentPage].subtitle,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 14,
-                      color: Colors.white70,
-                      height: 1.6,
-                    ),
-                  ).animate(key: ValueKey('subtitle_$_currentPage')).fadeIn(delay: 200.ms),
-                  
-                  const Spacer(flex: 1),
-                  
-                  // Navigation
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          // Footer Section
+          Positioned(
+            bottom: 64,
+            left: 0,
+            right: 0,
+            child: Column(
+              children: [
+                // CORPORATE IDENTITY • PREMIUM ASSETS
+                Text(
+                  'CORPORATE IDENTITY • PREMIUM ASSETS',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFFC6A355),
+                    letterSpacing: 4,
+                  ),
+                ).animate().fadeIn(delay: 800.ms, duration: 1200.ms).moveY(begin: 10, end: 0),
+                
+                const SizedBox(height: 24),
+                
+                // Progress Line
+                Container(
+                  width: 160,
+                  height: 1,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(1),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: Stack(
                     children: [
-                      TextButton(
-                        onPressed: () => context.go('/login'),
-                        child: Text(
-                          'SKIP',
-                          style: GoogleFonts.montserrat(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            letterSpacing: 2,
-                          ),
-                        ),
-                      ),
-                      
-                      ElevatedButton(
-                        onPressed: () {
-                          if (_currentPage < _pages.length - 1) {
-                            _pageController.nextPage(
-                              duration: 500.ms,
-                              curve: Curves.easeInOut,
-                            );
-                          } else {
-                            context.go('/login');
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.black,
-                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              _currentPage == _pages.length - 1 ? 'GET STARTED' : 'NEXT',
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                      Positioned.fill(
+                        child: FractionallySizedBox(
+                          alignment: Alignment.centerLeft,
+                          widthFactor: 1.0,
+                          child: Container(
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFC6A355),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Color(0xFFC6A355),
+                                  blurRadius: 4,
+                                ),
+                              ],
                             ),
-                            const SizedBox(width: 8),
-                            const Icon(LucideIcons.chevronRight, size: 16),
-                          ],
+                          ).animate().moveX(begin: -160, end: 160, duration: 5.seconds, curve: Curves.linear),
                         ),
                       ),
                     ],
-                  ).animate().fadeIn(delay: 400.ms),
-                  
-                  const SizedBox(height: 20),
-                ],
-              ),
+                  ),
+                ),
+                
+                const SizedBox(height: 24),
+                
+                // M4 PRIVATE ACCESS SYSTEM
+                Text(
+                  'M4 PRIVATE ACCESS SYSTEM',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 11,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.white.withOpacity(0.9),
+                    letterSpacing: 5,
+                  ),
+                ).animate().fadeIn(delay: 1200.ms, duration: 1500.ms),
+              ],
             ),
           ),
         ],
@@ -184,14 +243,65 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 }
 
-class OnboardingData {
-  final String title;
-  final String subtitle;
-  final String imageUrl;
+class RotatingRaysPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+    
+    final paint = Paint()
+      ..shader = SweepGradient(
+        colors: [
+          Colors.transparent,
+          const Color(0xFFC6A355).withOpacity(0.1),
+          Colors.transparent,
+          const Color(0xFFC6A355).withOpacity(0.1),
+          Colors.transparent,
+          const Color(0xFFC6A355).withOpacity(0.1),
+          Colors.transparent,
+          const Color(0xFFC6A355).withOpacity(0.1),
+          Colors.transparent,
+        ],
+        stops: const [0.0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1.0],
+      ).createShader(Rect.fromCircle(center: center, radius: radius))
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 60);
 
-  OnboardingData({
-    required this.title,
-    required this.subtitle,
-    required this.imageUrl,
-  });
+    canvas.drawCircle(center, radius, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+
+class FloatingParticle extends StatelessWidget {
+  final int index;
+  const FloatingParticle({super.key, required this.index});
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      child: Container(
+        width: 3,
+        height: 3,
+        decoration: const BoxDecoration(
+          color: Color(0xFFC6A355),
+          shape: BoxShape.circle,
+        ),
+      )
+          .animate(onPlay: (controller) => controller.repeat())
+          .move(
+            begin: Offset((index % 2 == 0 ? 1 : -1) * (100 + index * 5), (index % 3 == 0 ? 1 : -1) * (100 + index * 5)),
+            end: Offset((index % 2 == 0 ? -1 : 1) * (100 + index * 5), (index % 3 == 0 ? -1 : 1) * (100 + index * 5)),
+            duration: (8 + index * 0.5).seconds,
+            curve: Curves.easeInOut,
+          )
+          .custom(
+            begin: 0,
+            end: 0.6,
+            duration: 4.seconds,
+            builder: (context, value, child) => Opacity(opacity: (value < 0.3) ? (value / 0.3) : (0.6 - value) / 0.3 * 0.6, child: child),
+          ),
+    );
+  }
+}
+
