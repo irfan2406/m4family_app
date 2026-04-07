@@ -78,7 +78,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
         ),
         title: Text(
           'REFERRAL & REWARDS',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
             color: isDark ? Colors.white : Colors.black,
             fontSize: 14,
             fontWeight: FontWeight.w900,
@@ -125,7 +125,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
         children: [
           Text(
             'WALLET BALANCE',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
               color: isDark ? Colors.white24 : Colors.black26,
               fontSize: 10,
               fontWeight: FontWeight.w800,
@@ -138,7 +138,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
             children: [
               Text(
                 _walletBalance.toStringAsFixed(0),
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
                   color: isDark ? Colors.white : Colors.black,
                   fontSize: 48,
                   fontWeight: FontWeight.w900,
@@ -147,7 +147,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
               const SizedBox(width: 8),
               Text(
                 'PTS',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
                   color: isDark ? Colors.white38 : Colors.black38,
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
@@ -176,7 +176,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
               ),
               child: Text(
                 'REDEEM NOW',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
                   color: isDark ? Colors.black : Colors.white,
                   fontSize: 12,
                   fontWeight: FontWeight.w900,
@@ -232,7 +232,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
                       color: isDark ? Colors.white : Colors.black,
                       fontSize: 14,
                       fontWeight: FontWeight.w800,
@@ -240,7 +240,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                   ),
                   Text(
                     subtitle,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
                       color: isDark ? Colors.white38 : Colors.black38,
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
@@ -265,7 +265,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
             padding: const EdgeInsets.only(left: 10, bottom: 15),
             child: Text(
               'ACTIVE REFERRALS',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
                 color: isDark ? Colors.white24 : Colors.black26,
                 fontSize: 10,
                 fontWeight: FontWeight.w800,
@@ -290,7 +290,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
           padding: const EdgeInsets.only(left: 10, bottom: 15),
           child: Text(
             'ACTIVE REFERRALS',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
               color: isDark ? Colors.white24 : Colors.black26,
               fontSize: 10,
               fontWeight: FontWeight.w800,
@@ -372,7 +372,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                   children: [
                     Text(
                       'NEW REFERRAL',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
                         color: isDark ? Colors.white : Colors.black,
                         fontSize: 24,
                         fontWeight: FontWeight.w900,
@@ -381,7 +381,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                     const SizedBox(height: 4),
                     Text(
                       'REFER & EARN REWARDS',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
                         color: isDark ? Colors.white54 : Colors.black54,
                         fontSize: 10,
                         fontWeight: FontWeight.w800,
@@ -449,7 +449,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                             ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: isDark ? Colors.black : Colors.white))
                             : Text(
                                 'SUBMIT REFERRAL',
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
                                   color: isDark ? Colors.black : Colors.white,
                                   fontSize: 12,
                                   fontWeight: FontWeight.w900,
@@ -478,7 +478,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
           padding: const EdgeInsets.only(left: 10, bottom: 8),
           child: Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
               color: isDark ? Colors.white54 : Colors.black54,
               fontSize: 10,
               fontWeight: FontWeight.w800,
@@ -495,14 +495,14 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
           child: TextField(
             controller: controller,
             keyboardType: isNumber ? TextInputType.phone : TextInputType.text,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
               color: isDark ? Colors.white : Colors.black,
               fontSize: 14,
               fontWeight: FontWeight.w600,
             ),
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: GoogleFonts.montserrat(
+              hintStyle: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
                 color: isDark ? Colors.white24 : Colors.black26,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,

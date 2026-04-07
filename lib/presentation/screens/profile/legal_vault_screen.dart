@@ -105,7 +105,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
             child: Center(
               child: Text(
                 'LEGAL VAULT',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white : Colors.black,
@@ -155,7 +155,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
               children: [
                 Text(
                   'ENCRYPTED STORAGE',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
                     fontSize: 8,
                     fontWeight: FontWeight.w800,
                     color: isDark ? Colors.white38 : Colors.black38,
@@ -164,7 +164,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
                 ),
                 Text(
                   'SECURE DOCUMENT REPOSITORY',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
                     color: isDark ? Colors.white : Colors.black,
@@ -192,7 +192,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
             onSelected: (selected) {
               if (selected) setState(() => _selectedFilter = f);
             },
-            labelStyle: GoogleFonts.montserrat(
+            labelStyle: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
               fontSize: 9,
               fontWeight: FontWeight.w800,
               color: _selectedFilter == f ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white54 : Colors.black54),
@@ -276,7 +276,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
         const SizedBox(height: 24),
         Text(
           'NO DOCUMENTS FOUND',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
             fontSize: 10,
             fontWeight: FontWeight.w800,
             color: (isDark ? Colors.white : Colors.black).withOpacity(0.2),

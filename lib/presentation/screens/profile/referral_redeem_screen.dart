@@ -69,7 +69,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
         ),
         title: Text(
           'REDEEM POINTS',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
             color: isDark ? Colors.white : Colors.black,
             fontSize: 14,
             fontWeight: FontWeight.w900,
@@ -88,7 +88,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
             const SizedBox(height: 40),
             Text(
               'REDEMPTION MATRIX',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
                 color: isDark ? Colors.white24 : Colors.black26,
                 fontSize: 10,
                 fontWeight: FontWeight.w800,
@@ -126,7 +126,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
         children: [
           Text(
             'AVAILABLE BALANCE',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
               color: isDark ? Colors.white24 : Colors.black26,
               fontSize: 10,
               fontWeight: FontWeight.w800,
@@ -139,7 +139,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
             children: [
               Text(
                 widget.walletBalance.toStringAsFixed(0),
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
                   color: isDark ? Colors.white : Colors.black,
                   fontSize: 48,
                   fontWeight: FontWeight.w900,
@@ -148,7 +148,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
               const SizedBox(width: 8),
               Text(
                 'PTS',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
                   color: isDark ? Colors.white38 : Colors.black38,
                   fontSize: 16,
                   fontWeight: FontWeight.w700,
@@ -165,7 +165,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
             ),
             child: Text(
               'VALUE: ₹${widget.walletBalance.toStringAsFixed(0)}',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
                 color: isDark ? Colors.white : Colors.black,
                 fontSize: 10,
                 fontWeight: FontWeight.w900,
@@ -217,7 +217,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
                 children: [
                   Text(
                     opt['title'],
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
                       color: isDark ? Colors.white : Colors.black,
                       fontSize: 14,
                       fontWeight: FontWeight.w800,
@@ -226,7 +226,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
                   const SizedBox(height: 2),
                   Text(
                     opt['subtitle'],
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
                       color: isDark ? Colors.white38 : Colors.black38,
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
@@ -251,7 +251,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
           padding: const EdgeInsets.only(left: 10, bottom: 10, top: 10),
           child: Text(
             'REDEEM VOLUME',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
               color: isDark ? Colors.white24 : Colors.black26,
               fontSize: 10,
               fontWeight: FontWeight.w800,
@@ -269,7 +269,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
             controller: _amountController,
             keyboardType: TextInputType.number,
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
               color: isDark ? Colors.white : Colors.black,
               fontSize: 24,
               fontWeight: FontWeight.w800,
@@ -316,7 +316,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
           alignment: Alignment.center,
           child: Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
               color: isDark ? Colors.white : Colors.black,
               fontSize: 10,
               fontWeight: FontWeight.w800,
@@ -392,7 +392,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
                   const SizedBox(width: 10),
                   Text(
                     'CONFIRM REDEMPTION',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
                       color: isDark ? Colors.black : Colors.white,
                       fontSize: 12,
                       fontWeight: FontWeight.w900,

@@ -3,8 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 class M4Theme {
   // Premium Zinc Palette (Web Match)
-  static const Color background = Color(0xFF09090B); // Zinc-950
-  static const Color surface = Color(0xFF18181B);    // Zinc-900
+  static const Color background = Color(0xFF000000); // Pitch Black
+  static const Color surface = Color(0xFF09090B);    // Deep Zinc
   static const Color premiumBlue = Color(0xFF3B82F6); // Blue-500
   
   static const Color textPrimary = Color(0xFFF8FAFC);

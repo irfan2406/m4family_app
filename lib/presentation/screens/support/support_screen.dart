@@ -38,14 +38,10 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
     final state = ref.watch(supportProvider);
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.white, Colors.black.withOpacity(0.02)],
-          ),
+          color: Theme.of(context).scaffoldBackgroundColor,
         ),
         child: SafeArea(
           child: Column(
@@ -56,8 +52,8 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
               Expanded(
                 child: RefreshIndicator(
                   onRefresh: () => ref.read(supportProvider.notifier).fetchTickets(),
-                  color: Colors.black,
-                  backgroundColor: Colors.white,
+                  color: Theme.of(context).colorScheme.onSurface,
+                  backgroundColor: Theme.of(context).colorScheme.surface,
                   child: ListView(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     children: [
@@ -92,18 +88,18 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
             context,
             MaterialPageRoute(builder: (context) => const CreateTicketScreen()),
           ),
-          backgroundColor: Colors.white,
+          backgroundColor: Theme.of(context).colorScheme.onSurface,
           elevation: 10,
           label: Text(
             'NEW TICKET',
             style: GoogleFonts.montserrat(
-              color: Colors.black,
+              color: Theme.of(context).colorScheme.surface,
               fontWeight: FontWeight.w900,
               fontSize: 12,
               letterSpacing: 1.5,
             ),
           ),
-          icon: const Icon(LucideIcons.plus, color: Colors.black, size: 18),
+          icon: Icon(LucideIcons.plus, color: Theme.of(context).colorScheme.surface, size: 18),
         ),
       ).animate().scale(delay: 400.ms),
     );
@@ -135,7 +131,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
                         style: GoogleFonts.montserrat(
                           fontSize: 24,
                           fontWeight: FontWeight.w300,
-                          color: Colors.black,
+                          color: Theme.of(context).colorScheme.onSurface,
                           letterSpacing: 2,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -145,7 +141,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
                         style: GoogleFonts.montserrat(
                           fontSize: 9,
                           fontWeight: FontWeight.w900,
-                          color: Colors.black.withOpacity(0.5),
+                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                           letterSpacing: 4,
                         ),
                         overflow: TextOverflow.ellipsis,
@@ -160,11 +156,11 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.05),
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
               shape: BoxShape.circle,
-              border: Border.all(color: Colors.black.withOpacity(0.1)),
+              border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1)),
             ),
-            child: Icon(LucideIcons.headphones, color: Colors.black.withOpacity(0.7), size: 20),
+            child: Icon(LucideIcons.headphones, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7), size: 20),
           ),
         ],
       ),
@@ -238,7 +234,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
               style: GoogleFonts.montserrat(
                 fontSize: 12,
                 fontWeight: FontWeight.w900,
-                color: Colors.black.withOpacity(0.7),
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                 letterSpacing: 2,
               ),
             ),
@@ -246,7 +242,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
             Container(
               width: 40,
               height: 2,
-              color: Colors.black.withOpacity(0.2),
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
             ),
           ],
         ),
@@ -262,7 +258,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
             style: GoogleFonts.montserrat(
               fontSize: 9,
               fontWeight: FontWeight.w900,
-              color: Colors.black.withOpacity(0.4),
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
               letterSpacing: 2,
             ),
           ),
@@ -324,9 +320,12 @@ class _MatrixItem extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.6),
+              color: isDark ? const Color(0xFF18181B).withOpacity(0.8) : Colors.white.withOpacity(0.6),
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: Colors.white.withOpacity(0.6)),
+              border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.white.withOpacity(0.6)),
+              boxShadow: [
+                if (!isDark) BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20, offset: const Offset(0, 10)),
+              ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -337,7 +336,7 @@ class _MatrixItem extends StatelessWidget {
                 Text(
                   title,
                   style: GoogleFonts.montserrat(
-                    color: Colors.black,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontWeight: FontWeight.w700,
                     fontSize: 13,
                   ),
@@ -346,7 +345,7 @@ class _MatrixItem extends StatelessWidget {
                 Text(
                   subtitle,
                   style: GoogleFonts.montserrat(
-                    color: Colors.black.withOpacity(0.4),
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
                     fontSize: 9,
                   ),
                 ),
@@ -376,9 +375,9 @@ class _LogPreviewItem extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 12),
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.6),
+            color: isDark ? const Color(0xFF18181B).withOpacity(0.8) : Colors.white.withOpacity(0.6),
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: Colors.white.withOpacity(0.6)),
+            border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.white.withOpacity(0.6)),
           ),
           child: Row(
             children: [
@@ -407,7 +406,7 @@ class _LogPreviewItem extends StatelessWidget {
                         Text(
                           log.title.toUpperCase(),
                           style: GoogleFonts.montserrat(
-                            color: Colors.black,
+                            color: Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w700,
                             fontSize: 13,
                           ),
@@ -419,12 +418,12 @@ class _LogPreviewItem extends StatelessWidget {
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        Icon(LucideIcons.clock, size: 12, color: Colors.black.withOpacity(0.2)),
+                        Icon(LucideIcons.clock, size: 12, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2)),
                         const SizedBox(width: 6),
                         Text(
                           _getTimeAgo(log.createdAt).toUpperCase(),
                           style: GoogleFonts.montserrat(
-                            color: Colors.black.withOpacity(0.2),
+                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
                             fontSize: 9,
                             fontWeight: FontWeight.w900,
                           ),

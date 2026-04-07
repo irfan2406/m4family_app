@@ -31,25 +31,25 @@ class ProjectListScreen extends ConsumerWidget {
           builder: (context, setModalState) {
             return Container(
               height: MediaQuery.of(context).size.height * 0.85,
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
               ),
               child: Column(
                 children: [
                   const SizedBox(height: 12),
-                  Container(width: 40, height: 4, decoration: BoxDecoration(color: Colors.black12, borderRadius: BorderRadius.circular(2))),
+                  Container(width: 40, height: 4, decoration: BoxDecoration(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1), borderRadius: BorderRadius.circular(2))),
                   const SizedBox(height: 24),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('REFINE SEARCH', style: GoogleFonts.montserrat(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black, letterSpacing: -0.5)),
+                        Text('REFINE SEARCH', style: GoogleFonts.montserrat(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface, letterSpacing: -0.5)),
                         IconButton(
                           onPressed: () => Navigator.pop(context),
-                          icon: const Icon(LucideIcons.x, color: Colors.black),
-                          style: IconButton.styleFrom(backgroundColor: Colors.black.withOpacity(0.05), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                          icon: Icon(LucideIcons.x, color: Theme.of(context).colorScheme.onSurface),
+                          style: IconButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.05), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
                         ),
                       ],
                     ),
@@ -113,7 +113,12 @@ class ProjectListScreen extends ConsumerWidget {
                         ),
                         child: Text(
                           'APPLY SEARCH MATRIX',
-                          style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 1),
+                          style: GoogleFonts.montserrat(
+                            fontSize: 12, 
+                            fontWeight: FontWeight.w900, 
+                            color: Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white,
+                            letterSpacing: 1
+                          ),
                         ),
                       ),
                     ),
@@ -137,7 +142,7 @@ class ProjectListScreen extends ConsumerWidget {
     final apiClient = ref.watch(apiClientProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA), // Premium light grey background
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: [
@@ -151,8 +156,8 @@ class ProjectListScreen extends ConsumerWidget {
                   Row(
                     children: [
                       IconButton(
-                        onPressed: () => ref.read(navigationProvider.notifier).state = 0,
-                        icon: const Icon(LucideIcons.arrowLeft, color: Colors.black, size: 24),
+                        onPressed: () => Navigator.pop(context),
+                        icon: Icon(LucideIcons.arrowLeft, color: Theme.of(context).colorScheme.onSurface, size: 24),
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
                       ),
@@ -165,7 +170,7 @@ class ProjectListScreen extends ConsumerWidget {
                             style: GoogleFonts.montserrat(
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
-                              color: Colors.black.withOpacity(0.2),
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
                               letterSpacing: 3,
                             ),
                           ),
@@ -174,7 +179,7 @@ class ProjectListScreen extends ConsumerWidget {
                             style: GoogleFonts.montserrat(
                               fontSize: 24,
                               fontWeight: FontWeight.w900,
-                              color: Colors.black,
+                              color: Theme.of(context).colorScheme.onSurface,
                               letterSpacing: -1,
                             ),
                           ),
@@ -204,7 +209,7 @@ class ProjectListScreen extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(10),
                             border: Border.all(color: Colors.black.withOpacity(0.05)),
                           ),
-                          child: const Icon(LucideIcons.slidersHorizontal, size: 16, color: Colors.black),
+                          child: Icon(LucideIcons.slidersHorizontal, size: 16, color: Theme.of(context).colorScheme.onSurface),
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -221,7 +226,9 @@ class ProjectListScreen extends ConsumerWidget {
                           child: Icon(
                             isGridView ? LucideIcons.layoutGrid : LucideIcons.list,
                             size: 16,
-                            color: isGridView ? Colors.black : Colors.white,
+                            color: isGridView 
+                                ? (Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white)
+                                : Colors.white,
                           ),
                         ),
                       ),
@@ -238,7 +245,7 @@ class ProjectListScreen extends ConsumerWidget {
               decoration: BoxDecoration(
                 color: Colors.transparent,
                 borderRadius: BorderRadius.circular(30),
-                border: Border.all(color: Colors.black.withOpacity(0.08)),
+                border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.08)),
               ),
               child: Row(
                 children: ['Ongoing', 'Upcoming', 'Completed'].map((filter) {
@@ -251,7 +258,9 @@ class ProjectListScreen extends ConsumerWidget {
                         curve: Curves.easeInOut,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: isSelected ? Colors.white : Colors.transparent,
+                          color: isSelected 
+                              ? (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black)
+                              : Colors.transparent,
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Text(
@@ -259,7 +268,9 @@ class ProjectListScreen extends ConsumerWidget {
                           style: GoogleFonts.montserrat(
                             fontSize: 10,
                             fontWeight: isSelected ? FontWeight.w900 : FontWeight.bold,
-                            color: isSelected ? Colors.black : Colors.black.withOpacity(0.35),
+                            color: isSelected 
+                                ? (Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white)
+                                : Theme.of(context).colorScheme.onSurface.withOpacity(0.35),
                             letterSpacing: 1,
                           ),
                         ),
@@ -327,14 +338,15 @@ class _ProjectGridItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
       height: 240, // Match Web 16:10 aspect ratio better
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? const Color(0xFF18181B) : Colors.white,
         borderRadius: BorderRadius.circular(40),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20, offset: const Offset(0, 10)),
+          BoxShadow(color: (isDark ? Colors.black : Colors.black).withOpacity(isDark ? 0.3 : 0.05), blurRadius: 20, offset: const Offset(0, 10)),
         ],
         image: DecorationImage(
           image: NetworkImage(imageUrl),
@@ -454,16 +466,17 @@ class _ProjectListRowItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? const Color(0xFF18181B) : Colors.white,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 20, offset: const Offset(0, 4)),
+          BoxShadow(color: (isDark ? Colors.black : Colors.black).withOpacity(isDark ? 0.3 : 0.04), blurRadius: 20, offset: const Offset(0, 4)),
         ],
-        border: Border.all(color: Colors.black.withOpacity(0.05)),
+        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
       ),
       child: Row(
         children: [
@@ -493,7 +506,7 @@ class _ProjectListRowItem extends StatelessWidget {
                   style: GoogleFonts.montserrat(
                     fontSize: 16,
                     fontWeight: FontWeight.w900,
-                    color: Colors.black,
+                    color: isDark ? Colors.white : Colors.black,
                     letterSpacing: -0.5,
                   ),
                   maxLines: 1,
@@ -502,14 +515,14 @@ class _ProjectListRowItem extends StatelessWidget {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    Icon(LucideIcons.mapPin, size: 12, color: Colors.black.withOpacity(0.4)),
+                    Icon(LucideIcons.mapPin, size: 12, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4)),
                     const SizedBox(width: 4),
                     Expanded(
                       child: Text(
                         project['location']?['name'] ?? 'N/A',
                         style: GoogleFonts.montserrat(
                           fontSize: 11,
-                          color: Colors.black.withOpacity(0.4),
+                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
                           fontWeight: FontWeight.w600,
                         ),
                         maxLines: 1,
@@ -526,10 +539,10 @@ class _ProjectListRowItem extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.05),
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(LucideIcons.chevronRight, color: Colors.black, size: 18),
+            child: Icon(LucideIcons.chevronRight, color: Theme.of(context).colorScheme.onSurface, size: 18),
           ),
         ],
       ),
@@ -547,16 +560,16 @@ class _Badge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.4),
+        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.white.withOpacity(0.4)),
+        border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1)),
       ),
       child: Text(
         text,
         style: GoogleFonts.montserrat(
           fontSize: 8,
           fontWeight: FontWeight.w900,
-          color: Colors.black,
+          color: Theme.of(context).colorScheme.onSurface,
           letterSpacing: 1.0,
         ),
       ),
@@ -584,7 +597,7 @@ class _FilterSection extends StatelessWidget {
       children: [
         Text(
           title, 
-          style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black.withOpacity(0.3), letterSpacing: 2)
+          style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3), letterSpacing: 2)
         ),
         const SizedBox(height: 16),
         Wrap(
@@ -598,11 +611,15 @@ class _FilterSection extends StatelessWidget {
                 duration: const Duration(milliseconds: 200),
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                 decoration: BoxDecoration(
-                  color: isSelected ? Colors.black : Colors.black.withOpacity(0.05),
+                  color: isSelected 
+                      ? (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black)
+                      : Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
                   borderRadius: BorderRadius.circular(15),
-                  border: Border.all(color: isSelected ? Colors.black : Colors.black.withOpacity(0.08)),
+                  border: Border.all(color: isSelected 
+                      ? (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black)
+                      : Theme.of(context).colorScheme.onSurface.withOpacity(0.08)),
                   boxShadow: isSelected ? [
-                    BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 20, spreadRadius: -5)
+                    BoxShadow(color: (Theme.of(context).brightness == Brightness.dark ? Colors.white24 : Colors.black26), blurRadius: 20, spreadRadius: -5)
                   ] : null,
                 ),
                 child: Text(
@@ -610,7 +627,9 @@ class _FilterSection extends StatelessWidget {
                   style: GoogleFonts.montserrat(
                     fontSize: 9, 
                     fontWeight: FontWeight.w900, 
-                    color: isSelected ? Colors.white : Colors.black.withOpacity(0.4),
+                    color: isSelected 
+                        ? (Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white)
+                        : Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
                     letterSpacing: 1,
                   ),
                 ),

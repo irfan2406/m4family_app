@@ -135,11 +135,12 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
     final projectsAsync = ref.watch(projectsProvider);
     
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(LucideIcons.chevronLeft, color: Colors.black),
+          icon: Icon(LucideIcons.chevronLeft, color: Theme.of(context).colorScheme.onSurface),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -147,13 +148,13 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
           style: GoogleFonts.montserrat(
             fontSize: 14,
             fontWeight: FontWeight.w900,
-            color: Colors.black,
+            color: Theme.of(context).colorScheme.onSurface,
             letterSpacing: 2,
           ),
         ),
       ),
       body: Container(
-        color: Colors.white,
+        color: Colors.transparent,
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Form(
@@ -165,9 +166,9 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.04),
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.04),
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Colors.black.withOpacity(0.05)),
+                    border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05)),
                   ),
                   child: Row(
                     children: [
@@ -179,7 +180,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                           style: GoogleFonts.montserrat(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
-                            color: Colors.black45,
+                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
                             letterSpacing: 0.5,
                             height: 1.4,
                           ),
@@ -284,7 +285,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
       style: GoogleFonts.montserrat(
         fontSize: 10,
         fontWeight: FontWeight.w900,
-        color: Colors.black.withOpacity(0.38),
+        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.38),
         letterSpacing: 2,
       ),
     ).animate().fadeIn().slideX(begin: -0.1);
@@ -307,24 +308,24 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
           maxLines: maxLines,
           keyboardType: keyboardType,
           validator: validator,
-          style: GoogleFonts.montserrat(color: Colors.black, fontSize: 13, fontWeight: FontWeight.bold),
+          style: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface, fontSize: 13, fontWeight: FontWeight.bold),
           decoration: InputDecoration(
             filled: true,
-            fillColor: Colors.black.withOpacity(0.03),
+            fillColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.03),
             hintText: hint.toUpperCase(),
-            hintStyle: GoogleFonts.montserrat(color: Colors.black26, fontSize: 13, fontWeight: FontWeight.bold),
-            prefixIcon: icon != null ? Icon(icon, color: Colors.black26, size: 18) : null,
+            hintStyle: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2), fontSize: 13, fontWeight: FontWeight.bold),
+            prefixIcon: icon != null ? Icon(icon, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2), size: 18) : null,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(color: Colors.black12),
+              borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1)),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(color: Colors.black12),
+              borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1)),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: Colors.black.withOpacity(0.24), width: 1),
+              borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.24), width: 1),
             ),
           ),
         ),
@@ -341,16 +342,16 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.03),
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.03),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.black12),
+            border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1)),
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               value: _selectedProjectId,
-              hint: Text('Choose a project', style: GoogleFonts.montserrat(color: Colors.black26, fontSize: 13)),
-              dropdownColor: Colors.white,
-              icon: const Icon(LucideIcons.chevronDown, color: Colors.black26, size: 18),
+              hint: Text('Choose a project', style: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2), fontSize: 13)),
+              dropdownColor: Theme.of(context).colorScheme.surface,
+              icon: Icon(LucideIcons.chevronDown, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2), size: 18),
               isExpanded: true,
               onChanged: (String? newValue) {
                 setState(() {
@@ -362,7 +363,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                   value: project['_id'],
                   child: Text(
                     project['title'] ?? 'Unknown Project',
-                    style: GoogleFonts.montserrat(color: Colors.black, fontSize: 14),
+                    style: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface, fontSize: 14),
                   ),
                 );
               }).toList(),
@@ -384,18 +385,18 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
             height: 56,
             padding: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.03),
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.03),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.black12),
+              border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1)),
             ),
             child: Row(
               children: [
-                Icon(icon, color: Colors.black26, size: 18),
+                Icon(icon, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2), size: 18),
                 const SizedBox(width: 12),
                 Text(
                   text,
                   style: GoogleFonts.montserrat(
-                    color: text.contains('Select') || text.contains('MM') || text.contains('TIME') ? Colors.black26 : Colors.black,
+                    color: text.contains('Select') || text.contains('MM') || text.contains('TIME') ? Theme.of(context).colorScheme.onSurface.withOpacity(0.2) : Theme.of(context).colorScheme.onSurface,
                     fontSize: 14,
                   ),
                 ),
@@ -415,8 +416,8 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
       child: ElevatedButton(
         onPressed: _submit,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.black,
-          foregroundColor: Colors.white,
+          backgroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
+          foregroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           elevation: 0,
         ),

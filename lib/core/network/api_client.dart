@@ -82,6 +82,16 @@ class ApiClient {
     });
   }
 
+  Future<Response> getGlobalUpdates() async {
+    return dio.get('/api/catalog/updates', queryParameters: {
+      'status': 'Published',
+    });
+  }
+
+  Future<Response> getProjectProgress(String projectId) async {
+    return dio.get('/api/catalog/projects/$projectId/progress');
+  }
+
   Future<Response> getProjectInventory(String projectId) async {
     return dio.get('/api/catalog/projects/$projectId/inventory');
   }

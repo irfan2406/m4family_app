@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/core/providers/theme_provider.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfileSettingsScreen extends ConsumerStatefulWidget {
   const ProfileSettingsScreen({super.key});
@@ -32,8 +33,10 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
   bool _smsAlerts = true;
   bool _isSaving = false;
   bool _isEditing = false;
+  bool _isUploadingAvatar = false;
   DateTime? _selectedDob;
   List<Map<String, dynamic>> _familyMembers = [];
+  String? _avatarUrl;
 
   @override
   void initState() {
@@ -52,12 +55,12 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
     _panController = TextEditingController(text: ownerDetails['PAN'] ?? '');
     _aadharController = TextEditingController(text: ownerDetails['AADHAR'] ?? '');
     
-    if (user?['dob'] != null) {
+    if (user?['dob'] != null && user!['dob'].toString().isNotEmpty && !user!['dob'].toString().startsWith('0000')) {
       try {
-        _selectedDob = DateTime.parse(user?['dob']);
-        _dobController = TextEditingController(text: DateFormat('yyyy-MM-dd').format(_selectedDob!));
+        _selectedDob = DateTime.parse(user!['dob']);
+        _dobController = TextEditingController(text: DateFormat('dd MMM yyyy').format(_selectedDob!).toUpperCase());
       } catch (e) {
-        _dobController = TextEditingController(text: user?['dob'] ?? '');
+        _dobController = TextEditingController();
       }
     } else {
       _dobController = TextEditingController();
@@ -66,6 +69,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
     _pushNotifications = user?['pushNotifications'] ?? true;
     _emailUpdates = user?['emailUpdates'] ?? true;
     _smsAlerts = user?['smsAlerts'] ?? true;
+    _avatarUrl = user?['avatarUrl'];
     
     _familyMembers = List<Map<String, dynamic>>.from(user?['familyMembers'] ?? user?['familyDetails'] ?? []);
   }
@@ -125,6 +129,9 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       final firstName = nameParts[0];
       final lastName = nameParts.length > 1 ? nameParts.sublist(1).join(" ") : "";
 
+      final user = ref.read(authProvider).user;
+      final existingOwnerDetails = user?['ownerDetails'] is Map ? Map<String, dynamic>.from(user!['ownerDetails']) : <String, dynamic>{};
+
       final updateData = {
         'firstName': firstName,
         'lastName': lastName,
@@ -135,6 +142,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
         'familyDetails': _familyMembers,
         'familyMembers': _familyMembers,
         'ownerDetails': {
+          ...existingOwnerDetails,
           'PAN': _panController.text,
           'AADHAR': _aadharController.text,
         },
@@ -152,6 +160,33 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       // Handle error
     } finally {
       if (mounted) setState(() => _isSaving = false);
+    }
+  }
+
+  Future<void> _pickAndUploadAvatar() async {
+    final picker = ImagePicker();
+    final image = await picker.pickImage(source: ImageSource.gallery, imageQuality: 70);
+    
+    if (image == null) return;
+
+    setState(() => _isUploadingAvatar = true);
+    try {
+      final res = await ref.read(apiClientProvider).uploadAvatar(image.path);
+      if (res.data['status'] == true && res.data['data'] != null) {
+        final newUrl = res.data['data']['fileUrl'];
+        // Update user profile with new avatar URL
+        await ref.read(apiClientProvider).updateMe({'avatarUrl': newUrl});
+        await ref.read(authProvider.notifier).fetchMe();
+        setState(() => _avatarUrl = newUrl);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to upload profile picture')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isUploadingAvatar = false);
     }
   }
 
@@ -173,6 +208,8 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    _buildAvatarSection(isDark),
+                    const SizedBox(height: 32),
                     _buildField("FULL NAME", _nameController, isDark, enabled: _isEditing),
                     const SizedBox(height: 24),
                     _buildField("EMAIL ADDRESS", _emailController, isDark, enabled: _isEditing),
@@ -204,6 +241,75 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
     );
   }
 
+  Widget _buildAvatarSection(bool isDark) {
+    final apiClient = ref.read(apiClientProvider);
+    final String name = _nameController.text;
+    final String initial = name.isNotEmpty ? name[0].toUpperCase() : "U";
+
+    return Center(
+      child: Stack(
+        children: [
+          Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1), width: 4),
+              boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 20, offset: const Offset(0, 10))],
+            ),
+            child: ClipOval(
+              child: _isUploadingAvatar
+                  ? Container(
+                      color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05),
+                      child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                    )
+                  : _avatarUrl != null
+                      ? Image.network(
+                          apiClient.resolveUrl(_avatarUrl),
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => _buildAvatarPlaceholder(isDark, initial),
+                        )
+                      : _buildAvatarPlaceholder(isDark, initial),
+            ),
+          ),
+          if (!_isUploadingAvatar)
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: GestureDetector(
+                onTap: _pickAndUploadAvatar,
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: isDark ? const Color(0xFF09090B) : Colors.white, width: 3),
+                  ),
+                  child: const Icon(LucideIcons.camera, color: Colors.white, size: 16),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAvatarPlaceholder(bool isDark, String initial) {
+    return Container(
+      color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05),
+      child: Center(
+        child: Text(
+          initial,
+          style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
+            fontSize: 32,
+            fontWeight: FontWeight.w800,
+            color: isDark ? Colors.white38 : Colors.black38,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildHeader(bool isDark) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -218,7 +324,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
             child: Center(
               child: Text(
                 'SETTINGS',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
                   fontSize: 14,
                   fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white : Colors.black,
@@ -260,7 +366,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
               fontSize: 8,
               fontWeight: FontWeight.w800,
               color: isDark ? Colors.white38 : Colors.black38,
@@ -278,7 +384,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           child: TextField(
             controller: controller,
             enabled: enabled,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
               fontSize: 12,
               fontWeight: FontWeight.w800,
               color: enabled ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white24 : Colors.black26),
@@ -301,7 +407,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
               fontSize: 8,
               fontWeight: FontWeight.w800,
               color: isDark ? Colors.white38 : Colors.black38,
@@ -325,7 +431,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                     child: Text(
                       controller.text.isEmpty ? "SELECT DATE" : controller.text,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
                         fontSize: 12,
                         fontWeight: FontWeight.w800,
                         color: _isEditing ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white24 : Colors.black26),
@@ -351,7 +457,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       children: [
         Text(
           "NOTIFICATION PREFERENCES",
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
             fontSize: 9,
             fontWeight: FontWeight.w800,
             color: isDark ? Colors.white38 : Colors.black38,
@@ -513,10 +619,17 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
   }
 
   Widget _buildFamilyDateField(String label, String value, bool isDark, Function(String) onChanged) {
+    String displayValue = value;
+    if (value.isNotEmpty) {
+      try {
+        displayValue = DateFormat('dd MMM yyyy').format(DateTime.parse(value)).toUpperCase();
+      } catch (_) {}
+    }
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w800, color: isDark ? Colors.white38 : Colors.black38)),
+        Text(label, style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), fontSize: 8, fontWeight: FontWeight.w800, color: isDark ? Colors.white38 : Colors.black38)),
         const SizedBox(height: 4),
         GestureDetector(
           onTap: () async {
@@ -531,7 +644,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
               color: isDark ? Colors.white.withOpacity(0.02) : Colors.black.withOpacity(0.02),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Text(value.isEmpty ? "SELECT DATE" : value, style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black)),
+            child: Text(value.isEmpty ? "SELECT DATE" : displayValue, style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), fontSize: 10, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black)),
           ),
         ),
       ],
@@ -546,10 +659,11 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
 
   Widget _buildAccountManagement(bool isDark) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildActionButton("UPDATE SECURITY PASSWORD", LucideIcons.shieldCheck, isDark, () {}),
-        const SizedBox(height: 12),
-        _buildActionButton("DEACTIVATE ACCOUNT", LucideIcons.userX, isDark, () {}, isDestructive: true),
+        Text("SECURITY & ACCESS", style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), fontSize: 9, fontWeight: FontWeight.bold, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1.5)),
+        const SizedBox(height: 16),
+        _buildActionButton("DEACTIVATE ACCOUNT", LucideIcons.userX, isDark, () => GoRouter.of(context).push('/profile/deactivate'), isDestructive: true),
       ],
     );
   }
@@ -560,10 +674,10 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       child: OutlinedButton.icon(
         onPressed: onTap,
         icon: Icon(icon, size: 16),
-        label: Text(label, style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
+        label: Text(label, style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
         style: OutlinedButton.styleFrom(
-          foregroundColor: isDestructive ? Colors.redAccent.withOpacity(0.6) : (isDark ? Colors.white38 : Colors.black38),
-          side: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+          foregroundColor: isDestructive ? const Color(0xFFEF4444) : (isDark ? Colors.white70 : Colors.black87),
+          side: BorderSide(color: isDestructive ? const Color(0xFFEF4444).withOpacity(0.2) : (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
           padding: const EdgeInsets.symmetric(vertical: 20),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           backgroundColor: isDark ? const Color(0xFF18181B) : Colors.white,

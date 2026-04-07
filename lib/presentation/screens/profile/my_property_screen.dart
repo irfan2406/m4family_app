@@ -99,7 +99,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
             child: Center(
               child: Text(
                 'MY PROPERTY',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white : Colors.black,
@@ -134,7 +134,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
             children: [
               Text(
                 'PORTFOLIO OVERVIEW',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
                   fontSize: 8,
                   fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white38 : Colors.black38,
@@ -144,7 +144,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
               const SizedBox(height: 8),
               Text(
                 '$units Units • $visits Visits',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white : Colors.black,
@@ -157,7 +157,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
             children: [
               Text(
                 'TOTAL VALUE',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
                   fontSize: 8,
                   fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white38 : Colors.black38,
@@ -167,7 +167,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
               const SizedBox(height: 8),
               Text(
                 '₹${NumberFormat('#,##,###').format(_totalValue)}',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
                   color: const Color(0xFF22C55E),
@@ -215,7 +215,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                     children: [
                       Text(
                         (project['title'] ?? 'Unknown Project').toUpperCase(),
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
                           fontSize: 14,
                           fontWeight: FontWeight.w800,
                           color: isDark ? Colors.white : Colors.black,
@@ -228,7 +228,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                           const SizedBox(width: 4),
                           Text(
                             (project['location']?['name'] ?? 'Developing Area').toUpperCase(),
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
                               fontSize: 9,
                               fontWeight: FontWeight.w700,
                               color: isDark ? Colors.white38 : Colors.black38,
@@ -315,7 +315,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
         const SizedBox(height: 24),
         Text(
           'NO PROPERTY RECORDS FOUND',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
             fontSize: 10,
             fontWeight: FontWeight.w800,
             color: (isDark ? Colors.white : Colors.black).withOpacity(0.2),

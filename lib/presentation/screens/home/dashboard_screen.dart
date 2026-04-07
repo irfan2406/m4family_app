@@ -13,6 +13,7 @@ import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/screens/pages/pages_list_screen.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_detail_screen.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
+import 'dart:async';
 
 
 class DashboardScreen extends ConsumerStatefulWidget {
@@ -33,6 +34,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   String _selectedCategory = 'ALL';
   List<dynamic> _projects = [];
   bool _projectsLoading = true;
+  List<dynamic> _updates = [];
+  bool _updatesLoading = true;
+  String _updateCategory = 'PROPERTIES';
+  
+  Timer? _heroTimer;
+  Timer? _scrollTimer;
+  final ScrollController _recommendedScrollController = ScrollController();
 
   // 📝 Inquiry Form Controllers
   final TextEditingController _nameController = TextEditingController();
@@ -46,6 +54,49 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   void initState() {
     super.initState();
     _fetchProjects();
+    _fetchUpdates();
+    _startTimers();
+  }
+
+  void _startTimers() {
+    _heroTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      if (_projects.isNotEmpty) {
+        setState(() {
+          _currentHeroIndex = (_currentHeroIndex + 1) % 5;
+        });
+      }
+    });
+
+    _scrollTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      if (_recommendedScrollController.hasClients) {
+        double maxScroll = _recommendedScrollController.position.maxScrollExtent;
+        double currentScroll = _recommendedScrollController.offset;
+        double nextScroll = currentScroll + 260; // card width + margin
+
+        if (nextScroll >= maxScroll) {
+          _recommendedScrollController.animateTo(0, duration: 800.ms, curve: Curves.easeInOut);
+        } else {
+          _recommendedScrollController.animateTo(nextScroll, duration: 800.ms, curve: Curves.easeInOut);
+        }
+      }
+    });
+  }
+
+  Future<void> _fetchUpdates() async {
+    try {
+      final apiClient = ref.read(apiClientProvider);
+      final response = await apiClient.getGlobalUpdates();
+      if (response.data['status'] == true && response.data['data'] is List) {
+        setState(() {
+          _updates = response.data['data'];
+          _updatesLoading = false;
+        });
+      } else {
+        setState(() => _updatesLoading = false);
+      }
+    } catch (e) {
+      setState(() => _updatesLoading = false);
+    }
   }
 
   Future<void> _fetchProjects() async {
@@ -82,6 +133,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     _messageController.dispose();
     _featuredController.dispose();
     _scrollController.dispose();
+    _recommendedScrollController.dispose();
+    _heroTimer?.cancel();
+    _scrollTimer?.cancel();
     super.dispose();
   }
 
@@ -152,11 +206,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       drawer: const SidebarMenu(),
       body: CustomScrollView(
         controller: _scrollController,
-        slivers: [
+        slivers: <Widget>[
           // ⭐️ Stage 1: Fullscreen Hero Stack (Web Parity Overlaid Design)
           SliverToBoxAdapter(
             child: Builder(
@@ -174,188 +228,220 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     : 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80';
 
                 return Container(
-                  height: 650,
+                  height: 750, // Immersive height
                   child: Stack(
-                    children: [
+                    children: <Widget>[
+                      // 1. Immersive background image (Full Bleed)
                       Positioned.fill(
-                        child: Image.network(
-                          apiClient.resolveUrl(mainImage),
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) => Container(
-                            color: Colors.black.withOpacity(0.1),
-                            child: const Center(child: Icon(LucideIcons.image, color: Colors.white24, size: 50)),
+                        child: AnimatedSwitcher(
+                          duration: 1500.ms,
+                          child: Image.network(
+                            apiClient.resolveUrl(mainImage),
+                            key: ValueKey(_currentHeroIndex),
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: double.infinity,
+                            errorBuilder: (context, error, stackTrace) => Container(
+                              color: Colors.black.withOpacity(0.1),
+                              child: const Center(child: Icon(LucideIcons.image, color: Colors.white24, size: 50)),
+                            ),
                           ),
                         ),
                       ),
-                      // 1. Gradient Overlay
+                      
+                      // 2. Soft Gradient for text legibility
                       Container(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
                             colors: [
-                              Colors.black.withOpacity(0.3),
+                              Colors.black.withOpacity(0.5),
                               Colors.transparent,
-                              Colors.black.withOpacity(0.4),
+                              Colors.black.withOpacity(0.7),
                             ],
                             stops: const [0.0, 0.4, 1.0],
                           ),
                         ),
                       ),
-                      
-                      // 2. Global Header & Search (Top) - ALWAYS VISIBLE
+
+                      // 3. Header & Search Area (TOP SIDE - Web Parity)
                       Positioned(
-                        top: 60,
+                        top: 70,
                         left: 25,
                         right: 25,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'DISCOVER',
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white.withOpacity(0.6),
-                                      letterSpacing: 2,
-                                    ),
+                          children: <Widget>[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Text(
+                                  'DISCOVER',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white.withOpacity(0.6),
+                                    letterSpacing: 2,
                                   ),
-                                  _GlassIconButton(
-                                    icon: LucideIcons.menu, 
-                                    onTap: () => _scaffoldKey.currentState?.openDrawer(),
-                                    size: 45,
-                                  ),
-                                ],
-                              ),
-                              Text(
-                                'M4 Projects',
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 42,
-                                  fontWeight: FontWeight.w900,
-                                  color: Colors.white,
-                                  letterSpacing: -1,
                                 ),
+                                _GlassIconButton(
+                                  icon: LucideIcons.menu, 
+                                  onTap: () => _scaffoldKey.currentState?.openDrawer(),
+                                  size: 45,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 5),
+                            Text(
+                              'M4 Projects',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 32, // Further decreased for mobile elegance
+                                fontWeight: FontWeight.w900,
+                                color: Colors.white,
+                                letterSpacing: -1,
                               ),
-                              const SizedBox(height: 30),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: _GlassSearchField(
-                                      onChanged: (val) => setState(() => _searchQuery = val),
-                                    ),
+                            ),
+                            const SizedBox(height: 35),
+                            // Search bar on TOP side
+                            Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: _GlassSearchField(
+                                    onChanged: (val) => setState(() => _searchQuery = val),
+                                  ),
+                                ),
+                                const SizedBox(width: 15),
+                                _GlassIconButton(
+                                  icon: LucideIcons.slidersHorizontal,
+                                  size: 60,
+                                  onTap: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      backgroundColor: Colors.transparent,
+                                      isScrollControlled: true,
+                                      builder: (context) => _QuickFilterSheet(),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 20),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: <Widget>[
+                                  _CategoryChip(
+                                    label: 'ALL', 
+                                    isActive: _selectedCategory == 'ALL', 
+                                    onTap: () => setState(() => _selectedCategory = 'ALL'),
                                   ),
                                   const SizedBox(width: 15),
-                                  _GlassIconButton(
-                                    icon: LucideIcons.slidersHorizontal,
-                                    size: 60,
-                                    onTap: () {
-                                      showModalBottomSheet(
-                                        context: context,
-                                        backgroundColor: Colors.transparent,
-                                        isScrollControlled: true,
-                                        builder: (context) => _QuickFilterSheet(),
-                                      );
-                                    },
+                                  _CategoryChip(
+                                    label: 'ONGOING', 
+                                    isActive: _selectedCategory == 'ONGOING', 
+                                    onTap: () => setState(() => _selectedCategory = 'ONGOING'),
                                   ),
-                                ],
-                              ),
-                              const SizedBox(height: 20),
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: [
-                                    _CategoryChip(
-                                      label: 'ALL', 
-                                      isActive: _selectedCategory == 'ALL', 
-                                      onTap: () => setState(() => _selectedCategory = 'ALL'),
-                                    ),
-                                    const SizedBox(width: 15),
-                                    _CategoryChip(
-                                      label: 'ONGOING', 
-                                      isActive: _selectedCategory == 'ONGOING', 
-                                      onTap: () => setState(() => _selectedCategory = 'ONGOING'),
-                                    ),
-                                    const SizedBox(width: 15),
-                                    _CategoryChip(
-                                      label: 'UPCOMING', 
-                                      isActive: _selectedCategory == 'UPCOMING', 
-                                      onTap: () => setState(() => _selectedCategory = 'UPCOMING'),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        
-                        // 3. Featured Project Info or Loading/Empty indicator
-                        if (_projectsLoading)
-                           const Center(child: CircularProgressIndicator(color: Colors.white24))
-                        else if (_projects.isEmpty)
-                           Center(child: Text('No projects found.', style: GoogleFonts.montserrat(color: Colors.white24, fontSize: 14)))
-                        else if (featured != null)
-                          Positioned(
-                            bottom: 40,
-                            left: 30,
-                            child: GestureDetector(
-                              onTap: () {
-                                final projectId = featured['_id']?.toString() ?? '';
-                                if (projectId.isNotEmpty) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ProjectDetailScreen(
-                                        projectId: projectId,
-                                        projectData: featured,
-                                      ),
-                                    ),
-                                  );
-                                }
-                              },
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                        decoration: BoxDecoration(color: M4Theme.premiumBlue.withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
-                                        child: Text('FEATURED', style: GoogleFonts.montserrat(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      Container(width: 6, height: 6, decoration: const BoxDecoration(color: M4Theme.premiumBlue, shape: BoxShape.circle)),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    featured['title']?.toString().toUpperCase() ?? 'M4 PROJECT',
-                                    style: GoogleFonts.montserrat(color: Colors.white, fontSize: 44, fontWeight: FontWeight.w900, letterSpacing: -1.5),
-                                  ),
-                                  const SizedBox(height: 5),
-                                  Row(
-                                    children: [
-                                      const Icon(LucideIcons.mapPin, color: Colors.white60, size: 14),
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        featured['location']?['name'] ?? 'MUMBAI',
-                                        style: GoogleFonts.montserrat(color: Colors.white60, fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 1),
-                                      ),
-                                      const SizedBox(width: 20),
-                                      Text(
-                                        featured['startingPrice'] != null && featured['startingPrice'] != "N/A" 
-                                          ? '₹ ${featured['startingPrice']}' 
-                                          : 'Price on Request',
-                                        style: GoogleFonts.montserrat(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
+                                  const SizedBox(width: 15),
+                                  _CategoryChip(
+                                    label: 'UPCOMING', 
+                                    isActive: _selectedCategory == 'UPCOMING', 
+                                    onTap: () => setState(() => _selectedCategory = 'UPCOMING'),
                                   ),
                                 ],
                               ),
                             ),
+                          ],
+                        ),
+                      ),
+
+                      // 4. Featured Project Name (ON HERO IMAGE - Web Parity)
+                      if (featured != null && !_projectsLoading)
+                        Positioned(
+                          bottom: 50,
+                          left: 30,
+                          right: 30,
+                          child: GestureDetector(
+                            onTap: () {
+                              final projectId = featured['_id']?.toString() ?? '';
+                              if (projectId.isNotEmpty) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ProjectDetailScreen(
+                                      projectId: projectId,
+                                      projectData: featured,
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Row(
+                                  children: <Widget>[
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                                      decoration: BoxDecoration(color: M4Theme.premiumBlue.withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
+                                      child: Text('FEATURED', style: GoogleFonts.montserrat(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Container(width: 6, height: 6, decoration: const BoxDecoration(color: M4Theme.premiumBlue, shape: BoxShape.circle)),
+                                  ],
+                                ),
+                                const SizedBox(height: 15),
+                                Text(
+                                  featured['title']?.toString().toUpperCase() ?? 'M4 PROJECT',
+                                  style: GoogleFonts.montserrat(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w900, letterSpacing: -1.2),
+                                ),
+                                const SizedBox(height: 10),
+                                 Row(
+                                  children: <Widget>[
+                                    const Icon(LucideIcons.mapPin, color: Colors.white70, size: 14),
+                                    const SizedBox(width: 5),
+                                    Text(
+                                      featured['location']?['name'] ?? 'MUMBAI',
+                                      style: GoogleFonts.montserrat(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 1),
+                                    ),
+                                    if (featured['startingPrice'] != null && 
+                                        featured['startingPrice'] != "N/A" && 
+                                        !featured['startingPrice'].toString().contains('YOY')) ...[
+                                      const SizedBox(width: 25),
+                                      Text(
+                                        '₹ ${featured['startingPrice']}', 
+                                        style: GoogleFonts.montserrat(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
+                        ),
+
+                      // Artistic Impression Tag (Lowered to clear menu button shadow)
+                      Positioned(
+                        top: 140, // Increased to avoid overlap with large menu button
+                        right: 25,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.6),
+                            borderRadius: BorderRadius.circular(4),
+                            border: Border.all(color: Colors.white.withOpacity(0.1)),
+                          ),
+                          child: Text(
+                            'ARTISTIC IMPRESSION',
+                            style: GoogleFonts.montserrat(
+                              color: Colors.white,
+                              fontSize: 7,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 2,
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 );
@@ -369,7 +455,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
+                children: <Widget>[
                    Text(
                     'RECOMMENDED FOR YOU',
                     style: GoogleFonts.montserrat(
@@ -379,13 +465,21 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       letterSpacing: 1.5
                     ),
                   ),
-                  Text(
-                    'VIEW ALL',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 10, 
-                      fontWeight: FontWeight.w900, 
-                      color: Theme.of(context).colorScheme.onSurface, 
-                      letterSpacing: 1.5
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const ProjectListScreen()),
+                      );
+                    },
+                    child: Text(
+                      'VIEW ALL',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 10, 
+                        fontWeight: FontWeight.w900, 
+                        color: Theme.of(context).colorScheme.onSurface, 
+                        letterSpacing: 1.5
+                      ),
                     ),
                   ),
                 ],
@@ -396,7 +490,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             child: _projectsLoading
                 ? const SizedBox(
                     height: 380,
-                    child: Center(child: CircularProgressIndicator(color: Colors.white24)),
+                    child: Center(child: CircularProgressIndicator(color: Colors.white10)),
                   )
                 : SizedBox(
                     height: 380,
@@ -413,8 +507,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         }
 
                         return ListView.builder(
+                          controller: _recommendedScrollController,
                           scrollDirection: Axis.horizontal,
-                          padding: const EdgeInsets.all(20),
+                          physics: const BouncingScrollPhysics(),
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                           itemCount: filteredProjects.length > 8 ? 8 : filteredProjects.length,
                           itemBuilder: (context, index) {
                             final project = filteredProjects[index];
@@ -455,63 +551,96 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   ),
           ),
 
-          // 4. ⚡️ Stage 4: Latest Updates / Quick Nav (Web Parity text tabs)
+          // 4. ⚡️ Stage 4: Latest Updates feed
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(30, 20, 0, 30),
-              child: Row(
+              padding: const EdgeInsets.fromLTRB(30, 20, 30, 30),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: 100,
-                    child: Text(
-                      'LATEST\nUPDATES',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 11, 
-                        fontWeight: FontWeight.w900, 
-                        color: Theme.of(context).colorScheme.onSurface, 
-                        letterSpacing: 2, 
-                        height: 1.5,
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Text(
+                        'LATEST UPDATES',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 10, 
+                          fontWeight: FontWeight.w900, 
+                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4), 
+                          letterSpacing: 2, 
+                        ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(width: 15),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      physics: const BouncingScrollPhysics(),
-                      child: Row(
-                        children: [
-                          _TextTab(
-                            label: 'PROPERTIES', 
-                            isActive: true, 
-                            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ProjectListScreen())),
+                      const SizedBox(width: 20), // Essential gap to prevent overlap
+                      Expanded(
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: <Widget>[
+                              _TextTab(
+                                label: 'PROPERTIES', 
+                                isActive: _updateCategory == 'PROPERTIES', 
+                                onTap: () => setState(() => _updateCategory = 'PROPERTIES'),
+                              ),
+                              _TextTab(
+                                label: 'BLOGS', 
+                                isActive: _updateCategory == 'BLOGS', 
+                                onTap: () => setState(() => _updateCategory = 'BLOGS'),
+                              ),
+                              _TextTab(
+                                label: 'COMMUNITIES', 
+                                isActive: _updateCategory == 'COMMUNITIES', 
+                                onTap: () => setState(() => _updateCategory = 'COMMUNITIES'),
+                              ),
+                              _TextTab(
+                                label: 'MEDIA', 
+                                isActive: _updateCategory == 'MEDIA', 
+                                onTap: () => setState(() => _updateCategory = 'MEDIA'),
+                              ),
+                            ],
                           ),
-                          _TextTab(
-                            label: 'BLOGS', 
-                            isActive: false, 
-                            onTap: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Blogs coming soon!'))),
-                          ),
-                          _TextTab(
-                            label: 'COMMUNITIES', 
-                            isActive: false, 
-                            onTap: () => ref.read(navigationProvider.notifier).state = 1,
-                          ),
-                          _TextTab(
-                            label: 'MEDIA', 
-                            isActive: false, 
-                            onTap: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Media coming soon!'))),
-                          ),
-                          _TextTab(
-                            label: 'ENQUIRY', 
-                            isActive: false, 
-                            onTap: _scrollToInquiry,
-                          ),
-                          const SizedBox(width: 30),
-                        ],
+                        ),
                       ),
-                    ),
+                    ],
                   ),
+                  const SizedBox(height: 25),
+                  _updatesLoading
+                      ? const SizedBox(height: 250, child: Center(child: CircularProgressIndicator(color: Colors.white10)))
+                      : SizedBox(
+                          height: 250,
+                          child: Builder(
+                            builder: (context) {
+                              final filtered = _updates.where((u) {
+                                final type = u['type']?.toString().toLowerCase();
+                                if (_updateCategory == 'BLOGS') return type == 'blog';
+                                if (_updateCategory == 'PROPERTIES') return type == 'project update';
+                                if (_updateCategory == 'COMMUNITIES') return type == 'community';
+                                if (_updateCategory == 'MEDIA') return type == 'media';
+                                return true;
+                              }).toList();
+
+                                if (filtered.isEmpty) {
+                                  return Center(child: Text('NO UPDATES FOUND', style: GoogleFonts.montserrat(color: Colors.white10, fontSize: 10, fontWeight: FontWeight.w900)));
+                                }
+
+                              return ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                physics: const BouncingScrollPhysics(),
+                                itemCount: filtered.length,
+                                itemBuilder: (context, idx) {
+                                  final update = filtered[idx];
+                                  return _UpdateCard(
+                                    title: update['title'] ?? 'UNTITLED',
+                                    type: update['type']?.toString().toUpperCase() ?? 'UPDATE',
+                                    date: update['createdAt']?.toString().substring(0, 10) ?? '',
+                                    imageUrl: apiClient.resolveUrl(update['coverImage']),
+                                    snippet: update['snippet'] ?? '',
+                                    onTap: () {},
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ),
                 ],
               ),
             ),
@@ -524,7 +653,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               padding: const EdgeInsets.fromLTRB(30, 40, 30, 40),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                children: <Widget>[
                   Text(
                     'OUR PHILOSOPHY',
                     style: GoogleFonts.montserrat(
@@ -588,7 +717,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                           return Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 10),
                             child: Stack(
-                              children: [
+                              children: <Widget>[
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(40),
                                   child: imageUrl.isNotEmpty
@@ -654,14 +783,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 40),
               child: Column(
-                children: [
+                children: <Widget>[
                   Text(
                     'FEATURED SELECTION',
                     style: GoogleFonts.montserrat(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
-                      letterSpacing: 2,
+                      fontSize: 8, // Refined small scale
+                      fontWeight: FontWeight.w900,
+                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                      letterSpacing: 2.5,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -670,18 +799,28 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         ? 'LOADING...' 
                         : (_projects[_currentHeroIndex % _projects.length]['title']?.toString().toUpperCase() ?? 'UNTITLED'),
                     style: GoogleFonts.montserrat(
-                      fontSize: 42,
+                      fontSize: 26, // Matched with Stage 1 Hero
                       fontWeight: FontWeight.w900,
                       color: Theme.of(context).colorScheme.onSurface,
+                      letterSpacing: -1.2,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 35),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
+                    children: <Widget>[
                       _SliderNavButton(
                         icon: LucideIcons.arrowLeft, 
-                        onTap: () => _featuredController.previousPage(duration: 500.ms, curve: Curves.easeInOut),
+                        onTap: () {
+                          if (_featuredController.hasClients) {
+                             if (_currentHeroIndex > 0) {
+                                _featuredController.previousPage(duration: 500.ms, curve: Curves.easeInOut);
+                             } else {
+                                _featuredController.animateToPage(_projects.length - 1, duration: 800.ms, curve: Curves.easeInOut);
+                             }
+                          }
+                        },
                       ),
                       const SizedBox(width: 25),
                       GestureDetector(
@@ -706,13 +845,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 45, vertical: 15),
                           decoration: BoxDecoration(
-                            color: Colors.black,
+                            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
                             borderRadius: BorderRadius.circular(35),
                           ),
                           child: Text(
                             'EXPLORE NOW',
                             style: GoogleFonts.montserrat(
-                              color: Colors.white,
+                              color: Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white,
                               fontWeight: FontWeight.w900,
                               fontSize: 11,
                               letterSpacing: 1.5,
@@ -723,7 +862,15 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       const SizedBox(width: 25),
                       _SliderNavButton(
                         icon: LucideIcons.arrowRight, 
-                        onTap: () => _featuredController.nextPage(duration: 500.ms, curve: Curves.easeInOut),
+                        onTap: () {
+                          if (_featuredController.hasClients) {
+                             if (_currentHeroIndex < (_projects.length - 1)) {
+                                _featuredController.nextPage(duration: 500.ms, curve: Curves.easeInOut);
+                             } else {
+                                _featuredController.animateToPage(0, duration: 800.ms, curve: Curves.easeInOut);
+                             }
+                          }
+                        },
                       ),
                     ],
                   ),
@@ -737,9 +884,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(25, 0, 25, 60),
               child: Column(
-                children: [
+                children: <Widget>[
                   Row(
-                    children: [
+                    children: <Widget>[
                       Expanded(
                         child: _LargeActionCard(
                           icon: LucideIcons.layoutGrid, 
@@ -762,7 +909,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   ),
                   const SizedBox(height: 15),
                   Row(
-                    children: [
+                    children: <Widget>[
                       Expanded(
                         child: _LargeActionCard(
                           icon: LucideIcons.playCircle, 
@@ -793,13 +940,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             child: Container(
               padding: const EdgeInsets.fromLTRB(30, 80, 30, 60),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.02),
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.02),
                 borderRadius: const BorderRadius.only(topLeft: Radius.circular(50), topRight: Radius.circular(50)),
-                border: Border.all(color: Colors.black.withOpacity(0.04)),
+                border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.04)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                children: <Widget>[
                   Text(
                     'REGISTER YOUR\nINTEREST',
                     style: GoogleFonts.montserrat(fontSize: 32, fontWeight: FontWeight.w300, color: Theme.of(context).colorScheme.onSurface, height: 1.1),
@@ -823,13 +970,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     child: ElevatedButton(
                       onPressed: _isSubmitting ? null : _submitInquiry,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.black,
+                        backgroundColor: Theme.of(context).colorScheme.onSurface,
+                        foregroundColor: Theme.of(context).colorScheme.surface,
                         padding: const EdgeInsets.symmetric(vertical: 22),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                       ),
                       child: _isSubmitting 
-                        ? const SizedBox(height: 15, width: 15, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black))
+                        ? SizedBox(height: 15, width: 15, child: CircularProgressIndicator(strokeWidth: 2, color: Theme.of(context).colorScheme.surface))
                         : Text('SUBMIT INTEREST', style: GoogleFonts.montserrat(fontWeight: FontWeight.bold, letterSpacing: 3, fontSize: 12)),
                     ),
                   ),
@@ -838,7 +985,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             ),
           ),
           
-          const SliverToBoxAdapter(child: SizedBox(height: 120)),
+          SliverToBoxAdapter(child: SizedBox(height: 120)),
         ],
       ),
     );
@@ -900,7 +1047,9 @@ class _ProjectCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasImage = imageUrl.isNotEmpty;
-    final displayPrice = startingPrice.isNotEmpty ? '₹ $startingPrice' : 'Contact Us';
+    final displayPrice = (startingPrice.isNotEmpty && !startingPrice.contains('YOY')) 
+        ? '₹ $startingPrice' 
+        : '';
     final displayLocation = location.isNotEmpty ? location.toUpperCase() : 'MUMBAI';
     final displayStatus = status.isNotEmpty ? status.toUpperCase() : 'UPCOMING';
 
@@ -914,7 +1063,7 @@ class _ProjectCard extends StatelessWidget {
           children: [
             Expanded(
               child: Stack(
-                children: [
+                children: <Widget>[
                   ClipRRect(
                     borderRadius: BorderRadius.circular(20),
                     child: hasImage
@@ -990,14 +1139,15 @@ class _ProjectCard extends StatelessWidget {
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('STARTING FROM', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3), fontSize: 7, fontWeight: FontWeight.bold)),
-                          Text(displayPrice, style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
-                        ],
-                      ),
+                    children: <Widget>[
+                      if (displayPrice.isNotEmpty)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text('STARTING FROM', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3), fontSize: 7, fontWeight: FontWeight.bold)),
+                            Text(displayPrice, style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
+                          ],
+                        ),
                       Icon(LucideIcons.arrowRight, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2), size: 14),
                     ],
                   ),
@@ -1256,6 +1406,7 @@ class _SliderNavButton extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
+      behavior: HitTestBehavior.opaque, // Ensure tap is caught
       child: ClipRRect(
         borderRadius: BorderRadius.circular(40),
         child: BackdropFilter(
@@ -1512,6 +1663,86 @@ class _TextTab extends StatelessWidget {
               letterSpacing: 1.5,
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _UpdateCard extends StatelessWidget {
+  final String title;
+  final String type;
+  final String date;
+  final String imageUrl;
+  final String snippet;
+  final VoidCallback onTap;
+
+  const _UpdateCard({
+    required this.title,
+    required this.type,
+    required this.date,
+    required this.imageUrl,
+    required this.snippet,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 280,
+        margin: const EdgeInsets.only(left: 20, right: 10),
+        decoration: BoxDecoration(
+          color: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
+          borderRadius: BorderRadius.circular(35),
+          border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+        ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(25),
+              child: Image.network(
+                imageUrl,
+                height: 120,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(color: Colors.white10),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(type, style: GoogleFonts.montserrat(fontSize: 7, fontWeight: FontWeight.w900, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5))),
+                ),
+                Text(date, style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3))),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              title,
+              style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, color: Theme.of(context).colorScheme.onSurface, letterSpacing: -0.5),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 6),
+            Text(
+              snippet,
+              style: GoogleFonts.montserrat(fontSize: 9, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), height: 1.4),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
         ),
       ),
     );

@@ -11,6 +11,7 @@ import 'package:m4_mobile/presentation/screens/support/support_logs_screen.dart'
 import 'package:m4_mobile/presentation/screens/support/support_screen.dart';
 import 'package:m4_mobile/presentation/screens/profile/my_property_screen.dart';
 import 'package:m4_mobile/presentation/screens/profile/legal_vault_screen.dart';
+import 'package:m4_mobile/presentation/screens/profile/deactivate_account_screen.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 
 import 'package:m4_mobile/core/providers/theme_provider.dart';
@@ -99,6 +100,10 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/profile/legal-vault',
       builder: (context, state) => const LegalVaultScreen(),
+    ),
+    GoRoute(
+      path: '/profile/deactivate',
+      builder: (context, state) => const DeactivateAccountScreen(),
     ),
     GoRoute(
       path: '/support',

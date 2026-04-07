@@ -25,22 +25,18 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(LucideIcons.chevronLeft, color: Colors.black),
+          icon: Icon(LucideIcons.chevronLeft, color: Theme.of(context).colorScheme.onSurface),
           onPressed: () => Navigator.pop(context),
         ),
       ),
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.white, Colors.black.withOpacity(0.02)],
-          ),
+          color: Theme.of(context).scaffoldBackgroundColor,
         ),
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -73,7 +69,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
           style: GoogleFonts.montserrat(
             fontSize: 24,
             fontWeight: FontWeight.w300,
-            color: Colors.black,
+            color: Theme.of(context).colorScheme.onSurface,
             letterSpacing: 2,
           ),
         ),
@@ -82,7 +78,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
           style: GoogleFonts.montserrat(
             fontSize: 9,
             fontWeight: FontWeight.w900,
-            color: Colors.black.withOpacity(0.5),
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
             letterSpacing: 4,
           ),
         ),
@@ -98,17 +94,17 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.6),
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.white.withOpacity(0.6)),
+            border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1)),
           ),
           child: TextField(
             controller: _searchController,
-            style: GoogleFonts.montserrat(color: Colors.black, fontSize: 13),
+            style: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface, fontSize: 13),
             decoration: InputDecoration(
               hintText: 'SEARCH FOR HELP...',
-              hintStyle: GoogleFonts.montserrat(color: Colors.black.withOpacity(0.2), fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1),
-              prefixIcon: Icon(LucideIcons.search, color: Colors.black.withOpacity(0.2), size: 18),
+              hintStyle: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2), fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1),
+              prefixIcon: Icon(LucideIcons.search, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2), size: 18),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(vertical: 16),
             ),
@@ -127,7 +123,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
           style: GoogleFonts.montserrat(
             fontSize: 9,
             fontWeight: FontWeight.w900,
-            color: Colors.black.withOpacity(0.4),
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
             letterSpacing: 2,
           ),
         ),
@@ -166,7 +162,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
               style: GoogleFonts.montserrat(
                 fontSize: 9,
                 fontWeight: FontWeight.w900,
-                color: Colors.black.withOpacity(0.4),
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
                 letterSpacing: 2,
               ),
             ),
@@ -234,9 +230,9 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.6),
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: Colors.white.withOpacity(0.6)),
+            border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1)),
           ),
           child: Column(
             children: [
@@ -246,7 +242,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                   color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(LucideIcons.helpCircle, color: Colors.black, size: 24),
+                child: Icon(LucideIcons.helpCircle, color: Theme.of(context).colorScheme.onSurface, size: 24),
               ),
               const SizedBox(height: 24),
               Text(
@@ -254,7 +250,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                 style: GoogleFonts.montserrat(
                   fontSize: 18,
                   fontWeight: FontWeight.w900,
-                  color: Colors.black,
+                  color: Theme.of(context).colorScheme.onSurface,
                   letterSpacing: 1,
                 ),
               ),
@@ -264,7 +260,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                 style: GoogleFonts.montserrat(
                   fontSize: 9,
                   fontWeight: FontWeight.w600,
-                  color: Colors.black.withOpacity(0.4),
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
                   letterSpacing: 1,
                 ),
               ),
@@ -280,8 +276,8 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    foregroundColor: Colors.white,
+                    backgroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
+                    foregroundColor: Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   child: Text(
@@ -338,13 +334,13 @@ class _GuideCard extends StatelessWidget {
                   color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(icon, color: Colors.black.withOpacity(0.7), size: 20),
+                child: Icon(icon, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7), size: 20),
               ),
               const SizedBox(height: 24),
               Text(
                 title,
                 style: GoogleFonts.montserrat(
-                  color: Colors.black,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w900,
                   fontSize: 10,
                   letterSpacing: 1,
@@ -354,7 +350,7 @@ class _GuideCard extends StatelessWidget {
               Text(
                 readingTime,
                 style: GoogleFonts.montserrat(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
                   fontSize: 8,
                   fontWeight: FontWeight.bold,
                 ),
@@ -387,7 +383,7 @@ class _FAQCategory extends StatelessWidget {
               width: 4,
               height: 4,
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.2),
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
                 shape: BoxShape.circle,
               ),
             ),
@@ -397,7 +393,7 @@ class _FAQCategory extends StatelessWidget {
               style: GoogleFonts.montserrat(
                 fontSize: 8,
                 fontWeight: FontWeight.w900,
-                color: Colors.black.withOpacity(0.4),
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
                 letterSpacing: 1,
               ),
             ),
@@ -428,9 +424,9 @@ class _FAQTileState extends State<_FAQTile> {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.02),
+        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.02),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.black.withOpacity(0.05)),
+        border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05)),
       ),
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
@@ -440,7 +436,7 @@ class _FAQTileState extends State<_FAQTile> {
           title: Text(
             widget.question.toUpperCase(),
             style: GoogleFonts.montserrat(
-              color: Colors.black,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.bold,
               fontSize: 10,
               letterSpacing: 0.5,
@@ -448,7 +444,7 @@ class _FAQTileState extends State<_FAQTile> {
           ),
           trailing: Icon(
             _isExpanded ? LucideIcons.chevronUp : LucideIcons.chevronDown,
-            color: Colors.black.withOpacity(0.2),
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
             size: 16,
           ),
           children: [
@@ -457,7 +453,7 @@ class _FAQTileState extends State<_FAQTile> {
               child: Text(
                 widget.answer,
                 style: GoogleFonts.montserrat(
-                  color: Colors.black.withOpacity(0.5),
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                   fontSize: 10,
                   height: 1.5,
                 ),

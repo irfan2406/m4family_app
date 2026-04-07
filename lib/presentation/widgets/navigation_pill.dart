@@ -38,7 +38,7 @@ class NavigationPill extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 25),
             decoration: BoxDecoration(
               color: isDark 
-                  ? const Color(0xFF080A0E) 
+                  ? const Color(0xFF000000) 
                   : Colors.white.withOpacity(0.4), 
               borderRadius: BorderRadius.circular(35),
               border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05), width: 1),
