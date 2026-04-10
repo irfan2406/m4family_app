@@ -81,90 +81,81 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
           ),
         ),
       ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 90),
-        child: FloatingActionButton.extended(
-          onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const CreateTicketScreen()),
-          ),
-          backgroundColor: Theme.of(context).colorScheme.onSurface,
-          elevation: 10,
-          label: Text(
-            'NEW TICKET',
-            style: GoogleFonts.montserrat(
-              color: Theme.of(context).colorScheme.surface,
-              fontWeight: FontWeight.w900,
-              fontSize: 12,
-              letterSpacing: 1.5,
-            ),
-          ),
-          icon: Icon(LucideIcons.plus, color: Theme.of(context).colorScheme.surface, size: 18),
-        ),
-      ).animate().scale(delay: 400.ms),
+      floatingActionButton: null,
     );
   }
 
   Widget _buildHeader(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+      padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(
-            child: Row(
-              children: [
-                IconButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  icon: Icon(LucideIcons.chevronLeft, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
-                ),
-                const SizedBox(width: 4),
-                Flexible(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'SUPPORT HUB',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w300,
-                          color: Theme.of(context).colorScheme.onSurface,
-                          letterSpacing: 2,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      Text(
-                        'HOW CAN WE HELP?',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 9,
-                          fontWeight: FontWeight.w900,
-                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                          letterSpacing: 4,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
+          Row(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  } else {
+                    ref.read(navigationProvider.notifier).state = 0;
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.05),
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white.withOpacity(0.1)),
                   ),
+                  child: const Icon(LucideIcons.arrowLeft, color: Colors.white, size: 16),
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(width: 16),
+              Text(
+                'SUPPORT HUB',
+                style: GoogleFonts.montserrat(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.white,
+                  letterSpacing: 0,
+                ),
+              ),
+            ],
           ),
 
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
-              shape: BoxShape.circle,
-              border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1)),
+          // New Ticket Button - Web Parity
+          InkWell(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const CreateTicketScreen()),
             ),
-            child: Icon(LucideIcons.headphones, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7), size: 20),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                children: [
+                  const Icon(LucideIcons.plusCircle, color: Colors.black, size: 14),
+                  const SizedBox(width: 10),
+                  Text(
+                    'NEW TICKET',
+                    style: GoogleFonts.montserrat(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 10,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
-    ).animate().fadeIn().slideX(begin: -0.1);
+    ).animate().fadeIn().slideY(begin: -0.1);
   }
 
   Widget _buildSupportMatrix() {

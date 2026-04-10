@@ -40,24 +40,33 @@ class _MainShellState extends ConsumerState<MainShell> {
   Widget build(BuildContext context) {
     final currentIndex = ref.watch(navigationProvider);
     
-    return Scaffold(
-      drawer: const SidebarMenu(),
-      body: Stack(
-        children: [
-          IndexedStack(
-            index: currentIndex,
-            children: _screens,
-          ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: NavigationPill(
-              currentIndex: currentIndex,
-              onTap: (index) {
-                ref.read(navigationProvider.notifier).state = index;
-              },
+    return PopScope(
+      canPop: currentIndex == 0,
+      onPopInvoked: (didPop) {
+        if (didPop) return;
+        if (currentIndex != 0) {
+          ref.read(navigationProvider.notifier).state = 0;
+        }
+      },
+      child: Scaffold(
+        drawer: const SidebarMenu(),
+        body: Stack(
+          children: [
+            IndexedStack(
+              index: currentIndex,
+              children: _screens,
             ),
-          ),
-        ],
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: NavigationPill(
+                currentIndex: currentIndex,
+                onTap: (index) {
+                  ref.read(navigationProvider.notifier).state = index;
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

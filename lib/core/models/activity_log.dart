@@ -6,6 +6,7 @@ class ActivityLog {
   final String type;
   final String description;
   final String actor;
+  final String? priority;
   final Map<String, dynamic> details;
   final DateTime createdAt;
 
@@ -17,6 +18,7 @@ class ActivityLog {
     required this.type,
     required this.description,
     required this.actor,
+    this.priority,
     required this.details,
     required this.createdAt,
   });
@@ -30,6 +32,7 @@ class ActivityLog {
       type: json['type'] ?? '',
       description: json['description'] ?? '',
       actor: json['actor'] ?? '',
+      priority: json['priority'],
       details: json['details'] ?? {},
       createdAt: DateTime.parse(json['createdAt']),
     );

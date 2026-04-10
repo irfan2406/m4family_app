@@ -28,7 +28,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
 
   final List<Map<String, dynamic>> _redemptionOptions = [
     {
-      'id': 'wallet_credit',
+      'id': 'wallet',
       'title': 'M4 WALLET CREDIT',
       'subtitle': '1 POINT = ₹1',
       'icon': LucideIcons.wallet,

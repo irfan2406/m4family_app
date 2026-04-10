@@ -7,7 +7,10 @@ import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:flutter/services.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/screens/profile/referral_redeem_screen.dart';
+import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:intl/intl.dart';
 
 class ReferralScreen extends ConsumerStatefulWidget {
   const ReferralScreen({super.key});
@@ -19,8 +22,10 @@ class ReferralScreen extends ConsumerStatefulWidget {
 class _ReferralScreenState extends ConsumerState<ReferralScreen> {
   bool _isLoading = true;
   double _walletBalance = 0;
+  double _cashBalance = 0;
   String _referralCode = '';
   List<dynamic> _referrals = [];
+  List<dynamic> _history = [];
 
   @override
   void initState() {
@@ -33,29 +38,23 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
       final apiClient = ref.read(apiClientProvider);
       final user = ref.read(authProvider).user;
       
-      // 1. Get Wallet Balance (Try Investor API first, fallback to user model)
-      try {
-        final walletRes = await apiClient.getInvestorWallet();
-        if (walletRes.data['status'] == true) {
-          _walletBalance = double.tryParse(walletRes.data['data']['balance'].toString()) ?? 0;
-        }
-      } catch (e) {
+      final response = await apiClient.getReferralDashboard();
+      if (response.data['status'] == true) {
+        final data = response.data['data'];
+        setState(() {
+          _walletBalance = double.tryParse(data['walletBalance'].toString()) ?? 0;
+          _cashBalance = double.tryParse(data['cashBalance'].toString()) ?? 0;
+          _referrals = data['activeReferrals'] ?? [];
+          _history = data['transactions'] ?? [];
+        });
+      } else {
+        // Fallback for legacy
         _walletBalance = double.tryParse(user?['loyaltyPoints']?.toString() ?? '0') ?? 0;
-      }
-
-      // 2. Get Referral Code from user model
-      _referralCode = user?['referralCode'] ?? 'M4-GEN-001';
-
-      // 3. Get Referrals List
-      try {
-        final refRes = await apiClient.getInvestorReferrals();
-        if (refRes.data['status'] == true && refRes.data['data'] is List) {
-          _referrals = refRes.data['data'];
-        }
-      } catch (e) {
         _referrals = [];
+        _history = [];
       }
 
+      _referralCode = user?['referralCode'] ?? 'M4-GEN-001';
       if (mounted) setState(() => _isLoading = false);
     } catch (e) {
       if (mounted) setState(() => _isLoading = false);
@@ -64,290 +63,445 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final themeMode = ref.watch(themeProvider);
-    final isDark = themeMode == ThemeMode.dark;
-
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(LucideIcons.chevronLeft, color: isDark ? Colors.white : Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          'REFERRAL & REWARDS',
-          style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
-            color: isDark ? Colors.white : Colors.black,
-            fontSize: 14,
-            fontWeight: FontWeight.w900,
-            letterSpacing: 2,
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: _isLoading 
-        ? const Center(child: CircularProgressIndicator())
-        : RefreshIndicator(
-            onRefresh: _fetchReferralData,
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(
-                children: [
-                  const SizedBox(height: 20),
-                  _buildWalletCard(isDark),
-                  const SizedBox(height: 30),
-                  _buildReferralOptions(isDark),
-                  const SizedBox(height: 30),
-                  _buildActiveReferrals(isDark),
-                  const SizedBox(height: 100),
-                ],
-              ),
+      backgroundColor: const Color(0xFF09090B),
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildHeader(),
+            Expanded(
+              child: _isLoading 
+                ? const Center(child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                : RefreshIndicator(
+                    onRefresh: _fetchReferralData,
+                    color: Colors.white,
+                    backgroundColor: const Color(0xFF18181B),
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 12),
+                          _buildPremiumRewardsCard(),
+                          const SizedBox(height: 24),
+                          _buildActionGrid(),
+                          const SizedBox(height: 48),
+                          _buildSectionHeader('ACTIVE PIPELINE', LucideIcons.trendingUp),
+                          const SizedBox(height: 16),
+                          _buildLeadsPipeline(),
+                          const SizedBox(height: 48),
+                          _buildSectionHeader('POINT HISTORY', LucideIcons.history),
+                          const SizedBox(height: 16),
+                          _buildHistoryList(),
+                          const SizedBox(height: 100),
+                        ],
+                      ),
+                    ),
+                  ),
             ),
-          ),
+          ],
+        ),
+      ),
     );
   }
 
-  Widget _buildWalletCard(bool isDark) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(30),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0A0C10) : Colors.white,
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
-        boxShadow: isDark ? null : [
-          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20, offset: const Offset(0, 10)),
-        ],
-      ),
-      child: Column(
+  Widget _buildHeader() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+      child: Stack(
+        alignment: Alignment.center,
         children: [
+          Align(
+            alignment: Alignment.centerLeft,
+            child: GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.05),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                ),
+                child: const Icon(LucideIcons.chevronLeft, color: Colors.white, size: 16),
+              ),
+            ),
+          ),
           Text(
-            'WALLET BALANCE',
-            style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
-              color: isDark ? Colors.white24 : Colors.black26,
-              fontSize: 10,
-              fontWeight: FontWeight.w800,
+            'REWARDS HUB',
+            style: GoogleFonts.montserrat(
+              color: Colors.white,
+              fontSize: 14,
+              fontWeight: FontWeight.w900,
               letterSpacing: 2,
             ),
           ),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                _walletBalance.toStringAsFixed(0),
-                style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
-                  color: isDark ? Colors.white : Colors.black,
-                  fontSize: 48,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'PTS',
-                style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
-                  color: isDark ? Colors.white38 : Colors.black38,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 25),
-          GestureDetector(
-            onTap: () async {
-               final result = await Navigator.push(
-                 context,
-                 MaterialPageRoute(
-                   builder: (context) => ReferralRedeemScreen(walletBalance: _walletBalance),
-                 ),
-               );
-               if (result == true && mounted) {
-                 _fetchReferralData();
-               }
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-              decoration: BoxDecoration(
-                color: isDark ? Colors.white : Colors.black,
-                borderRadius: BorderRadius.circular(40),
-              ),
-              child: Text(
-                'REDEEM NOW',
-                style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
-                  color: isDark ? Colors.black : Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 1,
-                ),
-              ),
-            ),
-          ),
         ],
       ),
     );
   }
 
-  Widget _buildReferralOptions(bool isDark) {
-    return Column(
+  Widget _buildPremiumRewardsCard() {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(40),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 30,
+            offset: const Offset(0, 15),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            right: 0,
+            top: 40,
+            child: Opacity(
+              opacity: 0.05,
+              child: Icon(LucideIcons.gift, size: 160, color: Colors.black),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(32),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'M4 REWARD POINTS',
+                  style: GoogleFonts.montserrat(
+                    color: Colors.black38,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      _walletBalance.toStringAsFixed(0),
+                      style: GoogleFonts.montserrat(
+                        color: Colors.black,
+                        fontSize: 48,
+                        fontWeight: FontWeight.w900,
+                        height: 0.9,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: Text(
+                        'PTS',
+                        style: GoogleFonts.montserrat(
+                          color: Colors.black26,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    _buildPill('VALUE: ₹${(_walletBalance * 0.5).toStringAsFixed(0)}', Colors.black.withValues(alpha: 0.05), Colors.black54),
+                    const SizedBox(width: 8),
+                    _buildPill('CASH: ₹$_cashBalance', const Color(0xFF10B981).withValues(alpha: 0.1), const Color(0xFF10B981)),
+                  ],
+                ),
+                const SizedBox(height: 32),
+                GestureDetector(
+                  onTap: () async {
+                    final result = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ReferralRedeemScreen(walletBalance: _walletBalance),
+                      ),
+                    );
+                    if (result == true && mounted) _fetchReferralData();
+                  },
+                  child: Container(
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.3),
+                          blurRadius: 15,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'REDEEM POINTS',
+                          style: GoogleFonts.montserrat(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        const Icon(LucideIcons.checkCircle2, color: Colors.white, size: 16),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ).animate().fadeIn().scale(begin: const Offset(0.95, 0.95));
+  }
+
+  Widget _buildPill(String text, Color bg, Color textCol) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        text.toUpperCase(),
+        style: GoogleFonts.montserrat(
+          color: textCol,
+          fontSize: 8,
+          fontWeight: FontWeight.w900,
+          letterSpacing: 0.5,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionGrid() {
+    return Row(
       children: [
-        _buildOptionItem(LucideIcons.userPlus, 'REFER A FRIEND', 'GET 500 PTS PER REF', isDark, () {
-          _showReferralForm(isDark);
-        }),
-        const SizedBox(height: 15),
-        _buildOptionItem(LucideIcons.share2, 'SHARE CODE', _referralCode, isDark, () {
+        Expanded(child: _buildActionBox('REFER FRIEND', LucideIcons.users, () => _showReferralForm())),
+        const SizedBox(width: 16),
+        Expanded(child: _buildActionBox('SHARE APP', LucideIcons.share2, () {
           Clipboard.setData(ClipboardData(text: _referralCode));
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Referral code copied to clipboard!')));
-        }),
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Referral code copied!')));
+        })),
       ],
     );
   }
 
-  Widget _buildOptionItem(IconData icon, String title, String subtitle, bool isDark, VoidCallback onTap) {
+  Widget _buildActionBox(String label, IconData icon, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(20),
+        height: 100,
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF080A0E) : Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.03)),
+          color: Colors.white.withValues(alpha: 0.03),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.04)),
         ),
-        child: Row(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, color: isDark ? Colors.white : Colors.black, size: 20),
-            ),
-            const SizedBox(width: 20),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
-                      color: isDark ? Colors.white : Colors.black,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                  Text(
-                    subtitle,
-                    style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
-                      color: isDark ? Colors.white38 : Colors.black38,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
+            Icon(icon, color: Colors.white, size: 24),
+            const SizedBox(height: 12),
+            Text(
+              label,
+              style: GoogleFonts.montserrat(
+                color: Colors.white,
+                fontSize: 9,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1,
               ),
             ),
-            Icon(LucideIcons.chevronRight, color: (isDark ? Colors.white : Colors.black).withOpacity(0.1), size: 18),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildActiveReferrals(bool isDark) {
-    if (_referrals.isEmpty) {
-       return Column(
-         crossAxisAlignment: CrossAxisAlignment.start,
-         children: [
-           Padding(
-            padding: const EdgeInsets.only(left: 10, bottom: 15),
-            child: Text(
-              'ACTIVE REFERRALS',
-              style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
-                color: isDark ? Colors.white24 : Colors.black26,
-                fontSize: 10,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 1.5,
-              ),
-            ),
-          ),
-          Center(
-            child: Text(
-              'NO ACTIVE REFERRALS YET', 
-              style: GoogleFonts.montserrat(color: isDark ? Colors.white12 : Colors.black12, fontSize: 10, fontWeight: FontWeight.w800)
-            )
-          ),
-         ],
-       );
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildSectionHeader(String title, IconData icon) {
+    return Row(
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 10, bottom: 15),
-          child: Text(
-            'ACTIVE REFERRALS',
-            style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
-              color: isDark ? Colors.white24 : Colors.black26,
-              fontSize: 10,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 1.5,
-            ),
+        Text(
+          title,
+          style: GoogleFonts.montserrat(
+            color: Colors.white24,
+            fontSize: 10,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 1,
           ),
         ),
-        ..._referrals.map((ref) => Column(
-          children: [
-            _buildReferralTile(
-              ref['referredUser']?['firstName'] ?? 'User', 
-              ref['status'] ?? 'Pending', 
-              '${ref['points'] ?? 0} PTS', 
-              isDark
-            ),
-            const SizedBox(height: 10),
-          ],
-        )).toList(),
+        const Spacer(),
+        Icon(icon, color: Colors.white12, size: 14),
       ],
     );
   }
 
-  Widget _buildReferralTile(String name, String status, String pts, bool isDark) {
-    // ...existing code...
-    final bool isVerified = status.toLowerCase() == 'verified' || status.toLowerCase() == 'active';
+  Widget _buildLeadsPipeline() {
+    if (_referrals.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 40),
+          child: Text(
+            'NO ACTIVE LEADS',
+            style: GoogleFonts.montserrat(
+              color: Colors.white.withValues(alpha: 0.05),
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 2,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Column(
+      children: _referrals.map((ref) => _buildLeadCard(ref)).toList(),
+    );
+  }
+
+  Widget _buildLeadCard(dynamic ref) {
+    final status = (ref['status'] ?? 'Pending').toString().toUpperCase();
+    final name = ref['referralName'] ?? ref['clientName'] ?? 'REFERRAL LEAD';
+    final project = ref['projectName'] ?? 'GENERAL SELECTION';
+    final points = ref['pointsEarned'] ?? 0;
+
     return Container(
-      padding: const EdgeInsets.all(15),
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF080A0E).withOpacity(0.5) : Colors.grey[100],
-        borderRadius: BorderRadius.circular(15),
+        color: Colors.white.withValues(alpha: 0.02),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
       ),
       child: Row(
         children: [
-          CircleAvatar(
-            backgroundColor: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
-            child: Text(name[0], style: TextStyle(color: isDark ? Colors.white38 : Colors.black38)),
-          ),
-          const SizedBox(width: 15),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name, style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 13, fontWeight: FontWeight.w700)),
-                Text(status.toUpperCase(), style: GoogleFonts.montserrat(color: isVerified ? Colors.green : Colors.orange, fontSize: 10, fontWeight: FontWeight.w600)),
+                Text(
+                  name.toString().toUpperCase(),
+                  style: GoogleFonts.montserrat(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w800),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Text(
+                      project.toString().toUpperCase(),
+                      style: GoogleFonts.montserrat(color: Colors.white24, fontSize: 8, fontWeight: FontWeight.w800, fontStyle: FontStyle.italic),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: (status == 'VERIFIED' || status == 'IN PROGRESS') ? const Color(0xFF10B981).withValues(alpha: 0.1) : Colors.white.withValues(alpha: 0.05),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        status,
+                        style: GoogleFonts.montserrat(
+                          color: (status == 'VERIFIED' || status == 'IN PROGRESS') ? const Color(0xFF10B981) : Colors.white38,
+                          fontSize: 6,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
-          Text(pts, style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 12, fontWeight: FontWeight.w900)),
+          Text(
+            '${points.toString()} PTS',
+            style: GoogleFonts.montserrat(color: const Color(0xFFF59E0B), fontSize: 11, fontWeight: FontWeight.w900),
+          ),
         ],
       ),
     );
   }
 
-  void _showReferralForm(bool isDark) {
+  Widget _buildHistoryList() {
+    if (_history.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 40),
+          child: Text(
+            'NO RECENT HISTORY',
+            style: GoogleFonts.montserrat(
+              color: Colors.white.withValues(alpha: 0.05),
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 2,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Column(
+      children: _history.map((txn) => _buildHistoryItem(txn)).toList(),
+    );
+  }
+
+  Widget _buildHistoryItem(dynamic txn) {
+    final type = (txn['type'] ?? 'Referral').toString().toUpperCase();
+    final date = txn['createdAt'] != null ? DateTime.parse(txn['createdAt'].toString()) : DateTime.now();
+    final amount = txn['amount'] ?? 0;
+    final isRedemption = type == 'REDEMPTION' || type == 'WITHDRAWAL';
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.02),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                type,
+                style: GoogleFonts.montserrat(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w800),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                '${date.day}/${date.month}/${date.year}',
+                style: GoogleFonts.montserrat(color: Colors.white24, fontSize: 8, fontWeight: FontWeight.w700),
+              ),
+            ],
+          ),
+          Text(
+            '${isRedemption ? '-' : '+'}$amount',
+            style: GoogleFonts.montserrat(
+              color: isRedemption ? Colors.redAccent : const Color(0xFF10B981),
+              fontSize: 12,
+              fontWeight: FontWeight.w900,
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showReferralForm() {
     final nameController = TextEditingController();
     final phoneController = TextEditingController();
-    final projectController = TextEditingController();
+    String selectedProjectName = '';
+    String selectedProjectId = '';
+    bool isProjectDropdownOpen = false;
     bool isLoading = false;
 
     showModalBottomSheet(
@@ -356,112 +510,202 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
       backgroundColor: Colors.transparent,
       builder: (context) {
         return StatefulBuilder(
-          builder: (context, setState) {
-            return Padding(
-              padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-              child: Container(
-                padding: const EdgeInsets.all(30),
-                decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF030406) : Colors.white,
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
-                  border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'NEW REFERRAL',
-                      style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
-                        color: isDark ? Colors.white : Colors.black,
-                        fontSize: 24,
-                        fontWeight: FontWeight.w900,
-                      ),
+          builder: (context, setModalState) {
+            return Container(
+              padding: EdgeInsets.only(
+                left: 32, right: 32, top: 40,
+                bottom: MediaQuery.of(context).viewInsets.bottom + 40,
+              ),
+              decoration: const BoxDecoration(
+                color: Color(0xFF111111),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'REFER FRIEND',
+                    style: GoogleFonts.montserrat(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'ADD TO YOUR SUCCESS MATRIX',
+                    style: GoogleFonts.montserrat(
+                      color: Colors.white24,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1.5,
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'REFER & EARN REWARDS',
-                      style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
-                        color: isDark ? Colors.white54 : Colors.black54,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 2,
+                  ),
+                  const SizedBox(height: 48),
+                  
+                  // CUSTOM INLINE DROPDOWN
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'SELECT PROJECT',
+                        style: GoogleFonts.montserrat(color: Colors.white24, fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 1),
                       ),
-                    ),
-                    const SizedBox(height: 30),
-                    _buildInputField('SELECT PROJECT', 'Project Name', projectController, isDark),
-                    const SizedBox(height: 20),
-                    _buildInputField('FRIEND\'S NAME', 'FULL NAME', nameController, isDark),
-                    const SizedBox(height: 20),
-                    _buildInputField('MOBILE NUMBER', '+91 XXXXX XXXXX', phoneController, isDark, isNumber: true),
-                    const SizedBox(height: 40),
-                    GestureDetector(
-                      onTap: isLoading ? null : () async {
-                        if (nameController.text.isEmpty || phoneController.text.isEmpty) {
-                           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please fill all required fields.')));
-                           return;
-                        }
-                        setState(() => isLoading = true);
-                        try {
-                          final apiClient = ref.read(apiClientProvider);
-                          final response = await apiClient.submitReferral({
-                            'clientName': nameController.text,
-                            'clientPhone': phoneController.text,
-                            'projectName': projectController.text,
-                          });
-                          
-                          if (response.data['status'] == true) {
-                            if (mounted) {
-                              Navigator.pop(context); // close modal
-                              _fetchReferralData(); // refresh list
-                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Referral Submitted Successfully!')));
-                            }
-                          } else {
-                            if (mounted) {
-                               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response.data['message'] ?? 'Failed to submit.')));
-                            }
-                          }
-                        } catch (e) {
-                          String errorMessage = 'Error submitting referral. Please try again.';
-                          if (e is DioException && e.response?.data != null) {
-                            errorMessage = e.response!.data['message'] ?? errorMessage;
-                          }
-                          if (mounted) {
-                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMessage)));
-                          }
-                        } finally {
-                          if (mounted) {
-                            setState(() => isLoading = false);
-                          }
-                        }
-                      },
-                      child: Opacity(
-                        opacity: isLoading ? 0.5 : 1.0,
+                      const SizedBox(height: 12),
+                      GestureDetector(
+                        onTap: () => setModalState(() => isProjectDropdownOpen = !isProjectDropdownOpen),
                         child: Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          height: 56,
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
                           decoration: BoxDecoration(
-                            color: isDark ? Colors.white : Colors.black,
-                            borderRadius: BorderRadius.circular(15),
+                            color: Colors.white.withValues(alpha: 0.03),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
                           ),
-                          alignment: Alignment.center,
-                          child: isLoading
-                            ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: isDark ? Colors.black : Colors.white))
-                            : Text(
-                                'SUBMIT REFERRAL',
-                                style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
-                                  color: isDark ? Colors.black : Colors.white,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: 2,
+                          child: Row(
+                            children: [
+                              Text(
+                                selectedProjectName.isEmpty ? 'CHOOSE OPPORTUNITY' : selectedProjectName.toUpperCase(),
+                                style: GoogleFonts.montserrat(
+                                  color: selectedProjectName.isEmpty ? Colors.white24 : Colors.white, 
+                                  fontSize: 11, 
+                                  fontWeight: FontWeight.w800
                                 ),
                               ),
+                              const Spacer(),
+                              Icon(
+                                isProjectDropdownOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown, 
+                                color: Colors.white24, 
+                                size: 16
+                              ),
+                            ],
+                          ),
                         ),
                       ),
+                      if (isProjectDropdownOpen) ...[
+                        const SizedBox(height: 4),
+                        Container(
+                          constraints: const BoxConstraints(maxHeight: 200),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1A1A1A),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+                          ),
+                          child: Consumer(
+                            builder: (context, ref, child) {
+                              final projectsAsync = ref.watch(projectsProvider);
+                              return projectsAsync.when(
+                                data: (projects) {
+                                  if (projects.isEmpty) {
+                                    return const Center(child: Padding(padding: EdgeInsets.all(20), child: Text('No projects available', style: TextStyle(color: Colors.white38))));
+                                  }
+                                  return SingleChildScrollView(
+                                    child: Column(
+                                      children: projects.map((p) {
+                                        final name = p['title'] ?? p['name'] ?? 'UNKNOWN PROJECT';
+                                        final isSelected = selectedProjectId == p['_id'];
+                                        return GestureDetector(
+                                          onTap: () => setModalState(() {
+                                            selectedProjectName = name;
+                                            selectedProjectId = p['_id'] ?? '';
+                                            isProjectDropdownOpen = false;
+                                          }),
+                                          child: Container(
+                                            width: double.infinity,
+                                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                                            decoration: BoxDecoration(
+                                              color: isSelected ? const Color(0xFF3B82F6).withValues(alpha: 0.4) : Colors.transparent,
+                                              borderRadius: BorderRadius.circular(12),
+                                            ),
+                                            child: Text(
+                                              name.toString().toUpperCase(),
+                                              style: GoogleFonts.montserrat(
+                                                color: isSelected ? Colors.white : Colors.white60,
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.w800,
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  );
+                                },
+                                loading: () => const Center(child: Padding(padding: EdgeInsets.all(20), child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))),
+                                error: (e, s) => const Padding(padding: EdgeInsets.all(20), child: Text('Failed to load projects', style: TextStyle(color: Colors.red))),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+
+                  const SizedBox(height: 24),
+                  _buildInputField('FRIEND NAME', 'FULL NAME', nameController),
+                  const SizedBox(height: 24),
+                  _buildInputField('MOBILE NUMBER', 'MOBILE NUMBER', phoneController, isPhone: true),
+                  const SizedBox(height: 48),
+                  
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: isLoading ? null : () async {
+                      if (nameController.text.isEmpty || phoneController.text.isEmpty || selectedProjectName.isEmpty) {
+                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                           content: Text('All fields are required.'),
+                           backgroundColor: Colors.redAccent,
+                           duration: Duration(seconds: 2),
+                         ));
+                         return;
+                      }
+                      setModalState(() => isLoading = true);
+                      try {
+                        final apiClient = ref.read(apiClientProvider);
+                        final response = await apiClient.submitReferral({
+                          'projectName': selectedProjectName,
+                          'referralName': nameController.text,
+                          'referralPhone': phoneController.text,
+                        });
+                        
+                        if (response.data['status'] == true || response.statusCode == 200 || response.statusCode == 201) {
+                          if (mounted) {
+                            Navigator.pop(context);
+                            _fetchReferralData();
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                              content: Text('Referral recorded successfully!'),
+                              backgroundColor: Colors.green,
+                            ));
+                          }
+                        } else {
+                          if (mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response.data['message'] ?? 'Submission failed.')));
+                          }
+                        }
+                      } catch (e) {
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Submission error. Check your connection.')));
+                        }
+                      } finally {
+                        if (mounted) setModalState(() => isLoading = false);
+                      }
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(color: Colors.white.withValues(alpha: 0.1), blurRadius: 20, offset: const Offset(0, 10)),
+                        ],
+                      ),
+                      alignment: Alignment.center,
+                      child: isLoading
+                        ? const CircularProgressIndicator(color: Colors.black, strokeWidth: 2)
+                        : Text(
+                            'SUBMIT LEAD VERIFICATION',
+                            style: GoogleFonts.montserrat(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w900),
+                          ),
                     ),
-                    const SizedBox(height: 20),
-                  ],
-                ),
+                  ),
+                ],
               ),
             );
           }
@@ -470,46 +714,47 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
     );
   }
 
-  Widget _buildInputField(String label, String hint, TextEditingController controller, bool isDark, {bool isNumber = false}) {
+
+  Widget _buildInputField(String label, String hint, TextEditingController controller, {bool isDropdown = false, bool isPhone = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 10, bottom: 8),
-          child: Text(
-            label,
-            style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
-              color: isDark ? Colors.white54 : Colors.black54,
-              fontSize: 10,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 2,
-            ),
-          ),
+        Text(
+          label,
+          style: GoogleFonts.montserrat(color: Colors.white24, fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 1),
         ),
+        const SizedBox(height: 12),
         Container(
+          height: 56,
           decoration: BoxDecoration(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.02),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+            color: Colors.white.withValues(alpha: 0.03),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
           ),
-          child: TextField(
-            controller: controller,
-            keyboardType: isNumber ? TextInputType.phone : TextInputType.text,
-            style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
-              color: isDark ? Colors.white : Colors.black,
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
-            decoration: InputDecoration(
-              hintText: hint,
-              hintStyle: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
-                color: isDark ? Colors.white24 : Colors.black26,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
+          child: Row(
+            children: [
+              if (isPhone) ...[
+                Padding(
+                  padding: const EdgeInsets.only(left: 20, right: 10),
+                  child: Text('+91', style: GoogleFonts.montserrat(color: Colors.white, fontWeight: FontWeight.bold)),
+                ),
+                Container(width: 1, height: 20, color: Colors.white10),
+              ],
+              Expanded(
+                child: TextField(
+                  controller: controller,
+                  readOnly: isDropdown,
+                  style: GoogleFonts.montserrat(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700),
+                  decoration: InputDecoration(
+                    hintText: hint,
+                    hintStyle: GoogleFonts.montserrat(color: Colors.white24, fontSize: 11, fontWeight: FontWeight.w800),
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+                    suffixIcon: isDropdown ? const Icon(LucideIcons.chevronDown, color: Colors.white24, size: 16) : null,
+                  ),
+                ),
               ),
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            ),
+            ],
           ),
         ),
       ],

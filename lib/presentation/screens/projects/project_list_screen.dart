@@ -156,10 +156,14 @@ class ProjectListScreen extends ConsumerWidget {
                   Row(
                     children: [
                       IconButton(
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: () {
+                          if (Navigator.canPop(context)) {
+                            Navigator.pop(context);
+                          } else {
+                            ref.read(navigationProvider.notifier).state = 0;
+                          }
+                        },
                         icon: Icon(LucideIcons.arrowLeft, color: Theme.of(context).colorScheme.onSurface, size: 24),
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
                       ),
                       const SizedBox(width: 16),
                       Column(

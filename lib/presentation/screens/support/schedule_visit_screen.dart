@@ -27,6 +27,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
   String? _selectedProjectId;
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
+  bool _isProjectDropdownOpen = false;
 
   @override
   void dispose() {
@@ -139,18 +140,45 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(LucideIcons.chevronLeft, color: Theme.of(context).colorScheme.onSurface),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          'SCHEDULE SITE VISIT',
-          style: GoogleFonts.montserrat(
-            fontSize: 14,
-            fontWeight: FontWeight.w900,
-            color: Theme.of(context).colorScheme.onSurface,
-            letterSpacing: 2,
+        centerTitle: true,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16),
+          child: Center(
+            child: GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.05),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white.withOpacity(0.1)),
+                ),
+                child: const Icon(LucideIcons.chevronLeft, color: Colors.white, size: 16),
+              ),
+            ),
           ),
+        ),
+        title: Column(
+          children: [
+            Text(
+              'SITE VISIT',
+              style: GoogleFonts.montserrat(
+                fontSize: 16,
+                fontWeight: FontWeight.w900,
+                color: Colors.white,
+                letterSpacing: 0,
+              ),
+            ),
+            Text(
+              'PROTOCOL VERIFICATION',
+              style: GoogleFonts.montserrat(
+                fontSize: 8,
+                fontWeight: FontWeight.w700,
+                color: Colors.white38,
+                letterSpacing: 1,
+              ),
+            ),
+          ],
         ),
       ),
       body: Container(
@@ -164,25 +192,32 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
               children: [
                 // Top Note
                 Container(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.04),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05)),
+                    color: const Color(0xFF111111),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.white.withOpacity(0.08)),
                   ),
                   child: Row(
                     children: [
-                      const Icon(LucideIcons.info, color: Colors.black45, size: 20),
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.05),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(LucideIcons.info, color: Colors.white, size: 18),
+                      ),
                       const SizedBox(width: 16),
                       Expanded(
                         child: Text(
                           'NOTE: OUR MANAGER WILL CONTACT YOU WITHIN 2 HOURS TO CONFIRM YOUR SCHEDULE.',
                           style: GoogleFonts.montserrat(
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
-                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
-                            letterSpacing: 0.5,
-                            height: 1.4,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                            letterSpacing: 0.2,
+                            height: 1.5,
                           ),
                         ),
                       ),
@@ -299,35 +334,38 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
     TextInputType keyboardType = TextInputType.text,
     String? Function(String?)? validator,
   }) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: TextFormField(
-          controller: controller,
-          maxLines: maxLines,
-          keyboardType: keyboardType,
-          validator: validator,
-          style: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface, fontSize: 13, fontWeight: FontWeight.bold),
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.03),
-            hintText: hint.toUpperCase(),
-            hintStyle: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2), fontSize: 13, fontWeight: FontWeight.bold),
-            prefixIcon: icon != null ? Icon(icon, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2), size: 18) : null,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1)),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1)),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.24), width: 1),
-            ),
-          ),
+    return TextFormField(
+      controller: controller,
+      maxLines: maxLines,
+      keyboardType: keyboardType,
+      validator: validator,
+      style: GoogleFonts.montserrat(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: Colors.white.withOpacity(0.03),
+        hintText: hint.toUpperCase(),
+        hintStyle: GoogleFonts.montserrat(color: Colors.white12, fontSize: 13, fontWeight: FontWeight.bold),
+        prefixIcon: icon != null ? Icon(icon, color: Colors.white12, size: 18) : null,
+        errorStyle: GoogleFonts.montserrat(color: Colors.white38, fontSize: 10), // Subtle white error text
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: Colors.white10),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: Colors.white10),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: Colors.white24, width: 1),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: Colors.white10), // No red border
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: Colors.white24, width: 1),
         ),
       ),
     ).animate().fadeIn(delay: 100.ms);
@@ -335,43 +373,87 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
 
 
   Widget _buildDropdown(List<dynamic> projects) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.03),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1)),
+    final selectedProject = projects.firstWhere(
+      (p) => p['_id'] == _selectedProjectId,
+      orElse: () => null,
+    );
+
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: () => setState(() => _isProjectDropdownOpen = !_isProjectDropdownOpen),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.03),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: _isProjectDropdownOpen ? Colors.white.withOpacity(0.2) : Colors.white10,
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  selectedProject != null ? selectedProject['title'].toString().toUpperCase() : 'CHOOSE PROJECT',
+                  style: GoogleFonts.montserrat(
+                    color: selectedProject != null ? Colors.white : Colors.white12,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1,
+                  ),
+                ),
+                Icon(
+                  _isProjectDropdownOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown,
+                  color: Colors.white24,
+                  size: 18,
+                ),
+              ],
+            ),
           ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: _selectedProjectId,
-              hint: Text('Choose a project', style: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2), fontSize: 13)),
-              dropdownColor: Theme.of(context).colorScheme.surface,
-              icon: Icon(LucideIcons.chevronDown, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2), size: 18),
-              isExpanded: true,
-              onChanged: (String? newValue) {
-                setState(() {
-                  _selectedProjectId = newValue!;
-                });
-              },
-              items: projects.map<DropdownMenuItem<String>>((dynamic project) {
-                return DropdownMenuItem<String>(
-                  value: project['_id'],
-                  child: Text(
-                    project['title'] ?? 'Unknown Project',
-                    style: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface, fontSize: 14),
+        ),
+        if (_isProjectDropdownOpen)
+          Container(
+            margin: const EdgeInsets.only(top: 8),
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFF111111),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.white.withOpacity(0.05)),
+            ),
+            child: Column(
+              children: projects.map((project) {
+                final isSelected = _selectedProjectId == project['_id'];
+                return InkWell(
+                  onTap: () {
+                    setState(() {
+                      _selectedProjectId = project['_id'];
+                      _isProjectDropdownOpen = false;
+                    });
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    decoration: BoxDecoration(
+                      color: isSelected ? Colors.white.withOpacity(0.05) : Colors.transparent,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      (project['title'] ?? '').toString().toUpperCase(),
+                      style: GoogleFonts.montserrat(
+                        color: isSelected ? Colors.white : Colors.white38,
+                        fontSize: 11,
+                        fontWeight: isSelected ? FontWeight.w900 : FontWeight.w600,
+                        letterSpacing: 1,
+                      ),
+                    ),
                   ),
                 );
               }).toList(),
             ),
-          ),
-        ),
-      ),
-    ).animate().fadeIn(delay: 200.ms);
+          ).animate().fadeIn(duration: 200.ms).slideY(begin: -0.05, end: 0),
+      ],
+    );
   }
 
   Widget _buildPickerButton({required String text, required IconData icon, required VoidCallback onTap}) {
@@ -429,11 +511,11 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
               style: GoogleFonts.montserrat(
                 fontWeight: FontWeight.w900,
                 fontSize: 13,
-                letterSpacing: 1,
+                letterSpacing: 2,
               ),
             ),
             const SizedBox(width: 12),
-            const Icon(LucideIcons.send, color: Colors.white, size: 16),
+            const Icon(LucideIcons.shieldCheck, color: Colors.black, size: 16),
           ],
         ),
       ),

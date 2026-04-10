@@ -13,6 +13,8 @@ import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/screens/pages/pages_list_screen.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_detail_screen.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
+import 'package:m4_mobile/presentation/screens/communities/community_detail_screen.dart';
+import 'package:m4_mobile/presentation/screens/communities/community_list_screen.dart';
 import 'dart:async';
 
 
@@ -37,6 +39,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   List<dynamic> _updates = [];
   bool _updatesLoading = true;
   String _updateCategory = 'PROPERTIES';
+  List<dynamic> _communities = [];
+  bool _communitiesLoading = true;
+  String _topTabCategory = 'COMMUNITIES';
   
   Timer? _heroTimer;
   Timer? _scrollTimer;
@@ -55,7 +60,25 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     super.initState();
     _fetchProjects();
     _fetchUpdates();
+    _fetchCommunities();
     _startTimers();
+  }
+
+  Future<void> _fetchCommunities() async {
+    try {
+      final apiClient = ref.read(apiClientProvider);
+      final response = await apiClient.getCommunities();
+      if (response.data['status'] == true && response.data['data'] is List) {
+        setState(() {
+          _communities = response.data['data'];
+          _communitiesLoading = false;
+        });
+      } else {
+        setState(() => _communitiesLoading = false);
+      }
+    } catch (e) {
+      setState(() => _communitiesLoading = false);
+    }
   }
 
   void _startTimers() {
@@ -452,199 +475,124 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           // ⭐️ Stage 2: Recommended for You (Relocated below Search like web)
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+              padding: const EdgeInsets.fromLTRB(30, 20, 30, 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                   Text(
-                    'RECOMMENDED FOR YOU',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 10, 
-                      fontWeight: FontWeight.w900, 
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), 
-                      letterSpacing: 1.5
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const ProjectListScreen()),
-                      );
-                    },
-                    child: Text(
-                      'VIEW ALL',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 10, 
-                        fontWeight: FontWeight.w900, 
-                        color: Theme.of(context).colorScheme.onSurface, 
-                        letterSpacing: 1.5
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: _projectsLoading
-                ? const SizedBox(
-                    height: 380,
-                    child: Center(child: CircularProgressIndicator(color: Colors.white10)),
-                  )
-                : SizedBox(
-                    height: 380,
-                    child: Builder(
-                      builder: (context) {
-                        final filteredProjects = _projects.where((p) {
-                          if (_selectedCategory == 'ALL') return true;
-                          final status = p['status']?.toString().toUpperCase();
-                          return status == _selectedCategory;
-                        }).toList();
-
-                        if (filteredProjects.isEmpty) {
-                          return Center(child: Text('No projects found.', style: GoogleFonts.montserrat(color: Colors.white24, fontSize: 12)));
-                        }
-
-                        return ListView.builder(
-                          controller: _recommendedScrollController,
-                          scrollDirection: Axis.horizontal,
-                          physics: const BouncingScrollPhysics(),
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                          itemCount: filteredProjects.length > 8 ? 8 : filteredProjects.length,
-                          itemBuilder: (context, index) {
-                            final project = filteredProjects[index];
-                            final locData = project['location'];
-                            final locationName = (locData is Map) ? locData['name']?.toString() ?? '' : '';
-                            
-                            final imageUrl = project['heroImage'] != null
-                                ? project['heroImage'].toString()
-                                : (project['images'] is List && (project['images'] as List).isNotEmpty
-                                    ? project['images'][0].toString()
-                                    : '');
-
-                            return _ProjectCard(
-                              title: project['title']?.toString() ?? 'Untitled',
-                              location: locationName,
-                              status: project['status']?.toString() ?? '',
-                              imageUrl: apiClient.resolveUrl(imageUrl),
-                              startingPrice: project['startingPrice']?.toString() ?? '',
-                              onTap: () {
-                                final projectId = project['_id']?.toString() ?? '';
-                                if (projectId.isNotEmpty) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ProjectDetailScreen(
-                                        projectId: projectId,
-                                        projectData: project,
-                                      ),
-                                    ),
-                                  );
-                                }
-                              },
-                            );
-                          },
-                        );
-                      }
-                    ),
-                  ),
-          ),
-
-          // 4. ⚡️ Stage 4: Latest Updates feed
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(30, 20, 30, 30),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        'LATEST UPDATES',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 10, 
-                          fontWeight: FontWeight.w900, 
-                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4), 
-                          letterSpacing: 2, 
-                        ),
+                    children: [
+                      _TextTab(
+                        label: 'COMMUNITIES',
+                        isActive: _topTabCategory == 'COMMUNITIES',
+                        onTap: () => setState(() => _topTabCategory = 'COMMUNITIES'),
                       ),
-                      const SizedBox(width: 20), // Essential gap to prevent overlap
-                      Expanded(
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: <Widget>[
-                              _TextTab(
-                                label: 'PROPERTIES', 
-                                isActive: _updateCategory == 'PROPERTIES', 
-                                onTap: () => setState(() => _updateCategory = 'PROPERTIES'),
-                              ),
-                              _TextTab(
-                                label: 'BLOGS', 
-                                isActive: _updateCategory == 'BLOGS', 
-                                onTap: () => setState(() => _updateCategory = 'BLOGS'),
-                              ),
-                              _TextTab(
-                                label: 'COMMUNITIES', 
-                                isActive: _updateCategory == 'COMMUNITIES', 
-                                onTap: () => setState(() => _updateCategory = 'COMMUNITIES'),
-                              ),
-                              _TextTab(
-                                label: 'MEDIA', 
-                                isActive: _updateCategory == 'MEDIA', 
-                                onTap: () => setState(() => _updateCategory = 'MEDIA'),
-                              ),
-                            ],
-                          ),
-                        ),
+                      _TextTab(
+                        label: 'PROPERTIES',
+                        isActive: _topTabCategory == 'PROPERTIES',
+                        onTap: () => setState(() => _topTabCategory = 'PROPERTIES'),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 25),
-                  _updatesLoading
-                      ? const SizedBox(height: 250, child: Center(child: CircularProgressIndicator(color: Colors.white10)))
-                      : SizedBox(
-                          height: 250,
-                          child: Builder(
-                            builder: (context) {
-                              final filtered = _updates.where((u) {
-                                final type = u['type']?.toString().toLowerCase();
-                                if (_updateCategory == 'BLOGS') return type == 'blog';
-                                if (_updateCategory == 'PROPERTIES') return type == 'project update';
-                                if (_updateCategory == 'COMMUNITIES') return type == 'community';
-                                if (_updateCategory == 'MEDIA') return type == 'media';
-                                return true;
-                              }).toList();
-
-                                if (filtered.isEmpty) {
-                                  return Center(child: Text('NO UPDATES FOUND', style: GoogleFonts.montserrat(color: Colors.white10, fontSize: 10, fontWeight: FontWeight.w900)));
-                                }
-
-                              return ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                physics: const BouncingScrollPhysics(),
-                                itemCount: filtered.length,
-                                itemBuilder: (context, idx) {
-                                  final update = filtered[idx];
-                                  return _UpdateCard(
-                                    title: update['title'] ?? 'UNTITLED',
-                                    type: update['type']?.toString().toUpperCase() ?? 'UPDATE',
-                                    date: update['createdAt']?.toString().substring(0, 10) ?? '',
-                                    imageUrl: apiClient.resolveUrl(update['coverImage']),
-                                    snippet: update['snippet'] ?? '',
-                                    onTap: () {},
-                                  );
-                                },
-                              );
-                            },
-                          ),
+                  InkWell(
+                    onTap: () {
+                      if (_topTabCategory == 'COMMUNITIES') {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const CommunityListScreen()));
+                      } else {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const ProjectListScreen()));
+                      }
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+                      child: Text(
+                        'VIEW ALL',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 10, 
+                          fontWeight: FontWeight.w900, 
+                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), 
+                          letterSpacing: 1.5
                         ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
+          
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: 380,
+              child: (_topTabCategory == 'COMMUNITIES' ? _communitiesLoading : _projectsLoading)
+                ? const Center(child: CircularProgressIndicator(color: Colors.white10))
+                : Builder(
+                    builder: (context) {
+                      final items = _topTabCategory == 'COMMUNITIES' 
+                          ? _communities 
+                          : _projects.where((p) {
+                              if (_selectedCategory == 'ALL') return true;
+                              return p['status']?.toString().toUpperCase() == _selectedCategory;
+                            }).toList();
+
+                      if (items.isEmpty) {
+                        return Center(child: Text('NO ITEMS FOUND', style: GoogleFonts.montserrat(color: Colors.white10, fontSize: 10, fontWeight: FontWeight.w900)));
+                      }
+
+                      return ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                        itemCount: items.length > 8 ? 8 : items.length,
+                        itemBuilder: (context, index) {
+                          final item = items[index];
+                          if (_topTabCategory == 'COMMUNITIES') {
+                            return _CommunityCard(
+                              title: item['title'] ?? 'UNTITLED',
+                              description: item['overview'] ?? item['description'] ?? 'Explore this master-planned community',
+                              imageUrl: apiClient.resolveUrl(item['image'] ?? (item['heroImages'] is List ? item['heroImages'][0] : null)),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CommunityDetailScreen(community: item),
+                                  ),
+                                );
+                              },
+                            );
+                          } else {
+                            final locData = item['location'];
+                            final locationName = (locData is Map) ? locData['name']?.toString() ?? '' : '';
+                            final imageUrl = item['heroImage'] != null
+                                ? item['heroImage'].toString()
+                                : (item['images'] is List && (item['images'] as List).isNotEmpty
+                                    ? item['images'][0].toString()
+                                    : '');
+
+                            return _ProjectCard(
+                              title: item['title']?.toString() ?? 'Untitled',
+                              location: locationName,
+                              status: item['status']?.toString() ?? '',
+                              imageUrl: apiClient.resolveUrl(imageUrl),
+                              startingPrice: item['startingPrice']?.toString() ?? '',
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ProjectDetailScreen(
+                                      projectId: item['_id']?.toString() ?? '',
+                                      projectData: item,
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          }
+                        },
+                      );
+                    }
+                  ),
+            ),
+          ),
+
 
 
           // 5. 📜 Stage 5: Our Philosophy
@@ -1129,13 +1077,13 @@ class _ProjectCard extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(15),
               child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.6), 
+                    color: Colors.white.withOpacity(0.12), 
                     borderRadius: BorderRadius.circular(15),
-                    border: Border.all(color: Colors.white.withOpacity(0.6)),
+                    border: Border.all(color: Colors.white.withOpacity(0.15)),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1144,11 +1092,13 @@ class _ProjectCard extends StatelessWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text('STARTING FROM', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3), fontSize: 7, fontWeight: FontWeight.bold)),
-                            Text(displayPrice, style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface)),
+                            Text('STARTING FROM', style: GoogleFonts.montserrat(color: Colors.white.withOpacity(0.5), fontSize: 7, fontWeight: FontWeight.w900, letterSpacing: 0.5)),
+                            Text(displayPrice, style: GoogleFonts.montserrat(fontSize: 15, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: -0.5)),
                           ],
-                        ),
-                      Icon(LucideIcons.arrowRight, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2), size: 14),
+                        )
+                      else
+                        Text('EXPLORE NOW', style: GoogleFonts.montserrat(color: Colors.white.withOpacity(0.8), fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                      const Icon(LucideIcons.arrowRight, color: Colors.white, size: 18),
                     ],
                   ),
                 ),
@@ -1743,6 +1693,119 @@ class _UpdateCard extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CommunityCard extends StatelessWidget {
+  final String title;
+  final String description;
+  final String imageUrl;
+  final VoidCallback onTap;
+
+  const _CommunityCard({
+    required this.title,
+    required this.description,
+    required this.imageUrl,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 280,
+        margin: const EdgeInsets.only(right: 20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(35),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(35),
+          child: Stack(
+            children: [
+              Image.network(
+                imageUrl,
+                height: double.infinity,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(color: Colors.white10),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
+                    stops: const [0.5, 1.0],
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 25,
+                left: 25,
+                right: 25,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title.toUpperCase(),
+                      style: GoogleFonts.montserrat(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      description,
+                      style: GoogleFonts.montserrat(
+                        color: Colors.white.withOpacity(0.6),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.5,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'EXPLORE COMMUNITY',
+                          style: GoogleFonts.montserrat(
+                            color: Colors.white.withOpacity(0.8),
+                            fontSize: 9,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: const Icon(LucideIcons.arrowRight, color: Colors.black, size: 18),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

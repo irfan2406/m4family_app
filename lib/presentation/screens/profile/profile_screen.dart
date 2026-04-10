@@ -96,7 +96,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         _buildPreferences(context, ref, isDark),
                         const SizedBox(height: 32),
                         _buildLogoutButton(context, ref),
-                        const SizedBox(height: 48),
+                        const SizedBox(height: 120),
                       ],
                     ),
                   ),
@@ -668,7 +668,31 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: () => ref.read(authProvider.notifier).logout(),
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              backgroundColor: const Color(0xFF18181B),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              title: Text('Logout', style: GoogleFonts.montserrat(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 22)),
+              content: Text('Are you sure you want to logout?', style: GoogleFonts.montserrat(color: Colors.white70, fontSize: 14)),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('CANCEL', style: GoogleFonts.montserrat(color: const Color(0xFF60A5FA), fontWeight: FontWeight.w600, fontSize: 13)),
+                ),
+                TextButton(
+                  onPressed: () {
+                    ref.read(authProvider.notifier).logout();
+                    Navigator.pop(context);
+                    context.go('/login');
+                  },
+                  child: Text('LOGOUT', style: GoogleFonts.montserrat(color: const Color(0xFFEF4444), fontWeight: FontWeight.bold, fontSize: 13)),
+                ),
+              ],
+            ),
+          );
+        },
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFF18181B),
           foregroundColor: const Color(0xFFEF4444),

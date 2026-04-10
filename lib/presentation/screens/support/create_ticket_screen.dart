@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/support_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:file_picker/file_picker.dart';
 
 class CreateTicketScreen extends ConsumerStatefulWidget {
   const CreateTicketScreen({super.key});
@@ -17,6 +18,8 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
   final _subjectController = TextEditingController();
   final _messageController = TextEditingController();
   String _selectedCategory = 'General Query';
+  List<String> _selectedFilePaths = [];
+  bool _isDropdownOpen = false;
 
   final List<String> _categories = [
     'Payment & Billing',
@@ -39,6 +42,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
           subject: _subjectController.text,
           category: _selectedCategory,
           message: _messageController.text,
+          attachments: _selectedFilePaths,
         );
 
     if (mounted) {
@@ -65,17 +69,31 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(LucideIcons.chevronLeft, color: Colors.white70),
-          onPressed: () => Navigator.pop(context),
+        centerTitle: true,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16),
+          child: Center(
+            child: GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.05),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white.withOpacity(0.1)),
+                ),
+                child: const Icon(LucideIcons.chevronLeft, color: Colors.white, size: 16),
+              ),
+            ),
+          ),
         ),
         title: Text(
-          'RAISE NEW TICKET',
+          'RAISE TICKET',
           style: GoogleFonts.montserrat(
-            fontSize: 14,
+            fontSize: 16,
             fontWeight: FontWeight.w900,
             color: Colors.white,
-            letterSpacing: 2,
+            letterSpacing: 0,
           ),
         ),
       ),
@@ -88,34 +106,77 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
           ),
         ),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Info Banner
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.orange.withOpacity(0.2)),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(LucideIcons.info, color: Colors.orange, size: 20),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Text(
+                          'MOST TICKETS ARE RESOLVED WITHIN 4-6 WORKING HOURS. PLEASE PROVIDE DETAIL.',
+                          style: GoogleFonts.montserrat(
+                            color: Colors.orange,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 1,
+                            height: 1.5,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 48),
+
                 _buildLabel('SUBJECT'),
                 const SizedBox(height: 12),
                 _buildTextField(
                   controller: _subjectController,
-                  hint: 'What is the issue about?',
+                  hint: 'E.G. PAYMENT RECEIPT',
                   validator: (v) => v!.isEmpty ? 'Please enter a subject' : null,
                 ),
+
                 const SizedBox(height: 32),
+
                 _buildLabel('CATEGORY'),
                 const SizedBox(height: 12),
                 _buildDropdown(),
+
                 const SizedBox(height: 32),
+
                 _buildLabel('MESSAGE'),
                 const SizedBox(height: 12),
                 _buildTextField(
                   controller: _messageController,
-                  hint: 'Describe your issue in detail...',
+                  hint: 'Describe your issue...',
                   maxLines: 5,
                   validator: (v) => v!.isEmpty ? 'Please enter a message' : null,
                 ),
+
+                const SizedBox(height: 32),
+
+                _buildLabel('ATTACHMENTS'),
+                const SizedBox(height: 12),
+                _buildAttachmentSection(),
+
                 const SizedBox(height: 48),
                 _buildSubmitButton(isLoading),
+                const SizedBox(height: 40),
               ],
             ),
           ),
@@ -170,42 +231,202 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
   }
 
   Widget _buildDropdown() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.03),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white10),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: _selectedCategory,
-          dropdownColor: const Color(0xFF1A1D21),
-          icon: const Icon(LucideIcons.chevronDown, color: Colors.white24, size: 18),
-          isExpanded: true,
-          onChanged: (String? newValue) {
-            setState(() {
-              _selectedCategory = newValue!;
-            });
-          },
-          items: _categories.map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(
-                value,
-                style: GoogleFonts.montserrat(color: Colors.white, fontSize: 14),
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: () => setState(() => _isDropdownOpen = !_isDropdownOpen),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.03),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: _isDropdownOpen ? Colors.white.withOpacity(0.2) : Colors.white10,
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  _selectedCategory.toUpperCase(),
+                  style: GoogleFonts.montserrat(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1,
+                  ),
+                ),
+                Icon(
+                  _isDropdownOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown,
+                  color: Colors.white24,
+                  size: 18,
+                ),
+              ],
+            ),
+          ),
+        ),
+        if (_isDropdownOpen)
+          Container(
+            margin: const EdgeInsets.only(top: 8),
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFF18181B),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.white.withOpacity(0.05)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.5),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+            child: Column(
+              children: _categories.map((category) {
+                final isSelected = _selectedCategory == category;
+                return InkWell(
+                  onTap: () {
+                    setState(() {
+                      _selectedCategory = category;
+                      _isDropdownOpen = false;
+                    });
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    decoration: BoxDecoration(
+                      color: isSelected ? Colors.white.withOpacity(0.05) : Colors.transparent,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      category.toUpperCase(),
+                      style: GoogleFonts.montserrat(
+                        color: isSelected ? Colors.white : Colors.white38,
+                        fontSize: 11,
+                        fontWeight: isSelected ? FontWeight.w900 : FontWeight.w600,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ).animate().fadeIn(duration: 200.ms).slideY(begin: -0.05, end: 0),
+      ],
+    );
+  }
+
+  Future<void> _pickFiles() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
+      allowMultiple: true,
+    );
+
+    if (result != null) {
+      setState(() {
+        _selectedFilePaths = [..._selectedFilePaths, ...result.paths.whereType<String>()];
+      });
+    }
+  }
+
+  Widget _buildAttachmentSection() {
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: _pickFiles,
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 48),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.02),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.white.withOpacity(0.05)),
+            ),
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.03),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(LucideIcons.paperclip, color: Colors.white.withOpacity(0.2), size: 20),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'ADD FILES (PDF, JPG)',
+                  style: GoogleFonts.montserrat(
+                    color: Colors.white.withOpacity(0.3),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        if (_selectedFilePaths.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          ..._selectedFilePaths.map((path) {
+            final fileName = path.split('/').last;
+            return Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    fileName.toLowerCase().endsWith('.pdf') ? LucideIcons.fileText : LucideIcons.image,
+                    color: Colors.white38,
+                    size: 16,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      fileName,
+                      style: GoogleFonts.inter(color: Colors.white70, fontSize: 12),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  IconButton(
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    icon: const Icon(LucideIcons.x, color: Colors.white38, size: 14),
+                    onPressed: () {
+                      setState(() {
+                        _selectedFilePaths.remove(path);
+                      });
+                    },
+                  ),
+                ],
               ),
             );
           }).toList(),
-        ),
-      ),
-    ).animate().fadeIn(delay: 200.ms);
+        ],
+      ],
+    );
   }
 
   Widget _buildSubmitButton(bool isLoading) {
-    return SizedBox(
+    return Container(
       width: double.infinity,
       height: 56,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.white.withOpacity(0.2),
+            blurRadius: 30,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
       child: ElevatedButton(
         onPressed: isLoading ? null : _submit,
         style: ElevatedButton.styleFrom(
@@ -220,13 +441,20 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                 width: 20,
                 child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2),
               )
-            : Text(
-                'RAISE TICKET',
-                style: GoogleFonts.montserrat(
-                  fontWeight: FontWeight.w900,
-                  fontSize: 14,
-                  letterSpacing: 2,
-                ),
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'RAISE TICKET',
+                    style: GoogleFonts.montserrat(
+                      fontWeight: FontWeight.w900,
+                      fontSize: 14,
+                      letterSpacing: 2,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Icon(LucideIcons.send, color: Colors.black, size: 16),
+                ],
               ),
       ),
     ).animate().fadeIn(delay: 300.ms).slideY(begin: 0.2);

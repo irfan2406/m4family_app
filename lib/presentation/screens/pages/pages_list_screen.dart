@@ -31,7 +31,9 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
       final response = await apiClient.getCmsPages();
       if (response.data['status'] == true && response.data['data'] is List) {
         setState(() {
-          _pages = (response.data['data'] as List).where((p) => p['published'] == true).toList();
+          _pages = (response.data['data'] as List).where((p) => 
+            p['published'] == true || p['status'] == 'published'
+          ).toList();
           _isLoading = false;
         });
       } else {
@@ -46,51 +48,92 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('PAGES',
-                style: GoogleFonts.montserrat(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20, letterSpacing: 1)),
-            Text('BROWSE ALL PUBLISHED PAGES',
-                style: GoogleFonts.montserrat(color: Colors.white54, fontWeight: FontWeight.w900, fontSize: 9, letterSpacing: 4)),
-          ],
-        ),
-        backgroundColor: Colors.black.withOpacity(0.8),
-        flexibleSpace: ClipRRect(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: Container(color: Colors.transparent),
-          ),
-        ),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(LucideIcons.arrowLeft, color: Colors.white70),
-          onPressed: () => Navigator.pop(context),
-        ),
-      ),
+      appBar: null,
       body: Container(
         decoration: const BoxDecoration(
-          gradient: RadialGradient(
-            center: Alignment.topCenter,
-            radius: 2.5,
-            colors: [Color(0xFF0F1115), Colors.black],
-          ),
+          color: Colors.black,
         ),
         child: SafeArea(
-          child: _isLoading
-              ? const Center(child: CircularProgressIndicator(color: Colors.white24))
-              : _pages.isEmpty
-                  ? Center(
-                      child: Text('No published pages available.',
-                          style: GoogleFonts.inter(color: Colors.white54, fontSize: 14)),
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-                      itemCount: _pages.length,
-                      itemBuilder: (context, index) => _buildPageCard(_pages[index], index),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ─── Custom Navigation Header ───────────────────────
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+                child: InkWell(
+                  onTap: () => Navigator.pop(context),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(LucideIcons.chevronLeft, color: Colors.white, size: 16),
+                      const SizedBox(width: 8),
+                      Text(
+                        'Back to Home',
+                        style: GoogleFonts.inter(
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 48),
+
+              // ─── Title & Subtitle ──────────────────────────────
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Pages',
+                      style: GoogleFonts.montserrat(
+                        color: Colors.white,
+                        fontSize: 32,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -1,
+                      ),
                     ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Browse all published pages.',
+                      style: GoogleFonts.inter(
+                        color: Colors.white60,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 48),
+
+              // ─── List Content ──────────────────────────────────
+              Expanded(
+                child: _isLoading
+                    ? const Center(child: CircularProgressIndicator(color: Colors.white24))
+                    : _pages.isEmpty
+                        ? Center(
+                            child: Text(
+                              'No published pages available.',
+                              style: GoogleFonts.inter(
+                                color: Colors.white38,
+                                fontSize: 13,
+                              ),
+                            ),
+                          )
+                        : ListView.builder(
+                            padding: const EdgeInsets.fromLTRB(24, 0, 24, 40),
+                            itemCount: _pages.length,
+                            itemBuilder: (context, index) => _buildPageCard(_pages[index], index),
+                          ),
+              ),
+            ],
+          ),
         ),
       ),
     );

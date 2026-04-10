@@ -108,6 +108,14 @@ class ApiClient {
     return dio.get('/api/catalog/communities');
   }
 
+  Future<Response> getCommunityBySlug(String slug) async {
+    return dio.get('/api/catalog/communities/$slug');
+  }
+
+  Future<Response> getProjectsByCommunity(String communityId) async {
+    return dio.get('/api/catalog/projects/community/$communityId');
+  }
+
   // Custom Views Methods
   Future<Response> submitCustomViews(Map<String, dynamic> data) async {
     return dio.post('/api/custom-views', data: data);
@@ -168,6 +176,30 @@ class ApiClient {
   }
 
   Future<Response> createTicket(Map<String, dynamic> data) async {
+    if (data.containsKey('attachments') && (data['attachments'] as List).isNotEmpty) {
+      final List<String> filePaths = List<String>.from(data['attachments']);
+      final Map<String, dynamic> formDataMap = Map<String, dynamic>.from(data);
+      
+      final List<MultipartFile> multipartFiles = [];
+      for (final path in filePaths) {
+        final fileName = path.split('/').last;
+        multipartFiles.add(await MultipartFile.fromFile(path, filename: fileName));
+      }
+      
+      formDataMap['attachments'] = multipartFiles;
+      final formData = FormData.fromMap(formDataMap);
+      
+      return dio.post(
+        '/api/tickets',
+        data: formData,
+        options: Options(
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        ),
+      );
+    }
+    
     return dio.post('/api/tickets', data: data);
   }
 
@@ -176,8 +208,23 @@ class ApiClient {
     return dio.get('/api/cms');
   }
 
-  Future<Response> getCmsPage(String slug) async {
-    return dio.get('/api/cms/$slug');
+  Future<Response> getCmsPage(String slug, {String portal = 'guest'}) async {
+    return dio.get('/api/cms/$slug', queryParameters: {'portal': portal});
+  }
+
+  // Content Hub Methods
+  Future<Response> getContent(String type, {String role = 'guest', String? projectId}) async {
+    final Map<String, dynamic> params = {
+      'type': type,
+      'role': role,
+      'isPublished': 'true',
+    };
+    if (projectId != null) params['projectId'] = projectId;
+    return dio.get('/api/content', queryParameters: params);
+  }
+
+  Future<Response> getContentBySlug(String slug) async {
+    return dio.get('/api/content/$slug');
   }
 
   // System Config
@@ -223,12 +270,12 @@ class ApiClient {
     return dio.get('/api/investor/wallet');
   }
 
-  Future<Response> getInvestorReferrals() async {
-    return dio.get('/api/investor/referrals');
+  Future<Response> getReferralDashboard() async {
+    return dio.get('/api/user/referrals/dashboard');
   }
 
   Future<Response> submitReferral(Map<String, dynamic> data) async {
-    return dio.post('/api/user/referrals', data: data);
+    return dio.post('/api/referral', data: data);
   }
 
   Future<Response> redeemPoints(Map<String, dynamic> data) async {
@@ -252,7 +299,7 @@ class ApiClient {
     if (url == null || url.isEmpty) {
       return 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80';
     }
-    if (url.startsWith('http')) return url;
+    if (url.startsWith('http') || url.startsWith('tel:') || url.startsWith('mailto:')) return url;
 
     String root = baseUrl;
     if (root.endsWith('/api')) root = root.substring(0, root.length - 4);

@@ -595,39 +595,47 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                           },
                           child: Container(
                             decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.03),
                               borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: isSelected ? Theme.of(context).colorScheme.onBackground : Colors.transparent, width: 2),
+                              border: Border.all(
+                                color: isSelected 
+                                    ? Colors.white 
+                                    : Colors.white.withOpacity(0.1), 
+                                width: isSelected ? 2 : 1
+                              ),
                             ),
                             clipBehavior: Clip.antiAlias,
                             child: Stack(
                               fit: StackFit.expand,
                               children: [
+                                // 🖼️ Material Content (Image or Color)
                                 if (opt['colorCode'] != null)
                                   Container(color: _hexToColor(opt['colorCode']))
                                 else if (opt['image'] != null)
                                   Image.network(opt['image'], fit: BoxFit.cover,
                                     errorBuilder: (context, error, stackTrace) => Container(
-                                      color: Colors.black.withOpacity(0.05),
-                                      child: const Center(child: Icon(LucideIcons.image, color: Colors.black12)),
+                                      color: Colors.white.withOpacity(0.05),
+                                      child: const Center(child: Icon(LucideIcons.image, color: Colors.white10)),
                                     ),
                                   )
                                 else
-                                  Container(
-                                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
-                                    alignment: Alignment.center,
-                                    child: Text(opt['name'], textAlign: TextAlign.center),
+                                  Container(color: Colors.white.withOpacity(0.05)),
+
+                                // 🏷️ Material Label (Centered Overlay)
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.35), // Shroud for image readability
                                   ),
-                                
-                                Align(
-                                  alignment: Alignment.bottomCenter,
-                                  child: Container(
-                                    width: double.infinity,
-                                    padding: const EdgeInsets.symmetric(vertical: 10),
-                                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                                    child: Text(
-                                      opt['name']?.toUpperCase() ?? '',
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 1, color: Theme.of(context).colorScheme.background),
+                                  alignment: Alignment.center,
+                                  padding: const EdgeInsets.all(12),
+                                  child: Text(
+                                    opt['name']?.toUpperCase() ?? '',
+                                    textAlign: TextAlign.center,
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w900,
+                                      letterSpacing: 1.2,
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ),
@@ -638,8 +646,8 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                                     right: 12,
                                     child: Container(
                                       padding: const EdgeInsets.all(4),
-                                      decoration: BoxDecoration(color: Theme.of(context).colorScheme.background, shape: BoxShape.circle),
-                                      child: Icon(LucideIcons.check, size: 14, color: Theme.of(context).colorScheme.onBackground),
+                                      decoration: BoxDecoration(color: M4Theme.premiumBlue, shape: BoxShape.circle),
+                                      child: const Icon(LucideIcons.check, size: 12, color: Colors.white),
                                     ),
                                   ),
                               ],

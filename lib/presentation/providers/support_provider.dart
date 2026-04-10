@@ -107,6 +107,7 @@ class SupportNotifier extends StateNotifier<SupportState> {
     required String subject,
     required String category,
     required String message,
+    List<String> attachments = const [],
   }) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
@@ -116,6 +117,7 @@ class SupportNotifier extends StateNotifier<SupportState> {
         'category': category,
         'message': message,
         'priority': 'Medium', // Default priority as seen in web
+        'attachments': attachments,
       });
       
       if (response.statusCode == 200 || response.statusCode == 201) {

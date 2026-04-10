@@ -87,11 +87,11 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/support/logs',
-      builder: (context, state) => const SupportLogsScreen(initialIndex: 0),
+      builder: (context, state) => const SupportLogsScreen(),
     ),
     GoRoute(
       path: '/support/documents',
-      builder: (context, state) => const SupportLogsScreen(initialIndex: 1),
+      builder: (context, state) => const LegalVaultScreen(),
     ),
     GoRoute(
       path: '/profile/my-property',

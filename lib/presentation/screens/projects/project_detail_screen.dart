@@ -82,6 +82,15 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
 
   void _launchAction(String message, [String? url]) async {
     if (url != null && url.isNotEmpty) {
+      if (url.startsWith('tel:')) {
+        await SupportHandlers.launchCall(url.replaceFirst('tel:', ''));
+        return;
+      }
+      if (url.startsWith('mailto:')) {
+        await SupportHandlers.launchEmail(url.replaceFirst('mailto:', ''));
+        return;
+      }
+      
       final apiClient = ref.read(apiClientProvider);
       final resolvedUrl = apiClient.resolveUrl(url);
       final uri = Uri.parse(resolvedUrl);
@@ -384,15 +393,17 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading && _fullProject == null) {
-      return Scaffold(
-        backgroundColor: Colors.white,
-        body: Center(child: CircularProgressIndicator(color: M4Theme.premiumBlue)),
-      );
-    }
-
     final project = _fullProject ?? widget.projectData;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    if (_isLoading && project == null) {
+      return Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(
+          child: CircularProgressIndicator(color: M4Theme.premiumBlue),
+        ),
+      );
+    }
 
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
@@ -1181,9 +1192,15 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
         ),
         child: Row(
           children: [
-            _BottomIconAction(icon: LucideIcons.phone, onTap: () => _launchAction('Dialing...', project?['phone'])),
+            _BottomIconAction(
+              icon: LucideIcons.phone, 
+              onTap: () => SupportHandlers.launchCall(project?['phone'] ?? project?['contactPhone']),
+            ),
             const SizedBox(width: 12),
-            _BottomIconAction(icon: LucideIcons.messageSquare, onTap: () => _launchAction('WhatsApp...', project?['phone'])),
+            _BottomIconAction(
+              icon: LucideIcons.messageSquare, 
+              onTap: () => SupportHandlers.launchWhatsApp(project?['whatsapp'] ?? project?['phone'] ?? project?['contactPhone']),
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: _ScaleButton(

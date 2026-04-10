@@ -88,20 +88,101 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
               ? const Center(child: CircularProgressIndicator(color: Colors.black26))
               : SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      _buildOffices(),
-                      const SizedBox(height: 32),
-                      _buildDirectContact(),
-                      const SizedBox(height: 48),
-
-                    ],
-                  ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _buildOffices(),
+                        const SizedBox(height: 48),
+                        _buildMapHeader(),
+                        const SizedBox(height: 32),
+                        _buildDirectContact(),
+                        const SizedBox(height: 48),
+                      ],
+                    ),
                 ),
         ),
       ),
     );
+  }
+
+  Widget _buildMapHeader() {
+    const mainAddress = '604, 6th Floor, M4 Aura Heights, Maulana Shaukat Ali Road, Grant Road, Mumbai - 400007';
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Center(
+          child: Text(
+            'GLOBAL HEADQUARTERS',
+            style: GoogleFonts.montserrat(
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.35),
+              fontSize: 9,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 2.5,
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+        GestureDetector(
+          onTap: () => SupportHandlers.openMap(mainAddress),
+          child: Container(
+            height: 320,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(40),
+              image: const DecorationImage(
+                image: NetworkImage('https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80'),
+                fit: BoxFit.cover,
+                colorFilter: ColorFilter.mode(Colors.black45, BlendMode.saturation),
+              ),
+              boxShadow: [
+                BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 30, offset: const Offset(0, 15)),
+              ],
+            ),
+            child: Stack(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(40),
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [Colors.black.withOpacity(0.2), Colors.black.withOpacity(0.7)],
+                    ),
+                  ),
+                ),
+                Center(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.8),
+                      borderRadius: BorderRadius.circular(30),
+                      border: Border.all(color: Colors.white10),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(LucideIcons.navigation, color: Colors.white, size: 16),
+                        const SizedBox(width: 12),
+                        Text(
+                          'OPEN MAP',
+                          style: GoogleFonts.montserrat(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 2,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    ).animate().fadeIn().slideY(begin: 0.1);
   }
 
   Widget _buildOffices() {
