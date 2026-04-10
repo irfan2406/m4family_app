@@ -321,7 +321,7 @@ class ProjectListScreen extends ConsumerWidget {
                     );
                   },
                 ),
-                loading: () => const Center(child: CircularProgressIndicator(color: M4Theme.premiumBlue)),
+                loading: () => Center(child: CircularProgressIndicator(color: M4Theme.premiumBlue)),
                 error: (e, s) => Center(child: Text('Error: $e\n\nNo projects found.')),
               ),
             ),

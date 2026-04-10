@@ -5,7 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
-import 'package:m4_mobile/presentation/widgets/sidebar_menu.dart';
+import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 
@@ -21,6 +21,19 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
   Map<String, dynamic>? _cmsData;
   bool _isLoading = true;
   String? _error;
+  
+  final _nameController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
+  bool _isSubmitting = false;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _phoneController.dispose();
+    _emailController.dispose();
+    super.dispose();
+  }
 
   static const List<Map<String, dynamic>> _steps = [
     {'id': 'about', 'label': 'About', 'icon': LucideIcons.users},
@@ -115,7 +128,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           const SizedBox(width: 8),
         ],
       ),
-      drawer: const SidebarMenu(),
+      drawer: const ConditionalDrawer(),
       body: Container(
         decoration: const BoxDecoration(
           color: Colors.black,
@@ -549,10 +562,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             width: double.infinity,
             height: 60,
             child: ElevatedButton(
-              onPressed: () {
-                ref.read(navigationProvider.notifier).state = 6;
-                Navigator.pop(context);
-              },
+              onPressed: () => _showCustomEnquiryForm(context),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.black,
                 foregroundColor: Colors.white,
@@ -562,7 +572,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('CUSTOM VIEWS', style: GoogleFonts.montserrat(fontWeight: FontWeight.w900, fontSize: 11, letterSpacing: 1)),
+                  Text('ENQUIRE NOW', style: GoogleFonts.montserrat(fontWeight: FontWeight.w900, fontSize: 11, letterSpacing: 1)),
                   const SizedBox(width: 8),
                   const Icon(LucideIcons.chevronRight, size: 14),
                 ],
@@ -574,9 +584,141 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     );
   }
 
+  void _showCustomEnquiryForm(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) => Container(
+          padding: EdgeInsets.only(
+            left: 24, right: 24, bottom: MediaQuery.of(context).viewInsets.bottom + 40, top: 40
+          ),
+          decoration: const BoxDecoration(
+            color: Color(0xFF0F1115),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('CUSTOM PERSONALISATION', 
+                    style: GoogleFonts.montserrat(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 16)),
+                  IconButton(
+                    icon: const Icon(LucideIcons.x, color: Colors.white54, size: 20),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text('Enter your details to receive our premium personalisation catalog and schedule a consultation.',
+                style: GoogleFonts.montserrat(color: Colors.white54, fontSize: 10, height: 1.6, fontWeight: FontWeight.w500)),
+              const SizedBox(height: 32),
+              
+              _buildFieldLabel('FULL NAME'),
+              _buildTextField(_nameController, 'Your Name', LucideIcons.user),
+              const SizedBox(height: 20),
+              
+              _buildFieldLabel('PHONE NUMBER'),
+              _buildTextField(_phoneController, 'Mobile Number', LucideIcons.phone),
+              const SizedBox(height: 20),
+              
+              _buildFieldLabel('EMAIL ADDRESS (OPTIONAL)'),
+              _buildTextField(_emailController, 'Email Address', LucideIcons.mail),
+              const SizedBox(height: 40),
+              
+              SizedBox(
+                width: double.infinity,
+                height: 60,
+                child: ElevatedButton(
+                  onPressed: _isSubmitting ? null : () async {
+                    if (_nameController.text.isEmpty || _phoneController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Please fill in required fields'))
+                      );
+                      return;
+                    }
+                    
+                    setModalState(() => _isSubmitting = true);
+                    try {
+                      final apiClient = ref.read(apiClientProvider);
+                      await apiClient.submitCustomViews({
+                        'name': _nameController.text,
+                        'phone': _phoneController.text,
+                        'email': _emailController.text,
+                        'source': 'App Custom Views Enquiry'
+                      });
+                      
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Enquiry submitted successfully! We will contact you soon.'))
+                        );
+                        _nameController.clear();
+                        _phoneController.clear();
+                        _emailController.clear();
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Error: $e'))
+                        );
+                      }
+                    } finally {
+                      if (context.mounted) setModalState(() => _isSubmitting = false);
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  ),
+                  child: _isSubmitting 
+                    ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black))
+                    : Text('SEND REQUEST', style: GoogleFonts.montserrat(fontWeight: FontWeight.w900, fontSize: 12, letterSpacing: 2)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFieldLabel(String label) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 4, bottom: 8),
+      child: Text(label, style: GoogleFonts.montserrat(color: Colors.white38, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String hint, IconData icon) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.03),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withOpacity(0.08)),
+      ),
+      child: TextField(
+        controller: controller,
+        style: GoogleFonts.montserrat(color: Colors.white, fontSize: 13),
+        decoration: InputDecoration(
+          hintText: hint,
+          hintStyle: GoogleFonts.montserrat(color: Colors.white24, fontSize: 13),
+          prefixIcon: Icon(icon, color: Colors.white24, size: 18),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        ),
+      ),
+    );
+  }
+
   Widget _buildNavigationButtons() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 110), // Increased bottom padding to prevent overlap with floating navbar
       decoration: BoxDecoration(
         color: Colors.black,
         border: Border(top: BorderSide(color: Colors.white.withOpacity(0.05))),

@@ -13,6 +13,13 @@ import 'package:m4_mobile/presentation/screens/profile/my_property_screen.dart';
 import 'package:m4_mobile/presentation/screens/profile/legal_vault_screen.dart';
 import 'package:m4_mobile/presentation/screens/profile/deactivate_account_screen.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
+import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
+import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/screens/about/about_screen.dart';
+import 'package:m4_mobile/presentation/screens/communities/community_list_screen.dart';
+import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
+import 'package:m4_mobile/presentation/screens/careers/careers_screen.dart';
+import 'package:m4_mobile/presentation/screens/support/support_screen.dart';
 
 import 'package:m4_mobile/core/providers/theme_provider.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -71,7 +78,7 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/home',
-      builder: (context, state) => const MainShell(),
+      builder: (context, state) => const ConditionalHomeShell(),
     ),
     GoRoute(
       path: '/profile/settings',
@@ -109,6 +116,42 @@ final GoRouter _router = GoRouter(
       path: '/support',
       builder: (context, state) => const SupportScreen(),
     ),
+    GoRoute(
+      path: '/about',
+      builder: (context, state) => const AboutScreen(),
+    ),
+    GoRoute(
+      path: '/communities',
+      builder: (context, state) => const CommunityListScreen(),
+    ),
+    GoRoute(
+      path: '/projects',
+      builder: (context, state) => const ProjectListScreen(),
+    ),
+    GoRoute(
+      path: '/careers',
+      builder: (context, state) => const CareersScreen(),
+    ),
+    GoRoute(
+      path: '/contact',
+      builder: (context, state) => const SupportScreen(),
+    ),
+    GoRoute(
+      path: '/media',
+      builder: (context, state) => const PlaceholderScreen(title: 'Media'),
+    ),
+    GoRoute(
+      path: '/highlights',
+      builder: (context, state) => const PlaceholderScreen(title: 'Highlights'),
+    ),
+    GoRoute(
+      path: '/events',
+      builder: (context, state) => const PlaceholderScreen(title: 'Events'),
+    ),
+    GoRoute(
+      path: '/blog',
+      builder: (context, state) => const PlaceholderScreen(title: 'Blog'),
+    ),
   ],
 );
 
@@ -139,7 +182,7 @@ class SplashScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            const CircularProgressIndicator(color: M4Theme.premiumBlue),
+            CircularProgressIndicator(color: M4Theme.premiumBlue),
           ],
         ),
       ),
@@ -157,5 +200,20 @@ class PlaceholderScreen extends StatelessWidget {
       appBar: AppBar(title: Text(title)),
       body: Center(child: Text('Coming Soon: $title')),
     );
+  }
+}
+
+class ConditionalHomeShell extends ConsumerWidget {
+  const ConditionalHomeShell({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final status = ref.watch(authProvider.select((s) => s.status));
+    
+    if (status == AuthStatus.authenticated) {
+      return const MainShell();
+    }
+    
+    return const GuestMainShell();
   }
 }
