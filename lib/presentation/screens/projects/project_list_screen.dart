@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_detail_screen.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
+import 'package:m4_mobile/presentation/screens/projects/guest_project_detail_screen.dart';
 
 
 class ProjectListScreen extends ConsumerWidget {
@@ -304,15 +305,28 @@ class ProjectListScreen extends ConsumerWidget {
                     return GestureDetector(
                       onTap: () {
                         if (projectId.isNotEmpty) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ProjectDetailScreen(
-                                projectId: projectId,
-                                projectData: project,
+                          final authState = ref.read(authProvider);
+                          if (authState.status == AuthStatus.authenticated) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProjectDetailScreen(
+                                  projectId: projectId,
+                                  projectData: project,
+                                ),
                               ),
-                            ),
-                          );
+                            );
+                          } else {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => GuestProjectDetailScreen(
+                                  projectId: projectId,
+                                  projectData: project,
+                                ),
+                              ),
+                            );
+                          }
                         }
                       },
                       child: isGridView

@@ -8,7 +8,7 @@ import 'dart:ui';
 import 'package:m4_mobile/presentation/widgets/guest_sidebar_menu.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
-import 'package:m4_mobile/presentation/screens/projects/project_detail_screen.dart';
+import 'package:m4_mobile/presentation/screens/projects/guest_project_detail_screen.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
 import 'package:m4_mobile/presentation/screens/communities/community_detail_screen.dart';
 import 'package:m4_mobile/presentation/screens/communities/community_list_screen.dart';
@@ -147,9 +147,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                _buildPhilosophy(),
-                const SizedBox(height: 48),
                 _buildTabsSection(),
+                const SizedBox(height: 48),
+                _buildPhilosophy(),
                 const SizedBox(height: 48),
                 _buildFeaturedProperty(),
                 const SizedBox(height: 48),
@@ -298,7 +298,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             GestureDetector(
               onTap: () {
                 if (_activeTab == 'Communities') context.push('/communities');
-                else if (_activeTab == 'Properties') context.push('/projects');
+                else if (_activeTab == 'Properties') {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const ProjectListScreen()));
+                }
                 else context.push('/media');
               },
               child: Text('VIEW ALL', style: GoogleFonts.montserrat(color: Colors.white38, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
@@ -334,7 +336,15 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         if (isCommunity) {
           context.push('/communities/${item['_id']}', extra: item);
         } else {
-          context.push('/projects/${item['_id']}', extra: item);
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => GuestProjectDetailScreen(
+                projectId: item['_id']?.toString() ?? '',
+                projectData: item,
+              ),
+            ),
+          );
         }
       },
       child: Container(
@@ -542,6 +552,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                     (item['action'] as Function)();
                   } else if (item['link'] != null) {
                     launchUrl(Uri.parse(item['link'] as String));
+                  } else if (item['route'] == '/projects') {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const ProjectListScreen()));
                   } else if (item['route'] != null) {
                     context.push(item['route'] as String);
                   }
