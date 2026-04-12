@@ -445,7 +445,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
               ],
             ),
           ),
-          _buildBottomActions(project),
+          // Bottom actions removed for Guest Portal parity with web
           Positioned(
             top: MediaQuery.of(context).padding.top + 20,
             left: 20,
