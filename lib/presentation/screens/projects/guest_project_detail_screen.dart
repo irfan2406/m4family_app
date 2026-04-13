@@ -408,7 +408,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     }
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
+      backgroundColor: Colors.black,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -522,9 +522,21 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
             left: 24,
             child: Row(
               children: [
-                _HeroMediaThumb(label: 'EXTERIOR', imageUrl: heroUrl, onTap: () => _openHeroGallery(project, 'EXTERIOR')),
+                _HeroMediaThumb(
+                  label: 'EXTERIOR', 
+                  imageUrl: (_getCategoryThumbnail(project, 'EXTERIOR') != null && _getCategoryThumbnail(project, 'EXTERIOR')!.isNotEmpty)
+                      ? apiClient.resolveUrl(_getCategoryThumbnail(project, 'EXTERIOR')!)
+                      : heroUrl, 
+                  onTap: () => _openHeroGallery(project, 'EXTERIOR')
+                ),
                 const SizedBox(width: 14),
-                _HeroMediaThumb(label: 'INTERIOR', imageUrl: heroUrl, onTap: () => _openHeroGallery(project, 'INTERIOR')),
+                _HeroMediaThumb(
+                  label: 'INTERIOR', 
+                  imageUrl: (_getCategoryThumbnail(project, 'INTERIOR') != null && _getCategoryThumbnail(project, 'INTERIOR')!.isNotEmpty)
+                      ? apiClient.resolveUrl(_getCategoryThumbnail(project, 'INTERIOR')!)
+                      : heroUrl, 
+                  onTap: () => _openHeroGallery(project, 'INTERIOR')
+                ),
               ],
             ),
           ),
@@ -813,6 +825,21 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     );
 
   }
+  String? _getCategoryThumbnail(dynamic project, String category) {
+    final List<dynamic> media = project?['media'] as List? ?? [];
+    if (category == 'EXTERIOR') {
+      final ext = (project?['exteriorImages'] as List?)?.firstOrNull;
+      if (ext != null) return ext.toString();
+      final fromMedia = media.firstWhere((m) => m['category']?.toString().toUpperCase() == 'EXTERIOR', orElse: () => null);
+      if (fromMedia != null) return fromMedia['url']?.toString();
+    } else if (category == 'INTERIOR') {
+      final int = (project?['interiorImages'] as List?)?.firstOrNull;
+      if (int != null) return int.toString();
+      final fromMedia = media.firstWhere((m) => m['category']?.toString().toUpperCase() == 'INTERIOR', orElse: () => null);
+      if (fromMedia != null) return fromMedia['url']?.toString();
+    }
+    return null;
+  }
 } // End of _GuestProjectDetailScreenState
 
 class _OverviewActionCard extends StatelessWidget {
@@ -839,15 +866,13 @@ class _OverviewActionCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isAction 
-            ? (isDark ? const Color(0xFF0F172A) : const Color(0xFFEFF6FF)) 
-            : (isDark ? const Color(0xFF0F1115) : const Color(0xFFF4F4F5)),
+          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF1F5F9),
           borderRadius: BorderRadius.circular(32),
           border: Border.all(
             color: isAction 
-              ? M4Theme.premiumBlue.withValues(alpha: 0.2) 
-              : (isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
-            width: 1,
+              ? M4Theme.premiumBlue.withValues(alpha: 0.3) 
+              : (isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05)),
+            width: 1.5,
           ),
         ),
         child: Column(
@@ -951,29 +976,35 @@ class _HeroMediaThumb extends StatelessWidget {
   Widget build(BuildContext context) {
     return _ScaleButton(
       onTap: onTap,
-      child: Container(
-        width: 72,
-        height: 72,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            if (imageUrl != null)
-              Image.network(imageUrl!, fit: BoxFit.cover, errorBuilder: (c, e, s) => Container(color: Colors.white10)),
-            Container(color: Colors.black.withValues(alpha: 0.3)),
-            Center(
-              child: Text(
-                label,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.montserrat(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 0.5),
-              ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+          child: Container(
+            width: 72,
+            height: 72,
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: 1.5),
             ),
-          ],
+            clipBehavior: Clip.antiAlias,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                if (imageUrl != null)
+                  Image.network(imageUrl!, fit: BoxFit.cover, errorBuilder: (c, e, s) => Container(color: Colors.white10)),
+                Container(color: Colors.black.withValues(alpha: 0.3)),
+                Center(
+                  child: Text(
+                    label,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.montserrat(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -1047,41 +1078,47 @@ class _MultimediaAssetCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      padding: const EdgeInsets.all(28),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0F1115) : Colors.white,
-        borderRadius: BorderRadius.circular(40),
-        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Icon(icon, color: isDark ? Colors.white70 : Colors.black.withValues(alpha: 0.7), size: 24),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(40),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          decoration: BoxDecoration(
+            color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+            borderRadius: BorderRadius.circular(40),
+            border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05)),
           ),
-          const SizedBox(width: 24),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title.toUpperCase(), style: GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 1)),
-                const SizedBox(height: 6),
-                Text(subtitle.replaceFirst('A,A', '•').toUpperCase(), style: GoogleFonts.montserrat(fontSize: 9, color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Icon(icon, color: isDark ? Colors.white70 : Colors.black.withValues(alpha: 0.7), size: 20),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title.toUpperCase(), style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 0.5)),
+                    const SizedBox(height: 4),
+                    Text(subtitle.replaceFirst('•', ' • ').toUpperCase(), style: GoogleFonts.montserrat(fontSize: 8, color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              _AssetButton(label: 'VIEW', isOutline: true, onTap: onView),
+              if (onDownload != null) ...[
+                const SizedBox(width: 8),
+                _AssetButton(label: 'DOWNLOAD', isOutline: false, onTap: onDownload!),
               ],
-            ),
+            ],
           ),
-          const SizedBox(width: 16),
-          _AssetButton(label: 'VIEW', isOutline: true, onTap: onView),
-          if (onDownload != null) ...[
-            const SizedBox(width: 12),
-            _AssetButton(label: 'DOWNLOAD', isOutline: false, onTap: onDownload!),
-          ],
-        ],
+        ),
       ),
     );
   }
@@ -1099,13 +1136,13 @@ class _AssetButton extends StatelessWidget {
     return _ScaleButton(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
           color: isOutline ? Colors.transparent : (isDark ? Colors.white : Colors.black),
           borderRadius: BorderRadius.circular(30),
           border: isOutline ? Border.all(color: isDark ? Colors.white24 : Colors.black12, width: 1.5) : null,
         ),
-        child: Text(label, style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: isOutline ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.black : Colors.white), letterSpacing: 1)),
+        child: Text(label, style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isOutline ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.black : Colors.white), letterSpacing: 1)),
       ),
     );
   }
