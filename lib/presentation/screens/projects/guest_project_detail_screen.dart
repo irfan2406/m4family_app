@@ -400,7 +400,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
 
     if (_isLoading && project == null) {
       return Scaffold(
-        backgroundColor: Colors.black,
+        backgroundColor: isDark ? Colors.black : Colors.white,
         body: Center(
           child: CircularProgressIndicator(color: M4Theme.premiumBlue),
         ),
@@ -408,7 +408,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     }
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: isDark ? Colors.black : Colors.white,
       body: Stack(
         children: [
           SingleChildScrollView(

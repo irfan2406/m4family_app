@@ -15,6 +15,7 @@ class HelpCenterScreen extends StatefulWidget {
 
 class _HelpCenterScreenState extends State<HelpCenterScreen> {
   final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
 
   @override
   void dispose() {
@@ -100,11 +101,23 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
           ),
           child: TextField(
             controller: _searchController,
+            onChanged: (value) {
+              setState(() {
+                _searchQuery = value.toLowerCase();
+              });
+            },
             style: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface, fontSize: 13),
             decoration: InputDecoration(
               hintText: 'SEARCH FOR HELP...',
               hintStyle: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2), fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1),
               prefixIcon: Icon(LucideIcons.search, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2), size: 18),
+              suffixIcon: _searchQuery.isNotEmpty ? IconButton(
+                icon: Icon(LucideIcons.x, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2), size: 16),
+                onPressed: () {
+                  _searchController.clear();
+                  setState(() => _searchQuery = '');
+                },
+              ) : null,
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(vertical: 16),
             ),
@@ -132,17 +145,20 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
           scrollDirection: Axis.horizontal,
           child: Row(
             children: [
-              _GuideCard(
-                title: 'HOME BUYER\'S GUIDE',
-                readingTime: '5 MIN READ',
-                icon: LucideIcons.home,
-              ),
-              const SizedBox(width: 16),
-              _GuideCard(
-                title: 'UNDERSTANDING NORMS',
-                readingTime: '8 MIN READ',
-                icon: LucideIcons.shield,
-              ),
+              if ('home buyer\'s guide'.contains(_searchQuery))
+                _GuideCard(
+                  title: 'HOME BUYER\'S GUIDE',
+                  readingTime: '5 MIN READ',
+                  icon: LucideIcons.home,
+                ),
+              if ('home buyer\'s guide'.contains(_searchQuery) && 'understanding norms'.contains(_searchQuery))
+                const SizedBox(width: 16),
+              if ('understanding norms'.contains(_searchQuery))
+                _GuideCard(
+                  title: 'UNDERSTANDING NORMS',
+                  readingTime: '8 MIN READ',
+                  icon: LucideIcons.shield,
+                ),
             ],
           ),
         ),
@@ -154,38 +170,39 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'FREQUENTLY ASKED QUESTIONS',
-              style: GoogleFonts.montserrat(
-                fontSize: 9,
-                fontWeight: FontWeight.w900,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
-                letterSpacing: 2,
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                'UPDATED',
+        if (_searchQuery.isEmpty)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'FREQUENTLY ASKED QUESTIONS',
                 style: GoogleFonts.montserrat(
-                  fontSize: 7,
+                  fontSize: 9,
                   fontWeight: FontWeight.w900,
-                  color: Colors.orangeAccent,
-                  letterSpacing: 1,
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                  letterSpacing: 2,
                 ),
               ),
-            ),
-          ],
-        ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  'UPDATED',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 7,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.orangeAccent,
+                    letterSpacing: 1,
+                  ),
+                ),
+              ),
+            ],
+          ),
         const SizedBox(height: 32),
-        _FAQCategory(
+        _buildFilteredFAQCategory(
           title: 'PAYMENTS',
           questions: const [
             {
@@ -203,7 +220,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
           ],
         ),
         const SizedBox(height: 24),
-        _FAQCategory(
+        _buildFilteredFAQCategory(
           title: 'BOOKINGS & SITE VISITS',
           questions: const [
             {
@@ -296,6 +313,19 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
         ),
       ),
     ).animate().fadeIn(delay: 400.ms);
+  }
+  Widget _buildFilteredFAQCategory({required String title, required List<Map<String, String>> questions}) {
+    final filtered = questions.where((q) {
+      final text = (q['q']! + q['a']!).toLowerCase();
+      return text.contains(_searchQuery);
+    }).toList();
+
+    if (filtered.isEmpty) return const SizedBox.shrink();
+
+    return _FAQCategory(
+      title: title,
+      questions: filtered,
+    );
   }
 }
 

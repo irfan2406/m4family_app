@@ -135,6 +135,7 @@ class ProjectListScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final projectsAsync = ref.watch(projectsProvider);
     final filteredProjects = ref.watch(filteredProjectsProvider);
     final currentFilter = ref.watch(projectFilterProvider);
@@ -210,9 +211,9 @@ class ProjectListScreen extends ConsumerWidget {
                         child: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.05),
+                            color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
                             borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.black.withOpacity(0.05)),
+                            border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
                           ),
                           child: Icon(LucideIcons.slidersHorizontal, size: 16, color: Theme.of(context).colorScheme.onSurface),
                         ),
@@ -224,16 +225,16 @@ class ProjectListScreen extends ConsumerWidget {
                         child: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: isGridView ? Colors.white : Colors.white.withOpacity(0.05),
+                            color: isGridView ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white : Colors.black).withOpacity(0.05),
                             borderRadius: BorderRadius.circular(10),
-                            border: isGridView ? null : Border.all(color: Colors.white10),
+                            border: isGridView ? null : Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
                           ),
                           child: Icon(
                             isGridView ? LucideIcons.layoutGrid : LucideIcons.list,
                             size: 16,
                             color: isGridView 
-                                ? (Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white)
-                                : Colors.white,
+                                ? (isDark ? Colors.black : Colors.white)
+                                : (isDark ? Colors.white : Colors.black),
                           ),
                         ),
                       ),

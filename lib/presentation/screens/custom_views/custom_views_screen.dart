@@ -8,6 +8,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
+import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
+import 'package:go_router/go_router.dart';
 
 class CustomViewsScreen extends ConsumerWidget {
   const CustomViewsScreen({super.key});
@@ -32,8 +34,14 @@ class CustomViewsScreen extends ConsumerWidget {
                       if (currentStep > 0) {
                         ref.read(customViewsStepProvider.notifier).state = currentStep - 1;
                       } else {
-                        // Return to Home tab
-                        ref.read(navigationProvider.notifier).state = 0;
+                        if (Navigator.canPop(context)) {
+                          Navigator.pop(context);
+                        } else {
+                          // Return to Home tab
+                          ref.read(navigationProvider.notifier).state = 0;
+                          ref.read(guestNavigationProvider.notifier).state = 0;
+                          context.go('/home');
+                        }
                       }
                     },
                     child: Container(
@@ -540,6 +548,7 @@ class _MaterialsSelectionStep extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final optionsAsync = ref.watch(customizationOptionsProvider);
     final selections = ref.watch(customViewsSelectionsProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -564,11 +573,11 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                   children: [
                     Row(
                       children: [
-                        const Icon(LucideIcons.palette, size: 14, color: Colors.white70),
+                        Icon(LucideIcons.palette, size: 14, color: isDark ? Colors.white70 : Colors.black54),
                         const SizedBox(width: 8),
                         Text(
                           (cat['title']?.toUpperCase() ?? 'CATEGORY'),
-                          style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2, color: Colors.white),
+                          style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2, color: isDark ? Colors.white : Colors.black),
                         ),
                       ],
                     ),
@@ -595,12 +604,12 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                           },
                           child: Container(
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.03),
+                              color: isDark ? Colors.white.withOpacity(0.03) : Colors.black.withOpacity(0.03),
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
                                 color: isSelected 
-                                    ? Colors.white 
-                                    : Colors.white.withOpacity(0.1), 
+                                    ? (isDark ? Colors.white : Colors.black) 
+                                    : (isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.1)), 
                                 width: isSelected ? 2 : 1
                               ),
                             ),

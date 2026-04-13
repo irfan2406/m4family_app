@@ -137,7 +137,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
 
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       drawer: const GuestSidebarMenu(),
       body: CustomScrollView(
         controller: _scrollController,
@@ -182,8 +182,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     return SliverToBoxAdapter(
       child: Container(
         padding: const EdgeInsets.only(top: 60, bottom: 20),
-        decoration: const BoxDecoration(
-          color: Colors.black,
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -197,8 +197,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('M4 FAMILY', style: GoogleFonts.montserrat(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 18, letterSpacing: -1)),
-                      Text('DEVELOPMENTS', style: GoogleFonts.montserrat(color: Colors.white60, fontWeight: FontWeight.w800, fontSize: 8, letterSpacing: 3)),
+                      Text('M4 FAMILY', style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w900, fontSize: 18, letterSpacing: -1)),
+                      Text('DEVELOPMENTS', style: GoogleFonts.montserrat(color: isDark ? Colors.white60 : Colors.black54, fontWeight: FontWeight.w800, fontSize: 8, letterSpacing: 3)),
                     ],
                   ),
                   _ScaleButton(
@@ -207,11 +207,11 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       width: 44,
                       height: 34,
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.1),
+                        color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1)),
                       ),
-                      child: const Icon(LucideIcons.moreHorizontal, color: Colors.white, size: 20),
+                      child: Icon(LucideIcons.moreHorizontal, color: isDark ? Colors.white : Colors.black, size: 20),
                     ),
                   ),
                 ],
@@ -228,7 +228,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                    Text(
                     'Living the',
                     style: GoogleFonts.dmSerifDisplay(
-                      color: Colors.white.withValues(alpha: 0.9),
+                      color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.9),
                       fontSize: 34,
                       fontWeight: FontWeight.w400,
                       height: 1.1,
@@ -237,7 +237,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                   Text(
                     'M4 Life',
                     style: GoogleFonts.dmSerifDisplay(
-                      color: Colors.white,
+                      color: isDark ? Colors.white : Colors.black,
                       fontSize: 42,
                       fontWeight: FontWeight.w400,
                       height: 1.1,
@@ -343,13 +343,14 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
   }
 
   Widget _buildPhilosophy() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'OUR PHILOSOPHY', 
           style: GoogleFonts.montserrat(
-            color: Colors.white, 
+            color: isDark ? Colors.white : Colors.black, 
             fontSize: 22, 
             fontWeight: FontWeight.w400, 
             letterSpacing: 2
@@ -358,13 +359,13 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         const SizedBox(height: 24),
         RichText(
           text: TextSpan(
-            style: GoogleFonts.montserrat(color: Colors.white.withValues(alpha: 0.7), fontSize: 13, height: 1.8),
+            style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.7), fontSize: 13, height: 1.8),
             children: [
               const TextSpan(text: 'To redefine modern luxury living by crafting homes with cutting edge design, enduring quality and thoughtful amenities delivered with trust, transparency, timeliness, and a human touch that creates lasting value for every homeowner. '),
               WidgetSpan(
                 child: GestureDetector(
                   onTap: () => context.push('/about'),
-                  child: Text('Who We Are', style: GoogleFonts.montserrat(color: Colors.white, fontWeight: FontWeight.bold, decoration: TextDecoration.underline)),
+                  child: Text('Who We Are', style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.bold, decoration: TextDecoration.underline)),
                 ),
               ),
             ],
@@ -375,6 +376,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
   }
 
   Widget _buildTabsSection() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
         Row(
@@ -395,7 +397,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                         Text(
                           tab.toUpperCase(), 
                           style: GoogleFonts.montserrat(
-                            color: isSelected ? Colors.white : Colors.white24, 
+                            color: isSelected 
+                                ? (isDark ? Colors.white : Colors.black) 
+                                : (isDark ? Colors.white24 : Colors.black26), 
                             fontSize: 10, 
                             fontWeight: FontWeight.w900, 
                             letterSpacing: 1.5
@@ -407,7 +411,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                             width: 24, 
                             height: 2, 
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: isDark ? Colors.white : Colors.black,
                               borderRadius: BorderRadius.circular(1),
                             ),
                           ),
@@ -430,7 +434,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                 child: Text(
                   'VIEW ALL', 
                   style: GoogleFonts.montserrat(
-                    color: Colors.white.withValues(alpha: 0.9), 
+                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.9), 
                     fontSize: 10, 
                     fontWeight: FontWeight.w900, 
                     letterSpacing: 1,
@@ -460,6 +464,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
   Widget _buildTabCard(dynamic item) {
     final isCommunity = _activeTab == 'Communities';
     final apiClient = ref.read(apiClientProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     
     final imageUrl = apiClient.resolveUrl(isCommunity 
         ? (item['image'] ?? 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80')
@@ -470,15 +475,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         if (isCommunity) {
           context.push('/communities/${item['_id']}', extra: item);
         } else {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => GuestProjectDetailScreen(
-                projectId: item['_id']?.toString() ?? '',
-                projectData: item,
-              ),
-            ),
-          );
+          context.push('/projects/${item['_id']}', extra: item);
         }
       },
       child: ClipRRect(
@@ -489,9 +486,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             width: 300,
             margin: const EdgeInsets.only(right: 20),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.03),
+              color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.black.withValues(alpha: 0.04),
               borderRadius: BorderRadius.circular(40),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+              border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08)),
             ),
             child: Column(
               children: [
@@ -524,7 +521,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(item['title']?.toString() ?? '', style: GoogleFonts.dmSerifDisplay(color: Colors.white, fontSize: 20)),
+                        Text(item['title']?.toString() ?? '', style: GoogleFonts.dmSerifDisplay(color: isDark ? Colors.white : Colors.black, fontSize: 20)),
                         const SizedBox(height: 12),
                         if (isCommunity)
                           Text((item['description'] ?? item['overview'] ?? '').toUpperCase(), maxLines: 2, overflow: TextOverflow.ellipsis, style: GoogleFonts.montserrat(color: Colors.white54, fontSize: 7, fontWeight: FontWeight.w900, letterSpacing: 1.5))
@@ -539,14 +536,17 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                         const Spacer(),
                         Container(
                           height: 44,
-                          decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
+                          decoration: BoxDecoration(
+                            color: isDark ? Colors.white : Colors.black, 
+                            borderRadius: BorderRadius.circular(12)
+                          ),
                           child: Center(
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text('READ MORE', style: GoogleFonts.montserrat(color: Colors.black, fontWeight: FontWeight.w900, fontSize: 10, letterSpacing: 1)),
+                                Text('READ MORE', style: GoogleFonts.montserrat(color: isDark ? Colors.black : Colors.white, fontWeight: FontWeight.w900, fontSize: 10, letterSpacing: 1)),
                                 const SizedBox(width: 8),
-                                const Icon(LucideIcons.chevronRight, color: Colors.black, size: 14),
+                                Icon(LucideIcons.chevronRight, color: isDark ? Colors.black : Colors.white, size: 14),
                               ],
                             ),
                           ),
@@ -567,6 +567,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     if (_projects.isEmpty) return const SizedBox.shrink();
     final project = _projects[_featuredIndex % _projects.length];
     final apiClient = ref.read(apiClientProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -580,7 +581,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               Text(
                 'FEATURED',
                 style: GoogleFonts.montserrat(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
                   fontSize: 12,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 4,
@@ -589,7 +590,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               Text(
                 'PROPERTIES',
                 style: GoogleFonts.montserrat(
-                  color: Colors.white,
+                  color: isDark ? Colors.white : Colors.black,
                   fontSize: 32,
                   fontWeight: FontWeight.w400,
                   letterSpacing: 1,
@@ -608,9 +609,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 24),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.03),
+                color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.black.withValues(alpha: 0.02),
                 borderRadius: BorderRadius.circular(40),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08)),
               ),
               child: Column(
                 children: [
@@ -669,29 +670,19 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                               onTap: () => setState(() => _featuredIndex = (_featuredIndex - 1 + _projects.length) % _projects.length),
                               child: Container(
                                 padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.1), shape: BoxShape.circle),
-                                child: const Icon(LucideIcons.arrowLeft, color: Colors.white, size: 20),
+                                decoration: BoxDecoration(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1), shape: BoxShape.circle),
+                                child: Icon(LucideIcons.arrowLeft, color: isDark ? Colors.white : Colors.black, size: 20),
                               ),
                             ),
                             const SizedBox(width: 16),
                             Expanded(
                               child: _ScaleButton(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => GuestProjectDetailScreen(
-                                        projectId: project['_id']?.toString() ?? '',
-                                        projectData: project,
-                                      ),
-                                    ),
-                                  );
-                                },
+                                onTap: () => context.push('/projects/${project['_id']}', extra: project),
                                 child: Container(
                                   height: 56,
-                                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+                                  decoration: BoxDecoration(color: isDark ? Colors.white : Colors.black, borderRadius: BorderRadius.circular(16)),
                                   child: Center(
-                                    child: Text('READ MORE', style: GoogleFonts.montserrat(color: Colors.black, fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 2)),
+                                    child: Text('READ MORE', style: GoogleFonts.montserrat(color: isDark ? Colors.black : Colors.white, fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 2)),
                                   ),
                                 ),
                               ),
@@ -701,8 +692,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                               onTap: () => setState(() => _featuredIndex = (_featuredIndex + 1) % _projects.length),
                               child: Container(
                                 padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.1), shape: BoxShape.circle),
-                                child: const Icon(LucideIcons.arrowRight, color: Colors.white, size: 20),
+                                decoration: BoxDecoration(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1), shape: BoxShape.circle),
+                                child: Icon(LucideIcons.arrowRight, color: isDark ? Colors.white : Colors.black, size: 20),
                               ),
                             ),
                           ],
@@ -720,38 +711,41 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
   }
 
   Widget _buildFeatureIcon(IconData icon, String label) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
-        Icon(icon, color: Colors.white38, size: 24),
+        Icon(icon, color: isDark ? Colors.white38 : Colors.black38, size: 24),
         const SizedBox(height: 8),
-        Text(label, textAlign: TextAlign.center, style: GoogleFonts.montserrat(color: Colors.white38, fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 1.5)),
+        Text(label, textAlign: TextAlign.center, style: GoogleFonts.montserrat(color: isDark ? Colors.white38 : Colors.black38, fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 1.5)),
       ],
     );
   }
 
   Widget _buildCircularNavButton(IconData icon, VoidCallback onTap) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: 56,
         height: 56,
-        decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(16), border: Border.all(color: Colors.white.withOpacity(0.05))),
-        child: Icon(icon, color: Colors.white70, size: 20),
+        decoration: BoxDecoration(color: isDark ? Colors.black : Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05))),
+        child: Icon(icon, color: isDark ? Colors.white70 : Colors.black87, size: 20),
       ),
     );
   }
 
   Widget _buildConnectGrid() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'EXPLORE, CONNECT', 
-          style: GoogleFonts.dmSerifDisplay(color: Colors.white, fontSize: 34, height: 1),
+          style: GoogleFonts.dmSerifDisplay(color: isDark ? Colors.white : Colors.black, fontSize: 34, height: 1),
         ),
         Text(
           'AND ENGAGE WITH US', 
-          style: GoogleFonts.dmSerifDisplay(color: Colors.white, fontSize: 34, height: 1.2),
+          style: GoogleFonts.dmSerifDisplay(color: isDark ? Colors.white : Colors.black, fontSize: 34, height: 1.2),
         ),
         const SizedBox(height: 48),
         GridView.count(
@@ -773,7 +767,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
                 child: Container(
-                  color: Colors.white.withValues(alpha: 0.02),
+                  color: isDark ? Colors.white.withValues(alpha: 0.02) : Colors.black.withValues(alpha: 0.03),
                   child: InkWell(
                 onTap: () {
                   if (item['action'] != null) {
@@ -789,11 +783,11 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(item['icon'] as IconData, color: Colors.white, size: 28),
+                      Icon(item['icon'] as IconData, color: isDark ? Colors.white : Colors.black, size: 28),
                       const SizedBox(height: 20),
-                      Text(item['title'] as String, textAlign: TextAlign.center, style: GoogleFonts.montserrat(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 9, letterSpacing: 1)),
+                      Text(item['title'] as String, textAlign: TextAlign.center, style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w900, fontSize: 9, letterSpacing: 1)),
                       const SizedBox(height: 8),
-                      Text(item['desc'] as String, textAlign: TextAlign.center, style: GoogleFonts.montserrat(color: Colors.white54, fontSize: 8)),
+                      Text(item['desc'] as String, textAlign: TextAlign.center, style: GoogleFonts.montserrat(color: isDark ? Colors.white54 : Colors.black54, fontSize: 8)),
                     ],
                   ),
                 ),
@@ -808,6 +802,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
 }
 
   Widget _buildInterestForm() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       key: _interestFormKey,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -815,7 +810,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         Text(
           'REGISTER INTEREST', 
           style: GoogleFonts.montserrat(
-            color: Colors.white, 
+            color: isDark ? Colors.white : Colors.black, 
             fontSize: 28, 
             fontWeight: FontWeight.w400, 
             letterSpacing: 2
@@ -835,12 +830,12 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             Checkbox(
               value: _agreedToTerms,
               onChanged: (val) => setState(() => _agreedToTerms = val ?? false),
-              activeColor: Colors.white,
-              checkColor: Colors.black,
-              side: const BorderSide(color: Colors.white24),
+              activeColor: isDark ? Colors.white : Colors.black,
+              checkColor: isDark ? Colors.black : Colors.white,
+              side: BorderSide(color: isDark ? Colors.white24 : Colors.black26),
             ),
             Expanded(
-              child: Text("I've read and agree to the Privacy Policy", style: GoogleFonts.montserrat(color: Colors.white54, fontSize: 11, letterSpacing: 1)),
+              child: Text("I've read and agree to the Privacy Policy", style: GoogleFonts.montserrat(color: isDark ? Colors.white54 : Colors.black54, fontSize: 11, letterSpacing: 1)),
             ),
           ],
         ),
@@ -851,11 +846,11 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           child: _ScaleButton(
             onTap: _submitting ? () {} : _submitInterest,
             child: Container(
-              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16)),
+              decoration: BoxDecoration(color: isDark ? Colors.white : Colors.black, borderRadius: BorderRadius.circular(16)),
               child: Center(
                 child: _submitting 
-                    ? const CircularProgressIndicator(color: Colors.black)
-                    : Text('SUBMIT INTEREST', style: GoogleFonts.montserrat(color: Colors.black, fontWeight: FontWeight.w900, letterSpacing: 2)),
+                    ? CircularProgressIndicator(color: isDark ? Colors.black : Colors.white)
+                    : Text('SUBMIT INTEREST', style: GoogleFonts.montserrat(color: isDark ? Colors.black : Colors.white, fontWeight: FontWeight.w900, letterSpacing: 2)),
               ),
             ),
           ),
@@ -865,15 +860,23 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
   }
 
   Widget _buildLuxuryInput(String hint, TextEditingController controller, {bool isLong = false}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(16), border: Border.all(color: Colors.white.withOpacity(0.05))),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.black : Colors.white, 
+        borderRadius: BorderRadius.circular(16), 
+        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+        boxShadow: isDark ? [] : [
+          BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 20, offset: const Offset(0, 10))
+        ]
+      ),
       child: TextField(
         controller: controller,
-        style: const TextStyle(color: Colors.white),
+        style: TextStyle(color: isDark ? Colors.white : Colors.black),
         maxLines: isLong ? 5 : 1,
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: GoogleFonts.montserrat(color: Colors.white24, fontSize: 13),
+          hintStyle: GoogleFonts.montserrat(color: isDark ? Colors.white24 : Colors.black26, fontSize: 13),
           contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
           border: InputBorder.none,
         ),

@@ -10,6 +10,7 @@ import 'package:m4_mobile/presentation/screens/projects/project_detail_screen.da
 import 'package:url_launcher/url_launcher.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
+import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 
 class CommunityDetailScreen extends ConsumerStatefulWidget {
   final dynamic community;
@@ -120,6 +121,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final apiClient = ref.watch(apiClientProvider);
     final heroImageUrl = apiClient.resolveUrl(widget.community['image'] ?? widget.community['heroImage']);
     final benefitsRaw = widget.community['benefits'] as List? ?? [];
@@ -133,54 +135,61 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
     ];
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: isDark ? Colors.black : Colors.white,
+      drawer: const ConditionalDrawer(),
       body: CustomScrollView(
         controller: _scrollController,
         slivers: [
               // 🔝 Sticky Header
               SliverToBoxAdapter(
                 child: Container(
-                  padding: const EdgeInsets.fromLTRB(25, 60, 25, 20),
+                  padding: const EdgeInsets.fromLTRB(25, 60, 15, 20),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      GestureDetector(
+                       GestureDetector(
                         onTap: () => Navigator.pop(context),
-                        child: Row(
-                          children: [
-                            const Icon(LucideIcons.arrowLeft, color: Colors.white, size: 20),
-                            const SizedBox(width: 10),
-                            Text(
-                              'COMMUNITIES',
-                              style: GoogleFonts.inter(
-                                color: Colors.white.withOpacity(0.5),
-                                fontSize: 10,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: 2,
-                              ),
-                            ),
-                          ],
+                        child: Container(
+                          width: 45,
+                          height: 45,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                            border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
+                          ),
+                          child: Icon(LucideIcons.chevronLeft, color: isDark ? Colors.white : Colors.black, size: 20),
                         ),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                      Row(
                         children: [
-                          Text(
-                            'M4 FAMILY',
-                            style: GoogleFonts.inter(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: -1,
-                            ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                'M4 FAMILY',
+                                style: GoogleFonts.inter(
+                                  color: isDark ? Colors.white : Colors.black,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: -1,
+                                ),
+                              ),
+                              Text(
+                                'DEVELOPMENTS',
+                                style: GoogleFonts.inter(
+                                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 3,
+                                ),
+                              ),
+                            ],
                           ),
-                          Text(
-                            'DEVELOPMENTS',
-                            style: GoogleFonts.inter(
-                              color: Colors.white.withOpacity(0.5),
-                              fontSize: 8,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 3,
+                          const SizedBox(width: 8),
+                          Builder(
+                            builder: (context) => IconButton(
+                              icon: Icon(LucideIcons.moreHorizontal, color: isDark ? Colors.white : Colors.black, size: 28),
+                              onPressed: () => Scaffold.of(context).openDrawer(),
                             ),
                           ),
                         ],
@@ -271,25 +280,25 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                         child: Container(
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.05),
+                            color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
                             borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.white.withOpacity(0.1)),
+                            border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
                           ),
                           child: Row(
                             children: [
                               Container(
                                 padding: const EdgeInsets.all(10),
-                                decoration: const BoxDecoration(
-                                  color: Colors.white,
+                                decoration: BoxDecoration(
+                                  color: isDark ? Colors.white : Colors.black,
                                   shape: BoxShape.circle,
                                 ),
-                                child: const Icon(LucideIcons.mapPin, color: Colors.black, size: 18),
+                                child: Icon(LucideIcons.mapPin, color: isDark ? Colors.black : Colors.white, size: 18),
                               ),
                               const SizedBox(width: 15),
                               Text(
                                 (widget.community['location'] ?? '').toString().toUpperCase(),
                                 style: GoogleFonts.inter(
-                                  color: Colors.white,
+                                  color: isDark ? Colors.white : Colors.black,
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 1,
@@ -311,7 +320,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                       Text(
                         widget.community['overview'] ?? widget.community['description'] ?? '',
                         style: GoogleFonts.lora(
-                          color: Colors.white.withOpacity(0.6),
+                          color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
                           fontSize: 14,
                           height: 1.8,
                           fontWeight: FontWeight.w500,
@@ -337,9 +346,9 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                           final benefit = benefits[index];
                           return Container(
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.04),
+                              color: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
                               borderRadius: BorderRadius.circular(35),
-                              border: Border.all(color: Colors.white.withOpacity(0.06)),
+                              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.06)),
                             ),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -536,12 +545,12 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                             child: ElevatedButton(
                               onPressed: _isSubmitting ? null : _handleLeadSubmission,
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: Colors.black,
+                                backgroundColor: isDark ? Colors.white : Colors.black,
+                                foregroundColor: isDark ? Colors.black : Colors.white,
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                               ),
                               child: _isSubmitting 
-                                ? const CircularProgressIndicator(color: Colors.black)
+                                ? CircularProgressIndicator(color: isDark ? Colors.black : Colors.white)
                                 : Text(
                                     'REGISTER INTEREST',
                                     style: GoogleFonts.inter(
@@ -557,7 +566,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                             child: Text(
                               'EXCLUSIVE GUEST PREVIEW - LIMITED OPPORTUNITIES',
                               style: GoogleFonts.inter(
-                                color: Colors.white.withOpacity(0.3),
+                                color: (isDark ? Colors.white : Colors.black).withOpacity(0.3),
                                 fontSize: 8,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 2,
@@ -650,21 +659,22 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
   }
 
   Widget _buildInput(String hint, TextEditingController controller) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
+        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
       ),
       child: TextField(
         controller: controller,
-        style: GoogleFonts.inter(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
+        style: GoogleFonts.inter(color: isDark ? Colors.white : Colors.black, fontSize: 13, fontWeight: FontWeight.bold),
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: hint.toUpperCase(),
           hintStyle: GoogleFonts.inter(
-            color: Colors.white.withOpacity(0.3),
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.3),
             fontSize: 10,
             fontWeight: FontWeight.w900,
             letterSpacing: 2,
@@ -694,12 +704,13 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            Container(width: 4, height: 40, color: Colors.white),
+            Container(width: 4, height: 40, color: isDark ? Colors.white : Colors.black),
             const SizedBox(width: 20),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -707,7 +718,7 @@ class _SectionHeader extends StatelessWidget {
                 Text(
                   title,
                   style: GoogleFonts.inter(
-                    color: Colors.white,
+                    color: isDark ? Colors.white : Colors.black,
                     fontSize: 22,
                     fontWeight: FontWeight.w900,
                     height: 1.1,
@@ -717,7 +728,7 @@ class _SectionHeader extends StatelessWidget {
                 Text(
                   subtitle,
                   style: GoogleFonts.inter(
-                    color: Colors.white.withOpacity(0.4),
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(0.4),
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,

@@ -252,12 +252,15 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                         onTap: SupportHandlers.launchWhatsApp,
                       ),
                       
-                      const SizedBox(height: 16),
-                      _SidebarExitButton(),
-                      const SizedBox(height: 120),
-
+                      const SizedBox(height: 120), // Huge space at the bottom of the list
                     ],
                   ),
+                ),
+                
+                // Fixed Logout Button
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 12, 24, 100), // Pushes button above floating nav pill
+                  child: _SidebarExitButton(),
                 ),
               ],
             ),

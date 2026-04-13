@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -31,13 +32,14 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: isDark ? Colors.black : Colors.white,
+      drawer: const ConditionalDrawer(),
       body: CustomScrollView(
         slivers: [
-          // 🔝 Header (Logo & Back)
+          // 🔝 Header (Logo, Back & Menu)
           SliverToBoxAdapter(
             child: Container(
-              padding: const EdgeInsets.fromLTRB(25, 60, 25, 20),
+              padding: const EdgeInsets.fromLTRB(25, 60, 15, 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -54,31 +56,42 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       height: 45,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.white.withOpacity(0.05),
-                        border: Border.all(color: Colors.white.withOpacity(0.1)),
+                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
                       ),
-                      child: const Icon(LucideIcons.chevronLeft, color: Colors.white, size: 20),
+                      child: Icon(LucideIcons.chevronLeft, color: isDark ? Colors.white : Colors.black, size: 20),
                     ),
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                  Row(
                     children: [
-                      Text(
-                        'M4 FAMILY',
-                        style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: -1,
-                        ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            'M4 FAMILY',
+                            style: GoogleFonts.inter(
+                              color: isDark ? Colors.white : Colors.black,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: -1,
+                            ),
+                          ),
+                          Text(
+                            'DEVELOPMENTS',
+                            style: GoogleFonts.inter(
+                              color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+                              fontSize: 8,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 3,
+                            ),
+                          ),
+                        ],
                       ),
-                      Text(
-                        'DEVELOPMENTS',
-                        style: GoogleFonts.inter(
-                          color: Colors.white.withOpacity(0.5),
-                          fontSize: 8,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 3,
+                      const SizedBox(width: 8),
+                      Builder(
+                        builder: (context) => IconButton(
+                          icon: Icon(LucideIcons.moreHorizontal, color: isDark ? Colors.white : Colors.black, size: 28),
+                          onPressed: () => Scaffold.of(context).openDrawer(),
                         ),
                       ),
                     ],
@@ -100,7 +113,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                     style: GoogleFonts.lora(
                       fontSize: 32,
                       fontWeight: FontWeight.w300,
-                      color: Colors.white.withOpacity(0.7),
+                      color: (isDark ? Colors.white : Colors.black).withOpacity(0.7),
                       height: 1,
                     ),
                   ),
@@ -109,7 +122,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                     style: GoogleFonts.lora(
                       fontSize: 32,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                      color: isDark ? Colors.white : Colors.black,
                       height: 1,
                     ),
                   ),
@@ -120,7 +133,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                     firstChild: Text(
                       'At M4 Family Developments, we are dedicated to delivering a luxury experience that goes beyond the ordinary. Our commitment to exquisite living, unparalleled quality, and iconic design is evident in ...',
                       style: GoogleFonts.lora(
-                        color: Colors.white.withOpacity(0.6),
+                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
                         fontSize: 14,
                         height: 1.8,
                         fontWeight: FontWeight.w500,
@@ -129,7 +142,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                     secondChild: Text(
                       'At M4 Family Developments, we are dedicated to delivering a luxury experience that goes beyond the ordinary. Our commitment to exquisite living, unparalleled quality, and iconic design is evident in every community we curate. We believe in creating spaces that faster connection, inspiration, and a sense of belonging for every resident. Our developments are strategically located to offer the best of urban living with a touch of serenity.',
                       style: GoogleFonts.lora(
-                        color: Colors.white.withOpacity(0.6),
+                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
                         fontSize: 14,
                         height: 1.8,
                         fontWeight: FontWeight.w500,
@@ -142,12 +155,12 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                     child: Container(
                       padding: const EdgeInsets.only(bottom: 2),
                       decoration: BoxDecoration(
-                        border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.2), width: 1)),
+                        border: Border(bottom: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.2), width: 1)),
                       ),
                       child: Text(
                         _isExpanded ? 'Read less' : 'Read more',
                         style: GoogleFonts.inter(
-                          color: Colors.white,
+                          color: isDark ? Colors.white : Colors.black,
                           fontSize: 13,
                           fontWeight: FontWeight.bold,
                         ),
@@ -161,11 +174,11 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
 
           // 🏗️ Grid of Communities
           if (state.isLoading)
-            const SliverToBoxAdapter(
+            SliverToBoxAdapter(
               child: Center(
                 child: Padding(
                   padding: EdgeInsets.all(100.0),
-                  child: CircularProgressIndicator(color: Colors.white),
+                  child: CircularProgressIndicator(color: isDark ? Colors.white : Colors.black),
                 ),
               ),
             )
@@ -174,7 +187,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
               child: Center(
                 child: Padding(
                   padding: const EdgeInsets.all(40.0),
-                  child: Text(state.error!, style: const TextStyle(color: Colors.white38)),
+                  child: Text(state.error!, style: TextStyle(color: isDark ? Colors.white38 : Colors.black38)),
                 ),
               ),
             )
@@ -203,6 +216,7 @@ class _CommunityCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final apiClient = ref.watch(apiClientProvider);
     final imageUrl = apiClient.resolveUrl(community['image'] ?? community['imageUrl']);
 
@@ -292,7 +306,7 @@ class _CommunityCard extends ConsumerWidget {
                     width: 55,
                     height: 55,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: isDark ? Colors.white : Colors.black,
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
@@ -301,7 +315,7 @@ class _CommunityCard extends ConsumerWidget {
                         ),
                       ],
                     ),
-                    child: const Icon(LucideIcons.arrowRight, color: Colors.black, size: 24),
+                    child: Icon(LucideIcons.arrowRight, color: isDark ? Colors.black : Colors.white, size: 24),
                   ),
                 ],
               ),

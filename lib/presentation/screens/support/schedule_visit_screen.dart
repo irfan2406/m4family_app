@@ -149,11 +149,11 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.05),
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white.withOpacity(0.1)),
+                  border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1)),
                 ),
-                child: const Icon(LucideIcons.chevronLeft, color: Colors.white, size: 16),
+                child: Icon(LucideIcons.chevronLeft, color: Theme.of(context).colorScheme.onSurface, size: 16),
               ),
             ),
           ),
@@ -165,7 +165,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
               style: GoogleFonts.montserrat(
                 fontSize: 16,
                 fontWeight: FontWeight.w900,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.onSurface,
                 letterSpacing: 0,
               ),
             ),
@@ -174,7 +174,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
               style: GoogleFonts.montserrat(
                 fontSize: 8,
                 fontWeight: FontWeight.w700,
-                color: Colors.white38,
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
                 letterSpacing: 1,
               ),
             ),
@@ -194,7 +194,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF111111),
+                    color: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF111111) : Colors.black,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: Colors.white.withOpacity(0.08)),
                   ),
@@ -203,7 +203,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                       Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.05),
+                          color: Colors.white.withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(LucideIcons.info, color: Colors.white, size: 18),
@@ -334,38 +334,39 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
     TextInputType keyboardType = TextInputType.text,
     String? Function(String?)? validator,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return TextFormField(
       controller: controller,
       maxLines: maxLines,
       keyboardType: keyboardType,
       validator: validator,
-      style: GoogleFonts.montserrat(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
+      style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 13, fontWeight: FontWeight.bold),
       decoration: InputDecoration(
         filled: true,
-        fillColor: Colors.white.withOpacity(0.03),
+        fillColor: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
         hintText: hint.toUpperCase(),
-        hintStyle: GoogleFonts.montserrat(color: Colors.white12, fontSize: 13, fontWeight: FontWeight.bold),
-        prefixIcon: icon != null ? Icon(icon, color: Colors.white12, size: 18) : null,
-        errorStyle: GoogleFonts.montserrat(color: Colors.white38, fontSize: 10), // Subtle white error text
+        hintStyle: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.2), fontSize: 13, fontWeight: FontWeight.bold),
+        prefixIcon: icon != null ? Icon(icon, color: (isDark ? Colors.white : Colors.black).withOpacity(0.2), size: 18) : null,
+        errorStyle: GoogleFonts.montserrat(color: isDark ? Colors.white38 : Colors.black38, fontSize: 10),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Colors.white10),
+          borderSide: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Colors.white10),
+          borderSide: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Colors.white24, width: 1),
+          borderSide: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.2), width: 1),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Colors.white10), // No red border
+          borderSide: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Colors.white24, width: 1),
+          borderSide: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.2), width: 1),
         ),
       ),
     ).animate().fadeIn(delay: 100.ms);
@@ -378,6 +379,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
       orElse: () => null,
     );
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
         GestureDetector(
@@ -385,10 +387,10 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.03),
+              color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: _isProjectDropdownOpen ? Colors.white.withOpacity(0.2) : Colors.white10,
+                color: _isProjectDropdownOpen ? (isDark ? Colors.white : Colors.black).withOpacity(0.2) : (isDark ? Colors.white : Colors.black).withOpacity(0.1),
               ),
             ),
             child: Row(
@@ -397,7 +399,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                 Text(
                   selectedProject != null ? selectedProject['title'].toString().toUpperCase() : 'CHOOSE PROJECT',
                   style: GoogleFonts.montserrat(
-                    color: selectedProject != null ? Colors.white : Colors.white12,
+                    color: selectedProject != null ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white : Colors.black).withOpacity(0.2),
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1,
@@ -405,7 +407,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                 ),
                 Icon(
                   _isProjectDropdownOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown,
-                  color: Colors.white24,
+                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.2),
                   size: 18,
                 ),
               ],
@@ -417,9 +419,10 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
             margin: const EdgeInsets.only(top: 8),
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: const Color(0xFF111111),
+              color: isDark ? const Color(0xFF111111) : Colors.white,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.white.withOpacity(0.05)),
+              boxShadow: isDark ? null : [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20, offset: const Offset(0, 10))],
+              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
             ),
             child: Column(
               children: projects.map((project) {
@@ -435,13 +438,13 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                     decoration: BoxDecoration(
-                      color: isSelected ? Colors.white.withOpacity(0.05) : Colors.transparent,
+                      color: isSelected ? (isDark ? Colors.white : Colors.black).withOpacity(0.05) : Colors.transparent,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
                       (project['title'] ?? '').toString().toUpperCase(),
                       style: GoogleFonts.montserrat(
-                        color: isSelected ? Colors.white : Colors.white38,
+                        color: isSelected ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white38 : Colors.black38),
                         fontSize: 11,
                         fontWeight: isSelected ? FontWeight.w900 : FontWeight.w600,
                         letterSpacing: 1,
@@ -515,7 +518,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
               ),
             ),
             const SizedBox(width: 12),
-            const Icon(LucideIcons.shieldCheck, color: Colors.black, size: 16),
+            Icon(LucideIcons.shieldCheck, color: Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white, size: 16),
           ],
         ),
       ),

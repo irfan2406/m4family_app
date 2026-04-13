@@ -19,7 +19,11 @@ import 'package:m4_mobile/presentation/screens/about/about_screen.dart';
 import 'package:m4_mobile/presentation/screens/communities/community_list_screen.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
 import 'package:m4_mobile/presentation/screens/careers/careers_screen.dart';
+import 'package:m4_mobile/presentation/screens/communities/community_detail_screen.dart';
+import 'package:m4_mobile/presentation/screens/projects/guest_project_detail_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/support_screen.dart';
+import 'package:m4_mobile/presentation/screens/custom_views/custom_views_screen.dart';
+import 'package:m4_mobile/presentation/screens/custom_views/guest_custom_views_screen.dart';
 
 import 'package:m4_mobile/core/providers/theme_provider.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -34,7 +38,7 @@ void main() async {
   runApp(
     ProviderScope(
       overrides: [
-        themeProvider.overrideWith((ref) => ThemeNotifier(initialTheme))
+        themeProvider.overrideWith((ref) => ThemeNotifier(ref, initialTheme))
       ],
       child: const M4FamilyApp(),
     ),
@@ -137,6 +141,19 @@ final GoRouter _router = GoRouter(
       builder: (context, state) => const SupportScreen(),
     ),
     GoRoute(
+      path: '/communities/:id',
+      builder: (context, state) => CommunityDetailScreen(
+        community: state.extra ?? {'_id': state.pathParameters['id']!},
+      ),
+    ),
+    GoRoute(
+      path: '/projects/:id',
+      builder: (context, state) => GuestProjectDetailScreen(
+        projectId: state.pathParameters['id']!,
+        projectData: state.extra as Map<String, dynamic>?,
+      ),
+    ),
+    GoRoute(
       path: '/media',
       builder: (context, state) => const PlaceholderScreen(title: 'Media'),
     ),
@@ -151,6 +168,16 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/blog',
       builder: (context, state) => const PlaceholderScreen(title: 'Blog'),
+    ),
+    GoRoute(
+      path: '/custom-views',
+      builder: (context, state) {
+        final authState = ProviderScope.containerOf(context).read(authProvider);
+        if (authState.status == AuthStatus.authenticated) {
+          return const CustomViewsScreen();
+        }
+        return const GuestCustomViewsScreen();
+      },
     ),
   ],
 );

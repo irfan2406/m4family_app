@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:ui';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:m4_mobile/core/providers/theme_provider.dart';
 
 class GuestSidebarMenu extends ConsumerStatefulWidget {
   const GuestSidebarMenu({super.key});
@@ -20,6 +21,9 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
 
   @override
   Widget build(BuildContext context) {
+    final themeMode = ref.watch(themeProvider);
+    final isDark = themeMode == ThemeMode.dark;
+    
     return Drawer(
       backgroundColor: Colors.transparent,
       width: MediaQuery.of(context).size.width * 0.85,
@@ -95,7 +99,29 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('THEME MODE', style: GoogleFonts.montserrat(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 2)),
+                      GestureDetector(
+                        onTap: () {
+                          ref.read(themeProvider.notifier).setTheme(isDark ? ThemeMode.light : ThemeMode.dark);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.white.withOpacity(0.2)),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(isDark ? LucideIcons.moon : LucideIcons.sparkles, color: Colors.white, size: 16),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 12, 24, 100), // Increased bottom padding to 100
                   child: Container(
                     width: double.infinity,
                     height: 56,

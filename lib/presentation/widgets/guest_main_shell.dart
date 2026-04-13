@@ -10,6 +10,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final guestNavigationProvider = StateProvider<int>((ref) => 0);
+final drawerOpenProvider = StateProvider<bool>((ref) => false);
 
 class GuestMainShell extends ConsumerWidget {
   const GuestMainShell({super.key});
@@ -17,6 +18,7 @@ class GuestMainShell extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentIndex = ref.watch(guestNavigationProvider);
+    final isDrawerOpen = ref.watch(drawerOpenProvider);
 
     final List<Widget> screens = [
       const GuestDashboardScreen(), // 0: Home
@@ -27,21 +29,23 @@ class GuestMainShell extends ConsumerWidget {
     ];
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       drawer: const ConditionalDrawer(),
+      onDrawerChanged: (isOpen) => ref.read(drawerOpenProvider.notifier).state = isOpen,
       body: Stack(
         children: [
           IndexedStack(
             index: currentIndex,
             children: screens,
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: _GuestNavigationPill(
-              currentIndex: currentIndex,
-              onTap: (index) => ref.read(guestNavigationProvider.notifier).state = index,
+          if (!isDrawerOpen)
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: _GuestNavigationPill(
+                currentIndex: currentIndex,
+                onTap: (index) => ref.read(guestNavigationProvider.notifier).state = index,
+              ),
             ),
-          ),
         ],
       ),
     );
@@ -56,16 +60,17 @@ class _GuestNavigationPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.only(bottom: 40),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.95),
+        color: isDark ? Colors.black.withValues(alpha: 0.95) : Colors.white.withValues(alpha: 0.95),
         borderRadius: BorderRadius.circular(50),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+        border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.4),
+            color: (isDark ? Colors.black : Colors.grey).withValues(alpha: 0.3),
             blurRadius: 30,
             spreadRadius: 2,
             offset: const Offset(0, 10),
@@ -99,20 +104,21 @@ class _NavIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return _ScaleButton(
       onTap: onTap,
       child: Container(
         width: 48,
         height: 48,
         decoration: BoxDecoration(
-          color: isActive ? Colors.white : Colors.transparent,
+          color: isActive ? (isDark ? Colors.white : Colors.black) : Colors.transparent,
           shape: BoxShape.circle,
-          boxShadow: isActive ? [BoxShadow(color: Colors.white.withValues(alpha: 0.2), blurRadius: 10)] : [],
+          boxShadow: isActive ? [BoxShadow(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.2), blurRadius: 10)] : [],
         ),
         child: Center(
           child: Icon(
             icon, 
-            color: isActive ? Colors.black : Colors.white60, 
+            color: isActive ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white60 : Colors.black54), 
             size: 20
           ),
         ),

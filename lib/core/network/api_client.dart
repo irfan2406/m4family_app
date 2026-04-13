@@ -232,6 +232,10 @@ class ApiClient {
     return dio.get('/api/config');
   }
 
+  Future<Response> updatePreferences(Map<String, dynamic> preferences) async {
+    return dio.patch('/api/preferences', data: preferences);
+  }
+
   // Careers Methods
   Future<Response> getJobs() async {
     return dio.get('/api/careers/jobs');

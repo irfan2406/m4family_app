@@ -1,10 +1,11 @@
 import 'dart:ui';
+import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:m4_mobile/presentation/screens/careers/job_apply_screen.dart';
-import 'package:m4_mobile/presentation/widgets/sidebar_menu.dart';
+import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 
 class JobDetailScreen extends StatelessWidget {
   final Map<String, dynamic> job;
@@ -13,8 +14,9 @@ class JobDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: isDark ? Colors.black : Colors.white,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: Column(
@@ -23,7 +25,7 @@ class JobDetailScreen extends StatelessWidget {
             Text(
               (job['title'] ?? '').toString().toUpperCase(),
               style: GoogleFonts.montserrat(
-                color: Colors.white,
+                color: isDark ? Colors.white : Colors.black,
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
                 letterSpacing: 0.5,
@@ -34,7 +36,7 @@ class JobDetailScreen extends StatelessWidget {
             Text(
               (job['department'] ?? '').toString().toUpperCase(),
               style: GoogleFonts.montserrat(
-                color: Colors.white54,
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
                 fontWeight: FontWeight.w900,
                 fontSize: 9,
                 letterSpacing: 2,
@@ -42,7 +44,7 @@ class JobDetailScreen extends StatelessWidget {
             ),
           ],
         ),
-        backgroundColor: Colors.black.withOpacity(0.8),
+        backgroundColor: (isDark ? Colors.black : Colors.white).withOpacity(0.8),
         flexibleSpace: ClipRRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
@@ -51,28 +53,28 @@ class JobDetailScreen extends StatelessWidget {
         ),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(LucideIcons.arrowLeft, color: Colors.white70),
+          icon: Icon(LucideIcons.arrowLeft, color: isDark ? Colors.white70 : Colors.black54),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           Builder(
             builder: (context) => IconButton(
-              icon: const Icon(LucideIcons.moreHorizontal, color: Colors.white70),
+              icon: Icon(LucideIcons.moreHorizontal, color: isDark ? Colors.white : Colors.black),
               onPressed: () => Scaffold.of(context).openDrawer(),
             ),
           ),
         ],
       ),
-      drawer: const SidebarMenu(),
+      drawer: const ConditionalDrawer(),
       body: Container(
         padding: const EdgeInsets.only(top: 120),
-        decoration: const BoxDecoration(
-          color: Colors.black,
-          gradient: RadialGradient(
+        decoration: BoxDecoration(
+          color: isDark ? Colors.black : Colors.white,
+          gradient: isDark ? const RadialGradient(
             center: Alignment.topCenter,
             radius: 2.0,
             colors: [Color(0xFF0F1115), Colors.black],
-          ),
+          ) : null,
         ),
         child: Column(
           children: [
@@ -86,9 +88,9 @@ class JobDetailScreen extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.08),
+                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.white.withOpacity(0.1)),
+                        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
                       ),
                       child: Text(
                         (job['department'] ?? '').toString().toUpperCase(),
@@ -106,7 +108,7 @@ class JobDetailScreen extends StatelessWidget {
                     Text(
                       (job['title'] ?? '').toString().toUpperCase(),
                       style: GoogleFonts.montserrat(
-                        color: Colors.white,
+                        color: isDark ? Colors.white : Colors.black,
                         fontWeight: FontWeight.w900,
                         fontSize: 32,
                         letterSpacing: -1.5,
@@ -129,7 +131,7 @@ class JobDetailScreen extends StatelessWidget {
                     Text(
                       'JOB DESCRIPTION',
                       style: GoogleFonts.montserrat(
-                        color: Colors.white54,
+                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 3,
@@ -141,14 +143,14 @@ class JobDetailScreen extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(32),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.04),
+                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
                         borderRadius: BorderRadius.circular(40),
-                        border: Border.all(color: Colors.white.withOpacity(0.05)),
+                        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
                       ),
                       child: Text(
                         (job['description'] ?? 'WE ARE LOOKING FOR A HIGH-PERFORMING ${job['title']} TO HELP US MEET OUR CUSTOMER ACQUISITION AND REVENUE GROWTH TARGETS BY KEEPING OUR COMPANY COMPETITIVE AND INNOVATIVE.').toString(),
                         style: GoogleFonts.montserrat(
-                          color: Colors.white.withOpacity(0.7),
+                          color: (isDark ? Colors.white : Colors.black).withOpacity(0.7),
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
                           height: 1.8,
@@ -164,7 +166,7 @@ class JobDetailScreen extends StatelessWidget {
         ),
       ),
       bottomSheet: Container(
-        color: Colors.black,
+        color: isDark ? Colors.black : Colors.white,
         padding: const EdgeInsets.fromLTRB(24, 16, 24, 40),
         child: SizedBox(
           width: double.infinity,
@@ -177,8 +179,8 @@ class JobDetailScreen extends StatelessWidget {
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
+              backgroundColor: isDark ? Colors.white : Colors.black,
+              foregroundColor: isDark ? Colors.black : Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
               elevation: 20,
               shadowColor: Colors.white.withOpacity(0.2),

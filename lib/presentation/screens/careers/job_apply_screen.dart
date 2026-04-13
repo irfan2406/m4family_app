@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
@@ -8,7 +9,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
-import 'package:m4_mobile/presentation/widgets/sidebar_menu.dart';
+import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 
 class JobApplyScreen extends ConsumerStatefulWidget {
   final Map<String, dynamic> job;
@@ -104,8 +105,9 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: isDark ? Colors.black : Colors.white,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: Column(
@@ -114,7 +116,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
             Text(
               (widget.job['title'] ?? '').toString().toUpperCase(),
               style: GoogleFonts.montserrat(
-                color: Colors.white,
+                color: isDark ? Colors.white : Colors.black,
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
                 letterSpacing: 0.5,
@@ -125,7 +127,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
             Text(
               (widget.job['department'] ?? '').toString().toUpperCase(),
               style: GoogleFonts.montserrat(
-                color: Colors.white54,
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
                 fontWeight: FontWeight.w900,
                 fontSize: 9,
                 letterSpacing: 2,
@@ -136,28 +138,28 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(LucideIcons.arrowLeft, color: Colors.white70),
+          icon: Icon(LucideIcons.arrowLeft, color: isDark ? Colors.white70 : Colors.black54),
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
           Builder(
             builder: (context) => IconButton(
-              icon: const Icon(LucideIcons.moreHorizontal, color: Colors.white70),
+              icon: Icon(LucideIcons.moreHorizontal, color: isDark ? Colors.white : Colors.black),
               onPressed: () => Scaffold.of(context).openDrawer(),
             ),
           ),
         ],
       ),
-      drawer: const SidebarMenu(),
+      drawer: const ConditionalDrawer(),
       body: Container(
         padding: const EdgeInsets.only(top: 120),
-        decoration: const BoxDecoration(
-          color: Colors.black,
-          gradient: RadialGradient(
+        decoration: BoxDecoration(
+          color: isDark ? Colors.black : Colors.white,
+          gradient: isDark ? const RadialGradient(
             center: Alignment.topCenter,
             radius: 2.5,
             colors: [Color(0xFF111319), Colors.black],
-          ),
+          ) : null,
         ),
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -177,10 +179,10 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                       child: Text(
                         'APPLYING FOR',
                         style: GoogleFonts.montserrat(
-                          color: Colors.white38,
+                          color: (isDark ? Colors.white : Colors.black).withOpacity(0.4),
                           fontSize: 8,
                           fontWeight: FontWeight.w900,
-                          letterSpacing: 3,
+                          letterSpacing: 1,
                         ),
                       ),
                     ),
@@ -189,7 +191,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                       (widget.job['title'] ?? '').toString().toUpperCase(),
                       textAlign: TextAlign.center,
                       style: GoogleFonts.montserrat(
-                        color: Colors.white,
+                        color: isDark ? Colors.white : Colors.black,
                         fontWeight: FontWeight.w900,
                         fontSize: 22,
                         letterSpacing: -1,
@@ -200,7 +202,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                     Text(
                       (widget.job['location'] ?? 'MUMBAI').toString().toUpperCase(),
                       style: GoogleFonts.montserrat(
-                        color: Colors.white38,
+                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.4),
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 2,
@@ -212,23 +214,23 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
               const SizedBox(height: 48),
 
               // Form Fields
-              _buildLabel('FULL NAME'),
+              _buildLabel('FULL NAME', isDark),
               const SizedBox(height: 12),
               _buildTextField(controller: _fullNameController, hint: 'IRFAN KHAN'),
               const SizedBox(height: 32),
 
-              _buildLabel('PHONE NUMBER'),
+              _buildLabel('PHONE NUMBER', isDark),
               const SizedBox(height: 12),
               _buildTextField(controller: _phoneController, hint: '+1 234 567 890', isPhone: true),
               const SizedBox(height: 32),
 
-              _buildLabel('EMAIL ADDRESS'),
+              _buildLabel('EMAIL ADDRESS', isDark),
               const SizedBox(height: 12),
               _buildTextField(controller: _emailController, hint: 'IRFAN1@GMAIL.COM', isEmail: true),
               const SizedBox(height: 48),
 
               // PDF Upload Area
-              _buildLabel('RESUME / PORTFOLIO (PDF)'),
+              _buildLabel('RESUME / PORTFOLIO (PDF)', isDark),
               const SizedBox(height: 16),
               GestureDetector(
                 onTap: () async {
@@ -243,10 +245,10 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                 child: Container(
                   height: 200,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.03),
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
                     borderRadius: BorderRadius.circular(40),
                     border: Border.all(
-                      color: _resumeFile != null ? Colors.white : Colors.white.withOpacity(0.05),
+                      color: _resumeFile != null ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white : Colors.black).withOpacity(0.05),
                       width: 1.5,
                     ),
                   ),
@@ -271,7 +273,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                             ? _resumeFile!.path.split('/').last.toUpperCase()
                             : 'SELECT PDF DOCUMENT',
                         style: GoogleFonts.montserrat(
-                          color: Colors.white,
+                          color: isDark ? Colors.white : Colors.black,
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 2,
@@ -290,8 +292,8 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                 child: ElevatedButton(
                   onPressed: _isSubmitting ? null : _submitApplication,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: Colors.black,
+                    backgroundColor: isDark ? Colors.white : Colors.black,
+                    foregroundColor: isDark ? Colors.black : Colors.white,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                     elevation: 0,
                   ),
@@ -315,43 +317,44 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
     );
   }
 
-  Widget _buildLabel(String text) {
+  Widget _buildLabel(String text, bool isDark) {
     return Padding(
       padding: const EdgeInsets.only(left: 8),
       child: Text(
         text,
         style: GoogleFonts.montserrat(
-          color: Colors.white38,
+          color: (isDark ? Colors.white : Colors.black).withOpacity(0.3),
           fontSize: 10,
           fontWeight: FontWeight.w900,
-          letterSpacing: 2,
+          letterSpacing: 1,
         ),
       ),
     );
   }
 
   Widget _buildTextField({required TextEditingController controller, required String hint, bool isEmail = false, bool isPhone = false}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return TextField(
       controller: controller,
       keyboardType: isEmail ? TextInputType.emailAddress : isPhone ? TextInputType.phone : TextInputType.text,
-      style: GoogleFonts.montserrat(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+      style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.bold, fontSize: 13),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.montserrat(color: Colors.white.withOpacity(0.15), fontWeight: FontWeight.bold, fontSize: 13),
+        hintStyle: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.15), fontWeight: FontWeight.bold, fontSize: 13),
         filled: true,
-        fillColor: const Color(0xFF0F1219),
+        fillColor: isDark ? const Color(0xFF0F1219) : const Color(0xFFF1F5F9),
         contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+          borderSide: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+          borderSide: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: const BorderSide(color: Colors.white, width: 1.5),
+          borderSide: BorderSide(color: isDark ? Colors.white : Colors.black, width: 1.5),
         ),
       ),
     );
