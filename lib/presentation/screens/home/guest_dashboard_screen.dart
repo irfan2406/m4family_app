@@ -462,7 +462,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
   }
 
   Widget _buildTabCard(dynamic item) {
-    final isCommunity = _activeTab == 'Communities';
+    final isCommunity = _activeTab.toLowerCase() == 'communities';
     final apiClient = ref.read(apiClientProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
@@ -478,85 +478,129 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           context.push('/projects/${item['_id']}', extra: item);
         }
       },
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(40),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            width: 300,
-            margin: const EdgeInsets.only(right: 20),
-            decoration: BoxDecoration(
-              color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.black.withValues(alpha: 0.04),
-              borderRadius: BorderRadius.circular(40),
-              border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08)),
-            ),
-            child: Column(
-              children: [
-                Expanded(
-                  flex: 5,
-                  child: ClipRRect(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        Image.network(imageUrl, fit: BoxFit.cover, width: double.infinity),
-                        if (!isCommunity) ...[
-                          Positioned(
-                            top: 20, right: 20,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                              decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.6), borderRadius: BorderRadius.circular(20), border: Border.all(color: Colors.white.withValues(alpha: 0.1))),
-                              child: Text((item['status']?.toString() ?? 'ONGOING').toUpperCase(), style: GoogleFonts.montserrat(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w800, letterSpacing: 1)),
-                            ),
-                          ),
-                        ],
-                      ],
+      child: Container(
+        width: 300,
+        margin: const EdgeInsets.only(right: 20, bottom: 20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(40),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.15),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            )
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(40),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // 🖼️ High Resolution Image
+              Image.network(imageUrl, fit: BoxFit.cover),
+              
+              // 🌫️ High-End Gradient Overlay
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    stops: const [0.3, 1.0],
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withValues(alpha: 0.85),
+                    ],
+                  ),
+                ),
+              ),
+
+              // 🏷️ Badge (for Properties)
+              if (!isCommunity)
+                Positioned(
+                  top: 24,
+                  right: 24,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.6),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                    ),
+                    child: Text(
+                      (item['status']?.toString() ?? 'ONGOING').toUpperCase(), 
+                      style: GoogleFonts.montserrat(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1)
                     ),
                   ),
                 ),
-                Expanded(
-                  flex: 4,
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+
+              // 📄 Content Section
+              Positioned(
+                bottom: 24,
+                left: 24,
+                right: 24,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      (item['title'] ?? item['name'] ?? '').toString().toUpperCase(), 
+                      style: GoogleFonts.montserrat(
+                        color: Colors.white, 
+                        fontSize: 18, 
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -0.5,
+                      )
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      (isCommunity 
+                        ? (item['overview'] ?? item['description'] ?? '') 
+                        : (item['location'] is Map ? item['location']['name'] : item['location'] ?? 'MAZGAON')).toString().toUpperCase(),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.montserrat(
+                        color: Colors.white.withValues(alpha: 0.5), 
+                        fontSize: 8, 
+                        fontWeight: FontWeight.w800, 
+                        letterSpacing: 0.5,
+                        height: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(item['title']?.toString() ?? '', style: GoogleFonts.dmSerifDisplay(color: isDark ? Colors.white : Colors.black, fontSize: 20)),
-                        const SizedBox(height: 12),
-                        if (isCommunity)
-                          Text((item['description'] ?? item['overview'] ?? '').toUpperCase(), maxLines: 2, overflow: TextOverflow.ellipsis, style: GoogleFonts.montserrat(color: Colors.white54, fontSize: 7, fontWeight: FontWeight.w900, letterSpacing: 1.5))
-                        else
-                          Row(
-                            children: [
-                              const Icon(LucideIcons.mapPin, color: Colors.white38, size: 8),
-                              const SizedBox(width: 6),
-                              Text((item['location'] is Map ? item['location']['name'] : item['location'] ?? 'MAZGAON').toString().toUpperCase(), style: GoogleFonts.montserrat(color: Colors.white38, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1)),
-                            ],
+                        Text(
+                          isCommunity ? 'EXPLORE COMMUNITY' : 'VIEW PROJECT',
+                          style: GoogleFonts.montserrat(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 1.2,
                           ),
-                        const Spacer(),
+                        ),
                         Container(
+                          width: 44,
                           height: 44,
                           decoration: BoxDecoration(
-                            color: isDark ? Colors.white : Colors.black, 
-                            borderRadius: BorderRadius.circular(12)
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.2),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              )
+                            ],
                           ),
-                          child: Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text('READ MORE', style: GoogleFonts.montserrat(color: isDark ? Colors.black : Colors.white, fontWeight: FontWeight.w900, fontSize: 10, letterSpacing: 1)),
-                                const SizedBox(width: 8),
-                                Icon(LucideIcons.chevronRight, color: isDark ? Colors.black : Colors.white, size: 14),
-                              ],
-                            ),
-                          ),
+                          child: const Icon(LucideIcons.arrowRight, color: Colors.black, size: 18),
                         ),
                       ],
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
