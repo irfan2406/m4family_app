@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -9,6 +10,7 @@ import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
 
 class AboutScreen extends ConsumerStatefulWidget {
   const AboutScreen({super.key});
@@ -101,8 +103,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 )),
             Text('M4 FAMILY COLLECTIVE', 
                 style: GoogleFonts.montserrat(
-                  color: isDark ? Colors.white24 : Colors.black26, 
-                  fontWeight: FontWeight.w900, 
+                  color: isDark ? Colors.white : Colors.black, 
+                  fontWeight: FontWeight.w400, 
                   fontSize: 8, 
                   letterSpacing: 3
                 )),
@@ -117,8 +119,14 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         ),
         elevation: 0,
         leading: IconButton(
-          icon: Icon(LucideIcons.arrowLeft, color: isDark ? Colors.white70 : Colors.black54),
-          onPressed: () => Navigator.pop(context),
+          icon: Icon(LucideIcons.arrowLeft, color: isDark ? Colors.white : Colors.black),
+          onPressed: () {
+            if (Navigator.of(context).canPop()) {
+              Navigator.pop(context);
+            } else {
+              ref.read(guestNavigationProvider.notifier).state = 0;
+            }
+          },
         ),
         actions: [
           Builder(
@@ -217,7 +225,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                         ),
                         child: Icon(
                           step['icon'],
-                          color: isActive ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white24 : Colors.black26),
+                          color: isActive ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white : Colors.black),
                           size: 14,
                         ),
                       ),
@@ -227,9 +235,9 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   Text(
                     step['label'].toString().toUpperCase(),
                     style: GoogleFonts.montserrat(
-                      color: isActive ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white24 : Colors.black26),
+                      color: isActive ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white : Colors.black),
                       fontSize: 7,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w500,
                       letterSpacing: 1,
                     ),
                   ),
@@ -268,7 +276,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             children: [
               Text(
                 '"M4 Family, with over a decade of excellence in Mumbai’s real estate landscape, has established itself as a trusted name in premium residential development."',
-                style: GoogleFonts.montserrat(color: isDark ? Colors.white70 : Colors.black54, fontSize: 13, fontWeight: FontWeight.w600, height: 1.8),
+                style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 13, fontWeight: FontWeight.w400, height: 1.8),
               ),
               const SizedBox(height: 20),
               Text(
@@ -312,7 +320,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                         decoration: BoxDecoration(
                           color: isDark ? Colors.black : Colors.white,
                           shape: BoxShape.circle,
-                          border: Border.all(color: M4Theme.premiumBlue, width: 3),
+                          border: Border.all(color: isDark ? Colors.white : Colors.black, width: 3),
                         ),
                       ),
                       if (idx < _milestones.length - 1)
@@ -338,12 +346,12 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                           const SizedBox(height: 8),
                           Text(
                             item['title']!.toUpperCase(),
-                            style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 18, fontWeight: FontWeight.w900),
+                            style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 18, fontWeight: FontWeight.w400),
                           ),
                           const SizedBox(height: 12),
                           Text(
                             item['desc']!,
-                            style: GoogleFonts.montserrat(color: isDark ? Colors.white38 : Colors.black38, fontSize: 12, height: 1.6),
+                            style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 12, height: 1.6),
                           ),
                         ],
                       ),
@@ -388,17 +396,17 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(pillar['icon'], color: isDark ? Colors.white70 : Colors.black54, size: 28),
+                  Icon(pillar['icon'], color: isDark ? Colors.white : Colors.black, size: 28),
                   const SizedBox(height: 16),
                   Text(
                     pillar['title'],
-                    style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2),
+                    style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 10, fontWeight: FontWeight.w400, letterSpacing: 2),
                   ),
                   const SizedBox(height: 12),
                   Text(
                     pillar['desc'],
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.montserrat(color: isDark ? Colors.white24 : Colors.black26, fontSize: 8, fontWeight: FontWeight.w900, height: 1.5),
+                    style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 8, fontWeight: FontWeight.w400, height: 1.5),
                   ),
                 ],
               ),
@@ -440,7 +448,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         Text(
           'EXPERIENCE THE FUTURE OF HOME PERSONALISATION. OUR PROPRIETARY CUSTOM VIEWS SUITE ALLOWS YOU TO VISUALISE AND CRAFT YOUR DREAM SPACE BEFORE IT\'S EVEN BUILT.',
           textAlign: TextAlign.center,
-          style: GoogleFonts.montserrat(color: isDark ? Colors.white54 : Colors.black54, fontSize: 11, fontWeight: FontWeight.w600, height: 1.8),
+          style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 11, fontWeight: FontWeight.w400, height: 1.8),
         ),
         const SizedBox(height: 40),
         Row(
@@ -462,21 +470,31 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(40),
-        image: const DecorationImage(
-          image: NetworkImage('https://images.unsplash.com/photo-1464938050520-ef2270bb8ce8?auto=format&fit=crop&q=80'),
-          fit: BoxFit.cover,
-          colorFilter: ColorFilter.mode(Colors.black45, BlendMode.darken),
-        ),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.start,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(40),
+        child: Stack(
           children: [
-            Text('THE COLLECTIVE', style: GoogleFonts.montserrat(color: Colors.white60, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 3)),
-            const SizedBox(height: 4),
-            Text('M4 LEGACY', style: GoogleFonts.montserrat(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900, letterSpacing: -1)),
+            CachedNetworkImage(
+              imageUrl: 'https://images.unsplash.com/photo-1464938050520-ef2270bb8ce8?auto=format&fit=crop&q=80',
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
+              placeholder: (context, url) => Container(color: Colors.black12),
+            ),
+            Container(color: Colors.black45),
+            Padding(
+              padding: const EdgeInsets.all(32),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('THE COLLECTIVE', style: GoogleFonts.montserrat(color: Colors.white60, fontSize: 10, fontWeight: FontWeight.w400, letterSpacing: 3)),
+                  const SizedBox(height: 4),
+                  Text('M4 LEGACY', style: GoogleFonts.montserrat(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w400, letterSpacing: -1)),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -493,7 +511,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           child: Icon(icon, color: isDark ? Colors.white : Colors.black, size: 18),
         ),
         const SizedBox(width: 16),
-        Text(title, style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: -0.5)),
+        Text(title, style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 18, fontWeight: FontWeight.w400, letterSpacing: -0.5)),
       ],
     );
   }
@@ -523,14 +541,14 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
               const SizedBox(width: 12),
               Text(
                 section['title'].toString().toUpperCase(),
-                style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 14, fontWeight: FontWeight.w900),
+                style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 14, fontWeight: FontWeight.w400),
               ),
             ],
           ),
           const SizedBox(height: 20),
           Text(
             section['content'],
-            style: GoogleFonts.montserrat(color: isDark ? Colors.white54 : Colors.black54, fontSize: 11, fontWeight: FontWeight.w900, height: 1.6, letterSpacing: 1),
+            style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 11, fontWeight: FontWeight.w400, height: 1.6, letterSpacing: 1),
           ),
         ],
       ),
@@ -544,33 +562,52 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(32),
-          image: DecorationImage(image: NetworkImage(url), fit: BoxFit.cover),
           border: Border.all(color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05)),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(30),
+          child: CachedNetworkImage(
+            imageUrl: url, 
+            fit: BoxFit.cover,
+            placeholder: (context, url) => Container(color: Colors.black12),
+          ),
         ),
       ),
     );
   }
 
   Widget _buildFinalCTA() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(40),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white : Colors.black,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(40),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 30,
+            offset: const Offset(0, 10),
+          )
+        ],
       ),
       child: Column(
         children: [
-          Icon(LucideIcons.compass, color: isDark ? Colors.black : Colors.white, size: 32),
+          const Icon(LucideIcons.compass, color: Colors.black, size: 32),
           const SizedBox(height: 24),
-          Text('YOUR DESIGN JOURNEY', style: GoogleFonts.montserrat(color: isDark ? Colors.black : Colors.white, fontSize: 20, fontWeight: FontWeight.w900, letterSpacing: -1)),
+          Text(
+            'YOUR DESIGN JOURNEY', 
+            style: GoogleFonts.montserrat(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w400, letterSpacing: -1)
+          ),
           const SizedBox(height: 8),
-          Text('PERSONALISE EVERY DETAIL', style: GoogleFonts.montserrat(color: isDark ? Colors.black54 : Colors.white54, fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2)),
+          Text(
+            'PERSONALISE EVERY DETAIL', 
+            style: GoogleFonts.montserrat(color: Colors.black54, fontSize: 9, fontWeight: FontWeight.w400, letterSpacing: 2)
+          ),
           const SizedBox(height: 24),
           Text(
             'choose your materials, explore configurations, and see your vision come to life with m4 custom views.'.toUpperCase(),
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(color: isDark ? Colors.black45 : Colors.white60, fontSize: 10, fontWeight: FontWeight.bold, height: 1.6),
+            style: GoogleFonts.montserrat(color: Colors.black45, fontSize: 10, fontWeight: FontWeight.bold, height: 1.6),
           ),
           const SizedBox(height: 32),
           SizedBox(
@@ -579,15 +616,15 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             child: ElevatedButton(
               onPressed: () => _showCustomEnquiryForm(context),
               style: ElevatedButton.styleFrom(
-                backgroundColor: isDark ? Colors.black : Colors.white,
-                foregroundColor: isDark ? Colors.white : Colors.black,
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                 elevation: 0,
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('ENQUIRE NOW', style: GoogleFonts.montserrat(fontWeight: FontWeight.w900, fontSize: 11, letterSpacing: 1)),
+                  Text('ENQUIRE FOR CUSTOM VIEWS', style: GoogleFonts.montserrat(fontWeight: FontWeight.w400, fontSize: 11, letterSpacing: 1)),
                   const SizedBox(width: 8),
                   const Icon(LucideIcons.chevronRight, size: 14),
                 ],
@@ -624,16 +661,16 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text('CUSTOM PERSONALISATION', 
-                      style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w900, fontSize: 16)),
+                      style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w400, fontSize: 16)),
                     IconButton(
-                      icon: Icon(LucideIcons.x, color: isDark ? Colors.white54 : Colors.black54, size: 20),
+                      icon: Icon(LucideIcons.x, color: isDark ? Colors.white : Colors.black, size: 20),
                       onPressed: () => Navigator.pop(context),
                     ),
                   ],
                 ),
                 const SizedBox(height: 8),
                 Text('Enter your details to receive our premium personalisation catalog and schedule a consultation.',
-                  style: GoogleFonts.montserrat(color: isDark ? Colors.white54 : Colors.black54, fontSize: 10, height: 1.6, fontWeight: FontWeight.w500)),
+                  style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 10, height: 1.6, fontWeight: FontWeight.w500)),
                 const SizedBox(height: 32),
                 
                 _buildFieldLabel('FULL NAME'),
@@ -696,7 +733,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                     ),
                     child: _isSubmitting 
                       ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: isDark ? Colors.black : Colors.white))
-                      : Text('SEND REQUEST', style: GoogleFonts.montserrat(fontWeight: FontWeight.w900, fontSize: 12, letterSpacing: 2)),
+                      : Text('SEND REQUEST', style: GoogleFonts.montserrat(fontWeight: FontWeight.w400, fontSize: 12, letterSpacing: 2)),
                   ),
                 ),
               ],
@@ -711,7 +748,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.only(left: 4, bottom: 8),
-      child: Text(label, style: GoogleFonts.montserrat(color: isDark ? Colors.white38 : Colors.black38, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
+      child: Text(label, style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 8, fontWeight: FontWeight.w400, letterSpacing: 1.5)),
     );
   }
 
@@ -728,8 +765,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 13),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: GoogleFonts.montserrat(color: isDark ? Colors.white24 : Colors.black26, fontSize: 13),
-          prefixIcon: Icon(icon, color: isDark ? Colors.white24 : Colors.black26, size: 18),
+          hintStyle: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 13),
+          prefixIcon: Icon(icon, color: isDark ? Colors.white : Colors.black, size: 18),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         ),
@@ -739,56 +776,56 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
 
   Widget _buildNavigationButtons() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isLastStep = _currentStep == _steps.length - 1;
+
     return Container(
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 110), // Increased bottom padding to prevent overlap with floating navbar
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 40),
       decoration: BoxDecoration(
         color: isDark ? Colors.black : Colors.white,
         border: Border(top: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05))),
       ),
       child: Row(
-        children: [
-          if (_currentStep > 0)
-            Expanded(
-              flex: 1,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 12),
-                child: TextButton(
-                  onPressed: () => setState(() => _currentStep--),
-                  style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20), 
-                      side: BorderSide(color: isDark ? Colors.white12 : Colors.black12),
+              children: [
+                if (_currentStep > 0)
+                  Expanded(
+                    flex: 1,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 12),
+                      child: TextButton(
+                        onPressed: () => setState(() => _currentStep--),
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 20),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            side: BorderSide(color: isDark ? Colors.white12 : Colors.black12),
+                          ),
+                        ),
+                        child: Text('BACK', style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w400, fontSize: 10, letterSpacing: 2)),
+                      ),
                     ),
                   ),
-                  child: Text('BACK', style: GoogleFonts.montserrat(color: isDark ? Colors.white54 : Colors.black54, fontWeight: FontWeight.w900, fontSize: 10, letterSpacing: 2)),
+                Expanded(
+                  flex: 2,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_currentStep < _steps.length - 1) {
+                        setState(() => _currentStep++);
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: isDark ? Colors.white : Colors.black,
+                      foregroundColor: isDark ? Colors.black : Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                    ),
+                    child: Text(
+                      _currentStep == _steps.length - 1 ? 'FINISH' : 'NEXT STEP',
+                      style: GoogleFonts.montserrat(fontWeight: FontWeight.w900, fontSize: 10, letterSpacing: 2),
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
-          Expanded(
-            flex: 2,
-            child: ElevatedButton(
-              onPressed: () {
-                if (_currentStep < _steps.length - 1) {
-                  setState(() => _currentStep++);
-                } else {
-                  Navigator.pop(context);
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: isDark ? Colors.white : Colors.black,
-                foregroundColor: isDark ? Colors.black : Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-              ),
-              child: Text(
-                _currentStep < _steps.length - 1 ? 'NEXT STEP' : 'FINISH',
-                style: GoogleFonts.montserrat(fontWeight: FontWeight.w900, fontSize: 10, letterSpacing: 2),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
@@ -130,27 +131,31 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(40),
-              image: const DecorationImage(
-                image: NetworkImage('https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80'),
-                fit: BoxFit.cover,
-                colorFilter: ColorFilter.mode(Colors.black45, BlendMode.saturation),
-              ),
               boxShadow: [
                 BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 30, offset: const Offset(0, 15)),
               ],
             ),
-            child: Stack(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(40),
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [Colors.black.withOpacity(0.2), Colors.black.withOpacity(0.7)],
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(40),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  CachedNetworkImage(
+                    imageUrl: 'https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80',
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Container(color: Colors.black12),
+                    color: Colors.black45,
+                    colorBlendMode: BlendMode.saturation,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Colors.black.withOpacity(0.2), Colors.black.withOpacity(0.7)],
+                      ),
                     ),
                   ),
-                ),
                 Center(
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
@@ -181,8 +186,9 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
             ),
           ),
         ),
-      ],
-    ).animate().fadeIn().slideY(begin: 0.1);
+      ),
+    ],
+  ).animate().fadeIn().slideY(begin: 0.1);
   }
 
   Widget _buildOffices() {

@@ -193,22 +193,6 @@ final GoRouter _router = GoRouter(
       ),
     ),
     GoRoute(
-      path: '/media',
-      builder: (context, state) => const PlaceholderScreen(title: 'Media'),
-    ),
-    GoRoute(
-      path: '/highlights',
-      builder: (context, state) => const PlaceholderScreen(title: 'Highlights'),
-    ),
-    GoRoute(
-      path: '/events',
-      builder: (context, state) => const PlaceholderScreen(title: 'Events'),
-    ),
-    GoRoute(
-      path: '/blog',
-      builder: (context, state) => const PlaceholderScreen(title: 'Blog'),
-    ),
-    GoRoute(
       path: '/custom-views',
       builder: (context, state) {
         final authState = ProviderScope.containerOf(context).read(authProvider);

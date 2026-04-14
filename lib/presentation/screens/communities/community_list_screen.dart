@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -72,16 +73,16 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                             style: GoogleFonts.inter(
                               color: isDark ? Colors.white : Colors.black,
                               fontSize: 18,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               letterSpacing: -1,
                             ),
                           ),
                           Text(
                             'DEVELOPMENTS',
                             style: GoogleFonts.inter(
-                              color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+                              color: (isDark ? Colors.white : Colors.black).withOpacity(0.75),
                               fontSize: 8,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w700,
                               letterSpacing: 3,
                             ),
                           ),
@@ -113,7 +114,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                     style: GoogleFonts.lora(
                       fontSize: 32,
                       fontWeight: FontWeight.w300,
-                      color: (isDark ? Colors.white : Colors.black).withOpacity(0.7),
+                      color: (isDark ? Colors.white : Colors.black).withOpacity(0.85),
                       height: 1,
                     ),
                   ),
@@ -121,7 +122,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                     'COMMUNITIES',
                     style: GoogleFonts.lora(
                       fontSize: 32,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w500,
                       color: isDark ? Colors.white : Colors.black,
                       height: 1,
                     ),
@@ -133,7 +134,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                     firstChild: Text(
                       'At M4 Family Developments, we are dedicated to delivering a luxury experience that goes beyond the ordinary. Our commitment to exquisite living, unparalleled quality, and iconic design is evident in ...',
                       style: GoogleFonts.lora(
-                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
+                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.75),
                         fontSize: 14,
                         height: 1.8,
                         fontWeight: FontWeight.w500,
@@ -142,7 +143,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                     secondChild: Text(
                       'At M4 Family Developments, we are dedicated to delivering a luxury experience that goes beyond the ordinary. Our commitment to exquisite living, unparalleled quality, and iconic design is evident in every community we curate. We believe in creating spaces that faster connection, inspiration, and a sense of belonging for every resident. Our developments are strategically located to offer the best of urban living with a touch of serenity.',
                       style: GoogleFonts.lora(
-                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
+                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.75),
                         fontSize: 14,
                         height: 1.8,
                         fontWeight: FontWeight.w500,
@@ -155,14 +156,14 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                     child: Container(
                       padding: const EdgeInsets.only(bottom: 2),
                       decoration: BoxDecoration(
-                        border: Border(bottom: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.2), width: 1)),
+                        border: Border(bottom: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.3), width: 1)),
                       ),
                       child: Text(
                         _isExpanded ? 'Read less' : 'Read more',
                         style: GoogleFonts.inter(
                           color: isDark ? Colors.white : Colors.black,
                           fontSize: 13,
-                          fontWeight: FontWeight.bold,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
@@ -244,9 +245,11 @@ class _CommunityCard extends ConsumerWidget {
         child: Stack(
           children: [
             Positioned.fill(
-              child: Image.network(
-                imageUrl,
+              child: CachedNetworkImage(
+                imageUrl: imageUrl,
                 fit: BoxFit.cover,
+                placeholder: (context, url) => Container(color: Colors.black12),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
             ),
             // Gradient

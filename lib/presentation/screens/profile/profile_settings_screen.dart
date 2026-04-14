@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/core/providers/theme_provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 
 class ProfileSettingsScreen extends ConsumerStatefulWidget {
@@ -264,10 +265,14 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                       child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
                     )
                   : _avatarUrl != null
-                      ? Image.network(
-                          apiClient.resolveUrl(_avatarUrl),
+                      ? CachedNetworkImage(
+                          imageUrl: apiClient.resolveUrl(_avatarUrl),
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => _buildAvatarPlaceholder(isDark, initial),
+                          placeholder: (context, url) => Container(
+                            color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05),
+                            child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                          ),
+                          errorWidget: (_, __, ___) => _buildAvatarPlaceholder(isDark, initial),
                         )
                       : _buildAvatarPlaceholder(isDark, initial),
             ),

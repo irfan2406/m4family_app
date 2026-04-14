@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -301,16 +302,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05)),
-                    image: avatarUrl != null
-                        ? DecorationImage(
-                            image: NetworkImage(ref.read(apiClientProvider).resolveUrl(avatarUrl)),
-                            fit: BoxFit.cover,
-                          )
-                        : null,
                   ),
-                  child: avatarUrl == null
-                      ? Icon(LucideIcons.user, color: isDark ? Colors.white38 : Colors.black38)
-                      : null,
+                  child: avatarUrl != null
+                      ? ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: CachedNetworkImage(
+                            imageUrl: ref.read(apiClientProvider).resolveUrl(avatarUrl),
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Container(color: Colors.black12),
+                            errorWidget: (context, url, error) => Icon(LucideIcons.user, color: isDark ? Colors.white38 : Colors.black38),
+                          ),
+                        )
+                      : Icon(LucideIcons.user, color: isDark ? Colors.white38 : Colors.black38),
                 ),
                 const SizedBox(width: 20),
                 Expanded(

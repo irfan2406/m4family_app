@@ -54,7 +54,7 @@ class GuestContentHubScreen extends StatelessWidget {
                   'M4 FAMILY',
                   style: GoogleFonts.montserrat(
                     fontSize: 16,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w400,
                     letterSpacing: -0.5,
                     color: isDark ? Colors.white : Colors.black,
                   ),
@@ -63,7 +63,7 @@ class GuestContentHubScreen extends StatelessWidget {
                   'DEVELOPMENTS',
                   style: GoogleFonts.montserrat(
                     fontSize: 8,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w400,
                     letterSpacing: 3,
                     color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
                   ),
@@ -110,7 +110,7 @@ class GuestContentHubScreen extends StatelessWidget {
                           style: GoogleFonts.montserrat(
                             color: isDark ? Colors.white : Colors.black,
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w400,
                             letterSpacing: 1,
                           ),
                         ),
@@ -124,7 +124,7 @@ class GuestContentHubScreen extends StatelessWidget {
                     title,
                     style: GoogleFonts.montserrat(
                       fontSize: 48,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w400,
                       letterSpacing: -2,
                       height: 0.9,
                       color: isDark ? Colors.white : Colors.black,

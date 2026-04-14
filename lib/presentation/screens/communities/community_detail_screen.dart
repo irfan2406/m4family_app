@@ -11,6 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class CommunityDetailScreen extends ConsumerStatefulWidget {
   final dynamic community;
@@ -210,10 +211,12 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
-                        Image.network(
-                          heroImageUrl,
+                        CachedNetworkImage(
+                          imageUrl: heroImageUrl,
                           fit: BoxFit.cover,
-                        ).animate().fadeIn(duration: 800.ms),
+                          placeholder: (context, url) => Container(color: Colors.black12),
+                          errorWidget: (context, url, error) => const Icon(Icons.error),
+                        ),
                         Container(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
@@ -440,74 +443,79 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                   margin: const EdgeInsets.only(right: 20),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(30),
-                                    image: DecorationImage(
-                                      image: NetworkImage(apiClient.resolveUrl(project['heroImage'] ?? project['image'])),
-                                      fit: BoxFit.cover,
-                                    ),
                                   ),
-                                  child: Stack(
-                                    children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(30),
-                                          gradient: LinearGradient(
-                                            begin: Alignment.topCenter,
-                                            end: Alignment.bottomCenter,
-                                            colors: [
-                                              Colors.transparent,
-                                              Colors.black.withOpacity(0.8),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(30),
+                                    child: Stack(
+                                      fit: StackFit.expand,
+                                      children: [
+                                        CachedNetworkImage(
+                                          imageUrl: apiClient.resolveUrl(project['heroImage'] ?? project['image']),
+                                          fit: BoxFit.cover,
+                                          placeholder: (context, url) => Container(color: Colors.black12),
+                                          errorWidget: (context, url, error) => const Icon(Icons.error),
+                                        ),
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              begin: Alignment.topCenter,
+                                              end: Alignment.bottomCenter,
+                                              colors: [
+                                                Colors.transparent,
+                                                Colors.black.withOpacity(0.8),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(20),
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                project['title']?.toString().toUpperCase() ?? '',
+                                                style: GoogleFonts.inter(
+                                                  color: Colors.white,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w900,
+                                                  letterSpacing: -0.5,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 4),
+                                              Row(
+                                                children: [
+                                                  const Icon(LucideIcons.mapPin, color: Colors.white54, size: 10),
+                                                  const SizedBox(width: 5),
+                                                  Text(
+                                                    (project['location']?['name'] ?? project['location'] ?? '').toString().toUpperCase(),
+                                                    style: GoogleFonts.inter(
+                                                      color: Colors.white54,
+                                                      fontSize: 8,
+                                                      fontWeight: FontWeight.bold,
+                                                      letterSpacing: 1,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                             ],
                                           ),
                                         ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(20),
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.end,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              project['title']?.toString().toUpperCase() ?? '',
-                                              style: GoogleFonts.inter(
-                                                color: Colors.white,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w900,
-                                                letterSpacing: -0.5,
-                                              ),
+                                        Positioned(
+                                          bottom: 20,
+                                          right: 20,
+                                          child: Container(
+                                            width: 35,
+                                            height: 35,
+                                            decoration: const BoxDecoration(
+                                              color: Colors.white,
+                                              shape: BoxShape.circle,
                                             ),
-                                            const SizedBox(height: 4),
-                                            Row(
-                                              children: [
-                                                const Icon(LucideIcons.mapPin, color: Colors.white54, size: 10),
-                                                const SizedBox(width: 5),
-                                                Text(
-                                                  (project['location']?['name'] ?? project['location'] ?? '').toString().toUpperCase(),
-                                                  style: GoogleFonts.inter(
-                                                    color: Colors.white54,
-                                                    fontSize: 8,
-                                                    fontWeight: FontWeight.bold,
-                                                    letterSpacing: 1,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Positioned(
-                                        bottom: 20,
-                                        right: 20,
-                                        child: Container(
-                                          width: 35,
-                                          height: 35,
-                                          decoration: const BoxDecoration(
-                                            color: Colors.white,
-                                            shape: BoxShape.circle,
+                                            child: const Icon(LucideIcons.arrowRight, color: Colors.black, size: 18),
                                           ),
-                                          child: const Icon(LucideIcons.arrowRight, color: Colors.black, size: 18),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ),
                               );
@@ -593,57 +601,64 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                           width: double.infinity,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(40),
-                            image: const DecorationImage(
-                              image: NetworkImage('https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&q=80'),
-                              fit: BoxFit.cover,
-                              colorFilter: ColorFilter.mode(Colors.black54, BlendMode.darken),
-                            ),
                           ),
-                          child: Stack(
-                            children: [
-                              Positioned(
-                                bottom: 30,
-                                left: 30,
-                                right: 30,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'M4 AURA HEIGHTS',
-                                          style: GoogleFonts.inter(
-                                            color: Colors.white,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w900,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 5),
-                                        Text(
-                                          'GRANT ROAD, MUMBAI - 400007',
-                                          style: GoogleFonts.inter(
-                                            color: Colors.white.withOpacity(0.6),
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w500,
-                                            letterSpacing: 1,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Container(
-                                      width: 50,
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: const Icon(LucideIcons.mapPin, color: Colors.black, size: 24),
-                                    ),
-                                  ],
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(40),
+                            child: Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                CachedNetworkImage(
+                                  imageUrl: 'https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&q=80',
+                                  fit: BoxFit.cover,
+                                  color: Colors.black.withOpacity(0.5),
+                                  colorBlendMode: BlendMode.darken,
+                                  placeholder: (context, url) => Container(color: Colors.black54),
+                                  errorWidget: (context, url, error) => const Icon(Icons.error),
                                 ),
-                              ),
-                            ],
+                                Positioned(
+                                  bottom: 30,
+                                  left: 30,
+                                  right: 30,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'M4 AURA HEIGHTS',
+                                            style: GoogleFonts.inter(
+                                              color: Colors.white,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w900,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 5),
+                                          Text(
+                                            'GRANT ROAD, MUMBAI - 400007',
+                                            style: GoogleFonts.inter(
+                                              color: Colors.white.withOpacity(0.6),
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w500,
+                                              letterSpacing: 1,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Container(
+                                        width: 50,
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(20),
+                                        ),
+                                        child: const Icon(LucideIcons.mapPin, color: Colors.black, size: 24),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -847,13 +862,18 @@ class CommunityProjectsScreen extends ConsumerWidget {
                       margin: const EdgeInsets.only(bottom: 25),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(40),
-                        image: DecorationImage(
-                          image: NetworkImage(apiClient.resolveUrl(project['heroImage'] ?? project['image'])),
-                          fit: BoxFit.cover,
-                        ),
                       ),
-                      child: Stack(
-                        children: [
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(40),
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            CachedNetworkImage(
+                              imageUrl: apiClient.resolveUrl(project['heroImage'] ?? project['image']),
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) => Container(color: Colors.black12),
+                              errorWidget: (context, url, error) => const Icon(Icons.error),
+                            ),
                           Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(40),
@@ -971,6 +991,7 @@ class CommunityProjectsScreen extends ConsumerWidget {
                             ),
                           ),
                         ],
+                      ),
                       ),
                     ),
                   );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -258,13 +259,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       Positioned.fill(
                         child: AnimatedSwitcher(
                           duration: 1500.ms,
-                          child: Image.network(
-                            apiClient.resolveUrl(mainImage),
+                          child: CachedNetworkImage(
+                            imageUrl: apiClient.resolveUrl(mainImage),
                             key: ValueKey(_currentHeroIndex),
                             fit: BoxFit.cover,
                             width: double.infinity,
                             height: double.infinity,
-                            errorBuilder: (context, error, stackTrace) => Container(
+                            placeholder: (context, url) => Container(color: Colors.black12),
+                            errorWidget: (context, url, error) => Container(
                               color: Colors.black.withOpacity(0.1),
                               child: const Center(child: Icon(LucideIcons.image, color: Colors.white24, size: 50)),
                             ),
@@ -669,12 +671,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(40),
                                   child: imageUrl.isNotEmpty
-                                      ? Image.network(
-                                          apiClient.resolveUrl(imageUrl), 
+                                      ? CachedNetworkImage(
+                                          imageUrl: apiClient.resolveUrl(imageUrl), 
                                           fit: BoxFit.cover,
                                           height: 420,
                                           width: double.infinity,
-                                          errorBuilder: (context, error, stackTrace) => Container(
+                                          placeholder: (context, url) => Container(height: 420, color: Colors.black12),
+                                          errorWidget: (context, url, error) => Container(
                                             height: 420,
                                             width: double.infinity,
                                             color: Colors.white.withOpacity(0.05),
@@ -1015,11 +1018,12 @@ class _ProjectCard extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(20),
                     child: hasImage
-                        ? Image.network(
-                            imageUrl,
+                        ? CachedNetworkImage(
+                            imageUrl: imageUrl,
                             width: double.infinity,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) => Container(
+                            placeholder: (context, url) => Container(color: Colors.black12),
+                            errorWidget: (_, __, ___) => Container(
                               color: Colors.white.withOpacity(0.05),
                               child: const Center(child: Icon(LucideIcons.building, color: Colors.white24, size: 40)),
                             ),
@@ -1655,12 +1659,13 @@ class _UpdateCard extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(25),
-              child: Image.network(
-                imageUrl,
+              child: CachedNetworkImage(
+                imageUrl: imageUrl,
                 height: 120,
                 width: double.infinity,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(color: Colors.white10),
+                placeholder: (context, url) => Container(height: 120, color: Colors.black12),
+                errorWidget: (_, __, ___) => Container(color: Colors.white10),
               ),
             ),
             const SizedBox(height: 16),
@@ -1733,12 +1738,13 @@ class _CommunityCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(35),
           child: Stack(
             children: [
-              Image.network(
-                imageUrl,
+              CachedNetworkImage(
+                imageUrl: imageUrl,
                 height: double.infinity,
                 width: double.infinity,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(color: Colors.white10),
+                placeholder: (context, url) => Container(color: Colors.black12),
+                errorWidget: (_, __, ___) => Container(color: Colors.white10),
               ),
               Container(
                 decoration: BoxDecoration(

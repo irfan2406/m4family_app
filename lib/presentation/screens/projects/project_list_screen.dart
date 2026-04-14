@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
@@ -180,8 +181,8 @@ class ProjectListScreen extends ConsumerWidget {
                             'DISCOVER',
                             style: GoogleFonts.montserrat(
                               fontSize: 10,
-                              fontWeight: FontWeight.w900,
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
+                              fontWeight: FontWeight.w400,
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.55),
                               letterSpacing: 3,
                             ),
                           ),
@@ -189,7 +190,7 @@ class ProjectListScreen extends ConsumerWidget {
                             'M4 PROJECTS',
                             style: GoogleFonts.montserrat(
                               fontSize: 24,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w400,
                               color: Theme.of(context).colorScheme.onSurface,
                               letterSpacing: -1,
                             ),
@@ -199,7 +200,7 @@ class ProjectListScreen extends ConsumerWidget {
                             '${filteredProjects.length} PROPERTIES AVAILABLE',
                             style: GoogleFonts.montserrat(
                               fontSize: 10,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w500,
                               color: M4Theme.premiumBlue,
                               letterSpacing: 1.5,
                             ),
@@ -372,14 +373,17 @@ class _ProjectGridItem extends StatelessWidget {
         boxShadow: [
           BoxShadow(color: (isDark ? Colors.black : Colors.black).withOpacity(isDark ? 0.3 : 0.05), blurRadius: 20, offset: const Offset(0, 10)),
         ],
-        image: DecorationImage(
-          image: NetworkImage(imageUrl),
-          fit: BoxFit.cover,
-        ),
       ),
       clipBehavior: Clip.antiAlias,
       child: Stack(
+        fit: StackFit.expand,
         children: [
+          CachedNetworkImage(
+            imageUrl: imageUrl, 
+            fit: BoxFit.cover,
+            placeholder: (context, url) => Container(color: Colors.black12),
+            errorWidget: (context, url, error) => const Icon(Icons.error),
+          ),
           // Subtle Gradient Overlay for text readability on images
           Container(
             decoration: BoxDecoration(
@@ -510,9 +514,14 @@ class _ProjectListRowItem extends StatelessWidget {
             height: 100,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
-              image: DecorationImage(
-                image: NetworkImage(imageUrl),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: CachedNetworkImage(
+                imageUrl: imageUrl, 
                 fit: BoxFit.cover,
+                placeholder: (context, url) => Container(color: Colors.black12),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
             ),
           ),

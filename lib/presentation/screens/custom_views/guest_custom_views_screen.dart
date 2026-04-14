@@ -7,6 +7,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class GuestCustomViewsScreen extends ConsumerStatefulWidget {
   const GuestCustomViewsScreen({super.key});
@@ -177,10 +178,6 @@ class _GuestCustomViewsScreenState extends ConsumerState<GuestCustomViewsScreen>
                   return Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(100),
-                      image: DecorationImage(
-                        image: NetworkImage(cat['image']!),
-                        fit: BoxFit.cover,
-                      ),
                       boxShadow: [
                         BoxShadow(
                           color: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
@@ -189,31 +186,44 @@ class _GuestCustomViewsScreenState extends ConsumerState<GuestCustomViewsScreen>
                         )
                       ],
                     ),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
-                        gradient: LinearGradient(
-                          begin: Alignment.bottomCenter,
-                          end: Alignment.topCenter,
-                          colors: [
-                            Colors.black.withOpacity(0.6),
-                            Colors.transparent,
-                            Colors.transparent,
-                          ],
-                        ),
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-                      alignment: Alignment.center,
-                      child: Text(
-                        cat['title']!,
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.montserrat(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.white,
-                          letterSpacing: 1.5,
-                          height: 1.2,
-                        ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(100),
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          CachedNetworkImage(
+                            imageUrl: cat['image']!,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Container(color: Colors.black12),
+                            errorWidget: (context, url, error) => Container(color: Colors.black12),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.bottomCenter,
+                                end: Alignment.topCenter,
+                                colors: [
+                                  Colors.black.withOpacity(0.6),
+                                  Colors.transparent,
+                                  Colors.transparent,
+                                ],
+                              ),
+                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+                            alignment: Alignment.center,
+                            child: Text(
+                              cat['title']!,
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.montserrat(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w900,
+                                color: Colors.white,
+                                letterSpacing: 1.5,
+                                height: 1.2,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ).animate().fadeIn(delay: (150 * index).ms).scale(begin: const Offset(0.9, 0.9));

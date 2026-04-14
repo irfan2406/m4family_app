@@ -39,7 +39,7 @@ class GuestMainShell extends ConsumerWidget {
             index: currentIndex,
             children: screens,
           ),
-          if (!isDrawerOpen)
+          if (!isDrawerOpen && currentIndex != 2)
             Align(
               alignment: Alignment.bottomCenter,
               child: _GuestNavigationPill(
@@ -119,7 +119,7 @@ class _NavIcon extends StatelessWidget {
         child: Center(
           child: Icon(
             icon, 
-            color: isActive ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white60 : Colors.black54), 
+            color: isActive ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white70 : Colors.black87), 
             size: 24
           ),
         ),

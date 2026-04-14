@@ -11,6 +11,7 @@ import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class GuestProjectDetailScreen extends ConsumerStatefulWidget {
   final dynamic projectData; 
@@ -371,10 +372,11 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
             children: [
               Center(
                 child: InteractiveViewer(
-                  child: Image.network(
-                    apiClient.resolveUrl(url),
+                  child: CachedNetworkImage(
+                    imageUrl: apiClient.resolveUrl(url),
                     fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) => const Icon(LucideIcons.image, color: Colors.white24, size: 50),
+                    placeholder: (context, url) => const Center(child: CircularProgressIndicator(color: Colors.white24)),
+                    errorWidget: (context, url, error) => const Icon(LucideIcons.image, color: Colors.white24, size: 50),
                   ),
                 ),
               ),
@@ -491,7 +493,12 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
         children: [
           ClipRRect(
             borderRadius: const BorderRadius.vertical(bottom: Radius.circular(56)),
-            child: Image.network(heroUrl, fit: BoxFit.cover),
+            child: CachedNetworkImage(
+              imageUrl: heroUrl, 
+              fit: BoxFit.cover,
+              placeholder: (context, url) => Container(color: Colors.black12),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
+            ),
           ),
           Container(
             decoration: BoxDecoration(
@@ -826,11 +833,13 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    Image.network(
-                      'https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80', 
+                    CachedNetworkImage(
+                      imageUrl: 'https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80', 
                       fit: BoxFit.cover,
                       color: isDark ? Colors.black.withValues(alpha: 0.6) : Colors.white.withValues(alpha: 0.6),
                       colorBlendMode: BlendMode.dstATop,
+                      placeholder: (context, url) => Container(color: isDark ? Colors.black26 : Colors.black12),
+                      errorWidget: (context, url, error) => const Icon(Icons.error),
                     ),
                     Positioned(
                       bottom: 20,
@@ -1038,7 +1047,12 @@ class _HeroMediaThumb extends StatelessWidget {
               fit: StackFit.expand,
               children: [
                 if (imageUrl != null)
-                  Image.network(imageUrl!, fit: BoxFit.cover, errorBuilder: (c, e, s) => Container(color: Colors.white10)),
+                  CachedNetworkImage(
+                    imageUrl: imageUrl!, 
+                    fit: BoxFit.cover, 
+                    errorWidget: (c, e, s) => Container(color: Colors.white10),
+                    placeholder: (c, e) => Container(color: Colors.white10),
+                  ),
                 Container(color: Colors.black.withValues(alpha: 0.3)),
                 Center(
                   child: Text(
@@ -1312,7 +1326,14 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                           onTap: () => onPhaseTap(imageUrl),
                           child: ClipRRect(
                             borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-                            child: Image.network(imageUrl, height: 220, width: 320, fit: BoxFit.cover, errorBuilder: (c, e, s) => Container(height: 220, color: Colors.white10)),
+                            child: CachedNetworkImage(
+                              imageUrl: imageUrl, 
+                              height: 220, 
+                              width: 320, 
+                              fit: BoxFit.cover, 
+                              placeholder: (c, u) => Container(height: 220, color: Colors.white10),
+                              errorWidget: (c, e, s) => Container(height: 220, color: Colors.white10),
+                            ),
                           ),
                         ),
                         Padding(

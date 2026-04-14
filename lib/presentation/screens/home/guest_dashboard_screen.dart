@@ -15,6 +15,7 @@ import 'package:m4_mobile/presentation/screens/communities/community_list_screen
 import 'dart:async';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class GuestDashboardScreen extends ConsumerStatefulWidget {
   const GuestDashboardScreen({super.key});
@@ -31,6 +32,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
   int _heroIndex = 0;
   List<dynamic> _projects = [];
   List<dynamic> _communities = [];
+  List<dynamic> _media = [];
   bool _loading = true;
   String _activeTab = 'Communities';
   int _featuredIndex = 0;
@@ -73,12 +75,41 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       final results = await Future.wait([
         apiClient.getProjects(),
         apiClient.getCommunities(),
+        apiClient.getContent('media'),
       ]);
 
       if (mounted) {
         setState(() {
           _projects = results[0].data['data'] ?? [];
           _communities = results[1].data['data'] ?? [];
+          _media = results[2].data['data'] ?? [];
+          
+          // 💡 Add dummy content if media is empty to fill blank space
+          if (_media.isEmpty) {
+            _media = [
+              {
+                '_id': 'dummy1',
+                'title': 'CLÉDOR LUXURY LIVING',
+                'thumbnail': 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80',
+                'description': 'Discover the epitome of refinement in our latest architectural masterpiece.',
+                'slug': 'cledor-luxury-living'
+              },
+              {
+                '_id': 'dummy2',
+                'title': 'OCEAN VIEW RESIDENCES',
+                'thumbnail': 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
+                'description': 'Where horizon meets home. Experience coastal elegance like never before.',
+                'slug': 'ocean-view-residences'
+              },
+              {
+                '_id': 'dummy3',
+                'title': 'URBAN SANCTUARY',
+                'thumbnail': 'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80',
+                'description': 'A peaceful retreat in the heart of the city.',
+                'slug': 'urban-sanctuary'
+              }
+            ];
+          }
           _loading = false;
         });
       }
@@ -197,7 +228,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('M4 FAMILY', style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w900, fontSize: 18, letterSpacing: -1)),
+                      Text('M4 FAMILY', style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w400, fontSize: 18, letterSpacing: -1)),
                       Text('DEVELOPMENTS', style: GoogleFonts.montserrat(color: isDark ? Colors.white60 : Colors.black54, fontWeight: FontWeight.w800, fontSize: 8, letterSpacing: 3)),
                     ],
                   ),
@@ -265,8 +296,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                   children: [
                     AnimatedSwitcher(
                       duration: const Duration(milliseconds: 800),
-                      child: Image.network(
-                        [
+                      child: CachedNetworkImage(
+                        imageUrl: [
                           'https://images.unsplash.com/photo-1613545325278-f24b0cae1224?auto=format&fit=crop&q=80',
                           'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80',
                           'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80'
@@ -275,6 +306,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                         fit: BoxFit.cover,
                         width: double.infinity,
                         height: double.infinity,
+                        placeholder: (context, url) => Container(color: isDark ? Colors.black26 : Colors.black12),
+                        errorWidget: (context, url, error) => const Icon(Icons.error),
                       ),
                     ),
                     Container(
@@ -311,7 +344,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                           borderRadius: BorderRadius.circular(5),
                           border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                         ),
-                        child: Text('ARTISTIC IMPRESSION', style: GoogleFonts.montserrat(color: Colors.white, fontSize: 7, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                        child: Text('ARTISTIC IMPRESSION', style: GoogleFonts.montserrat(color: Colors.white, fontSize: 7, fontWeight: FontWeight.w400, letterSpacing: 1)),
                       ),
                     ),
                     // Carousel Indicators (Matches Web Image 1 dots)
@@ -384,47 +417,56 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           crossAxisAlignment: CrossAxisAlignment.baseline,
           textBaseline: TextBaseline.alphabetic,
           children: [
-            Row(
-              children: ['communities', 'properties'].map((tab) {
-                final isSelected = _activeTab.toLowerCase() == tab;
-                return GestureDetector(
-                  onTap: () => setState(() => _activeTab = tab[0].toUpperCase() + tab.substring(1)),
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 28),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          tab.toUpperCase(), 
-                          style: GoogleFonts.montserrat(
-                            color: isSelected 
-                                ? (isDark ? Colors.white : Colors.black) 
-                                : (isDark ? Colors.white24 : Colors.black26), 
-                            fontSize: 10, 
-                            fontWeight: FontWeight.w900, 
-                            letterSpacing: 1.5
-                          )
-                        ),
-                        const SizedBox(height: 10),
-                        if (isSelected) 
-                          Container(
-                            width: 24, 
-                            height: 2, 
-                            decoration: BoxDecoration(
-                              color: isDark ? Colors.white : Colors.black,
-                              borderRadius: BorderRadius.circular(1),
+            Expanded(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                child: Row(
+                  children: ['communities', 'properties', 'media'].map((tab) {
+                    final isSelected = _activeTab.toLowerCase() == tab;
+                    return GestureDetector(
+                      onTap: () => setState(() => _activeTab = tab[0].toUpperCase() + tab.substring(1)),
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              tab.toUpperCase(), 
+                              style: GoogleFonts.montserrat(
+                                color: isSelected 
+                                    ? (isDark ? Colors.white : Colors.black) 
+                                    : (isDark ? Colors.white : Colors.black), 
+                                fontSize: 10, 
+                                fontWeight: FontWeight.w500, 
+                                letterSpacing: 1.5
+                              )
                             ),
-                          ),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(),
+                            const SizedBox(height: 10),
+                            if (isSelected) 
+                              Container(
+                                width: 24, 
+                                height: 2, 
+                                decoration: BoxDecoration(
+                                  color: isDark ? Colors.white : Colors.black,
+                                  borderRadius: BorderRadius.circular(1),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
             ),
+            const SizedBox(width: 16),
             GestureDetector(
               onTap: () {
                 if (_activeTab == 'Communities') {
                   context.push('/communities');
+                } else if (_activeTab == 'Media') {
+                  context.push('/media');
                 } else {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => const ProjectListScreen()));
                 }
@@ -436,7 +478,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                   style: GoogleFonts.montserrat(
                     color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.9), 
                     fontSize: 10, 
-                    fontWeight: FontWeight.w900, 
+                    fontWeight: FontWeight.w700, 
                     letterSpacing: 1,
                   )
                 ),
@@ -450,9 +492,13 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
-            itemCount: _activeTab == 'Communities' ? _communities.length : _projects.length,
+            itemCount: _activeTab == 'Communities' 
+                ? _communities.length 
+                : (_activeTab == 'Media' ? _media.length : _projects.length),
             itemBuilder: (context, index) {
-              final item = _activeTab == 'Communities' ? _communities[index] : _projects[index];
+              final item = _activeTab == 'Communities' 
+                  ? _communities[index] 
+                  : (_activeTab == 'Media' ? _media[index] : _projects[index]);
               return _buildTabCard(item);
             },
           ),
@@ -463,17 +509,22 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
 
   Widget _buildTabCard(dynamic item) {
     final isCommunity = _activeTab.toLowerCase() == 'communities';
+    final isMedia = _activeTab.toLowerCase() == 'media';
     final apiClient = ref.read(apiClientProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
     final imageUrl = apiClient.resolveUrl(isCommunity 
         ? (item['image'] ?? 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80')
-        : (item['heroImage'] ?? 'https://images.unsplash.com/photo-1613545325278-f24b0cae1224?auto=format&fit=crop&q=80'));
+        : (isMedia 
+            ? (item['thumbnail'] ?? item['image'] ?? 'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80')
+            : (item['heroImage'] ?? 'https://images.unsplash.com/photo-1613545325278-f24b0cae1224?auto=format&fit=crop&q=80')));
 
     return _ScaleButton(
       onTap: () {
         if (isCommunity) {
           context.push('/communities/${item['_id']}', extra: item);
+        } else if (isMedia) {
+          context.push('/media');
         } else {
           context.push('/projects/${item['_id']}', extra: item);
         }
@@ -497,7 +548,12 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             fit: StackFit.expand,
             children: [
               // 🖼️ High Resolution Image
-              Image.network(imageUrl, fit: BoxFit.cover),
+              CachedNetworkImage(
+                imageUrl: imageUrl, 
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(color: Colors.black12),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
+              ),
               
               // 🌫️ High-End Gradient Overlay
               Container(
@@ -514,7 +570,24 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                 ),
               ),
 
-              // 🏷️ Badge (for Properties)
+              // 🎬 Play Icon for Media
+              if (isMedia)
+                Center(
+                  child: Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.4), width: 2),
+                    ),
+                    child: const Center(
+                      child: Icon(LucideIcons.play, color: Colors.white, size: 30),
+                    ),
+                  ).animate().scale(begin: const Offset(0.8, 0.8), curve: Curves.elasticOut, duration: 800.ms),
+                ),
+
+              // 🏷️ Badge (for Properties/Media)
               if (!isCommunity)
                 Positioned(
                   top: 24,
@@ -527,8 +600,10 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                     ),
                     child: Text(
-                      (item['status']?.toString() ?? 'ONGOING').toUpperCase(), 
-                      style: GoogleFonts.montserrat(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1)
+                      isMedia 
+                          ? 'MEDIA' 
+                          : (item['status']?.toString() ?? 'ONGOING').toUpperCase(), 
+                      style: GoogleFonts.montserrat(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w400, letterSpacing: 1)
                     ),
                   ),
                 ),
@@ -547,7 +622,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       style: GoogleFonts.montserrat(
                         color: Colors.white, 
                         fontSize: 18, 
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w400,
                         letterSpacing: -0.5,
                       )
                     ),
@@ -571,11 +646,11 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          isCommunity ? 'EXPLORE COMMUNITY' : 'VIEW PROJECT',
+                          isCommunity ? 'EXPLORE COMMUNITY' : (isMedia ? 'READ ARTICLE' : 'VIEW PROJECT'),
                           style: GoogleFonts.montserrat(
                             color: Colors.white,
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w400,
                             letterSpacing: 1.2,
                           ),
                         ),
@@ -627,7 +702,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                 style: GoogleFonts.montserrat(
                   color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
                   fontSize: 12,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w400,
                   letterSpacing: 4,
                 ),
               ),
@@ -663,9 +738,11 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                     borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
                     child: Stack(
                       children: [
-                        Image.network(
-                          apiClient.resolveUrl(project['heroImage'] ?? ''),
+                        CachedNetworkImage(
+                          imageUrl: apiClient.resolveUrl(project['heroImage'] ?? ''),
                           height: 420, width: double.infinity, fit: BoxFit.cover,
+                          placeholder: (context, url) => Container(color: Colors.black12),
+                          errorWidget: (context, url, error) => const Icon(Icons.error),
                         ),
                         Positioned(
                           top: 24, right: 24,
@@ -680,14 +757,14 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('FEATURED PROPERTY', style: GoogleFonts.montserrat(color: const Color(0xFFC5A358), fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2)),
+                              Text('FEATURED PROPERTY', style: GoogleFonts.montserrat(color: const Color(0xFFC5A358), fontSize: 10, fontWeight: FontWeight.w400, letterSpacing: 2)),
                               const SizedBox(height: 12),
                               Text(project['title'] ?? '', style: GoogleFonts.dmSerifDisplay(color: Colors.white, fontSize: 40)),
                               const SizedBox(height: 16),
                               Text(
                                 (project['startingPrice'] ?? project['description'] ?? '').toUpperCase(),
                                 maxLines: 2, overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.montserrat(color: Colors.white70, fontSize: 10, height: 1.6, fontWeight: FontWeight.w900, letterSpacing: 1.5),
+                                style: GoogleFonts.montserrat(color: Colors.white70, fontSize: 10, height: 1.6, fontWeight: FontWeight.w400, letterSpacing: 1.5),
                               ),
                             ],
                           ),
@@ -726,7 +803,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                                   height: 56,
                                   decoration: BoxDecoration(color: isDark ? Colors.white : Colors.black, borderRadius: BorderRadius.circular(16)),
                                   child: Center(
-                                    child: Text('READ MORE', style: GoogleFonts.montserrat(color: isDark ? Colors.black : Colors.white, fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 2)),
+                                    child: Text('READ MORE', style: GoogleFonts.montserrat(color: isDark ? Colors.black : Colors.white, fontWeight: FontWeight.w400, fontSize: 13, letterSpacing: 2)),
                                   ),
                                 ),
                               ),
@@ -758,9 +835,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
-        Icon(icon, color: isDark ? Colors.white38 : Colors.black38, size: 24),
+        Icon(icon, color: isDark ? Colors.white : Colors.black, size: 24),
         const SizedBox(height: 8),
-        Text(label, textAlign: TextAlign.center, style: GoogleFonts.montserrat(color: isDark ? Colors.white38 : Colors.black38, fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 1.5)),
+        Text(label, textAlign: TextAlign.center, style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 1.5)),
       ],
     );
   }
@@ -785,11 +862,11 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       children: [
         Text(
           'EXPLORE, CONNECT', 
-          style: GoogleFonts.dmSerifDisplay(color: isDark ? Colors.white : Colors.black, fontSize: 34, height: 1),
+          style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 32, fontWeight: FontWeight.w400, letterSpacing: -1),
         ),
         Text(
           'AND ENGAGE WITH US', 
-          style: GoogleFonts.dmSerifDisplay(color: isDark ? Colors.white : Colors.black, fontSize: 34, height: 1.2),
+          style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 32, fontWeight: FontWeight.w400, letterSpacing: -1, height: 1.2),
         ),
         const SizedBox(height: 48),
         GridView.count(
@@ -829,9 +906,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                     children: [
                       Icon(item['icon'] as IconData, color: isDark ? Colors.white : Colors.black, size: 28),
                       const SizedBox(height: 20),
-                      Text(item['title'] as String, textAlign: TextAlign.center, style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w900, fontSize: 9, letterSpacing: 1)),
+                      Text(item['title'] as String, textAlign: TextAlign.center, style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w500, fontSize: 10, letterSpacing: 1.2)),
                       const SizedBox(height: 8),
-                      Text(item['desc'] as String, textAlign: TextAlign.center, style: GoogleFonts.montserrat(color: isDark ? Colors.white54 : Colors.black54, fontSize: 8)),
+                      Text(item['desc'] as String, textAlign: TextAlign.center, style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 9)),
                     ],
                   ),
                 ),
@@ -894,7 +971,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               child: Center(
                 child: _submitting 
                     ? CircularProgressIndicator(color: isDark ? Colors.black : Colors.white)
-                    : Text('SUBMIT INTEREST', style: GoogleFonts.montserrat(color: isDark ? Colors.black : Colors.white, fontWeight: FontWeight.w900, letterSpacing: 2)),
+                    : Text('SUBMIT INTEREST', style: GoogleFonts.montserrat(color: isDark ? Colors.black : Colors.white, fontWeight: FontWeight.w400, letterSpacing: 2)),
               ),
             ),
           ),
@@ -909,9 +986,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       decoration: BoxDecoration(
         color: isDark ? Colors.black : Colors.white, 
         borderRadius: BorderRadius.circular(16), 
-        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.12)),
         boxShadow: isDark ? [] : [
-          BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 20, offset: const Offset(0, 10))
+          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20, offset: const Offset(0, 10))
         ]
       ),
       child: TextField(
@@ -920,7 +997,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         maxLines: isLong ? 5 : 1,
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: GoogleFonts.montserrat(color: isDark ? Colors.white24 : Colors.black26, fontSize: 13),
+          hintStyle: GoogleFonts.montserrat(color: isDark ? Colors.white54 : Colors.black45, fontSize: 13),
           contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
           border: InputBorder.none,
         ),

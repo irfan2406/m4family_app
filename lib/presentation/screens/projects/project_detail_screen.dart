@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
@@ -1483,8 +1484,21 @@ class _FloorPlanItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(borderRadius: BorderRadius.circular(16), child: Image.network(imageUrl, fit: BoxFit.cover, height: 200, width: double.infinity,
-              errorBuilder: (context, error, stackTrace) => Container(height: 200, color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05), child: Center(child: Icon(LucideIcons.image, color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.1)))))),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16), 
+              child: CachedNetworkImage(
+                imageUrl: imageUrl, 
+                fit: BoxFit.cover, 
+                height: 200, 
+                width: double.infinity,
+                placeholder: (context, url) => Container(height: 200, color: Colors.black12),
+                errorWidget: (context, url, error) => Container(
+                  height: 200, 
+                  color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05), 
+                  child: Center(child: Icon(LucideIcons.image, color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.1)))
+                ),
+              ),
+            ),
             const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1762,8 +1776,14 @@ class _ConstructionUpdateCard extends StatelessWidget {
             borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
             child: Stack(
               children: [
-                Image.network(imageUrl, height: 180, width: double.infinity, fit: BoxFit.cover, 
-                  errorBuilder: (context, error, stackTrace) => Container(height: 180, color: Colors.black.withOpacity(0.05), child: Center(child: Icon(LucideIcons.image, color: Colors.black.withOpacity(0.1))))),
+                CachedNetworkImage(
+                  imageUrl: imageUrl, 
+                  height: 180, 
+                  width: double.infinity, 
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Container(height: 180, color: Colors.black12),
+                  errorWidget: (context, url, error) => Container(height: 180, color: Colors.black.withOpacity(0.05), child: Center(child: Icon(LucideIcons.image, color: Colors.black.withOpacity(0.1)))),
+                ),
                 Positioned(
                   top: 15,
                   right: 15,
@@ -2040,7 +2060,12 @@ class _HeroMediaThumb extends StatelessWidget {
                 ),
               )
             else if (imageUrl != null)
-              Image.network(imageUrl!, fit: BoxFit.cover),
+              CachedNetworkImage(
+                imageUrl: imageUrl!, 
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(color: Colors.black12),
+                errorWidget: (context, url, error) => Container(color: Colors.black12),
+              ),
             
             if (!isVR)
               Positioned(
@@ -2260,7 +2285,14 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                         onTap: () => onPhaseTap(imageUrl),
                         child: ClipRRect(
                           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-                          child: Image.network(imageUrl, height: 180, width: 260, fit: BoxFit.cover, errorBuilder: (c, e, s) => Container(height: 180, color: Colors.white10)),
+                          child: CachedNetworkImage(
+                            imageUrl: imageUrl, 
+                            height: 180, 
+                            width: 260, 
+                            fit: BoxFit.cover, 
+                            placeholder: (context, url) => Container(height: 180, width: 260, color: Colors.white10),
+                            errorWidget: (context, url, error) => Container(height: 180, width: 260, color: Colors.white10),
+                          ),
                         ),
                       ),
                       Padding(
@@ -2353,9 +2385,23 @@ class _MediaFloatThumbnail extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: Colors.white, width: 2),
-              image: DecorationImage(image: NetworkImage(image), fit: BoxFit.cover),
             ),
-            child: is360 ? const Center(child: Icon(LucideIcons.rotateCcw, color: Colors.white, size: 20)) : null,
+            child: Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: CachedNetworkImage(
+                    imageUrl: image, 
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity,
+                    placeholder: (context, url) => Container(color: Colors.black12),
+                    errorWidget: (context, url, error) => Container(color: Colors.black12),
+                  ),
+                ),
+                if (is360) const Center(child: Icon(LucideIcons.rotateCcw, color: Colors.white, size: 20)),
+              ],
+            ),
           ),
         ),
         const SizedBox(height: 2),
