@@ -357,10 +357,10 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                   width: 50,
                                   height: 50,
                                   decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.05),
+                                    color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
                                     borderRadius: BorderRadius.circular(20),
                                   ),
-                                  child: Icon(_getIcon(benefit['icon']), color: Colors.white, size: 24),
+                                  child: Icon(_getIcon(benefit['icon']), color: isDark ? Colors.white : Colors.black, size: 24),
                                 ),
                                 const SizedBox(height: 15),
                                 Padding(
@@ -369,7 +369,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                     benefit['label'].toString().toUpperCase(),
                                     textAlign: TextAlign.center,
                                     style: GoogleFonts.inter(
-                                      color: Colors.white.withOpacity(0.6),
+                                      color: (isDark ? Colors.white : Colors.black).withOpacity(0.7),
                                       fontSize: 8,
                                       fontWeight: FontWeight.w900,
                                       letterSpacing: 0.5,
