@@ -63,18 +63,18 @@ class _GuestNavigationPill extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      margin: const EdgeInsets.only(bottom: 40),
-      padding: const EdgeInsets.all(10),
+      margin: const EdgeInsets.only(bottom: 48),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: isDark ? Colors.black.withValues(alpha: 0.95) : Colors.white.withValues(alpha: 0.95),
-        borderRadius: BorderRadius.circular(50),
+        borderRadius: BorderRadius.circular(100),
         border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08)),
         boxShadow: [
           BoxShadow(
-            color: (isDark ? Colors.black : Colors.grey).withValues(alpha: 0.3),
-            blurRadius: 30,
-            spreadRadius: 2,
-            offset: const Offset(0, 10),
+            color: (isDark ? Colors.black : Colors.grey).withValues(alpha: 0.4),
+            blurRadius: 40,
+            spreadRadius: 4,
+            offset: const Offset(0, 15),
           )
         ],
       ),
@@ -82,13 +82,13 @@ class _GuestNavigationPill extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           _NavIcon(icon: LucideIcons.home, isActive: currentIndex == 0, onTap: () => onTap(0)),
-          const SizedBox(width: 8),
+          const SizedBox(width: 12),
           _NavIcon(icon: LucideIcons.layoutGrid, isActive: currentIndex == 1, onTap: () => onTap(1)),
-          const SizedBox(width: 8),
+          const SizedBox(width: 12),
           _NavIcon(icon: LucideIcons.info, isActive: currentIndex == 2, onTap: () => onTap(2)),
-          const SizedBox(width: 8),
+          const SizedBox(width: 12),
           _NavIcon(icon: LucideIcons.briefcase, isActive: currentIndex == 3, onTap: () => onTap(3)),
-          const SizedBox(width: 8),
+          const SizedBox(width: 12),
           _NavIcon(icon: LucideIcons.phone, isActive: currentIndex == 4, onTap: () => onTap(4)),
         ],
       ),
@@ -109,18 +109,18 @@ class _NavIcon extends StatelessWidget {
     return _ScaleButton(
       onTap: onTap,
       child: Container(
-        width: 48,
-        height: 48,
+        width: 60,
+        height: 60,
         decoration: BoxDecoration(
           color: isActive ? (isDark ? Colors.white : Colors.black) : Colors.transparent,
           shape: BoxShape.circle,
-          boxShadow: isActive ? [BoxShadow(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.2), blurRadius: 10)] : [],
+          boxShadow: isActive ? [BoxShadow(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.2), blurRadius: 15)] : [],
         ),
         child: Center(
           child: Icon(
             icon, 
             color: isActive ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white60 : Colors.black54), 
-            size: 20
+            size: 24
           ),
         ),
       ),

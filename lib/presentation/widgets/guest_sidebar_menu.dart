@@ -33,8 +33,8 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
             filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.8),
-                border: Border(right: BorderSide(color: Colors.white.withOpacity(0.05))),
+                color: isDark ? Colors.black.withOpacity(0.8) : Colors.white.withOpacity(0.8),
+                border: Border(right: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05))),
               ),
             ),
           ),
@@ -44,7 +44,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
               children: [
                 Padding(
                   padding: const EdgeInsets.fromLTRB(24, 20, 24, 10),
-                  child: Text('MENU', style: GoogleFonts.montserrat(color: Colors.white.withOpacity(0.4), fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 4)),
+                  child: Text('MENU', style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.5), fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 4)),
                 ),
                 Expanded(
                     child: ListView(
@@ -88,7 +88,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                       const SizedBox(height: 32),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 14),
-                        child: Text('QUICK ACTIONS', style: GoogleFonts.montserrat(color: Colors.white38, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 3)),
+                        child: Text('QUICK ACTIONS', style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.6), fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 3)),
                       ),
                       const SizedBox(height: 12),
                       _QuickActionItem(label: 'ENQUIRY', icon: LucideIcons.mail, onTap: () => context.push('/contact')),
@@ -103,7 +103,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('THEME MODE', style: GoogleFonts.montserrat(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 2)),
+                      Text('THEME MODE', style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
                       GestureDetector(
                         onTap: () {
                           ref.read(themeProvider.notifier).setTheme(isDark ? ThemeMode.light : ThemeMode.dark);
@@ -111,10 +111,10 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                         child: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            border: Border.all(color: Colors.white.withOpacity(0.2)),
+                            border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.3)),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Icon(isDark ? LucideIcons.moon : LucideIcons.sparkles, color: Colors.white, size: 16),
+                          child: Icon(isDark ? LucideIcons.moon : LucideIcons.sparkles, color: isDark ? Colors.white : Colors.black, size: 16),
                         ),
                       )
                     ],
@@ -138,7 +138,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                           children: [
                             const Icon(LucideIcons.logOut, color: Colors.red, size: 18),
                             const SizedBox(width: 12),
-                            Text('EXIT APP', style: GoogleFonts.montserrat(color: Colors.red, fontWeight: FontWeight.w800, fontSize: 13, letterSpacing: 1)),
+                            Text('EXIT APP', style: GoogleFonts.montserrat(color: Colors.red, fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 1)),
                           ],
                         ),
                     ),
@@ -162,6 +162,7 @@ class _MenuItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       children: [
         AnimatedContainer(
@@ -169,10 +170,10 @@ class _MenuItem extends StatelessWidget {
           width: 4,
           height: isActive ? 24 : 0,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: isDark ? Colors.white : Colors.black,
             borderRadius: BorderRadius.circular(2),
             boxShadow: [
-              BoxShadow(color: Colors.white.withOpacity(0.5), blurRadius: 8)
+              BoxShadow(color: (isDark ? Colors.white : Colors.black).withOpacity(0.5), blurRadius: 8)
             ],
           ),
         ),
@@ -182,13 +183,13 @@ class _MenuItem extends StatelessWidget {
             leading: Container(
               width: 40, height: 40,
               decoration: BoxDecoration(
-                color: isActive ? Colors.white.withOpacity(0.1) : Colors.white.withOpacity(0.05), 
+                color: isActive ? (isDark ? Colors.white : Colors.black).withOpacity(0.15) : (isDark ? Colors.white : Colors.black).withOpacity(0.08), 
                 borderRadius: BorderRadius.circular(12),
-                border: isActive ? Border.all(color: Colors.white.withOpacity(0.1)) : null,
+                border: isActive ? Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.2)) : null,
               ),
-              child: Icon(icon, color: isActive ? Colors.white : Colors.white54, size: 18),
+              child: Icon(icon, color: isActive ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white.withOpacity(0.4) : Colors.black.withOpacity(0.5)), size: 18),
             ),
-            title: Text(label, style: GoogleFonts.montserrat(color: isActive ? Colors.white : Colors.white70, fontSize: 12, fontWeight: isActive ? FontWeight.w800 : FontWeight.w700, letterSpacing: 1.5)),
+            title: Text(label, style: GoogleFonts.montserrat(color: isActive ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white.withOpacity(0.7) : Colors.black.withOpacity(0.8)), fontSize: 13, fontWeight: isActive ? FontWeight.w900 : FontWeight.w800, letterSpacing: 1.2)),
           ),
         ),
       ],
@@ -206,6 +207,7 @@ class _DropdownMenuItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
         ListTile(
@@ -213,14 +215,14 @@ class _DropdownMenuItem extends StatelessWidget {
           leading: Container(
             width: 40, height: 40,
             decoration: BoxDecoration(
-              color: isOpen ? Colors.white.withOpacity(0.1) : Colors.white.withOpacity(0.05), 
+              color: isOpen ? (isDark ? Colors.white : Colors.black).withOpacity(0.15) : (isDark ? Colors.white : Colors.black).withOpacity(0.08), 
               borderRadius: BorderRadius.circular(12),
-              border: isOpen ? Border.all(color: Colors.white.withOpacity(0.15)) : null,
+              border: isOpen ? Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.2)) : null,
             ),
-            child: Icon(icon, color: isOpen ? Colors.white : Colors.white54, size: 18),
+            child: Icon(icon, color: isOpen ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white.withOpacity(0.4) : Colors.black.withOpacity(0.5)), size: 18),
           ),
-          title: Text(label, style: GoogleFonts.montserrat(color: isOpen ? Colors.white : Colors.white, fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 1.5)),
-          trailing: Icon(isOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown, color: Colors.white24, size: 16),
+          title: Text(label, style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(isOpen ? 1.0 : 0.8), fontSize: 13, fontWeight: FontWeight.w900, letterSpacing: 1.2)),
+          trailing: Icon(isOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown, color: isDark ? Colors.white.withOpacity(0.3) : Colors.black.withOpacity(0.3), size: 16),
         ),
         if (isOpen) ...subItems,
       ],
@@ -235,12 +237,13 @@ class _SubItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.only(left: 64),
       child: ListTile(
         onTap: onTap,
         dense: true,
-        title: Text(label, style: GoogleFonts.montserrat(color: Colors.white54, fontSize: 11, fontWeight: FontWeight.w600, letterSpacing: 1)),
+        title: Text(label, style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.5), fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 1)),
       ),
     );
   }
@@ -254,14 +257,15 @@ class _QuickActionItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return ListTile(
       onTap: onTap,
       leading: Container(
         width: 40, height: 40,
-        decoration: BoxDecoration(color: Colors.white.withOpacity(0.05), borderRadius: BorderRadius.circular(12)),
-        child: Icon(icon, color: Colors.white54, size: 18),
+        decoration: BoxDecoration(color: (isDark ? Colors.white : Colors.black).withOpacity(0.08), borderRadius: BorderRadius.circular(12)),
+        child: Icon(icon, color: (isDark ? Colors.white : Colors.black).withOpacity(0.5), size: 18),
       ),
-      title: Text(label, style: GoogleFonts.montserrat(color: Colors.white54, fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 1.5)),
+      title: Text(label, style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.6), fontSize: 13, fontWeight: FontWeight.w800, letterSpacing: 1.2)),
     );
   }
 }
