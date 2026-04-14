@@ -758,8 +758,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           children: List.generate(4, (i) {
             final items = [
               {'title': 'EXPLORE PROJECTS', 'desc': 'Browse our portfolio of properties', 'icon': LucideIcons.building2, 'route': '/projects'},
-              {'title': 'BOOK A VIEWING', 'desc': 'Schedule a visit to our show apartment', 'icon': LucideIcons.calendarDays, 'link': 'https://calendly.com'},
-              {'title': 'SALES VIDEO CALL', 'desc': 'Talk to one of our sales expert', 'icon': LucideIcons.play, 'link': 'https://meet.google.com'},
+              {'title': 'BOOK A VIEWING', 'desc': 'Schedule a visit to our show apartment', 'icon': LucideIcons.calendarDays, 'action': _scrollToInterestForm},
+              {'title': 'SALES VIDEO CALL', 'desc': 'Talk to one of our sales expert', 'icon': LucideIcons.play, 'link': 'https://wa.me/912246018844'},
               {'title': 'REGISTER INTEREST', 'desc': 'Register your interest in our properties', 'icon': LucideIcons.user, 'action': _scrollToInterestForm},
             ];
             final item = items[i];
@@ -773,7 +773,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                   if (item['action'] != null) {
                     (item['action'] as Function)();
                   } else if (item['link'] != null) {
-                    launchUrl(Uri.parse(item['link'] as String));
+                    launchUrl(Uri.parse(item['link'] as String), mode: LaunchMode.externalApplication);
                   } else if (item['route'] == '/projects') {
                     Navigator.push(context, MaterialPageRoute(builder: (context) => const ProjectListScreen()));
                   }

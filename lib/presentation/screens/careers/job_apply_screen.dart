@@ -179,7 +179,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                       child: Text(
                         'APPLYING FOR',
                         style: GoogleFonts.montserrat(
-                          color: (isDark ? Colors.white : Colors.black).withOpacity(0.4),
+                          color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
                           fontSize: 8,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1,
@@ -202,7 +202,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                     Text(
                       (widget.job['location'] ?? 'MUMBAI').toString().toUpperCase(),
                       style: GoogleFonts.montserrat(
-                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.4),
+                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 2,
@@ -216,17 +216,17 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
               // Form Fields
               _buildLabel('FULL NAME', isDark),
               const SizedBox(height: 12),
-              _buildTextField(controller: _fullNameController, hint: 'IRFAN KHAN'),
+              _buildTextField(controller: _fullNameController, hint: ''),
               const SizedBox(height: 32),
 
               _buildLabel('PHONE NUMBER', isDark),
               const SizedBox(height: 12),
-              _buildTextField(controller: _phoneController, hint: '+1 234 567 890', isPhone: true),
+              _buildTextField(controller: _phoneController, hint: '', isPhone: true),
               const SizedBox(height: 32),
 
               _buildLabel('EMAIL ADDRESS', isDark),
               const SizedBox(height: 12),
-              _buildTextField(controller: _emailController, hint: 'IRFAN1@GMAIL.COM', isEmail: true),
+              _buildTextField(controller: _emailController, hint: '', isEmail: true),
               const SizedBox(height: 48),
 
               // PDF Upload Area
@@ -258,12 +258,12 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                       Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color: _resumeFile != null ? Colors.white : Colors.white.withOpacity(0.05),
+                          color: _resumeFile != null ? Colors.black : (isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05)),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           _resumeFile != null ? LucideIcons.fileCheck : LucideIcons.rocket,
-                          color: _resumeFile != null ? Colors.black : Colors.white,
+                          color: _resumeFile != null ? Colors.white : (isDark ? Colors.white : Colors.black),
                           size: 32,
                         ),
                       ),
@@ -323,7 +323,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
       child: Text(
         text,
         style: GoogleFonts.montserrat(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.3),
+          color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
           fontSize: 10,
           fontWeight: FontWeight.w900,
           letterSpacing: 1,
@@ -340,9 +340,9 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
       style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.bold, fontSize: 13),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.15), fontWeight: FontWeight.bold, fontSize: 13),
+        hintStyle: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.3), fontWeight: FontWeight.bold, fontSize: 13),
         filled: true,
-        fillColor: isDark ? const Color(0xFF0F1219) : const Color(0xFFF1F5F9),
+        fillColor: isDark ? const Color(0xFF0F1219) : const Color(0xFFF8F8F8), // Neutral grey instead of blue-grey
         contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),

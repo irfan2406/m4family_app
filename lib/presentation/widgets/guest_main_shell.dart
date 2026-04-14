@@ -4,6 +4,7 @@ import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart
 import 'package:m4_mobile/presentation/screens/about/about_screen.dart';
 import 'package:m4_mobile/presentation/screens/careers/careers_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/support_screen.dart';
+import 'package:m4_mobile/presentation/screens/support/contact_screen.dart';
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -25,7 +26,7 @@ class GuestMainShell extends ConsumerWidget {
       const ProjectListScreen(),   // 1: Projects
       const AboutScreen(),         // 2: About
       const CareersScreen(),       // 3: Careers
-      const SupportScreen(),       // 4: Support
+      const ContactScreen(),       // 4: Contact
     ];
 
     return Scaffold(

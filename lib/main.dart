@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/screens/auth/login_screen.dart';
 import 'package:m4_mobile/presentation/screens/auth/onboarding_screen.dart';
 import 'package:m4_mobile/presentation/screens/profile/profile_settings_screen.dart';
@@ -24,6 +25,8 @@ import 'package:m4_mobile/presentation/screens/projects/guest_project_detail_scr
 import 'package:m4_mobile/presentation/screens/support/support_screen.dart';
 import 'package:m4_mobile/presentation/screens/custom_views/custom_views_screen.dart';
 import 'package:m4_mobile/presentation/screens/custom_views/guest_custom_views_screen.dart';
+import 'package:m4_mobile/presentation/screens/support/contact_screen.dart';
+import 'package:m4_mobile/presentation/screens/content_hub/content_hub_screen.dart';
 
 import 'package:m4_mobile/core/providers/theme_provider.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -121,6 +124,42 @@ final GoRouter _router = GoRouter(
       builder: (context, state) => const SupportScreen(),
     ),
     GoRoute(
+      path: '/media',
+      builder: (context, state) => const GuestContentHubScreen(
+        title: 'MEDIA\nGALLERY',
+        subtitle: 'Stay updated with our latest multimedia releases.',
+        typeIcon: LucideIcons.play,
+        emptyMessage: 'No media posts found',
+      ),
+    ),
+    GoRoute(
+      path: '/highlights',
+      builder: (context, state) => const GuestContentHubScreen(
+        title: 'PROJECT\nHIGHLIGHTS',
+        subtitle: 'Stay updated with our latest achievements and milestones.',
+        typeIcon: LucideIcons.zap,
+        emptyMessage: 'No highlights posts found',
+      ),
+    ),
+    GoRoute(
+      path: '/events',
+      builder: (context, state) => const GuestContentHubScreen(
+        title: 'M4 EVENTS',
+        subtitle: 'Stay updated with our latest upcoming events.',
+        typeIcon: LucideIcons.calendarDays,
+        emptyMessage: 'No event posts found',
+      ),
+    ),
+    GoRoute(
+      path: '/blog',
+      builder: (context, state) => const GuestContentHubScreen(
+        title: 'M4 BLOG',
+        subtitle: 'Stay updated with our latest insights and news.',
+        typeIcon: LucideIcons.fileText,
+        emptyMessage: 'No blog posts found',
+      ),
+    ),
+    GoRoute(
       path: '/about',
       builder: (context, state) => const AboutScreen(),
     ),
@@ -138,7 +177,7 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/contact',
-      builder: (context, state) => const SupportScreen(),
+      builder: (context, state) => const ContactScreen(),
     ),
     GoRoute(
       path: '/communities/:id',

@@ -95,7 +95,7 @@ class JobDetailScreen extends StatelessWidget {
                       child: Text(
                         (job['department'] ?? '').toString().toUpperCase(),
                         style: GoogleFonts.montserrat(
-                          color: Colors.white70,
+                          color: isDark ? Colors.white70 : Colors.black87,
                           fontSize: 9,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 2,
@@ -120,9 +120,9 @@ class JobDetailScreen extends StatelessWidget {
                     // Meta Info
                     Row(
                       children: [
-                        _buildMetaBadge(LucideIcons.mapPin, (job['location'] ?? 'Mumbai').toString()),
+                        _buildMetaBadge(LucideIcons.mapPin, (job['location'] ?? 'Mumbai').toString(), isDark),
                         const SizedBox(width: 12),
-                        _buildMetaBadge(LucideIcons.clock, (job['type'] ?? 'Full-time').toString()),
+                        _buildMetaBadge(LucideIcons.clock, (job['type'] ?? 'Full-time').toString(), isDark),
                       ],
                     ),
                     const SizedBox(height: 48),
@@ -131,7 +131,7 @@ class JobDetailScreen extends StatelessWidget {
                     Text(
                       'JOB DESCRIPTION',
                       style: GoogleFonts.montserrat(
-                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 3,
@@ -150,7 +150,7 @@ class JobDetailScreen extends StatelessWidget {
                       child: Text(
                         (job['description'] ?? 'WE ARE LOOKING FOR A HIGH-PERFORMING ${job['title']} TO HELP US MEET OUR CUSTOMER ACQUISITION AND REVENUE GROWTH TARGETS BY KEEPING OUR COMPANY COMPETITIVE AND INNOVATIVE.').toString(),
                         style: GoogleFonts.montserrat(
-                          color: (isDark ? Colors.white : Colors.black).withOpacity(0.7),
+                          color: (isDark ? Colors.white : Colors.black).withOpacity(0.85),
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
                           height: 1.8,
@@ -206,23 +206,23 @@ class JobDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMetaBadge(IconData icon, String text) {
+  Widget _buildMetaBadge(IconData icon, String text, bool isDark) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: Colors.white70, size: 14),
+          Icon(icon, color: isDark ? Colors.white70 : Colors.black54, size: 14),
           const SizedBox(width: 8),
           Text(
             text.toUpperCase(),
             style: GoogleFonts.montserrat(
-              color: Colors.white70,
+              color: isDark ? Colors.white70 : Colors.black54,
               fontSize: 9,
               fontWeight: FontWeight.w900,
               letterSpacing: 1.5,

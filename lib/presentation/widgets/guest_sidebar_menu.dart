@@ -33,8 +33,8 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
             filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.4),
-                border: Border(right: BorderSide(color: Colors.white.withOpacity(0.1))),
+                color: Colors.black.withOpacity(0.8),
+                border: Border(right: BorderSide(color: Colors.white.withOpacity(0.05))),
               ),
             ),
           ),
@@ -44,7 +44,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
               children: [
                 Padding(
                   padding: const EdgeInsets.fromLTRB(24, 20, 24, 10),
-                  child: Text('MENU', style: GoogleFonts.montserrat(color: Colors.white38, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 3)),
+                  child: Text('MENU', style: GoogleFonts.montserrat(color: Colors.white.withOpacity(0.4), fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 4)),
                 ),
                 Expanded(
                     child: ListView(
@@ -213,13 +213,13 @@ class _DropdownMenuItem extends StatelessWidget {
           leading: Container(
             width: 40, height: 40,
             decoration: BoxDecoration(
-              color: isOpen ? M4Theme.premiumBlue.withOpacity(0.1) : Colors.white.withOpacity(0.05), 
+              color: isOpen ? Colors.white.withOpacity(0.1) : Colors.white.withOpacity(0.05), 
               borderRadius: BorderRadius.circular(12),
-              border: isOpen ? Border.all(color: M4Theme.premiumBlue.withOpacity(0.2)) : null,
+              border: isOpen ? Border.all(color: Colors.white.withOpacity(0.15)) : null,
             ),
-            child: Icon(icon, color: isOpen ? M4Theme.premiumBlue : Colors.white54, size: 18),
+            child: Icon(icon, color: isOpen ? Colors.white : Colors.white54, size: 18),
           ),
-          title: Text(label, style: GoogleFonts.montserrat(color: isOpen ? M4Theme.premiumBlue : Colors.white, fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 1.5)),
+          title: Text(label, style: GoogleFonts.montserrat(color: isOpen ? Colors.white : Colors.white, fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 1.5)),
           trailing: Icon(isOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown, color: Colors.white24, size: 16),
         ),
         if (isOpen) ...subItems,

@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_detail_screen.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
+import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
 import 'package:m4_mobile/presentation/screens/projects/guest_project_detail_screen.dart';
 
 
@@ -157,15 +158,19 @@ class ProjectListScreen extends ConsumerWidget {
                 children: [
                   Row(
                     children: [
-                      IconButton(
-                        onPressed: () {
+                      InkWell(
+                        onTap: () {
                           if (Navigator.canPop(context)) {
                             Navigator.pop(context);
-                          } else {
-                            ref.read(navigationProvider.notifier).state = 0;
                           }
+                          ref.read(navigationProvider.notifier).state = 0;
+                          ref.read(guestNavigationProvider.notifier).state = 0;
                         },
-                        icon: Icon(LucideIcons.arrowLeft, color: Theme.of(context).colorScheme.onSurface, size: 24),
+                        borderRadius: BorderRadius.circular(12),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Icon(LucideIcons.arrowLeft, color: Theme.of(context).colorScheme.onSurface, size: 24),
+                        ),
                       ),
                       const SizedBox(width: 16),
                       Column(

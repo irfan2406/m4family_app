@@ -39,6 +39,8 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
   bool _isFavorited = false;
   String _mediaFilter = 'ALL';
   String _selectedConfig = '3 BHK';
+  bool _showFullOverview = false;
+  bool _showFullProgress = false;
 
 
   @override
@@ -447,7 +449,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
           ),
           // Bottom actions removed for Guest Portal parity with web
           Positioned(
-            top: MediaQuery.of(context).padding.top + 20,
+            top: MediaQuery.of(context).padding.top + 16,
             left: 20,
             right: 20,
             child: Row(
@@ -456,12 +458,15 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                 _CircleAction(icon: LucideIcons.chevronLeft, onTap: () => Navigator.pop(context)),
                 Row(
                   children: [
-                    _CircleAction(icon: LucideIcons.share2, onTap: () => Share.share('Check out ${project?['title']} on M4 Family!')),
+                    _CircleAction(
+                      icon: LucideIcons.share2, 
+                      onTap: () => Share.share('Check out ${project?['title']} on M4 Family!')
+                    ),
                     const SizedBox(width: 12),
                     _CircleAction(
                       icon: LucideIcons.heart, 
                       onTap: () => setState(() => _isFavorited = !_isFavorited),
-                      color: _isFavorited ? Colors.red : null,
+                      color: _isFavorited ? Colors.red : Colors.white,
                     ),
                   ],
                 ),
@@ -504,12 +509,12 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
           ),
           // Artistic Impression Badge
           Positioned(
-            top: MediaQuery.of(context).padding.top + 20,
+            top: MediaQuery.of(context).padding.top + 80,
             right: 20,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.6),
+                color: Colors.black.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(30),
                 border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
               ),
@@ -582,9 +587,17 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       children: [
-        Container(width: 40, height: 2, color: M4Theme.premiumBlue),
-        const SizedBox(width: 14),
-        Text(title.toUpperCase(), style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 2)),
+        Container(width: 24, height: 1.5, color: M4Theme.premiumBlue),
+        const SizedBox(width: 12),
+        Text(
+          title.toUpperCase(), 
+          style: GoogleFonts.montserrat(
+            fontSize: 11, 
+            fontWeight: FontWeight.w900, 
+            color: isDark ? Colors.white : Colors.black, 
+            letterSpacing: 3
+          )
+        ),
       ],
     );
   }
@@ -596,9 +609,34 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
       children: [
         _buildSectionHeader('Overview'),
         const SizedBox(height: 24),
-        Text(
-          project?['description'] ?? 'Experience the pinnacle of luxury living with floor-to-ceiling windows, Italian marble flooring, and smart home automation.',
-          style: GoogleFonts.montserrat(fontSize: 13, color: isDark ? Colors.white.withValues(alpha: 0.6) : Colors.black.withValues(alpha: 0.6), height: 1.8, fontWeight: FontWeight.w500),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              project?['description'] ?? 'Experience the pinnacle of luxury living with floor-to-ceiling windows, Italian marble flooring, and smart home automation.',
+              maxLines: _showFullOverview ? null : 3,
+              overflow: _showFullOverview ? TextOverflow.visible : TextOverflow.ellipsis,
+              style: GoogleFonts.montserrat(
+                fontSize: 11, 
+                color: isDark ? Colors.white.withValues(alpha: 0.6) : Colors.black.withValues(alpha: 0.6), 
+                height: 1.8, 
+                fontWeight: FontWeight.w900,
+                letterSpacing: 0,
+                decoration: TextDecoration.none,
+              ).copyWith(height: 1.8),
+            ),
+            if ((project?['description']?.length ?? 100) > 150)
+              GestureDetector(
+                onTap: () => setState(() => _showFullOverview = !_showFullOverview),
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: Text(
+                    _showFullOverview ? 'SHOW LESS' : 'READ MORE',
+                    style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 1),
+                  ),
+                ),
+              ),
+          ],
         ),
         const SizedBox(height: 32),
         _MultimediaAssetCard(
@@ -620,8 +658,10 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
         const SizedBox(height: 24),
         _ConstructionDashboardCard(
           overallProgress: project?['completion'] ?? 0,
-          estimatedCompletion: (project?['possessionDate'] ?? 'DEC 2026').toString().toUpperCase(),
+          estimatedCompletion: (project?['estimatedCompletionDate'] ?? project?['possessionDate'] ?? 'Q1 2029').toString().toUpperCase(),
           phases: _progressPhases,
+          showFullProgress: _showFullProgress,
+          onToggleReadMore: () => setState(() => _showFullProgress = !_showFullProgress),
           onPhaseTap: (url) => _showMediaLightbox(url, 'IMAGE'),
         ),
       ],
@@ -921,17 +961,22 @@ class _CircleAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return _ScaleButton(
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04),
-          border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1)),
-          shape: BoxShape.circle,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(30),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: Colors.black.withValues(alpha: 0.2),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, size: 20, color: color ?? Colors.white),
+          ),
         ),
-        child: Icon(icon, size: 20, color: color ?? (isDark ? Colors.white : Colors.black)),
       ),
     );
   }
@@ -1152,12 +1197,16 @@ class _ConstructionDashboardCard extends ConsumerWidget {
   final num overallProgress;
   final String estimatedCompletion;
   final List<dynamic> phases;
+  final bool showFullProgress;
+  final VoidCallback onToggleReadMore;
   final Function(String) onPhaseTap;
 
   const _ConstructionDashboardCard({
     required this.overallProgress, 
     required this.estimatedCompletion, 
     required this.phases,
+    required this.showFullProgress,
+    required this.onToggleReadMore,
     required this.onPhaseTap,
   });
 
@@ -1187,25 +1236,46 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     const SizedBox(height: 12),
                     Text(estimatedCompletion, style: GoogleFonts.dmSerifDisplay(fontSize: 64, color: isDark ? Colors.white : Colors.black, height: 1)),
                     const SizedBox(height: 24),
-                    Text(
-                      'As the project progresses, significant milestones are reached, showcasing our team\'s dedication and expertise.',
-                      style: GoogleFonts.montserrat(fontSize: 14, color: isDark ? Colors.white38 : Colors.black38, height: 1.6, fontWeight: FontWeight.w500),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'As the project progresses, significant milestones are reached, showcasing our team\'s dedication and expertise. We are steadily moving closer to our completion goal, ensuring quality and safety at every step. Each phase is handled with precision to meet our luxury standards and timeline.',
+                          maxLines: showFullProgress ? null : 3,
+                          overflow: showFullProgress ? TextOverflow.visible : TextOverflow.ellipsis,
+                          style: GoogleFonts.montserrat(
+                            fontSize: 11, 
+                            color: isDark ? Colors.white38 : Colors.black38, 
+                            height: 1.6, 
+                            fontWeight: FontWeight.bold
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        GestureDetector(
+                          onTap: onToggleReadMore,
+                          child: Text(
+                            showFullProgress ? 'Show less' : 'Read more',
+                            style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
               ),
-              const SizedBox(width: 32),
+              const SizedBox(width: 24),
               Stack(
                 alignment: Alignment.center,
                 children: [
-                   SizedBox(
+                  SizedBox(
                     width: 100,
                     height: 100,
-                    child: CircularProgressIndicator(
-                      value: overallProgress.toDouble() / 100,
-                      strokeWidth: 6,
-                      backgroundColor: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1),
-                      valueColor: const AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
+                    child: CustomPaint(
+                      painter: _DashedCirclePainter(
+                        progress: overallProgress.toDouble() / 100,
+                        color: M4Theme.premiumBlue,
+                        backgroundColor: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1),
+                      ),
                     ),
                   ),
                   Column(
@@ -1314,4 +1384,62 @@ class _FilterChip extends StatelessWidget {
       ).animate(target: isActive ? 1 : 0).scale(duration: 100.ms, end: const Offset(0.95, 0.95)),
     );
   }
+}
+
+class _DashedCirclePainter extends CustomPainter {
+  final double progress;
+  final Color color;
+  final Color backgroundColor;
+
+  _DashedCirclePainter({required this.progress, required this.color, required this.backgroundColor});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+    const strokeWidth = 4.0;
+    const dashCount = 60;
+    const gap = 0.5;
+
+    final bgPaint = Paint()
+      ..color = backgroundColor
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke;
+
+    final progressPaint = Paint()
+      ..color = color
+      ..strokeWidth = strokeWidth
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+    final dashAngle = (2 * 3.14159) / dashCount;
+
+    for (int i = 0; i < dashCount; i++) {
+        final startAngle = i * dashAngle;
+        final sweepAngle = dashAngle * (1 - gap);
+        
+        // Draw background segment
+        canvas.drawArc(
+            Rect.fromCircle(center: center, radius: radius),
+            startAngle,
+            sweepAngle,
+            false,
+            bgPaint
+        );
+
+        // Draw progress segment if within range
+        if (i < dashCount * progress) {
+            canvas.drawArc(
+                Rect.fromCircle(center: center, radius: radius),
+                startAngle,
+                sweepAngle,
+                false,
+                progressPaint
+            );
+        }
+    }
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
 }
