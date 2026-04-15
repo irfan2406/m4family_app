@@ -130,6 +130,7 @@ final GoRouter _router = GoRouter(
         subtitle: 'Stay updated with our latest multimedia releases.',
         typeIcon: LucideIcons.play,
         emptyMessage: 'No media posts found',
+        contentType: 'media',
       ),
     ),
     GoRoute(
@@ -139,6 +140,7 @@ final GoRouter _router = GoRouter(
         subtitle: 'Stay updated with our latest achievements and milestones.',
         typeIcon: LucideIcons.zap,
         emptyMessage: 'No highlights posts found',
+        contentType: 'highlight',
       ),
     ),
     GoRoute(
@@ -148,6 +150,7 @@ final GoRouter _router = GoRouter(
         subtitle: 'Stay updated with our latest upcoming events.',
         typeIcon: LucideIcons.calendarDays,
         emptyMessage: 'No event posts found',
+        contentType: 'event',
       ),
     ),
     GoRoute(
@@ -157,6 +160,7 @@ final GoRouter _router = GoRouter(
         subtitle: 'Stay updated with our latest insights and news.',
         typeIcon: LucideIcons.fileText,
         emptyMessage: 'No blog posts found',
+        contentType: 'blog',
       ),
     ),
     GoRoute(
