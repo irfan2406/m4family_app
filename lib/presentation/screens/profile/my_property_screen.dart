@@ -6,7 +6,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import 'package:m4_mobile/core/providers/theme_provider.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
-import 'package:m4_mobile/core/network/api_client.dart';
 
 class MyPropertyScreen extends ConsumerStatefulWidget {
   const MyPropertyScreen({super.key});
@@ -28,7 +27,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
 
   Future<void> _fetchBookings() async {
     try {
-      final res = await ref.read(apiClientProvider).getMyBookings();
+      final res = await ref.read(apiClientProvider).getUserBookings();
       if (res.data['status'] == true) {
         setState(() {
           _bookings = res.data['data'] ?? [];

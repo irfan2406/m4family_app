@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -88,6 +89,46 @@ class AuthNotifier extends StateNotifier<AuthState> {
       }
     } catch (e) {
       state = state.copyWith(status: AuthStatus.error, error: e.toString());
+    }
+  }
+
+  /// Web `/auth/cp/login`: password + CP ID; rejects non-CP roles like the web client.
+  Future<String?> loginCpWithPassword(String identifier, String password) async {
+    state = state.copyWith(status: AuthStatus.loading, error: null);
+    try {
+      final response = await _apiClient.loginWithPassword(identifier.trim(), password);
+      final ok = response.statusCode == 200 && response.data['status'] == true;
+      if (!ok) {
+        final msg = response.data['message']?.toString() ?? 'Login failed';
+        state = state.copyWith(status: AuthStatus.initial, error: null);
+        return msg;
+      }
+      final data = response.data['data'];
+      final role = data['user']?['role']?.toString().toLowerCase();
+      if (role != 'cp') {
+        state = state.copyWith(status: AuthStatus.initial, error: null);
+        return 'Access denied. Channel Partner account required under this ID.';
+      }
+      final token = data['accessToken'] as String;
+      await _storage.write(key: 'jwt_token', value: token);
+      final userResponse = await _apiClient.getCurrentUser();
+      final raw = userResponse.data['data'] ?? userResponse.data;
+      Map<String, dynamic>? userMap;
+      if (raw is Map<String, dynamic>) {
+        userMap = raw;
+      } else if (raw is Map) {
+        userMap = Map<String, dynamic>.from(raw);
+      }
+      state = state.copyWith(status: AuthStatus.authenticated, user: userMap);
+      return null;
+    } on DioException catch (e) {
+      final data = e.response?.data;
+      final msg = data is Map ? data['message']?.toString() : null;
+      state = state.copyWith(status: AuthStatus.initial, error: null);
+      return msg ?? e.message ?? 'Login failed';
+    } catch (e) {
+      state = state.copyWith(status: AuthStatus.initial, error: null);
+      return e.toString();
     }
   }
 

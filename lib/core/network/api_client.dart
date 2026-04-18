@@ -62,8 +62,99 @@ class ApiClient {
     });
   }
 
+  /// Password login (web CP: `identifier` = CP ID / phone / email).
+  Future<Response> loginWithPassword(String identifier, String password) async {
+    return dio.post('/api/auth/login', data: {
+      'identifier': identifier,
+      'password': password,
+    });
+  }
+
+  /// Registration (web CP signup: `role`: `CP`, plus CP fields).
+  Future<Response> register(Map<String, dynamic> body) async {
+    return dio.post('/api/auth/register', data: body);
+  }
+
+  Future<Response> forgotPassword(String identifier) async {
+    return dio.post('/api/auth/forgot-password', data: {'identifier': identifier});
+  }
+
+  Future<Response> resetPassword({
+    required String identifier,
+    required String token,
+    required String newPassword,
+  }) async {
+    return dio.post('/api/auth/reset-password', data: {
+      'identifier': identifier,
+      'token': token,
+      'newPassword': newPassword,
+    });
+  }
+
   Future<Response> getCurrentUser() async {
     return dio.get('/api/auth/me');
+  }
+
+  /// Public app config (matches web `GET /api/config` — e.g. support phone/WhatsApp).
+  Future<Response> getPublicConfig() async {
+    return dio.get('/api/config');
+  }
+
+  // ─── Channel Partner (`/api/cp/*`, requireAuth) ─────────────────────────────
+  Future<Response> getCpWallet() async {
+    return dio.get('/api/cp/wallet');
+  }
+
+  Future<Response> getCpReferrals() async {
+    return dio.get('/api/cp/referrals');
+  }
+
+  Future<Response> createCpReferral(Map<String, dynamic> body) async {
+    return dio.post('/api/cp/referrals', data: body);
+  }
+
+  Future<Response> patchCpReferralStatus(String id, String status) async {
+    return dio.patch('/api/cp/referrals/$id/status', data: {'status': status});
+  }
+
+  Future<Response> getCpCommissions() async {
+    return dio.get('/api/cp/commissions');
+  }
+
+  Future<Response> getCpTracker({Map<String, dynamic>? queryParameters}) async {
+    return dio.get('/api/cp/tracker', queryParameters: queryParameters);
+  }
+
+  Future<Response> createCpTracker(Map<String, dynamic> body) async {
+    return dio.post('/api/cp/tracker', data: body);
+  }
+
+  Future<Response> updateCpTracker(String id, Map<String, dynamic> body) async {
+    return dio.patch('/api/cp/tracker/$id', data: body);
+  }
+
+  Future<Response> getCpPerformance() async {
+    return dio.get('/api/cp/performance');
+  }
+
+  /// CP tax / TDS statements (same mock payload as investor tax-reports).
+  Future<Response> getCpTaxReports({String? year}) async {
+    final q = year != null ? <String, dynamic>{'year': year} : null;
+    return dio.get('/api/cp/tax-reports', queryParameters: q);
+  }
+
+  /// Authenticated leads list (filters: `source`, `status`, etc.).
+  Future<Response> getLeads({Map<String, dynamic>? queryParameters}) async {
+    return dio.get('/api/leads', queryParameters: queryParameters);
+  }
+
+  /// CP bookings (`GET /api/bookings/my`).
+  Future<Response> getCpBookings() async {
+    return dio.get('/api/bookings/my');
+  }
+
+  Future<Response> getCatalogContactStaff() async {
+    return dio.get('/api/catalog/contact-staff');
   }
 
   // Catalog Methods
@@ -134,6 +225,20 @@ class ApiClient {
   // Profile Management
   Future<Response> updateMe(Map<String, dynamic> data) async {
     return dio.patch('/api/auth/me', data: data);
+  }
+
+  Future<Response> changePassword({
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    return dio.patch('/api/auth/change-password', data: {
+      'currentPassword': currentPassword,
+      'newPassword': newPassword,
+    });
+  }
+
+  Future<Response> logoutAllSessions() async {
+    return dio.post('/api/auth/logout-all');
   }
 
   Future<Response> deleteMe() async {
@@ -291,7 +396,7 @@ class ApiClient {
     return dio.post('/api/user/site-visit', data: data);
   }
 
-  Future<Response> getMyBookings() async {
+  Future<Response> getUserBookings() async {
     return dio.get('/api/user/bookings');
   }
 

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -194,10 +193,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           label: 'CHANNEL PARTNER',
           icon: LucideIcons.sparkles,
           iconColor: Colors.purpleAccent,
-          onTap: () => setState(() {
-            _selectedRole = 'CP';
-            _step = 1;
-          }),
+          onTap: () => context.push('/auth/cp/login'),
         ),
         const SizedBox(height: 12),
         _PremiumButton(

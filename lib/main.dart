@@ -4,6 +4,9 @@ import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/screens/auth/login_screen.dart';
+import 'package:m4_mobile/presentation/screens/auth/cp_login_screen.dart';
+import 'package:m4_mobile/presentation/screens/auth/cp_signup_screen.dart';
+import 'package:m4_mobile/presentation/screens/auth/cp_forgot_password_screen.dart';
 import 'package:m4_mobile/presentation/screens/auth/onboarding_screen.dart';
 import 'package:m4_mobile/presentation/screens/profile/profile_settings_screen.dart';
 import 'package:m4_mobile/presentation/screens/profile/referral_screen.dart';
@@ -15,6 +18,8 @@ import 'package:m4_mobile/presentation/screens/profile/legal_vault_screen.dart';
 import 'package:m4_mobile/presentation/screens/profile/deactivate_account_screen.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
+import 'package:m4_mobile/presentation/widgets/cp_main_shell.dart';
+import 'package:m4_mobile/presentation/screens/notifications/notification_list_screen.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/screens/about/about_screen.dart';
 import 'package:m4_mobile/presentation/screens/communities/community_list_screen.dart';
@@ -22,11 +27,26 @@ import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart
 import 'package:m4_mobile/presentation/screens/careers/careers_screen.dart';
 import 'package:m4_mobile/presentation/screens/communities/community_detail_screen.dart';
 import 'package:m4_mobile/presentation/screens/projects/guest_project_detail_screen.dart';
-import 'package:m4_mobile/presentation/screens/support/support_screen.dart';
 import 'package:m4_mobile/presentation/screens/custom_views/custom_views_screen.dart';
 import 'package:m4_mobile/presentation/screens/custom_views/guest_custom_views_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/contact_screen.dart';
 import 'package:m4_mobile/presentation/screens/content_hub/content_hub_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_dashboard_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_referral_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_payments_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_tracker_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_hub_calculator_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_hub_analytics_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_hub_network_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_hub_reports_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_hub_insights_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_my_bookings_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_site_visit_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_inquiry_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_profile_settings_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_elite_cp_connect_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_elite_investor_connect_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_tax_reports_screen.dart';
 
 import 'package:m4_mobile/core/providers/theme_provider.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -80,12 +100,100 @@ final GoRouter _router = GoRouter(
       builder: (context, state) => const LoginScreen(),
     ),
     GoRoute(
+      path: '/auth/cp/login',
+      builder: (context, state) => const CpLoginScreen(),
+    ),
+    GoRoute(
+      path: '/auth/cp/signup',
+      builder: (context, state) => const CpSignupScreen(),
+    ),
+    GoRoute(
+      path: '/auth/cp/forgot-password',
+      builder: (context, state) => const CpForgotPasswordScreen(),
+    ),
+    GoRoute(
       path: '/',
       builder: (context, state) => const SplashScreen(),
     ),
     GoRoute(
       path: '/home',
       builder: (context, state) => const ConditionalHomeShell(),
+    ),
+    GoRoute(
+      path: '/cp/dashboard',
+      builder: (context, state) => const CpDashboardScreen(),
+    ),
+    GoRoute(
+      path: '/cp/referral',
+      builder: (context, state) => const CpReferralScreen(),
+    ),
+    GoRoute(
+      path: '/cp/payments',
+      builder: (context, state) => const CpPaymentsScreen(),
+    ),
+    GoRoute(
+      path: '/cp/tracker',
+      builder: (context, state) => const CpTrackerScreen(),
+    ),
+    GoRoute(
+      path: '/cp/hub/analytics',
+      builder: (context, state) => const CpHubAnalyticsScreen(),
+    ),
+    GoRoute(
+      path: '/cp/hub/calculator',
+      builder: (context, state) => const CpHubCalculatorScreen(),
+    ),
+    GoRoute(
+      path: '/cp/hub/network',
+      builder: (context, state) => const CpHubNetworkScreen(),
+    ),
+    GoRoute(
+      path: '/cp/hub/reports',
+      builder: (context, state) => const CpHubReportsScreen(),
+    ),
+    GoRoute(
+      path: '/cp/hub/insights',
+      builder: (context, state) => const CpHubInsightsScreen(),
+    ),
+    GoRoute(
+      path: '/cp/booking/my-bookings',
+      builder: (context, state) => const CpMyBookingsScreen(),
+    ),
+    GoRoute(
+      path: '/cp/booking/site-visit',
+      builder: (context, state) => const CpSiteVisitScreen(),
+    ),
+    GoRoute(
+      path: '/cp/booking/schedule-visit',
+      builder: (context, state) => const CpSiteVisitScreen(),
+    ),
+    GoRoute(
+      path: '/cp/booking/inquiry',
+      builder: (context, state) => const CpInquiryScreen(),
+    ),
+    GoRoute(
+      path: '/cp/settings',
+      builder: (context, state) => const CpProfileSettingsScreen(),
+    ),
+    GoRoute(
+      path: '/cp/profile/settings',
+      builder: (context, state) => const CpProfileSettingsScreen(),
+    ),
+    GoRoute(
+      path: '/cp/profile/ticket-logs',
+      builder: (context, state) => const SupportLogsScreen(),
+    ),
+    GoRoute(
+      path: '/cp/elite/cp-connect',
+      builder: (context, state) => const CpEliteCpConnectScreen(),
+    ),
+    GoRoute(
+      path: '/cp/elite/investor-connect',
+      builder: (context, state) => const CpEliteInvestorConnectScreen(),
+    ),
+    GoRoute(
+      path: '/cp/tax-reports',
+      builder: (context, state) => const CpTaxReportsScreen(),
     ),
     GoRoute(
       path: '/profile/settings',
@@ -122,6 +230,10 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/support',
       builder: (context, state) => const SupportScreen(),
+    ),
+    GoRoute(
+      path: '/notifications',
+      builder: (context, state) => const NotificationListScreen(),
     ),
     GoRoute(
       path: '/media',
@@ -236,7 +348,7 @@ class SplashScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            CircularProgressIndicator(color: M4Theme.premiumBlue),
+            const CircularProgressIndicator(color: M4Theme.premiumBlue),
           ],
         ),
       ),
@@ -263,11 +375,16 @@ class ConditionalHomeShell extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final status = ref.watch(authProvider.select((s) => s.status));
-    
+    final user = ref.watch(authProvider.select((s) => s.user));
+
     if (status == AuthStatus.authenticated) {
+      final role = user?['role']?.toString().toLowerCase();
+      if (role == 'cp') {
+        return const CpMainShell();
+      }
       return const MainShell();
     }
-    
+
     return const GuestMainShell();
   }
 }
