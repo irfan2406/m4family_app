@@ -1,8 +1,12 @@
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
@@ -23,10 +27,14 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
   final _last = TextEditingController();
   final _email = TextEditingController();
   final _phone = TextEditingController();
+  final _company = TextEditingController();
+  final _rera = TextEditingController();
 
   bool _loading = true;
   bool _saving = false;
+  bool _uploadingAvatar = false;
   String? _dobIso;
+  String? _avatarUrl;
 
   bool _sessionsBusy = false;
   bool _deleteBusy = false;
@@ -41,6 +49,8 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
     _last.dispose();
     _email.dispose();
     _phone.dispose();
+    _company.dispose();
+    _rera.dispose();
     _curPass.dispose();
     _newPass.dispose();
     _confPass.dispose();
@@ -64,6 +74,10 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
         _last.text = u['lastName']?.toString() ?? '';
         _email.text = u['email']?.toString() ?? '';
         _phone.text = u['phone']?.toString() ?? '';
+        _company.text = u['companyName']?.toString() ?? '';
+        _rera.text = u['reraNumber']?.toString() ?? '';
+        final av = u['avatarUrl'] ?? u['avatar'];
+        _avatarUrl = av?.toString();
         final raw = u['dob'];
         if (raw != null && raw.toString().isNotEmpty) {
           try {
@@ -82,6 +96,10 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
         _last.text = u['lastName']?.toString() ?? '';
         _email.text = u['email']?.toString() ?? '';
         _phone.text = u['phone']?.toString() ?? '';
+        _company.text = u['companyName']?.toString() ?? '';
+        _rera.text = u['reraNumber']?.toString() ?? '';
+        final av = u['avatarUrl'] ?? u['avatar'];
+        _avatarUrl = av?.toString();
         final raw = u['dob'];
         if (raw != null && raw.toString().isNotEmpty) {
           try {
@@ -92,6 +110,67 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
       }
     }
     if (mounted) setState(() => _loading = false);
+  }
+
+  Future<void> _pickAndUploadAvatar() async {
+    final picker = ImagePicker();
+    final x = await picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 2048,
+      maxHeight: 2048,
+      imageQuality: 88,
+    );
+    if (x == null || !mounted) return;
+    final len = await File(x.path).length();
+    if (len > 2 * 1024 * 1024) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('File too large (max 2MB)')),
+        );
+      }
+      return;
+    }
+    setState(() => _uploadingAvatar = true);
+    try {
+      final res = await ref.read(apiClientProvider).uploadAvatar(x.path);
+      final body = res.data;
+      String? newUrl;
+      if (body is Map && body['data'] is Map) {
+        final d = body['data'] as Map;
+        newUrl = d['fileUrl']?.toString() ?? d['url']?.toString();
+      }
+      if (newUrl == null || newUrl.isEmpty) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Upload failed')),
+          );
+        }
+        return;
+      }
+      final patch = await ref.read(apiClientProvider).updateMe({'avatarUrl': newUrl});
+      final ok = patch.data is Map && (patch.data as Map)['status'] == true;
+      if (ok) {
+        setState(() => _avatarUrl = newUrl);
+        await ref.read(authProvider.notifier).fetchMe();
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Profile photo updated')),
+          );
+        }
+      } else {
+        final msg = patch.data is Map ? (patch.data as Map)['message']?.toString() : null;
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg ?? 'Update failed')));
+        }
+      }
+    } on DioException catch (e) {
+      if (mounted) {
+        final m = e.response?.data is Map ? (e.response!.data as Map)['message']?.toString() : null;
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m ?? 'Upload failed')));
+      }
+    } finally {
+      if (mounted) setState(() => _uploadingAvatar = false);
+    }
   }
 
   @override
@@ -107,6 +186,8 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
         'firstName': _first.text.trim(),
         'lastName': _last.text.trim(),
         'phone': _phone.text.trim(),
+        'companyName': _company.text.trim(),
+        'reraNumber': _rera.text.trim(),
         if (_dobIso != null && _dobIso!.isNotEmpty) 'dob': _dobIso,
       });
       if (!mounted) return;
@@ -650,6 +731,86 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          Center(
+            child: Column(
+              children: [
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Container(
+                      width: 96,
+                      height: 96,
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: scheme.primary.withValues(alpha: 0.22), width: 2),
+                        color: scheme.surfaceContainerHigh.withValues(alpha: 0.25),
+                      ),
+                      child: ClipOval(
+                        child: _avatarUrl != null && _avatarUrl!.isNotEmpty
+                            ? CachedNetworkImage(
+                                imageUrl: ref.read(apiClientProvider).resolveUrl(_avatarUrl!),
+                                fit: BoxFit.cover,
+                                alignment: Alignment.center,
+                                memCacheWidth: 192,
+                                memCacheHeight: 192,
+                                fadeInDuration: Duration.zero,
+                                errorWidget: (_, __, ___) =>
+                                    Icon(LucideIcons.user, size: 40, color: scheme.outline),
+                              )
+                            : Icon(LucideIcons.user, size: 40, color: scheme.outline.withValues(alpha: 0.35)),
+                      ),
+                    ),
+                    if (_uploadingAvatar)
+                      Positioned.fill(
+                        child: Container(
+                          decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.black54),
+                          child: const Center(
+                            child: SizedBox(
+                              width: 28,
+                              height: 28,
+                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      ),
+                    Positioned(
+                      bottom: -2,
+                      right: -2,
+                      child: Material(
+                        color: scheme.primary,
+                        shape: const CircleBorder(),
+                        child: InkWell(
+                          customBorder: const CircleBorder(),
+                          onTap: _uploadingAvatar ? null : _pickAndUploadAvatar,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Icon(LucideIcons.camera, size: 16, color: scheme.onPrimary),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'ACCOUNT AVATAR',
+                  style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Recommended: square PNG/JPG · max 2MB',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 8,
+                    fontWeight: FontWeight.w600,
+                    color: scheme.onSurface.withValues(alpha: 0.38),
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const SizedBox(height: 20),
+              ],
+            ),
+          ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -760,6 +921,43 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
                 prefix: Icon(LucideIcons.phone, size: 16, color: scheme.onSurface.withValues(alpha: 0.5)),
               ),
             ),
+          ),
+          const SizedBox(height: 18),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: _labeledField(
+                  scheme,
+                  'FIRM NAME',
+                  TextField(
+                    controller: _company,
+                    style: GoogleFonts.montserrat(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                      color: scheme.onSurface.withValues(alpha: 0.92),
+                    ),
+                    decoration: _inputDec(scheme),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _labeledField(
+                  scheme,
+                  'RERA NUMBER',
+                  TextField(
+                    controller: _rera,
+                    style: GoogleFonts.montserrat(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 14,
+                      color: scheme.onSurface.withValues(alpha: 0.92),
+                    ),
+                    decoration: _inputDec(scheme),
+                  ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 18),
           _labeledField(
@@ -907,7 +1105,7 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
                   child: CircularProgressIndicator(strokeWidth: 2, color: scheme.error),
                 )
               : Text(
-                  'DEACTIVATE ALL ACTIVE SESSIONS',
+                  'SECURITY LOGOUT (ALL DEVICES)',
                   style: GoogleFonts.montserrat(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,

@@ -143,6 +143,25 @@ class ApiClient {
     return dio.get('/api/cp/tax-reports', queryParameters: q);
   }
 
+  /// CP team members (web `GET /api/cp/employees`).
+  Future<Response> getCpEmployees() async {
+    return dio.get('/api/cp/employees');
+  }
+
+  /// Web `POST /api/cp/employees` — body: `{ name, phone, email? }`.
+  Future<Response> createCpEmployee(Map<String, dynamic> body) async {
+    return dio.post('/api/cp/employees', data: body);
+  }
+
+  /// Paginated site visits (web `GET /api/cp/visits`).
+  Future<Response> getCpVisits({int page = 1, int limit = 10}) async {
+    return dio.get('/api/cp/visits', queryParameters: {'page': page, 'limit': limit});
+  }
+
+  Future<Response> patchCpVisitStatus(String id, String status) async {
+    return dio.patch('/api/cp/visits/$id/status', data: {'status': status});
+  }
+
   /// Authenticated leads list (filters: `source`, `status`, etc.).
   Future<Response> getLeads({Map<String, dynamic>? queryParameters}) async {
     return dio.get('/api/leads', queryParameters: queryParameters);

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
+import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,9 +14,11 @@ import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
 import 'package:m4_mobile/presentation/screens/projects/guest_project_detail_screen.dart';
 
-
+/// Channel Partner catalog: set [cpCatalogMode] so back + detail routes match web `/cp/projects`.
 class ProjectListScreen extends ConsumerWidget {
-  const ProjectListScreen({super.key});
+  const ProjectListScreen({super.key, this.cpCatalogMode = false});
+
+  final bool cpCatalogMode;
 
   void _showFilterBottomSheet(BuildContext context, WidgetRef ref) {
     final locations = ref.read(projectLocationsProvider);
@@ -161,6 +165,11 @@ class ProjectListScreen extends ConsumerWidget {
                     children: [
                       InkWell(
                         onTap: () {
+                          if (cpCatalogMode) {
+                            ref.read(cpNavigationIndexProvider.notifier).state = 0;
+                            context.go('/home');
+                            return;
+                          }
                           if (Navigator.canPop(context)) {
                             Navigator.pop(context);
                           }
@@ -177,34 +186,56 @@ class ProjectListScreen extends ConsumerWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'DISCOVER',
-                            style: GoogleFonts.montserrat(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w400,
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.55),
-                              letterSpacing: 3,
+                          if (cpCatalogMode) ...[
+                            Text(
+                              'M4 PROPERTIES',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w900,
+                                color: Theme.of(context).colorScheme.onSurface,
+                                letterSpacing: -0.5,
+                              ),
                             ),
-                          ),
-                          Text(
-                            'M4 PROJECTS',
-                            style: GoogleFonts.montserrat(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w400,
-                              color: Theme.of(context).colorScheme.onSurface,
-                              letterSpacing: -1,
+                            const SizedBox(height: 6),
+                            Text(
+                              'DISCOVER CURATED LUXURY',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w700,
+                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.45),
+                                letterSpacing: 2.5,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '${filteredProjects.length} PROPERTIES AVAILABLE',
-                            style: GoogleFonts.montserrat(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w500,
-                              color: M4Theme.premiumBlue,
-                              letterSpacing: 1.5,
+                          ] else ...[
+                            Text(
+                              'DISCOVER',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w400,
+                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.55),
+                                letterSpacing: 3,
+                              ),
                             ),
-                          ),
+                            Text(
+                              'M4 PROJECTS',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 24,
+                                fontWeight: FontWeight.w400,
+                                color: Theme.of(context).colorScheme.onSurface,
+                                letterSpacing: -1,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '${filteredProjects.length} PROPERTIES AVAILABLE',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500,
+                                color: M4Theme.premiumBlue,
+                                letterSpacing: 1.5,
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ],
@@ -305,35 +336,42 @@ class ProjectListScreen extends ConsumerWidget {
                     final project = filteredProjects[index];
                     final projectId = project['_id']?.toString() ?? '';
                     final images = project['images'] as List?;
-                    final imageUrl = apiClient.resolveUrl(
-                      project['heroImage']?.toString() ?? 
-                      ((images != null && images.isNotEmpty) ? images[0].toString() : null)
-                    );
+                    final heroImages = project['heroImages'] as List?;
+                    final rawHero = project['heroImage']?.toString() ??
+                        ((heroImages != null && heroImages.isNotEmpty) ? heroImages[0].toString() : null) ??
+                        ((images != null && images.isNotEmpty) ? images[0].toString() : null);
+                    final imageUrl = apiClient.resolveUrl(rawHero);
                     return GestureDetector(
                       onTap: () {
-                        if (projectId.isNotEmpty) {
-                          final authState = ref.read(authProvider);
-                          if (authState.status == AuthStatus.authenticated) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ProjectDetailScreen(
-                                  projectId: projectId,
-                                  projectData: project,
-                                ),
+                        if (projectId.isEmpty) return;
+                        if (cpCatalogMode) {
+                          final map = project is Map<String, dynamic>
+                              ? project as Map<String, dynamic>
+                              : Map<String, dynamic>.from(project as Map);
+                          context.push('/cp/projects/$projectId', extra: map);
+                          return;
+                        }
+                        final authState = ref.read(authProvider);
+                        if (authState.status == AuthStatus.authenticated) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProjectDetailScreen(
+                                projectId: projectId,
+                                projectData: project,
                               ),
-                            );
-                          } else {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => GuestProjectDetailScreen(
-                                  projectId: projectId,
-                                  projectData: project,
-                                ),
+                            ),
+                          );
+                        } else {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => GuestProjectDetailScreen(
+                                projectId: projectId,
+                                projectData: project,
                               ),
-                            );
-                          }
+                            ),
+                          );
                         }
                       },
                       child: isGridView

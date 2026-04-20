@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_home_screen.dart';
-import 'package:m4_mobile/presentation/screens/cp/cp_hub_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_profile_screen.dart';
+import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_dashboard_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_tracker_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/support_screen.dart';
@@ -22,7 +22,7 @@ class CpMainShell extends ConsumerWidget {
       const CpHomeScreen(),
       const CpDashboardScreen(embeddedInShell: true),
       const CpTrackerScreen(embeddedInShell: true),
-      const CpHubScreen(),
+      const ProjectListScreen(cpCatalogMode: true),
       const SupportScreen(),
       const CpProfileScreen(),
     ];

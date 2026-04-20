@@ -6,7 +6,7 @@ import 'package:m4_mobile/presentation/providers/support_provider.dart';
 import 'package:m4_mobile/presentation/screens/support/create_ticket_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/schedule_visit_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/help_center_screen.dart';
-import 'package:m4_mobile/presentation/screens/support/support_logs_screen.dart';
+import 'package:m4_mobile/presentation/screens/support/support_tickets_screen.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 
 
@@ -29,7 +29,6 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
     super.initState();
     Future.microtask(() {
       ref.read(supportProvider.notifier).fetchTickets();
-      ref.read(supportProvider.notifier).fetchLogs();
     });
   }
 
@@ -62,15 +61,15 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
                       const SizedBox(height: 40),
                       _buildOperationalLogsHeader(),
                       const SizedBox(height: 20),
-                      if (state.isLoading && state.logs.isEmpty)
+                      if (state.isLoading && state.tickets.isEmpty)
                         const Center(child: Padding(
                           padding: EdgeInsets.all(40.0),
                           child: CircularProgressIndicator(color: Colors.white24),
                         ))
-                      else if (state.logs.isEmpty)
+                      else if (state.tickets.isEmpty)
                         _buildEmptyState()
                       else
-                        ...state.logs.take(3).map((log) => _LogPreviewItem(log: log)).toList(),
+                        ...state.tickets.take(3).map((t) => _TicketPreviewItem(ticket: t)).toList(),
                       const SizedBox(height: 120), // Bottom padding
 
                     ],
@@ -86,6 +85,8 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
   }
 
   Widget _buildHeader(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final isLight = scheme.brightness == Brightness.light;
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
       child: Row(
@@ -104,54 +105,24 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.05),
+                    color: scheme.surfaceContainerHighest.withValues(alpha: isLight ? 0.65 : 0.25),
                     shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white.withOpacity(0.1)),
+                    border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.5)),
                   ),
-                  child: const Icon(LucideIcons.arrowLeft, color: Colors.white, size: 16),
+                  child: Icon(LucideIcons.arrowLeft, color: scheme.onSurface, size: 16),
                 ),
               ),
               const SizedBox(width: 16),
               Text(
                 'SUPPORT HUB',
                 style: GoogleFonts.montserrat(
-                  fontSize: 20,
+                  fontSize: 18,
                   fontWeight: FontWeight.w900,
-                  color: Colors.white,
-                  letterSpacing: 0,
+                  color: scheme.onSurface,
+                  letterSpacing: 2.4,
                 ),
               ),
             ],
-          ),
-
-          // New Ticket Button - Web Parity
-          InkWell(
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const CreateTicketScreen()),
-            ),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Row(
-                children: [
-                  const Icon(LucideIcons.plusCircle, color: Colors.black, size: 14),
-                  const SizedBox(width: 10),
-                  Text(
-                    'NEW TICKET',
-                    style: GoogleFonts.montserrat(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 10,
-                      letterSpacing: 1,
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ),
         ],
       ),
@@ -159,6 +130,9 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
   }
 
   Widget _buildSupportMatrix() {
+    final scheme = Theme.of(context).colorScheme;
+    final isLight = scheme.brightness == Brightness.light;
+    // web uses monochrome icons
     return GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -171,14 +145,14 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
           icon: LucideIcons.messageCircle,
           title: 'WhatsApp Support',
           subtitle: 'Instant help via WhatsApp',
-          color: Colors.greenAccent,
+          color: scheme.onSurface,
           onTap: SupportHandlers.launchWhatsApp,
         ),
         _MatrixItem(
           icon: LucideIcons.calendar,
           title: 'Schedule Visit',
           subtitle: 'Book a site tour',
-          color: Colors.blueAccent,
+          color: scheme.onSurface,
           onTap: () {
             Navigator.push(
               context,
@@ -190,14 +164,14 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
           icon: LucideIcons.phone,
           title: 'Call Us',
           subtitle: 'Speak with our support team',
-          color: Colors.orangeAccent,
+          color: scheme.onSurface,
           onTap: SupportHandlers.launchCall,
         ),
         _MatrixItem(
           icon: LucideIcons.helpCircle,
           title: 'Help Center',
           subtitle: 'Read our FAQs & Guides',
-          color: Colors.purpleAccent,
+          color: scheme.onSurface,
           onTap: () {
             Navigator.push(
               context,
@@ -213,6 +187,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
   }
 
   Widget _buildOperationalLogsHeader() {
+    final scheme = Theme.of(context).colorScheme;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -223,17 +198,17 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
             Text(
               'OPERATIONAL LOGS',
               style: GoogleFonts.montserrat(
-                fontSize: 12,
+                fontSize: 10,
                 fontWeight: FontWeight.w900,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                letterSpacing: 2,
+                color: scheme.onSurface,
+                letterSpacing: 3.2,
               ),
             ),
             const SizedBox(height: 4),
             Container(
               width: 40,
               height: 2,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
+              color: scheme.onSurface.withValues(alpha: 0.18),
             ),
           ],
         ),
@@ -241,7 +216,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const SupportLogsScreen()),
+              MaterialPageRoute(builder: (context) => const SupportTicketsScreen()),
             );
           },
           child: Text(
@@ -249,8 +224,8 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
             style: GoogleFonts.montserrat(
               fontSize: 9,
               fontWeight: FontWeight.w900,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
-              letterSpacing: 2,
+              color: scheme.onSurface.withValues(alpha: 0.65),
+              letterSpacing: 1.6,
             ),
           ),
         ),
@@ -259,22 +234,23 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
   }
 
   Widget _buildEmptyState() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scheme = Theme.of(context).colorScheme;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.white : Colors.black).withOpacity(0.02),
+        color: scheme.onSurface.withValues(alpha: 0.02),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.6), style: BorderStyle.solid),
       ),
       child: Center(
         child: Text(
-          'No active tickets.',
+          'NO ACTIVE TICKETS.',
           style: GoogleFonts.montserrat(
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
+            fontSize: 11,
+            fontWeight: FontWeight.w900,
+            color: scheme.onSurface,
+            letterSpacing: 3.2,
           ),
         ),
       ),
@@ -300,7 +276,8 @@ class _MatrixItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scheme = Theme.of(context).colorScheme;
+    final isLight = scheme.brightness == Brightness.light;
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
@@ -311,33 +288,45 @@ class _MatrixItem extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF18181B).withOpacity(0.8) : Colors.white.withOpacity(0.6),
+              color: scheme.surfaceContainerHighest.withValues(alpha: isLight ? 0.65 : 0.22),
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.white.withOpacity(0.6)),
+              border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.6)),
               boxShadow: [
-                if (!isDark) BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20, offset: const Offset(0, 10)),
+                if (isLight) BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 20, offset: const Offset(0, 10)),
               ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(icon, color: color, size: 28),
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: scheme.surface,
+                    border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.6)),
+                  ),
+                  child: Icon(icon, color: color, size: 18),
+                ),
                 const SizedBox(height: 16),
                 Text(
-                  title,
+                  title.toUpperCase(),
                   style: GoogleFonts.montserrat(
-                    color: Theme.of(context).colorScheme.onSurface,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 13,
+                    color: scheme.onSurface,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 11,
+                    letterSpacing: 0.6,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  subtitle,
+                  subtitle.toUpperCase(),
                   style: GoogleFonts.montserrat(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
-                    fontSize: 9,
+                    color: scheme.onSurface.withValues(alpha: 0.65),
+                    fontSize: 8.5,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.2,
                   ),
                 ),
               ],
@@ -350,14 +339,20 @@ class _MatrixItem extends StatelessWidget {
 }
 
 
-class _LogPreviewItem extends StatelessWidget {
-  final dynamic log;
+class _TicketPreviewItem extends StatelessWidget {
+  final dynamic ticket;
 
-  const _LogPreviewItem({required this.log});
+  const _TicketPreviewItem({required this.ticket});
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final id = (ticket.id ?? '').toString();
+    final title = (ticket.subject ?? 'Support Query').toString();
+    final status = (ticket.status ?? 'Open').toString();
+    final isOpen = status.toLowerCase() == 'open' || status.toLowerCase() == 'in progress';
+    final badgeBg = isOpen ? Colors.blueAccent.withOpacity(0.1) : Colors.greenAccent.withOpacity(0.12);
+    final badgeFg = isOpen ? Colors.blueAccent : Colors.greenAccent;
     return ClipRRect(
       borderRadius: BorderRadius.circular(24),
       child: BackdropFilter(
@@ -385,7 +380,7 @@ class _LogPreviewItem extends StatelessWidget {
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
-                            log.displayId,
+                            id.isEmpty ? '—' : id.substring(0, id.length.clamp(0, 8)),
                             style: GoogleFonts.montserrat(
                               color: Colors.blueAccent,
                               fontSize: 8,
@@ -394,15 +389,18 @@ class _LogPreviewItem extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        Text(
-                          log.title.toUpperCase(),
-                          style: GoogleFonts.montserrat(
-                            color: Theme.of(context).colorScheme.onSurface,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 13,
+                        Expanded(
+                          child: Text(
+                            title.toUpperCase(),
+                            style: GoogleFonts.montserrat(
+                              color: Theme.of(context).colorScheme.onSurface,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 13,
+                            ),
+                            maxLines: 1,
+                            softWrap: false,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
@@ -412,7 +410,7 @@ class _LogPreviewItem extends StatelessWidget {
                         Icon(LucideIcons.clock, size: 12, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2)),
                         const SizedBox(width: 6),
                         Text(
-                          _getTimeAgo(log.createdAt).toUpperCase(),
+                          DateFormat('MMM d').format(ticket.createdAt).toUpperCase(),
                           style: GoogleFonts.montserrat(
                             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
                             fontSize: 9,
@@ -424,40 +422,19 @@ class _LogPreviewItem extends StatelessWidget {
                   ],
                 ),
               ),
-              _buildStatusBadge(log.status),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(color: badgeBg, borderRadius: BorderRadius.circular(8)),
+                child: Text(
+                  status.toUpperCase(),
+                  style: GoogleFonts.montserrat(color: badgeFg, fontSize: 8, fontWeight: FontWeight.w900),
+                ),
+              ),
             ],
           ),
         ),
       ),
     );
-  }
-
-  Widget _buildStatusBadge(String status) {
-    final bool isPositive = ['completed', 'verified', 'success', 'sent'].contains(status.toLowerCase());
-    final color = isPositive ? Colors.greenAccent : Colors.blueAccent;
-    
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Text(
-        status.toUpperCase(),
-        style: GoogleFonts.montserrat(
-          color: color,
-          fontSize: 8,
-          fontWeight: FontWeight.w900,
-        ),
-      ),
-    );
-  }
-
-  String _getTimeAgo(DateTime dateTime) {
-    final duration = DateTime.now().difference(dateTime);
-    if (duration.inMinutes < 60) return '${duration.inMinutes} mins ago';
-    if (duration.inHours < 24) return '${duration.inHours} hours ago';
-    return DateFormat('MMM d').format(dateTime);
   }
 }
 

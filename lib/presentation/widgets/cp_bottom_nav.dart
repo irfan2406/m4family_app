@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
-/// Web CP mobile mockup: Home, Dashboard, Performance, Hub, Support, Profile (6 tabs).
+/// Web `AppShell` CP bar: Home, Dashboard, Tracker, Projects (compass), Support, Profile (6 tabs).
 class CpBottomNav extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;

@@ -12,6 +12,9 @@ import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:go_router/go_router.dart';
+import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
+import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
 
 class CommunityDetailScreen extends ConsumerStatefulWidget {
   final dynamic community;
@@ -123,6 +126,10 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final user = ref.watch(authProvider).user;
+    final role = user?['role']?.toString().toLowerCase();
+    final isCp = role == 'cp';
+    final cpIdx = ref.watch(cpNavigationIndexProvider);
     final apiClient = ref.watch(apiClientProvider);
     final heroImageUrl = apiClient.resolveUrl(widget.community['image'] ?? widget.community['heroImage']);
     final benefitsRaw = widget.community['benefits'] as List? ?? [];
@@ -138,6 +145,15 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
     return Scaffold(
       backgroundColor: isDark ? Colors.black : Colors.white,
       drawer: const ConditionalDrawer(),
+      bottomNavigationBar: isCp
+          ? CpBottomNav(
+              currentIndex: cpIdx,
+              onTap: (i) {
+                context.go('/home');
+                ref.read(cpNavigationIndexProvider.notifier).state = i;
+              },
+            )
+          : null,
       body: CustomScrollView(
         controller: _scrollController,
         slivers: [
@@ -411,7 +427,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                               child: Text(
                                 'VIEW ALL',
                                 style: GoogleFonts.inter(
-                                  color: Colors.white.withOpacity(0.5),
+                                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
                                   fontSize: 10,
                                   fontWeight: FontWeight.w900,
                                   letterSpacing: 2,
@@ -766,9 +782,24 @@ class CommunityProjectsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final apiClient = ref.watch(apiClientProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scheme = Theme.of(context).colorScheme;
+    final user = ref.watch(authProvider).user;
+    final role = user?['role']?.toString().toLowerCase();
+    final isCp = role == 'cp';
+    final cpIdx = ref.watch(cpNavigationIndexProvider);
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: scheme.surface,
+      bottomNavigationBar: isCp
+          ? CpBottomNav(
+              currentIndex: cpIdx,
+              onTap: (i) {
+                context.go('/home');
+                ref.read(cpNavigationIndexProvider.notifier).state = i;
+              },
+            )
+          : null,
       body: CustomScrollView(
         slivers: [
           // 🔝 Header
@@ -782,12 +813,12 @@ class CommunityProjectsScreen extends ConsumerWidget {
                     onTap: () => Navigator.pop(context),
                     child: Row(
                       children: [
-                        const Icon(LucideIcons.arrowLeft, color: Colors.white, size: 20),
+                        Icon(LucideIcons.arrowLeft, color: isDark ? Colors.white : Colors.black, size: 20),
                         const SizedBox(width: 10),
                         Text(
                           'BACK',
                           style: GoogleFonts.inter(
-                            color: Colors.white.withOpacity(0.5),
+                            color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 2,
@@ -802,7 +833,7 @@ class CommunityProjectsScreen extends ConsumerWidget {
                       Text(
                         'M4 FAMILY',
                         style: GoogleFonts.inter(
-                          color: Colors.white,
+                          color: isDark ? Colors.white : Colors.black,
                           fontSize: 18,
                           fontWeight: FontWeight.w900,
                           letterSpacing: -1,
@@ -811,7 +842,7 @@ class CommunityProjectsScreen extends ConsumerWidget {
                       Text(
                         'COMMUNITY PORTFOLIO',
                         style: GoogleFonts.inter(
-                          color: Colors.white.withOpacity(0.5),
+                          color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
                           fontSize: 8,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1,

@@ -40,17 +40,18 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scheme = Theme.of(context).colorScheme;
+    final isDark = scheme.brightness == Brightness.dark;
     final state = ref.watch(contentProvider(widget.contentType));
 
     return Scaffold(
-      backgroundColor: isDark ? Colors.black : Colors.white,
+      backgroundColor: scheme.surface,
       drawer: const ConditionalDrawer(),
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
             floating: true,
-            backgroundColor: (isDark ? Colors.black : Colors.white).withOpacity(0.9),
+            backgroundColor: scheme.surface.withValues(alpha: 0.92),
             surfaceTintColor: Colors.transparent,
             elevation: 0,
             leadingWidth: 80,
@@ -61,7 +62,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                   onPressed: () => Navigator.pop(context),
                   icon: Icon(LucideIcons.chevronLeft, color: isDark ? Colors.white : Colors.black, size: 28),
                   style: IconButton.styleFrom(
-                    backgroundColor: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
+                    backgroundColor: scheme.onSurface.withValues(alpha: 0.05),
                     padding: EdgeInsets.zero,
                   ),
                 ),
@@ -77,7 +78,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                     fontSize: 16,
                     fontWeight: FontWeight.w400,
                     letterSpacing: -0.5,
-                    color: isDark ? Colors.white : Colors.black,
+                    color: scheme.onSurface,
                   ),
                 ),
                 Text(
@@ -86,7 +87,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                     fontSize: 8,
                     fontWeight: FontWeight.w400,
                     letterSpacing: 3,
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+                    color: scheme.onSurface.withValues(alpha: 0.55),
                   ),
                 ),
               ],
@@ -97,7 +98,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                   onPressed: () => Scaffold.of(context).openDrawer(),
                   icon: Icon(
                     LucideIcons.moreHorizontal,
-                    color: isDark ? Colors.white : Colors.black,
+                    color: scheme.onSurface,
                     size: 28,
                   ),
                 ),
@@ -117,19 +118,19 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                      color: scheme.onSurface.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
+                      border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.45)),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(widget.typeIcon, color: isDark ? Colors.white : Colors.black, size: 16),
+                        Icon(widget.typeIcon, color: scheme.onSurface, size: 16),
                         const SizedBox(width: 12),
                         Text(
                           'CONTENT HUB',
                           style: GoogleFonts.montserrat(
-                            color: isDark ? Colors.white : Colors.black,
+                            color: scheme.onSurface,
                             fontSize: 10,
                             fontWeight: FontWeight.w400,
                             letterSpacing: 1,
@@ -146,7 +147,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                       fontWeight: FontWeight.w400,
                       letterSpacing: -2,
                       height: 0.9,
-                      color: isDark ? Colors.white : Colors.black,
+                      color: scheme.onSurface,
                     ),
                   ).animate().fadeIn().slideY(begin: 0.2),
                   const SizedBox(height: 16),
@@ -154,7 +155,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                     widget.subtitle,
                     style: GoogleFonts.montserrat(
                       fontSize: 14,
-                      color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+                      color: scheme.onSurface.withValues(alpha: 0.55),
                       fontWeight: FontWeight.w500,
                     ),
                   ).animate().fadeIn(delay: 200.ms),
@@ -175,11 +176,11 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(LucideIcons.wifiOff, color: (isDark ? Colors.white : Colors.black).withOpacity(0.2), size: 48),
+                    Icon(LucideIcons.wifiOff, color: scheme.onSurface.withValues(alpha: 0.25), size: 48),
                     const SizedBox(height: 16),
                     Text(
                       'Unable to load content',
-                      style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.5), fontSize: 14),
+                      style: GoogleFonts.montserrat(color: scheme.onSurface.withValues(alpha: 0.6), fontSize: 14),
                     ),
                     const SizedBox(height: 16),
                     TextButton(
@@ -216,6 +217,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
   }
 
   Widget _buildEmptyState(bool isDark) {
+    final scheme = Theme.of(context).colorScheme;
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -224,18 +226,18 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
+              color: scheme.onSurface.withValues(alpha: 0.03),
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
+              border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.45)),
             ),
-            child: Icon(widget.typeIcon, color: (isDark ? Colors.white : Colors.black).withOpacity(0.2), size: 32),
+            child: Icon(widget.typeIcon, color: scheme.onSurface.withValues(alpha: 0.25), size: 32),
           ),
           const SizedBox(height: 32),
           Text(
             widget.emptyMessage,
             textAlign: TextAlign.center,
             style: GoogleFonts.montserrat(
-              color: isDark ? Colors.white : Colors.black,
+              color: scheme.onSurface,
               fontSize: 18,
               fontWeight: FontWeight.w800,
             ),
@@ -245,7 +247,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
             'We\'re working on something amazing.\nCheck back soon for fresh updates.',
             textAlign: TextAlign.center,
             style: GoogleFonts.montserrat(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.4),
+              color: scheme.onSurface.withValues(alpha: 0.55),
               fontSize: 12,
               height: 1.5,
             ),

@@ -232,6 +232,34 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
     );
   }
 
+  InputDecoration _inquiryDec(ColorScheme scheme, {required String hint}) {
+    final isLight = scheme.brightness == Brightness.light;
+    final accent = isLight ? Colors.black : scheme.primary;
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: GoogleFonts.montserrat(
+        fontSize: 12,
+        fontWeight: FontWeight.w700,
+        color: scheme.onSurface.withValues(alpha: isLight ? 0.55 : 0.5),
+      ),
+      filled: true,
+      fillColor: scheme.surfaceContainerHighest.withValues(alpha: isLight ? 0.16 : 0.2),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(18),
+        borderSide: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.5)),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(18),
+        borderSide: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.5)),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(18),
+        borderSide: BorderSide(color: accent.withValues(alpha: 0.85), width: 1.2),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     ref.listen<int>(cpInquiryScrollTriggerProvider, (prev, next) {
@@ -245,7 +273,8 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
 
     final projectsAsync = ref.watch(projectsProvider);
     final scheme = Theme.of(context).colorScheme;
-    final primary = scheme.primary;
+    final isLight = scheme.brightness == Brightness.light;
+    final accent = isLight ? Colors.black : scheme.primary;
 
     return projectsAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
@@ -348,7 +377,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                                     const TextSpan(text: 'Living the\n'),
                                     TextSpan(
                                       text: 'M4 Life',
-                                      style: TextStyle(color: primary, fontWeight: FontWeight.w900),
+                                      style: TextStyle(color: accent, fontWeight: FontWeight.w900),
                                     ),
                                   ],
                                 ),
@@ -360,13 +389,15 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                       Positioned(
                         top: MediaQuery.of(context).padding.top + 8,
                         right: 8,
-                        child: IconButton(
-                          style: IconButton.styleFrom(
-                            backgroundColor: scheme.surface.withValues(alpha: 0.12),
-                            side: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
+                        child: Builder(
+                          builder: (ctx) => IconButton(
+                            style: IconButton.styleFrom(
+                              backgroundColor: scheme.surface.withValues(alpha: 0.12),
+                              side: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
+                            ),
+                            onPressed: () => Scaffold.of(ctx).openDrawer(),
+                            icon: Icon(LucideIcons.moreHorizontal, color: scheme.onSurface),
                           ),
-                          onPressed: () => Scaffold.of(context).openDrawer(),
-                          icon: Icon(LucideIcons.moreHorizontal, color: scheme.onSurface),
                         ),
                       ),
                       Positioned(
@@ -548,7 +579,11 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                       ),
                     ),
                     TextButton(
-                      onPressed: () => context.push('/projects'),
+                      onPressed: () => context.push('/cp/projects'),
+                      style: TextButton.styleFrom(
+                        foregroundColor: scheme.onSurface.withValues(alpha: 0.7),
+                        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+                      ),
                       child: Text(
                         'VIEW ALL',
                         style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 2),
@@ -574,7 +609,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                           final status = (p['status'] ?? 'ONGOING').toString();
                           return GestureDetector(
                             onTap: () {
-                              if (id.isNotEmpty) context.push('/projects/$id');
+                              if (id.isNotEmpty) context.push('/cp/projects/$id', extra: Map<String, dynamic>.from(p as Map));
                             },
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(32),
@@ -752,7 +787,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                       padding: const EdgeInsets.only(right: 14),
                       child: GestureDetector(
                         onTap: () {
-                          if (id.isNotEmpty) context.push('/projects/$id');
+                          if (id.isNotEmpty) context.push('/cp/projects/$id', extra: Map<String, dynamic>.from(p as Map));
                         },
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(28),
@@ -804,7 +839,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                           color: scheme.onSurface,
                         ),
                         children: [
-                          TextSpan(text: 'O', style: TextStyle(color: primary)),
+                          TextSpan(text: 'O', style: TextStyle(color: accent)),
                           const TextSpan(text: 'ur Philosophy'),
                         ],
                       ),
@@ -827,7 +862,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                           color: scheme.onSurface,
                         ),
                         children: [
-                          TextSpan(text: 'F', style: TextStyle(color: primary)),
+                          TextSpan(text: 'F', style: TextStyle(color: accent)),
                           const TextSpan(text: 'eatured Property'),
                         ],
                       ),
@@ -848,7 +883,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                         child: GestureDetector(
                           onTap: () {
                             final id = currentFeatured['_id']?.toString() ?? currentFeatured['id']?.toString() ?? '';
-                            if (id.isNotEmpty) context.push('/projects/$id');
+                            if (id.isNotEmpty) context.push('/cp/projects/$id', extra: Map<String, dynamic>.from(currentFeatured as Map));
                           },
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(40),
@@ -900,7 +935,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                                           fontSize: 9,
                                           fontWeight: FontWeight.w700,
                                           letterSpacing: 3,
-                                          color: primary,
+                                          color: accent,
                                         ),
                                       ),
                                       const SizedBox(height: 8),
@@ -958,7 +993,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                               ),
                               onPressed: () {
                                 final id = currentFeatured['_id']?.toString() ?? currentFeatured['id']?.toString() ?? '';
-                                if (id.isNotEmpty) context.push('/projects/$id');
+                                if (id.isNotEmpty) context.push('/cp/projects/$id', extra: Map<String, dynamic>.from(currentFeatured as Map));
                               },
                               child: Text(
                                 'EXPLORE NOW',
@@ -999,7 +1034,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                       icon: LucideIcons.layoutGrid,
                       title: 'EXPLORE',
                       subtitle: 'VIEW ALL PROJECTS',
-                      onTap: () => context.push('/projects'),
+                      onTap: () => context.push('/cp/projects'),
                     ),
                     _ActionTile(
                       icon: LucideIcons.mapPin,
@@ -1014,7 +1049,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                       icon: LucideIcons.play,
                       title: 'VIDEO',
                       subtitle: 'WATCH WALKTHROUGHS',
-                      onTap: () => context.push('/media'),
+                      onTap: () => context.push('/cp/updates'),
                     ),
                     _ActionTile(
                       icon: LucideIcons.userCheck,
@@ -1046,7 +1081,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                         ),
                         children: [
                           const TextSpan(text: 'Partner '),
-                          TextSpan(text: 'Inquiry', style: TextStyle(color: primary)),
+                          TextSpan(text: 'Inquiry', style: TextStyle(color: accent)),
                         ],
                       ),
                     ),
@@ -1063,50 +1098,46 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                     const SizedBox(height: 24),
                     TextField(
                       controller: _nameController,
-                      decoration: InputDecoration(
-                        hintText: 'Client Full Name *',
-                        filled: true,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-                      ),
+                      decoration: _inquiryDec(scheme, hint: 'Client Full Name *'),
+                      style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 14),
                     TextField(
                       controller: _phoneController,
                       keyboardType: TextInputType.phone,
-                      decoration: InputDecoration(
-                        hintText: 'Client Phone Number *',
-                        filled: true,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-                      ),
+                      decoration: _inquiryDec(scheme, hint: 'Client Phone Number *'),
+                      style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(height: 14),
-                    InputDecorator(
-                      decoration: InputDecoration(
-                        hintText: 'Select Project',
-                        filled: true,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          isExpanded: true,
-                          value: _projectId,
-                          hint: Text('Select Project', style: TextStyle(color: scheme.outline)),
-                          items: [
-                            for (final p in projects)
-                              if ((p['_id']?.toString() ?? p['id']?.toString() ?? '').isNotEmpty)
-                                DropdownMenuItem<String>(
-                                  value: p['_id']?.toString() ?? p['id']!.toString(),
-                                  child: Text(
-                                    p['title']?.toString() ?? 'Project',
-                                    style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 1),
-                                  ),
-                                ),
-                          ],
-                          onChanged: (v) => setState(() => _projectId = v),
+                    Theme(
+                      data: Theme.of(context).copyWith(
+                        focusColor: accent,
+                        canvasColor: scheme.surface,
+                        cardColor: scheme.surface,
+                        colorScheme: Theme.of(context).colorScheme.copyWith(primary: accent),
+                        dropdownMenuTheme: DropdownMenuThemeData(
+                          menuStyle: MenuStyle(
+                            backgroundColor: WidgetStatePropertyAll(scheme.surface),
+                            surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
+                          ),
+                          textStyle: GoogleFonts.montserrat(fontWeight: FontWeight.w600, color: scheme.onSurface),
                         ),
+                      ),
+                      child: DropdownButtonFormField<String>(
+                        initialValue: _projectId,
+                        decoration: _inquiryDec(scheme, hint: 'Select Project'),
+                        items: [
+                          for (final p in projects)
+                            if ((p['_id']?.toString() ?? p['id']?.toString() ?? '').isNotEmpty)
+                              DropdownMenuItem<String>(
+                                value: p['_id']?.toString() ?? p['id']!.toString(),
+                                child: Text(
+                                  p['title']?.toString() ?? 'Project',
+                                  style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 0.6),
+                                ),
+                              ),
+                        ],
+                        onChanged: (v) => setState(() => _projectId = v),
                       ),
                     ),
                     const SizedBox(height: 20),

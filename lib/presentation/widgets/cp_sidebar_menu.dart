@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
@@ -15,13 +16,16 @@ class CpSidebarMenu extends ConsumerStatefulWidget {
 }
 
 class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
-  bool _contentOpen = false;
-
   void _close() => Navigator.of(context).pop();
 
   void _setTab(int i) {
     ref.read(cpNavigationIndexProvider.notifier).state = i;
     _close();
+  }
+
+  void _go(String path) {
+    _close();
+    context.push(path);
   }
 
   @override
@@ -81,8 +85,8 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                       _SidebarItem(
                         icon: LucideIcons.crown,
                         label: 'Partner Hub',
-                        isActive: idx == 3,
-                        onTap: () => _setTab(3),
+                        isActive: false,
+                        onTap: () => _go('/cp/hub'),
                       ),
                       _SidebarItem(
                         icon: LucideIcons.user,
@@ -93,8 +97,8 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                       _SidebarItem(
                         icon: LucideIcons.layoutGrid,
                         label: 'Property Catalog',
-                        isActive: false,
-                        onTap: () => _close(), // Assuming project list separately or tab 4
+                        isActive: idx == 3,
+                        onTap: () => _setTab(3),
                       ),
                       
                       Theme(
@@ -102,7 +106,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                         child: ExpansionTile(
                           iconColor: const Color(0xFF9333EA),
                           collapsedIconColor: const Color(0xFF9333EA),
-                          onExpansionChanged: (val) => setState(() => _contentOpen = val),
+                          onExpansionChanged: (_) {},
                           tilePadding: EdgeInsets.zero,
                           title: _SidebarItem(
                             icon: LucideIcons.sparkles,
@@ -110,10 +114,10 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                             isActive: false,
                           ),
                           children: [
-                            _SubItem(label: 'Media', onTap: () {}),
-                            _SubItem(label: 'Highlights', onTap: () {}),
-                            _SubItem(label: 'Events', onTap: () {}),
-                            _SubItem(label: 'Blog', onTap: () {}),
+                            _SubItem(label: 'Media', onTap: () => _go('/media')),
+                            _SubItem(label: 'Highlights', onTap: () => _go('/highlights')),
+                            _SubItem(label: 'Events', onTap: () => _go('/events')),
+                            _SubItem(label: 'Blog', onTap: () => _go('/blog')),
                           ],
                         ),
                       ),
@@ -122,13 +126,13 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                         icon: LucideIcons.building2,
                         label: 'Communities',
                         isActive: false,
-                        onTap: () {}
+                        onTap: () => _go('/communities'),
                       ),
                       _SidebarItem(
                         icon: LucideIcons.calendar,
                         label: 'Bookings',
                         isActive: false,
-                        onTap: () {}
+                        onTap: () => _go('/cp/booking/my-bookings'),
                       ),
                       _SidebarItem(
                         icon: LucideIcons.headphones,
@@ -140,13 +144,13 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                         icon: LucideIcons.bell,
                         label: 'Notifications',
                         isActive: false,
-                        onTap: () {}
+                        onTap: () => _go('/notifications'),
                       ),
                       _SidebarItem(
                         icon: LucideIcons.sparkles,
                         label: 'Custom Views',
                         isActive: false,
-                        onTap: () {}
+                        onTap: () => _go('/custom-views'),
                       ),
 
                       const SizedBox(height: 24),
@@ -167,25 +171,31 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                         icon: LucideIcons.mail,
                         label: 'Enquiry',
                         isActive: false,
-                        onTap: () {}
+                        onTap: () => _go('/cp/booking/inquiry'),
                       ),
                       _SidebarItem(
                         icon: LucideIcons.phone,
                         label: 'Call',
                         isActive: false,
-                        onTap: () {}
+                        onTap: () {
+                          _close();
+                          SupportHandlers.launchCall();
+                        },
                       ),
                       _SidebarItem(
                         icon: LucideIcons.messageSquare,
                         label: 'Whatsapp',
                         isActive: false,
-                        onTap: () {}
+                        onTap: () {
+                          _close();
+                          SupportHandlers.launchWhatsApp();
+                        },
                       ),
                       _SidebarItem(
                         icon: LucideIcons.users,
                         label: 'Referral',
                         isActive: false,
-                        onTap: () {}
+                        onTap: () => _go('/cp/referral'),
                       ),
                     ],
                   ),
@@ -196,8 +206,10 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                   padding: const EdgeInsets.all(24),
                   child: GestureDetector(
                     onTap: () async {
+                      _close();
                       await ref.read(authProvider.notifier).logout();
-                      if (mounted) Navigator.of(context).pushReplacementNamed('/login');
+                      if (!context.mounted) return;
+                      context.go('/auth/cp/login');
                     },
                     child: Container(
                       height: 56,

@@ -10,6 +10,9 @@ import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/presentation/providers/communities_provider.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/screens/communities/community_detail_screen.dart';
+import 'package:go_router/go_router.dart';
+import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
+import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
 
 class CommunityListScreen extends ConsumerStatefulWidget {
   const CommunityListScreen({super.key});
@@ -30,11 +33,24 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(communitiesProvider);
+    final user = ref.watch(authProvider).user;
+    final role = user?['role']?.toString().toLowerCase();
+    final isCp = role == 'cp';
+    final cpIdx = ref.watch(cpNavigationIndexProvider);
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: isDark ? Colors.black : Colors.white,
       drawer: const ConditionalDrawer(),
+      bottomNavigationBar: isCp
+          ? CpBottomNav(
+              currentIndex: cpIdx,
+              onTap: (i) {
+                context.go('/home');
+                ref.read(cpNavigationIndexProvider.notifier).state = i;
+              },
+            )
+          : null,
       body: CustomScrollView(
         slivers: [
           // 🔝 Header (Logo, Back & Menu)

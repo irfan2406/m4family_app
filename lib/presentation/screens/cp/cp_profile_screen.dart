@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -22,11 +23,84 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
 
   bool _loading = true;
   Map<String, dynamic>? _me;
+  List<Map<String, dynamic>> _employees = [];
+  bool _employeesLoading = false;
+  bool _addEmployeeOpen = false;
+  final _newEmpName = TextEditingController();
+  final _newEmpPhone = TextEditingController();
+  final _newEmpEmail = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _fetchUser());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchUser();
+      _fetchEmployees();
+    });
+  }
+
+  @override
+  void dispose() {
+    _newEmpName.dispose();
+    _newEmpPhone.dispose();
+    _newEmpEmail.dispose();
+    super.dispose();
+  }
+
+  Future<void> _fetchEmployees() async {
+    setState(() => _employeesLoading = true);
+    try {
+      final res = await ref.read(apiClientProvider).getCpEmployees();
+      final body = res.data;
+      if (body is Map && body['status'] == true && body['data'] is List) {
+        final list = body['data'] as List;
+        setState(() {
+          _employees = list.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+        });
+      }
+    } catch (_) {}
+    if (mounted) setState(() => _employeesLoading = false);
+  }
+
+  Future<void> _submitNewEmployee() async {
+    final name = _newEmpName.text.trim();
+    final phone = _newEmpPhone.text.trim();
+    if (name.isEmpty || phone.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Name and phone are required')),
+      );
+      return;
+    }
+    try {
+      final res = await ref.read(apiClientProvider).createCpEmployee({
+        'name': name,
+        'phone': phone,
+        if (_newEmpEmail.text.trim().isNotEmpty) 'email': _newEmpEmail.text.trim(),
+      });
+      final body = res.data;
+      if (body is Map && body['status'] == true) {
+        _newEmpName.clear();
+        _newEmpPhone.clear();
+        _newEmpEmail.clear();
+        setState(() => _addEmployeeOpen = false);
+        await _fetchEmployees();
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Employee added successfully')),
+          );
+        }
+      } else {
+        final msg = body is Map ? body['message']?.toString() : null;
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg ?? 'Failed to add employee')));
+        }
+      }
+    } on DioException catch (e) {
+      final m = e.response?.data is Map ? (e.response!.data as Map)['message']?.toString() : null;
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m ?? 'Failed to add employee')));
+      }
+    }
   }
 
   Future<void> _fetchUser() async {
@@ -106,6 +180,8 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
     final points = u['loyaltyPoints'] ?? 0;
     final born = _bornLine(u);
     final avatarUrl = _avatarUrl(u);
+    final firm = u['companyName']?.toString().trim();
+    final rera = u['reraNumber']?.toString().trim();
 
     return Scaffold(
       backgroundColor: scheme.surface,
@@ -181,6 +257,8 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                     avatarUrl: avatarUrl,
                     points: points,
                     scheme: scheme,
+                    firm: firm,
+                    rera: rera,
                   ),
                   const SizedBox(height: 28),
                   Text(
@@ -193,37 +271,43 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  LayoutBuilder(
-                    builder: (context, constraints) {
-                      const gap = 12.0;
-                      final tileW = (constraints.maxWidth - gap) / 2;
-                      return Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            width: tileW,
-                            child: _serviceTile(
-                              context,
-                              label: 'Bookings',
-                              icon: LucideIcons.calendar,
-                              onTap: () => context.push('/cp/booking/my-bookings'),
-                              scheme: scheme,
-                            ),
-                          ),
-                          const SizedBox(width: gap),
-                          SizedBox(
-                            width: tileW,
-                            child: _serviceTile(
-                              context,
-                              label: 'Visits',
-                              icon: LucideIcons.mapPin,
-                              onTap: () => context.push('/cp/booking/schedule-visit'),
-                              scheme: scheme,
-                            ),
-                          ),
-                        ],
-                      );
-                    },
+                  GridView.count(
+                    crossAxisCount: 2,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    childAspectRatio: 1.02,
+                    children: [
+                      _serviceTile(
+                        context,
+                        label: 'Visit',
+                        icon: LucideIcons.building2,
+                        onTap: () => context.push('/cp/visits'),
+                        scheme: scheme,
+                      ),
+                      _serviceTile(
+                        context,
+                        label: 'Booking',
+                        icon: LucideIcons.calendar,
+                        onTap: () => context.push('/cp/booking/my-bookings'),
+                        scheme: scheme,
+                      ),
+                      _serviceTile(
+                        context,
+                        label: 'CP Tracker',
+                        icon: LucideIcons.clipboardList,
+                        onTap: () => context.push('/cp/visits'),
+                        scheme: scheme,
+                      ),
+                      _serviceTile(
+                        context,
+                        label: 'Book a Visit',
+                        icon: LucideIcons.mapPin,
+                        onTap: () => context.push('/cp/booking/schedule-visit'),
+                        scheme: scheme,
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 16),
                   _linkRow(
@@ -249,9 +333,177 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                     title: 'Support & Contact',
                     subtitle: '24/7 Concierge service',
                     icon: LucideIcons.phone,
-                    onTap: () => context.push('/contact'),
+                    onTap: () => context.push('/cp/contact'),
                     scheme: scheme,
                   ),
+                  const SizedBox(height: 28),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'EMPLOYEE MANAGEMENT',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w700,
+                          color: scheme.onSurfaceVariant,
+                          letterSpacing: 2,
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () => setState(() => _addEmployeeOpen = true),
+                        child: Text(
+                          '+ ADD NEW',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 8,
+                            fontWeight: FontWeight.w900,
+                            color: scheme.primary,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (_addEmployeeOpen) ...[
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.45)),
+                        color: scheme.surfaceContainerHighest.withValues(alpha: 0.35),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          TextField(
+                            controller: _newEmpName,
+                            decoration: const InputDecoration(labelText: 'Full name'),
+                          ),
+                          const SizedBox(height: 8),
+                          TextField(
+                            controller: _newEmpPhone,
+                            keyboardType: TextInputType.phone,
+                            decoration: const InputDecoration(labelText: 'Phone'),
+                          ),
+                          const SizedBox(height: 8),
+                          TextField(
+                            controller: _newEmpEmail,
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: const InputDecoration(labelText: 'Email (optional)'),
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              TextButton(
+                                onPressed: () => setState(() => _addEmployeeOpen = false),
+                                child: const Text('Cancel'),
+                              ),
+                              const Spacer(),
+                              FilledButton(
+                                onPressed: _submitNewEmployee,
+                                child: const Text('Add'),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 12),
+                  if (_employeesLoading)
+                    const Center(child: Padding(padding: EdgeInsets.all(16), child: CircularProgressIndicator()))
+                  else if (_employees.isEmpty)
+                    Container(
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.35), style: BorderStyle.solid),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'No employees registered yet',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w900,
+                            color: scheme.onSurfaceVariant.withValues(alpha: 0.45),
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ),
+                    )
+                  else
+                    ..._employees.map((emp) {
+                      final active = emp['isActive'] == true;
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(24),
+                            border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.35)),
+                            color: scheme.onSurface.withValues(alpha: 0.03),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: scheme.primary.withValues(alpha: 0.12),
+                                ),
+                                child: Icon(LucideIcons.userCheck, size: 20, color: scheme.primary),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      (emp['name'] ?? '').toString().toUpperCase(),
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w700,
+                                        color: scheme.onSurface,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      (emp['phone'] ?? '').toString(),
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 8,
+                                        fontWeight: FontWeight.w700,
+                                        color: scheme.onSurfaceVariant,
+                                        letterSpacing: 0.8,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: active ? Colors.green.withValues(alpha: 0.35) : scheme.outlineVariant,
+                                  ),
+                                ),
+                                child: Text(
+                                  active ? 'ACTIVE' : 'INACTIVE',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 7,
+                                    fontWeight: FontWeight.w900,
+                                    color: active ? Colors.green : scheme.onSurfaceVariant,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
                   const SizedBox(height: 28),
                   Text(
                     'PREFERENCES',
@@ -394,6 +646,8 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
     required String avatarUrl,
     required dynamic points,
     required ColorScheme scheme,
+    String? firm,
+    String? rera,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -422,15 +676,23 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                     Container(
                       width: 80,
                       height: 80,
+                      padding: const EdgeInsets.all(1.5),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(18),
                         border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.6)),
+                        color: scheme.surfaceContainerHigh.withValues(alpha: 0.35),
                       ),
-                      clipBehavior: Clip.antiAlias,
-                      child: CachedNetworkImage(
-                        imageUrl: avatarUrl,
-                        fit: BoxFit.cover,
-                        errorWidget: (_, __, ___) => Icon(LucideIcons.user, color: scheme.outline, size: 36),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(16),
+                        child: CachedNetworkImage(
+                          imageUrl: avatarUrl,
+                          fit: BoxFit.cover,
+                          alignment: Alignment.center,
+                          memCacheWidth: 160,
+                          memCacheHeight: 160,
+                          fadeInDuration: Duration.zero,
+                          errorWidget: (_, __, ___) => Icon(LucideIcons.user, color: scheme.outline, size: 36),
+                        ),
                       ),
                     ),
                   ],
@@ -475,6 +737,19 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                           letterSpacing: 1.2,
                         ),
                       ),
+                      if ((firm != null && firm.isNotEmpty) || (rera != null && rera.isNotEmpty)) ...[
+                        const SizedBox(height: 10),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 6,
+                          children: [
+                            if (firm != null && firm.isNotEmpty)
+                              _firmReraBadge(scheme, 'Firm: $firm'),
+                            if (rera != null && rera.isNotEmpty)
+                              _firmReraBadge(scheme, 'RERA: $rera'),
+                          ],
+                        ),
+                      ],
                       if (born != null) ...[
                         const SizedBox(height: 8),
                         Row(
@@ -568,6 +843,26 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
     );
   }
 
+  Widget _firmReraBadge(ColorScheme scheme, String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: scheme.primary.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: scheme.primary.withValues(alpha: 0.22)),
+      ),
+      child: Text(
+        text.toUpperCase(),
+        style: GoogleFonts.montserrat(
+          fontSize: 7,
+          fontWeight: FontWeight.w900,
+          color: scheme.primary,
+          letterSpacing: 0.6,
+        ),
+      ),
+    );
+  }
+
   Widget _serviceTile(
     BuildContext context, {
     required String label,
@@ -575,40 +870,54 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
     required VoidCallback onTap,
     required ColorScheme scheme,
   }) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            AspectRatio(
-              aspectRatio: 1,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(32),
-                  border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.45)),
-                  color: scheme.surfaceContainerHigh.withValues(alpha: 0.4),
-                ),
-                alignment: Alignment.center,
-                child: Icon(icon, size: 24, color: scheme.onSurface.withValues(alpha: 0.55)),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final maxW = constraints.maxWidth;
+        final side = (maxW * 0.58).clamp(72.0, 100.0);
+        return Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(24),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: side,
+                    height: side,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.45)),
+                        color: scheme.surfaceContainerHigh.withValues(alpha: 0.4),
+                      ),
+                      alignment: Alignment.center,
+                      child: Icon(icon, size: 20, color: scheme.onSurface.withValues(alpha: 0.55)),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    label.toUpperCase(),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 8,
+                      fontWeight: FontWeight.w800,
+                      color: scheme.onSurface.withValues(alpha: 0.72),
+                      letterSpacing: 1.1,
+                      height: 1.15,
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 10),
-            Text(
-              label.toUpperCase(),
-              textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
-                fontSize: 9,
-                fontWeight: FontWeight.w800,
-                color: scheme.onSurface.withValues(alpha: 0.72),
-                letterSpacing: 1.4,
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 

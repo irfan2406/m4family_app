@@ -38,6 +38,7 @@ import 'package:m4_mobile/presentation/screens/cp/cp_tracker_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_hub_calculator_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_hub_analytics_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_hub_network_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_updates_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_hub_reports_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_hub_insights_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_my_bookings_screen.dart';
@@ -47,6 +48,11 @@ import 'package:m4_mobile/presentation/screens/cp/cp_profile_settings_screen.dar
 import 'package:m4_mobile/presentation/screens/cp/cp_elite_cp_connect_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_elite_investor_connect_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_tax_reports_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_visits_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_hub_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_project_detail_screen.dart';
+import 'package:m4_mobile/presentation/screens/support/support_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_shell_entry_screen.dart';
 
 import 'package:m4_mobile/core/providers/theme_provider.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -194,6 +200,37 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/cp/tax-reports',
       builder: (context, state) => const CpTaxReportsScreen(),
+    ),
+    GoRoute(
+      path: '/cp/hub',
+      builder: (context, state) => const CpHubScreen(),
+    ),
+    GoRoute(
+      path: '/cp/updates',
+      builder: (context, state) => const CpUpdatesScreen(),
+    ),
+    GoRoute(
+      path: '/cp/visits',
+      builder: (context, state) => const CpVisitsScreen(),
+    ),
+    GoRoute(
+      path: '/cp/contact',
+      builder: (context, state) => const ContactScreen(),
+    ),
+    GoRoute(
+      path: '/cp/support',
+      builder: (context, state) => const CpShellEntryScreen(index: 4),
+    ),
+    GoRoute(
+      path: '/cp/projects',
+      builder: (context, state) => const CpShellEntryScreen(index: 3),
+    ),
+    GoRoute(
+      path: '/cp/projects/:id',
+      builder: (context, state) => CpProjectDetailScreen(
+        projectId: state.pathParameters['id']!,
+        projectData: state.extra as Map<String, dynamic>?,
+      ),
     ),
     GoRoute(
       path: '/profile/settings',
