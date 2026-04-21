@@ -148,8 +148,8 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                       context,
                       title: 'Network',
                       icon: LucideIcons.users,
-                      bg: const Color(0x1AA855F7),
-                      fg: const Color(0xFFA855F7),
+                      bg: scheme.onSurface.withValues(alpha: 0.05),
+                      fg: scheme.onSurface.withValues(alpha: 0.7),
                       onTap: () => context.push('/cp/hub/network'),
                       scheme: scheme,
                     ),
@@ -157,8 +157,8 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                       context,
                       title: 'Concierge',
                       icon: LucideIcons.crown,
-                      bg: const Color(0x1AA855F7),
-                      fg: const Color(0xFFA855F7),
+                      bg: scheme.onSurface.withValues(alpha: 0.05),
+                      fg: scheme.onSurface.withValues(alpha: 0.7),
                       onTap: () {
                         // Match web: redirect to `/cp/support`.
                         context.push('/cp/support');
@@ -183,7 +183,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                     TextButton(
                       onPressed: () => context.push('/cp/projects'),
                       style: TextButton.styleFrom(
-                        foregroundColor: const Color(0xFFA855F7),
+                        foregroundColor: Colors.black,
                         padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
                       ),
                       child: Text('VIEW ALL', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1)),
@@ -271,10 +271,10 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                 height: 40,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(14),
-                  color: const Color(0x1AA855F7),
-                  border: Border.all(color: const Color(0x33A855F7)),
+                  color: scheme.onSurface.withValues(alpha: 0.1),
+                  border: Border.all(color: scheme.onSurface.withValues(alpha: 0.1)),
                 ),
-                child: const Icon(LucideIcons.crown, color: Color(0xFFA855F7), size: 20),
+                child: Icon(LucideIcons.crown, color: scheme.onSurface, size: 20),
               ),
               const SizedBox(width: 10),
               Text(
@@ -283,7 +283,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                   fontSize: 11,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2,
-                  color: const Color(0xFFA855F7),
+                  color: scheme.onSurface,
                 ),
               ),
             ],
@@ -463,7 +463,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                      decoration: BoxDecoration(color: const Color(0xFFA855F7), borderRadius: BorderRadius.circular(999)),
+                      decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(999)),
                       child: Text(
                         ((p?['status']?.toString() ?? '').isNotEmpty ? (p?['status']?.toString() ?? '') : 'PRE-LAUNCH').toUpperCase(),
                         style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1.2, color: Colors.white),
@@ -481,9 +481,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                     const SizedBox(height: 10),
                     Row(
                       children: [
-                        Text('Explore Opportunity', style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, color: const Color(0xFFA855F7))),
+                        Text('Explore Opportunity', style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, color: Colors.black)),
                         const SizedBox(width: 8),
-                        const Icon(LucideIcons.arrowRight, size: 16, color: Color(0xFFA855F7)),
+                        const Icon(LucideIcons.arrowRight, size: 16, color: Colors.black),
                       ],
                     ),
                   ],

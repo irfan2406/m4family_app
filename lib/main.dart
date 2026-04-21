@@ -55,9 +55,16 @@ import 'package:m4_mobile/presentation/screens/support/support_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_shell_entry_screen.dart';
 
 import 'package:m4_mobile/core/providers/theme_provider.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 void main() async {
+  debugPaintSizeEnabled = false;
+  debugPaintBaselinesEnabled = false;
+  debugPaintPointersEnabled = false;
+  debugPaintLayerBordersEnabled = false;
+  debugRepaintRainbowEnabled = false;
+  
   WidgetsFlutterBinding.ensureInitialized();
   
   const storage = FlutterSecureStorage();
@@ -373,19 +380,19 @@ class SplashScreen extends StatelessWidget {
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: M4Theme.premiumBlue, width: 2),
+                border: Border.all(color: Colors.black, width: 2),
               ),
               child: const Text(
                 'M4',
                 style: TextStyle(
                   fontSize: 48,
                   fontWeight: FontWeight.bold,
-                  color: M4Theme.premiumBlue,
+                  color: Colors.black,
                 ),
               ),
             ),
             const SizedBox(height: 24),
-            const CircularProgressIndicator(color: M4Theme.premiumBlue),
+            const CircularProgressIndicator(color: Colors.black),
           ],
         ),
       ),

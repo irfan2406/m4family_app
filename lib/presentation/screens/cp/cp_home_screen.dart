@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -297,296 +298,293 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         final currentFeatured = projects.isNotEmpty
             ? projects[_featuredPropIndex % projects.length]
             : null;
-
         return CustomScrollView(
           controller: _scrollController,
           physics: const BouncingScrollPhysics(),
           slivers: [
+            // High-Fidelity Header (Web Parity)
             SliverToBoxAdapter(
-              child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(bottom: Radius.circular(48)),
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.55,
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      if (heroImg.isNotEmpty)
-                        AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 800),
-                          child: CachedNetworkImage(
-                            key: ValueKey(heroImg),
-                            imageUrl: heroImg,
-                            fit: BoxFit.cover,
-                            errorWidget: (_, __, ___) => Container(color: Colors.grey.shade900),
-                          ),
-                        )
-                      else
-                        Container(color: Colors.grey.shade900),
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.black.withValues(alpha: 0.4),
-                              Colors.transparent,
-                              scheme.surface.withValues(alpha: 0.92),
-                            ],
-                            stops: const [0, 0.35, 1],
-                          ),
+              child: Container(
+                color: scheme.surface,
+                padding: EdgeInsets.fromLTRB(28, MediaQuery.of(context).padding.top + 16, 24, 0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Living the\n' + 'M4 Life'.toUpperCase(),
+                        style: GoogleFonts.montserrat(
+                          fontSize: 32,
+                          fontWeight: FontWeight.w900,
+                          height: 1.0,
+                          letterSpacing: -0.8,
+                          color: Colors.black,
                         ),
                       ),
-                      Positioned(
-                        top: MediaQuery.of(context).padding.top + 8,
-                        right: 16,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.4),
-                            borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
-                          ),
-                          child: Text(
-                            'ARTISTIC IMPRESSION',
-                            style: GoogleFonts.montserrat(
-                              fontSize: 7,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 2,
-                              color: Colors.white70,
+                    ),
+                    Builder(
+                      builder: (ctx) => Material(
+                        color: Colors.grey.withOpacity(0.08),
+                        borderRadius: BorderRadius.circular(14),
+                        child: InkWell(
+                          onTap: () => Scaffold.of(ctx).openDrawer(),
+                          borderRadius: BorderRadius.circular(14),
+                          child: Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(color: Colors.black.withOpacity(0.08)),
                             ),
+                            child: const Icon(LucideIcons.moreHorizontal, color: Colors.black, size: 22),
                           ),
                         ),
                       ),
-                      Positioned(
-                        top: MediaQuery.of(context).padding.top + 8,
-                        left: 20,
-                        right: 72,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: RichText(
-                                text: TextSpan(
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 34,
-                                    fontWeight: FontWeight.w900,
-                                    height: 1.05,
-                                    color: scheme.onSurface,
-                                  ),
-                                  children: [
-                                    const TextSpan(text: 'Living the\n'),
-                                    TextSpan(
-                                      text: 'M4 Life',
-                                      style: TextStyle(color: accent, fontWeight: FontWeight.w900),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Positioned(
-                        top: MediaQuery.of(context).padding.top + 8,
-                        right: 8,
-                        child: Builder(
-                          builder: (ctx) => IconButton(
-                            style: IconButton.styleFrom(
-                              backgroundColor: scheme.surface.withValues(alpha: 0.12),
-                              side: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
-                            ),
-                            onPressed: () => Scaffold.of(ctx).openDrawer(),
-                            icon: Icon(LucideIcons.moreHorizontal, color: scheme.onSurface),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        top: MediaQuery.of(context).padding.top + 100,
-                        left: 16,
-                        right: 16,
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Container(
-                                height: 56,
-                                padding: const EdgeInsets.symmetric(horizontal: 16),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(16),
-                                  color: scheme.surface.withValues(alpha: 0.12),
-                                  border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Icon(LucideIcons.search, size: 20, color: scheme.outline),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: TextField(
-                                        onChanged: (v) => setState(() => _searchQuery = v),
-                                        style: TextStyle(color: scheme.onSurface, fontWeight: FontWeight.w500),
-                                        decoration: InputDecoration(
-                                          border: InputBorder.none,
-                                          hintText: 'Search residences...',
-                                          hintStyle: TextStyle(color: scheme.outline),
-                                          isDense: true,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Material(
-                              color: scheme.surface.withValues(alpha: 0.15),
-                              borderRadius: BorderRadius.circular(16),
-                              child: InkWell(
-                                onTap: _showFilterSheet,
-                                borderRadius: BorderRadius.circular(16),
-                                child: SizedBox(
-                                  width: 56,
-                                  height: 56,
-                                  child: Icon(LucideIcons.slidersHorizontal, color: scheme.onSurface),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Positioned(
-                        top: MediaQuery.of(context).padding.top + 172,
-                        left: 0,
-                        right: 0,
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Row(
-                            children: _filters.map((chip) {
-                              final sel = _selectedFilter == chip;
-                              return Padding(
-                                padding: const EdgeInsets.only(right: 10),
-                                child: Material(
-                                  color: sel ? scheme.onSurface : scheme.surface.withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(999),
-                                  child: InkWell(
-                                    onTap: () => setState(() => _selectedFilter = chip),
-                                    borderRadius: BorderRadius.circular(999),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-                                      child: Text(
-                                        chip.toUpperCase(),
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w700,
-                                          letterSpacing: 2,
-                                          color: sel ? scheme.surface : scheme.onSurface.withValues(alpha: 0.65),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                      ),
-                      if (featured != null)
-                        Positioned(
-                          left: 24,
-                          right: 24,
-                          bottom: 28,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                    decoration: BoxDecoration(
-                                      color: scheme.secondaryContainer.withValues(alpha: 0.9),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Text(
-                                      'FEATURED',
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: 9,
-                                        fontWeight: FontWeight.w800,
-                                        letterSpacing: 2,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Container(
-                                    width: 6,
-                                    height: 6,
-                                    decoration: const BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Color(0xFFA855F7),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                (featured['title'] ?? 'M4 Family').toString(),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: -0.5,
-                                  color: scheme.onSurface,
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              Row(
-                                children: [
-                                  Icon(LucideIcons.mapPin, size: 14, color: scheme.outline),
-                                  const SizedBox(width: 6),
-                                  Expanded(
-                                    child: Text(
-                                      _locLine(featured).toUpperCase(),
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: 2,
-                                        color: scheme.outline,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
+
+            // Hero Section with Overlays
+             SliverToBoxAdapter(
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  // Hero Image (Enlarged for 'Full Image' feel)
+                  ClipRRect(
+                    borderRadius: const BorderRadius.vertical(bottom: Radius.circular(40)),
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.62,
+                      width: double.infinity,
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          if (heroImg.isNotEmpty)
+                            AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 800),
+                              child: CachedNetworkImage(
+                                key: ValueKey(heroImg),
+                                imageUrl: heroImg,
+                                fit: BoxFit.cover,
+                                errorWidget: (_, __, ___) => Container(color: Colors.grey[200]),
+                              ),
+                            ),
+                          Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.white.withOpacity(0.3),
+                                  Colors.transparent,
+                                  Colors.black.withOpacity(0.6),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Search Bar (IN THE IMAGE)
+                  Positioned(
+                    top: 20,
+                    left: 20,
+                    right: 20,
+                    child: Container(
+                      height: 56,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(color: Colors.black.withOpacity(0.12), blurRadius: 20, offset: const Offset(0, 8)),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(LucideIcons.search, size: 20, color: Colors.grey[400]),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: TextField(
+                              onChanged: (v) => setState(() => _searchQuery = v),
+                              decoration: const InputDecoration(
+                                hintText: 'Search residences...',
+                                border: InputBorder.none,
+                                hintStyle: TextStyle(color: Colors.grey),
+                              ),
+                            ),
+                          ),
+                          Icon(LucideIcons.slidersHorizontal, size: 20, color: Colors.grey[400]),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // Filter Chips (IN THE IMAGE)
+                  Positioned(
+                    top: 92,
+                    left: 0,
+                    right: 0,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
+                        children: _filters.map((filter) {
+                          final isSelected = _selectedFilter == filter;
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: ChoiceChip(
+                              label: Text(
+                                filter.toUpperCase(),
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w800,
+                                  color: isSelected ? Colors.white : Colors.black,
+                                  letterSpacing: 1.5,
+                                ),
+                              ),
+                              selected: isSelected,
+                              onSelected: (v) => setState(() => _selectedFilter = filter),
+                              selectedColor: Colors.black,
+                              backgroundColor: Colors.white.withOpacity(0.9),
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+                              side: BorderSide.none,
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+
+                  // Artistic Impression Badge (Top Right of Image Content)
+                  Positioned(
+                    top: 160,
+                    right: 20,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.35),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        'ARTISTIC IMPRESSION',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 6,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 2,
+                          color: Colors.white70,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Featured Content at Bottom (Styled like Web)
+                  if (featured != null)
+                    Positioned(
+                      left: 20,
+                      bottom: 24,
+                      right: 20,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(100),
+                              boxShadow: [
+                                BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10),
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'FEATURED',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 8,
+                                    fontWeight: FontWeight.w900,
+                                    color: Colors.black,
+                                    letterSpacing: 1,
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                Container(
+                                  width: 5,
+                                  height: 5,
+                                  decoration: const BoxDecoration(color: Colors.deepPurple, shape: BoxShape.circle),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            (featured['title'] ?? '').toString().toUpperCase(),
+                            style: GoogleFonts.montserrat(
+                              fontSize: 42,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white,
+                              height: 0.9,
+                              letterSpacing: -1,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              const Icon(LucideIcons.mapPin, color: Colors.white, size: 12),
+                              const SizedBox(width: 6),
+                              Text(
+                                _locLine(featured).toUpperCase(),
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 2.5,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+            ),
+
+            // Gap
+            const SliverToBoxAdapter(child: SizedBox(height: 32)),
+
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+                padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
                   children: [
                     Text(
-                      _selectedFilter == 'All' ? 'RECOMMENDED FOR YOU' : '${_selectedFilter.toUpperCase()} PROPERTIES',
+                      'RECOMMENDED FOR YOU',
                       style: GoogleFonts.montserrat(
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
-                        letterSpacing: 4,
-                        color: scheme.onSurface.withValues(alpha: 0.65),
+                        letterSpacing: 2,
+                        color: scheme.outline,
                       ),
                     ),
-                    TextButton(
-                      onPressed: () => context.push('/cp/projects'),
-                      style: TextButton.styleFrom(
-                        foregroundColor: scheme.onSurface.withValues(alpha: 0.7),
-                        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-                      ),
+                    InkWell(
+                      onTap: () => context.push('/cp/projects'),
                       child: Text(
                         'VIEW ALL',
-                        style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 2),
+                        style: GoogleFonts.montserrat(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 1,
+                          color: Colors.black,
+                        ),
                       ),
                     ),
                   ],
@@ -595,162 +593,161 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
             ),
             SliverToBoxAdapter(
               child: SizedBox(
-                height: 300,
+                height: 380,
                 child: filtered.isEmpty
-                    ? const Center(child: Text('No projects match'))
-                    : ListView.separated(
+                    ? const Center(child: Text('No results found'))
+                    : ListView.builder(
                         scrollDirection: Axis.horizontal,
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         itemCount: filtered.length,
-                        separatorBuilder: (_, __) => const SizedBox(width: 14),
                         itemBuilder: (context, i) {
                           final p = filtered[i];
                           final id = p['_id']?.toString() ?? p['id']?.toString() ?? '';
-                          final status = (p['status'] ?? 'ONGOING').toString();
-                          return GestureDetector(
-                            onTap: () {
-                              if (id.isNotEmpty) context.push('/cp/projects/$id', extra: Map<String, dynamic>.from(p as Map));
-                            },
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(32),
-                              child: SizedBox(
-                                width: 240,
-                                child: Stack(
-                                  fit: StackFit.expand,
-                                  children: [
-                                    CachedNetworkImage(
-                                      imageUrl: _heroUrl(p),
-                                      fit: BoxFit.cover,
-                                    ),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter,
-                                          colors: [
-                                            Colors.black.withValues(alpha: 0.1),
-                                            Colors.black.withValues(alpha: 0.82),
+                          final status = (p['status'] ?? 'Upcoming').toString();
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 14),
+                            child: GestureDetector(
+                              onTap: () {
+                                if (id.isNotEmpty) context.push('/cp/projects/$id', extra: Map<String, dynamic>.from(p as Map));
+                              },
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(28),
+                                child: SizedBox(
+                                  width: 280,
+                                  child: Stack(
+                                    fit: StackFit.expand,
+                                    children: [
+                                      CachedNetworkImage(imageUrl: _heroUrl(p), fit: BoxFit.cover),
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: 10,
+                                        right: 10,
+                                        child: Container(
+                                          padding: const EdgeInsets.all(4),
+                                          decoration: BoxDecoration(
+                                            color: Colors.black.withOpacity(0.45),
+                                            borderRadius: BorderRadius.circular(4),
+                                            border: Border.all(color: Colors.white24),
+                                          ),
+                                          child: Text(
+                                            'ARTISTIC IMPRESSION',
+                                            style: GoogleFonts.montserrat(fontSize: 6, fontWeight: FontWeight.w800, letterSpacing: 1, color: Colors.white70),
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: 10,
+                                        left: 10,
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white.withOpacity(0.65),
+                                            borderRadius: BorderRadius.circular(6),
+                                          ),
+                                          child: Text(
+                                            status.toUpperCase(),
+                                            style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w800),
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        left: 16,
+                                        right: 16,
+                                        bottom: 16,
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              (p['title'] ?? '').toString().toUpperCase(),
+                                              maxLines: 2,
+                                              style: GoogleFonts.montserrat(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 18,
+                                                height: 1.1,
+                                                letterSpacing: -0.2,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 6),
+                                            Row(
+                                              children: [
+                                                const Icon(LucideIcons.mapPin, size: 12, color: Colors.white70),
+                                                const SizedBox(width: 4),
+                                                Expanded(
+                                                  child: Text(
+                                                    _locLine(p).toUpperCase(),
+                                                    style: GoogleFonts.montserrat(
+                                                      fontSize: 9,
+                                                      letterSpacing: 2,
+                                                      color: Colors.white70,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(height: 12),
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Container(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white.withOpacity(0.08),
+                                                      borderRadius: BorderRadius.circular(16),
+                                                      border: Border.all(color: Colors.white12),
+                                                    ),
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Text(
+                                                          'STARTING FROM',
+                                                          style: GoogleFonts.montserrat(
+                                                            fontSize: 7.5,
+                                                            fontWeight: FontWeight.w800,
+                                                            color: Colors.white70,
+                                                            letterSpacing: 1.2,
+                                                          ),
+                                                        ),
+                                                        const SizedBox(height: 2),
+                                                        Text(
+                                                          _starting(p).isEmpty ? '18% YOY' : (_starting(p) + ' YOY'),
+                                                          style: GoogleFonts.montserrat(
+                                                            fontSize: 18,
+                                                            fontWeight: FontWeight.w900,
+                                                            color: Colors.white,
+                                                            height: 1.1,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 10),
+                                                Container(
+                                                  width: 48,
+                                                  height: 48,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white.withOpacity(0.12),
+                                                    borderRadius: BorderRadius.circular(16),
+                                                    border: Border.all(color: Colors.white12),
+                                                  ),
+                                                  child: const Icon(LucideIcons.chevronRight, color: Colors.white, size: 20),
+                                                ),
+                                              ],
+                                            ),
                                           ],
                                         ),
                                       ),
-                                    ),
-                                    Positioned(
-                                      top: 10,
-                                      right: 10,
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                                        decoration: BoxDecoration(
-                                          color: Colors.black.withValues(alpha: 0.45),
-                                          borderRadius: BorderRadius.circular(4),
-                                          border: Border.all(color: Colors.white24),
-                                        ),
-                                        child: Text(
-                                          'ARTISTIC IMPRESSION',
-                                          style: GoogleFonts.montserrat(fontSize: 6, fontWeight: FontWeight.w800, letterSpacing: 1, color: Colors.white70),
-                                        ),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      top: 10,
-                                      left: 10,
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white.withValues(alpha: 0.65),
-                                          borderRadius: BorderRadius.circular(6),
-                                        ),
-                                        child: Text(
-                                          status.toUpperCase(),
-                                          style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w800),
-                                        ),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      left: 16,
-                                      right: 16,
-                                      bottom: 16,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            (p['title'] ?? '').toString(),
-                                            maxLines: 2,
-                                            style: GoogleFonts.montserrat(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: 17,
-                                              height: 1.1,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 6),
-                                          Row(
-                                            children: [
-                                              const Icon(LucideIcons.mapPin, size: 12, color: Colors.white70),
-                                              const SizedBox(width: 4),
-                                              Expanded(
-                                                child: Text(
-                                                  _locLine(p).toUpperCase(),
-                                                  style: GoogleFonts.montserrat(
-                                                    fontSize: 9,
-                                                    letterSpacing: 2,
-                                                    color: Colors.white70,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 10),
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: Container(
-                                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white.withValues(alpha: 0.12),
-                                                    borderRadius: BorderRadius.circular(10),
-                                                    border: Border.all(color: Colors.white24),
-                                                  ),
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Text(
-                                                        'STARTING FROM',
-                                                        style: GoogleFonts.montserrat(
-                                                          fontSize: 8,
-                                                          fontWeight: FontWeight.w700,
-                                                          color: Colors.white60,
-                                                        ),
-                                                      ),
-                                                      Text(
-                                                        _starting(p).isEmpty ? '—' : _starting(p),
-                                                        style: GoogleFonts.montserrat(
-                                                          fontSize: 14,
-                                                          fontWeight: FontWeight.w700,
-                                                          fontStyle: FontStyle.italic,
-                                                          color: Colors.white,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                              const SizedBox(width: 8),
-                                              Container(
-                                                width: 40,
-                                                height: 40,
-                                                decoration: BoxDecoration(
-                                                  color: Colors.white.withValues(alpha: 0.15),
-                                                  borderRadius: BorderRadius.circular(12),
-                                                  border: Border.all(color: Colors.white24),
-                                                ),
-                                                child: const Icon(LucideIcons.chevronRight, color: Colors.white, size: 20),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -830,18 +827,13 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    RichText(
-                      text: TextSpan(
-                        style: GoogleFonts.dmSerifDisplay(
-                          fontSize: 26,
-                          fontWeight: FontWeight.w300,
-                          height: 1.1,
-                          color: scheme.onSurface,
-                        ),
-                        children: [
-                          TextSpan(text: 'O', style: TextStyle(color: accent)),
-                          const TextSpan(text: 'ur Philosophy'),
-                        ],
+                    Text(
+                      'Our Philosophy'.toUpperCase(),
+                      style: GoogleFonts.montserrat(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 4,
+                        color: Colors.grey,
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -849,22 +841,18 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                       _philosophyBody,
                       style: TextStyle(
                         fontSize: 14,
-                        height: 1.55,
-                        color: scheme.onSurface.withValues(alpha: 0.65),
+                        height: 1.6,
+                        color: Colors.black.withOpacity(0.7),
                       ),
                     ),
                     const SizedBox(height: 32),
-                    RichText(
-                      text: TextSpan(
-                        style: GoogleFonts.dmSerifDisplay(
-                          fontSize: 26,
-                          fontWeight: FontWeight.w300,
-                          color: scheme.onSurface,
-                        ),
-                        children: [
-                          TextSpan(text: 'F', style: TextStyle(color: accent)),
-                          const TextSpan(text: 'eatured Property'),
-                        ],
+                    Text(
+                      'Featured Property'.toUpperCase(),
+                      style: GoogleFonts.montserrat(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 4,
+                        color: Colors.grey,
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -935,7 +923,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                                           fontSize: 9,
                                           fontWeight: FontWeight.w700,
                                           letterSpacing: 3,
-                                          color: accent,
+                                          color: Colors.white.withOpacity(0.8),
                                         ),
                                       ),
                                       const SizedBox(height: 8),
@@ -988,6 +976,8 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                           Expanded(
                             child: FilledButton(
                               style: FilledButton.styleFrom(
+                                backgroundColor: Colors.black,
+                                foregroundColor: Colors.white,
                                 padding: const EdgeInsets.symmetric(vertical: 18),
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                               ),
@@ -1071,18 +1061,13 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                   key: _inquiryKey,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    RichText(
-                      text: TextSpan(
-                        style: GoogleFonts.dmSerifDisplay(
-                          fontSize: 32,
-                          fontWeight: FontWeight.w300,
-                          height: 1.05,
-                          color: scheme.onSurface,
-                        ),
-                        children: [
-                          const TextSpan(text: 'Partner '),
-                          TextSpan(text: 'Inquiry', style: TextStyle(color: accent)),
-                        ],
+                    Text(
+                      'Partner Inquiry'.toUpperCase(),
+                      style: GoogleFonts.montserrat(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.black,
+                        letterSpacing: -0.5,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -1190,9 +1175,8 @@ class _ActionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return Material(
-      color: scheme.surfaceContainerHighest.withValues(alpha: 0.5),
+      color: Colors.black,
       borderRadius: BorderRadius.circular(28),
       child: InkWell(
         onTap: onTap,
@@ -1206,17 +1190,22 @@ class _ActionTile extends StatelessWidget {
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: scheme.primary.withValues(alpha: 0.18),
+                  color: Colors.white.withOpacity(0.15),
                 ),
-                child: Icon(icon, size: 22, color: scheme.primary),
+                child: Icon(icon, size: 22, color: Colors.white),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 14),
               Text(
                 title,
                 textAlign: TextAlign.center,
-                style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2),
+                style: GoogleFonts.montserrat(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 2,
+                  color: Colors.white,
+                ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 6),
               Text(
                 subtitle,
                 textAlign: TextAlign.center,
@@ -1225,7 +1214,7 @@ class _ActionTile extends StatelessWidget {
                   fontSize: 8,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 1,
-                  color: scheme.outline,
+                  color: Colors.white60,
                 ),
               ),
             ],

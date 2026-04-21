@@ -29,6 +29,8 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
   final _newEmpName = TextEditingController();
   final _newEmpPhone = TextEditingController();
   final _newEmpEmail = TextEditingController();
+  List<Map<String, dynamic>> _bookings = [];
+  bool _bookingsLoading = false;
 
   @override
   void initState() {
@@ -36,6 +38,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _fetchUser();
       _fetchEmployees();
+      _fetchBookings();
     });
   }
 
@@ -60,6 +63,43 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
       }
     } catch (_) {}
     if (mounted) setState(() => _employeesLoading = false);
+  }
+
+  Future<void> _fetchBookings() async {
+    setState(() => _bookingsLoading = true);
+    try {
+      final res = await ref.read(apiClientProvider).getCpBookings();
+      final body = res.data;
+      if (body is Map && body['status'] == true && body['data'] != null) {
+        final b = body['data']['bookings'];
+        if (b is List) {
+          setState(() {
+            _bookings = b.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+          });
+        }
+      }
+    } catch (_) {}
+    if (mounted) setState(() => _bookingsLoading = false);
+  }
+
+  Future<void> _notifyAdmin(String bookingId) async {
+    try {
+      final res = await ref.read(apiClientProvider).notifyAdminForSettlement(bookingId);
+      final body = res.data;
+      if (mounted) {
+        final ok = body is Map && body['status'] == true;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(ok ? 'Settlement request sent to Admin' : (body['message'] ?? 'Failed to notify admin')),
+            backgroundColor: ok ? Colors.green : Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to send notification')));
+      }
+    }
   }
 
   Future<void> _submitNewEmployee() async {
@@ -260,13 +300,15 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                     firm: firm,
                     rera: rera,
                   ),
+                  const SizedBox(height: 32),
+                  _paymentTracker(context, scheme, isDark),
                   const SizedBox(height: 28),
                   Text(
                     'PROPERTY SERVICES',
                     style: GoogleFonts.montserrat(
                       fontSize: 9,
                       fontWeight: FontWeight.w700,
-                      color: scheme.onSurface.withValues(alpha: 0.55),
+                      color: scheme.onSurface,
                       letterSpacing: 2,
                     ),
                   ),
@@ -350,7 +392,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                         ),
                       ),
                       TextButton(
-                        onPressed: () => setState(() => _addEmployeeOpen = true),
+                        onPressed: () => _showAddEmployee(context, scheme),
                         child: Text(
                           '+ ADD NEW',
                           style: GoogleFonts.montserrat(
@@ -363,52 +405,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                       ),
                     ],
                   ),
-                  if (_addEmployeeOpen) ...[
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(24),
-                        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.45)),
-                        color: scheme.surfaceContainerHighest.withValues(alpha: 0.35),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          TextField(
-                            controller: _newEmpName,
-                            decoration: const InputDecoration(labelText: 'Full name'),
-                          ),
-                          const SizedBox(height: 8),
-                          TextField(
-                            controller: _newEmpPhone,
-                            keyboardType: TextInputType.phone,
-                            decoration: const InputDecoration(labelText: 'Phone'),
-                          ),
-                          const SizedBox(height: 8),
-                          TextField(
-                            controller: _newEmpEmail,
-                            keyboardType: TextInputType.emailAddress,
-                            decoration: const InputDecoration(labelText: 'Email (optional)'),
-                          ),
-                          const SizedBox(height: 12),
-                          Row(
-                            children: [
-                              TextButton(
-                                onPressed: () => setState(() => _addEmployeeOpen = false),
-                                child: const Text('Cancel'),
-                              ),
-                              const Spacer(),
-                              FilledButton(
-                                onPressed: _submitNewEmployee,
-                                child: const Text('Add'),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+
                   const SizedBox(height: 12),
                   if (_employeesLoading)
                     const Center(child: Padding(padding: EdgeInsets.all(16), child: CircularProgressIndicator()))
@@ -863,6 +860,241 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
     );
   }
 
+  Widget _paymentTracker(BuildContext context, ColorScheme scheme, bool isDark) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 12),
+          child: Row(
+            children: [
+              Icon(LucideIcons.wallet, size: 14, color: scheme.primary),
+              const SizedBox(width: 8),
+              Text(
+                'C.P PAYMENT TRACKER',
+                style: GoogleFonts.montserrat(
+                  fontSize: 9,
+                  fontWeight: FontWeight.w900,
+                  color: scheme.onSurface,
+                  letterSpacing: 2,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(32),
+            border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.45)),
+            color: scheme.surfaceContainerHighest.withValues(alpha: 0.35),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            children: [
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: DataTable(
+                  horizontalMargin: 20,
+                  columnSpacing: 24,
+                  headingRowHeight: 40,
+                  dataRowMinHeight: 52,
+                  dataRowMaxHeight: 52,
+                  headingRowColor: WidgetStateProperty.all(scheme.onSurface.withValues(alpha: 0.03)),
+                  columns: [
+                    DataColumn(label: _th('PROJECT', scheme)),
+                    DataColumn(label: _th('CLIENT', scheme)),
+                    DataColumn(label: _th('PAYMENT %', scheme)),
+                    DataColumn(label: _th('STATUS', scheme)),
+                    DataColumn(label: _th('ACTION', scheme)),
+                  ],
+                  rows: _bookings.isEmpty
+                      ? [
+                          DataRow(cells: [
+                            DataCell(Text('NO FINANCIAL LOGS', style: _tdStyle(scheme).copyWith(fontSize: 8, color: scheme.outline))),
+                            const DataCell(SizedBox()),
+                            const DataCell(SizedBox()),
+                            const DataCell(SizedBox()),
+                            const DataCell(SizedBox()),
+                          ])
+                        ]
+                      : _bookings.map((b) {
+                          final prog = (b['paymentProgress'] ?? 0) as num;
+                          final canNotify = prog >= 100;
+                          final sanctioned = b['isSanctioned'] == true;
+                          final prod = b['project']?['title'] ?? 'N/A';
+                          return DataRow(cells: [
+                            DataCell(Text(prod.toString().toUpperCase(), style: _tdStyle(scheme))),
+                            DataCell(Text(b['name']?.toString().toUpperCase() ?? 'UNKNOWN', style: _tdStyle(scheme))),
+                            DataCell(Text('$prog%', style: _tdStyle(scheme).copyWith(color: scheme.primary, fontWeight: FontWeight.w900, fontStyle: FontStyle.italic))),
+                            DataCell(
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(4),
+                                  color: (sanctioned ? Colors.green : Colors.amber).withValues(alpha: 0.1),
+                                  border: Border.all(color: (sanctioned ? Colors.green : Colors.amber).withValues(alpha: 0.2)),
+                                ),
+                                child: Text(
+                                  sanctioned ? 'SANCTIONED' : 'NO SANCTION',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 6.5,
+                                    fontWeight: FontWeight.w900,
+                                    color: sanctioned ? Colors.green : Colors.amber[700],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            DataCell(
+                              IconButton(
+                                onPressed: canNotify ? () => _notifyAdmin(b['_id'].toString()) : null,
+                                icon: Icon(LucideIcons.bellRing, size: 14, color: canNotify ? scheme.primary : scheme.outline.withValues(alpha: 0.3)),
+                                style: IconButton.styleFrom(
+                                  backgroundColor: canNotify ? scheme.onSurface.withValues(alpha: 0.05) : Colors.transparent,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                ),
+                              ),
+                            ),
+                          ]);
+                        }).toList(),
+                ),
+              ),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                color: scheme.primary.withValues(alpha: 0.03),
+                child: Text(
+                  'ONLY 100% PAYMENTS CAN NOTIFY THE ADMIN PANEL FOR SETTLEMENT.',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.montserrat(
+                    fontSize: 7,
+                    fontWeight: FontWeight.w700,
+                    color: scheme.onSurface.withValues(alpha: 0.4),
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _th(String label, ColorScheme scheme) => Text(
+        label,
+        style: GoogleFonts.montserrat(
+          fontSize: 8,
+          fontWeight: FontWeight.w900,
+          color: scheme.onSurface,
+          letterSpacing: 1,
+        ),
+      );
+
+  TextStyle _tdStyle(ColorScheme scheme) => GoogleFonts.montserrat(
+        fontSize: 9,
+        fontWeight: FontWeight.w700,
+        color: scheme.onSurface,
+      );
+
+  void _showAddEmployee(BuildContext context, ColorScheme scheme) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => Container(
+        padding: EdgeInsets.fromLTRB(28, 24, 28, MediaQuery.of(ctx).viewInsets.bottom + 40),
+        decoration: BoxDecoration(
+          color: scheme.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'ADD NEW EMPLOYEE',
+                  style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w900, letterSpacing: 1.5),
+                ),
+                IconButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  icon: const Icon(LucideIcons.x, size: 20),
+                  padding: EdgeInsets.zero,
+                  visualDensity: VisualDensity.compact,
+                ),
+              ],
+            ),
+            const SizedBox(height: 32),
+            _label('FULL NAME'),
+            const SizedBox(height: 8),
+            _dialogField(controller: _newEmpName, hint: 'ENTER NAME'),
+            const SizedBox(height: 24),
+            _label('PHONE NUMBER'),
+            const SizedBox(height: 8),
+            _dialogField(controller: _newEmpPhone, hint: '+91 XXXXX XXXXX', keyboardType: TextInputType.phone),
+            const SizedBox(height: 24),
+            _label('EMAIL ADDRESS'),
+            const SizedBox(height: 8),
+            _dialogField(controller: _newEmpEmail, hint: 'NAME@EXAMPLE.COM', keyboardType: TextInputType.emailAddress),
+            const SizedBox(height: 40),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: Text(
+                    'CANCEL',
+                    style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w800, color: scheme.onSurface, letterSpacing: 1),
+                  ),
+                ),
+                const SizedBox(width: 24),
+                Material(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(12),
+                  child: InkWell(
+                    onTap: () {
+                      _submitNewEmployee();
+                      Navigator.pop(ctx);
+                    },
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                      child: Text(
+                        'ADD EMPLOYEE',
+                        style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _dialogField({required TextEditingController controller, required String hint, TextInputType? keyboardType}) {
+    final scheme = Theme.of(context).colorScheme;
+    return TextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      style: GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w700),
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w800, color: scheme.onSurface.withValues(alpha: 0.2)),
+        filled: true,
+        fillColor: scheme.onSurface.withValues(alpha: 0.02),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.3))),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.3))),
+        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.black.withValues(alpha: 0.6))),
+      ),
+    );
+  }
+
   Widget _serviceTile(
     BuildContext context, {
     required String label,
@@ -905,10 +1137,10 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: GoogleFonts.montserrat(
-                      fontSize: 8,
-                      fontWeight: FontWeight.w800,
-                      color: scheme.onSurface.withValues(alpha: 0.72),
-                      letterSpacing: 1.1,
+                      fontSize: 9.5,
+                      fontWeight: FontWeight.w900,
+                      color: scheme.onSurface,
+                      letterSpacing: 1.2,
                       height: 1.15,
                     ),
                   ),
@@ -973,9 +1205,9 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                       subtitle.toUpperCase(),
                       style: GoogleFonts.montserrat(
                         fontSize: 8,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w800,
                         color: scheme.onSurfaceVariant,
-                        letterSpacing: 0.8,
+                        letterSpacing: 1,
                       ),
                     ),
                   ],
@@ -985,6 +1217,16 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _label(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 4),
+      child: Text(
+        text,
+        style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.black.withValues(alpha: 0.8), letterSpacing: 0.5),
       ),
     );
   }

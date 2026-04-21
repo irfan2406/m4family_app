@@ -346,7 +346,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
         contentPadding: const EdgeInsets.all(24),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1))),
         enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1))),
-        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: const BorderSide(color: M4Theme.premiumBlue, width: 2)),
+        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2)),
       ),
     );
   }

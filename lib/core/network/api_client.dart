@@ -167,9 +167,14 @@ class ApiClient {
     return dio.get('/api/leads', queryParameters: queryParameters);
   }
 
-  /// CP bookings (`GET /api/bookings/my`).
+  /// CP bookings (`GET /api/cp/bookings`).
   Future<Response> getCpBookings() async {
-    return dio.get('/api/bookings/my');
+    return dio.get('/api/cp/bookings');
+  }
+
+  /// Notify Admin about 100% payment settlement (`POST /api/cp/bookings/:id/notify-admin`).
+  Future<Response> notifyAdminForSettlement(String bookingId) async {
+    return dio.post('/api/cp/bookings/$bookingId/notify-admin', data: {});
   }
 
   Future<Response> getCatalogContactStaff() async {

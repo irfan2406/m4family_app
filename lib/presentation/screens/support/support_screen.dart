@@ -131,59 +131,69 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
 
   Widget _buildSupportMatrix() {
     final scheme = Theme.of(context).colorScheme;
-    final isLight = scheme.brightness == Brightness.light;
-    // web uses monochrome icons
-    return GridView.count(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: 2,
-      crossAxisSpacing: 16,
-      mainAxisSpacing: 16,
-      childAspectRatio: 1.2,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _MatrixItem(
-          icon: LucideIcons.messageCircle,
-          title: 'WhatsApp Support',
-          subtitle: 'Instant help via WhatsApp',
-          color: scheme.onSurface,
-          onTap: SupportHandlers.launchWhatsApp,
+        Text(
+          'SUPPORT MATRIX',
+          style: GoogleFonts.montserrat(
+            fontSize: 9,
+            fontWeight: FontWeight.w900,
+            color: scheme.onSurface,
+            letterSpacing: 2,
+          ),
         ),
-        _MatrixItem(
-          icon: LucideIcons.calendar,
-          title: 'Schedule Visit',
-          subtitle: 'Book a site tour',
-          color: scheme.onSurface,
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const ScheduleVisitScreen()),
-            );
-          },
+        const SizedBox(height: 16),
+        GridView.count(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          crossAxisCount: 2,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+          childAspectRatio: 1.05,
+          children: [
+            _MatrixItem(
+              icon: LucideIcons.messageCircle,
+              title: 'WhatsApp Support',
+              subtitle: 'Instant help via WhatsApp',
+              color: scheme.onSurface,
+              onTap: SupportHandlers.launchWhatsApp,
+            ),
+            _MatrixItem(
+              icon: LucideIcons.calendar,
+              title: 'Schedule Visit',
+              subtitle: 'Book a site tour',
+              color: scheme.onSurface,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ScheduleVisitScreen()),
+                );
+              },
+            ),
+            _MatrixItem(
+              icon: LucideIcons.phone,
+              title: 'Call Us',
+              subtitle: 'Speak with our support team',
+              color: scheme.onSurface,
+              onTap: SupportHandlers.launchCall,
+            ),
+            _MatrixItem(
+              icon: LucideIcons.helpCircle,
+              title: 'Help Center',
+              subtitle: 'Read our FAQs & Guides',
+              color: scheme.onSurface,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const HelpCenterScreen()),
+                );
+              },
+            ),
+          ],
         ),
-        _MatrixItem(
-          icon: LucideIcons.phone,
-          title: 'Call Us',
-          subtitle: 'Speak with our support team',
-          color: scheme.onSurface,
-          onTap: SupportHandlers.launchCall,
-        ),
-        _MatrixItem(
-          icon: LucideIcons.helpCircle,
-          title: 'Help Center',
-          subtitle: 'Read our FAQs & Guides',
-          color: scheme.onSurface,
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const HelpCenterScreen()),
-            );
-          },
-        ),
-
-
-
       ],
-    ).animate().fadeIn(delay: 200.ms).scale(begin: const Offset(0.9, 0.9));
+    ).animate().fadeIn(delay: 200.ms).scale(begin: const Offset(0.98, 0.98));
   }
 
   Widget _buildOperationalLogsHeader() {
@@ -201,14 +211,14 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
                 fontSize: 10,
                 fontWeight: FontWeight.w900,
                 color: scheme.onSurface,
-                letterSpacing: 3.2,
+                letterSpacing: 2,
               ),
             ),
             const SizedBox(height: 4),
             Container(
-              width: 40,
+              width: 32,
               height: 2,
-              color: scheme.onSurface.withValues(alpha: 0.18),
+              color: scheme.onSurface,
             ),
           ],
         ),
@@ -224,8 +234,8 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
             style: GoogleFonts.montserrat(
               fontSize: 9,
               fontWeight: FontWeight.w900,
-              color: scheme.onSurface.withValues(alpha: 0.65),
-              letterSpacing: 1.6,
+              color: scheme.onSurface.withValues(alpha: 0.6),
+              letterSpacing: 1.2,
             ),
           ),
         ),
@@ -237,20 +247,20 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
     final scheme = Theme.of(context).colorScheme;
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 24),
+      padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 24),
       decoration: BoxDecoration(
         color: scheme.onSurface.withValues(alpha: 0.02),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.6), style: BorderStyle.solid),
+        borderRadius: BorderRadius.circular(32),
+        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.3)),
       ),
       child: Center(
         child: Text(
           'NO ACTIVE TICKETS.',
           style: GoogleFonts.montserrat(
-            fontSize: 11,
+            fontSize: 12,
             fontWeight: FontWeight.w900,
             color: scheme.onSurface,
-            letterSpacing: 3.2,
+            letterSpacing: 3,
           ),
         ),
       ),
@@ -277,61 +287,52 @@ class _MatrixItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final isLight = scheme.brightness == Brightness.light;
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: scheme.surfaceContainerHighest.withValues(alpha: isLight ? 0.65 : 0.22),
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.6)),
-              boxShadow: [
-                if (isLight) BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 20, offset: const Offset(0, 10)),
-              ],
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        decoration: BoxDecoration(
+          color: scheme.onSurface.withValues(alpha: 0.02),
+          borderRadius: BorderRadius.circular(32),
+          border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.3)),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.4)),
+                color: scheme.surface,
+              ),
+              child: Icon(icon, color: color, size: 20),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: scheme.surface,
-                    border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.6)),
-                  ),
-                  child: Icon(icon, color: color, size: 18),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  title.toUpperCase(),
-                  style: GoogleFonts.montserrat(
-                    color: scheme.onSurface,
-                    fontWeight: FontWeight.w900,
-                    fontSize: 11,
-                    letterSpacing: 0.6,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  subtitle.toUpperCase(),
-                  style: GoogleFonts.montserrat(
-                    color: scheme.onSurface.withValues(alpha: 0.65),
-                    fontSize: 8.5,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 1.2,
-                  ),
-                ),
-              ],
+            const Spacer(),
+            Text(
+              title.toUpperCase(),
+              textAlign: TextAlign.center,
+              style: GoogleFonts.montserrat(
+                color: scheme.onSurface,
+                fontWeight: FontWeight.w900,
+                fontSize: 11,
+                letterSpacing: 0.5,
+              ),
             ),
-          ),
+            const SizedBox(height: 6),
+            Text(
+              subtitle.toUpperCase(),
+              textAlign: TextAlign.center,
+              style: GoogleFonts.montserrat(
+                color: scheme.onSurface.withValues(alpha: 0.5),
+                fontSize: 8,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.8,
+              ),
+            ),
+          ],
         ),
       ),
     );

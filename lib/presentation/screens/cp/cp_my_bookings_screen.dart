@@ -58,7 +58,9 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
       if (!mounted) return;
       if (res.statusCode == 200 && res.data['status'] == true) {
         final d = res.data['data'];
-        if (d is List) _list = List<dynamic>.from(d);
+        if (d is Map && d['bookings'] is List) {
+          _list = List<dynamic>.from(d['bookings']);
+        }
       }
     } catch (_) {}
     if (mounted) setState(() => _loading = false);

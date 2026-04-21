@@ -5,7 +5,8 @@ class M4Theme {
   // Premium Zinc Palette (Web Match)
   static const Color background = Color(0xFF000000); // Pitch Black
   static const Color surface = Color(0xFF09090B);    // Deep Zinc
-  static const Color premiumBlue = Color(0xFF3B82F6); // Blue-500
+  static const Color institutionalBlack = Color(0xFF09090B); 
+  static const Color premiumBlue = institutionalBlack; // Redefine for backward compatibility if needed, but it's now neutral
   
   static const Color textPrimary = Color(0xFFF8FAFC);
   static const Color textSecondary = Color(0xFFA1A1AA); // Zinc-400
@@ -16,12 +17,13 @@ class M4Theme {
     brightness: Brightness.light,
     scaffoldBackgroundColor: Colors.white,
     colorScheme: const ColorScheme.light(
-      primary: premiumBlue,
-      secondary: premiumBlue,
+      primary: Color(0xFF09090B),    // Institutional Black
+      secondary: Color(0xFF18181B),  // Zinc-900
       surface: Colors.white,
-      background: Color(0xFFF8FAFC),
+      background: Colors.white,      // Pure Neutral
       onPrimary: Colors.white,
       onSurface: Color(0xFF09090B),
+      outline: Color(0xFFE4E4E7),    // Zinc-200
     ),
     textTheme: GoogleFonts.montserratTextTheme().copyWith(
       displayLarge: GoogleFonts.montserrat(
@@ -63,8 +65,8 @@ class M4Theme {
     brightness: Brightness.dark,
     scaffoldBackgroundColor: background,
     colorScheme: const ColorScheme.dark(
-      primary: premiumBlue,
-      secondary: premiumBlue,
+      primary: Color(0xFFF8FAFC),   // High contrast white for dark mode
+      secondary: Color(0xFFF8FAFC),
       surface: surface,
       background: background,
       onPrimary: background,
