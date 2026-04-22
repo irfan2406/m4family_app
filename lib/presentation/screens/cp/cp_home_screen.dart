@@ -298,64 +298,33 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         final currentFeatured = projects.isNotEmpty
             ? projects[_featuredPropIndex % projects.length]
             : null;
+
+        String displayLocation = '';
+        if (featured != null && featured['location'] != null) {
+          final loc = featured['location'];
+          if (loc is Map) {
+            displayLocation = loc['name']?.toString() ?? '';
+          } else {
+            displayLocation = loc.toString();
+          }
+        }
+
+        final scheme = Theme.of(context).colorScheme;
+
         return CustomScrollView(
           controller: _scrollController,
           physics: const BouncingScrollPhysics(),
           slivers: [
-            // High-Fidelity Header (Web Parity)
+            // Immersive Hero Section (Matches Web Parity)
             SliverToBoxAdapter(
-              child: Container(
-                color: scheme.surface,
-                padding: EdgeInsets.fromLTRB(28, MediaQuery.of(context).padding.top + 16, 24, 0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'Living the\n' + 'M4 Life'.toUpperCase(),
-                        style: GoogleFonts.montserrat(
-                          fontSize: 32,
-                          fontWeight: FontWeight.w900,
-                          height: 1.0,
-                          letterSpacing: -0.8,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                    Builder(
-                      builder: (ctx) => Material(
-                        color: Colors.grey.withOpacity(0.08),
-                        borderRadius: BorderRadius.circular(14),
-                        child: InkWell(
-                          onTap: () => Scaffold.of(ctx).openDrawer(),
-                          borderRadius: BorderRadius.circular(14),
-                          child: Container(
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(14),
-                              border: Border.all(color: Colors.black.withOpacity(0.08)),
-                            ),
-                            child: const Icon(LucideIcons.moreHorizontal, color: Colors.black, size: 22),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            // Hero Section with Overlays
-             SliverToBoxAdapter(
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  // Hero Image (Enlarged for 'Full Image' feel)
+                  // 1. Full-Section Hero Image
                   ClipRRect(
                     borderRadius: const BorderRadius.vertical(bottom: Radius.circular(40)),
                     child: SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.62,
+                      height: MediaQuery.of(context).size.height * 0.72, 
                       width: double.infinity,
                       child: Stack(
                         fit: StackFit.expand,
@@ -370,16 +339,18 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                                 errorWidget: (_, __, ___) => Container(color: Colors.grey[200]),
                               ),
                             ),
+                          // Premium Gradient Overlay
                           Container(
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
                                 colors: [
-                                  Colors.white.withOpacity(0.3),
-                                  Colors.transparent,
-                                  Colors.black.withOpacity(0.6),
+                                  Colors.white.withOpacity(0.4),
+                                  Colors.white.withOpacity(0.0),
+                                  Colors.black.withOpacity(0.9),
                                 ],
+                                stops: const [0.0, 0.4, 1.0],
                               ),
                             ),
                           ),
@@ -388,19 +359,62 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                     ),
                   ),
 
-                  // Search Bar (IN THE IMAGE)
+                  // 2. Cinematic Header (Living the M4 Life)
                   Positioned(
-                    top: 20,
+                    top: MediaQuery.of(context).padding.top + 16,
+                    left: 28,
+                    right: 24,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'Living the\n' + 'M4 Life'.toUpperCase(),
+                            style: GoogleFonts.montserrat(
+                              fontSize: 32,
+                              fontWeight: FontWeight.w900,
+                              height: 1.0,
+                              letterSpacing: -0.8,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                        Builder(
+                          builder: (ctx) => Material(
+                            color: Colors.white.withOpacity(0.8),
+                            borderRadius: BorderRadius.circular(14),
+                            child: InkWell(
+                              onTap: () => Scaffold.of(ctx).openDrawer(),
+                              borderRadius: BorderRadius.circular(14),
+                              child: Container(
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(color: Colors.black.withOpacity(0.05)),
+                                ),
+                                child: const Icon(LucideIcons.moreHorizontal, color: Colors.black, size: 22),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // 3. Floating Search Bar
+                  Positioned(
+                    top: MediaQuery.of(context).padding.top + 106,
                     left: 20,
                     right: 20,
                     child: Container(
-                      height: 56,
+                      height: 58,
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(18),
                         boxShadow: [
-                          BoxShadow(color: Colors.black.withOpacity(0.12), blurRadius: 20, offset: const Offset(0, 8)),
+                          BoxShadow(color: Colors.black.withOpacity(0.12), blurRadius: 25, offset: const Offset(0, 10)),
                         ],
                       ),
                       child: Row(
@@ -410,10 +424,10 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                           Expanded(
                             child: TextField(
                               onChanged: (v) => setState(() => _searchQuery = v),
-                              decoration: const InputDecoration(
+                              decoration: InputDecoration(
                                 hintText: 'Search residences...',
                                 border: InputBorder.none,
-                                hintStyle: TextStyle(color: Colors.grey),
+                                hintStyle: GoogleFonts.montserrat(color: Colors.grey, fontWeight: FontWeight.w600, fontSize: 13),
                               ),
                             ),
                           ),
@@ -423,9 +437,9 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                     ),
                   ),
 
-                  // Filter Chips (IN THE IMAGE)
+                  // 4. Status Filter Tabs
                   Positioned(
-                    top: 92,
+                    top: MediaQuery.of(context).padding.top + 184,
                     left: 0,
                     right: 0,
                     child: SingleChildScrollView(
@@ -435,13 +449,13 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                         children: _filters.map((filter) {
                           final isSelected = _selectedFilter == filter;
                           return Padding(
-                            padding: const EdgeInsets.only(right: 8),
+                            padding: const EdgeInsets.only(right: 10),
                             child: ChoiceChip(
                               label: Text(
                                 filter.toUpperCase(),
                                 style: GoogleFonts.montserrat(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w800,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w900,
                                   color: isSelected ? Colors.white : Colors.black,
                                   letterSpacing: 1.5,
                                 ),
@@ -449,10 +463,11 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                               selected: isSelected,
                               onSelected: (v) => setState(() => _selectedFilter = filter),
                               selectedColor: Colors.black,
-                              backgroundColor: Colors.white.withOpacity(0.9),
-                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                              backgroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
                               side: BorderSide.none,
+                              elevation: isSelected ? 4 : 0,
                             ),
                           );
                         }).toList(),
@@ -460,34 +475,34 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                     ),
                   ),
 
-                  // Artistic Impression Badge (Top Right of Image Content)
+                  // Artistic Impression Badge
                   Positioned(
-                    top: 160,
+                    top: MediaQuery.of(context).padding.top + 265,
                     right: 20,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.35),
-                        borderRadius: BorderRadius.circular(4),
+                        color: Colors.black.withOpacity(0.4),
+                        borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         'ARTISTIC IMPRESSION',
                         style: GoogleFonts.montserrat(
-                          fontSize: 6,
-                          fontWeight: FontWeight.w800,
+                          fontSize: 7,
+                          fontWeight: FontWeight.w900,
                           letterSpacing: 2,
-                          color: Colors.white70,
+                          color: Colors.white.withOpacity(0.9),
                         ),
                       ),
                     ),
                   ),
 
-                  // Featured Content at Bottom (Styled like Web)
+                  // 5. Featured Property Metadata
                   if (featured != null)
                     Positioned(
-                      left: 20,
-                      bottom: 24,
-                      right: 20,
+                      left: 24,
+                      bottom: 32,
+                      right: 24,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -496,9 +511,6 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(100),
-                              boxShadow: [
-                                BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10),
-                              ],
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -506,44 +518,40 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                                 Text(
                                   'FEATURED',
                                   style: GoogleFonts.montserrat(
-                                    fontSize: 8,
+                                    fontSize: 9,
                                     fontWeight: FontWeight.w900,
+                                    letterSpacing: 1.5,
                                     color: Colors.black,
-                                    letterSpacing: 1,
                                   ),
                                 ),
-                                const SizedBox(width: 6),
-                                Container(
-                                  width: 5,
-                                  height: 5,
-                                  decoration: const BoxDecoration(color: Colors.deepPurple, shape: BoxShape.circle),
-                                ),
+                                const SizedBox(width: 8),
+                                Container(width: 5, height: 5, decoration: const BoxDecoration(color: Color(0xFF9333EA), shape: BoxShape.circle)),
                               ],
                             ),
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 18),
                           Text(
-                            (featured['title'] ?? '').toString().toUpperCase(),
+                            featured?['title']?.toString().toUpperCase() ?? '',
                             style: GoogleFonts.montserrat(
                               fontSize: 42,
                               fontWeight: FontWeight.w900,
-                              color: Colors.white,
                               height: 0.9,
-                              letterSpacing: -1,
+                              letterSpacing: -1.5,
+                              color: Colors.white,
                             ),
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 10),
                           Row(
                             children: [
-                              const Icon(LucideIcons.mapPin, color: Colors.white, size: 12),
-                              const SizedBox(width: 6),
+                              const Icon(LucideIcons.mapPin, size: 14, color: Colors.white),
+                              const SizedBox(width: 8),
                               Text(
-                                _locLine(featured).toUpperCase(),
+                                displayLocation.toUpperCase(),
                                 style: GoogleFonts.montserrat(
-                                  fontSize: 11,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.w800,
                                   letterSpacing: 2.5,
-                                  color: Colors.white,
+                                  color: Colors.white.withOpacity(0.9),
                                 ),
                               ),
                             ],
@@ -556,7 +564,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
             ),
 
             // Gap
-            const SliverToBoxAdapter(child: SizedBox(height: 32)),
+            const SliverToBoxAdapter(child: SizedBox(height: 40)),
 
             SliverToBoxAdapter(
               child: Padding(
@@ -569,10 +577,10 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                     Text(
                       'RECOMMENDED FOR YOU',
                       style: GoogleFonts.montserrat(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 2,
-                        color: scheme.outline,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 2.5,
+                        color: scheme.onSurface.withOpacity(0.5),
                       ),
                     ),
                     InkWell(
@@ -581,7 +589,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                         'VIEW ALL',
                         style: GoogleFonts.montserrat(
                           fontSize: 10,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w900,
                           letterSpacing: 1,
                           color: Colors.black,
                         ),
@@ -591,6 +599,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                 ),
               ),
             ),
+
             SliverToBoxAdapter(
               child: SizedBox(
                 height: 380,
@@ -762,10 +771,10 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                 child: Text(
                   'PROPERTY RENDERS & VIDEOS',
                   style: GoogleFonts.montserrat(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 4,
-                    color: scheme.outline,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 2,
+                    color: scheme.onSurface.withOpacity(0.5),
                   ),
                 ),
               ),
@@ -830,10 +839,10 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                     Text(
                       'Our Philosophy'.toUpperCase(),
                       style: GoogleFonts.montserrat(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 4,
-                        color: Colors.grey,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 2,
+                        color: scheme.onSurface.withOpacity(0.5),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -849,10 +858,10 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                     Text(
                       'Featured Property'.toUpperCase(),
                       style: GoogleFonts.montserrat(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 4,
-                        color: Colors.grey,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 2,
+                        color: scheme.onSurface.withOpacity(0.5),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -1109,7 +1118,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                         ),
                       ),
                       child: DropdownButtonFormField<String>(
-                        initialValue: _projectId,
+                        value: _projectId,
                         decoration: _inquiryDec(scheme, hint: 'Select Project'),
                         items: [
                           for (final p in projects)
@@ -1175,49 +1184,68 @@ class _ActionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.black,
-      borderRadius: BorderRadius.circular(28),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(28),
-        child: Padding(
-          padding: const EdgeInsets.all(18),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.15),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF18181B) : Colors.white,
+        borderRadius: BorderRadius.circular(40),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(40),
+          child: Padding(
+            padding: const EdgeInsets.all(18),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Icon Container (Silver/Grey Circle like web)
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: isDark ? Colors.white.withOpacity(0.08) : const Color(0xFFF3F4F6),
+                  ),
+                  child: Icon(
+                    icon, 
+                    size: 20, 
+                    color: isDark ? Colors.white : const Color(0xFF1F2937),
+                  ),
                 ),
-                child: Icon(icon, size: 22, color: Colors.white),
-              ),
-              const SizedBox(height: 14),
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.montserrat(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 2,
-                  color: Colors.white,
+                const SizedBox(height: 16),
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.montserrat(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -0.2,
+                    color: isDark ? Colors.white : Colors.black,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                subtitle,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                style: GoogleFonts.montserrat(
-                  fontSize: 8,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1,
-                  color: Colors.white60,
+                const SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  style: GoogleFonts.montserrat(
+                    fontSize: 8,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1,
+                    color: isDark ? Colors.white60 : const Color(0xFF6B7280),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

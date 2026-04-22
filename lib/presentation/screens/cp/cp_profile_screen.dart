@@ -991,7 +991,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
       );
 
   TextStyle _tdStyle(ColorScheme scheme) => GoogleFonts.montserrat(
-        fontSize: 9,
+        fontSize: 10,
         fontWeight: FontWeight.w700,
         color: scheme.onSurface,
       );

@@ -11,6 +11,7 @@ import 'package:m4_mobile/core/utils/support_handlers.dart';
 
 
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
+import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import 'dart:ui';
@@ -99,7 +100,9 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
                   if (Navigator.canPop(context)) {
                     Navigator.pop(context);
                   } else {
+                    // Reset to index 0 for either shell
                     ref.read(navigationProvider.notifier).state = 0;
+                    ref.read(cpNavigationIndexProvider.notifier).state = 0;
                   }
                 },
                 child: Container(

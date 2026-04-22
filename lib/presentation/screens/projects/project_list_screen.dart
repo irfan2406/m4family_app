@@ -21,13 +21,9 @@ class ProjectListScreen extends ConsumerWidget {
   final bool cpCatalogMode;
 
   void _showFilterBottomSheet(BuildContext context, WidgetRef ref) {
-    final locations = ref.read(projectLocationsProvider);
-    final categories = ref.read(projectCategoriesProvider);
-    final selectedLocs = ref.watch(selectedLocationsProvider);
-    final selectedBudgets = ref.watch(selectedBudgetsProvider);
-    final selectedTypes = ref.watch(selectedTypesProvider);
-
-    final budgetOptions = ["< 5 Cr", "5 - 10 Cr", "10 - 20 Cr", "20 Cr +"];
+    final locationOptions = ["SOUTH MUMBAI", "WORLI", "BANDRA", "JUHU", "POWAI"];
+    final configOptions = ["1 BHK", "2 BHK", "3 BHK", "4 BHK", "5 BHK", "DUPLEX", "PENTHOUSE"];
+    final areaOptions = ["< 1000", "1000 - 2000", "2000 - 4000", "4000 +"];
 
     showModalBottomSheet(
       context: context,
@@ -36,10 +32,11 @@ class ProjectListScreen extends ConsumerWidget {
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setModalState) {
+            final isDark = Theme.of(context).brightness == Brightness.dark;
             return Container(
               height: MediaQuery.of(context).size.height * 0.85,
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface,
+                color: isDark ? const Color(0xFF111111) : Colors.white,
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
               ),
               child: Column(
@@ -52,69 +49,78 @@ class ProjectListScreen extends ConsumerWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('REFINE SEARCH', style: GoogleFonts.montserrat(fontSize: 20, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface, letterSpacing: -0.5)),
+                        Text('REFINE SEARCH', style: GoogleFonts.montserrat(fontSize: 22, fontWeight: FontWeight.w900, color: Theme.of(context).colorScheme.onSurface, letterSpacing: -0.5)),
                         IconButton(
                           onPressed: () => Navigator.pop(context),
-                          icon: Icon(LucideIcons.x, color: Theme.of(context).colorScheme.onSurface),
-                          style: IconButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.05), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+                          icon: Icon(LucideIcons.x, color: Theme.of(context).colorScheme.onSurface, size: 18),
+                          style: IconButton.styleFrom(
+                            backgroundColor: Theme.of(context).colorScheme.onSurface.withOpacity(0.05), 
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            fixedSize: const Size(40, 40),
+                          ),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 32),
                   Expanded(
-                    child: ListView(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      children: [
-                        _FilterSection(
-                          title: 'LOCATION',
-                          options: locations,
-                          selectedOptions: selectedLocs,
-                          onToggle: (val) {
-                            final current = List<String>.from(ref.read(selectedLocationsProvider));
-                            if (current.contains(val)) current.remove(val); else current.add(val);
-                            ref.read(selectedLocationsProvider.notifier).state = current;
-                            setModalState(() {});
-                          },
-                        ),
-                        const SizedBox(height: 32),
-                        _FilterSection(
-                          title: 'BUDGET RANGE',
-                          options: budgetOptions,
-                          selectedOptions: selectedBudgets,
-                          onToggle: (val) {
-                            final current = List<String>.from(ref.read(selectedBudgetsProvider));
-                            if (current.contains(val)) current.remove(val); else current.add(val);
-                            ref.read(selectedBudgetsProvider.notifier).state = current;
-                            setModalState(() {});
-                          },
-                        ),
-                        const SizedBox(height: 32),
-                        _FilterSection(
-                          title: 'PROPERTY TYPE',
-                          options: categories,
-                          selectedOptions: selectedTypes,
-                          onToggle: (val) {
-                            final current = List<String>.from(ref.read(selectedTypesProvider));
-                            if (current.contains(val)) current.remove(val); else current.add(val);
-                            ref.read(selectedTypesProvider.notifier).state = current;
-                            setModalState(() {});
-                          },
-                        ),
-                        const SizedBox(height: 48),
-                      ],
+                    child: Consumer(
+                      builder: (context, ref, child) {
+                        final selectedLocs = ref.watch(selectedLocationsProvider);
+                        final selectedConfigs = ref.watch(selectedConfigsProvider);
+                        final selectedAreas = ref.watch(selectedAreasProvider);
+
+                        return ListView(
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          children: [
+                            _FilterSection(
+                              title: 'LOCATION',
+                              options: locationOptions,
+                              selectedOptions: selectedLocs,
+                              onToggle: (val) {
+                                final current = List<String>.from(ref.read(selectedLocationsProvider));
+                                if (current.contains(val)) current.remove(val); else current.add(val);
+                                ref.read(selectedLocationsProvider.notifier).state = current;
+                              },
+                            ),
+                            const SizedBox(height: 32),
+                            _FilterSection(
+                              title: 'CONFIGURATION',
+                              options: configOptions,
+                              selectedOptions: selectedConfigs,
+                              onToggle: (val) {
+                                final current = List<String>.from(ref.read(selectedConfigsProvider));
+                                if (current.contains(val)) current.remove(val); else current.add(val);
+                                ref.read(selectedConfigsProvider.notifier).state = current;
+                              },
+                            ),
+                            const SizedBox(height: 32),
+                            _FilterSection(
+                              title: 'AREA (SQ FT)',
+                              options: areaOptions,
+                              selectedOptions: selectedAreas,
+                              onToggle: (val) {
+                                final current = List<String>.from(ref.read(selectedAreasProvider));
+                                if (current.contains(val)) current.remove(val); else current.add(val);
+                                ref.read(selectedAreasProvider.notifier).state = current;
+                              },
+                            ),
+                            const SizedBox(height: 48),
+                          ],
+                        );
+                      },
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 48),
+                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 40),
                     child: SizedBox(
                       width: double.infinity,
                       height: 64,
                       child: ElevatedButton(
                         onPressed: () => Navigator.pop(context),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          foregroundColor: Colors.white,
+                          backgroundColor: isDark ? Colors.white : Colors.black,
+                          foregroundColor: isDark ? Colors.black : Colors.white,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                           elevation: 0,
                         ),
@@ -123,8 +129,7 @@ class ProjectListScreen extends ConsumerWidget {
                           style: GoogleFonts.montserrat(
                             fontSize: 12, 
                             fontWeight: FontWeight.w900, 
-                            color: Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white,
-                            letterSpacing: 1
+                            letterSpacing: 1.5
                           ),
                         ),
                       ),
@@ -291,7 +296,7 @@ class ProjectListScreen extends ConsumerWidget {
                 border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.08)),
               ),
               child: Row(
-                children: ['Ongoing', 'Upcoming', 'Completed'].map((filter) {
+                children: ['All', 'Ongoing', 'Upcoming', 'Completed'].map((filter) {
                   final isSelected = currentFilter == filter;
                   return Expanded(
                     child: GestureDetector(
@@ -668,11 +673,11 @@ class _FilterSection extends StatelessWidget {
       children: [
         Text(
           title, 
-          style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3), letterSpacing: 2)
+          style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3), letterSpacing: 2)
         ),
         const SizedBox(height: 16),
         Wrap(
-          spacing: 8,
+          spacing: 12,
           runSpacing: 12,
           children: options.map((opt) {
             final isSelected = selectedOptions.contains(opt);
@@ -680,18 +685,15 @@ class _FilterSection extends StatelessWidget {
               onTap: () => onToggle(opt),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
                 decoration: BoxDecoration(
                   color: isSelected 
                       ? (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black)
-                      : Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
-                  borderRadius: BorderRadius.circular(15),
+                      : Theme.of(context).colorScheme.onSurface.withOpacity(0.04),
+                  borderRadius: BorderRadius.circular(30), // Rounded pill like web
                   border: Border.all(color: isSelected 
                       ? (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black)
                       : Theme.of(context).colorScheme.onSurface.withOpacity(0.08)),
-                  boxShadow: isSelected ? [
-                    BoxShadow(color: (Theme.of(context).brightness == Brightness.dark ? Colors.white24 : Colors.black26), blurRadius: 20, spreadRadius: -5)
-                  ] : null,
                 ),
                 child: Text(
                   opt.toUpperCase(),
@@ -700,7 +702,7 @@ class _FilterSection extends StatelessWidget {
                     fontWeight: FontWeight.w900, 
                     color: isSelected 
                         ? (Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white)
-                        : Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                        : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                     letterSpacing: 1,
                   ),
                 ),

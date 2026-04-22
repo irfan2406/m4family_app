@@ -1,9 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final apiClientProvider = Provider((ref) => ApiClient(baseUrl: 'http://10.0.2.2:5009'));
+final apiClientProvider = Provider((ref) => ApiClient(baseUrl: dotenv.get('API_URL', fallback: 'http://10.0.2.2:5009')));
 
 enum AuthStatus { initial, loading, otpSent, authenticated, error }
 

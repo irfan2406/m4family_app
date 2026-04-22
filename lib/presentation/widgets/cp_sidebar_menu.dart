@@ -117,7 +117,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                             _SubItem(label: 'Media', onTap: () => _go('/media')),
                             _SubItem(label: 'Highlights', onTap: () => _go('/highlights')),
                             _SubItem(label: 'Events', onTap: () => _go('/events')),
-                            _SubItem(label: 'Blog', onTap: () => _go('/blog')),
+                            _SubItem(label: 'Blog', onTap: () => _go('/cp/blog')),
                           ],
                         ),
                       ),
@@ -145,12 +145,6 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                         label: 'Notifications',
                         isActive: false,
                         onTap: () => _go('/notifications'),
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.sparkles,
-                        label: 'Custom Views',
-                        isActive: false,
-                        onTap: () => _go('/custom-views'),
                       ),
 
                       const SizedBox(height: 24),

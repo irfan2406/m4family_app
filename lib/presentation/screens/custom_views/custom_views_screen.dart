@@ -17,7 +17,7 @@ class CustomViewsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentStep = ref.watch(customViewsStepProvider);
-    final isSubmitted = false; // We can add an isSubmitted state later if needed
+    final isSubmitted = false;
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -33,6 +33,8 @@ class CustomViewsScreen extends ConsumerWidget {
                     onTap: () {
                       if (currentStep > 0) {
                         ref.read(customViewsStepProvider.notifier).state = currentStep - 1;
+                      } else if (currentStep == 0) {
+                        ref.read(customViewsStepProvider.notifier).state = -1;
                       } else {
                         if (Navigator.canPop(context)) {
                           Navigator.pop(context);
@@ -65,16 +67,16 @@ class CustomViewsScreen extends ConsumerWidget {
                             fontSize: 16,
                             fontWeight: FontWeight.w900,
                             color: Theme.of(context).colorScheme.onSurface,
-                            letterSpacing: 0,
+                            letterSpacing: 1.5,
                           ),
                         ),
                         Text(
                           'PERSONALISATION SUITE',
                           style: GoogleFonts.montserrat(
                             fontSize: 8,
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-                            letterSpacing: 3,
+                            fontWeight: FontWeight.w900,
+                            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.4),
+                            letterSpacing: 5.5,
                           ),
                         ),
                       ],
@@ -84,27 +86,112 @@ class CustomViewsScreen extends ConsumerWidget {
                 ],
               ),
             ),
-
-            // Main Scrolling Content
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.only(bottom: 120),
                 child: Column(
                   children: [
-                    // Journey Steps Track
-                    SizedBox(
-                      height: 90,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.symmetric(horizontal: 24),
-                        children: const [
-                          _StepIndicator(index: 0, title: 'PROJECT & UNIT', icon: LucideIcons.building2),
-                          SizedBox(width: 32),
-                          _StepIndicator(index: 1, title: 'SELECT SPACE', icon: LucideIcons.home),
-                          SizedBox(width: 32),
-                          _StepIndicator(index: 2, title: 'CHOOSE MATERIALS', icon: LucideIcons.layers),
-                          SizedBox(width: 32),
-                          _StepIndicator(index: 3, title: 'FINALISE', icon: LucideIcons.check),
+                    // Banner Section (always visible, exactly as Web CP)
+                    Container(
+                      height: 200,
+                      width: double.infinity,
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          Image.network(
+                            'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=1974&auto=format&fit=crop',
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) => Container(
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
+                            ),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.transparent,
+                                  Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.4),
+                                  Theme.of(context).scaffoldBackgroundColor,
+                                ],
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 0, left: 0, right: 0,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'PERSONALISE',
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.w200,
+                                      color: Theme.of(context).colorScheme.onSurface,
+                                      letterSpacing: 6,
+                                    ),
+                                  ),
+                                  Text(
+                                    'YOUR LEGACY',
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.w900,
+                                      color: Theme.of(context).colorScheme.onSurface,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Container(width: 40, height: 2, color: Theme.of(context).colorScheme.onSurface),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Overview Section
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'OVERVIEW',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 3,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Your home is a reflection of your soul. Experience total creative freedom in our Personalisation Suite. From master suites to bespoke kitchens, curate every detail of your future residence with real-time visualisation and elite material selections.',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 14,
+                              height: 1.7,
+                              fontWeight: FontWeight.w500,
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.75),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Journey Steps Track (4 steps with icons, exactly as Web CP)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _StepIconIndicator(index: 0, title: 'PROJECT &\nUNIT', icon: LucideIcons.building2),
+                          _StepIconIndicator(index: 1, title: 'SELECT\nSPACE', icon: LucideIcons.home),
+                          _StepIconIndicator(index: 2, title: 'CHOOSE\nMATERIALS', icon: LucideIcons.layers),
+                          _StepIconIndicator(index: 3, title: 'FINALISE', icon: LucideIcons.check),
                         ],
                       ),
                     ),
@@ -113,138 +200,122 @@ class CustomViewsScreen extends ConsumerWidget {
 
                     // Wizard Content Card
                     Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 24),
-                      padding: const EdgeInsets.all(24),
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      padding: const EdgeInsets.all(28),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.03),
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? const Color(0xFF18181B)
+                            : Colors.white.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(40),
-                        border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05)),
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.04),
+                            blurRadius: 24,
+                            offset: const Offset(0, 12),
+                          ),
+                        ],
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildStepContent(currentStep),
-                          
-                          const SizedBox(height: 32),
-                          
-                          // Navigation Footer inside the card
-                          if (!isSubmitted)
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                GestureDetector(
-                                  onTap: currentStep > 0
-                                      ? () => ref.read(customViewsStepProvider.notifier).state = currentStep - 1
-                                      : null,
-                                  child: Text(
-                                    'BACK',
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w900,
-                                      color: currentStep > 0 ? Theme.of(context).colorScheme.onSurface.withOpacity(0.7) : Colors.transparent,
-                                      letterSpacing: 2,
-                                    ),
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () async {
-                                    if (currentStep < 3) {
-                                      ref.read(customViewsStepProvider.notifier).state = currentStep + 1;
-                                    } else {
-                                      final messenger = ScaffoldMessenger.of(context);
-                                      try {
-                                        final apiClient = ref.read(apiClientProvider);
-                                        final auth = ref.read(authProvider);
-                                        final selectedProject = ref.read(customViewsProjectProvider);
-                                        final selectedUnit = ref.read(customViewsUnitProvider);
-                                        final selections = ref.read(customViewsSelectionsProvider);
-                                        
-                                        // Map identifier to phone or email if possible
-                                        String? guestPhone;
-                                        String? guestEmail;
-                                        if (auth.identifier != null) {
-                                          if (auth.identifier!.contains('@')) {
-                                            guestEmail = auth.identifier;
-                                          } else {
-                                            guestPhone = auth.identifier;
-                                          }
-                                        }
-
-                                        final response = await apiClient.submitCustomViews({
-                                          'project': selectedProject,
-                                          'unitType': selectedUnit,
-                                          'space': selections['space'],
-                                          'selections': selections,
-                                          'guestName': auth.identifier ?? 'App Guest',
-                                          'guestPhone': guestPhone ?? 'N/A',
-                                          'guestEmail': guestEmail ?? 'app@m4family.com'
-                                        });
-                                        
-                                        if (context.mounted) {
-                                          if (response.data['status'] == true) {
-                                            messenger.showSnackBar(
-                                              const SnackBar(
-                                                content: Text('Selections successfully saved and synced to Admin Panel!'),
-                                                backgroundColor: Colors.green,
-                                              ),
-                                            );
-                                            // Reset to Step 0 and clear states
-                                            ref.read(customViewsStepProvider.notifier).state = 0;
-                                            ref.read(customViewsSelectionsProvider.notifier).state = {};
-                                            ref.read(customViewsProjectProvider.notifier).state = null;
-                                          } else {
-                                            messenger.showSnackBar(
-                                              SnackBar(
-                                                content: Text(response.data['message'] ?? 'Failed to save selections'),
-                                                backgroundColor: Colors.red,
-                                              ),
-                                            );
-                                          }
-                                        }
-                                      } catch (e) {
-                                        if (context.mounted) {
-                                          messenger.showSnackBar(
-                                            SnackBar(
-                                              content: Text('Failed to save selections. Please try again.'),
-                                              backgroundColor: Colors.red,
-                                            ),
-                                          );
-                                        }
-                                      }
-                                    }
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context).colorScheme.onBackground,
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
+                      child: Consumer(
+                        builder: (context, ref, child) {
+                          final currentStepVal = ref.watch(customViewsStepProvider);
+                          final activeStep = currentStepVal == -1 ? 0 : currentStepVal;
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _buildStepWizardBody(activeStep),
+                              
+                              const SizedBox(height: 32),
+                              
+                              // Separator line before footer
+                              Container(
+                                height: 1,
+                                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08),
+                              ),
+                              const SizedBox(height: 20),
+                              
+                              // Navigation Footer (BACK / NEXT STEP)
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  GestureDetector(
+                                    onTap: activeStep > 0
+                                        ? () => ref.read(customViewsStepProvider.notifier).state = activeStep - 1
+                                        : null,
                                     child: Text(
-                                      currentStep < 3 ? 'NEXT STEP' : 'CONFIRM',
+                                      'BACK',
                                       style: GoogleFonts.montserrat(
-                                        fontSize: 12,
+                                        fontSize: 9,
                                         fontWeight: FontWeight.w900,
-                                        color: Theme.of(context).colorScheme.background,
-                                        letterSpacing: 1,
+                                        color: activeStep > 0
+                                            ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5)
+                                            : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
+                                        letterSpacing: 2,
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                        ],
+                                  GestureDetector(
+                                    onTap: () async {
+                                      if (activeStep < 3) {
+                                        ref.read(customViewsStepProvider.notifier).state = activeStep + 1;
+                                      } else {
+                                        final messenger = ScaffoldMessenger.of(context);
+                                        try {
+                                          final apiClient = ref.read(apiClientProvider);
+                                          final auth = ref.read(authProvider);
+                                          final selectedProject = ref.read(customViewsProjectProvider);
+                                          final selectedUnit = ref.read(customViewsUnitProvider);
+                                          final selections = ref.read(customViewsSelectionsProvider);
+                                          
+                                          final response = await apiClient.submitCustomViews({
+                                            'project': selectedProject,
+                                            'unitType': selectedUnit,
+                                            'space': selections['space'],
+                                            'selections': selections,
+                                            'guestName': auth.identifier ?? 'App Guest',
+                                            'guestPhone': 'N/A',
+                                            'guestEmail': 'app@m4family.com'
+                                          });
+                                          
+                                          if (context.mounted) {
+                                            if (response.data['status'] == true) {
+                                              messenger.showSnackBar(const SnackBar(content: Text('Selections successfully saved!'), backgroundColor: Colors.green));
+                                              ref.read(customViewsStepProvider.notifier).state = -1;
+                                            }
+                                          }
+                                        } catch (e) {
+                                          if (context.mounted) messenger.showSnackBar(const SnackBar(content: Text('Failed to save selections.'), backgroundColor: Colors.red));
+                                        }
+                                      }
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context).colorScheme.onSurface,
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Text(
+                                        activeStep < 3 ? 'NEXT STEP' : 'CONFIRM SELECTIONS',
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.w900,
+                                          color: Theme.of(context).colorScheme.surface,
+                                          letterSpacing: 1.5,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          );
+                        },
                       ),
                     ),
-
+                    
                     const SizedBox(height: 64),
-
-                    // Premium Materials Section
-                    const _PremiumMaterialsSection(),
-
-                    const SizedBox(height: 64),
-
-                    // Consultation Section
-                    const _ConsultationSection(),
                   ],
                 ),
               ),
@@ -255,85 +326,69 @@ class CustomViewsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStepContent(int step) {
+  Widget _buildStepWizardBody(int step) {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 300),
       child: () {
         switch (step) {
-          case 0:
-            return const _ProjectSelectionStep(key: ValueKey(0));
-          case 1:
-            return const _SpaceSelectionStep(key: ValueKey(1));
-          case 2:
-            return const _MaterialsSelectionStep(key: ValueKey(2));
-          case 3:
-            return const _FinaliseStep(key: ValueKey(3));
-          default:
-            return const SizedBox();
+          case 0: return const _ProjectSelectionStep(key: ValueKey(0));
+          case 1: return const _SpaceSelectionStep(key: ValueKey(1));
+          case 2: return const _MaterialsSelectionStep(key: ValueKey(2));
+          case 3: return const _FinaliseStep(key: ValueKey(3));
+          default: return const SizedBox();
         }
       }(),
     );
   }
+
 }
 
-class _StepIndicator extends ConsumerWidget {
+
+class _StepIconIndicator extends ConsumerWidget {
   final int index;
   final String title;
   final IconData icon;
 
-  const _StepIndicator({required this.index, required this.title, required this.icon});
+  const _StepIconIndicator({required this.index, required this.title, required this.icon});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final currentStep = ref.watch(customViewsStepProvider);
-    final isActive = currentStep >= index;
+    final activeStep = currentStep == -1 ? 0 : currentStep;
+    // Web uses >= for filled state (current + previous steps filled)
+    final isFilled = activeStep >= index;
 
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
-      onTap: () {
-        if (index > 0 && ref.read(customViewsProjectProvider) == null) {
-          // Keep them on step 0 if no project selected
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Please select a project first')),
-          );
-          return;
-        }
-        ref.read(customViewsStepProvider.notifier).state = index;
-      },
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              width: 52,
-              height: 52,
-              decoration: BoxDecoration(
-                color: isActive ? M4Theme.premiumBlue : (isDark ? Colors.white : Colors.black).withOpacity(0.05),
-                shape: BoxShape.circle,
-                boxShadow: isActive ? [
-                  BoxShadow(color: M4Theme.premiumBlue.withOpacity(0.3), blurRadius: 12, spreadRadius: 2)
-                ] : [],
-              ),
-              child: Icon(
-                icon,
-                size: 20,
-                color: isActive ? Colors.white : Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
+      onTap: () => ref.read(customViewsStepProvider.notifier).state = index,
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: isFilled ? Theme.of(context).colorScheme.onSurface : Colors.transparent,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isFilled ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
               ),
             ),
-            const SizedBox(height: 12),
-            Text(
-              title,
-              style: GoogleFonts.montserrat(
-                fontSize: 8,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 1,
-                color: isActive ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
-              ),
+            child: Icon(
+              icon,
+              size: 16,
+              color: isFilled ? Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.onSurface,
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.montserrat(
+              fontSize: 7,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 0.8,
+              color: isFilled ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -348,6 +403,7 @@ class _ProjectSelectionStep extends ConsumerWidget {
     final projectsAsync = ref.watch(projectsProvider);
     final selectedProject = ref.watch(customViewsProjectProvider);
     final selectedUnit = ref.watch(customViewsUnitProvider);
+    final scheme = Theme.of(context).colorScheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -380,12 +436,15 @@ class _ProjectSelectionStep extends ConsumerWidget {
               return GestureDetector(
                 onTap: () => ref.read(customViewsProjectProvider.notifier).state = p['_id'],
                 child: Container(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  margin: const EdgeInsets.only(bottom: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                   decoration: BoxDecoration(
-                    color: isSelected ? Theme.of(context).colorScheme.onBackground : (isDark ? Colors.white : Colors.black).withOpacity(0.04),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: isSelected ? Theme.of(context).colorScheme.onBackground : (isDark ? Colors.white : Colors.black).withOpacity(0.08)),
+                    color: isSelected ? scheme.onSurface : scheme.surface,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: scheme.onSurface.withValues(alpha: isSelected ? 1 : 0.1)),
+                    boxShadow: isSelected ? [] : [
+                      BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10, offset: const Offset(0, 4)),
+                    ],
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -398,7 +457,7 @@ class _ProjectSelectionStep extends ConsumerWidget {
                             style: GoogleFonts.montserrat(
                               fontSize: 14,
                               fontWeight: FontWeight.w900,
-                              color: isSelected ? Theme.of(context).colorScheme.background : Theme.of(context).colorScheme.onSurface,
+                              color: isSelected ? scheme.surface : scheme.onSurface,
                               letterSpacing: 0.5,
                             ),
                           ),
@@ -409,12 +468,13 @@ class _ProjectSelectionStep extends ConsumerWidget {
                               fontSize: 8,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 2,
-                              color: isSelected ? Theme.of(context).colorScheme.background.withOpacity(0.7) : Theme.of(context).colorScheme.onSurface.withOpacity(0.54),
+                              color: isSelected ? scheme.surface.withValues(alpha: 0.7) : scheme.onSurface.withValues(alpha: 0.54),
                             ),
                           ),
                         ],
                       ),
-                      if (isSelected) Icon(LucideIcons.check, color: Theme.of(context).colorScheme.background, size: 20),
+                      if (isSelected) 
+                        Icon(LucideIcons.check, color: scheme.surface, size: 20),
                     ],
                   ),
                 ),
@@ -633,7 +693,11 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                                 // 🏷️ Material Label (Centered Overlay)
                                 Container(
                                   decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.35), // Shroud for image readability
+                                    color: isDark 
+                                        ? Colors.black.withOpacity(0.35) 
+                                        : (opt['image'] != null || opt['colorCode'] != null 
+                                            ? Colors.black.withOpacity(0.05) 
+                                            : Colors.transparent),
                                   ),
                                   alignment: Alignment.center,
                                   padding: const EdgeInsets.all(12),
@@ -644,7 +708,9 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                                       fontSize: 10,
                                       fontWeight: FontWeight.w900,
                                       letterSpacing: 1.2,
-                                      color: Colors.white,
+                                      color: isDark || opt['image'] != null || opt['colorCode'] != null 
+                                          ? Colors.white 
+                                          : Theme.of(context).colorScheme.onSurface,
                                     ),
                                   ),
                                 ),

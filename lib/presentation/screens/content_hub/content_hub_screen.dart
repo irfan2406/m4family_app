@@ -143,20 +143,20 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                   Text(
                     widget.title,
                     style: GoogleFonts.montserrat(
-                      fontSize: 48,
-                      fontWeight: FontWeight.w400,
-                      letterSpacing: -2,
-                      height: 0.9,
+                      fontSize: 32,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -1,
+                      height: 1.0,
                       color: scheme.onSurface,
                     ),
                   ).animate().fadeIn().slideY(begin: 0.2),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 18),
                   Text(
                     widget.subtitle,
                     style: GoogleFonts.montserrat(
                       fontSize: 14,
-                      color: scheme.onSurface.withValues(alpha: 0.55),
-                      fontWeight: FontWeight.w500,
+                      color: scheme.onSurface.withValues(alpha: isDark ? 0.6 : 0.8),
+                      fontWeight: FontWeight.w600,
                     ),
                   ).animate().fadeIn(delay: 200.ms),
                   const SizedBox(height: 40),

@@ -6,6 +6,8 @@ import 'package:m4_mobile/presentation/providers/notification_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
+import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 
 class NotificationListScreen extends ConsumerWidget {
@@ -33,9 +35,15 @@ class NotificationListScreen extends ConsumerWidget {
                       children: [
                         IconButton(
                           onPressed: () {
-                            ref.read(navigationProvider.notifier).state = 0; // Go back to Home
+                            if (Navigator.canPop(context)) {
+                              Navigator.pop(context);
+                            } else {
+                              // Reset to index 0 for either shell
+                              ref.read(navigationProvider.notifier).state = 0;
+                              ref.read(cpNavigationIndexProvider.notifier).state = 0;
+                            }
                           },
-                          icon: Icon(LucideIcons.chevronLeft, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7)),
+                          icon: Icon(LucideIcons.arrowLeft, color: Theme.of(context).colorScheme.onSurface, size: 18),
                         ),
                         const SizedBox(width: 4),
                         Flexible(
@@ -46,7 +54,7 @@ class NotificationListScreen extends ConsumerWidget {
                                 'NOTIFICATIONS',
                                 style: GoogleFonts.montserrat(
                                   fontSize: 24,
-                                  fontWeight: FontWeight.w300,
+                                  fontWeight: FontWeight.w900,
                                   color: Theme.of(context).colorScheme.onSurface,
                                   letterSpacing: 2,
                                 ),
@@ -57,7 +65,7 @@ class NotificationListScreen extends ConsumerWidget {
                                 style: GoogleFonts.montserrat(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w900,
-                                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.85),
                                   letterSpacing: 4,
                                 ),
                                 overflow: TextOverflow.ellipsis,
@@ -162,95 +170,251 @@ class _NotificationItem extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final dateFormat = DateFormat('M/d/yyyy, h:mm a');
     final String timeStr = dateFormat.format(notification.createdAt);
+    final String timeAgoStr = timeago.format(notification.createdAt).toUpperCase();
 
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(notification.read ? 0.05 : 0.1),
-          width: 0.5,
-        ),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Icon
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.blueAccent.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              LucideIcons.info,
-              size: 16,
-              color: Colors.blueAccent,
-            ),
+    return GestureDetector(
+      onTap: () => _showNotificationDetail(context, notification, timeAgoStr),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: (isDark ? Colors.white : Colors.black).withOpacity(notification.read ? 0.05 : 0.1),
+            width: 0.5,
           ),
-          const SizedBox(width: 16),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Icon
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.blueAccent.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                LucideIcons.info,
+                size: 16,
+                color: Colors.blueAccent,
+              ),
+            ),
+            const SizedBox(width: 16),
 
-          // Content
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        notification.title.toUpperCase(),
-                        style: GoogleFonts.montserrat(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w900,
-                          color: Theme.of(context).colorScheme.onSurface,
-                          letterSpacing: 0.5,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-
-                    Row(
-                      children: [
-                        Text(
-                          timeStr,
+            // Content
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          notification.title.toUpperCase(),
                           style: GoogleFonts.montserrat(
-                            fontSize: 8,
-                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
+                            color: Theme.of(context).colorScheme.onSurface,
+                            letterSpacing: 0.5,
                           ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
                         ),
-                        if (!notification.read) ...[
-                          const SizedBox(width: 8),
-                          Container(
-                            width: 6,
-                            height: 6,
-                            decoration: const BoxDecoration(
-                              color: Colors.orangeAccent,
-                              shape: BoxShape.circle,
+                      ),
+                      const SizedBox(width: 12),
+
+                      Row(
+                        children: [
+                          Text(
+                            timeStr,
+                            style: GoogleFonts.montserrat(
+                              fontSize: 8,
+                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                              fontWeight: FontWeight.w800,
                             ),
                           ),
+                          if (!notification.read) ...[
+                            const SizedBox(width: 8),
+                            Container(
+                              width: 6,
+                              height: 6,
+                              decoration: const BoxDecoration(
+                                color: Colors.orangeAccent,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ],
                         ],
-                      ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    notification.message,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 10,
+                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.85),
+                      height: 1.5,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showNotificationDetail(BuildContext context, dynamic notification, String timeAgo) {
+    final scheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) => Material(
+        color: Colors.transparent,
+        child: Center(
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 32),
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF18181B) : Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.2)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.4),
+                  blurRadius: 40,
+                  spreadRadius: 10,
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Close Icon
+                Align(
+                  alignment: Alignment.topRight,
+                  child: IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: Icon(LucideIcons.x, size: 18, color: scheme.onSurface.withValues(alpha: 0.4)),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                ),
+                
+                // Top Bell Icon Vault
+                Container(
+                  width: 80,
+                  height: 80,
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.02),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.2)),
+                  ),
+                  child: Icon(LucideIcons.bell, size: 32, color: scheme.onSurface),
+                ),
+                const SizedBox(height: 24),
+                
+                // Tag and Time
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: scheme.onSurface.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        'ANNOUNCEMENT',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 8,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1,
+                          color: scheme.onSurface.withValues(alpha: 0.6),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      '• $timeAgo',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 8,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1,
+                        color: scheme.onSurface.withValues(alpha: 0.4),
+                      ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 16),
+                
+                // Title
                 Text(
-                  notification.message,
+                  notification.title,
+                  textAlign: TextAlign.center,
                   style: GoogleFonts.montserrat(
-                    fontSize: 11,
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                    height: 1.5,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w900,
+                    color: scheme.onSurface,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                
+                // Message Box
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: scheme.onSurface.withValues(alpha: 0.02),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.1)),
+                  ),
+                  child: Text(
+                    notification.message,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: scheme.onSurface.withValues(alpha: 0.8),
+                      height: 1.6,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 32),
+                
+                // DONE Button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: scheme.onSurface,
+                      foregroundColor: scheme.surface,
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      elevation: 0,
+                    ),
+                    child: Text(
+                      'DONE',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 2,
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }

@@ -39,6 +39,8 @@ final projectFilterProvider = StateProvider<String>((ref) => 'Ongoing');
 final selectedLocationsProvider = StateProvider<List<String>>((ref) => []);
 final selectedBudgetsProvider = StateProvider<List<String>>((ref) => []);
 final selectedTypesProvider = StateProvider<List<String>>((ref) => []);
+final selectedConfigsProvider = StateProvider<List<String>>((ref) => []);
+final selectedAreasProvider = StateProvider<List<String>>((ref) => []);
 
 // Layout provider: true = Grid (Large Cards), false = List (Compact Rows)
 final projectLayoutProvider = StateProvider<bool>((ref) => true);
@@ -49,27 +51,48 @@ final filteredProjectsProvider = Provider<List<dynamic>>((ref) {
   final selectedLocs = ref.watch(selectedLocationsProvider);
   final selectedBudgets = ref.watch(selectedBudgetsProvider);
   final selectedTypes = ref.watch(selectedTypesProvider);
+  final selectedConfigs = ref.watch(selectedConfigsProvider);
+  final selectedAreas = ref.watch(selectedAreasProvider);
 
   return projectsAsync.when(
     data: (projects) {
       return projects.where((p) {
-        // Status Filter
-        final matchesStatus = statusFilter == 'All' || p['status']?.toLowerCase() == statusFilter.toLowerCase();
+        // 1. Status Filter (Ongoing/Upcoming/Completed)
+        final status = p['status']?.toString().toLowerCase() ?? '';
+        final matchesStatus = statusFilter == 'All' || status == statusFilter.toLowerCase();
         
-        // Location Filter
-        final matchesLoc = selectedLocs.isEmpty || selectedLocs.contains(p['location']?['name']?.toString());
+        // 2. Location Filter (Case-insensitive)
+        final projectLoc = p['location']?['name']?.toString().toUpperCase() ?? '';
+        final matchesLoc = selectedLocs.isEmpty || selectedLocs.any((loc) => projectLoc == loc.toUpperCase() || projectLoc.contains(loc.toUpperCase()));
         
-        // Type Filter
-        final matchesType = selectedTypes.isEmpty || selectedTypes.contains(p['category']?['name']?.toString());
-
-        // Budget Filter (Simple string match for now as per web logic)
-        bool matchesBudget = selectedBudgets.isEmpty;
-        if (!matchesBudget) {
-          final price = p['startingPrice']?.toString() ?? '';
-          matchesBudget = selectedBudgets.any((b) => price.contains(b.split(' ')[0]));
+        // 3. Configuration Filter (e.g. "2 BHK") - searches in title, description and config fields if any
+        bool matchesConfig = selectedConfigs.isEmpty;
+        if (!matchesConfig) {
+          final title = p['title']?.toString().toUpperCase() ?? '';
+          final desc = p['description']?.toString().toUpperCase() ?? '';
+          matchesConfig = selectedConfigs.any((c) => title.contains(c.toUpperCase()) || desc.contains(c.toUpperCase()));
         }
 
-        return matchesStatus && matchesLoc && matchesType && matchesBudget;
+        // 4. Area Filter (e.g. "< 1000") - searches in description
+        bool matchesArea = selectedAreas.isEmpty;
+        if (!matchesArea) {
+          final desc = p['description']?.toString().toUpperCase() ?? '';
+          // Handle simple numeric matching or range matching
+          matchesArea = selectedAreas.any((a) {
+            final firstWord = a.split(' ')[0].toUpperCase();
+            return desc.contains(firstWord) || desc.contains(a.toUpperCase());
+          });
+        }
+
+        // 5. Legacy Filters (Budget/Type)
+        final matchesType = selectedTypes.isEmpty || selectedTypes.any((t) => p['category']?['name']?.toString().toUpperCase() == t.toUpperCase());
+        bool matchesBudget = selectedBudgets.isEmpty;
+        if (!matchesBudget) {
+          final price = p['startingPrice']?.toString().toUpperCase() ?? '';
+          matchesBudget = selectedBudgets.any((b) => price.contains(b.split(' ')[0].toUpperCase()));
+        }
+
+        return matchesStatus && matchesLoc && matchesType && matchesBudget && matchesConfig && matchesArea;
       }).toList();
     },
     loading: () => [],

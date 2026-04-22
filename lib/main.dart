@@ -51,10 +51,12 @@ import 'package:m4_mobile/presentation/screens/cp/cp_tax_reports_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_visits_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_hub_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_project_detail_screen.dart';
-import 'package:m4_mobile/presentation/screens/support/support_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_blog_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_shell_entry_screen.dart';
+import 'package:m4_mobile/presentation/screens/support/support_screen.dart';
 
 import 'package:m4_mobile/core/providers/theme_provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -66,6 +68,7 @@ void main() async {
   debugRepaintRainbowEnabled = false;
   
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   
   const storage = FlutterSecureStorage();
   final themeStr = await storage.read(key: 'app_theme');
@@ -219,6 +222,10 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/cp/visits',
       builder: (context, state) => const CpVisitsScreen(),
+    ),
+    GoRoute(
+      path: '/cp/blog',
+      builder: (context, state) => const CpBlogScreen(),
     ),
     GoRoute(
       path: '/cp/contact',
