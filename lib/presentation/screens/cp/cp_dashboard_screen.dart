@@ -117,7 +117,178 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
       backgroundColor: scheme.surface,
       body: CustomScrollView(
         slivers: [
-          _sliverHeader(user, scheme),
+          // ⭐️ FIXED HEADER (Web Parity)
+          SliverAppBar(
+            pinned: true,
+            toolbarHeight: 120,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9),
+            automaticallyImplyLeading: false,
+            elevation: 0,
+            titleSpacing: 0,
+            title: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ColorFiltered(
+                    colorFilter: ColorFilter.matrix(
+                      Theme.of(context).brightness == Brightness.dark
+                          ? const [
+                              // Invert logo for dark mode
+                              -1, 0, 0, 0, 255,
+                              0, -1, 0, 0, 255,
+                              0, 0, -1, 0, 255,
+                              0, 0, 0, 1, 0,
+                            ]
+                          : const [
+                              // Identity matrix for light mode
+                              1, 0, 0, 0, 0,
+                              0, 1, 0, 0, 0,
+                              0, 0, 1, 0, 0,
+                              0, 0, 0, 1, 0,
+                            ],
+                    ),
+                    child: Image.asset(
+                      'assets/m4_logo.png',
+                      height: 100,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => context.go('/cp/hub'),
+                    child: Container(
+                      width: 56,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).brightness == Brightness.dark 
+                            ? Colors.white 
+                            : Colors.black,
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Icon(
+                        LucideIcons.moreHorizontal, 
+                        color: Theme.of(context).brightness == Brightness.dark 
+                            ? Colors.black 
+                            : Colors.white, 
+                        size: 24
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // ⭐️ TAGLINE & HERO SECTION
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // ⭐️ Tagline (Living the M4 Life)
+                  Transform.translate(
+                    offset: const Offset(0, -60),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 0),
+                      child: ColorFiltered(
+                        colorFilter: ColorFilter.matrix(
+                          Theme.of(context).brightness == Brightness.dark
+                              ? const [
+                                  // Dark Mode: Invert and boost to white
+                                  -5.0, 0, 0, 0, 255,
+                                  0, -5.0, 0, 0, 255,
+                                  0, 0, -5.0, 0, 255,
+                                  0, 0, 0, 1, 0,
+                                ]
+                              : const [
+                                  // Light Mode: Crush to black
+                                  5.0, 0, 0, 0, -150,
+                                  0, 5.0, 0, 0, -150,
+                                  0, 0, 5.0, 0, -150,
+                                  0, 0, 0, 1, 0,
+                                ],
+                        ),
+                        child: Image.asset(
+                          'assets/living_m4_life.png',
+                          width: MediaQuery.of(context).size.width,
+                          height: 300,
+                          fit: BoxFit.fitWidth,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Hero Image Container
+                  Transform.translate(
+                    offset: const Offset(0, -120),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Builder(
+                    builder: (context) {
+                      return Stack(
+                        children: [
+                          AspectRatio(
+                            aspectRatio: 4 / 3,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(32),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.15),
+                                    blurRadius: 30,
+                                    offset: const Offset(0, 15),
+                                  ),
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(32),
+                                child: CachedNetworkImage(
+                                  imageUrl: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80',
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => Container(color: Colors.black12),
+                                  errorWidget: (context, url, error) => Container(
+                                    color: Colors.white10,
+                                    child: const Center(child: Icon(LucideIcons.image, color: Colors.white24, size: 50)),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          
+                          // Artistic Impression Badge
+                          Positioned(
+                            top: 16,
+                            right: 16,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.4),
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: Colors.white.withOpacity(0.1)),
+                              ),
+                              child: Text(
+                                'ARTISTIC IMPRESSION',
+                                style: GoogleFonts.montserrat(
+                                  color: Colors.white,
+                                  fontSize: 7,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 1.5,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ),
+                ],
+              ),
+            ),
+          ),
+
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -154,41 +325,6 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
     );
   }
 
-  Widget _sliverHeader(dynamic user, ColorScheme scheme) {
-    return SliverPadding(
-      padding: const EdgeInsets.fromLTRB(16, 24, 16, 12),
-      sliver: SliverToBoxAdapter(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            IconButton(
-              onPressed: () => context.go('/cp/hub'),
-              icon: const Icon(LucideIcons.arrowLeft, size: 20),
-              style: IconButton.styleFrom(backgroundColor: scheme.surfaceContainer),
-            ),
-            Column(
-              children: [
-                Text('PARTNER DASHBOARD', style: GoogleFonts.montserrat(fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 0.5)),
-                const SizedBox(height: 4),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(color: Colors.black12, borderRadius: BorderRadius.circular(4)),
-                  child: Text('ID: ${(user?['cpId'] ?? 'BROKEN HOURS').toString().toUpperCase()}', style: GoogleFonts.firaCode(fontSize: 8, fontWeight: FontWeight.w700)),
-                ),
-                const SizedBox(height: 2),
-                Text('• BROKEN HOURS', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w800, color: Colors.black54, letterSpacing: 1.5)),
-              ],
-            ),
-            IconButton(
-              onPressed: () => context.push('/cp/booking/site-visit'),
-              icon: const Icon(LucideIcons.plus, size: 20),
-              style: IconButton.styleFrom(backgroundColor: Colors.black, foregroundColor: Colors.white),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   Widget _commissionVault(ColorScheme scheme) {
     return Container(

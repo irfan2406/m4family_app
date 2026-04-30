@@ -272,11 +272,14 @@ class CustomViewsScreen extends ConsumerWidget {
                                           final response = await apiClient.submitCustomViews({
                                             'project': selectedProject,
                                             'unitType': selectedUnit,
+                                            'unitNumber': ref.read(customViewsUnitNumberProvider),
+                                            'bookingId': ref.read(customViewsBookingIdProvider),
                                             'space': selections['space'],
                                             'selections': selections,
                                             'guestName': auth.identifier ?? 'App Guest',
                                             'guestPhone': 'N/A',
-                                            'guestEmail': 'app@m4family.com'
+                                            'guestEmail': 'app@m4family.com',
+                                            'status': 'SUBMITTED'
                                           });
                                           
                                           if (context.mounted) {
@@ -355,11 +358,14 @@ class _StepIconIndicator extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final currentStep = ref.watch(customViewsStepProvider);
     final activeStep = currentStep == -1 ? 0 : currentStep;
+    final bookingId = ref.watch(customViewsBookingIdProvider);
+    final isAllotted = bookingId != null && index == 0;
+    
     // Web uses >= for filled state (current + previous steps filled)
     final isFilled = activeStep >= index;
 
     return GestureDetector(
-      onTap: () => ref.read(customViewsStepProvider.notifier).state = index,
+      onTap: isAllotted ? null : () => ref.read(customViewsStepProvider.notifier).state = index,
       child: Column(
         children: [
           Container(
@@ -372,20 +378,20 @@ class _StepIconIndicator extends ConsumerWidget {
               ),
             ),
             child: Icon(
-              icon,
+              isAllotted ? LucideIcons.check : icon,
               size: 16,
               color: isFilled ? Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 6),
           Text(
-            title,
+            isAllotted ? 'ALLOTTED' : title,
             textAlign: TextAlign.center,
             style: GoogleFonts.montserrat(
               fontSize: 7,
               fontWeight: FontWeight.w900,
               letterSpacing: 0.8,
-              color: isFilled ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
+              color: isFilled || isAllotted ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
             ),
           ),
         ],
@@ -418,6 +424,34 @@ class _ProjectSelectionStep extends ConsumerWidget {
           style: GoogleFonts.montserrat(fontSize: 12, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), height: 1.5),
         ),
         const SizedBox(height: 40),
+        
+        if (ref.watch(customViewsBookingIdProvider) != null) ...[
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: scheme.onSurface.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: scheme.onSurface.withOpacity(0.1)),
+            ),
+            child: Row(
+              children: [
+                Icon(LucideIcons.checkCircle2, color: Colors.green, size: 20),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('UNIT ALLOTTED', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.green, letterSpacing: 1)),
+                      const SizedBox(height: 4),
+                      Text('Your project and unit configuration are locked for this booking.', style: GoogleFonts.montserrat(fontSize: 11, color: scheme.onSurface.withOpacity(0.5))),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 32),
+        ],
 
         // Projects List
         Row(

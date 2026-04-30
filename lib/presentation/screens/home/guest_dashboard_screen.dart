@@ -173,7 +173,183 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       body: CustomScrollView(
         controller: _scrollController,
         slivers: [
-          _buildHeroHeader(),
+          // ⭐️ FIXED HEADER (Web Parity)
+          SliverAppBar(
+            pinned: true,
+            toolbarHeight: 120,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9),
+            automaticallyImplyLeading: false,
+            elevation: 0,
+            titleSpacing: 0,
+            title: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ColorFiltered(
+                    colorFilter: ColorFilter.matrix(
+                      Theme.of(context).brightness == Brightness.dark
+                          ? const [
+                              // Invert logo for dark mode
+                              -1, 0, 0, 0, 255,
+                              0, -1, 0, 0, 255,
+                              0, 0, -1, 0, 255,
+                              0, 0, 0, 1, 0,
+                            ]
+                          : const [
+                              // Identity matrix for light mode
+                              1, 0, 0, 0, 0,
+                              0, 1, 0, 0, 0,
+                              0, 0, 1, 0, 0,
+                              0, 0, 0, 1, 0,
+                            ],
+                    ),
+                    child: Image.asset(
+                      'assets/m4_logo.png',
+                      height: 100,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => _scaffoldKey.currentState?.openDrawer(),
+                    child: Container(
+                      width: 56,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).brightness == Brightness.dark 
+                            ? Colors.white 
+                            : Colors.black,
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Icon(
+                        LucideIcons.moreHorizontal, 
+                        color: Theme.of(context).brightness == Brightness.dark 
+                            ? Colors.black 
+                            : Colors.white, 
+                        size: 24
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // ⭐️ TAGLINE & HERO SECTION
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // ⭐️ Tagline (Living the M4 Life)
+                  Transform.translate(
+                    offset: const Offset(0, -60),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 0),
+                      child: ColorFiltered(
+                        colorFilter: ColorFilter.matrix(
+                          Theme.of(context).brightness == Brightness.dark
+                              ? const [
+                                  // Dark Mode: Invert and boost to white
+                                  -5.0, 0, 0, 0, 255,
+                                  0, -5.0, 0, 0, 255,
+                                  0, -5.0, 0, 0, 255,
+                                  0, 0, 0, 1, 0,
+                                ]
+                              : const [
+                                  // Light Mode: Crush to black
+                                  5.0, 0, 0, 0, -150,
+                                  0, 5.0, 0, 0, -150,
+                                  0, 0, 5.0, 0, -150,
+                                  0, 0, 0, 1, 0,
+                                ],
+                        ),
+                        child: Image.asset(
+                          'assets/living_m4_life.png',
+                          width: MediaQuery.of(context).size.width,
+                          height: 300,
+                          fit: BoxFit.fitWidth,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Hero Image Container
+                  Transform.translate(
+                    offset: const Offset(0, -120),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Builder(
+                    builder: (context) {
+                      final mainImage = _projects.isNotEmpty 
+                          ? (_projects[0]['heroImage'] ?? _projects[0]['image'] ?? 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80')
+                          : 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80';
+                      
+                      return Stack(
+                        children: [
+                          AspectRatio(
+                            aspectRatio: 4 / 3,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(32),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.15),
+                                    blurRadius: 30,
+                                    offset: const Offset(0, 15),
+                                  ),
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(32),
+                                child: CachedNetworkImage(
+                                  imageUrl: mainImage.toString().startsWith('http') 
+                                      ? mainImage.toString() 
+                                      : ref.read(apiClientProvider).resolveUrl(mainImage.toString()),
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => Container(color: Colors.black12),
+                                  errorWidget: (context, url, error) => Container(
+                                    color: Colors.white10,
+                                    child: const Center(child: Icon(LucideIcons.image, color: Colors.white24, size: 50)),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          
+                          // Artistic Impression Badge
+                          Positioned(
+                            top: 16,
+                            right: 16,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.4),
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: Colors.white.withOpacity(0.1)),
+                              ),
+                              child: Text(
+                                'ARTISTIC IMPRESSION',
+                                style: GoogleFonts.montserrat(
+                                  color: Colors.white,
+                                  fontSize: 7,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 1.5,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ),
+                ],
+              ),
+            ),
+          ),
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 32),
             sliver: SliverList(
@@ -208,172 +384,6 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     );
   }
 
-  Widget _buildHeroHeader() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return SliverToBoxAdapter(
-      child: Container(
-        padding: const EdgeInsets.only(top: 60, bottom: 20),
-        decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Logo and Menu Row
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('M4 FAMILY', style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w400, fontSize: 18, letterSpacing: -1)),
-                      Text('DEVELOPMENTS', style: GoogleFonts.montserrat(color: isDark ? Colors.white60 : Colors.black54, fontWeight: FontWeight.w800, fontSize: 8, letterSpacing: 3)),
-                    ],
-                  ),
-                  _ScaleButton(
-                    onTap: () => _scaffoldKey.currentState?.openDrawer(),
-                    child: Container(
-                      width: 44,
-                      height: 34,
-                      decoration: BoxDecoration(
-                        color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05),
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1)),
-                      ),
-                      child: Icon(LucideIcons.moreHorizontal, color: isDark ? Colors.white : Colors.black, size: 20),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 50),
-            
-            // Living the M4 Life Title
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                   Text(
-                    'Living the',
-                    style: GoogleFonts.dmSerifDisplay(
-                      color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.9),
-                      fontSize: 34,
-                      fontWeight: FontWeight.w400,
-                      height: 1.1,
-                    ),
-                  ),
-                  Text(
-                    'M4 Life',
-                    style: GoogleFonts.dmSerifDisplay(
-                      color: isDark ? Colors.white : Colors.black,
-                      fontSize: 42,
-                      fontWeight: FontWeight.w400,
-                      height: 1.1,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 40),
-
-            // Featured Showcase Carousel (Matches Web Image 1 Centerpiece)
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 24),
-              height: 240,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(40),
-                boxShadow: [
-                  BoxShadow(color: Colors.black.withValues(alpha: 0.5), blurRadius: 40, spreadRadius: 5),
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(40),
-                child: Stack(
-                  children: [
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 800),
-                      child: CachedNetworkImage(
-                        imageUrl: [
-                          'https://images.unsplash.com/photo-1613545325278-f24b0cae1224?auto=format&fit=crop&q=80',
-                          'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80',
-                          'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80'
-                        ][_heroIndex],
-                        key: ValueKey(_heroIndex),
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: double.infinity,
-                        placeholder: (context, url) => Container(color: isDark ? Colors.black26 : Colors.black12),
-                        errorWidget: (context, url, error) => const Icon(Icons.error),
-                      ),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [Colors.transparent, Colors.black.withValues(alpha: 0.4)],
-                        ),
-                      ),
-                    ),
-                    Center(
-                      child: _ScaleButton(
-                        onTap: () {},
-                        child: Container(
-                          width: 48,
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.2),
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
-                          ),
-                          child: const Icon(LucideIcons.play, color: Colors.white, size: 20),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      top: 20,
-                      right: 20,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.4),
-                          borderRadius: BorderRadius.circular(5),
-                          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-                        ),
-                        child: Text('ARTISTIC IMPRESSION', style: GoogleFonts.montserrat(color: Colors.white, fontSize: 7, fontWeight: FontWeight.w400, letterSpacing: 1)),
-                      ),
-                    ),
-                    // Carousel Indicators (Matches Web Image 1 dots)
-                    Positioned(
-                      bottom: 20,
-                      left: 0,
-                      right: 0,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(3, (index) => Container(
-                          width: 24,
-                          height: 2,
-                          margin: const EdgeInsets.symmetric(horizontal: 4),
-                          decoration: BoxDecoration(
-                            color: _heroIndex == index ? Colors.white : Colors.white.withValues(alpha: 0.3),
-                            borderRadius: BorderRadius.circular(1),
-                          ),
-                        )),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   Widget _buildPhilosophy() {
     final isDark = Theme.of(context).brightness == Brightness.dark;

@@ -66,21 +66,21 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'SUPPORT INDEX',
+          'HELP CENTER',
           style: GoogleFonts.montserrat(
             fontSize: 24,
-            fontWeight: FontWeight.w300,
+            fontWeight: FontWeight.w900,
             color: Theme.of(context).colorScheme.onSurface,
-            letterSpacing: 2,
+            letterSpacing: -1,
           ),
         ),
         Text(
           'FAQ & GOVERNANCE',
           style: GoogleFonts.montserrat(
             fontSize: 9,
-            fontWeight: FontWeight.w900,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-            letterSpacing: 4,
+            fontWeight: FontWeight.w800,
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+            letterSpacing: 3,
           ),
         ),
       ],
@@ -128,42 +128,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
   }
 
   Widget _buildPopularGuides() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'POPULAR GUIDES',
-          style: GoogleFonts.montserrat(
-            fontSize: 9,
-            fontWeight: FontWeight.w900,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
-            letterSpacing: 2,
-          ),
-        ),
-        const SizedBox(height: 16),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-              if ('home buyer\'s guide'.contains(_searchQuery))
-                _GuideCard(
-                  title: 'HOME BUYER\'S GUIDE',
-                  readingTime: '5 MIN READ',
-                  icon: LucideIcons.home,
-                ),
-              if ('home buyer\'s guide'.contains(_searchQuery) && 'understanding norms'.contains(_searchQuery))
-                const SizedBox(width: 16),
-              if ('understanding norms'.contains(_searchQuery))
-                _GuideCard(
-                  title: 'UNDERSTANDING NORMS',
-                  readingTime: '8 MIN READ',
-                  icon: LucideIcons.shield,
-                ),
-            ],
-          ),
-        ),
-      ],
-    ).animate().fadeIn(delay: 200.ms);
+    return const SizedBox.shrink();
   }
 
   Widget _buildFAQSection() {
@@ -181,22 +146,6 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                   fontWeight: FontWeight.w900,
                   color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
                   letterSpacing: 2,
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.orange.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  'UPDATED',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 7,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.orangeAccent,
-                    letterSpacing: 1,
-                  ),
                 ),
               ),
             ],

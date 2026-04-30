@@ -24,3 +24,12 @@ final customViewsUnitProvider = StateProvider<String>((ref) => '3 BHK');
 // State for Selections (Key = Category ID or 'space', Value = Selected Option object)
 final customViewsSelectionsProvider = StateProvider<Map<String, dynamic>>((ref) => {});
 
+// State for Booking ID (if alloted)
+final customViewsBookingIdProvider = StateProvider<String?>((ref) => null);
+
+// State for Unit Number
+final customViewsUnitNumberProvider = StateProvider<String?>((ref) => null);
+
+// State for Edit Mode
+final customViewsEditModeProvider = StateProvider<bool>((ref) => false);
+

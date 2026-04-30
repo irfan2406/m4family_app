@@ -33,6 +33,11 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
   @override
   Widget build(BuildContext context) {
     final currentIndex = ref.watch(navigationProvider);
+    final authState = ref.watch(authProvider);
+    final user = authState.user;
+    final role = user?['role']?.toString().toLowerCase();
+    final isInvestor = role == 'investor';
+    final accentColor = isInvestor ? const Color(0xFFC5A358) : Colors.white;
 
     void navigateTo(int index) {
       ref.read(navigationProvider.notifier).state = index;
@@ -62,20 +67,20 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                   child: Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.05),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.white.withOpacity(0.1)),
+                          color: accentColor.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: accentColor.withOpacity(0.2)),
                         ),
-                        child: const Icon(LucideIcons.sparkles, color: Colors.white, size: 18),
+                        child: Icon(isInvestor ? LucideIcons.crown : LucideIcons.sparkles, color: accentColor, size: 20),
                       ),
                       const SizedBox(width: 16),
                       Text(
-                        'MENU',
+                        isInvestor ? 'INVESTOR MENU' : 'MENU',
                         style: GoogleFonts.montserrat(
-                          color: Colors.white,
-                          fontSize: 14,
+                          color: accentColor,
+                          fontSize: 10, // 👈 Web size
                           fontWeight: FontWeight.w900,
                           letterSpacing: 4,
                         ),
@@ -93,18 +98,21 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                         icon: LucideIcons.home,
                         label: 'Home',
                         isActive: currentIndex == 0,
+                        activeColor: accentColor,
                         onTap: () => navigateTo(0),
                       ),
                       _SidebarItem(
                         icon: LucideIcons.building2,
-                        label: 'Community',
+                        label: 'Communities', // 👈 Web plural
                         isActive: currentIndex == 4,
+                        activeColor: accentColor,
                         onTap: () => navigateTo(4),
                       ),
                       _SidebarItem(
                         icon: LucideIcons.layoutGrid,
                         label: 'Properties',
                         isActive: currentIndex == 1,
+                        activeColor: accentColor,
                         onTap: () => navigateTo(1),
                       ),
 
@@ -147,23 +155,26 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                       ),
 
                       _SidebarItem(
-                        icon: LucideIcons.sparkles, 
-                        label: 'Custom Views',
-                        isActive: currentIndex == 6,
-                        onTap: () => navigateTo(6),
-                      ),
-                      
-                      _SidebarItem(
-                        icon: LucideIcons.fileText, 
-                        label: 'Selection Logs',
+                        icon: LucideIcons.layoutGrid, 
+                        label: 'My Custom Views', // 👈 Added for web parity
                         isActive: currentIndex == 7,
+                        activeColor: accentColor,
                         onTap: () => navigateTo(7),
                       ),
 
                       _SidebarItem(
+                        icon: LucideIcons.sparkles, 
+                        label: 'Custom Views',
+                        isActive: currentIndex == 6,
+                        activeColor: accentColor,
+                        onTap: () => navigateTo(6),
+                      ),
+                      
+                      _SidebarItem(
                         icon: LucideIcons.bell, 
                         label: 'Notifications',
                         isActive: currentIndex == 5,
+                        activeColor: accentColor,
                         onTap: () => navigateTo(5),
                       ),
 
@@ -171,6 +182,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                         icon: LucideIcons.headphones, 
                         label: 'Support',
                         isActive: currentIndex == 2,
+                        activeColor: accentColor,
                         onTap: () => navigateTo(2),
                       ),
                       
@@ -183,52 +195,16 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                         },
                       ),
 
-                      _SidebarItem(
-                        icon: LucideIcons.phoneCall, 
-                        label: 'Contact Us',
-                        onTap: () {
-                          Navigator.pop(context);
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => ContactSupportScreen()));
-                        },
-                      ),
-
-                      _SidebarItem(
-                        icon: LucideIcons.briefcase, 
-                        label: 'Careers',
-                        onTap: () {
-                          Navigator.pop(context);
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const CareersScreen()));
-                        },
-                      ),
-
-                      _SidebarItem(
-                        icon: LucideIcons.trendingUp,
-                        label: 'Investor Relations',
-                        onTap: () {
-                          Navigator.pop(context);
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const InvestorRelationsScreen()));
-                        },
-                      ),
-
-                      _SidebarItem(
-                        icon: LucideIcons.layers,
-                        label: 'Pages',
-                        onTap: () {
-                          Navigator.pop(context);
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const PagesListScreen()));
-                        },
-                      ),
-
                       const SizedBox(height: 32),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                         child: Text(
                           'QUICK ACTIONS',
                           style: GoogleFonts.montserrat(
                             color: Colors.white.withOpacity(0.3),
                             fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 3,
+                            fontWeight: FontWeight.w900, // 👈 Match web bold
+                            letterSpacing: 4,
                           ),
                         ),
                       ),
@@ -251,15 +227,23 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                         label: 'Whatsapp',
                         onTap: SupportHandlers.launchWhatsApp,
                       ),
-                      
-                      const SizedBox(height: 120), // Huge space at the bottom of the list
+                      _SidebarItem(
+                        icon: LucideIcons.info, 
+                        label: 'About',
+                        onTap: () {
+                          Navigator.pop(context);
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const AboutScreen()));
+                        },
+                      ),
+
+                      const SizedBox(height: 120),
                     ],
                   ),
                 ),
                 
                 // Fixed Logout Button
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 12, 24, 100), // Pushes button above floating nav pill
+                  padding: const EdgeInsets.fromLTRB(24, 12, 24, 100),
                   child: _SidebarExitButton(),
                 ),
               ],
@@ -279,7 +263,7 @@ class _SidebarExitButton extends ConsumerWidget {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            backgroundColor: const Color(0xFF18181B), // Dark Zinc-900
+            backgroundColor: const Color(0xFF18181B),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             title: Text(
               'Logout',
@@ -296,75 +280,49 @@ class _SidebarExitButton extends ConsumerWidget {
                 fontSize: 14,
               ),
             ),
-            contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 10),
-            actionsPadding: const EdgeInsets.fromLTRB(0, 0, 16, 16),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text(
-                  'CANCEL',
-                  style: GoogleFonts.montserrat(
-                    color: const Color(0xFF60A5FA), // Bright Blue to match Image 2
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13,
-                  ),
-                ),
+                child: Text('CANCEL', style: GoogleFonts.montserrat(color: Colors.blueAccent)),
               ),
-              const SizedBox(width: 8),
               TextButton(
                 onPressed: () {
-                  // Actually clear the authentication state and storage
                   ref.read(authProvider.notifier).logout();
-                  
-                  Navigator.pop(context); // Close dialog
-                  context.go('/login'); // Redirect to login
+                  Navigator.pop(context);
+                  context.go('/login');
                 }, 
-                child: Text(
-                  'LOGOUT',
-                  style: GoogleFonts.montserrat(
-                    color: const Color(0xFFEF4444), // Red-500
-                    fontWeight: FontWeight.bold,
-                    fontSize: 13,
-                  ),
-                ),
+                child: Text('LOGOUT', style: GoogleFonts.montserrat(color: Colors.redAccent, fontWeight: FontWeight.bold)),
               ),
             ],
           ),
         );
       },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          decoration: BoxDecoration(
-            color: Colors.red.withOpacity(0.02),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.red.withOpacity(0.2), width: 1.5),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.red.withOpacity(0.05),
-                blurRadius: 20,
-                spreadRadius: -5,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        decoration: BoxDecoration(
+          color: Colors.red.withOpacity(0.08), // 👈 Web style
+          borderRadius: BorderRadius.circular(20), // 👈 More rounded like web
+          border: Border.all(color: Colors.red.withOpacity(0.2), width: 1.5),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Transform.rotate(
+              angle: 3.14159, // 👈 Rotate 180 deg
+              child: const Icon(LucideIcons.logOut, color: Colors.redAccent, size: 18),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              'LOG OUT', // 👈 Web space
+              style: GoogleFonts.montserrat(
+                color: Colors.redAccent,
+                fontSize: 11,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 4,
               ),
-            ],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(LucideIcons.logOut, color: Colors.redAccent, size: 18),
-              const SizedBox(width: 12),
-              Text(
-                'LOGOUT',
-                style: GoogleFonts.montserrat(
-                  color: Colors.redAccent,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 4,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -375,6 +333,7 @@ class _SidebarItem extends StatelessWidget {
   final IconData icon;
   final String label;
   final bool isActive;
+  final Color activeColor;
   final VoidCallback? onTap;
   final Widget? trailing;
 
@@ -382,6 +341,7 @@ class _SidebarItem extends StatelessWidget {
     required this.icon,
     required this.label,
     this.isActive = false,
+    this.activeColor = Colors.white,
     this.onTap,
     this.trailing,
   });
@@ -389,61 +349,61 @@ class _SidebarItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 4),
+      margin: const EdgeInsets.symmetric(vertical: 2),
       child: Stack(
         children: [
-          // Active Indicator (White Vertical Capsule)
+          // Active Indicator
           if (isActive)
             Positioned(
-              left: 2,
-              top: 15,
-              bottom: 15,
+              left: 0,
+              top: 12,
+              bottom: 12,
               child: Container(
                 width: 4,
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(2),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.white.withOpacity(0.5),
-                      blurRadius: 10,
-                    ),
-                  ],
+                  color: activeColor,
+                  borderRadius: const BorderRadius.only(
+                    topRight: Radius.circular(4),
+                    bottomRight: Radius.circular(4),
+                  ),
                 ),
               ),
             ),
           
           ListTile(
             leading: Container(
-              width: 44,
-              height: 44,
+              width: 36, // 👈 Web size
+              height: 36, // 👈 Web size
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(isActive ? 0.1 : 0.03),
-                borderRadius: BorderRadius.circular(12),
+                color: isActive ? activeColor.withOpacity(0.1) : Colors.white.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(10), // 👈 Web radius
                 border: Border.all(
-                  color: isActive ? Colors.white.withOpacity(0.15) : Colors.white.withOpacity(0.05),
+                  color: isActive ? activeColor.withOpacity(0.3) : Colors.transparent,
                 ),
+                boxShadow: isActive ? [
+                  BoxShadow(color: activeColor.withOpacity(0.15), blurRadius: 20, spreadRadius: 0)
+                ] : null,
               ),
               child: Icon(
                 icon, 
-                color: isActive ? Colors.white : Colors.white30, 
-                size: 20
+                color: isActive ? activeColor : Colors.white.withOpacity(0.4), 
+                size: 16 // 👈 Web size
               ),
             ),
             title: Text(
               label,
               style: GoogleFonts.montserrat(
                 color: isActive 
-                    ? Colors.white
-                    : Colors.white.withOpacity(0.5),
-                fontSize: 14,
-                fontWeight: isActive ? FontWeight.w800 : FontWeight.w600,
-                letterSpacing: 0,
+                    ? activeColor
+                    : Colors.white.withOpacity(0.6),
+                fontSize: 13, // 👈 Web size
+                fontWeight: isActive ? FontWeight.w900 : FontWeight.w700, // 👈 Web weights
+                letterSpacing: -0.2,
               ),
             ),
             trailing: trailing,
             onTap: onTap,
-            contentPadding: const EdgeInsets.only(left: 28, right: 12),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 24), // 👈 Web padding
             visualDensity: VisualDensity.compact,
           ),
         ],

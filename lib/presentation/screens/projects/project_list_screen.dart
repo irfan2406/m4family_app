@@ -122,7 +122,6 @@ class ProjectListScreen extends ConsumerWidget {
                           backgroundColor: isDark ? Colors.white : Colors.black,
                           foregroundColor: isDark ? Colors.black : Colors.white,
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                          elevation: 0,
                         ),
                         child: Text(
                           'APPLY SEARCH MATRIX',
@@ -409,7 +408,7 @@ class _ProjectGridItem extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
-      height: 240, // Match Web 16:10 aspect ratio better
+      height: 200, // Enforce 16:9 aspect ratio parity with web (approx for mobile width)
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF18181B) : Colors.white,
         borderRadius: BorderRadius.circular(40),

@@ -116,14 +116,28 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
                 ),
               ),
               const SizedBox(width: 16),
-              Text(
-                'SUPPORT HUB',
-                style: GoogleFonts.montserrat(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w900,
-                  color: scheme.onSurface,
-                  letterSpacing: 2.4,
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'M4 FAMILY',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 8,
+                      fontWeight: FontWeight.w800,
+                      color: scheme.onSurface.withOpacity(0.4),
+                      letterSpacing: 2,
+                    ),
+                  ),
+                  Text(
+                    'SUPPORT HUB',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w900,
+                      color: scheme.onSurface,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

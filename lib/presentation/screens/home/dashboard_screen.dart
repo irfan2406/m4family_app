@@ -235,284 +235,62 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       body: CustomScrollView(
         controller: _scrollController,
         slivers: <Widget>[
-          // ⭐️ Stage 1: Fullscreen Hero Stack (Web Parity Overlaid Design)
-          SliverToBoxAdapter(
-            child: Builder(
-              builder: (context) {
-                final featured = (_projects.isNotEmpty)
-                    ? _projects.firstWhere((p) => p['featured'] == true, orElse: () => _projects.isNotEmpty ? _projects[0] : null)
-                    : null;
-                
-                final mainImage = (featured != null)
-                    ? (featured['heroImage'] != null
-                        ? featured['heroImage'].toString()
-                        : (featured['images'] is List && (featured['images'] as List).isNotEmpty
-                            ? featured['images'][0].toString()
-                            : 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80'))
-                    : 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80';
-
-                return Container(
-                  height: 750, // Immersive height
-                  child: Stack(
-                    children: <Widget>[
-                      // 1. Immersive background image (Full Bleed)
-                      Positioned.fill(
-                        child: AnimatedSwitcher(
-                          duration: 1500.ms,
-                          child: CachedNetworkImage(
-                            imageUrl: apiClient.resolveUrl(mainImage),
-                            key: ValueKey(_currentHeroIndex),
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            height: double.infinity,
-                            placeholder: (context, url) => Container(color: Colors.black12),
-                            errorWidget: (context, url, error) => Container(
-                              color: Colors.black.withOpacity(0.1),
-                              child: const Center(child: Icon(LucideIcons.image, color: Colors.white24, size: 50)),
-                            ),
-                          ),
-                        ),
-                      ),
-                      
-                      // 2. Soft Gradient for text legibility
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.black.withOpacity(0.5),
-                              Colors.transparent,
-                              Colors.black.withOpacity(0.7),
-                            ],
-                            stops: const [0.0, 0.4, 1.0],
-                          ),
-                        ),
-                      ),
-
-                      // 3. Header & Search Area (TOP SIDE - Web Parity)
-                      Positioned(
-                        top: 70,
-                        left: 25,
-                        right: 25,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                Text(
-                                  'DISCOVER',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white.withOpacity(0.6),
-                                    letterSpacing: 2,
-                                  ),
-                                ),
-                                _GlassIconButton(
-                                  icon: LucideIcons.menu, 
-                                  onTap: () => _scaffoldKey.currentState?.openDrawer(),
-                                  size: 45,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 5),
-                            Text(
-                              'M4 Projects',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 32, // Further decreased for mobile elegance
-                                fontWeight: FontWeight.w900,
-                                color: Colors.white,
-                                letterSpacing: -1,
-                              ),
-                            ),
-                            const SizedBox(height: 35),
-                            // Search bar on TOP side
-                            Row(
-                              children: <Widget>[
-                                Expanded(
-                                  child: _GlassSearchField(
-                                    onChanged: (val) => setState(() => _searchQuery = val),
-                                  ),
-                                ),
-                                const SizedBox(width: 15),
-                                _GlassIconButton(
-                                  icon: LucideIcons.slidersHorizontal,
-                                  size: 60,
-                                  onTap: () {
-                                    showModalBottomSheet(
-                                      context: context,
-                                      backgroundColor: Colors.transparent,
-                                      isScrollControlled: true,
-                                      builder: (context) => _QuickFilterSheet(),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 20),
-                            SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                children: <Widget>[
-                                  _CategoryChip(
-                                    label: 'ALL', 
-                                    isActive: _selectedCategory == 'ALL', 
-                                    onTap: () => setState(() => _selectedCategory = 'ALL'),
-                                  ),
-                                  const SizedBox(width: 15),
-                                  _CategoryChip(
-                                    label: 'ONGOING', 
-                                    isActive: _selectedCategory == 'ONGOING', 
-                                    onTap: () => setState(() => _selectedCategory = 'ONGOING'),
-                                  ),
-                                  const SizedBox(width: 15),
-                                  _CategoryChip(
-                                    label: 'UPCOMING', 
-                                    isActive: _selectedCategory == 'UPCOMING', 
-                                    onTap: () => setState(() => _selectedCategory = 'UPCOMING'),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      // 4. Featured Project Name (ON HERO IMAGE - Web Parity)
-                      if (featured != null && !_projectsLoading)
-                        Positioned(
-                          bottom: 50,
-                          left: 30,
-                          right: 30,
-                          child: GestureDetector(
-                            onTap: () {
-                              final projectId = featured['_id']?.toString() ?? '';
-                              if (projectId.isNotEmpty) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ProjectDetailScreen(
-                                      projectId: projectId,
-                                      projectData: featured,
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Row(
-                                  children: <Widget>[
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                      decoration: BoxDecoration(color: M4Theme.premiumBlue.withOpacity(0.2), borderRadius: BorderRadius.circular(8)),
-                                      child: Text('FEATURED', style: GoogleFonts.montserrat(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Container(width: 6, height: 6, decoration: const BoxDecoration(color: M4Theme.premiumBlue, shape: BoxShape.circle)),
-                                  ],
-                                ),
-                                const SizedBox(height: 15),
-                                Text(
-                                  featured['title']?.toString().toUpperCase() ?? 'M4 PROJECT',
-                                  style: GoogleFonts.montserrat(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w900, letterSpacing: -1.2),
-                                ),
-                                const SizedBox(height: 10),
-                                 Row(
-                                  children: <Widget>[
-                                    const Icon(LucideIcons.mapPin, color: Colors.white70, size: 14),
-                                    const SizedBox(width: 5),
-                                    Text(
-                                      featured['location']?['name'] ?? 'MUMBAI',
-                                      style: GoogleFonts.montserrat(color: Colors.white70, fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 1),
-                                    ),
-                                    if (featured['startingPrice'] != null && 
-                                        featured['startingPrice'] != "N/A" && 
-                                        !featured['startingPrice'].toString().contains('YOY')) ...[
-                                      const SizedBox(width: 25),
-                                      Text(
-                                        '₹ ${featured['startingPrice']}', 
-                                        style: GoogleFonts.montserrat(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-
-                      // Artistic Impression Tag (Lowered to clear menu button shadow)
-                      Positioned(
-                        top: 140, // Increased to avoid overlap with large menu button
-                        right: 25,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.6),
-                            borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: Colors.white.withOpacity(0.1)),
-                          ),
-                          child: Text(
-                            'ARTISTIC IMPRESSION',
-                            style: GoogleFonts.montserrat(
-                              color: Colors.white,
-                              fontSize: 7,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 2,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-
-          // ⭐️ Stage 2: Recommended for You (Relocated below Search like web)
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(30, 20, 30, 10),
+          // ⭐️ FIXED HEADER (Web Parity)
+          SliverAppBar(
+            pinned: true,
+            toolbarHeight: 120,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9),
+            automaticallyImplyLeading: false,
+            elevation: 0,
+            titleSpacing: 0,
+            title: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Row(
-                    children: [
-                      _TextTab(
-                        label: 'COMMUNITIES',
-                        isActive: _topTabCategory == 'COMMUNITIES',
-                        onTap: () => setState(() => _topTabCategory = 'COMMUNITIES'),
-                      ),
-                      _TextTab(
-                        label: 'PROPERTIES',
-                        isActive: _topTabCategory == 'PROPERTIES',
-                        onTap: () => setState(() => _topTabCategory = 'PROPERTIES'),
-                      ),
-                    ],
+                children: [
+                  ColorFiltered(
+                    colorFilter: ColorFilter.matrix(
+                      Theme.of(context).brightness == Brightness.dark
+                          ? const [
+                              // Invert logo for dark mode
+                              -1, 0, 0, 0, 255,
+                              0, -1, 0, 0, 255,
+                              0, 0, -1, 0, 255,
+                              0, 0, 0, 1, 0,
+                            ]
+                          : const [
+                              // Identity matrix for light mode
+                              1, 0, 0, 0, 0,
+                              0, 1, 0, 0, 0,
+                              0, 0, 1, 0, 0,
+                              0, 0, 0, 1, 0,
+                            ],
+                    ),
+                    child: Image.asset(
+                      'assets/m4_logo.png',
+                      height: 100,
+                      fit: BoxFit.contain,
+                    ),
                   ),
-                  InkWell(
-                    onTap: () {
-                      if (_topTabCategory == 'COMMUNITIES') {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const CommunityListScreen()));
-                      } else {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const ProjectListScreen()));
-                      }
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-                      child: Text(
-                        'VIEW ALL',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 10, 
-                          fontWeight: FontWeight.w900, 
-                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), 
-                          letterSpacing: 1.5
-                        ),
+                  GestureDetector(
+                    onTap: () => _scaffoldKey.currentState?.openDrawer(),
+                    child: Container(
+                      width: 56,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        // Toggle button background: White in Dark Mode, Black in Light Mode
+                        color: Theme.of(context).brightness == Brightness.dark 
+                            ? Colors.white 
+                            : Colors.black,
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Icon(
+                        LucideIcons.moreHorizontal, 
+                        // Toggle icon color: Black in Dark Mode, White in Light Mode
+                        color: Theme.of(context).brightness == Brightness.dark 
+                            ? Colors.black 
+                            : Colors.white, 
+                        size: 24
                       ),
                     ),
                   ),
@@ -520,7 +298,196 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               ),
             ),
           ),
-          
+
+          // ⭐️ TAGLINE & HERO SECTION
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0), // 👈 Zero bottom padding
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // ⭐️ Tagline (Living the M4 Life)
+                  Transform.translate(
+                    offset: const Offset(0, -20), // 👈 Reduced from -60 to avoid overlap
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 0),
+                      child: ColorFiltered(
+                        colorFilter: ColorFilter.matrix(
+                          Theme.of(context).brightness == Brightness.dark
+                              ? const [
+                                  // Dark Mode: Invert and boost to white
+                                  -5.0, 0, 0, 0, 255,
+                                  0, -5.0, 0, 0, 255,
+                                  0, 0, -5.0, 0, 255,
+                                  0, 0, 0, 1, 0,
+                                ]
+                              : const [
+                                  // Light Mode: Crush to black
+                                  5.0, 0, 0, 0, -150,
+                                  0, 5.0, 0, 0, -150,
+                                  0, 0, 5.0, 0, -150,
+                                  0, 0, 0, 1, 0,
+                                ],
+                        ),
+                        child: Image.asset(
+                          'assets/living_m4_life.png',
+                          width: MediaQuery.of(context).size.width,
+                          height: 140, // 👈 Reduced from 300
+                          fit: BoxFit.fitWidth, // 👈 Force to edges
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Hero Image Container (Pulled UP)
+                  Transform.translate(
+                    offset: const Offset(0, -40), // 👈 Pull even higher due to taller tagline box
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Builder(
+                    builder: (context) {
+                      final featured = (_projects.isNotEmpty)
+                          ? _projects.firstWhere((p) => p['featured'] == true, orElse: () => _projects.isNotEmpty ? _projects[0] : null)
+                          : null;
+                      
+                      final mainImage = (featured != null)
+                          ? (featured['heroImage'] != null
+                              ? featured['heroImage'].toString()
+                              : (featured['images'] is List && (featured['images'] as List).isNotEmpty
+                                  ? featured['images'][0].toString()
+                                  : 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80'))
+                          : 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80';
+
+                      return Stack(
+                        children: [
+                          AspectRatio(
+                            aspectRatio: 4 / 3,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(32),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.15),
+                                    blurRadius: 30,
+                                    offset: const Offset(0, 15),
+                                  ),
+                                ],
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(32),
+                                child: CachedNetworkImage(
+                                  imageUrl: apiClient.resolveUrl(mainImage),
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) => Container(color: Colors.black12),
+                                  errorWidget: (context, url, error) => Container(
+                                    color: Colors.white10,
+                                    child: const Center(child: Icon(LucideIcons.image, color: Colors.white24, size: 50)),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          
+                          // Artistic Impression Badge
+                          Positioned(
+                            top: 16,
+                            right: 16,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.4),
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: Colors.white.withOpacity(0.1)),
+                              ),
+                              child: Text(
+                                'ARTISTIC IMPRESSION',
+                                style: GoogleFonts.montserrat(
+                                  color: Colors.white,
+                                  fontSize: 7,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 1.5,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          // Carousel Indicators
+                          Positioned(
+                            bottom: 24,
+                            left: 0,
+                            right: 0,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: List.generate(3, (index) => Container(
+                                margin: const EdgeInsets.symmetric(horizontal: 3),
+                                width: index == 0 ? 20 : 12,
+                                height: 2,
+                                decoration: BoxDecoration(
+                                  color: index == 0 ? Colors.white : Colors.white.withOpacity(0.5),
+                                  borderRadius: BorderRadius.circular(1),
+                                ),
+                              )),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ), // 👈 Closing Transform.translate for Hero
+                ],
+              ),
+            ),
+          ),
+
+          // ⭐️ DISCOVERY SECTION TABS (Web Parity)
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1))),
+                    ),
+                    child: Row(
+                      children: [
+                        _WebTab(
+                          label: 'COMMUNITIES',
+                          isActive: _topTabCategory == 'COMMUNITIES',
+                          onTap: () => setState(() => _topTabCategory = 'COMMUNITIES'),
+                        ),
+                        const SizedBox(width: 32),
+                        _WebTab(
+                          label: 'PROPERTIES',
+                          isActive: _topTabCategory == 'PROPERTIES',
+                          onTap: () => setState(() => _topTabCategory = 'PROPERTIES'),
+                        ),
+                        const SizedBox(width: 32),
+                        _WebTab(
+                          label: 'MEDIA',
+                          isActive: _topTabCategory == 'MEDIA',
+                          onTap: () => setState(() => _topTabCategory = 'MEDIA'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  Text(
+                    _topTabCategory == 'COMMUNITIES' ? 'M4 COMMUNITIES' : 'M4 PROJECTS',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w900,
+                      color: Theme.of(context).colorScheme.onSurface,
+                      letterSpacing: -1,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
           SliverToBoxAdapter(
             child: SizedBox(
               height: 380,
@@ -1589,33 +1556,32 @@ class _GlassIconButton extends StatelessWidget {
   }
 }
 
-class _TextTab extends StatelessWidget {
+class _WebTab extends StatelessWidget {
   final String label;
   final bool isActive;
   final VoidCallback onTap;
 
-  const _TextTab({required this.label, this.isActive = false, required this.onTap});
+  const _WebTab({required this.label, this.isActive = false, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final onSurface = Theme.of(context).colorScheme.onSurface;
     return GestureDetector(
       onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.only(right: 25),
-        child: Container(
-          padding: const EdgeInsets.only(bottom: 6),
-          decoration: BoxDecoration(
-            border: isActive ? Border(bottom: BorderSide(color: isDark ? Colors.white : Colors.black, width: 2)) : null,
-          ),
-          child: Text(
-            label,
-            style: GoogleFonts.montserrat(
-              color: isActive ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white60 : Colors.black54),
-              fontSize: 11,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.5,
-            ),
+      child: Container(
+        padding: const EdgeInsets.only(bottom: 12),
+        decoration: BoxDecoration(
+          border: isActive 
+              ? Border(bottom: BorderSide(color: onSurface, width: 2.5)) 
+              : null,
+        ),
+        child: Text(
+          label,
+          style: GoogleFonts.montserrat(
+            color: isActive ? onSurface : onSurface.withOpacity(0.4),
+            fontSize: 12, // 👈 Matched with web text-xs
+            fontWeight: FontWeight.w900, // 👈 Matched with web font-black
+            letterSpacing: 2,
           ),
         ),
       ),

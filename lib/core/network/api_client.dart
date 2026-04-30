@@ -240,6 +240,10 @@ class ApiClient {
     return dio.get('/api/custom-views/my');
   }
 
+  Future<Response> getMyUnits() async {
+    return dio.get('/api/customization/my-units');
+  }
+
   // Lead Generation
   // Lead Generation
   Future<Response> submitLead(Map<String, dynamic> data) async {
