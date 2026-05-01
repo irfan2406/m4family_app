@@ -17,9 +17,11 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
   final _formKey = GlobalKey<FormState>();
   final _subjectController = TextEditingController();
   final _messageController = TextEditingController();
-  String _selectedCategory = 'General Query';
+  String _selectedCategory = 'Project / Possession';
+  String _selectedPriority = 'Medium';
   List<String> _selectedFilePaths = [];
-  bool _isDropdownOpen = false;
+  bool _isCategoryOpen = false;
+  bool _isPriorityOpen = false;
 
   final List<String> _categories = [
     'Payment & Billing',
@@ -27,6 +29,8 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
     'Legal & Technical',
     'General Query',
   ];
+
+  final List<String> _priorities = ['Low', 'Medium', 'High'];
 
   @override
   void dispose() {
@@ -62,10 +66,11 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isLoading = ref.watch(supportProvider).isLoading;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: isDark ? const Color(0xFF09090B) : const Color(0xFFF8FAFC),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -78,121 +83,150 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.05),
+                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white.withOpacity(0.1)),
+                  border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
                 ),
-                child: const Icon(LucideIcons.chevronLeft, color: Colors.white, size: 16),
+                child: Icon(LucideIcons.chevronLeft, color: isDark ? Colors.white : Colors.black, size: 16),
               ),
             ),
           ),
         ),
-        title: Text(
-          'RAISE TICKET',
-          style: GoogleFonts.montserrat(
-            fontSize: 16,
-            fontWeight: FontWeight.w900,
-            color: Colors.white,
-            letterSpacing: 0,
-          ),
+        title: Column(
+          children: [
+            Text(
+              'NEW TICKET',
+              style: GoogleFonts.montserrat(
+                fontSize: 16,
+                fontWeight: FontWeight.w900,
+                color: isDark ? Colors.white : Colors.black,
+                letterSpacing: 0,
+              ),
+            ),
+            Text(
+              'INITIATE SERVICE REQUEST',
+              style: GoogleFonts.montserrat(
+                fontSize: 8,
+                fontWeight: FontWeight.w700,
+                color: isDark ? Colors.white38 : Colors.black38,
+                letterSpacing: 1,
+              ),
+            ),
+          ],
         ),
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF0F1115), Color(0xFF050505)],
-          ),
-        ),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Info Banner
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.orange.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.orange.withOpacity(0.2)),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildLabel('SUBJECT', isDark),
+              const SizedBox(height: 12),
+              _buildTextField(
+                controller: _subjectController,
+                hint: 'BRIEF DESCRIPTION OF YOUR ISSUE...',
+                isDark: isDark,
+                validator: (v) => v!.isEmpty ? 'Please enter a subject' : null,
+              ),
+
+              const SizedBox(height: 32),
+
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildLabel('CATEGORY', isDark),
+                        const SizedBox(height: 12),
+                        _buildCategoryDropdown(isDark),
+                      ],
+                    ),
                   ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Icon(LucideIcons.info, color: Colors.orange, size: 20),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Text(
-                          'MOST TICKETS ARE RESOLVED WITHIN 4-6 WORKING HOURS. PLEASE PROVIDE DETAIL.',
-                          style: GoogleFonts.montserrat(
-                            color: Colors.orange,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 1,
-                            height: 1.5,
-                          ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildLabel('PRIORITY', isDark),
+                        const SizedBox(height: 12),
+                        _buildPriorityDropdown(isDark),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 32),
+
+              _buildLabel('MESSAGE', isDark),
+              const SizedBox(height: 12),
+              _buildTextField(
+                controller: _messageController,
+                hint: 'DESCRIBE YOUR REQUEST IN DETAIL...',
+                isDark: isDark,
+                maxLines: 5,
+                validator: (v) => v!.isEmpty ? 'Please enter a message' : null,
+              ),
+
+              const SizedBox(height: 32),
+
+              _buildLabel('ATTACHMENTS', isDark),
+              const SizedBox(height: 12),
+              _buildAttachmentSection(isDark),
+
+              const SizedBox(height: 32),
+
+              // Info Banner (at bottom like web)
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(LucideIcons.info, color: isDark ? Colors.white38 : Colors.black38, size: 20),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        'OUR CONCIERGE TEAM TYPICALLY RESPONDS WITHIN 24-48 BUSINESS HOURS. FOR URGENT MATTERS, PLEASE CALL THE DIRECT SERVICE LINE.',
+                        style: GoogleFonts.montserrat(
+                          color: isDark ? Colors.white38 : Colors.black38,
+                          fontSize: 9,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.5,
+                          height: 1.5,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
+              ),
 
-                const SizedBox(height: 48),
-
-                _buildLabel('SUBJECT'),
-                const SizedBox(height: 12),
-                _buildTextField(
-                  controller: _subjectController,
-                  hint: 'E.G. PAYMENT RECEIPT',
-                  validator: (v) => v!.isEmpty ? 'Please enter a subject' : null,
-                ),
-
-                const SizedBox(height: 32),
-
-                _buildLabel('CATEGORY'),
-                const SizedBox(height: 12),
-                _buildDropdown(),
-
-                const SizedBox(height: 32),
-
-                _buildLabel('MESSAGE'),
-                const SizedBox(height: 12),
-                _buildTextField(
-                  controller: _messageController,
-                  hint: 'Describe your issue...',
-                  maxLines: 5,
-                  validator: (v) => v!.isEmpty ? 'Please enter a message' : null,
-                ),
-
-                const SizedBox(height: 32),
-
-                _buildLabel('ATTACHMENTS'),
-                const SizedBox(height: 12),
-                _buildAttachmentSection(),
-
-                const SizedBox(height: 48),
-                _buildSubmitButton(isLoading),
-                const SizedBox(height: 40),
-              ],
-            ),
+              const SizedBox(height: 48),
+              _buildSubmitButton(isLoading, isDark),
+              const SizedBox(height: 40),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildLabel(String label) {
+  Widget _buildLabel(String label, bool isDark) {
     return Text(
       label,
       style: GoogleFonts.montserrat(
         fontSize: 10,
         fontWeight: FontWeight.w900,
-        color: Colors.white38,
-        letterSpacing: 2,
+        color: isDark ? Colors.white24 : Colors.black26,
+        letterSpacing: 1,
       ),
     ).animate().fadeIn().slideX(begin: -0.1);
   }
@@ -200,6 +234,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
   Widget _buildTextField({
     required TextEditingController controller,
     required String hint,
+    required bool isDark,
     int maxLines = 1,
     String? Function(String?)? validator,
   }) {
@@ -207,75 +242,83 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
       controller: controller,
       maxLines: maxLines,
       validator: validator,
-      style: GoogleFonts.montserrat(color: Colors.white, fontSize: 14),
+      style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 13, fontWeight: FontWeight.w700),
       decoration: InputDecoration(
         filled: true,
-        fillColor: Colors.white.withOpacity(0.03),
+        fillColor: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
         hintText: hint,
-        hintStyle: GoogleFonts.montserrat(color: Colors.white24, fontSize: 14),
+        hintStyle: GoogleFonts.montserrat(color: isDark ? Colors.white24 : Colors.black26, fontSize: 12, fontWeight: FontWeight.w700),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Colors.white10),
+          borderSide: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
         ),
-
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Colors.white10),
+          borderSide: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Colors.blueAccent, width: 1),
+          borderSide: const BorderSide(color: Color(0xFF3B82F6), width: 1.5),
         ),
+        errorStyle: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w700),
       ),
     ).animate().fadeIn(delay: 100.ms);
   }
 
-  Widget _buildDropdown() {
+  Widget _buildCategoryDropdown(bool isDark) {
     return Column(
       children: [
         GestureDetector(
-          onTap: () => setState(() => _isDropdownOpen = !_isDropdownOpen),
+          onTap: () => setState(() {
+            _isCategoryOpen = !_isCategoryOpen;
+            _isPriorityOpen = false;
+          }),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.03),
+              color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: _isDropdownOpen ? Colors.white.withOpacity(0.2) : Colors.white10,
+                color: _isCategoryOpen ? const Color(0xFF3B82F6) : (isDark ? Colors.white : Colors.black).withOpacity(0.05),
               ),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  _selectedCategory.toUpperCase(),
-                  style: GoogleFonts.montserrat(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1,
+                Expanded(
+                  child: Text(
+                    _selectedCategory.toUpperCase(),
+                    style: GoogleFonts.montserrat(
+                      color: isDark ? Colors.white : Colors.black,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.5,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 Icon(
-                  _isDropdownOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown,
-                  color: Colors.white24,
-                  size: 18,
+                  _isCategoryOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown,
+                  color: isDark ? Colors.white24 : Colors.black26,
+                  size: 16,
                 ),
               ],
             ),
           ),
         ),
-        if (_isDropdownOpen)
+        if (_isCategoryOpen)
           Container(
             margin: const EdgeInsets.only(top: 8),
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: const Color(0xFF18181B),
+              color: isDark ? const Color(0xFF111111) : Colors.white,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.white.withOpacity(0.05)),
+              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.5),
+                  color: Colors.black.withOpacity(isDark ? 0.5 : 0.05),
                   blurRadius: 20,
                   offset: const Offset(0, 10),
                 ),
@@ -288,23 +331,116 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                   onTap: () {
                     setState(() {
                       _selectedCategory = category;
-                      _isDropdownOpen = false;
+                      _isCategoryOpen = false;
                     });
                   },
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                     decoration: BoxDecoration(
-                      color: isSelected ? Colors.white.withOpacity(0.05) : Colors.transparent,
+                      color: isSelected ? const Color(0xFF3B82F6).withOpacity(0.1) : Colors.transparent,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
                       category.toUpperCase(),
                       style: GoogleFonts.montserrat(
-                        color: isSelected ? Colors.white : Colors.white38,
-                        fontSize: 11,
-                        fontWeight: isSelected ? FontWeight.w900 : FontWeight.w600,
-                        letterSpacing: 1,
+                        color: isSelected ? const Color(0xFF3B82F6) : (isDark ? Colors.white38 : Colors.black38),
+                        fontSize: 10,
+                        fontWeight: isSelected ? FontWeight.w900 : FontWeight.w700,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ).animate().fadeIn(duration: 200.ms).slideY(begin: -0.05, end: 0),
+      ],
+    );
+  }
+
+  Widget _buildPriorityDropdown(bool isDark) {
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: () => setState(() {
+            _isPriorityOpen = !_isPriorityOpen;
+            _isCategoryOpen = false;
+          }),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            decoration: BoxDecoration(
+              color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: _isPriorityOpen ? const Color(0xFF3B82F6) : (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    _selectedPriority.toUpperCase(),
+                    style: GoogleFonts.montserrat(
+                      color: isDark ? Colors.white : Colors.black,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.5,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Icon(
+                  _isPriorityOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown,
+                  color: isDark ? Colors.white24 : Colors.black26,
+                  size: 16,
+                ),
+              ],
+            ),
+          ),
+        ),
+        if (_isPriorityOpen)
+          Container(
+            margin: const EdgeInsets.only(top: 8),
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF111111) : Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(isDark ? 0.5 : 0.05),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+            child: Column(
+              children: _priorities.map((priority) {
+                final isSelected = _selectedPriority == priority;
+                return InkWell(
+                  onTap: () {
+                    setState(() {
+                      _selectedPriority = priority;
+                      _isPriorityOpen = false;
+                    });
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    decoration: BoxDecoration(
+                      color: isSelected ? const Color(0xFF3B82F6).withOpacity(0.1) : Colors.transparent,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      priority.toUpperCase(),
+                      style: GoogleFonts.montserrat(
+                        color: isSelected ? const Color(0xFF3B82F6) : (isDark ? Colors.white38 : Colors.black38),
+                        fontSize: 10,
+                        fontWeight: isSelected ? FontWeight.w900 : FontWeight.w700,
+                        letterSpacing: 0.5,
                       ),
                     ),
                   ),
@@ -330,34 +466,34 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
     }
   }
 
-  Widget _buildAttachmentSection() {
+  Widget _buildAttachmentSection(bool isDark) {
     return Column(
       children: [
         GestureDetector(
           onTap: _pickFiles,
           child: Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 48),
+            padding: const EdgeInsets.symmetric(vertical: 40),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.02),
+              color: (isDark ? Colors.white : Colors.black).withOpacity(0.02),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.white.withOpacity(0.05)),
+              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
             ),
             child: Column(
               children: [
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.03),
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(LucideIcons.paperclip, color: Colors.white.withOpacity(0.2), size: 20),
+                  child: Icon(LucideIcons.paperclip, color: isDark ? Colors.white24 : Colors.black26, size: 20),
                 ),
                 const SizedBox(height: 16),
                 Text(
                   'ADD FILES (PDF, JPG)',
                   style: GoogleFonts.montserrat(
-                    color: Colors.white.withOpacity(0.3),
+                    color: isDark ? Colors.white24 : Colors.black26,
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1,
@@ -375,21 +511,21 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
               margin: const EdgeInsets.only(bottom: 8),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.05),
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 children: [
                   Icon(
                     fileName.toLowerCase().endsWith('.pdf') ? LucideIcons.fileText : LucideIcons.image,
-                    color: Colors.white38,
+                    color: isDark ? Colors.white38 : Colors.black38,
                     size: 16,
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       fileName,
-                      style: GoogleFonts.inter(color: Colors.white70, fontSize: 12),
+                      style: GoogleFonts.inter(color: isDark ? Colors.white70 : Colors.black87, fontSize: 12, fontWeight: FontWeight.w600),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -397,7 +533,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                   IconButton(
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
-                    icon: const Icon(LucideIcons.x, color: Colors.white38, size: 14),
+                    icon: Icon(LucideIcons.x, color: isDark ? Colors.white38 : Colors.black38, size: 14),
                     onPressed: () {
                       setState(() {
                         _selectedFilePaths.remove(path);
@@ -413,7 +549,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
     );
   }
 
-  Widget _buildSubmitButton(bool isLoading) {
+  Widget _buildSubmitButton(bool isLoading, bool isDark) {
     return Container(
       width: double.infinity,
       height: 56,
@@ -421,7 +557,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.white.withOpacity(0.2),
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
             blurRadius: 30,
             offset: const Offset(0, 10),
           ),
@@ -430,30 +566,30 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
       child: ElevatedButton(
         onPressed: isLoading ? null : _submit,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
+          backgroundColor: isDark ? Colors.white : Colors.black,
+          foregroundColor: isDark ? Colors.black : Colors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           elevation: 0,
         ),
         child: isLoading
-            ? const SizedBox(
+            ? SizedBox(
                 height: 20,
                 width: 20,
-                child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2),
+                child: CircularProgressIndicator(color: isDark ? Colors.black : Colors.white, strokeWidth: 2),
               )
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'RAISE TICKET',
+                    'SUBMIT TICKET REQUEST',
                     style: GoogleFonts.montserrat(
                       fontWeight: FontWeight.w900,
-                      fontSize: 14,
-                      letterSpacing: 2,
+                      fontSize: 12,
+                      letterSpacing: 0.5,
                     ),
                   ),
                   const SizedBox(width: 12),
-                  const Icon(LucideIcons.send, color: Colors.black, size: 16),
+                  Icon(LucideIcons.send, color: isDark ? Colors.black : Colors.white, size: 16),
                 ],
               ),
       ),

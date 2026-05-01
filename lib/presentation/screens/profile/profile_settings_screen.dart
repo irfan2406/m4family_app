@@ -53,7 +53,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
     _emailController = TextEditingController(text: user?['email'] ?? '');
     _phoneController = TextEditingController(text: user?['phone'] ?? '');
     _addressController = TextEditingController(text: user?['address'] ?? '');
-    _panController = TextEditingController(text: ownerDetails['PAN'] ?? '');
+    _panController = TextEditingController(text: (ownerDetails['PAN'] ?? '').toUpperCase());
     _aadharController = TextEditingController(text: ownerDetails['AADHAR'] ?? '');
     
     if (user?['dob'] != null && user!['dob'].toString().isNotEmpty && !user!['dob'].toString().startsWith('0000')) {
@@ -221,7 +221,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                     const SizedBox(height: 24),
                     _buildField("CURRENT ADDRESS", _addressController, isDark, enabled: _isEditing),
                     const SizedBox(height: 24),
-                    _buildField("PAN", _panController, isDark, enabled: _isEditing),
+                    _buildField("PAN", _panController, isDark, enabled: _isEditing, capitalization: TextCapitalization.characters),
                     const SizedBox(height: 24),
                     _buildField("AADHAAR", _aadharController, isDark, enabled: _isEditing),
                     const SizedBox(height: 40),
@@ -363,7 +363,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
     );
   }
 
-  Widget _buildField(String label, TextEditingController controller, bool isDark, {bool enabled = true}) {
+  Widget _buildField(String label, TextEditingController controller, bool isDark, {bool enabled = true, TextCapitalization capitalization = TextCapitalization.none}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -389,6 +389,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           child: TextField(
             controller: controller,
             enabled: enabled,
+            textCapitalization: capitalization,
             style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
               fontSize: 12,
               fontWeight: FontWeight.w800,

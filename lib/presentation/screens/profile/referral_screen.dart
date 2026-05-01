@@ -48,7 +48,6 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
           _history = data['transactions'] ?? [];
         });
       } else {
-        // Fallback for legacy
         _walletBalance = double.tryParse(user?['loyaltyPoints']?.toString() ?? '0') ?? 0;
         _referrals = [];
         _history = [];
@@ -63,19 +62,22 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
-      backgroundColor: const Color(0xFF09090B),
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           children: [
             _buildHeader(),
             Expanded(
               child: _isLoading 
-                ? const Center(child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                ? Center(child: CircularProgressIndicator(color: colorScheme.primary, strokeWidth: 2))
                 : RefreshIndicator(
                     onRefresh: _fetchReferralData,
-                    color: Colors.white,
-                    backgroundColor: const Color(0xFF18181B),
+                    color: colorScheme.primary,
+                    backgroundColor: theme.cardColor,
                     child: SingleChildScrollView(
                       physics: const BouncingScrollPhysics(),
                       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -84,7 +86,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                         children: [
                           const SizedBox(height: 12),
                           _buildPremiumRewardsCard(),
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 32),
                           _buildActionGrid(),
                           const SizedBox(height: 48),
                           _buildSectionHeader('ACTIVE PIPELINE', LucideIcons.trendingUp),
@@ -94,7 +96,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                           _buildSectionHeader('POINT HISTORY', LucideIcons.history),
                           const SizedBox(height: 16),
                           _buildHistoryList(),
-                          const SizedBox(height: 100),
+                          const SizedBox(height: 40),
                         ],
                       ),
                     ),
@@ -107,6 +109,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
   }
 
   Widget _buildHeader() {
+    final foreground = Theme.of(context).colorScheme.onSurface;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
       child: Stack(
@@ -119,18 +122,18 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.05),
+                  color: foreground.withOpacity(0.05),
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                  border: Border.all(color: foreground.withOpacity(0.1)),
                 ),
-                child: const Icon(LucideIcons.chevronLeft, color: Colors.white, size: 16),
+                child: Icon(LucideIcons.chevronLeft, color: foreground, size: 16),
               ),
             ),
           ),
           Text(
             'REWARDS HUB',
             style: GoogleFonts.montserrat(
-              color: Colors.white,
+              color: foreground,
               fontSize: 14,
               fontWeight: FontWeight.w900,
               letterSpacing: 2,
@@ -142,14 +145,19 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
   }
 
   Widget _buildPremiumRewardsCard() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final cardBg = isDark ? theme.cardColor : const Color(0xFF09090B);
+    final cardFg = Colors.white;
+
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cardBg,
         borderRadius: BorderRadius.circular(40),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
+            color: Colors.black.withOpacity(0.3),
             blurRadius: 30,
             offset: const Offset(0, 15),
           ),
@@ -158,11 +166,11 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
       child: Stack(
         children: [
           Positioned(
-            right: 0,
-            top: 40,
+            right: -20,
+            top: 20,
             child: Opacity(
-              opacity: 0.05,
-              child: Icon(LucideIcons.gift, size: 160, color: Colors.black),
+              opacity: 0.1,
+              child: Icon(LucideIcons.gift, size: 140, color: cardFg),
             ),
           ),
           Padding(
@@ -173,85 +181,76 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                 Text(
                   'M4 REWARD POINTS',
                   style: GoogleFonts.montserrat(
-                    color: Colors.black38,
+                    color: cardFg.withOpacity(0.4),
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1.5,
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      _walletBalance.toStringAsFixed(0),
+                      NumberFormat('#,###').format(_walletBalance),
                       style: GoogleFonts.montserrat(
-                        color: Colors.black,
+                        color: cardFg,
                         fontSize: 48,
                         fontWeight: FontWeight.w900,
-                        height: 0.9,
+                        height: 1,
+                        fontStyle: FontStyle.italic,
                       ),
                     ),
                     const SizedBox(width: 8),
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 4),
+                      padding: const EdgeInsets.only(bottom: 6),
                       child: Text(
                         'PTS',
                         style: GoogleFonts.montserrat(
-                          color: Colors.black26,
+                          color: cardFg.withOpacity(0.4),
                           fontSize: 14,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w900,
                         ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 12),
                 Row(
                   children: [
-                    _buildPill('VALUE: ₹${(_walletBalance * 0.5).toStringAsFixed(0)}', Colors.black.withValues(alpha: 0.05), Colors.black54),
-                    const SizedBox(width: 8),
-                    _buildPill('CASH: ₹$_cashBalance', const Color(0xFF10B981).withValues(alpha: 0.1), const Color(0xFF10B981)),
+                    _buildPill('VALUE: ₹${NumberFormat('#,###').format(_walletBalance)}', cardFg.withOpacity(0.1)),
+                    const Spacer(),
+                    _buildPill('CASH: ₹${NumberFormat('#,###').format(_cashBalance)}', const Color(0xFF10B981)),
                   ],
                 ),
                 const SizedBox(height: 32),
                 GestureDetector(
-                  onTap: () async {
-                    final result = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ReferralRedeemScreen(walletBalance: _walletBalance),
-                      ),
-                    );
-                    if (result == true && mounted) _fetchReferralData();
-                  },
+                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ReferralRedeemScreen(walletBalance: _walletBalance))),
                   child: Container(
-                    height: 56,
+                    height: 64,
+                    width: double.infinity,
                     decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(16),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
                       boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.3),
-                          blurRadius: 15,
-                          offset: const Offset(0, 8),
-                        ),
+                        BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 5)),
                       ],
                     ),
+                    alignment: Alignment.center,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           'REDEEM POINTS',
                           style: GoogleFonts.montserrat(
-                            color: Colors.white,
+                            color: Colors.black,
                             fontSize: 12,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 1,
                           ),
                         ),
                         const SizedBox(width: 12),
-                        const Icon(LucideIcons.checkCircle2, color: Colors.white, size: 16),
+                        const Icon(LucideIcons.checkCircle2, color: Colors.black, size: 18),
                       ],
                     ),
                   ),
@@ -261,20 +260,20 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
           ),
         ],
       ),
-    ).animate().fadeIn().scale(begin: const Offset(0.95, 0.95));
+    );
   }
 
-  Widget _buildPill(String text, Color bg, Color textCol) {
+  Widget _buildPill(String label, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(6),
+        color: color,
+        borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
-        text.toUpperCase(),
+        label,
         style: GoogleFonts.montserrat(
-          color: textCol,
+          color: Colors.white,
           fontSize: 8,
           fontWeight: FontWeight.w900,
           letterSpacing: 0.5,
@@ -286,38 +285,40 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
   Widget _buildActionGrid() {
     return Row(
       children: [
-        Expanded(child: _buildActionBox('REFER FRIEND', LucideIcons.users, () => _showReferralForm())),
+        Expanded(child: _buildActionCard('REFER FRIEND', LucideIcons.users, _showReferralForm)),
         const SizedBox(width: 16),
-        Expanded(child: _buildActionBox('SHARE APP', LucideIcons.share2, () {
+        Expanded(child: _buildActionCard('SHARE APP', LucideIcons.share2, () {
           Clipboard.setData(ClipboardData(text: _referralCode));
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Referral code copied!')));
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('App link & code copied!')));
         })),
       ],
     );
   }
 
-  Widget _buildActionBox(String label, IconData icon, VoidCallback onTap) {
+  Widget _buildActionCard(String label, IconData icon, VoidCallback onTap) {
+    final theme = Theme.of(context);
+    final foreground = theme.colorScheme.onSurface;
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 100,
+        height: 120,
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.03),
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.04)),
+          color: theme.cardColor.withOpacity(0.4),
+          borderRadius: BorderRadius.circular(32),
+          border: Border.all(color: foreground.withOpacity(0.05)),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: Colors.white, size: 24),
+            Icon(icon, color: theme.colorScheme.primary, size: 24),
             const SizedBox(height: 12),
             Text(
               label,
               style: GoogleFonts.montserrat(
-                color: Colors.white,
-                fontSize: 9,
+                color: foreground.withOpacity(0.4),
+                fontSize: 8,
                 fontWeight: FontWeight.w900,
-                letterSpacing: 1,
+                letterSpacing: 1.2,
               ),
             ),
           ],
@@ -327,19 +328,20 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
   }
 
   Widget _buildSectionHeader(String title, IconData icon) {
+    final foreground = Theme.of(context).colorScheme.onSurface;
     return Row(
       children: [
         Text(
           title,
           style: GoogleFonts.montserrat(
-            color: Colors.white24,
+            color: foreground.withOpacity(0.3),
             fontSize: 10,
             fontWeight: FontWeight.w800,
-            letterSpacing: 1,
+            letterSpacing: 1.5,
           ),
         ),
         const Spacer(),
-        Icon(icon, color: Colors.white12, size: 14),
+        Icon(icon, color: foreground.withOpacity(0.1), size: 14),
       ],
     );
   }
@@ -352,7 +354,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
           child: Text(
             'NO ACTIVE LEADS',
             style: GoogleFonts.montserrat(
-              color: Colors.white.withValues(alpha: 0.05),
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
               fontSize: 10,
               fontWeight: FontWeight.w900,
               letterSpacing: 2,
@@ -363,65 +365,85 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
     }
 
     return Column(
-      children: _referrals.map((ref) => _buildLeadCard(ref)).toList(),
+      children: _referrals.map((lead) => _buildLeadCard(lead)).toList(),
     );
   }
 
-  Widget _buildLeadCard(dynamic ref) {
-    final status = (ref['status'] ?? 'Pending').toString().toUpperCase();
-    final name = ref['referralName'] ?? ref['clientName'] ?? 'REFERRAL LEAD';
-    final project = ref['projectName'] ?? 'GENERAL SELECTION';
-    final points = ref['pointsEarned'] ?? 0;
+  Widget _buildLeadCard(dynamic lead) {
+    final status = (lead['status'] ?? 'Pending').toString().toUpperCase();
+    final name = lead['referralName'] ?? lead['clientName'] ?? 'REFERRAL LEAD';
+    final project = lead['projectName'] ?? 'GENERAL SELECTION';
+    final points = lead['pointsEarned'] ?? 0;
+
+    final theme = Theme.of(context);
+    final foreground = theme.colorScheme.onSurface;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.02),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        color: theme.cardColor.withOpacity(0.4),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: foreground.withOpacity(0.05)),
       ),
-      child: Row(
+      child: Column(
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
               children: [
-                Text(
-                  name.toString().toUpperCase(),
-                  style: GoogleFonts.montserrat(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w800),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        name.toString().toUpperCase(),
+                        style: GoogleFonts.montserrat(color: foreground, fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: -0.5),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        project.toString().toUpperCase(),
+                        style: GoogleFonts.montserrat(color: foreground.withOpacity(0.3), fontSize: 8, fontWeight: FontWeight.w900, fontStyle: FontStyle.italic),
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Text(
-                      project.toString().toUpperCase(),
-                      style: GoogleFonts.montserrat(color: Colors.white24, fontSize: 8, fontWeight: FontWeight.w800, fontStyle: FontStyle.italic),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primary.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: theme.colorScheme.primary.withOpacity(0.2)),
+                  ),
+                  child: Text(
+                    status,
+                    style: GoogleFonts.montserrat(
+                      color: theme.colorScheme.primary,
+                      fontSize: 7,
+                      fontWeight: FontWeight.w900,
                     ),
-                    const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: (status == 'VERIFIED' || status == 'IN PROGRESS') ? const Color(0xFF10B981).withValues(alpha: 0.1) : Colors.white.withValues(alpha: 0.05),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        status,
-                        style: GoogleFonts.montserrat(
-                          color: (status == 'VERIFIED' || status == 'IN PROGRESS') ? const Color(0xFF10B981) : Colors.white38,
-                          fontSize: 6,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ],
             ),
           ),
-          Text(
-            '${points.toString()} PTS',
-            style: GoogleFonts.montserrat(color: const Color(0xFFF59E0B), fontSize: 11, fontWeight: FontWeight.w900),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            decoration: BoxDecoration(
+              border: Border.all(color: foreground.withOpacity(0.05)),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'EST. REWARD',
+                  style: GoogleFonts.montserrat(color: foreground.withOpacity(0.3), fontSize: 7, fontWeight: FontWeight.w900, letterSpacing: 1),
+                ),
+                Text(
+                  '${NumberFormat('#,###').format(points)} PTS',
+                  style: GoogleFonts.montserrat(color: const Color(0xFFF59E0B), fontSize: 10, fontWeight: FontWeight.w900, fontStyle: FontStyle.italic),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -436,7 +458,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
           child: Text(
             'NO RECENT HISTORY',
             style: GoogleFonts.montserrat(
-              color: Colors.white.withValues(alpha: 0.05),
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
               fontSize: 10,
               fontWeight: FontWeight.w900,
               letterSpacing: 2,
@@ -455,15 +477,19 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
     final type = (txn['type'] ?? 'Referral').toString().toUpperCase();
     final date = txn['createdAt'] != null ? DateTime.parse(txn['createdAt'].toString()) : DateTime.now();
     final amount = txn['amount'] ?? 0;
+    final status = (txn['status'] ?? 'Completed').toString().toUpperCase();
     final isRedemption = type == 'REDEMPTION' || type == 'WITHDRAWAL';
+
+    final theme = Theme.of(context);
+    final foreground = theme.colorScheme.onSurface;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.02),
+        color: theme.cardColor.withOpacity(0.2),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+        border: Border.all(color: foreground.withOpacity(0.05)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -473,23 +499,32 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
             children: [
               Text(
                 type,
-                style: GoogleFonts.montserrat(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w800),
+                style: GoogleFonts.montserrat(color: foreground, fontSize: 9, fontWeight: FontWeight.w900),
               ),
               const SizedBox(height: 2),
               Text(
-                '${date.day}/${date.month}/${date.year}',
-                style: GoogleFonts.montserrat(color: Colors.white24, fontSize: 8, fontWeight: FontWeight.w700),
+                DateFormat('dd/MM/yyyy').format(date),
+                style: GoogleFonts.montserrat(color: foreground.withOpacity(0.3), fontSize: 7, fontWeight: FontWeight.w800),
               ),
             ],
           ),
-          Text(
-            '${isRedemption ? '-' : '+'}$amount',
-            style: GoogleFonts.montserrat(
-              color: isRedemption ? Colors.redAccent : const Color(0xFF10B981),
-              fontSize: 12,
-              fontWeight: FontWeight.w900,
-              fontStyle: FontStyle.italic,
-            ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                '${isRedemption ? '-' : '+'}$amount',
+                style: GoogleFonts.montserrat(
+                  color: isRedemption ? Colors.redAccent : const Color(0xFF10B981),
+                  fontSize: 10,
+                  fontWeight: FontWeight.w900,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+              Text(
+                'STATUS: $status',
+                style: GoogleFonts.montserrat(color: foreground.withOpacity(0.2), fontSize: 6, fontWeight: FontWeight.w900),
+              ),
+            ],
           ),
         ],
       ),
@@ -511,14 +546,17 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setModalState) {
+            final theme = Theme.of(context);
+            final foreground = theme.colorScheme.onSurface;
             return Container(
               padding: EdgeInsets.only(
                 left: 32, right: 32, top: 40,
                 bottom: MediaQuery.of(context).viewInsets.bottom + 40,
               ),
-              decoration: const BoxDecoration(
-                color: Color(0xFF111111),
-                borderRadius: BorderRadius.vertical(top: Radius.circular(40)),
+              decoration: BoxDecoration(
+                color: theme.scaffoldBackgroundColor,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
+                border: Border.all(color: foreground.withOpacity(0.1)),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -526,53 +564,52 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                 children: [
                   Text(
                     'REFER FRIEND',
-                    style: GoogleFonts.montserrat(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900),
+                    style: GoogleFonts.montserrat(color: foreground, fontSize: 24, fontWeight: FontWeight.w900, fontStyle: FontStyle.italic),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'ADD TO YOUR SUCCESS MATRIX',
                     style: GoogleFonts.montserrat(
-                      color: Colors.white24,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 1.5,
+                      color: foreground.withOpacity(0.3),
+                      fontSize: 9,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 3,
                     ),
                   ),
                   const SizedBox(height: 48),
                   
-                  // CUSTOM INLINE DROPDOWN
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'SELECT PROJECT',
-                        style: GoogleFonts.montserrat(color: Colors.white24, fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 1),
+                        style: GoogleFonts.montserrat(color: foreground.withOpacity(0.4), fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1),
                       ),
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 8),
                       GestureDetector(
                         onTap: () => setModalState(() => isProjectDropdownOpen = !isProjectDropdownOpen),
                         child: Container(
                           height: 56,
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.03),
+                            color: foreground.withOpacity(0.05),
                             borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                            border: Border.all(color: foreground.withOpacity(0.1)),
                           ),
                           child: Row(
                             children: [
                               Text(
                                 selectedProjectName.isEmpty ? 'CHOOSE OPPORTUNITY' : selectedProjectName.toUpperCase(),
                                 style: GoogleFonts.montserrat(
-                                  color: selectedProjectName.isEmpty ? Colors.white24 : Colors.white, 
-                                  fontSize: 11, 
-                                  fontWeight: FontWeight.w800
+                                  color: selectedProjectName.isEmpty ? foreground.withOpacity(0.4) : foreground, 
+                                  fontSize: 10, 
+                                  fontWeight: FontWeight.w900
                                 ),
                               ),
                               const Spacer(),
                               Icon(
                                 isProjectDropdownOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown, 
-                                color: Colors.white24, 
+                                color: foreground.withOpacity(0.4), 
                                 size: 16
                               ),
                             ],
@@ -584,9 +621,9 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                         Container(
                           constraints: const BoxConstraints(maxHeight: 200),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF1A1A1A),
+                            color: theme.cardColor,
                             borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+                            border: Border.all(color: foreground.withOpacity(0.05)),
                           ),
                           child: Consumer(
                             builder: (context, ref, child) {
@@ -594,7 +631,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                               return projectsAsync.when(
                                 data: (projects) {
                                   if (projects.isEmpty) {
-                                    return const Center(child: Padding(padding: EdgeInsets.all(20), child: Text('No projects available', style: TextStyle(color: Colors.white38))));
+                                    return Center(child: Padding(padding: const EdgeInsets.all(20), child: Text('No projects available', style: TextStyle(color: foreground.withOpacity(0.38)))));
                                   }
                                   return SingleChildScrollView(
                                     child: Column(
@@ -611,15 +648,15 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                                             width: double.infinity,
                                             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                                             decoration: BoxDecoration(
-                                              color: isSelected ? const Color(0xFF3B82F6).withValues(alpha: 0.4) : Colors.transparent,
+                                              color: isSelected ? theme.colorScheme.primary.withOpacity(0.1) : Colors.transparent,
                                               borderRadius: BorderRadius.circular(12),
                                             ),
                                             child: Text(
                                               name.toString().toUpperCase(),
                                               style: GoogleFonts.montserrat(
-                                                color: isSelected ? Colors.white : Colors.white60,
+                                                color: isSelected ? theme.colorScheme.primary : foreground.withOpacity(0.6),
                                                 fontSize: 10,
-                                                fontWeight: FontWeight.w800,
+                                                fontWeight: FontWeight.w900,
                                               ),
                                             ),
                                           ),
@@ -628,7 +665,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                                     ),
                                   );
                                 },
-                                loading: () => const Center(child: Padding(padding: EdgeInsets.all(20), child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))),
+                                loading: () => Center(child: Padding(padding: const EdgeInsets.all(20), child: CircularProgressIndicator(strokeWidth: 2, color: foreground))),
                                 error: (e, s) => const Padding(padding: EdgeInsets.all(20), child: Text('Failed to load projects', style: TextStyle(color: Colors.red))),
                               );
                             },
@@ -688,20 +725,20 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                     },
                     child: Container(
                       width: double.infinity,
-                      height: 60,
+                      height: 64,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: theme.colorScheme.onSurface,
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
-                          BoxShadow(color: Colors.white.withValues(alpha: 0.1), blurRadius: 20, offset: const Offset(0, 10)),
+                          BoxShadow(color: theme.colorScheme.onSurface.withOpacity(0.2), blurRadius: 20, offset: const Offset(0, 10)),
                         ],
                       ),
                       alignment: Alignment.center,
                       child: isLoading
-                        ? const CircularProgressIndicator(color: Colors.black, strokeWidth: 2)
+                        ? CircularProgressIndicator(color: theme.colorScheme.surface, strokeWidth: 2)
                         : Text(
                             'SUBMIT LEAD VERIFICATION',
-                            style: GoogleFonts.montserrat(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w900),
+                            style: GoogleFonts.montserrat(color: theme.colorScheme.surface, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2),
                           ),
                     ),
                   ),
@@ -714,43 +751,43 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
     );
   }
 
-
   Widget _buildInputField(String label, String hint, TextEditingController controller, {bool isDropdown = false, bool isPhone = false}) {
+    final foreground = Theme.of(context).colorScheme.onSurface;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: GoogleFonts.montserrat(color: Colors.white24, fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 1),
+          style: GoogleFonts.montserrat(color: foreground.withOpacity(0.4), fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 8),
         Container(
           height: 56,
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.03),
+            color: foreground.withOpacity(0.05),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+            border: Border.all(color: foreground.withOpacity(0.1)),
           ),
           child: Row(
             children: [
               if (isPhone) ...[
                 Padding(
                   padding: const EdgeInsets.only(left: 20, right: 10),
-                  child: Text('+91', style: GoogleFonts.montserrat(color: Colors.white, fontWeight: FontWeight.bold)),
+                  child: Text('+91', style: GoogleFonts.montserrat(color: foreground, fontWeight: FontWeight.bold)),
                 ),
-                Container(width: 1, height: 20, color: Colors.white10),
+                Container(width: 1, height: 20, color: foreground.withOpacity(0.1)),
               ],
               Expanded(
                 child: TextField(
                   controller: controller,
                   readOnly: isDropdown,
-                  style: GoogleFonts.montserrat(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w700),
+                  style: GoogleFonts.montserrat(color: foreground, fontSize: 10, fontWeight: FontWeight.w900),
                   decoration: InputDecoration(
                     hintText: hint,
-                    hintStyle: GoogleFonts.montserrat(color: Colors.white24, fontSize: 11, fontWeight: FontWeight.w800),
+                    hintStyle: GoogleFonts.montserrat(color: foreground.withOpacity(0.2), fontSize: 10, fontWeight: FontWeight.w900),
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-                    suffixIcon: isDropdown ? const Icon(LucideIcons.chevronDown, color: Colors.white24, size: 16) : null,
+                    suffixIcon: isDropdown ? Icon(LucideIcons.chevronDown, color: foreground.withOpacity(0.24), size: 16) : null,
                   ),
                 ),
               ),

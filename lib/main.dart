@@ -53,7 +53,9 @@ import 'package:m4_mobile/presentation/screens/cp/cp_hub_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_project_detail_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_blog_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_shell_entry_screen.dart';
-import 'package:m4_mobile/presentation/screens/support/support_screen.dart';
+import 'package:m4_mobile/presentation/screens/selection_logs/selection_logs_screen.dart';
+import 'package:m4_mobile/presentation/screens/custom_views/my_custom_views_screen.dart';
+import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
 
 import 'package:m4_mobile/core/providers/theme_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -255,6 +257,14 @@ final GoRouter _router = GoRouter(
       builder: (context, state) => const ReferralScreen(),
     ),
     GoRoute(
+      path: '/my-custom-views',
+      builder: (context, state) => MyCustomViewsScreen(),
+    ),
+    GoRoute(
+      path: '/profile/custom-requests',
+      builder: (context, state) => SelectionLogsScreen(),
+    ),
+    GoRoute(
       path: '/support/schedule-visit',
       builder: (context, state) => const ScheduleVisitScreen(),
     ),
@@ -272,23 +282,23 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/profile/legal-vault',
-      builder: (context, state) => const LegalVaultScreen(),
+      builder: (context, state) => LegalVaultScreen(),
     ),
     GoRoute(
       path: '/profile/deactivate',
-      builder: (context, state) => const DeactivateAccountScreen(),
+      builder: (context, state) => DeactivateAccountScreen(),
     ),
     GoRoute(
       path: '/support',
-      builder: (context, state) => const SupportScreen(),
+      builder: (context, state) => SupportScreen(),
     ),
     GoRoute(
       path: '/notifications',
-      builder: (context, state) => const NotificationListScreen(),
+      builder: (context, state) => NotificationListScreen(),
     ),
     GoRoute(
       path: '/media',
-      builder: (context, state) => const GuestContentHubScreen(
+      builder: (context, state) => GuestContentHubScreen(
         title: 'MEDIA\nGALLERY',
         subtitle: 'Stay updated with our latest multimedia releases.',
         typeIcon: LucideIcons.play,

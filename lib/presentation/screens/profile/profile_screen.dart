@@ -83,17 +83,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       children: [
                         const SizedBox(height: 16),
                         _buildProfileCard(user, isDark),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 24),
                         _buildOwnerDetails(user, isDark),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 24),
                         _buildFamilySection(user, isDark),
-                        const SizedBox(height: 32),
-                        _buildBookingsSummary(user, isDark),
-                        const SizedBox(height: 32),
-                        _buildDocumentsSummary(user, isDark),
-                        const SizedBox(height: 32),
+                        if (user['bookings']?.isNotEmpty == true) ...[
+                          const SizedBox(height: 24),
+                          _buildBookingsSummary(user, isDark),
+                        ],
+                        if (user['documents']?.isNotEmpty == true) ...[
+                          const SizedBox(height: 24),
+                          _buildDocumentsSummary(user, isDark),
+                        ],
+                        const SizedBox(height: 24),
                         _buildPropertyServices(context, isDark),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 24),
                         _buildPreferences(context, ref, isDark),
                         const SizedBox(height: 32),
                         _buildLogoutButton(context, ref),
@@ -112,7 +116,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   Widget _buildBookingsSummary(dynamic user, bool isDark) {
     final List<dynamic> bookings = user['bookings'] ?? [];
-    if (bookings.isEmpty) return const SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,7 +189,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   Widget _buildDocumentsSummary(dynamic user, bool isDark) {
     final List<dynamic> documents = user['documents'] ?? [];
-    if (documents.isEmpty) return const SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -575,11 +577,27 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             _ServiceIconButton(label: 'DOCUMENTS', icon: LucideIcons.fileText, isDark: isDark, onTap: () => context.push('/profile/legal-vault')),
           ],
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 16),
+        _ListActionTile(
+          label: 'MY CUSTOM VIEWS',
+          subtitle: 'PERSONALISE YOUR PURCHASED UNITS',
+          icon: LucideIcons.palette,
+          isDark: isDark,
+          onTap: () => ref.read(navigationProvider.notifier).state = 7,
+        ),
+        const SizedBox(height: 12),
+        _ListActionTile(
+          label: 'PERSONALISATION LOGS',
+          subtitle: 'VIEW YOUR SAVED DESIGN HISTORY',
+          icon: LucideIcons.clipboardList,
+          isDark: isDark,
+          onTap: () => ref.read(navigationProvider.notifier).state = 5,
+        ),
+        const SizedBox(height: 12),
         _ListActionTile(
           label: 'CONCIERGE TICKET LOGS',
           subtitle: 'SERVICE & SUPPORT HISTORY',
-          icon: LucideIcons.clipboardList,
+          icon: LucideIcons.fileText,
           isDark: isDark,
           onTap: () => context.push('/support/logs'),
         ),
@@ -743,10 +761,10 @@ class _SectionTitle extends StatelessWidget {
       child: Text(
         title,
         style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
-          fontSize: 9,
-          fontWeight: FontWeight.w800,
-          color: isDark ? Colors.white38 : Colors.black38,
-          letterSpacing: 2,
+          fontSize: 11,
+          fontWeight: FontWeight.w900,
+          color: isDark ? Colors.white.withOpacity(0.4) : Colors.black.withOpacity(0.45),
+          letterSpacing: 1.5,
         ),
       ),
     );

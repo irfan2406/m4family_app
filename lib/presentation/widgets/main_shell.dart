@@ -7,6 +7,7 @@ import 'package:m4_mobile/presentation/screens/notifications/notification_list_s
 import 'package:m4_mobile/presentation/screens/support/support_screen.dart';
 import 'package:m4_mobile/presentation/screens/profile/profile_screen.dart';
 import 'package:m4_mobile/presentation/screens/custom_views/my_custom_views_screen.dart';
+import 'package:m4_mobile/presentation/screens/selection_logs/selection_logs_screen.dart';
 import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
 import 'package:m4_mobile/presentation/widgets/sidebar_menu.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,9 +30,10 @@ class _MainShellState extends ConsumerState<MainShell> {
     const SupportScreen(), // 2: MessageSquare (Support)
     const ProfileScreen(), // 3: User (Profile)
     const CommunityListScreen(), // 4: Sidebar only
-    const NotificationListScreen(), // 5: Sidebar only
-    const CustomViewsScreen(), // 6: Sidebar only
-    const MyCustomViewsScreen(), // 7: Sidebar only
+    SelectionLogsScreen(), // 5: Sidebar only
+    CustomViewsScreen(), // 6: Sidebar only
+    MyCustomViewsScreen(), // 7: Sidebar only
+    const NotificationListScreen(), // 8: Sidebar only
   ];
 
 
