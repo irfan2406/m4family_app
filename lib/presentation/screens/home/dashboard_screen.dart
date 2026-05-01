@@ -476,9 +476,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   const SizedBox(height: 32),
                   Text(
                     _topTabCategory == 'COMMUNITIES' ? 'M4 COMMUNITIES' : 'M4 PROJECTS',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w900,
+                    style: GoogleFonts.dmSerifDisplay(
+                      fontSize: 32,
+                      fontWeight: FontWeight.w400,
                       color: Theme.of(context).colorScheme.onSurface,
                       letterSpacing: -1,
                     ),
@@ -573,9 +573,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 children: <Widget>[
                   Text(
                     'OUR PHILOSOPHY',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 28, 
-                      fontWeight: FontWeight.w900, 
+                    style: GoogleFonts.dmSerifDisplay(
+                      fontSize: 32, 
+                      fontWeight: FontWeight.w400, 
                       color: Theme.of(context).colorScheme.onSurface,
                       letterSpacing: -0.5,
                     ),
@@ -704,11 +704,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 children: <Widget>[
                   Text(
                     'FEATURED SELECTION',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 8, // Refined small scale
-                      fontWeight: FontWeight.w900,
+                    style: GoogleFonts.dmSerifDisplay(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w400,
                       color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
-                      letterSpacing: 2.5,
+                      letterSpacing: 4,
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -716,9 +716,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     _projectsLoading || _projects.isEmpty 
                         ? 'LOADING...' 
                         : (_projects[_currentHeroIndex % _projects.length]['title']?.toString().toUpperCase() ?? 'UNTITLED'),
-                    style: GoogleFonts.montserrat(
-                      fontSize: 26, // Matched with Stage 1 Hero
-                      fontWeight: FontWeight.w900,
+                    style: GoogleFonts.dmSerifDisplay(
+                      fontSize: 32,
+                      fontWeight: FontWeight.w400,
                       color: Theme.of(context).colorScheme.onSurface,
                       letterSpacing: -1.2,
                     ),
@@ -1063,12 +1063,12 @@ class _ProjectCard extends StatelessWidget {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text('STARTING FROM', style: GoogleFonts.montserrat(color: Colors.white.withOpacity(0.5), fontSize: 7, fontWeight: FontWeight.w900, letterSpacing: 0.5)),
-                            Text(displayPrice, style: GoogleFonts.montserrat(fontSize: 15, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: -0.5)),
+                            Text('STARTING FROM', style: GoogleFonts.montserrat(color: Colors.white.withOpacity(0.5), fontSize: 7, fontWeight: FontWeight.w700, letterSpacing: 0.5)),
+                            Text(displayPrice, style: GoogleFonts.montserrat(fontSize: 15, fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: -0.5)),
                           ],
                         )
                       else
-                        Text('EXPLORE NOW', style: GoogleFonts.montserrat(color: Colors.white.withOpacity(0.8), fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                        Text('EXPLORE NOW', style: GoogleFonts.montserrat(color: Colors.white.withOpacity(0.8), fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 1)),
                       const Icon(LucideIcons.arrowRight, color: Colors.white, size: 18),
                     ],
                   ),
@@ -1117,7 +1117,7 @@ class _QuickAction extends StatelessWidget {
             label,
             style: GoogleFonts.montserrat(
               fontSize: 8,
-              fontWeight: FontWeight.w900,
+              fontWeight: FontWeight.w700,
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
               letterSpacing: 1,
             ),
@@ -1168,7 +1168,7 @@ class _LargeActionCard extends StatelessWidget {
                   title, 
                   style: GoogleFonts.montserrat(
                     fontSize: 13, 
-                    fontWeight: FontWeight.w900, 
+                    fontWeight: FontWeight.w800, 
                     color: Theme.of(context).colorScheme.onSurface, 
                     letterSpacing: 1.5,
                   ),
@@ -1179,7 +1179,7 @@ class _LargeActionCard extends StatelessWidget {
                   style: GoogleFonts.montserrat(
                     fontSize: 8, 
                     color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4), 
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -1221,7 +1221,7 @@ class _QuickFilterSheet extends StatelessWidget {
                 'QUICK FILTERS',
                 style: GoogleFonts.montserrat(
                   fontSize: 18, 
-                  fontWeight: FontWeight.w900, 
+                  fontWeight: FontWeight.w800, 
                   color: Theme.of(context).colorScheme.onSurface,
                   letterSpacing: 1,
                 ),
@@ -1731,10 +1731,10 @@ class _CommunityCard extends StatelessWidget {
                   children: [
                     Text(
                       title.toUpperCase(),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w900,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w400,
                         letterSpacing: -0.5,
                       ),
                     ),
@@ -1759,7 +1759,7 @@ class _CommunityCard extends StatelessWidget {
                           style: GoogleFonts.montserrat(
                             color: Colors.white.withOpacity(0.8),
                             fontSize: 9,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w700,
                             letterSpacing: 1.5,
                           ),
                         ),

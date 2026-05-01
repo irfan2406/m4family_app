@@ -161,6 +161,173 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
     }
   }
 
+  void _showBookingOptionsDialog(dynamic project) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF0F1115) : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
+          border: Border.all(color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.1), width: 0.5),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Align(
+              alignment: Alignment.center,
+              child: Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(2))),
+            ),
+            const SizedBox(height: 32),
+            Text(
+              'HOW CAN\nWE HELP?',
+              style: GoogleFonts.montserrat(
+                fontSize: 28, 
+                fontWeight: FontWeight.w900, 
+                color: isDark ? Colors.white : Colors.black,
+                height: 0.9,
+                letterSpacing: -1.5,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'INTERESTED IN ${project?['title']?.toString().toUpperCase() ?? 'PROJECT'}?\nCHOOSE HOW YOU\'D LIKE TO PROCEED.',
+              style: GoogleFonts.montserrat(
+                fontSize: 9, 
+                color: isDark ? Colors.white38 : Colors.black38, 
+                fontWeight: FontWeight.w900, 
+                letterSpacing: 2,
+              ),
+            ),
+            const SizedBox(height: 40),
+            _buildBookingOption(
+              icon: LucideIcons.messageSquare,
+              title: 'SEND INQUIRY',
+              desc: 'Get detailed brochure and pricing via email/WhatsApp.',
+              color: const Color(0xFF3B82F6),
+              onTap: () {
+                Navigator.pop(context);
+                _showRequestDetailsDialog(project, null, 'General');
+              },
+            ),
+            const SizedBox(height: 16),
+            _buildBookingOption(
+              icon: LucideIcons.calendar,
+              title: 'SCHEDULE SITE VISIT',
+              desc: 'Book a personalized tour with our project manager.',
+              color: const Color(0xFF10B981),
+              onTap: () {
+                Navigator.pop(context);
+                _showRequestDetailsDialog(project, null, 'Site Visit');
+              },
+            ),
+            const SizedBox(height: 16),
+            _buildBookingOption(
+              icon: LucideIcons.creditCard,
+              title: 'TOKEN BOOKING',
+              desc: 'Lock your preferred unit with a refundable token amount.',
+              color: const Color(0xFFF59E0B),
+              onTap: () {
+                Navigator.pop(context);
+                _showRequestDetailsDialog(project, 'TOKEN BOOKING', 'General');
+              },
+            ),
+            const SizedBox(height: 32),
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: M4Theme.premiumBlue.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: M4Theme.premiumBlue.withOpacity(0.1)),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(color: M4Theme.premiumBlue, borderRadius: BorderRadius.circular(8)),
+                    child: const Icon(LucideIcons.info, color: Colors.white, size: 14),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Text(
+                      'M4 FAMILY MEMBERS GET PRIORITY SITE VISITS AND EXCLUSIVE UNIT SELECTION WINDOWS.',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 8, 
+                        color: isDark ? Colors.white70 : Colors.black.withOpacity(0.8), 
+                        fontWeight: FontWeight.w900, 
+                        letterSpacing: 0.5,
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBookingOption({
+    required IconData icon,
+    required String title,
+    required String desc,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return _ScaleButton(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1E1F21) : Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
+          boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 15, offset: const Offset(0, 5))],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: color, size: 20),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 0.5),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    desc,
+                    style: GoogleFonts.montserrat(fontSize: 9, color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.w600),
+                  ),
+                ],
+              ),
+            ),
+            Icon(LucideIcons.chevronRight, color: isDark ? Colors.white12 : Colors.black12, size: 18),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _showRequestDetailsDialog(dynamic project, [dynamic plan, String type = 'General']) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final planName = plan is Map ? plan['name']?.toString() : plan?.toString();
@@ -439,8 +606,8 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
                 _buildAmenitiesSection(project),
                 _buildInventorySection(project),
                 _buildMediaGallerySection(project),
-                _buildLocationSection(project),
                 _buildDocumentsSection(project),
+                _buildLocationSection(project),
                 const SizedBox(height: 150),
               ],
             ),
@@ -944,7 +1111,10 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
     if (_isLoading) return const Center(child: CircularProgressIndicator(color: Colors.white24));
 
     return Column(
-      children: _inventory.map((unit) => _InventoryItem(unit: unit)).toList(),
+      children: _inventory.map((unit) => _InventoryItem(
+        unit: unit,
+        onTap: () => _showBookingOptionsDialog(project),
+      )).toList(),
     );
   }
 
@@ -1170,8 +1340,8 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
   }
 
   Widget _buildTabContent({required Widget child}) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(24, 30, 24, 150),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
       child: child,
     );
   }
@@ -1205,7 +1375,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
             const SizedBox(width: 12),
             Expanded(
               child: _ScaleButton(
-                onTap: () => _showRequestDetailsDialog(project, null),
+                onTap: () => _showBookingOptionsDialog(project),
                 child: Container(
                   height: 56,
                   decoration: BoxDecoration(
@@ -1687,7 +1857,8 @@ class _PaymentPlanCard extends StatelessWidget {
 
 class _InventoryItem extends StatelessWidget {
   final dynamic unit;
-  const _InventoryItem({required this.unit});
+  final VoidCallback onTap;
+  const _InventoryItem({required this.unit, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -1695,7 +1866,7 @@ class _InventoryItem extends StatelessWidget {
     final currency = unit?['currency'] ?? 'AED';
     
     return _ScaleButton(
-      onTap: () {}, // TODO: Connect to booking/inquiry logic
+      onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         padding: const EdgeInsets.all(20),

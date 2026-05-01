@@ -323,7 +323,7 @@ class _LogCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _buildDetailInfo(context, 'CONFIGURATION', space.toUpperCase()),
+                    _buildDetailInfo(context, 'LOCATION', space.toUpperCase()),
                     _buildDetailInfo(context, 'LOGGED ON', dateStr, alignEnd: true),
                   ],
                 ),
@@ -537,22 +537,6 @@ class _LogDetailDialog extends ConsumerWidget {
                       letterSpacing: -1,
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Icon(LucideIcons.mapPin, size: 12, color: foreground.withOpacity(0.3)),
-                      const SizedBox(width: 6),
-                      Text(
-                        space.toUpperCase(),
-                        style: GoogleFonts.montserrat(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w900,
-                          color: foreground.withOpacity(0.3),
-                          letterSpacing: 2,
-                        ),
-                      ),
-                    ],
-                  ),
                   const SizedBox(height: 40),
                   Text(
                     'CHOSEN SPECIFICATIONS',
@@ -565,6 +549,22 @@ class _LogDetailDialog extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                   ...selections.entries.map((entry) => _buildSpecItem(context, entry.key, entry.value)),
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      Icon(LucideIcons.mapPin, size: 12, color: foreground.withOpacity(0.3)),
+                      const SizedBox(width: 6),
+                      Text(
+                        'LOCATION: ${space.toUpperCase()}',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w900,
+                          color: foreground.withOpacity(0.3),
+                          letterSpacing: 2,
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 40),
                   Text(
                     'PROTOCOL STATUS',

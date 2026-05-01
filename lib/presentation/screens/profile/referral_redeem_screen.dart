@@ -83,9 +83,9 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
             _buildWalletCard(isDark),
-            const SizedBox(height: 40),
+            const SizedBox(height: 24),
             Text(
               'REDEMPTION MATRIX',
               style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
@@ -95,15 +95,15 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
                 letterSpacing: 2,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
             ..._redemptionOptions.map((opt) => _buildOption(opt, isDark)).toList(),
             if (_selectedOption != null) ...[
-              const SizedBox(height: 10),
+              const SizedBox(height: 8),
               _buildVolumeInput(isDark),
             ],
-            const SizedBox(height: 40),
+            const SizedBox(height: 24),
             _buildConfirmButton(isDark),
-            const SizedBox(height: 40),
+            const SizedBox(height: 32),
           ],
         ),
       ),
