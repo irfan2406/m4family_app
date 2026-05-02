@@ -173,9 +173,9 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                       _SidebarItem(
                         icon: LucideIcons.bell, 
                         label: 'Notifications',
-                        isActive: currentIndex == 5,
+                        isActive: currentIndex == 8,
                         activeColor: accentColor,
-                        onTap: () => navigateTo(5),
+                        onTap: () => navigateTo(8),
                       ),
 
                       _SidebarItem(

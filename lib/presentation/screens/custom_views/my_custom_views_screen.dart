@@ -77,7 +77,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
       child: Row(
         children: [
           GestureDetector(
-            onTap: () => ref.read(navigationProvider.notifier).state = 3,
+            onTap: () => ref.read(navigationProvider.notifier).state = 0,
             child: Container(
               width: 40,
               height: 40,
