@@ -591,7 +591,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           subtitle: 'VIEW YOUR SAVED DESIGN HISTORY',
           icon: LucideIcons.clipboardList,
           isDark: isDark,
-          onTap: () => ref.read(navigationProvider.notifier).state = 5,
+          onTap: () => ref.read(navigationProvider.notifier).state = 8,
         ),
         const SizedBox(height: 12),
         _ListActionTile(

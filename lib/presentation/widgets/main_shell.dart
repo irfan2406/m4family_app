@@ -30,10 +30,10 @@ class _MainShellState extends ConsumerState<MainShell> {
     const SupportScreen(), // 2: MessageSquare (Support)
     const ProfileScreen(), // 3: User (Profile)
     const CommunityListScreen(), // 4: Sidebar only
-    SelectionLogsScreen(), // 5: Sidebar only
-    CustomViewsScreen(), // 6: Sidebar only
-    MyCustomViewsScreen(), // 7: Sidebar only
-    const NotificationListScreen(), // 8: Sidebar only
+    const NotificationListScreen(), // 5: Notifications (Sidebar)
+    CustomViewsScreen(), // 6: Custom Views (Sidebar)
+    MyCustomViewsScreen(), // 7: My Custom Views (Sidebar)
+    const SelectionLogsScreen(), // 8: Personalisation Logs
   ];
 
 

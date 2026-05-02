@@ -12,6 +12,7 @@ import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:m4_mobile/presentation/screens/booking/booking_start_screen.dart';
 
 class ProjectDetailScreen extends ConsumerStatefulWidget {
   final dynamic projectData; 
@@ -40,6 +41,8 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
   bool _isFavorited = false;
   String _mediaFilter = 'ALL';
   String _selectedConfig = '3 BHK';
+  bool _showFullOverviewDesc = false;
+  bool _showFullProgressDesc = false;
 
 
   @override
@@ -95,20 +98,25 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
       final apiClient = ref.read(apiClientProvider);
       final resolvedUrl = apiClient.resolveUrl(url);
       final uri = Uri.parse(resolvedUrl);
-      if (await canLaunchUrl(uri)) {
+      
+      try {
+        // We show the snackbar first to provide immediate feedback
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message, style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.bold)),
+            backgroundColor: M4Theme.premiumBlue,
+            duration: const Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+        );
+        
         await launchUrl(uri, mode: LaunchMode.externalApplication);
         return;
+      } catch (e) {
+        debugPrint('Error launching URL: $e');
       }
     }
-    
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message, style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.bold)),
-        backgroundColor: M4Theme.premiumBlue,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-    );
   }
 
   @override
@@ -333,12 +341,16 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
     final planName = plan is Map ? plan['name']?.toString() : plan?.toString();
     final projectTitle = project?['title'] ?? 'this project';
 
-    // Prefill auth user data if available
+    // Prefill auth user data ONLY for General inquiries, not for Video Call or Site Visit
     final authUser = ref.read(authProvider).user;
-    if (authUser != null) {
+    if (authUser != null && type == 'General') {
       _nameController.text = authUser['fullName']?.toString() ?? authUser['username']?.toString() ?? '';
       _phoneController.text = authUser['phone']?.toString() ?? '';
       _emailController.text = authUser['email']?.toString() ?? '';
+    } else {
+      _nameController.clear();
+      _phoneController.clear();
+      _emailController.clear();
     }
 
     showModalBottomSheet(
@@ -382,11 +394,32 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
                       planName != null 
                         ? 'INQUIRY FOR "$planName" PAYMENT PLAN'
                         : 'INQUIRY FOR ${projectTitle.toUpperCase()}',
-                      style: GoogleFonts.montserrat(fontSize: 9, color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.w900, letterSpacing: 1),
+                      style: GoogleFonts.montserrat(fontSize: 10, color: isDark ? Colors.white54 : Colors.black45, fontWeight: FontWeight.w900, letterSpacing: 1),
                     ),
+                    const SizedBox(height: 24),
+                    
+                    if (authUser != null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(width: 6, height: 6, decoration: const BoxDecoration(color: Color(0xFF10B981), shape: BoxShape.circle)),
+                            const SizedBox(width: 12),
+                            Text(
+                              'ACTING AS: ${authUser['email']?.toString().toUpperCase()}',
+                              style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: isDark ? Colors.white70 : Colors.black87, letterSpacing: 0.5),
+                            ),
+                          ],
+                        ),
+                      ),
+                    
                     const SizedBox(height: 32),
                     
-                    Text('PREFERRED CONFIGURATION *', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1)),
+                    Text('PREFERRED CONFIGURATION *', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : Colors.black54, letterSpacing: 1)),
                     const SizedBox(height: 12),
                     Wrap(
                       spacing: 8,
@@ -477,7 +510,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1)),
+        Text(label, style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : Colors.black54, letterSpacing: 1)),
         const SizedBox(height: 10),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -513,14 +546,20 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
     }
 
     if (list.isNotEmpty) {
-      _showMediaLightbox(list[0], 'IMAGE');
+      _showMediaLightbox(list, 'IMAGE');
     } else {
       _launchAction('Gallery coming soon!', null);
     }
   }
 
-  void _showMediaLightbox(String url, String type) {
+  void _showMediaLightbox(dynamic urlOrList, String type, [int initialIndex = 0]) {
     final apiClient = ref.read(apiClientProvider);
+    final List<String> urls = urlOrList is List 
+      ? urlOrList.map((u) => apiClient.resolveUrl(u.toString())).toList() 
+      : [apiClient.resolveUrl(urlOrList.toString())];
+    
+    final PageController pageController = PageController(initialPage: initialIndex);
+
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -533,12 +572,48 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
           body: Stack(
             fit: StackFit.expand,
             children: [
-              Center(
-                child: InteractiveViewer(
-                  child: Image.network(
-                    apiClient.resolveUrl(url),
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) => const Icon(LucideIcons.image, color: Colors.white24, size: 50),
+              PageView.builder(
+                controller: pageController,
+                itemCount: urls.length,
+                itemBuilder: (context, index) {
+                  return Center(
+                    child: InteractiveViewer(
+                      child: Image.network(
+                        urls[index],
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) => const Icon(LucideIcons.image, color: Colors.white24, size: 50),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              Positioned(
+                left: 10,
+                top: 0,
+                bottom: 0,
+                child: Center(
+                  child: IconButton(
+                    icon: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(color: Colors.black26, shape: BoxShape.circle),
+                      child: const Icon(LucideIcons.chevronLeft, color: Colors.white, size: 24),
+                    ),
+                    onPressed: () => pageController.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut),
+                  ),
+                ),
+              ),
+              Positioned(
+                right: 10,
+                top: 0,
+                bottom: 0,
+                child: Center(
+                  child: IconButton(
+                    icon: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(color: Colors.black26, shape: BoxShape.circle),
+                      child: const Icon(LucideIcons.chevronRight, color: Colors.white, size: 24),
+                    ),
+                    onPressed: () => pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut),
                   ),
                 ),
               ),
@@ -550,6 +625,31 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
                   onPressed: () => Navigator.pop(context),
                 ),
               ),
+              if (urls.length > 1)
+                Positioned(
+                  bottom: 40,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.black54,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: ListenableBuilder(
+                        listenable: pageController,
+                        builder: (context, child) {
+                          final current = (pageController.hasClients ? pageController.page?.round() ?? initialIndex : initialIndex) + 1;
+                          return Text(
+                            '$current / ${urls.length}',
+                            style: GoogleFonts.montserrat(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                          );
+                        }
+                      ),
+                    ),
+                  ),
+                ),
               if (type == 'VIDEO')
                 const Center(child: Icon(LucideIcons.playCircle, color: Colors.white, size: 60)),
             ],
@@ -583,7 +683,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildHero(project, isDark),
-                const SizedBox(height: 12),
+                const SizedBox(height: 16),
+                _buildMediaQuickActions(project, isDark),
+                const SizedBox(height: 24),
                 GridView.count(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   shrinkWrap: true,
@@ -600,19 +702,72 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
                   ],
                 ),
                 const SizedBox(height: 24),
-                _buildOverviewSection(project),
-                _buildConstructionSection(project),
-                _buildPricingSection(project),
-                _buildAmenitiesSection(project),
-                _buildInventorySection(project),
-                _buildMediaGallerySection(project),
-                _buildDocumentsSection(project),
-                _buildLocationSection(project),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildOverviewSection(project),
+                      const SizedBox(height: 48),
+                      _buildConstructionSection(project),
+                      const SizedBox(height: 48),
+                      _buildPricingSection(project),
+                      const SizedBox(height: 48),
+                      _buildAmenitiesSection(project),
+                      const SizedBox(height: 48),
+                      _buildPlansSection(project),
+                      const SizedBox(height: 48),
+                      _buildMediaGallerySection(project),
+                      const SizedBox(height: 48),
+                      _buildDocumentsSection(project),
+                      const SizedBox(height: 48),
+                      _buildLocationSection(project),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 150),
               ],
             ),
           ),
           _buildBottomActions(project),
+        ],
+      ),
+    );
+  }
+
+
+  Widget _buildHero(dynamic project, bool isDark) {
+    final apiClient = ref.read(apiClientProvider);
+    final heroUrl = apiClient.resolveUrl(project?['heroImage'] ?? project?['coverImage'] ?? (project?['heroImages'] as List?)?.first ?? '');
+
+    return AspectRatio(
+      aspectRatio: 1920 / 1080,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          ClipRRect(
+            borderRadius: const BorderRadius.vertical(bottom: Radius.circular(40)),
+            child: CachedNetworkImage(
+              imageUrl: heroUrl,
+              fit: BoxFit.cover,
+              placeholder: (context, url) => Container(color: isDark ? Colors.white10 : Colors.black.withOpacity(0.1)),
+              errorWidget: (context, url, error) => Container(color: isDark ? Colors.white10 : Colors.black.withOpacity(0.1)),
+            ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(40)),
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black.withOpacity(0.1),
+                  Colors.transparent,
+                  Colors.black.withOpacity(0.8),
+                ],
+              ),
+            ),
+          ),
           Positioned(
             top: MediaQuery.of(context).padding.top + 20,
             left: 20,
@@ -635,96 +790,83 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
               ],
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-
-  Widget _buildHero(dynamic project, bool isDark) {
-    final apiClient = ref.read(apiClientProvider);
-    final heroUrl = apiClient.resolveUrl(project?['heroImage'] ?? project?['coverImage']);
-
-    return SizedBox(
-      height: 450,
-      width: double.infinity,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(bottom: Radius.circular(40)),
-            child: Image.network(heroUrl, fit: BoxFit.cover),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(40)),
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.black.withOpacity(0.3),
-                  Colors.transparent,
-                  Colors.black.withOpacity(0.8),
-                ],
-              ),
-            ),
-          ),
           Positioned(
-            top: MediaQuery.of(context).padding.top + 20,
+            top: MediaQuery.of(context).padding.top + 70,
             right: 20,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.4),
+                color: Colors.black.withOpacity(0.5),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: Colors.white.withOpacity(0.1)),
               ),
-              child: Text('ARTISTIC IMPRESSION', style: GoogleFonts.montserrat(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1)),
+              child: Text(
+                'ARTISTIC IMPRESSION', 
+                style: GoogleFonts.montserrat(
+                  color: Colors.white.withOpacity(0.8), 
+                  fontSize: 7, 
+                  fontWeight: FontWeight.w900, 
+                  letterSpacing: 1.2
+                )
+              ),
             ),
           ),
           Positioned(
-            bottom: 30,
-            left: 24,
-            child: Row(
-              children: [
-                _HeroMediaThumb(label: 'EXTERIOR', imageUrl: heroUrl, onTap: () => _openHeroGallery(project, 'EXTERIOR')),
-                const SizedBox(width: 12),
-                _HeroMediaThumb(label: 'INTERIOR', imageUrl: heroUrl, onTap: () => _openHeroGallery(project, 'INTERIOR')),
-                const SizedBox(width: 12),
-                _HeroMediaThumb(
-                  label: '360° VIEW', 
-                  isVR: true, 
-                  onTap: () => _launchAction('Virtual Tour coming soon!', project?['threeSixtyUrl'] ?? project?['virtualTourUrl']),
-                ),
-              ],
-            ),
-          ),
-          Positioned(
-            bottom: 110,
+            bottom: 24,
             left: 24,
             right: 24,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _Badge(text: (project?['status']?.toString().toUpperCase() ?? 'ONGOING'), color: M4Theme.premiumBlue),
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
                 Text(
                   (project?['title']?.toString() ?? 'PROJECT NAME').toUpperCase(),
-                  style: GoogleFonts.dmSerifDisplay(color: Colors.white, fontSize: 32, height: 1.1),
+                  style: GoogleFonts.dmSerifDisplay(color: Colors.white, fontSize: 24, height: 1),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 4),
                 Row(
                   children: [
-                    const Icon(LucideIcons.mapPin, color: Colors.white70, size: 12),
+                    const Icon(LucideIcons.mapPin, color: Colors.white70, size: 10),
                     const SizedBox(width: 4),
                     Text(
                       ((project?['location'] is Map ? project?['location']?['name'] : project?['location'])?.toString() ?? 'MAZGAON').toUpperCase(),
-                      style: GoogleFonts.montserrat(color: Colors.white70, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1),
+                      style: GoogleFonts.montserrat(color: Colors.white70, fontSize: 8, fontWeight: FontWeight.bold, letterSpacing: 1),
                     ),
                   ],
                 ),
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMediaQuickActions(dynamic project, bool isDark) {
+    final apiClient = ref.read(apiClientProvider);
+    final heroUrl = apiClient.resolveUrl(project?['heroImage'] ?? project?['coverImage'] ?? (project?['heroImages'] as List?)?.first ?? '');
+    
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Row(
+        children: [
+          _HeroMediaThumb(
+            label: 'EXTERIOR', 
+            imageUrl: heroUrl, 
+            onTap: () => _openHeroGallery(project, 'EXTERIOR')
+          ),
+          const SizedBox(width: 12),
+          _HeroMediaThumb(
+            label: 'INTERIOR', 
+            imageUrl: heroUrl, 
+            onTap: () => _openHeroGallery(project, 'INTERIOR')
+          ),
+          const SizedBox(width: 12),
+          _HeroMediaThumb(
+            label: '360° VIEW', 
+            isVR: true, 
+            onTap: () => _launchAction('Virtual Tour coming soon!', project?['threeSixtyUrl'] ?? project?['virtualTourUrl']),
           ),
         ],
       ),
@@ -751,8 +893,14 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
         _buildSectionHeader('Overview'),
         const SizedBox(height: 24),
         Text(
-          project?['description'] ?? 'Experience the pinnacle of luxury living with floor-to-ceiling windows, Italian marble flooring, and smart home automation.',
-          style: GoogleFonts.montserrat(fontSize: 13, color: isDark ? Colors.white.withOpacity(0.6) : Colors.black.withOpacity(0.6), height: 1.8, fontWeight: FontWeight.w500),
+          ('Experience the pinnacle of luxury living with floor-to-ceiling windows, Italian marble flooring, and smart home automation. ${project?['description'] ?? ''}').toString().trim().toUpperCase(),
+          style: GoogleFonts.montserrat(
+            fontSize: 11, 
+            color: isDark ? Colors.white.withOpacity(0.9) : Colors.black, 
+            height: 1.8, 
+            fontWeight: FontWeight.w900,
+            letterSpacing: 0.2
+          ),
         ),
         const SizedBox(height: 32),
         _MultimediaAssetCard(
@@ -793,6 +941,8 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
           estimatedCompletion: project?['estimatedCompletion'] ?? 'Q1 2029',
           phases: _progressPhases,
           onPhaseTap: (img) => _showMediaLightbox(img, 'IMAGE'),
+          showFullDesc: _showFullProgressDesc,
+          onToggle: () => setState(() => _showFullProgressDesc = !_showFullProgressDesc),
         ),
       ],
     );
@@ -804,7 +954,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
       children: [
         _buildSectionHeader('Financials'),
         const SizedBox(height: 24),
-        _PriceHighlightCard(price: 'AED ${project?['startingPrice'] ?? 'N/A'}'),
+        _PriceHighlightCard(price: project?['startingPrice']?.toString() ?? 'Price on Request'),
         const SizedBox(height: 16),
         if (project?['paymentPlans'] != null)
            ...((project?['paymentPlans'] as List).map((plan) => _PaymentPlanCard(
@@ -850,19 +1000,23 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
     );
   }
 
-  Widget _buildInventorySection(dynamic project) {
+  Widget _buildPlansSection(dynamic project) {
+    final plans = project?['plans'] as List? ?? [];
+    if (plans.isEmpty) return const SizedBox.shrink();
+    final apiClient = ref.read(apiClientProvider);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _buildSectionHeader('Available Inventory'),
-            const _Badge(text: 'LIVE UNITS', color: M4Theme.premiumBlue),
-          ],
-        ),
+        _buildSectionHeader('Plans'),
         const SizedBox(height: 24),
-        _buildInventory(project),
+        ...plans.map((plan) => _FloorPlanItem(
+          plan: plan,
+          imageUrl: apiClient.resolveUrl(plan['image']?.toString()),
+          onLaunch: _launchAction,
+          onView: _showMediaLightbox,
+        )).toList(),
+        const SizedBox(height: 32),
       ],
     );
   }
@@ -880,6 +1034,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
 
 
   Widget _buildOverview(dynamic project) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return _buildTabContent(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -895,8 +1050,24 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
           ),
           const SizedBox(height: 16),
           Text(
-            project?['description'] ?? 'Experience luxurious living redefined with M4 Family. Our projects blend architectural excellence with modern comforts to create homes that inspire.',
-            style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), fontSize: 13, color: Colors.black.withOpacity(0.7), height: 1.8, fontWeight: FontWeight.w500),
+            (project?['description'] ?? 'Experience luxurious living redefined with M4 Family. Our projects blend architectural excellence with modern comforts to create homes that inspire.').toString().toUpperCase(),
+            style: GoogleFonts.montserrat(
+              fontSize: 12, 
+              color: isDark ? Colors.white.withOpacity(0.9) : Colors.black, 
+              height: 1.8, 
+              fontWeight: FontWeight.w900,
+              letterSpacing: 0.2
+            ),
+            maxLines: _showFullOverviewDesc ? null : 3,
+            overflow: _showFullOverviewDesc ? TextOverflow.visible : TextOverflow.ellipsis,
+          ),
+          const SizedBox(height: 12),
+          GestureDetector(
+            onTap: () => setState(() => _showFullOverviewDesc = !_showFullOverviewDesc),
+            child: Text(
+              _showFullOverviewDesc ? 'Read less' : 'Read more',
+              style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, decoration: TextDecoration.underline),
+            ),
           ),
           const SizedBox(height: 32),
           // Multimedia Assets Header
@@ -988,32 +1159,32 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
         return Container(
           decoration: BoxDecoration(
             color: isDark ? const Color(0xFF1E1F21).withOpacity(0.4) : Colors.black.withOpacity(0.03),
-            borderRadius: BorderRadius.circular(32),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
           ),
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(8),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: 48,
-                height: 48,
+                width: 36,
+                height: 36,
                 decoration: BoxDecoration(
                   color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.04),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(_getAmenityIcon(name), color: isDark ? Colors.white : Colors.black, size: 20),
+                child: Icon(_getAmenityIcon(name), color: isDark ? Colors.white : Colors.black, size: 16),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               Text(
                 name,
                 textAlign: TextAlign.center,
                 style: GoogleFonts.montserrat(
-                  fontSize: 8, 
+                  fontSize: 7, 
                   fontWeight: FontWeight.w900, 
                   color: isDark ? Colors.white.withOpacity(0.8) : Colors.black.withOpacity(0.8), 
                   letterSpacing: 0.5,
-                  height: 1.2
+                  height: 1.1
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -1143,6 +1314,8 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
             estimatedCompletion: estimatedCompletion,
             phases: _progressPhases,
             onPhaseTap: (url) => _showMediaLightbox(url, 'IMAGE'),
+            showFullDesc: _showFullProgressDesc,
+            onToggle: () => setState(() => _showFullProgressDesc = !_showFullProgressDesc),
           ),
 
           const SizedBox(height: 32),
@@ -1169,8 +1342,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _SectionHeader(title: 'LOCATION & ACCESSIBILITY'),
-          const SizedBox(height: 24),
+          const SizedBox(height: 0),
           _ScaleButton(
             onTap: () => _launchAction('Opening Maps...', 'https://www.google.com/maps?q=${Uri.encodeComponent(locName)}'),
             child: Container(
@@ -1199,8 +1371,6 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
                           Icon(LucideIcons.mapPin, color: M4Theme.premiumBlue, size: 40),
                           const SizedBox(height: 12),
                           Text(locName.toUpperCase(), style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 2)),
-                          const SizedBox(height: 4),
-                          Text('CLICK TO VIEW ON GOOGLE MAPS', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.bold, color: isDark ? Colors.white24 : Colors.black26)),
                         ],
                       ),
                     ),
@@ -1209,10 +1379,6 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
               ),
             ),
           ),
-          const SizedBox(height: 32),
-          const _LocationLandmark(icon: LucideIcons.plane, title: 'Mumbai International Airport', distance: '12.4 KM • 15 MINS'),
-          const _LocationLandmark(icon: LucideIcons.train, title: 'Metro Station', distance: '1.2 KM • 5 MINS'),
-          const _LocationLandmark(icon: LucideIcons.building, title: 'City Mall', distance: '8.5 KM • 10 MINS'),
         ],
       ),
     );
@@ -1231,6 +1397,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
               plan: plan, 
               imageUrl: apiClient.resolveUrl(plan['image']?.toString()),
               onLaunch: _launchAction,
+              onView: _showMediaLightbox,
             )).toList())
           else
             const _EmptyTabContent(message: 'Floor plans and layouts are being finalized'),
@@ -1241,73 +1408,55 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
 
   Widget _buildMedia(dynamic project) {
     final allMedia = project?['media'] as List? ?? [];
-    
-    final List<dynamic> filteredMedia = allMedia.where((item) {
-      if (_mediaFilter == 'ALL') return true;
-      if (_mediaFilter == 'PHOTOS') return item['type'] == 'Image' || item['type'] == 'VIDEO_THUMBNAIL';
-      if (_mediaFilter == 'VIDEOS') return item['type'] == 'Video';
-      return true;
-    }).toList();
+    final List<dynamic> filteredMedia = allMedia;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final apiClient = ref.read(apiClientProvider);
 
     if (filteredMedia.isEmpty) return const _EmptyTabContent(message: 'Coming soon');
 
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-              _FilterChip(label: 'ALL', isActive: _mediaFilter == 'ALL', onTap: () => setState(() => _mediaFilter = 'ALL')),
-              const SizedBox(width: 12),
-              _FilterChip(label: 'PHOTOS', isActive: _mediaFilter == 'PHOTOS', onTap: () => setState(() => _mediaFilter = 'PHOTOS')),
-              const SizedBox(width: 12),
-              _FilterChip(label: 'VIDEOS', isActive: _mediaFilter == 'VIDEOS', onTap: () => setState(() => _mediaFilter = 'VIDEOS')),
-            ],
-          ),
-        ),
-        const SizedBox(height: 32),
         GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.zero,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            mainAxisSpacing: 16,
-            crossAxisSpacing: 16,
-            childAspectRatio: 1.2,
+            mainAxisSpacing: 12,
+            crossAxisSpacing: 12,
+            childAspectRatio: 1.3,
           ),
           itemCount: filteredMedia.length,
           itemBuilder: (context, index) {
-            final media = filteredMedia[index];
-            final url = ref.read(apiClientProvider).resolveUrl(media['image'] ?? media['url'] ?? '');
-            final type = media['type']?.toString().toUpperCase() ?? 'IMAGE';
+            final item = filteredMedia[index];
+            final type = (item['type'] ?? 'Image').toString().toUpperCase();
+            final isVideo = type == 'VIDEO' || type == 'VIDEO_THUMBNAIL';
+            final url = apiClient.resolveUrl(item['url']?.toString());
+            
+            final allUrls = filteredMedia.map((m) => m['url']?.toString() ?? '').where((u) => u.isNotEmpty).toList();
             
             return _ScaleButton(
-              onTap: () => _showMediaLightbox(url, type),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(24),
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    Image.network(url, fit: BoxFit.cover, errorBuilder: (c, e, s) => Container(color: Colors.white10)),
-                    Positioned(
-                      top: 12,
-                      left: 12,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(color: Colors.black.withOpacity(0.5), borderRadius: BorderRadius.circular(8)),
-                        child: Text(type, style: GoogleFonts.montserrat(fontSize: 7, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 0.5)),
+              onTap: () => _showMediaLightbox(allUrls, isVideo ? 'VIDEO' : 'IMAGE', index),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      CachedNetworkImage(
+                        imageUrl: url,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Container(color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05)),
+                        errorWidget: (context, url, error) => Container(color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05)),
                       ),
-                    ),
-                    if (type == 'VIDEO')
-                      Center(
-                        child: Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), shape: BoxShape.circle),
-                          child: const Icon(LucideIcons.play, color: Colors.white, size: 24),
-                        ),
-                      ),
-                  ],
+                      if (isVideo)
+                        const Center(child: Icon(LucideIcons.playCircle, color: Colors.white, size: 40)),
+                    ],
+                  ),
                 ),
               ),
             );
@@ -1323,8 +1472,6 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _SectionHeader(title: 'LEGAL & COMPLIANCE'),
-          const SizedBox(height: 24),
           if (docs.isEmpty)
               _DocumentItem(title: 'RERA Registration Certificate', size: '1.2 MB', type: 'LEGAL', onLaunch: _launchAction)
           else
@@ -1375,7 +1522,17 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
             const SizedBox(width: 12),
             Expanded(
               child: _ScaleButton(
-                onTap: () => _showBookingOptionsDialog(project),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BookingStartScreen(
+                      projectId: widget.projectId,
+                      project: project,
+                    ),
+                  ),
+                ).then((_) {
+                  // If they came back from a 'Send Inquiry' action (if we implement that bridge)
+                }),
                 child: Container(
                   height: 56,
                   decoration: BoxDecoration(
@@ -1431,62 +1588,36 @@ class _OverviewActionCard extends StatelessWidget {
   });
 
   @override
+  @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isAction 
-            ? (isDark ? M4Theme.premiumBlue.withOpacity(0.1) : const Color(0xFFEFF6FF)) 
-            : (isDark ? const Color(0xFF1E1F21) : const Color(0xFFF4F4F5)),
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: isAction 
-              ? (isDark ? M4Theme.premiumBlue.withOpacity(0.3) : const Color(0xFFDBEAFE)) 
-              : (isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05))
-          ),
+          color: isDark ? const Color(0xFF1E1F21) : const Color(0xFFF8F9FA),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
               children: [
-                Icon(icon, color: isAction ? M4Theme.premiumBlue : (isDark ? Colors.white38 : Colors.black38), size: 10),
+                Icon(icon, size: 14, color: isAction ? M4Theme.premiumBlue : (isDark ? Colors.white24 : Colors.black26)),
                 const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    label.toUpperCase(), 
-                    style: GoogleFonts.montserrat(
-                      color: isAction ? M4Theme.premiumBlue : (isDark ? Colors.white38 : Colors.black38), 
-                      fontSize: 8, 
-                      fontWeight: FontWeight.w900, 
-                      letterSpacing: 1,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                Text(
+                  label.toUpperCase(), 
+                  style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 0.5)
                 ),
               ],
             ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  value.toUpperCase(), 
-                  style: GoogleFonts.montserrat(
-                    color: isDark ? Colors.white : Colors.black, 
-                    fontSize: 12, 
-                    fontWeight: FontWeight.w900, 
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ),
+            Text(
+              value.toUpperCase(), 
+              style: GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: -0.2)
             ),
           ],
         ),
@@ -1637,24 +1768,31 @@ class _FloorPlanItem extends StatelessWidget {
   final dynamic plan;
   final String imageUrl;
   final Function(String, String?) onLaunch;
-  const _FloorPlanItem({required this.plan, required this.imageUrl, required this.onLaunch});
+  final Function(String, String) onView;
+  
+  const _FloorPlanItem({
+    required this.plan, 
+    required this.imageUrl, 
+    required this.onLaunch,
+    required this.onView,
+  });
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return _ScaleButton(
-      onTap: () => onLaunch('Opening Floor Plan...', plan['fileUrl']),
-      child: Container(
-         margin: const EdgeInsets.only(bottom: 16),
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E1F21) : Colors.black.withOpacity(0.04), 
-          borderRadius: BorderRadius.circular(24), 
-          border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05))
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
+    return Container(
+       margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF1E1F21) : Colors.black.withOpacity(0.04), 
+        borderRadius: BorderRadius.circular(24), 
+        border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05))
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          GestureDetector(
+            onTap: () => onView(imageUrl, 'IMAGE'),
+            child: ClipRRect(
               borderRadius: BorderRadius.circular(16), 
               child: CachedNetworkImage(
                 imageUrl: imageUrl, 
@@ -1669,24 +1807,28 @@ class _FloorPlanItem extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(plan['title'] ?? 'Floor Plan', style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black)),
-                      Text(plan['area'] ?? '', style: GoogleFonts.montserrat(fontSize: 12, color: isDark ? Colors.white38 : Colors.black38)),
-                    ],
-                  ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text((plan['title'] ?? 'Floor Plan').toUpperCase(), style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 0.5)),
+                    if (plan['area'] != null && plan['area'].toString().isNotEmpty)
+                      Text(plan['area'].toUpperCase(), style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.bold, color: isDark ? Colors.white24 : Colors.black26, letterSpacing: 1)),
+                  ],
                 ),
-                Icon(LucideIcons.download, color: isDark ? Colors.white38 : Colors.black38, size: 18),
-              ],
-            ),
-          ],
-        ),
+              ),
+              GestureDetector(
+                onTap: () => onLaunch('Downloading Floor Plan...', imageUrl),
+                child: Icon(LucideIcons.download, color: isDark ? Colors.white38 : Colors.black38, size: 18),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -1782,7 +1924,7 @@ class _PaymentPlanCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final steps = plan['steps'] as List? ?? [];
+    final steps = plan['items'] as List? ?? plan['steps'] as List? ?? [];
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       padding: const EdgeInsets.all(24),
@@ -1797,37 +1939,28 @@ class _PaymentPlanCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(plan['name']?.toString().toUpperCase() ?? 'PLAN', style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 1)),
-              _Badge(text: plan['status']?.toString().toUpperCase() ?? 'ACTIVE', color: M4Theme.premiumBlue),
+              Text(plan['name']?.toString().toUpperCase() ?? 'PLAN', style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 1)),
+              _Badge(text: plan['status']?.toString().toUpperCase() ?? 'ACTIVE', color: const Color(0xFF10B981)),
             ],
           ),
           const SizedBox(height: 32),
           ...List.generate(steps.length, (index) {
             final step = steps[index];
-            final isLast = index == steps.length - 1;
-            return Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Column(
-                  children: [
-                    Container(width: 8, height: 8, decoration: const BoxDecoration(color: M4Theme.premiumBlue, shape: BoxShape.circle)),
-                    if (!isLast) Container(width: 1, height: 40, color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.1)),
-                  ],
-                ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 24),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(step['label']?.toString().toUpperCase() ?? '', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1)),
-                        Text(step['value']?.toString() ?? '', style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black)),
-                      ],
-                    ),
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    (step['description'] ?? step['label'] ?? '').toString().toUpperCase(), 
+                    style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: isDark ? Colors.white70 : Colors.black, letterSpacing: 0.5)
                   ),
-                ),
-              ],
+                  Text(
+                    (step['percentage'] != null ? '${step['percentage']}%' : step['value'] ?? '').toString(), 
+                    style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black)
+                  ),
+                ],
+              ),
             );
           }),
           const SizedBox(height: 12),
@@ -1842,7 +1975,7 @@ class _PaymentPlanCard extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('INQUIRE NOW', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2, color: isDark ? Colors.black : Colors.white)),
+                  Text('REQUEST DETAILS', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2, color: isDark ? Colors.black : Colors.white)),
                   const SizedBox(width: 8),
                   Icon(LucideIcons.arrowUpRight, size: 14, color: isDark ? Colors.black : Colors.white),
                 ],
@@ -2199,17 +2332,18 @@ class _HeroMediaThumb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return _ScaleButton(
       onTap: onTap,
       child: Container(
-        width: 64,
-        height: 64,
+        width: 68,
+        height: 68,
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.white, width: 2),
+          color: isDark ? const Color(0xFF1E1F21) : Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.08), width: 1.5),
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 15, offset: const Offset(0, 8)),
+            BoxShadow(color: Colors.black.withOpacity(0.15), blurRadius: 10, offset: const Offset(0, 4)),
           ],
         ),
         clipBehavior: Clip.antiAlias,
@@ -2218,14 +2352,21 @@ class _HeroMediaThumb extends StatelessWidget {
           children: [
             if (isVR)
               Container(
-                color: Colors.white,
+                color: isDark ? const Color(0xFF1E1F21) : Colors.white,
                 child: Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(LucideIcons.glasses, color: Colors.black, size: 24),
-                      const SizedBox(height: 2),
-                      Text('360°', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: Colors.black)),
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: isDark ? Colors.white24 : Colors.black26, width: 1.5),
+                        ),
+                        child: Icon(LucideIcons.refreshCw, color: isDark ? Colors.white : Colors.black, size: 16),
+                      ),
+                      const SizedBox(height: 4),
+                      Text('360° VIEW', style: GoogleFonts.montserrat(fontSize: 7, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black)),
                     ],
                   ),
                 ),
@@ -2234,26 +2375,43 @@ class _HeroMediaThumb extends StatelessWidget {
               CachedNetworkImage(
                 imageUrl: imageUrl!, 
                 fit: BoxFit.cover,
-                placeholder: (context, url) => Container(color: Colors.black12),
-                errorWidget: (context, url, error) => Container(color: Colors.black12),
+                placeholder: (context, url) => Container(color: isDark ? Colors.white10 : Colors.black.withOpacity(0.1)),
+                errorWidget: (context, url, error) => Container(color: isDark ? Colors.white10 : Colors.black.withOpacity(0.1)),
               ),
             
-            if (!isVR)
+            if (!isVR) ...[
+              // Gradient Overlay for text readability
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: const [0.5, 1.0],
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withOpacity(0.7),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
               Positioned(
-                bottom: 6,
+                bottom: 8,
                 left: 0,
                 right: 0,
                 child: Text(
                   label,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.montserrat(
-                    fontSize: 8, 
+                    fontSize: 7, 
                     fontWeight: FontWeight.w900, 
                     color: Colors.white,
-                    shadows: [const Shadow(color: Colors.black, blurRadius: 4, offset: Offset(0, 1))],
+                    letterSpacing: 0.5,
                   ),
                 ),
               ),
+            ],
           ],
         ),
       ),
@@ -2365,16 +2523,20 @@ class _MultimediaAssetCard extends StatelessWidget {
 
 
 class _ConstructionDashboardCard extends ConsumerWidget {
-  final num overallProgress;
+  final int overallProgress;
   final String estimatedCompletion;
   final List<dynamic> phases;
   final Function(String) onPhaseTap;
+  final bool showFullDesc;
+  final VoidCallback onToggle;
 
   const _ConstructionDashboardCard({
     required this.overallProgress, 
     required this.estimatedCompletion, 
-    required this.phases,
+    required this.phases, 
     required this.onPhaseTap,
+    required this.showFullDesc,
+    required this.onToggle,
   });
 
   @override
@@ -2404,8 +2566,27 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     Text(estimatedCompletion.toUpperCase(), style: GoogleFonts.dmSerifDisplay(fontSize: 40, color: isDark ? Colors.white : Colors.black, height: 1)),
                     const SizedBox(height: 16),
                     Text(
-                      'As the project progresses, significant milestones are reached, showcasing our team\'s dedication and expertise.',
-                      style: GoogleFonts.montserrat(fontSize: 11, color: isDark ? Colors.white38 : Colors.black38, height: 1.6, fontWeight: FontWeight.w500),
+                      'As the project progresses, significant milestones are reached, showcasing our team\'s dedication and expertise. We are steadily moving closer to our completion goal, ensuring quality and safety at every step. Each phase is handled with precision to meet our luxury standards and timeline.',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 11, 
+                        color: isDark ? Colors.white38 : Colors.black38, 
+                        height: 1.6, 
+                        fontWeight: FontWeight.w500
+                      ),
+                      maxLines: showFullDesc ? null : 3,
+                      overflow: showFullDesc ? TextOverflow.visible : TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8),
+                    GestureDetector(
+                      onTap: onToggle,
+                      child: Text(
+                        showFullDesc ? 'Show less' : 'Read more',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w900,
+                          color: M4Theme.premiumBlue,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -2471,7 +2652,15 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(phase['name']?.toString().toUpperCase() ?? 'INITIAL PHASE', style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1)),
+                            Text(
+                              phase['name']?.toString().toUpperCase() ?? 'INITIAL PHASE', 
+                              style: GoogleFonts.montserrat(
+                                fontSize: 11, 
+                                fontWeight: FontWeight.w900, 
+                                color: isDark ? Colors.white : Colors.black, 
+                                letterSpacing: 1
+                              )
+                            ),
                             const SizedBox(height: 12),
                             Row(
                               children: [
@@ -2481,12 +2670,19 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                   child: CircularProgressIndicator(
                                     value: (phase['progressPercent'] ?? phase['progress'] ?? 0).toDouble() / 100,
                                     strokeWidth: 2,
-                                    backgroundColor: Colors.white10,
+                                    backgroundColor: isDark ? Colors.white10 : Colors.black.withOpacity(0.05),
                                     valueColor: const AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
                                   ),
                                 ),
                                 const SizedBox(width: 12),
-                                Text('${phase['progressPercent'] ?? phase['progress'] ?? 0}% COMPLETED', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w800, color: Colors.white38)),
+                                Text(
+                                  '${phase['progressPercent'] ?? phase['progress'] ?? 0}% COMPLETED', 
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 9, 
+                                    fontWeight: FontWeight.w800, 
+                                    color: isDark ? Colors.white38 : Colors.black38
+                                  )
+                                ),
                               ],
                             ),
                           ],
@@ -2600,9 +2796,9 @@ class _PriceHighlightCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('STARTING PRICE', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 3)),
-          const SizedBox(height: 8),
-          Text(price.toUpperCase(), style: GoogleFonts.dmSerifDisplay(fontSize: 36, color: isDark ? Colors.white : Colors.black, height: 1)),
+          Text('STARTING PRICE', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 2)),
+          const SizedBox(height: 12),
+          Text(price.toUpperCase(), style: GoogleFonts.montserrat(fontSize: 24, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, height: 1, letterSpacing: -0.5)),
         ],
       ),
     );
@@ -2641,9 +2837,16 @@ class _CircleAction extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
+          color: isDark ? Colors.white.withOpacity(0.1) : Colors.white,
           shape: BoxShape.circle,
-          border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+          border: Border.all(color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05)),
         ),
         child: Icon(icon, size: 20, color: color ?? (isDark ? Colors.white : Colors.black)),
       ),

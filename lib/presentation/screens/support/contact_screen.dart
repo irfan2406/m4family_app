@@ -53,7 +53,8 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
         'phone': _phoneController.text.trim(),
         'message': _messageController.text.trim(),
         'interest': 'General Enquiry',
-        'source': 'Mobile App Contact Page',
+        'source': 'online',
+        'notes': 'Submitted via Mobile App Contact Page',
         'status': 'New',
       });
 

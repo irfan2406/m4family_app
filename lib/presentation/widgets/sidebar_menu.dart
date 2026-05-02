@@ -9,6 +9,7 @@ import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/presentation/screens/about/about_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/contact_support_screen.dart';
+import 'package:m4_mobile/presentation/screens/support/contact_screen.dart';
 import 'package:m4_mobile/presentation/screens/careers/careers_screen.dart';
 import 'package:m4_mobile/presentation/screens/investor/investor_relations_screen.dart';
 import 'package:m4_mobile/presentation/screens/pages/pages_list_screen.dart';
@@ -53,7 +54,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
           BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
             child: Container(
-              color: const Color(0xFF09090B).withOpacity(0.4), // Low opacity for glass effect
+              color: const Color(0xFF09090B).withOpacity(0.1), // 👈 Lighten for better glass effect
             ),
           ),
           
@@ -173,9 +174,9 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                       _SidebarItem(
                         icon: LucideIcons.bell, 
                         label: 'Notifications',
-                        isActive: currentIndex == 8,
+                        isActive: currentIndex == 5,
                         activeColor: accentColor,
-                        onTap: () => navigateTo(8),
+                        onTap: () => navigateTo(5),
                       ),
 
                       _SidebarItem(
@@ -192,6 +193,42 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                         onTap: () {
                           Navigator.pop(context);
                           Navigator.push(context, MaterialPageRoute(builder: (context) => const AboutScreen()));
+                        },
+                      ),
+
+                      _SidebarItem(
+                        icon: LucideIcons.headphones, 
+                        label: 'Contact Us',
+                        onTap: () {
+                          Navigator.pop(context);
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const ContactScreen()));
+                        },
+                      ),
+
+                      _SidebarItem(
+                        icon: LucideIcons.briefcase, 
+                        label: 'Careers',
+                        onTap: () {
+                          Navigator.pop(context);
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const CareersScreen()));
+                        },
+                      ),
+
+                      _SidebarItem(
+                        icon: LucideIcons.trendingUp, 
+                        label: 'Investor Relations',
+                        onTap: () {
+                          Navigator.pop(context);
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const InvestorRelationsScreen()));
+                        },
+                      ),
+
+                      _SidebarItem(
+                        icon: LucideIcons.fileText, 
+                        label: 'Pages',
+                        onTap: () {
+                          Navigator.pop(context);
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => const PagesListScreen()));
                         },
                       ),
 
@@ -243,7 +280,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                 
                 // Fixed Logout Button
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 12, 24, 100),
+                  padding: const EdgeInsets.fromLTRB(24, 12, 24, 40),
                   child: _SidebarExitButton(),
                 ),
               ],

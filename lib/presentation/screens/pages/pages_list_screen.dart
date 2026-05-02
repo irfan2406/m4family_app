@@ -46,12 +46,13 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: null,
       body: Container(
-        decoration: const BoxDecoration(
-          color: Colors.black,
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
         ),
         child: SafeArea(
           child: Column(
@@ -65,12 +66,12 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(LucideIcons.chevronLeft, color: Colors.white, size: 16),
+                      Icon(LucideIcons.chevronLeft, color: Theme.of(context).colorScheme.onSurface, size: 16),
                       const SizedBox(width: 8),
                       Text(
                         'Back to Home',
                         style: GoogleFonts.inter(
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
                         ),
@@ -91,7 +92,7 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                     Text(
                       'Pages',
                       style: GoogleFonts.montserrat(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontSize: 32,
                         fontWeight: FontWeight.w900,
                         letterSpacing: -1,
@@ -101,7 +102,7 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                     Text(
                       'Browse all published pages.',
                       style: GoogleFonts.inter(
-                        color: Colors.white60,
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
                       ),
@@ -115,13 +116,13 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
               // ─── List Content ──────────────────────────────────
               Expanded(
                 child: _isLoading
-                    ? const Center(child: CircularProgressIndicator(color: Colors.white24))
+                    ? Center(child: CircularProgressIndicator(color: isDark ? Colors.white24 : Colors.black12))
                     : _pages.isEmpty
                         ? Center(
                             child: Text(
                               'No published pages available.',
                               style: GoogleFonts.inter(
-                                color: Colors.white38,
+                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.38),
                                 fontSize: 13,
                               ),
                             ),
@@ -140,6 +141,7 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
   }
 
   Widget _buildPageCard(Map<String, dynamic> page, int index) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Material(
@@ -161,9 +163,9 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
               child: Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.04),
+                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
                   borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: Colors.white.withOpacity(0.05)),
+                  border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
                 ),
                 child: Row(
                   children: [
@@ -171,10 +173,10 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                       width: 44,
                       height: 44,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.06),
+                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.06),
                         borderRadius: BorderRadius.circular(14),
                       ),
-                      child: const Icon(LucideIcons.fileText, color: Colors.white70, size: 20),
+                      child: Icon(LucideIcons.fileText, color: (isDark ? Colors.white : Colors.black).withOpacity(0.7), size: 20),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
@@ -184,7 +186,7 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                           Text(
                             (page['title'] ?? 'Untitled').toString(),
                             style: GoogleFonts.montserrat(
-                              color: Colors.white,
+                              color: Theme.of(context).colorScheme.onSurface,
                               fontSize: 15,
                               fontWeight: FontWeight.w800,
                             ),
@@ -192,18 +194,18 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                           const SizedBox(height: 4),
                           Row(
                             children: [
-                              Icon(LucideIcons.globe, color: Colors.white.withOpacity(0.3), size: 12),
+                              Icon(LucideIcons.globe, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3), size: 12),
                               const SizedBox(width: 6),
                               Text(
                                 '/${page['slug'] ?? ''}',
-                                style: GoogleFonts.inter(color: Colors.white38, fontSize: 11, fontWeight: FontWeight.w500),
+                                style: GoogleFonts.inter(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.38), fontSize: 11, fontWeight: FontWeight.w500),
                               ),
                             ],
                           ),
                         ],
                       ),
                     ),
-                    Icon(LucideIcons.arrowRight, color: Colors.white.withOpacity(0.3), size: 20),
+                    Icon(LucideIcons.arrowRight, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3), size: 20),
                   ],
                 ),
               ),
@@ -214,3 +216,4 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
     ).animate().fadeIn(delay: (index * 80).ms).slideX(begin: 0.05);
   }
 }
+

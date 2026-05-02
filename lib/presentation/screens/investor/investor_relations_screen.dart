@@ -91,7 +91,8 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
         'phone': _phoneController.text.trim(),
         'message': _messageController.text.trim(),
         'interest': 'Investing',
-        'source': 'Investor Relations Page',
+        'source': 'online',
+        'notes': 'Submitted via Investor Relations Page',
       });
 
       if (response.data['status'] == true) {
@@ -129,6 +130,7 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBodyBehindAppBar: true,
@@ -137,12 +139,12 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('INVESTOR RELATIONS',
-                style: GoogleFonts.montserrat(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18, letterSpacing: 1)),
+                style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.bold, fontSize: 18, letterSpacing: 1)),
             Text('M4 FAMILY DEVELOPMENTS',
-                style: GoogleFonts.montserrat(color: Colors.white54, fontWeight: FontWeight.w900, fontSize: 9, letterSpacing: 4)),
+                style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.5), fontWeight: FontWeight.w900, fontSize: 9, letterSpacing: 4)),
           ],
         ),
-        backgroundColor: Colors.black.withOpacity(0.8),
+        backgroundColor: (isDark ? Colors.black : Colors.white).withOpacity(0.8),
         flexibleSpace: ClipRRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
@@ -151,21 +153,24 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
         ),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(LucideIcons.arrowLeft, color: Colors.white70),
+          icon: Icon(LucideIcons.arrowLeft, color: isDark ? Colors.white70 : Colors.black54),
           onPressed: () => Navigator.pop(context),
         ),
       ),
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: RadialGradient(
-            center: Alignment.topCenter,
-            radius: 2.5,
-            colors: [Color(0xFF0F1115), Colors.black],
-          ),
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          gradient: isDark 
+            ? const RadialGradient(
+                center: Alignment.topCenter,
+                radius: 2.5,
+                colors: [Color(0xFF0F1115), Colors.black],
+              )
+            : null,
         ),
         child: SafeArea(
           child: _isLoading
-              ? const Center(child: CircularProgressIndicator(color: Colors.white24))
+              ? Center(child: CircularProgressIndicator(color: isDark ? Colors.white24 : Colors.black12))
               : SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
                   child: Column(
@@ -189,6 +194,7 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
 
   // ─── CMS Overview ─────────────────────────────────────────
   Widget _buildOverview() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final title = _pageData?['title'] ?? 'INVESTOR\nRELATIONS';
     final content = _pageData?['content'] ?? '';
 
@@ -198,7 +204,7 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
         Text(
           title.toString().toUpperCase(),
           style: GoogleFonts.playfairDisplay(
-            color: Colors.white,
+            color: isDark ? Colors.white : Colors.black,
             fontSize: 36,
             fontWeight: FontWeight.w300,
             letterSpacing: -0.5,
@@ -211,7 +217,7 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
                 padding: const EdgeInsets.only(bottom: 16, right: 16),
                 child: Text(
                   paragraph,
-                  style: GoogleFonts.inter(color: Colors.white60, fontSize: 14, fontWeight: FontWeight.w500, height: 1.6),
+                  style: GoogleFonts.inter(color: (isDark ? Colors.white : Colors.black).withOpacity(0.6), fontSize: 14, fontWeight: FontWeight.w500, height: 1.6),
                 ),
               )),
       ],
@@ -220,6 +226,7 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
 
   // ─── Handshake Image ──────────────────────────────────────
   Widget _buildImage() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return ClipRRect(
       borderRadius: BorderRadius.circular(32),
       child: AspectRatio(
@@ -227,12 +234,12 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
         child: CachedNetworkImage(
           imageUrl: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80',
           fit: BoxFit.cover,
-          color: Colors.white,
-          colorBlendMode: BlendMode.saturation,
-          placeholder: (_, __) => Container(color: Colors.white.withOpacity(0.05)),
+          color: isDark ? Colors.white : null,
+          colorBlendMode: isDark ? BlendMode.saturation : null,
+          placeholder: (_, __) => Container(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
           errorWidget: (_, __, ___) => Container(
-            color: Colors.white.withOpacity(0.05),
-            child: const Center(child: Icon(LucideIcons.image, color: Colors.white24, size: 40)),
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+            child: Center(child: Icon(LucideIcons.image, color: (isDark ? Colors.white : Colors.black).withOpacity(0.24), size: 40)),
           ),
         ),
       ),
@@ -241,13 +248,14 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
 
   // ─── Contact / Lead Form ──────────────────────────────────
   Widget _buildContactForm() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'STAY IN TOUCH\nWITH US',
           style: GoogleFonts.playfairDisplay(
-            color: Colors.white,
+            color: isDark ? Colors.white : Colors.black,
             fontSize: 28,
             fontWeight: FontWeight.w300,
             letterSpacing: -0.5,
@@ -275,7 +283,7 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
         // Preferred Contact Mode
         Text(
           'PREFERRED MODE OF CONTACT:',
-          style: GoogleFonts.montserrat(color: Colors.white54, fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2),
+          style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.54), fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2),
         ),
         const SizedBox(height: 16),
         Row(
@@ -308,13 +316,13 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
           child: ElevatedButton(
             onPressed: _isSubmitting ? null : _submitInquiry,
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
+              backgroundColor: isDark ? Colors.white : Colors.black,
+              foregroundColor: isDark ? Colors.black : Colors.white,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-              elevation: 10,
+              elevation: 0,
             ),
             child: _isSubmitting
-                ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black))
+                ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: isDark ? Colors.black : Colors.white))
                 : Text('SUBMIT', style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w900, letterSpacing: 1)),
           ),
         ),
@@ -324,6 +332,7 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
 
   // ─── Investor Contact Section ─────────────────────────────
   Widget _buildInvestorContact() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final contactEmail = _configData?['contact_email'] ?? 'sales@m4group.in';
     final contactPhone = _configData?['contact_phone'] ?? '+91 22 4601 8844';
 
@@ -333,7 +342,7 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
         Text(
           'INVESTOR CONTACT',
           style: GoogleFonts.playfairDisplay(
-            color: Colors.white,
+            color: isDark ? Colors.white : Colors.black,
             fontSize: 24,
             fontWeight: FontWeight.w300,
             letterSpacing: -0.5,
@@ -342,7 +351,7 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
         const SizedBox(height: 12),
         Text(
           'FOR ANY INVESTOR RELATION RELATED QUESTIONS OR QUERIES PLEASE CONTACT VIA BELOW EMAIL',
-          style: GoogleFonts.montserrat(color: Colors.white38, fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 1.5, height: 1.6),
+          style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.38), fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 1.5, height: 1.6),
         ),
         const SizedBox(height: 24),
 
@@ -368,6 +377,7 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
 
   // ─── Helper Widgets ───────────────────────────────────────
   Widget _buildContactCard({required IconData icon, required String label, required String value, required VoidCallback onTap}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(28),
@@ -378,17 +388,17 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
           child: Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.04),
+              color: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
               borderRadius: BorderRadius.circular(28),
-              border: Border.all(color: Colors.white.withOpacity(0.05)),
+              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
             ),
             child: Row(
               children: [
                 Container(
                   width: 56,
                   height: 56,
-                  decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                  child: Icon(icon, color: Colors.black, size: 24),
+                  decoration: BoxDecoration(color: isDark ? Colors.white : Colors.black, shape: BoxShape.circle),
+                  child: Icon(icon, color: isDark ? Colors.black : Colors.white, size: 24),
                 ),
                 const SizedBox(width: 20),
                 Expanded(
@@ -396,10 +406,10 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(label.toUpperCase(),
-                          style: GoogleFonts.montserrat(color: Colors.white54, fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2)),
+                          style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.54), fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2)),
                       const SizedBox(height: 4),
                       Text(value.toUpperCase(),
-                          style: GoogleFonts.montserrat(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w900, letterSpacing: -0.5)),
+                          style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 14, fontWeight: FontWeight.w900, letterSpacing: -0.5)),
                     ],
                   ),
                 ),
@@ -412,42 +422,45 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
   }
 
   Widget _buildInputField({required TextEditingController controller, required String hint, bool isEmail = false, bool isPhone = false}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return TextField(
       controller: controller,
       keyboardType: isEmail ? TextInputType.emailAddress : isPhone ? TextInputType.phone : TextInputType.text,
-      style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 14),
+      style: GoogleFonts.inter(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w500, fontSize: 14),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.inter(color: Colors.white24, fontWeight: FontWeight.w500, fontSize: 14),
+        hintStyle: GoogleFonts.inter(color: (isDark ? Colors.white : Colors.black).withOpacity(0.24), fontWeight: FontWeight.w500, fontSize: 14),
         filled: true,
-        fillColor: Colors.white.withOpacity(0.04),
+        fillColor: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
         contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: Colors.white.withOpacity(0.1))),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: Colors.white.withOpacity(0.1))),
-        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: const BorderSide(color: Colors.white, width: 1.5)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1))),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1))),
+        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: isDark ? Colors.white : Colors.black, width: 1.5)),
       ),
     );
   }
 
   Widget _buildMessageField() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return TextField(
       controller: _messageController,
       maxLines: 5,
-      style: GoogleFonts.inter(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 14),
+      style: GoogleFonts.inter(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w500, fontSize: 14),
       decoration: InputDecoration(
         hintText: 'Message',
-        hintStyle: GoogleFonts.inter(color: Colors.white24, fontWeight: FontWeight.w500, fontSize: 14),
+        hintStyle: GoogleFonts.inter(color: (isDark ? Colors.white : Colors.black).withOpacity(0.24), fontWeight: FontWeight.w500, fontSize: 14),
         filled: true,
-        fillColor: Colors.white.withOpacity(0.04),
+        fillColor: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
         contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: Colors.white.withOpacity(0.1))),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: Colors.white.withOpacity(0.1))),
-        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: const BorderSide(color: Colors.white, width: 1.5)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1))),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1))),
+        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: isDark ? Colors.white : Colors.black, width: 1.5)),
       ),
     );
   }
 
   Widget _buildCheckOption(String label, bool value, ValueChanged<bool> onChanged) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return InkWell(
       onTap: () => onChanged(!value),
       child: Row(
@@ -459,17 +472,17 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
             height: 20,
             margin: const EdgeInsets.only(top: 2),
             decoration: BoxDecoration(
-              color: value ? Colors.white : Colors.transparent,
-              border: Border.all(color: Colors.white.withOpacity(0.3)),
+              color: value ? (isDark ? Colors.white : Colors.black) : Colors.transparent,
+              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.3)),
               borderRadius: BorderRadius.circular(6),
             ),
-            child: value ? const Icon(LucideIcons.check, color: Colors.black, size: 14) : null,
+            child: value ? Icon(LucideIcons.check, color: isDark ? Colors.black : Colors.white, size: 14) : null,
           ),
           const SizedBox(width: 12),
           Flexible(
             child: Text(
               label,
-              style: GoogleFonts.inter(color: Colors.white60, fontSize: 13, fontWeight: FontWeight.w500),
+              style: GoogleFonts.inter(color: (isDark ? Colors.white : Colors.black).withOpacity(0.6), fontSize: 13, fontWeight: FontWeight.w500),
             ),
           ),
         ],
@@ -477,3 +490,4 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
     );
   }
 }
+

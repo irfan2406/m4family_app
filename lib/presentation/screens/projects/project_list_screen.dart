@@ -224,7 +224,7 @@ class ProjectListScreen extends ConsumerWidget {
                               'M4 PROJECTS',
                               style: GoogleFonts.montserrat(
                                 fontSize: 24,
-                                fontWeight: FontWeight.w400,
+                                fontWeight: FontWeight.w900,
                                 color: Theme.of(context).colorScheme.onSurface,
                                 letterSpacing: -1,
                               ),
@@ -295,7 +295,7 @@ class ProjectListScreen extends ConsumerWidget {
                 border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.08)),
               ),
               child: Row(
-                children: ['All', 'Ongoing', 'Upcoming', 'Completed'].map((filter) {
+                children: ['Ongoing', 'Upcoming', 'Completed'].map((filter) {
                   final isSelected = currentFilter == filter;
                   return Expanded(
                     child: GestureDetector(

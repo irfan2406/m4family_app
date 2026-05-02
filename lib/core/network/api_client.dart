@@ -46,6 +46,22 @@ class ApiClient {
     ));
   }
 
+  Future<Response> get(String path, {Map<String, dynamic>? queryParameters}) async {
+    return dio.get(path, queryParameters: queryParameters);
+  }
+
+  Future<Response> post(String path, dynamic data) async {
+    return dio.post(path, data: data);
+  }
+
+  Future<Response> patch(String path, dynamic data) async {
+    return dio.patch(path, data: data);
+  }
+
+  Future<Response> delete(String path) async {
+    return dio.delete(path);
+  }
+
   // Auth Methods
   Future<Response> sendOtp(String identifier, String role) async {
     return dio.post('/api/auth/send-otp', data: {
