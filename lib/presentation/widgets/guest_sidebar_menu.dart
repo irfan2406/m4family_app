@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'dart:ui';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:m4_mobile/core/providers/theme_provider.dart';
+import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 
 class GuestSidebarMenu extends ConsumerStatefulWidget {
   const GuestSidebarMenu({super.key});
@@ -60,10 +61,22 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                           isOpen: _isContentOpen,
                           onToggle: () => setState(() => _isContentOpen = !_isContentOpen),
                           subItems: [
-                            _SubItem(label: 'MEDIA', onTap: () => context.push('/media')),
-                            _SubItem(label: 'HIGHLIGHTS', onTap: () => context.push('/highlights')),
-                            _SubItem(label: 'EVENTS', onTap: () => context.push('/events')),
-                            _SubItem(label: 'BLOG', onTap: () => context.push('/blog')),
+                            _SubItem(label: 'MEDIA', icon: LucideIcons.playCircle, onTap: () {
+                              context.push('/media');
+                              Navigator.pop(context);
+                            }),
+                            _SubItem(label: 'HIGHLIGHTS', icon: LucideIcons.zap, onTap: () {
+                              context.push('/highlights');
+                              Navigator.pop(context);
+                            }),
+                            _SubItem(label: 'EVENTS', icon: LucideIcons.calendar, onTap: () {
+                              context.push('/events');
+                              Navigator.pop(context);
+                            }),
+                            _SubItem(label: 'BLOG', icon: LucideIcons.fileText, onTap: () {
+                              context.push('/blog');
+                              Navigator.pop(context);
+                            }),
                           ],
                         ),
                         
@@ -76,9 +89,9 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                           isOpen: _isConnectOpen,
                           onToggle: () => setState(() => _isConnectOpen = !_isConnectOpen),
                           subItems: [
-                            _SubItem(label: 'CP LOGIN', onTap: () => context.go('/login')),
-                            _SubItem(label: 'INVESTOR LOGIN', onTap: () => context.go('/login')),
-                            _SubItem(label: 'CUSTOMER LOGIN', onTap: () => context.go('/login')),
+                            _SubItem(label: 'CP LOGIN', icon: LucideIcons.user, onTap: () => context.go('/login')),
+                            _SubItem(label: 'INVESTOR LOGIN', icon: LucideIcons.crown, onTap: () => context.go('/login')),
+                            _SubItem(label: 'CUSTOMER LOGIN', icon: LucideIcons.users, onTap: () => context.go('/login')),
                           ],
                         ),
                         
@@ -232,8 +245,9 @@ class _DropdownMenuItem extends StatelessWidget {
 
 class _SubItem extends StatelessWidget {
   final String label;
+  final IconData icon;
   final VoidCallback onTap;
-  const _SubItem({required this.label, required this.onTap});
+  const _SubItem({required this.label, required this.icon, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -243,6 +257,7 @@ class _SubItem extends StatelessWidget {
       child: ListTile(
         onTap: onTap,
         dense: true,
+        leading: Icon(icon, size: 14, color: (isDark ? Colors.white : Colors.black).withOpacity(0.3)),
         title: Text(label, style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.5), fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 1)),
       ),
     );

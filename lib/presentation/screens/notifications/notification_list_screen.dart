@@ -17,9 +17,9 @@ class NotificationListScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(notificationProvider);
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: Container(
+    return Material(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: Container(
         color: Theme.of(context).scaffoldBackgroundColor,
         child: SafeArea(
           child: Column(
@@ -38,9 +38,9 @@ class NotificationListScreen extends ConsumerWidget {
                             if (Navigator.canPop(context)) {
                               Navigator.pop(context);
                             } else {
-                              // Reset to index 0 for either shell
-                              ref.read(navigationProvider.notifier).state = 0;
-                              ref.read(cpNavigationIndexProvider.notifier).state = 0;
+                              // Reset to index 3 (Profile)
+                              ref.read(navigationProvider.notifier).state = 3;
+                              ref.read(cpNavigationIndexProvider.notifier).state = 3;
                             }
                           },
                           icon: Icon(LucideIcons.arrowLeft, color: Theme.of(context).colorScheme.onSurface, size: 18),

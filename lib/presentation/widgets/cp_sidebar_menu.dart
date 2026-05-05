@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 
 class CpSidebarMenu extends ConsumerStatefulWidget {
@@ -114,10 +115,22 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                             isActive: false,
                           ),
                           children: [
-                            _SubItem(label: 'Media', onTap: () => _go('/media')),
-                            _SubItem(label: 'Highlights', onTap: () => _go('/highlights')),
-                            _SubItem(label: 'Events', onTap: () => _go('/events')),
-                            _SubItem(label: 'Blog', onTap: () => _go('/cp/blog')),
+                            _SubItem(label: 'Media', onTap: () {
+                              ref.read(contentHubTypeProvider.notifier).state = 'media';
+                              _setTab(9);
+                            }),
+                            _SubItem(label: 'Highlights', onTap: () {
+                              ref.read(contentHubTypeProvider.notifier).state = 'highlights';
+                              _setTab(9);
+                            }),
+                            _SubItem(label: 'Events', onTap: () {
+                              ref.read(contentHubTypeProvider.notifier).state = 'events';
+                              _setTab(9);
+                            }),
+                            _SubItem(label: 'Blog', onTap: () {
+                              ref.read(contentHubTypeProvider.notifier).state = 'blog';
+                              _setTab(9);
+                            }),
                           ],
                         ),
                       ),

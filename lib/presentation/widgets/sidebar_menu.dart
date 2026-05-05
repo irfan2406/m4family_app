@@ -54,7 +54,17 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
           BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
             child: Container(
-              color: const Color(0xFF09090B).withOpacity(0.1), // 👈 Lighten for better glass effect
+              decoration: BoxDecoration(
+                color: Theme.of(context).brightness == Brightness.dark 
+                    ? Colors.black.withOpacity(0.4) 
+                    : Colors.white.withOpacity(0.4),
+                border: Border(
+                  right: BorderSide(
+                    color: (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.white).withOpacity(0.1),
+                    width: 1,
+                  ),
+                ),
+              ),
             ),
           ),
           
@@ -64,14 +74,14 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
               children: [
                 // Header
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                  padding: const EdgeInsets.fromLTRB(32, 48, 32, 32),
                   child: Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           color: accentColor.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: accentColor.withOpacity(0.2)),
                         ),
                         child: Icon(isInvestor ? LucideIcons.crown : LucideIcons.sparkles, color: accentColor, size: 20),
@@ -80,8 +90,8 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                       Text(
                         isInvestor ? 'INVESTOR MENU' : 'MENU',
                         style: GoogleFonts.montserrat(
-                          color: accentColor,
-                          fontSize: 10, // 👈 Web size
+                          color: Theme.of(context).colorScheme.onSurface,
+                          fontSize: 10,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 4,
                         ),
@@ -126,30 +136,34 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                         subItems: [
                           _SidebarSubItem(
                             label: 'Media',
+                            icon: LucideIcons.playCircle,
                             onTap: () {
-                              Navigator.pop(context);
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => const ContentHubScreen(type: 'media')));
+                              ref.read(contentHubTypeProvider.notifier).state = 'media';
+                              navigateTo(9);
                             },
                           ),
                           _SidebarSubItem(
                             label: 'Highlights',
+                            icon: LucideIcons.zap,
                             onTap: () {
-                              Navigator.pop(context);
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => const ContentHubScreen(type: 'highlights')));
+                              ref.read(contentHubTypeProvider.notifier).state = 'highlight';
+                              navigateTo(9);
                             },
                           ),
                           _SidebarSubItem(
                             label: 'Events',
+                            icon: LucideIcons.calendar,
                             onTap: () {
-                              Navigator.pop(context);
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => const ContentHubScreen(type: 'events')));
+                              ref.read(contentHubTypeProvider.notifier).state = 'event';
+                              navigateTo(9);
                             },
                           ),
                           _SidebarSubItem(
                             label: 'Blog',
+                            icon: LucideIcons.fileText,
                             onTap: () {
-                              Navigator.pop(context);
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => const ContentHubScreen(type: 'blog')));
+                              ref.read(contentHubTypeProvider.notifier).state = 'blog';
+                              navigateTo(9);
                             },
                           ),
                         ],
@@ -278,9 +292,24 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                   ),
                 ),
                 
-                // Fixed Logout Button
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 12, 24, 40),
+                // Bottom Actions
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      top: BorderSide(
+                        color: Colors.white.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.05 : 0.2),
+                      ),
+                    ),
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        (Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white).withOpacity(0.2),
+                      ],
+                    ),
+                  ),
                   child: _SidebarExitButton(),
                 ),
               ],
@@ -336,22 +365,26 @@ class _SidebarExitButton extends ConsumerWidget {
       },
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 20),
+        height: 56, // 👈 Match web h-14 (14 * 4 = 56)
         decoration: BoxDecoration(
-          color: Colors.red.withOpacity(0.08), // 👈 Web style
-          borderRadius: BorderRadius.circular(20), // 👈 More rounded like web
-          border: Border.all(color: Colors.red.withOpacity(0.2), width: 1.5),
+          color: Colors.red.withOpacity(0.08),
+          borderRadius: BorderRadius.circular(16), // 👈 Web rounded-2xl
+          border: Border.all(color: Colors.red.withOpacity(0.2), width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.red.withOpacity(0.05),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            )
+          ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Transform.rotate(
-              angle: 3.14159, // 👈 Rotate 180 deg
-              child: const Icon(LucideIcons.logOut, color: Colors.redAccent, size: 18),
-            ),
+            const Icon(LucideIcons.logOut, color: Colors.redAccent, size: 16),
             const SizedBox(width: 12),
             Text(
-              'LOG OUT', // 👈 Web space
+              'LOG OUT',
               style: GoogleFonts.montserrat(
                 color: Colors.redAccent,
                 fontSize: 11,
@@ -393,15 +426,15 @@ class _SidebarItem extends StatelessWidget {
           if (isActive)
             Positioned(
               left: 0,
-              top: 12,
-              bottom: 12,
+              top: 15,
+              bottom: 15,
               child: Container(
                 width: 4,
                 decoration: BoxDecoration(
                   color: activeColor,
                   borderRadius: const BorderRadius.only(
-                    topRight: Radius.circular(4),
-                    bottomRight: Radius.circular(4),
+                    topRight: Radius.circular(10),
+                    bottomRight: Radius.circular(10),
                   ),
                 ),
               ),
@@ -409,11 +442,11 @@ class _SidebarItem extends StatelessWidget {
           
           ListTile(
             leading: Container(
-              width: 36, // 👈 Web size
-              height: 36, // 👈 Web size
+              width: 36,
+              height: 36,
               decoration: BoxDecoration(
                 color: isActive ? activeColor.withOpacity(0.1) : Colors.white.withOpacity(0.05),
-                borderRadius: BorderRadius.circular(10), // 👈 Web radius
+                borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: isActive ? activeColor.withOpacity(0.3) : Colors.transparent,
                 ),
@@ -424,7 +457,7 @@ class _SidebarItem extends StatelessWidget {
               child: Icon(
                 icon, 
                 color: isActive ? activeColor : Colors.white.withOpacity(0.4), 
-                size: 16 // 👈 Web size
+                size: 16
               ),
             ),
             title: Text(
@@ -432,15 +465,15 @@ class _SidebarItem extends StatelessWidget {
               style: GoogleFonts.montserrat(
                 color: isActive 
                     ? activeColor
-                    : Colors.white.withOpacity(0.6),
-                fontSize: 13, // 👈 Web size
-                fontWeight: isActive ? FontWeight.w900 : FontWeight.w700, // 👈 Web weights
+                    : (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black).withOpacity(0.6),
+                fontSize: 13,
+                fontWeight: isActive ? FontWeight.w900 : FontWeight.w700,
                 letterSpacing: -0.2,
               ),
             ),
             trailing: trailing,
             onTap: onTap,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 24), // 👈 Web padding
+            contentPadding: const EdgeInsets.symmetric(horizontal: 24),
             visualDensity: VisualDensity.compact,
           ),
         ],
@@ -493,9 +526,10 @@ class _SidebarDropdown extends StatelessWidget {
 
 class _SidebarSubItem extends StatelessWidget {
   final String label;
+  final IconData icon;
   final VoidCallback onTap;
 
-  const _SidebarSubItem({required this.label, required this.onTap});
+  const _SidebarSubItem({required this.label, required this.icon, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -510,7 +544,7 @@ class _SidebarSubItem extends StatelessWidget {
           color: Colors.white.withOpacity(0.05),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: const Icon(LucideIcons.logIn, color: Colors.white30, size: 14),
+        child: Icon(icon, color: Colors.white30, size: 14),
       ),
       title: Text(
         label,

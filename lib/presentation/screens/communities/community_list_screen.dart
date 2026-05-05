@@ -39,19 +39,9 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
     final cpIdx = ref.watch(cpNavigationIndexProvider);
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Scaffold(
-      backgroundColor: isDark ? Colors.black : Colors.white,
-      drawer: const ConditionalDrawer(),
-      bottomNavigationBar: isCp
-          ? CpBottomNav(
-              currentIndex: cpIdx,
-              onTap: (i) {
-                context.go('/home');
-                ref.read(cpNavigationIndexProvider.notifier).state = i;
-              },
-            )
-          : null,
-      body: CustomScrollView(
+    return Material(
+      color: isDark ? Colors.black : Colors.white,
+      child: CustomScrollView(
         slivers: [
           // 🔝 Header (Logo, Back & Menu)
           SliverToBoxAdapter(

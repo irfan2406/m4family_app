@@ -10,10 +10,13 @@ import 'package:m4_mobile/presentation/screens/custom_views/my_custom_views_scre
 import 'package:m4_mobile/presentation/screens/selection_logs/selection_logs_screen.dart';
 import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
 import 'package:m4_mobile/presentation/widgets/sidebar_menu.dart';
+import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
+import 'package:m4_mobile/presentation/screens/content/content_hub_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final navigationProvider = StateProvider<int>((ref) => 0);
 final inquiryScrollTriggerProvider = StateProvider<int>((ref) => 0);
+final contentHubTypeProvider = StateProvider<String>((ref) => 'media');
 
 class MainShell extends ConsumerStatefulWidget {
   const MainShell({super.key});
@@ -23,6 +26,7 @@ class MainShell extends ConsumerStatefulWidget {
 }
 
 class _MainShellState extends ConsumerState<MainShell> {
+  bool _isDrawerOpen = false;
 
   final List<Widget> _screens = [
     const DashboardScreen(), // 0: Home
@@ -32,8 +36,9 @@ class _MainShellState extends ConsumerState<MainShell> {
     const CommunityListScreen(), // 4: Sidebar only
     const NotificationListScreen(), // 5: Notifications (Sidebar)
     CustomViewsScreen(), // 6: Custom Views (Sidebar)
-    MyCustomViewsScreen(), // 7: My Custom Views (Sidebar)
+    const MyCustomViewsScreen(), // 7: My Custom Views (Sidebar)
     const SelectionLogsScreen(), // 8: Personalisation Logs
+    Consumer(builder: (context, ref, _) => ContentHubScreen(type: ref.watch(contentHubTypeProvider))), // 9: Content Hub
   ];
 
 
@@ -51,22 +56,29 @@ class _MainShellState extends ConsumerState<MainShell> {
         }
       },
       child: Scaffold(
-        drawer: const SidebarMenu(),
+        extendBody: true,
+        drawer: ConditionalDrawer(),
+        onDrawerChanged: (isOpen) {
+          setState(() {
+            _isDrawerOpen = isOpen;
+          });
+        },
         body: Stack(
           children: [
             IndexedStack(
               index: currentIndex,
               children: _screens,
             ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: NavigationPill(
-                currentIndex: currentIndex,
-                onTap: (index) {
-                  ref.read(navigationProvider.notifier).state = index;
-                },
+            if (!_isDrawerOpen)
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: NavigationPill(
+                  currentIndex: currentIndex,
+                  onTap: (index) {
+                    ref.read(navigationProvider.notifier).state = index;
+                  },
+                ),
               ),
-            ),
           ],
         ),
       ),

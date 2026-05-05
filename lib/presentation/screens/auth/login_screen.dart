@@ -118,16 +118,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget _buildHeader() {
     return Column(
       children: [
-        // Building Icon Placeholder
+        // Main Logo
         Container(
-          width: 64,
-          height: 64,
+          width: 80,
+          height: 80,
           decoration: BoxDecoration(
             color: Colors.black.withOpacity(0.4),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(color: Colors.white.withOpacity(0.1)),
           ),
-          child: const Icon(LucideIcons.building2, color: Colors.white, size: 32),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Image.asset(
+              'assets/m4_family_logo.png',
+              color: const Color(0xFFFFD700),
+              colorBlendMode: BlendMode.srcIn,
+            ),
+          ),
         ).animate().scale(duration: 500.ms, curve: Curves.easeOut),
         
         const SizedBox(height: 24),

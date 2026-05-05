@@ -38,9 +38,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       );
     }
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: Stack(
+    return Material(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: Stack(
         children: [
           // Background ambient effects
           if (isDark) ...[
@@ -615,7 +615,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           subtitle: '24/7 CONCIERGE SERVICE',
           icon: LucideIcons.phone,
           isDark: isDark,
-          onTap: () => context.push('/support'),
+          onTap: () => context.push('/support/contact'),
         ),
       ],
     );

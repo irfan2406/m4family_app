@@ -19,9 +19,9 @@ class CustomViewsScreen extends ConsumerWidget {
     final currentStep = ref.watch(customViewsStepProvider);
     final isSubmitted = false;
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: SafeArea(
+    return Material(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: SafeArea(
         child: Column(
           children: [
             // Header
@@ -39,10 +39,10 @@ class CustomViewsScreen extends ConsumerWidget {
                         if (Navigator.canPop(context)) {
                           Navigator.pop(context);
                         } else {
-                          // Return to Home tab
-                          ref.read(navigationProvider.notifier).state = 0;
-                          ref.read(guestNavigationProvider.notifier).state = 0;
-                          context.go('/home');
+                          // Return to Profile tab
+                          ref.read(navigationProvider.notifier).state = 3;
+                          ref.read(guestNavigationProvider.notifier).state = 3;
+                          context.go('/profile');
                         }
                       }
                     },

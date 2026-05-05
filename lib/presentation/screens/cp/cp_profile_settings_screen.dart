@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -218,15 +219,71 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
     final initial = _dobIso != null
         ? DateTime.tryParse(_dobIso!) ?? DateTime(now.year - 30, 1, 1)
         : DateTime(now.year - 30, 1, 1);
-    final d = await showDatePicker(
+    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    DateTime tempDate = initial;
+
+    showModalBottomSheet(
       context: context,
-      initialDate: initial,
-      firstDate: DateTime(1900),
-      lastDate: now,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        height: 350,
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF09090B) : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+          border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+        ),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(25, 20, 25, 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("SELECT BIRTHDAY", style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 1, color: isDark ? Colors.white : Colors.black)),
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text("DONE", style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.blue)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(thickness: 0.5),
+            Expanded(
+              child: CupertinoTheme(
+                data: CupertinoThemeData(
+                  brightness: isDark ? Brightness.dark : Brightness.light,
+                  textTheme: CupertinoTextThemeData(
+                    dateTimePickerTextStyle: GoogleFonts.montserrat(
+                      color: isDark ? Colors.white : Colors.black,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.date,
+                  initialDateTime: tempDate,
+                  maximumDate: now,
+                  onDateTimeChanged: (DateTime picked) {
+                    setState(() {
+                      _dobIso = DateFormat('yyyy-MM-dd').format(picked);
+                    });
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
-    if (d != null && mounted) {
-      setState(() => _dobIso = DateFormat('yyyy-MM-dd').format(d));
-    }
   }
 
   Future<void> _deactivateSessions() async {

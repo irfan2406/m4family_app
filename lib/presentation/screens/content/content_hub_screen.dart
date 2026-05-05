@@ -7,6 +7,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/main_shell.dart';
+import 'package:m4_mobile/presentation/screens/content/content_detail_screen.dart';
 
 class ContentHubScreen extends ConsumerStatefulWidget {
   final String type; // 'media', 'highlights', 'events', 'blog'
@@ -26,32 +28,71 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
     _fetchContent();
   }
 
+  @override
+  void didUpdateWidget(ContentHubScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.type != widget.type) {
+      _fetchContent();
+    }
+  }
+
   Future<void> _fetchContent() async {
+    setState(() {
+      _isLoading = true;
+      _items = []; // Clear old items to avoid stale UI
+    });
     try {
       final apiClient = ref.read(apiClientProvider);
+      final authState = ref.read(authProvider);
+      
+      // Extract role from auth state
+      String userRole = 'guest';
+      if (authState.user != null) {
+        final rawRole = (authState.user!['role'] ?? 'guest').toString().toLowerCase();
+        // Web portal and backend content logic expects 'user' for customers
+        userRole = rawRole == 'customer' ? 'user' : rawRole;
+      }
+
       // Determine type for API
       String apiType = widget.type;
-      if (widget.type == 'events') apiType = 'event';
-      if (widget.type == 'highlights') apiType = 'highlight';
+      
+      print('DEBUG: Fetching content type: $apiType for role: $userRole');
 
-      final response = await apiClient.getContent(apiType);
+      final response = await apiClient.getContent(apiType, role: userRole);
+      
+      print('DEBUG: Content API Response status: ${response.data['status']}');
+      
       if (response.data['status'] == true && response.data['data'] is List) {
         setState(() {
           _items = response.data['data'] as List;
           _isLoading = false;
         });
+        print('DEBUG: Loaded ${_items.length} items');
       } else {
         setState(() => _isLoading = false);
+        print('DEBUG: No data found or status false');
       }
-    } catch (_) {
+    } catch (e) {
+      print('DEBUG: Content Fetch Error: $e');
       setState(() => _isLoading = false);
     }
   }
 
+  void _openDetail(dynamic item) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ContentDetailScreen(content: item),
+      ),
+    );
+  }
+
   String _getTitle() {
-    switch (widget.type) {
+    switch (widget.type.toLowerCase()) {
       case 'media': return 'MEDIA GALLERY';
+      case 'highlight':
       case 'highlights': return 'PROJECT HIGHLIGHTS';
+      case 'event':
       case 'events': return 'M4 EVENTS';
       case 'blog': return 'M4 BLOG';
       default: return 'CONTENT HUB';
@@ -59,20 +100,17 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
   }
 
   String _getSubtitle() {
-    switch (widget.type) {
-      case 'media': return 'MULTIMEDIA RELEASES';
-      case 'highlights': return 'ACHIEVEMENTS AND MILESTONES';
-      case 'events': return 'UPCOMING EVENTS';
-      case 'blog': return 'INSIGHTS AND NEWS';
-      default: return 'LATEST UPDATES';
-    }
+    final type = widget.type.toLowerCase();
+    return 'Stay updated with our latest ${type == 'media' ? 'multimedia releases' : (type == 'highlight' || type == 'highlights') ? 'achievements and milestones' : (type == 'event' || type == 'events') ? 'upcoming events' : 'insights and news'}.';
   }
 
   IconData _getIcon() {
-    switch (widget.type) {
+    switch (widget.type.toLowerCase()) {
       case 'media': return LucideIcons.playCircle;
+      case 'highlight':
       case 'highlights': return LucideIcons.zap;
       case 'blog': return LucideIcons.fileText;
+      case 'event':
       case 'events': return LucideIcons.calendar;
       default: return LucideIcons.layout;
     }
@@ -80,81 +118,76 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: Colors.black,
-      extendBodyBehindAppBar: true,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(100),
-        child: ClipRRect(
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-            child: AppBar(
-              backgroundColor: Colors.black.withOpacity(0.5),
-              elevation: 0,
-              leading: Padding(
-                padding: const EdgeInsets.only(left: 20, top: 20),
-                child: IconButton(
-                  icon: const Icon(LucideIcons.arrowLeft, color: Colors.white, size: 24),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ),
-              centerTitle: true,
-              title: Padding(
-                padding: const EdgeInsets.only(top: 25),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'M4 FAMILY',
-                      style: GoogleFonts.montserrat(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 3,
-                      ),
-                    ),
-                    Text(
-                      'DEVELOPMENTS',
-                      style: GoogleFonts.montserrat(
-                        color: Colors.white.withOpacity(0.4),
-                        fontSize: 8,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 5,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
+      backgroundColor: scheme.surface,
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: RadialGradient(
-            center: Alignment.topCenter,
+            center: Alignment.topLeft,
             radius: 1.5,
-            colors: [Color(0xFF1A1D23), Colors.black],
+            colors: isDark 
+              ? [const Color(0xFF1A1A1A), const Color(0xFF0A0A0A)]
+              : [scheme.surface, scheme.surfaceContainerLowest],
           ),
         ),
         child: SafeArea(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header Intro
+              // 🏷️ STANDARDIZED HEADER (Web Parity)
               Padding(
-                padding: const EdgeInsets.fromLTRB(25, 30, 25, 40),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _buildCircleButton(
+                      icon: LucideIcons.arrowLeft,
+                      onTap: () {
+                        ref.read(navigationProvider.notifier).state = 0;
+                      },
+                    ),
+                    Column(
+                      children: [
+                        Text(
+                          'M4 FAMILY',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 2.5,
+                            color: scheme.onSurface,
+                          ),
+                        ),
+                        Text(
+                          'DEVELOPMENTS',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 8,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 3.5,
+                            color: scheme.onSurface.withOpacity(0.4),
+                          ),
+                        ),
+                      ],
+                    ),
+                    _buildMenuButton(),
+                  ],
+                ),
+              ),
+
+              // 🏷️ INTRO SECTION
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(12),
+                          padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
                             color: const Color(0xFF60A5FA).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: const Color(0xFF60A5FA).withOpacity(0.2)),
+                            shape: BoxShape.circle,
                           ),
                           child: Icon(_getIcon(), color: const Color(0xFF60A5FA), size: 18),
                         ),
@@ -162,31 +195,31 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                         Text(
                           'CONTENT HUB',
                           style: GoogleFonts.montserrat(
-                            color: const Color(0xFF60A5FA),
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
-                            letterSpacing: 2,
+                            letterSpacing: 3,
+                            color: const Color(0xFF60A5FA),
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 25),
+                    const SizedBox(height: 20),
                     Text(
                       _getTitle(),
                       style: GoogleFonts.montserrat(
-                        color: Colors.white,
                         fontSize: 32,
                         fontWeight: FontWeight.w900,
+                        color: scheme.onSurface,
                         letterSpacing: -1,
-                        height: 1,
+                        height: 0.9,
                       ),
                     ),
                     const SizedBox(height: 15),
                     Text(
                       _getSubtitle(),
                       style: GoogleFonts.inter(
-                        color: Colors.white.withOpacity(0.5),
                         fontSize: 14,
+                        color: scheme.onSurface.withOpacity(0.5),
                         fontWeight: FontWeight.w500,
                         height: 1.5,
                       ),
@@ -195,14 +228,13 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                 ),
               ),
 
-              // Content List
               Expanded(
                 child: _isLoading
                     ? const Center(child: CircularProgressIndicator(color: Color(0xFF60A5FA)))
                     : _items.isEmpty
                         ? _buildEmptyState()
                         : ListView.builder(
-                            padding: const EdgeInsets.symmetric(horizontal: 25),
+                            padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
                             itemCount: _items.length,
                             itemBuilder: (context, index) => _buildContentCard(_items[index], index),
                           ),
@@ -214,7 +246,57 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
     );
   }
 
+  Widget _buildCircleButton({required IconData icon, required VoidCallback onTap}) {
+    final scheme = Theme.of(context).colorScheme;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 48,
+        height: 48,
+        decoration: BoxDecoration(
+          color: scheme.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: scheme.onSurface.withOpacity(0.05)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: Icon(icon, size: 20, color: scheme.onSurface),
+      ),
+    );
+  }
+
+  Widget _buildMenuButton() {
+    final scheme = Theme.of(context).colorScheme;
+    return GestureDetector(
+      onTap: () {
+        Scaffold.of(context).openDrawer();
+      },
+      child: Container(
+        width: 56,
+        height: 48,
+        decoration: BoxDecoration(
+          color: scheme.onSurface,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              color: scheme.onSurface.withOpacity(0.2),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: Icon(LucideIcons.moreHorizontal, size: 24, color: scheme.surface),
+      ),
+    );
+  }
+
   Widget _buildEmptyState() {
+    final scheme = Theme.of(context).colorScheme;
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -222,30 +304,29 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
           Container(
             padding: const EdgeInsets.all(30),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
-              shape: BoxShape.circle,
+              color: const Color(0xFF60A5FA).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(30),
             ),
-            child: Icon(_getIcon(), color: Colors.white.withOpacity(0.2), size: 50),
+            child: Icon(_getIcon(), size: 40, color: const Color(0xFF60A5FA)),
           ),
           const SizedBox(height: 25),
           Text(
-            'NO ${_getTitle()} POSTS FOUND',
+            'NO ${widget.type.toUpperCase()} POSTS FOUND',
             style: GoogleFonts.montserrat(
-              color: Colors.white,
-              fontSize: 14,
+              fontSize: 16,
               fontWeight: FontWeight.w900,
+              color: scheme.onSurface,
             ),
           ),
           const SizedBox(height: 10),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50),
+            padding: const EdgeInsets.symmetric(horizontal: 40),
             child: Text(
-              "WE'RE WORKING ON SOMETHING AMAZING. CHECK BACK SOON FOR FRESH UPDATES FROM OUR CONTENT HUB.",
+              "We're working on something amazing. Check back soon for fresh updates from our content hub.",
               textAlign: TextAlign.center,
               style: GoogleFonts.inter(
-                color: Colors.white.withOpacity(0.4),
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
+                fontSize: 13,
+                color: scheme.onSurface.withOpacity(0.5),
                 height: 1.5,
               ),
             ),
@@ -257,168 +338,142 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
 
   Widget _buildContentCard(dynamic item, int index) {
     final apiClient = ref.read(apiClientProvider);
-    final imageUrl = apiClient.resolveUrl(item['image'] ?? item['thumbnail'] ?? item['coverImage']);
+    final String? rawImage = (item['image'] != null && item['image'].toString().isNotEmpty) 
+        ? item['image'] 
+        : (item['thumbnail'] != null && item['thumbnail'].toString().isNotEmpty)
+            ? item['thumbnail']
+            : item['coverImage'];
+    final imageUrl = apiClient.resolveUrl(rawImage);
     final date = DateTime.tryParse(item['createdAt'] ?? '') ?? DateTime.now();
-    final formattedDate = DateFormat('MMM dd, yyyy').format(date);
+    final formattedDate = DateFormat('MM/dd/yyyy').format(date);
+    final scheme = Theme.of(context).colorScheme;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 30),
-      decoration: BoxDecoration(
-        color: const Color(0xFF18181B),
-        borderRadius: BorderRadius.circular(40),
-        border: Border.all(color: Colors.white.withOpacity(0.05)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.3),
-            blurRadius: 30,
-            offset: const Offset(0, 15),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(40),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return GestureDetector(
+      onTap: () => _openDetail(item),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        decoration: BoxDecoration(
+          color: scheme.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: scheme.onSurface.withOpacity(0.05)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: Row(
           children: [
-            // Image Stack
-            Stack(
-              children: [
-                AspectRatio(
-                  aspectRatio: 16 / 10,
-                  child: Image.network(imageUrl, fit: BoxFit.cover),
-                ),
-                Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [Colors.transparent, Colors.black.withOpacity(0.7)],
+            // 🖼️ COMPACT IMAGE
+            Container(
+              width: 100,
+              height: 100,
+              margin: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: scheme.onSurface.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(12),
+                image: imageUrl.isNotEmpty
+                    ? DecorationImage(
+                        image: NetworkImage(imageUrl),
+                        fit: BoxFit.cover,
+                      )
+                    : null,
+              ),
+              child: imageUrl.isEmpty
+                  ? Center(
+                      child: Icon(
+                        _getIcon(),
+                        color: scheme.onSurface.withOpacity(0.1),
+                        size: 30,
                       ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 25,
-                  right: 25,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.white.withOpacity(0.2)),
-                    ),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                      child: Text(
-                        (item['type'] ?? widget.type).toString().toUpperCase(),
-                        style: GoogleFonts.montserrat(
-                          color: Colors.white,
-                          fontSize: 9,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 2,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+                    )
+                  : null,
             ),
 
-            // Content Info
-            Padding(
-              padding: const EdgeInsets.all(30),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(LucideIcons.calendar, size: 12, color: Colors.white.withOpacity(0.3)),
-                      const SizedBox(width: 8),
-                      Text(
-                        formattedDate.toUpperCase(),
-                        style: GoogleFonts.montserrat(
-                          color: Colors.white.withOpacity(0.3),
-                          fontSize: 9,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                      const SizedBox(width: 15),
-                      Container(width: 4, height: 4, decoration: BoxDecoration(color: const Color(0xFF60A5FA).withOpacity(0.4), shape: BoxShape.circle)),
-                      const SizedBox(width: 15),
-                      Icon(LucideIcons.user, size: 12, color: Colors.white.withOpacity(0.3)),
-                      const SizedBox(width: 8),
-                      Text(
-                        'BY M4 TEAM',
-                        style: GoogleFonts.montserrat(
-                          color: Colors.white.withOpacity(0.3),
-                          fontSize: 9,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Text(
-                    (item['title'] ?? 'UNTITLED').toString().toUpperCase(),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.montserrat(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w900,
-                      height: 1.1,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    (item['description'] ?? 'NO DESCRIPTION AVAILABLE').toString(),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.inter(
-                      color: Colors.white.withOpacity(0.5),
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500,
-                      height: 1.5,
-                    ),
-                  ),
-                  const SizedBox(height: 30),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextButton.icon(
-                        onPressed: () {},
-                        style: TextButton.styleFrom(padding: EdgeInsets.zero),
-                        icon: Text(
-                          'READ MORE',
-                          style: GoogleFonts.montserrat(
-                            color: const Color(0xFF60A5FA),
-                            fontSize: 10,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 2,
+            // 📄 CONTENT INFO
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 12, 16, 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF60A5FA).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            item['type'].toString().toUpperCase(),
+                            style: GoogleFonts.montserrat(
+                              fontSize: 7,
+                              fontWeight: FontWeight.w900,
+                              color: const Color(0xFF60A5FA),
+                              letterSpacing: 1,
+                            ),
                           ),
                         ),
-                        label: const Icon(LucideIcons.arrowRight, color: Color(0xFF60A5FA), size: 16),
-                      ),
-                      Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.05),
-                          borderRadius: BorderRadius.circular(14),
+                        Text(
+                          formattedDate,
+                          style: GoogleFonts.inter(
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                            color: scheme.onSurface.withOpacity(0.2),
+                          ),
                         ),
-                        child: const Icon(LucideIcons.share2, color: Colors.white54, size: 18),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      item['title'].toString().toUpperCase(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w900,
+                        color: scheme.onSurface,
+                        letterSpacing: -0.5,
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      item['description'] ?? '',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.inter(
+                        fontSize: 10,
+                        color: scheme.onSurface.withOpacity(0.5),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'READ ARTICLE',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w900,
+                            color: const Color(0xFF60A5FA),
+                            letterSpacing: 1,
+                          ),
+                        ),
+                        const Icon(LucideIcons.arrowRight, size: 14, color: Color(0xFF60A5FA)),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
         ),
       ),
-    ).animate().fadeIn(delay: (index * 100).ms).slideY(begin: 0.1, curve: Curves.easeOutCubic, duration: 600.ms);
+    ).animate().fadeIn(delay: (index * 100).ms).slideX(begin: 0.1);
   }
 }

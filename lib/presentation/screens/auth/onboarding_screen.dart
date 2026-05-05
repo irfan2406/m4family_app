@@ -53,13 +53,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                   .scale(
                     begin: const Offset(1.1, 1.1),
                     end: const Offset(1.0, 1.0),
-                    duration: 10.seconds,
-                    curve: Curves.easeInOut,
+                    duration: 5.seconds,
+                    curve: Curves.easeOut,
                   ),
             ),
           ),
           
-          // Gradient Overlay
+          // Gradient Overlay and Backdrop Blur
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -83,84 +83,75 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                 Stack(
                   alignment: Alignment.center,
                   children: [
-                    // Rotating Majesty Light Rays
-                    SizedBox(
-                      width: 400,
-                      height: 400,
-                      child: CustomPaint(
-                        painter: RotatingRaysPainter(),
-                      ),
-                    ).animate(onPlay: (controller) => controller.repeat())
-                     .rotate(duration: 30.seconds),
-
                     // Floating Premium Particles
                     ...List.generate(8, (index) => FloatingParticle(index: index)),
 
-                    // Logo Container
+                    // Logo Container (Centered and Clean)
                     Container(
-                      padding: const EdgeInsets.all(48),
+                      padding: const EdgeInsets.all(24),
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          // Soft Pulse Glow
-                          Container(
-                            width: 150,
-                            height: 150,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(0xFFC6A355).withOpacity(0.1),
-                                  blurRadius: 50,
-                                  spreadRadius: 20,
-                                ),
-                              ],
-                            ),
-                          ).animate(onPlay: (controller) => controller.repeat(reverse: true))
-                           .scale(begin: const Offset(1, 1), end: const Offset(1.3, 1.3), duration: 4.seconds),
+                          // Main Gold Logo (Smaller size: 180)
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // Subtle Glow/Shadow layer for legibility
+                              Image.asset(
+                                'assets/m4_family_logo.png',
+                                width: 180,
+                                fit: BoxFit.contain,
+                                color: const Color(0xFFFFD700).withOpacity(0.3),
+                              ).animate().fadeIn(duration: 2.seconds).blur(begin: const Offset(0, 0), end: const Offset(10, 10)),
 
-                          // Main Gold Logo
-                          Image.asset(
-                            'assets/m4-logo-gold.png',
-                            width: 280,
-                            fit: BoxFit.contain,
-                          )
-                              .animate()
-                              .fadeIn(duration: 2.seconds, curve: Curves.easeOut)
-                              .scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1), duration: 2.seconds, curve: const Cubic(0.16, 1, 0.3, 1))
-                              .moveY(begin: 20, end: 0, duration: 2.seconds)
-                              .animate(onPlay: (controller) => controller.repeat(reverse: true))
-                              .moveY(begin: -10, end: 10, duration: 6.seconds, curve: Curves.easeInOut),
+                              // Main vibrant logo layer
+                              Image.asset(
+                                'assets/m4_family_logo.png',
+                                width: 180,
+                                fit: BoxFit.contain,
+                                color: const Color(0xFFFFD700),
+                                colorBlendMode: BlendMode.srcIn,
+                              )
+                                  .animate()
+                                  .fadeIn(duration: 2.seconds, curve: Curves.easeOut)
+                                  .scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1), duration: 2.seconds, curve: const Cubic(0.16, 1, 0.3, 1))
+                                  .moveY(begin: 20, end: 0, duration: 2.seconds)
+                                  .animate(onPlay: (controller) => controller.repeat(reverse: true))
+                                  .moveY(begin: -5, end: 5, duration: 6.seconds, curve: Curves.easeInOut),
+                            ],
+                          ),
 
-                          // Sweep Light Effect
+                          // Diagonal Sweep Light Effect
                           ClipRect(
-                            child: AnimatedBuilder(
-                              animation: _controller,
-                              builder: (context, child) {
-                                return Transform.translate(
-                                  offset: Offset((_controller.value * 2.5 - 1.25) * 280, 0),
-                                  child: child,
-                                );
-                              },
-                              child: Transform.rotate(
-                                angle: -30 * 3.14159 / 180,
-                                child: Container(
-                                  width: 100,
-                                  height: 300,
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: [
-                                        Colors.white.withOpacity(0),
-                                        Colors.white.withOpacity(0.4),
-                                        Colors.white.withOpacity(0),
-                                      ],
-                                      stops: const [0.4, 0.5, 0.6],
+                            child: SizedBox(
+                              width: 180,
+                              height: 100,
+                              child: Stack(
+                                children: [
+                                  Positioned.fill(
+                                    child: Transform.rotate(
+                                      angle: -0.3,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                            colors: [
+                                              Colors.transparent,
+                                              Colors.white.withOpacity(0.5),
+                                              Colors.transparent,
+                                            ],
+                                            stops: const [0.35, 0.5, 0.65],
+                                          ),
+                                        ),
+                                      ).animate()
+                                       .moveX(begin: -300, end: 300, delay: 500.ms, duration: 2.seconds, curve: Curves.easeInOut),
                                     ),
                                   ),
-                                ),
+                                ],
                               ),
                             ),
-                          ).animate().fadeIn(delay: 500.ms, duration: 500.ms),
+                          ),
                         ],
                       ),
                     ),
@@ -253,18 +244,18 @@ class RotatingRaysPainter extends CustomPainter {
       ..shader = SweepGradient(
         colors: [
           Colors.transparent,
-          const Color(0xFFC6A355).withOpacity(0.1),
+          const Color(0xFFFFD700).withOpacity(0.05),
           Colors.transparent,
-          const Color(0xFFC6A355).withOpacity(0.1),
+          const Color(0xFFFFD700).withOpacity(0.05),
           Colors.transparent,
-          const Color(0xFFC6A355).withOpacity(0.1),
+          const Color(0xFFFFD700).withOpacity(0.05),
           Colors.transparent,
-          const Color(0xFFC6A355).withOpacity(0.1),
+          const Color(0xFFFFD700).withOpacity(0.05),
           Colors.transparent,
         ],
         stops: const [0.0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1.0],
       ).createShader(Rect.fromCircle(center: center, radius: radius))
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 60);
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 80);
 
     canvas.drawCircle(center, radius, paint);
   }

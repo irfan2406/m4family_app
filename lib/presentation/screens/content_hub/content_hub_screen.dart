@@ -3,19 +3,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:m4_mobile/presentation/providers/content_provider.dart';
-import 'package:m4_mobile/presentation/providers/auth_provider.dart';
-import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:intl/intl.dart';
+import 'package:m4_mobile/core/network/api_client.dart';
+import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/screens/content/content_detail_screen.dart';
+import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 
 class GuestContentHubScreen extends ConsumerStatefulWidget {
   final String title;
   final String subtitle;
   final IconData typeIcon;
   final String emptyMessage;
-  final String contentType; // "media", "blog", "highlight", "event"
+  final String contentType;
 
   const GuestContentHubScreen({
     super.key,
@@ -31,523 +30,457 @@ class GuestContentHubScreen extends ConsumerStatefulWidget {
 }
 
 class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
+  List<dynamic> _items = [];
+  bool _isLoading = true;
+
   @override
   void initState() {
     super.initState();
-    Future.microtask(() =>
-        ref.read(contentProvider(widget.contentType).notifier).fetchContent(widget.contentType));
+    _fetchContent();
   }
 
   @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final isDark = scheme.brightness == Brightness.dark;
-    final state = ref.watch(contentProvider(widget.contentType));
+  void didUpdateWidget(GuestContentHubScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.contentType != widget.contentType) {
+      _fetchContent();
+    }
+  }
 
-    return Scaffold(
-      backgroundColor: scheme.surface,
-      drawer: const ConditionalDrawer(),
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            floating: true,
-            backgroundColor: scheme.surface.withValues(alpha: 0.92),
-            surfaceTintColor: Colors.transparent,
-            elevation: 0,
-            leadingWidth: 80,
-            leading: Padding(
-              padding: const EdgeInsets.only(left: 12),
-              child: Center(
-                child: IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: Icon(LucideIcons.chevronLeft, color: isDark ? Colors.white : Colors.black, size: 28),
-                  style: IconButton.styleFrom(
-                    backgroundColor: scheme.onSurface.withValues(alpha: 0.05),
-                    padding: EdgeInsets.zero,
-                  ),
-                ),
-              ),
-            ),
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'M4 FAMILY',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w400,
-                    letterSpacing: -0.5,
-                    color: scheme.onSurface,
-                  ),
-                ),
-                Text(
-                  'DEVELOPMENTS',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 8,
-                    fontWeight: FontWeight.w400,
-                    letterSpacing: 3,
-                    color: scheme.onSurface.withValues(alpha: 0.55),
-                  ),
-                ),
-              ],
-            ),
-            actions: [
-              Builder(
-                builder: (context) => IconButton(
-                  onPressed: () => Scaffold.of(context).openDrawer(),
-                  icon: Icon(
-                    LucideIcons.moreHorizontal,
-                    color: scheme.onSurface,
-                    size: 28,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-            ],
-          ),
+  Future<void> _fetchContent() async {
+    print('Fetching content for type: ${widget.contentType}');
+    setState(() {
+      _isLoading = true;
+      _items = []; // Clear old items to avoid stale UI
+    });
+    try {
+      final apiClient = ref.read(apiClientProvider);
+      final authState = ref.read(authProvider);
+      
+      String userRole = 'guest';
+      if (authState.status == AuthStatus.authenticated) {
+        final rawRole = authState.user?['role']?.toString().toLowerCase() ?? 'user';
+        userRole = rawRole == 'customer' ? 'user' : rawRole;
+      }
 
-          // Header Section
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 40),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: scheme.onSurface.withValues(alpha: 0.05),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.45)),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(widget.typeIcon, color: scheme.onSurface, size: 16),
-                        const SizedBox(width: 12),
-                        Text(
-                          'CONTENT HUB',
-                          style: GoogleFonts.montserrat(
-                            color: scheme.onSurface,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w400,
-                            letterSpacing: 1,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ).animate().fadeIn().slideX(begin: -0.2),
-                  const SizedBox(height: 24),
-                  Text(
-                    widget.title,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 32,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: -1,
-                      height: 1.0,
-                      color: scheme.onSurface,
-                    ),
-                  ).animate().fadeIn().slideY(begin: 0.2),
-                  const SizedBox(height: 18),
-                  Text(
-                    widget.subtitle,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 14,
-                      color: scheme.onSurface.withValues(alpha: isDark ? 0.6 : 0.8),
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ).animate().fadeIn(delay: 200.ms),
-                  const SizedBox(height: 40),
-                ],
-              ),
-            ),
-          ),
+      final res = await apiClient.getContent(
+        widget.contentType,
+        role: userRole,
+      );
 
-          // Content Body
-          if (state.isLoading)
-            const SliverFillRemaining(
-              child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
-            )
-          else if (state.error != null)
-            SliverFillRemaining(
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(LucideIcons.wifiOff, color: scheme.onSurface.withValues(alpha: 0.25), size: 48),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Unable to load content',
-                      style: GoogleFonts.montserrat(color: scheme.onSurface.withValues(alpha: 0.6), fontSize: 14),
-                    ),
-                    const SizedBox(height: 16),
-                    TextButton(
-                      onPressed: () => ref.read(contentProvider(widget.contentType).notifier).fetchContent(widget.contentType),
-                      child: Text('RETRY', style: GoogleFonts.montserrat(fontWeight: FontWeight.w700, letterSpacing: 2)),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          else if (state.items.isEmpty)
-            SliverFillRemaining(
-              child: _buildEmptyState(isDark),
-            )
-          else
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    if (index >= state.items.length) return null;
-                    return _buildContentCard(state.items[index], isDark, index);
-                  },
-                  childCount: state.items.length,
-                ),
-              ),
-            ),
-          
-          // Bottom spacing
-          const SliverToBoxAdapter(child: SizedBox(height: 100)),
-        ],
+      if (res.statusCode == 200 && res.data['status'] == true && res.data['data'] is List) {
+        setState(() {
+          _items = res.data['data'];
+          _isLoading = false;
+        });
+      } else {
+        setState(() => _isLoading = false);
+      }
+    } catch (e) {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  void _openDetail(dynamic item) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ContentDetailScreen(content: item),
       ),
     );
   }
 
-  Widget _buildEmptyState(bool isDark) {
-    final scheme = Theme.of(context).colorScheme;
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              color: scheme.onSurface.withValues(alpha: 0.03),
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.45)),
-            ),
-            child: Icon(widget.typeIcon, color: scheme.onSurface.withValues(alpha: 0.25), size: 32),
-          ),
-          const SizedBox(height: 32),
-          Text(
-            widget.emptyMessage,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
-              color: scheme.onSurface,
-              fontSize: 18,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'We\'re working on something amazing.\nCheck back soon for fresh updates.',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
-              color: scheme.onSurface.withValues(alpha: 0.55),
-              fontSize: 12,
-              height: 1.5,
-            ),
-          ),
-        ],
-      ),
-    ).animate().fadeIn(delay: 500.ms).scale(begin: const Offset(0.9, 0.9));
+  IconData _getIcon() {
+    switch (widget.contentType.toLowerCase()) {
+      case 'media': return LucideIcons.playCircle;
+      case 'highlight':
+      case 'highlights': return LucideIcons.zap;
+      case 'blog': return LucideIcons.fileText;
+      case 'event':
+      case 'events': return LucideIcons.calendar;
+      default: return widget.typeIcon;
+    }
   }
 
-  Widget _buildContentCard(Map<String, dynamic> item, bool isDark, int index) {
-    final apiClient = ref.read(apiClientProvider);
-    final String title = item['title'] ?? '';
-    final String description = item['description'] ?? '';
-    final String? imageUrl = item['image'];
-    final String? videoUrl = item['videoUrl'];
-    final String? thumbnail = item['thumbnail'];
-    final String type = item['type'] ?? widget.contentType;
-    final DateTime? createdAt = item['createdAt'] != null ? DateTime.tryParse(item['createdAt']) : null;
-    final String? projectTitle = item['project'] is Map ? item['project']['title'] : null;
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final scheme = Theme.of(context).colorScheme;
 
-    final String displayImage = thumbnail ?? imageUrl ?? '';
-    final String resolvedImage = displayImage.isNotEmpty ? apiClient.resolveUrl(displayImage) : '';
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 24),
-      child: GestureDetector(
-        onTap: () => _openContentDetail(item),
-        child: Container(
-          decoration: BoxDecoration(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
-            borderRadius: BorderRadius.circular(32),
-            border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.06)),
+    return Scaffold(
+      backgroundColor: scheme.surface,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: RadialGradient(
+            center: Alignment.topLeft,
+            radius: 1.5,
+            colors: isDark 
+              ? [const Color(0xFF1A1A1A), const Color(0xFF0A0A0A)]
+              : [scheme.surface, scheme.surfaceContainerLowest],
           ),
+        ),
+        child: SafeArea(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Image
-              if (resolvedImage.isNotEmpty)
-                ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-                  child: AspectRatio(
-                    aspectRatio: 16 / 9,
-                    child: Stack(
-                      fit: StackFit.expand,
+              // 🏷️ STANDARDIZED HEADER (Web Parity)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    _buildCircleButton(
+                      icon: LucideIcons.arrowLeft,
+                      onTap: () {
+                        if (Navigator.canPop(context)) {
+                          Navigator.pop(context);
+                        } else {
+                          ref.read(navigationProvider.notifier).state = 0;
+                        }
+                      },
+                    ),
+                    Column(
                       children: [
-                        CachedNetworkImage(
-                          imageUrl: resolvedImage,
-                          fit: BoxFit.cover,
-                          placeholder: (_, __) => Container(color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05)),
-                          errorWidget: (_, __, ___) => Container(
-                            color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05),
-                            child: Icon(widget.typeIcon, color: (isDark ? Colors.white : Colors.black).withOpacity(0.15), size: 48),
+                        Text(
+                          'M4 FAMILY',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 2.5,
+                            color: scheme.onSurface,
                           ),
                         ),
-                        // Play icon for video content
-                        if (videoUrl != null && videoUrl.isNotEmpty)
-                          Center(
-                            child: Container(
-                              width: 56,
-                              height: 56,
-                              decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.6),
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(LucideIcons.play, color: Colors.white, size: 24),
-                            ),
+                        Text(
+                          'DEVELOPMENTS',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 8,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 3.5,
+                            color: scheme.onSurface.withOpacity(0.4),
                           ),
+                        ),
                       ],
                     ),
-                  ),
+                    _buildMenuButton(),
+                  ],
                 ),
+              ),
 
-              // Content Body
+              // 🏷️ INTRO SECTION
               Padding(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Type badge + date
                     Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: (isDark ? Colors.white : Colors.black).withOpacity(0.06),
-                            borderRadius: BorderRadius.circular(8),
+                            color: const Color(0xFF60A5FA).withOpacity(0.1),
+                            shape: BoxShape.circle,
                           ),
-                          child: Text(
-                            type.toUpperCase(),
-                            style: GoogleFonts.montserrat(
-                              color: isDark ? Colors.white : Colors.black,
-                              fontSize: 8,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 1.5,
-                            ),
-                          ),
+                          child: Icon(_getIcon(), color: const Color(0xFF60A5FA), size: 18),
                         ),
-                        if (projectTitle != null) ...[
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.06)),
-                            ),
-                            child: Text(
-                              projectTitle.toUpperCase(),
-                              style: GoogleFonts.montserrat(
-                                color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
-                                fontSize: 7,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: 1,
-                              ),
-                            ),
-                          ),
-                        ],
-                        const Spacer(),
-                        if (createdAt != null)
-                          Text(
-                            DateFormat('MMM d, yyyy').format(createdAt),
-                            style: GoogleFonts.montserrat(
-                              color: (isDark ? Colors.white : Colors.black).withOpacity(0.4),
-                              fontSize: 10,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    // Title
-                    Text(
-                      title,
-                      style: GoogleFonts.montserrat(
-                        color: isDark ? Colors.white : Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -0.5,
-                        height: 1.3,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    if (description.isNotEmpty) ...[
-                      const SizedBox(height: 8),
-                      Text(
-                        description,
-                        style: GoogleFonts.montserrat(
-                          color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
-                          fontSize: 12,
-                          height: 1.5,
-                        ),
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                    const SizedBox(height: 16),
-                    // Read More
-                    Row(
-                      children: [
+                        const SizedBox(width: 15),
                         Text(
-                          videoUrl != null && videoUrl.isNotEmpty ? 'WATCH NOW' : 'READ MORE',
+                          'CONTENT HUB',
                           style: GoogleFonts.montserrat(
-                            color: isDark ? Colors.white : Colors.black,
                             fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 2,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 3,
+                            color: const Color(0xFF60A5FA),
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        Icon(
-                          LucideIcons.arrowRight,
-                          color: isDark ? Colors.white : Colors.black,
-                          size: 14,
-                        ),
                       ],
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      _getTitle(),
+                      style: GoogleFonts.montserrat(
+                        fontSize: 32,
+                        fontWeight: FontWeight.w900,
+                        color: scheme.onSurface,
+                        letterSpacing: -1,
+                        height: 0.9,
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    Text(
+                      _getSubtitle(),
+                      style: GoogleFonts.inter(
+                        fontSize: 14,
+                        color: scheme.onSurface.withOpacity(0.5),
+                        fontWeight: FontWeight.w500,
+                        height: 1.5,
+                      ),
                     ),
                   ],
                 ),
+              ),
+
+              Expanded(
+                child: _isLoading
+                    ? const Center(child: CircularProgressIndicator(color: Color(0xFF60A5FA)))
+                    : _items.isEmpty
+                        ? _buildEmptyState()
+                        : ListView.builder(
+                            padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
+                            itemCount: _items.length,
+                            itemBuilder: (context, index) => _buildContentCard(_items[index], index),
+                          ),
               ),
             ],
           ),
         ),
       ),
-    ).animate(delay: Duration(milliseconds: 100 * index)).fadeIn().slideY(begin: 0.1);
-  }
-
-  void _openContentDetail(Map<String, dynamic> item) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final apiClient = ref.read(apiClientProvider);
-    final videoUrl = item['videoUrl'];
-    final content = item['content'] ?? '';
-    final image = item['image'];
-    final title = item['title'] ?? '';
-    final description = item['description'] ?? '';
-
-    // If it's a video, try to launch it directly
-    if (videoUrl != null && videoUrl.toString().isNotEmpty) {
-      launchUrl(Uri.parse(videoUrl.toString()), mode: LaunchMode.externalApplication);
-      return;
-    }
-
-    // Otherwise show a detail bottom sheet
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.9,
-          maxChildSize: 0.95,
-          minChildSize: 0.5,
-          builder: (context, scrollController) {
-            return Container(
-              decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF111111) : Colors.white,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-              ),
-              child: ListView(
-                controller: scrollController,
-                padding: const EdgeInsets.all(24),
-                children: [
-                  // Drag Handle
-                  Center(
-                    child: Container(
-                      width: 40,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Hero image
-                  if (image != null && image.toString().isNotEmpty)
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(24),
-                      child: CachedNetworkImage(
-                        imageUrl: apiClient.resolveUrl(image),
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        placeholder: (_, __) => Container(
-                          height: 200,
-                          color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05),
-                        ),
-                      ),
-                    ),
-                  const SizedBox(height: 24),
-
-                  // Title
-                  Text(
-                    title,
-                    style: GoogleFonts.montserrat(
-                      color: isDark ? Colors.white : Colors.black,
-                      fontSize: 24,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -0.5,
-                      height: 1.2,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Description
-                  if (description.isNotEmpty)
-                    Text(
-                      description,
-                      style: GoogleFonts.montserrat(
-                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
-                        fontSize: 14,
-                        height: 1.6,
-                      ),
-                    ),
-
-                  // HTML Content (rendered as plain text for now)
-                  if (content.toString().isNotEmpty) ...[
-                    const SizedBox(height: 24),
-                    Text(
-                      _stripHtml(content.toString()),
-                      style: GoogleFonts.montserrat(
-                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.8),
-                        fontSize: 13,
-                        height: 1.8,
-                      ),
-                    ),
-                  ],
-
-                  const SizedBox(height: 40),
-                ],
-              ),
-            );
-          },
-        );
-      },
     );
   }
 
-  String _stripHtml(String html) {
-    final RegExp exp = RegExp(r'<[^>]*>', multiLine: true, caseSensitive: true);
-    return html.replaceAll(exp, '').replaceAll('&nbsp;', ' ').replaceAll('&amp;', '&').trim();
+  Widget _buildCircleButton({required IconData icon, required VoidCallback onTap}) {
+    final scheme = Theme.of(context).colorScheme;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 48,
+        height: 48,
+        decoration: BoxDecoration(
+          color: scheme.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: scheme.onSurface.withOpacity(0.05)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: Icon(icon, size: 20, color: scheme.onSurface),
+      ),
+    );
+  }
+
+  Widget _buildMenuButton() {
+    final scheme = Theme.of(context).colorScheme;
+    return GestureDetector(
+      onTap: () {
+        Scaffold.of(context).openDrawer();
+      },
+      child: Container(
+        width: 56,
+        height: 48,
+        decoration: BoxDecoration(
+          color: scheme.onSurface,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              color: scheme.onSurface.withOpacity(0.2),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: Icon(LucideIcons.moreHorizontal, size: 24, color: scheme.surface),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    final scheme = Theme.of(context).colorScheme;
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(30),
+            decoration: BoxDecoration(
+              color: const Color(0xFF60A5FA).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: Icon(_getIcon(), size: 40, color: const Color(0xFF60A5FA)),
+          ),
+          const SizedBox(height: 25),
+          Text(
+            'NO ${widget.contentType.toUpperCase()} POSTS FOUND',
+            style: GoogleFonts.montserrat(
+              fontSize: 16,
+              fontWeight: FontWeight.w900,
+              color: scheme.onSurface,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40),
+            child: Text(
+              "We're working on something amazing. Check back soon for fresh updates from our content hub.",
+              textAlign: TextAlign.center,
+              style: GoogleFonts.inter(
+                fontSize: 13,
+                color: scheme.onSurface.withOpacity(0.5),
+                height: 1.5,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContentCard(dynamic item, int index) {
+    final apiClient = ref.read(apiClientProvider);
+    final String? rawImage = (item['image'] != null && item['image'].toString().isNotEmpty) 
+        ? item['image'] 
+        : (item['thumbnail'] != null && item['thumbnail'].toString().isNotEmpty)
+            ? item['thumbnail']
+            : item['coverImage'];
+    final imageUrl = apiClient.resolveUrl(rawImage);
+    final date = DateTime.tryParse(item['createdAt'] ?? '') ?? DateTime.now();
+    final formattedDate = DateFormat('MM/dd/yyyy').format(date);
+    final scheme = Theme.of(context).colorScheme;
+
+    return GestureDetector(
+      onTap: () => _openDetail(item),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        decoration: BoxDecoration(
+          color: scheme.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: scheme.onSurface.withOpacity(0.05)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            // 🖼️ COMPACT IMAGE
+            Container(
+              width: 100,
+              height: 100,
+              margin: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: scheme.onSurface.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(12),
+                image: imageUrl.isNotEmpty
+                    ? DecorationImage(
+                        image: NetworkImage(imageUrl),
+                        fit: BoxFit.cover,
+                      )
+                    : null,
+              ),
+              child: imageUrl.isEmpty
+                  ? Center(
+                      child: Icon(
+                        _getIcon(),
+                        color: scheme.onSurface.withOpacity(0.1),
+                        size: 30,
+                      ),
+                    )
+                  : null,
+            ),
+
+            // 📄 CONTENT INFO
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 12, 16, 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF60A5FA).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            (item['type'] ?? widget.contentType).toString().toUpperCase(),
+                            style: GoogleFonts.montserrat(
+                              fontSize: 7,
+                              fontWeight: FontWeight.w900,
+                              color: const Color(0xFF60A5FA),
+                              letterSpacing: 1,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          formattedDate,
+                          style: GoogleFonts.inter(
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                            color: scheme.onSurface.withOpacity(0.2),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      item['title'].toString().toUpperCase(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w900,
+                        color: scheme.onSurface,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      item['description'] ?? '',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.inter(
+                        fontSize: 10,
+                        color: scheme.onSurface.withOpacity(0.5),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'READ ARTICLE',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w900,
+                            color: const Color(0xFF60A5FA),
+                            letterSpacing: 1,
+                          ),
+                        ),
+                        const Icon(LucideIcons.arrowRight, size: 14, color: Color(0xFF60A5FA)),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ).animate().fadeIn(delay: (index * 100).ms).slideX(begin: 0.1);
+  }
+
+  String _getTitle() {
+    switch (widget.contentType.toLowerCase()) {
+      case 'media': return 'MEDIA GALLERY';
+      case 'highlight':
+      case 'highlights': return 'PROJECT HIGHLIGHTS';
+      case 'event':
+      case 'events': return 'M4 EVENTS';
+      case 'blog': return 'M4 BLOG';
+      default: return widget.title.replaceAll('\n', ' ').toUpperCase();
+    }
+  }
+
+  String _getSubtitle() {
+    final type = widget.contentType.toLowerCase();
+    return 'Stay updated with our latest ${type == 'media' ? 'multimedia releases' : (type == 'highlight' || type == 'highlights') ? 'achievements and milestones' : (type == 'event' || type == 'events') ? 'upcoming events' : 'insights and news'}.';
   }
 }

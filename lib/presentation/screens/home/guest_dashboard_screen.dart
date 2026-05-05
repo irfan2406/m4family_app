@@ -164,13 +164,11 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return Scaffold(body: Center(child: CircularProgressIndicator(color: M4Theme.premiumBlue)));
+    if (_loading) return Material(color: Theme.of(context).scaffoldBackgroundColor, child: Center(child: CircularProgressIndicator(color: M4Theme.premiumBlue)));
 
-    return Scaffold(
-      key: _scaffoldKey,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      drawer: const GuestSidebarMenu(),
-      body: CustomScrollView(
+    return Material(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: CustomScrollView(
         controller: _scrollController,
         slivers: [
           // ⭐️ FIXED HEADER (Web Parity)
@@ -205,28 +203,30 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                             ],
                     ),
                     child: Image.asset(
-                      'assets/m4_logo.png',
-                      height: 100,
+                      'assets/m4_family_logo.png',
+                      height: 85, // 👈 Reduced for better balance
                       fit: BoxFit.contain,
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () => _scaffoldKey.currentState?.openDrawer(),
-                    child: Container(
-                      width: 56,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).brightness == Brightness.dark 
-                            ? Colors.white 
-                            : Colors.black,
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: Icon(
-                        LucideIcons.moreHorizontal, 
-                        color: Theme.of(context).brightness == Brightness.dark 
-                            ? Colors.black 
-                            : Colors.white, 
-                        size: 24
+                  Builder(
+                    builder: (context) => GestureDetector(
+                      onTap: () => Scaffold.of(context).openDrawer(),
+                      child: Container(
+                        width: 56,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).brightness == Brightness.dark 
+                              ? Colors.white 
+                              : Colors.black,
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Icon(
+                          LucideIcons.moreHorizontal, 
+                          color: Theme.of(context).brightness == Brightness.dark 
+                              ? Colors.black 
+                              : Colors.white, 
+                          size: 24
+                        ),
                       ),
                     ),
                   ),
@@ -446,9 +446,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                               style: GoogleFonts.montserrat(
                                 color: isSelected 
                                     ? (isDark ? Colors.white : Colors.black) 
-                                    : (isDark ? Colors.white : Colors.black), 
+                                    : (isDark ? Colors.white : Colors.black).withValues(alpha: 0.4), 
                                 fontSize: 10, 
-                                fontWeight: FontWeight.w500, 
+                                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500, 
                                 letterSpacing: 1.5
                               )
                             ),
@@ -656,7 +656,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          isCommunity ? 'EXPLORE COMMUNITY' : (isMedia ? 'READ ARTICLE' : 'VIEW PROJECT'),
+                          isCommunity ? 'EXPLORE COMMUNITY' : (isMedia ? 'READ ARTICLE' : 'VIEW PROPERTY'),
                           style: GoogleFonts.montserrat(
                             color: Colors.white,
                             fontSize: 10,
@@ -888,7 +888,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           childAspectRatio: 0.9,
           children: List.generate(4, (i) {
             final items = [
-              {'title': 'EXPLORE PROJECTS', 'desc': 'Browse our portfolio of properties', 'icon': LucideIcons.building2, 'route': '/projects'},
+              {'title': 'EXPLORE PROPERTIES', 'desc': 'Browse our portfolio of properties', 'icon': LucideIcons.building2, 'route': '/projects'},
               {'title': 'BOOK A VIEWING', 'desc': 'Schedule a visit to our show apartment', 'icon': LucideIcons.calendarDays, 'action': _scrollToInterestForm},
               {'title': 'SALES VIDEO CALL', 'desc': 'Talk to one of our sales expert', 'icon': LucideIcons.play, 'link': 'https://wa.me/912246018844'},
               {'title': 'REGISTER INTEREST', 'desc': 'Register your interest in our properties', 'icon': LucideIcons.user, 'action': _scrollToInterestForm},
@@ -939,12 +939,13 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'REGISTER INTEREST', 
-          style: GoogleFonts.montserrat(
+          'REGISTER YOUR\nINTEREST', 
+          style: GoogleFonts.dmSerifDisplay(
             color: isDark ? Colors.white : Colors.black, 
-            fontSize: 28, 
+            fontSize: 32, 
             fontWeight: FontWeight.w400, 
-            letterSpacing: 2
+            letterSpacing: -1,
+            height: 1.1,
           )
         ),
         const SizedBox(height: 48),

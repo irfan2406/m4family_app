@@ -725,10 +725,13 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                           const SizedBox(height: 16),
                           _progressTimeline(scheme),
                         ],
-                        const SizedBox(height: 26),
                         _sectionTitle('Registration', scheme, accent),
                         const SizedBox(height: 12),
                         _registrationCard(scheme),
+                        const SizedBox(height: 26),
+                        _sectionTitle('Booking', scheme, accent),
+                        const SizedBox(height: 12),
+                        _buildBookingCtaBar(scheme),
                         const SizedBox(height: 26),
                         _sectionTitle('Location', scheme, accent),
                         const SizedBox(height: 12),
@@ -1398,6 +1401,96 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 : Text('SUBMIT', style: GoogleFonts.montserrat(fontWeight: FontWeight.w900, letterSpacing: 3)),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildBookingCtaBar(ColorScheme scheme) {
+    final isLight = scheme.brightness == Brightness.light;
+    final accent = isLight ? Colors.black : scheme.primary;
+    final accentFg = isLight ? Colors.white : scheme.onPrimary;
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.4)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Row(
+            children: [
+              _ctaCircleIcon(
+                icon: LucideIcons.phone,
+                scheme: scheme,
+                onTap: () => _openOrWarn(_project?['contactPhone']),
+              ),
+              const SizedBox(width: 10),
+              _ctaCircleIcon(
+                icon: LucideIcons.messageCircle,
+                scheme: scheme,
+                onTap: () {
+                  final phone = (_project?['contactPhone'] ?? '').toString();
+                  if (phone.isNotEmpty) {
+                    launchUrl(Uri.parse('https://wa.me/$phone'), mode: LaunchMode.externalApplication);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Contact not available')));
+                  }
+                },
+              ),
+            ],
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: FilledButton(
+              onPressed: () => context.push('/cp/booking/site-visit?projectId=${widget.projectId}'),
+              style: FilledButton.styleFrom(
+                backgroundColor: accent,
+                foregroundColor: accentFg,
+                minimumSize: const Size.fromHeight(50),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                elevation: 10,
+                shadowColor: accent.withValues(alpha: 0.3),
+              ),
+              child: Text(
+                'BOOK VISIT',
+                style: GoogleFonts.montserrat(
+                  fontWeight: FontWeight.w900,
+                  fontSize: 12,
+                  letterSpacing: 2,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _ctaCircleIcon({required IconData icon, required ColorScheme scheme, required VoidCallback onTap}) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.5)),
+            color: scheme.surface,
+          ),
+          child: Icon(icon, size: 20, color: scheme.onSurface),
+        ),
       ),
     );
   }

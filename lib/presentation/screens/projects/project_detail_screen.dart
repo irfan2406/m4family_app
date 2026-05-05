@@ -711,8 +711,6 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
                       const SizedBox(height: 48),
                       _buildConstructionSection(project),
                       const SizedBox(height: 48),
-                      _buildPricingSection(project),
-                      const SizedBox(height: 48),
                       _buildAmenitiesSection(project),
                       const SizedBox(height: 48),
                       _buildPlansSection(project),
@@ -721,15 +719,16 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
                       const SizedBox(height: 48),
                       _buildDocumentsSection(project),
                       const SizedBox(height: 48),
+                      _buildContactSection(project),
+                      const SizedBox(height: 48),
                       _buildLocationSection(project),
                     ],
                   ),
                 ),
-                const SizedBox(height: 150),
+                const SizedBox(height: 48),
               ],
             ),
           ),
-          _buildBottomActions(project),
         ],
       ),
     );
@@ -790,27 +789,28 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
               ],
             ),
           ),
-          Positioned(
-            top: MediaQuery.of(context).padding.top + 70,
-            right: 20,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.white.withOpacity(0.1)),
-              ),
-              child: Text(
-                'ARTISTIC IMPRESSION', 
-                style: GoogleFonts.montserrat(
-                  color: Colors.white.withOpacity(0.8), 
-                  fontSize: 7, 
-                  fontWeight: FontWeight.w900, 
-                  letterSpacing: 1.2
-                )
+          if (project?['status']?.toString().toLowerCase() != 'completed')
+            Positioned(
+              top: MediaQuery.of(context).padding.top + 70,
+              right: 20,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.white.withOpacity(0.1)),
+                ),
+                child: Text(
+                  'ARTISTIC IMPRESSION', 
+                  style: GoogleFonts.montserrat(
+                    color: Colors.white.withOpacity(0.8), 
+                    fontSize: 7, 
+                    fontWeight: FontWeight.w900, 
+                    letterSpacing: 1.2
+                  )
+                ),
               ),
             ),
-          ),
           Positioned(
             bottom: 24,
             left: 24,
@@ -948,24 +948,6 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
     );
   }
 
-  Widget _buildPricingSection(dynamic project) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionHeader('Financials'),
-        const SizedBox(height: 24),
-        _PriceHighlightCard(price: project?['startingPrice']?.toString() ?? 'Price on Request'),
-        const SizedBox(height: 16),
-        if (project?['paymentPlans'] != null)
-           ...((project?['paymentPlans'] as List).map((plan) => _PaymentPlanCard(
-             plan: plan, 
-             onInquire: () => _showRequestDetailsDialog(project, plan),
-           )).toList())
-        else
-          const _EmptyTabContent(message: 'Financial details available on request'),
-      ],
-    );
-  }
 
   Widget _buildAmenitiesSection(dynamic project) {
     return Column(
@@ -1196,86 +1178,6 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
     );
   }
 
-  Widget _buildPricing(dynamic project) {
-    String startingPrice = project?['startingPrice']?.toString() ?? 'N/A';
-    if (startingPrice == 'N/A') {
-      if (_inventory.isNotEmpty) {
-        final prices = _inventory.map((u) => double.tryParse(u['price']?.toString().replaceAll(',', '') ?? '0') ?? 0).where((p) => p > 0).toList();
-        if (prices.isNotEmpty) {
-          prices.sort();
-          startingPrice = '₹ ${prices.first.toStringAsFixed(0)}';
-        } else {
-          startingPrice = 'Contact Us';
-        }
-      } else {
-        startingPrice = 'Contact Us';
-      }
-    } else {
-       if (!startingPrice.contains('₹')) startingPrice = '₹ $startingPrice';
-    }
-
-    return _buildTabContent(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _PricingCard(
-            config: project?['config'] ?? '2, 3 & 4 BHK',
-            price: startingPrice,
-            area: project?['areaRange'] ?? 'Starting from 1200 Sq.Ft.',
-          ),
-          const SizedBox(height: 48),
-          _SectionHeader(title: 'PAYMENT PLANS'),
-          const SizedBox(height: 24),
-          if (project?['paymentPlans'] != null && (project?['paymentPlans'] as List).isNotEmpty)
-             ...((project?['paymentPlans'] as List).map((plan) => _PaymentPlanCard(
-               plan: plan, 
-               onInquire: () => _showRequestDetailsDialog(project, plan),
-             )).toList())
-          else
-          _PaymentPlanCard(
-              plan: {
-                'name': '80/20 STANDARD PLAN',
-                'status': 'Active',
-                'steps': [
-                  {'label': 'Booking Amount', 'value': '10%'},
-                  {'label': 'During Construction', 'value': '50%'},
-                  {'label': 'On Handover', 'value': '40%'},
-                ]
-              },
-              onInquire: () => _showRequestDetailsDialog(project, {'name': '80/20 STANDARD PLAN'}),
-            ),
-          const SizedBox(height: 32),
-          // Disclaimer Note
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.04),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(LucideIcons.info, color: Colors.black.withOpacity(0.4), size: 16),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    'PRICES AND PAYMENT TERMS ARE SUBJECT TO CHANGE BY THE DEVELOPER. FINAL TERMS WILL BE OUTLINED IN THE SALES AND PURCHASE AGREEMENT (SPA).',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 9,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black.withOpacity(0.6),
-                      height: 1.5,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildInventory(dynamic project) {
     if (_inventory.isEmpty && !_isLoading) return const _EmptyTabContent(message: 'Coming soon');
@@ -1490,6 +1392,135 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
       child: child,
+    );
+  }
+
+  Widget _buildContactSection(dynamic project) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionHeader('CONTACT'),
+        const SizedBox(height: 24),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: isDark ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.3) : Colors.white,
+            borderRadius: BorderRadius.circular(40),
+            border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.1),
+                blurRadius: 40,
+                offset: const Offset(0, 20),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'INTERESTED IN THIS PROJECT?',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w900,
+                            color: colorScheme.onSurface,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'CONNECT WITH OUR TEAM TODAY',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 7,
+                            fontWeight: FontWeight.w800,
+                            color: colorScheme.onSurfaceVariant,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      _ContactIconBtn(
+                        icon: LucideIcons.phone,
+                        onTap: () => SupportHandlers.launchCall(project?['phone'] ?? project?['contactPhone']),
+                      ),
+                      const SizedBox(width: 8),
+                      _ContactIconBtn(
+                        icon: LucideIcons.messageCircle,
+                        onTap: () => SupportHandlers.launchWhatsApp(project?['whatsapp'] ?? project?['phone'] ?? project?['contactPhone']),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              _ScaleButton(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => BookingStartScreen(
+                      projectId: widget.projectId,
+                      project: project,
+                    ),
+                  ),
+                ),
+                child: Container(
+                  width: double.infinity,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.white : Colors.black,
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: Center(
+                    child: Text(
+                      'BOOK YOUR UNIT NOW',
+                      style: GoogleFonts.montserrat(
+                        color: isDark ? Colors.black : Colors.white,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 10,
+                        letterSpacing: 2,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _ContactIconBtn({required IconData icon, required VoidCallback onTap}) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Material(
+      color: colorScheme.surface,
+      borderRadius: BorderRadius.circular(14),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+          ),
+          child: Icon(icon, size: 18, color: colorScheme.onSurface),
+        ),
+      ),
     );
   }
 
@@ -1844,149 +1875,7 @@ class _EmptyTabContent extends StatelessWidget {
   }
 }
 
-class _PricingCard extends StatelessWidget {
-  final String config;
-  final String price;
-  final String area;
-  final String currency;
-  const _PricingCard({required this.config, required this.price, required this.area, this.currency = 'AED'});
 
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final displayPrice = price.contains('₹') || price.contains('AED') || price.contains('\$') 
-        ? price 
-        : '$currency $price';
-
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1F21) : Colors.white,
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
-        boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20, offset: const Offset(0, 10))],
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(config.toUpperCase(), 
-                  style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              _Badge(text: 'BOOKING OPEN', isOutline: true),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Divider(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 3,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('STARTING FROM', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.bold, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1)),
-                    Text(displayPrice, style: GoogleFonts.montserrat(fontSize: 18, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue)),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                flex: 2,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text('SBA RANGE', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.bold, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1)),
-                    Text(area, textAlign: TextAlign.right, style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.bold, color: isDark ? Colors.white.withOpacity(0.8) : Colors.black.withOpacity(0.7))),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _PaymentPlanCard extends StatelessWidget {
-  final dynamic plan;
-  final VoidCallback onInquire;
-  const _PaymentPlanCard({required this.plan, required this.onInquire});
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final steps = plan['items'] as List? ?? plan['steps'] as List? ?? [];
-    return Container(
-      margin: const EdgeInsets.only(bottom: 20),
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1F21) : const Color(0xFFF4F4F5),
-        borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(plan['name']?.toString().toUpperCase() ?? 'PLAN', style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 1)),
-              _Badge(text: plan['status']?.toString().toUpperCase() ?? 'ACTIVE', color: const Color(0xFF10B981)),
-            ],
-          ),
-          const SizedBox(height: 32),
-          ...List.generate(steps.length, (index) {
-            final step = steps[index];
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    (step['description'] ?? step['label'] ?? '').toString().toUpperCase(), 
-                    style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: isDark ? Colors.white70 : Colors.black, letterSpacing: 0.5)
-                  ),
-                  Text(
-                    (step['percentage'] != null ? '${step['percentage']}%' : step['value'] ?? '').toString(), 
-                    style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black)
-                  ),
-                ],
-              ),
-            );
-          }),
-          const SizedBox(height: 12),
-          _ScaleButton(
-            onTap: onInquire,
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              decoration: BoxDecoration(
-                color: isDark ? Colors.white : Colors.black,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('REQUEST DETAILS', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2, color: isDark ? Colors.black : Colors.white)),
-                  const SizedBox(width: 8),
-                  Icon(LucideIcons.arrowUpRight, size: 14, color: isDark ? Colors.black : Colors.white),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class _InventoryItem extends StatelessWidget {
   final dynamic unit;
@@ -2778,32 +2667,6 @@ class _MediaFloatThumbnail extends StatelessWidget {
   }
 }
 
-class _PriceHighlightCard extends StatelessWidget {
-  final String price;
-  const _PriceHighlightCard({required this.price});
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(32),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1F21) : const Color(0xFFF4F4F5),
-        borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('STARTING PRICE', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 2)),
-          const SizedBox(height: 12),
-          Text(price.toUpperCase(), style: GoogleFonts.montserrat(fontSize: 24, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, height: 1, letterSpacing: -0.5)),
-        ],
-      ),
-    );
-  }
-}
 
 
 class _PlanRow extends StatelessWidget {

@@ -228,11 +228,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       }
     });
 
-    return Scaffold(
-      key: _scaffoldKey,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      drawer: const ConditionalDrawer(),
-      body: CustomScrollView(
+    return Material(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: CustomScrollView(
         controller: _scrollController,
         slivers: <Widget>[
           // ⭐️ FIXED HEADER (Web Parity)
@@ -267,30 +265,32 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             ],
                     ),
                     child: Image.asset(
-                      'assets/m4_logo.png',
-                      height: 100,
+                      'assets/m4_family_logo.png',
+                      height: 85, // 👈 Reduced for a more elegant, minimalist footprint
                       fit: BoxFit.contain,
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () => _scaffoldKey.currentState?.openDrawer(),
-                    child: Container(
-                      width: 56,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        // Toggle button background: White in Dark Mode, Black in Light Mode
-                        color: Theme.of(context).brightness == Brightness.dark 
-                            ? Colors.white 
-                            : Colors.black,
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: Icon(
-                        LucideIcons.moreHorizontal, 
-                        // Toggle icon color: Black in Dark Mode, White in Light Mode
-                        color: Theme.of(context).brightness == Brightness.dark 
-                            ? Colors.black 
-                            : Colors.white, 
-                        size: 24
+                  Builder(
+                    builder: (context) => GestureDetector(
+                      onTap: () => Scaffold.of(context).openDrawer(),
+                      child: Container(
+                        width: 56,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          // Toggle button background: White in Dark Mode, Black in Light Mode
+                          color: Theme.of(context).brightness == Brightness.dark 
+                              ? Colors.white 
+                              : Colors.black,
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Icon(
+                          LucideIcons.moreHorizontal, 
+                          // Toggle icon color: Black in Dark Mode, White in Light Mode
+                          color: Theme.of(context).brightness == Brightness.dark 
+                              ? Colors.black 
+                              : Colors.white, 
+                          size: 24
+                        ),
                       ),
                     ),
                   ),
@@ -395,7 +395,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.4),
+                                color: Colors.black.withOpacity(0.6),
                                 borderRadius: BorderRadius.circular(4),
                                 border: Border.all(color: Colors.white.withOpacity(0.1)),
                               ),
@@ -475,7 +475,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   ),
                   const SizedBox(height: 32),
                   Text(
-                    _topTabCategory == 'COMMUNITIES' ? 'M4 COMMUNITIES' : 'M4 PROJECTS',
+                    _topTabCategory == 'COMMUNITIES' ? 'M4 COMMUNITIES' : 'M4 PROPERTIES',
                     style: GoogleFonts.dmSerifDisplay(
                       fontSize: 32,
                       fontWeight: FontWeight.w400,
@@ -601,11 +601,11 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
               child: Text(
                 'FEATURED PROPERTY',
-                style: GoogleFonts.montserrat(
-                  fontSize: 18,
+                style: GoogleFonts.dmSerifDisplay(
+                  fontSize: 32,
                   fontWeight: FontWeight.w400,
                   color: Theme.of(context).colorScheme.onSurface,
-                  letterSpacing: 2,
+                  letterSpacing: -0.5,
                 ),
               ),
             ),
@@ -655,48 +655,48 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                         color: Colors.white10,
                                         child: const Center(child: Icon(LucideIcons.image, color: Colors.white24)),
                                       ),
-                              ),
-                              Container(
-                                height: 420,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(40),
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [Colors.transparent, Colors.black.withOpacity(0.4)],
-                                    stops: const [0.6, 1.0],
-                                  ),
                                 ),
-                              ),
-                              Positioned(
-                                top: 25,
-                                right: 25,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                                Container(
+                                  height: 420,
                                   decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(color: Colors.white.withOpacity(0.1)),
-                                  ),
-                                  child: Text(
-                                    'ARTISTIC IMPRESSION',
-                                    style: GoogleFonts.montserrat(
-                                      color: Colors.white,
-                                      fontSize: 8,
-                                      fontWeight: FontWeight.w900,
-                                      letterSpacing: 1.5,
+                                    borderRadius: BorderRadius.circular(40),
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [Colors.transparent, Colors.black.withOpacity(0.4)],
+                                      stops: const [0.6, 1.0],
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
+                                Positioned(
+                                  top: 25,
+                                  right: 25,
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(color: Colors.white.withOpacity(0.1)),
+                                    ),
+                                    child: Text(
+                                      'ARTISTIC IMPRESSION',
+                                      style: GoogleFonts.montserrat(
+                                        color: Colors.white,
+                                        fontSize: 8,
+                                        fontWeight: FontWeight.w900,
+                                        letterSpacing: 1.5,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                       ),
-              ),
-            ),
-          ),
+                    ),
+                  ),
+                ),
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 40),
@@ -707,7 +707,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     style: GoogleFonts.dmSerifDisplay(
                       fontSize: 10,
                       fontWeight: FontWeight.w400,
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                      color: Theme.of(context).colorScheme.onSurface.withOpacity(
+                        Theme.of(context).brightness == Brightness.dark ? 0.3 : 0.8,
+                      ),
                       letterSpacing: 4,
                     ),
                   ),
@@ -809,7 +811,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         child: _LargeActionCard(
                           icon: LucideIcons.layoutGrid, 
                           title: 'EXPLORE', 
-                          subtitle: 'VIEW ALL PROJECTS',
+                          subtitle: 'VIEW ALL PROPERTIES',
                           onTap: () => ref.read(navigationProvider.notifier).state = 1,
                         ),
                       ),
@@ -867,7 +869,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 children: <Widget>[
                   Text(
                     'REGISTER YOUR\nINTEREST',
-                    style: GoogleFonts.montserrat(fontSize: 32, fontWeight: FontWeight.w300, color: Theme.of(context).colorScheme.onSurface, height: 1.1),
+                    style: GoogleFonts.dmSerifDisplay(
+                      fontSize: 32, 
+                      fontWeight: FontWeight.w400, 
+                      color: Theme.of(context).colorScheme.onSurface, 
+                      height: 1.1,
+                      letterSpacing: -1,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text('OFFICIAL INQUIRY FORM', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 2)),
@@ -876,7 +884,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   _PremiumInputField(label: 'Email Address *', controller: _emailController, keyboardType: TextInputType.emailAddress),
                   _PremiumInputField(label: 'Phone Number *', controller: _phoneController, keyboardType: TextInputType.phone),
                   _PremiumDropdownField(
-                    label: 'Select Project *', 
+                    label: 'Select Property *', 
                     value: _selectedProject,
                     options: _projects.map((p) => p['title'].toString()).toList(),
                     onChanged: (val) => setState(() => _selectedProject = val),

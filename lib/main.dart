@@ -13,6 +13,7 @@ import 'package:m4_mobile/presentation/screens/profile/referral_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/schedule_visit_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/support_logs_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/support_screen.dart';
+import 'package:m4_mobile/presentation/screens/support/contact_support_screen.dart';
 import 'package:m4_mobile/presentation/screens/profile/my_property_screen.dart';
 import 'package:m4_mobile/presentation/screens/profile/legal_vault_screen.dart';
 import 'package:m4_mobile/presentation/screens/profile/deactivate_account_screen.dart';
@@ -56,6 +57,7 @@ import 'package:m4_mobile/presentation/screens/cp/cp_shell_entry_screen.dart';
 import 'package:m4_mobile/presentation/screens/selection_logs/selection_logs_screen.dart';
 import 'package:m4_mobile/presentation/screens/custom_views/my_custom_views_screen.dart';
 import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import 'package:m4_mobile/core/providers/theme_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -231,7 +233,7 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/cp/contact',
-      builder: (context, state) => const ContactScreen(),
+      builder: (context, state) => const ContactSupportScreen(),
     ),
     GoRoute(
       path: '/cp/support',
@@ -293,6 +295,10 @@ final GoRouter _router = GoRouter(
       builder: (context, state) => SupportScreen(),
     ),
     GoRoute(
+      path: '/support/contact',
+      builder: (context, state) => const ContactSupportScreen(),
+    ),
+    GoRoute(
       path: '/notifications',
       builder: (context, state) => NotificationListScreen(),
     ),
@@ -321,7 +327,7 @@ final GoRouter _router = GoRouter(
       builder: (context, state) => const GuestContentHubScreen(
         title: 'M4 EVENTS',
         subtitle: 'Stay updated with our latest upcoming events.',
-        typeIcon: LucideIcons.calendarDays,
+        typeIcon: LucideIcons.calendar,
         emptyMessage: 'No event posts found',
         contentType: 'event',
       ),
@@ -354,7 +360,7 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/contact',
-      builder: (context, state) => const ContactScreen(),
+      builder: (context, state) => const ContactSupportScreen(),
     ),
     GoRoute(
       path: '/communities/:id',
@@ -392,22 +398,24 @@ class SplashScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Luxury Logo Placeholder
+            // Main Logo
             Container(
-              padding: const EdgeInsets.all(24),
+              width: 80,
+              height: 80,
               decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.black, width: 2),
+                color: Colors.black.withOpacity(0.4),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.white.withOpacity(0.1)),
               ),
-              child: const Text(
-                'M4',
-                style: TextStyle(
-                  fontSize: 48,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Image.asset(
+                  'assets/m4_family_logo.png',
+                  color: const Color(0xFFFFD700),
+                  colorBlendMode: BlendMode.srcIn,
                 ),
               ),
-            ),
+            ).animate().scale(duration: 500.ms, curve: Curves.easeOut),
             const SizedBox(height: 24),
             const CircularProgressIndicator(color: Colors.black),
           ],

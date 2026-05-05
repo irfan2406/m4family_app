@@ -515,19 +515,20 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
             ),
           ),
           // Artistic Impression Badge
-          Positioned(
-            top: MediaQuery.of(context).padding.top + 80,
-            right: 20,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.5),
-                borderRadius: BorderRadius.circular(30),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+          if (project?['status']?.toString().toLowerCase() != 'completed')
+            Positioned(
+              top: MediaQuery.of(context).padding.top + 80,
+              right: 20,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.black.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                ),
+                child: Text('ARTISTIC IMPRESSION', style: GoogleFonts.montserrat(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
               ),
-              child: Text('ARTISTIC IMPRESSION', style: GoogleFonts.montserrat(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
             ),
-          ),
           // Media Thumbnails
           Positioned(
             bottom: 40,

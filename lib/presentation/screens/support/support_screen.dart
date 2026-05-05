@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/support_provider.dart';
 import 'package:m4_mobile/presentation/screens/support/create_ticket_screen.dart';
+import 'package:go_router/go_router.dart';
 import 'package:m4_mobile/presentation/screens/support/schedule_visit_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/help_center_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/support_tickets_screen.dart';
@@ -37,9 +38,9 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(supportProvider);
 
-    return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: Container(
+    return Material(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
         ),
@@ -81,7 +82,6 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
           ),
         ),
       ),
-      floatingActionButton: null,
     );
   }
 
@@ -193,7 +193,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
               title: 'Call Us',
               subtitle: 'Speak with our support team',
               color: scheme.onSurface,
-              onTap: SupportHandlers.launchCall,
+              onTap: () => context.push('/support/contact'),
             ),
             _MatrixItem(
               icon: LucideIcons.helpCircle,

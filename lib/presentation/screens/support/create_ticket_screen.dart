@@ -108,7 +108,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
               style: GoogleFonts.montserrat(
                 fontSize: 8,
                 fontWeight: FontWeight.w700,
-                color: isDark ? Colors.white38 : Colors.black38,
+                color: isDark ? Colors.white38 : Colors.black54,
                 letterSpacing: 1,
               ),
             ),
@@ -172,13 +172,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                 validator: (v) => v!.isEmpty ? 'Please enter a message' : null,
               ),
 
-              const SizedBox(height: 32),
-
-              _buildLabel('ATTACHMENTS', isDark),
-              const SizedBox(height: 12),
-              _buildAttachmentSection(isDark),
-
-              const SizedBox(height: 32),
+              const SizedBox(height: 8),
 
               // Info Banner (at bottom like web)
               Container(
@@ -191,13 +185,13 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(LucideIcons.info, color: isDark ? Colors.white38 : Colors.black38, size: 20),
+                    Icon(LucideIcons.info, color: isDark ? Colors.white38 : Colors.black54, size: 20),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Text(
                         'OUR CONCIERGE TEAM TYPICALLY RESPONDS WITHIN 24-48 BUSINESS HOURS. FOR URGENT MATTERS, PLEASE CALL THE DIRECT SERVICE LINE.',
                         style: GoogleFonts.montserrat(
-                          color: isDark ? Colors.white38 : Colors.black38,
+                          color: isDark ? Colors.white38 : Colors.black54,
                           fontSize: 9,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 0.5,
@@ -225,7 +219,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
       style: GoogleFonts.montserrat(
         fontSize: 10,
         fontWeight: FontWeight.w900,
-        color: isDark ? Colors.white24 : Colors.black26,
+        color: isDark ? Colors.white24 : Colors.black45,
         letterSpacing: 1,
       ),
     ).animate().fadeIn().slideX(begin: -0.1);
@@ -267,7 +261,8 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
   }
 
   Widget _buildCategoryDropdown(bool isDark) {
-    return Column(
+    return Stack(
+      clipBehavior: Clip.none,
       children: [
         GestureDetector(
           onTap: () => setState(() {
@@ -309,50 +304,58 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
           ),
         ),
         if (_isCategoryOpen)
-          Container(
-            margin: const EdgeInsets.only(top: 8),
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF111111) : Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(isDark ? 0.5 : 0.05),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
+          Positioned(
+            top: 60,
+            left: 0,
+            right: 0,
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF111111) : Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(isDark ? 0.5 : 0.1),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            child: Column(
-              children: _categories.map((category) {
-                final isSelected = _selectedCategory == category;
-                return InkWell(
-                  onTap: () {
-                    setState(() {
-                      _selectedCategory = category;
-                      _isCategoryOpen = false;
-                    });
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                    decoration: BoxDecoration(
-                      color: isSelected ? const Color(0xFF3B82F6).withOpacity(0.1) : Colors.transparent,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      category.toUpperCase(),
-                      style: GoogleFonts.montserrat(
-                        color: isSelected ? const Color(0xFF3B82F6) : (isDark ? Colors.white38 : Colors.black38),
-                        fontSize: 10,
-                        fontWeight: isSelected ? FontWeight.w900 : FontWeight.w700,
-                        letterSpacing: 0.5,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: _categories.map((category) {
+                    final isSelected = _selectedCategory == category;
+                    return InkWell(
+                      onTap: () {
+                        setState(() {
+                          _selectedCategory = category;
+                          _isCategoryOpen = false;
+                        });
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                        decoration: BoxDecoration(
+                          color: isSelected ? const Color(0xFF3B82F6).withOpacity(0.1) : Colors.transparent,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          category.toUpperCase(),
+                          style: GoogleFonts.montserrat(
+                            color: isSelected ? const Color(0xFF3B82F6) : (isDark ? Colors.white38 : Colors.black54),
+                            fontSize: 10,
+                            fontWeight: isSelected ? FontWeight.w900 : FontWeight.w700,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                );
-              }).toList(),
+                    );
+                  }).toList(),
+                ),
+              ),
             ),
           ).animate().fadeIn(duration: 200.ms).slideY(begin: -0.05, end: 0),
       ],
@@ -360,7 +363,8 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
   }
 
   Widget _buildPriorityDropdown(bool isDark) {
-    return Column(
+    return Stack(
+      clipBehavior: Clip.none,
       children: [
         GestureDetector(
           onTap: () => setState(() {
@@ -402,50 +406,58 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
           ),
         ),
         if (_isPriorityOpen)
-          Container(
-            margin: const EdgeInsets.only(top: 8),
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF111111) : Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(isDark ? 0.5 : 0.05),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
+          Positioned(
+            top: 60,
+            left: 0,
+            right: 0,
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF111111) : Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(isDark ? 0.5 : 0.1),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            child: Column(
-              children: _priorities.map((priority) {
-                final isSelected = _selectedPriority == priority;
-                return InkWell(
-                  onTap: () {
-                    setState(() {
-                      _selectedPriority = priority;
-                      _isPriorityOpen = false;
-                    });
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                    decoration: BoxDecoration(
-                      color: isSelected ? const Color(0xFF3B82F6).withOpacity(0.1) : Colors.transparent,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      priority.toUpperCase(),
-                      style: GoogleFonts.montserrat(
-                        color: isSelected ? const Color(0xFF3B82F6) : (isDark ? Colors.white38 : Colors.black38),
-                        fontSize: 10,
-                        fontWeight: isSelected ? FontWeight.w900 : FontWeight.w700,
-                        letterSpacing: 0.5,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: _priorities.map((priority) {
+                    final isSelected = _selectedPriority == priority;
+                    return InkWell(
+                      onTap: () {
+                        setState(() {
+                          _selectedPriority = priority;
+                          _isPriorityOpen = false;
+                        });
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                        decoration: BoxDecoration(
+                          color: isSelected ? const Color(0xFF3B82F6).withOpacity(0.1) : Colors.transparent,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          priority.toUpperCase(),
+                          style: GoogleFonts.montserrat(
+                            color: isSelected ? const Color(0xFF3B82F6) : (isDark ? Colors.white38 : Colors.black54),
+                            fontSize: 10,
+                            fontWeight: isSelected ? FontWeight.w900 : FontWeight.w700,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                );
-              }).toList(),
+                    );
+                  }).toList(),
+                ),
+              ),
             ),
           ).animate().fadeIn(duration: 200.ms).slideY(begin: -0.05, end: 0),
       ],

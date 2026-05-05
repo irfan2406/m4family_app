@@ -221,10 +221,10 @@ class ProjectListScreen extends ConsumerWidget {
                               ),
                             ),
                             Text(
-                              'M4 PROJECTS',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w900,
+                              'M4 PROPERTIES',
+                              style: GoogleFonts.dmSerifDisplay(
+                                fontSize: 32,
+                                fontWeight: FontWeight.w400,
                                 color: Theme.of(context).colorScheme.onSurface,
                                 letterSpacing: -1,
                               ),
@@ -451,7 +451,8 @@ class _ProjectGridItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _Badge(text: project['status']?.toUpperCase() ?? 'LIVE ESTATE'),
-                const _Badge(text: 'ARTISTIC IMPRESSION'),
+                if (project['status']?.toString().toLowerCase() != 'completed')
+                  const _Badge(text: 'ARTISTIC IMPRESSION'),
               ],
             ),
           ),

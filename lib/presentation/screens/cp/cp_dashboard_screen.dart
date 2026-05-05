@@ -113,9 +113,9 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
       return q.isEmpty || _leadName(l).toLowerCase().contains(q) || _leadProject(l).toLowerCase().contains(q);
     }).toList();
 
-    return Scaffold(
-      backgroundColor: scheme.surface,
-      body: CustomScrollView(
+    return Material(
+      color: scheme.surface,
+      child: CustomScrollView(
         slivers: [
           // ⭐️ FIXED HEADER (Web Parity)
           SliverAppBar(
@@ -149,28 +149,30 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                             ],
                     ),
                     child: Image.asset(
-                      'assets/m4_logo.png',
-                      height: 100,
+                      'assets/m4_family_logo.png',
+                      height: 85, // 👈 Reduced for better balance
                       fit: BoxFit.contain,
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () => context.go('/cp/hub'),
-                    child: Container(
-                      width: 56,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).brightness == Brightness.dark 
-                            ? Colors.white 
-                            : Colors.black,
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: Icon(
-                        LucideIcons.moreHorizontal, 
-                        color: Theme.of(context).brightness == Brightness.dark 
-                            ? Colors.black 
-                            : Colors.white, 
-                        size: 24
+                  Builder(
+                    builder: (context) => GestureDetector(
+                      onTap: () => Scaffold.of(context).openDrawer(),
+                      child: Container(
+                        width: 56,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).brightness == Brightness.dark 
+                              ? Colors.white 
+                              : Colors.black,
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Icon(
+                          LucideIcons.moreHorizontal, 
+                          color: Theme.of(context).brightness == Brightness.dark 
+                              ? Colors.black 
+                              : Colors.white, 
+                          size: 24
+                        ),
                       ),
                     ),
                   ),
@@ -300,7 +302,13 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                   else ...[
                     _commissionVault(scheme),
                     const SizedBox(height: 24),
-                    _sectionLabel('MARKET OPPORTUNITIES', onViewAll: () => context.push('/cp/projects')),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: _sectionLabel(
+                        'M4 PROPERTIES', 
+                        onViewAll: () => context.push('/cp/projects'),
+                      ),
+                    ),
                     _opportunitiesCarousel(projectsAsync),
                     const SizedBox(height: 24),
                     _leadsHeader(scheme),
@@ -383,7 +391,15 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(title, style: GoogleFonts.montserrat(fontWeight: FontWeight.w900, letterSpacing: 0.5)),
+        Text(
+          title, 
+          style: GoogleFonts.dmSerifDisplay(
+            fontSize: 22,
+            fontWeight: FontWeight.w400, 
+            letterSpacing: -0.5,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
         TextButton(
           onPressed: onViewAll,
           child: Row(

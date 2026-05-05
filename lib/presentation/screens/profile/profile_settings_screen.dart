@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -98,29 +99,74 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
 
   Future<void> _selectDate() async {
     if (!_isEditing) return;
-    final DateTime? picked = await showDatePicker(
+    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    DateTime tempDate = _selectedDob ?? DateTime(2000);
+    
+    showModalBottomSheet(
       context: context,
-      initialDate: _selectedDob ?? DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-      builder: (context, child) => Theme(
-        data: Theme.of(context).copyWith(
-          colorScheme: const ColorScheme.dark(
-            primary: Colors.white,
-            onPrimary: Colors.black,
-            surface: Color(0xFF18181B),
-            onSurface: Colors.white,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Container(
+          height: 350,
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF09090B) : Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+            border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
           ),
-        ),
-        child: child!,
-      ),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(25, 20, 25, 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("SELECT BIRTHDAY", style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 1)),
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text("DONE", style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.blue)),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(thickness: 0.5),
+              Expanded(
+                child: CupertinoTheme(
+                  data: CupertinoThemeData(
+                    brightness: isDark ? Brightness.dark : Brightness.light,
+                    textTheme: CupertinoTextThemeData(
+                      dateTimePickerTextStyle: GoogleFonts.montserrat(
+                        color: isDark ? Colors.white : Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  child: CupertinoDatePicker(
+                    mode: CupertinoDatePickerMode.date,
+                    initialDateTime: tempDate,
+                    maximumDate: DateTime.now(),
+                    onDateTimeChanged: (DateTime picked) {
+                      setState(() {
+                        _selectedDob = picked;
+                        _dobController.text = DateFormat('dd MMM yyyy').format(picked).toUpperCase();
+                      });
+                    },
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
-    if (picked != null) {
-      setState(() {
-        _selectedDob = picked;
-        _dobController.text = DateFormat('yyyy-MM-dd').format(picked);
-      });
-    }
   }
 
   Future<void> _handleSave() async {
@@ -640,8 +686,73 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
         GestureDetector(
           onTap: () async {
             if (!_isEditing) return;
-            final date = await showDatePicker(context: context, initialDate: DateTime.now(), firstDate: DateTime(1900), lastDate: DateTime.now());
-            if (date != null) onChanged(DateFormat('yyyy-MM-dd').format(date));
+            
+            DateTime initialDate;
+            try {
+              initialDate = value.isNotEmpty ? DateTime.parse(value) : DateTime.now();
+            } catch (_) {
+              initialDate = DateTime.now();
+            }
+
+            showModalBottomSheet(
+              context: context,
+              backgroundColor: Colors.transparent,
+              builder: (context) => Container(
+                height: 350,
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF09090B) : Colors.white,
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
+                  border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+                ),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(25, 20, 25, 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("SELECT BIRTHDAY", style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 1)),
+                          GestureDetector(
+                            onTap: () => Navigator.pop(context),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text("DONE", style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.blue)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Divider(thickness: 0.5),
+                    Expanded(
+                      child: CupertinoTheme(
+                        data: CupertinoThemeData(
+                          brightness: isDark ? Brightness.dark : Brightness.light,
+                          textTheme: CupertinoTextThemeData(
+                            dateTimePickerTextStyle: GoogleFonts.montserrat(
+                              color: isDark ? Colors.white : Colors.black,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        child: CupertinoDatePicker(
+                          mode: CupertinoDatePickerMode.date,
+                          initialDateTime: initialDate,
+                          maximumDate: DateTime.now(),
+                          onDateTimeChanged: (DateTime picked) {
+                            onChanged(DateFormat('yyyy-MM-dd').format(picked));
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
           },
           child: Container(
             width: double.infinity,

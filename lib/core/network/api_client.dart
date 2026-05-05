@@ -449,9 +449,7 @@ class ApiClient {
   }
 
   String resolveUrl(String? url) {
-    if (url == null || url.isEmpty) {
-      return 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80';
-    }
+    if (url == null || url.isEmpty) return "";
     if (url.startsWith('http') || url.startsWith('tel:') || url.startsWith('mailto:')) return url;
 
     String root = baseUrl;
