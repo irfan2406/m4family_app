@@ -83,10 +83,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 
   void _startTimers() {
-    _heroTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+    _heroTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
       if (_projects.isNotEmpty) {
         setState(() {
-          _currentHeroIndex = (_currentHeroIndex + 1) % 5;
+          _currentHeroIndex = (_currentHeroIndex + 1) % (_projects.length > 5 ? 5 : _projects.length);
         });
       }
     });
@@ -368,7 +368,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       child: Builder(
                     builder: (context) {
                       final featured = (_projects.isNotEmpty)
-                          ? _projects.firstWhere((p) => p['featured'] == true, orElse: () => _projects.isNotEmpty ? _projects[0] : null)
+                          ? _projects[_currentHeroIndex % _projects.length]
                           : null;
                       
                       final mainImage = (featured != null)
@@ -396,13 +396,22 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(32),
-                                child: CachedNetworkImage(
-                                  imageUrl: apiClient.resolveUrl(mainImage),
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) => Container(color: Colors.black12),
-                                  errorWidget: (context, url, error) => Container(
-                                    color: Colors.white10,
-                                    child: const Center(child: Icon(LucideIcons.image, color: Colors.white24, size: 50)),
+                                child: AnimatedSwitcher(
+                                  duration: const Duration(milliseconds: 800),
+                                  transitionBuilder: (Widget child, Animation<double> animation) {
+                                    return FadeTransition(opacity: animation, child: child);
+                                  },
+                                  child: CachedNetworkImage(
+                                    key: ValueKey<int>(_currentHeroIndex),
+                                    imageUrl: apiClient.resolveUrl(mainImage),
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                    placeholder: (context, url) => Container(color: Colors.black12),
+                                    errorWidget: (context, url, error) => Container(
+                                      color: Colors.white10,
+                                      child: const Center(child: Icon(LucideIcons.image, color: Colors.white24, size: 50)),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -439,15 +448,19 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             right: 0,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: List.generate(3, (index) => Container(
-                                margin: const EdgeInsets.symmetric(horizontal: 3),
-                                width: index == 0 ? 20 : 12,
-                                height: 2,
-                                decoration: BoxDecoration(
-                                  color: index == 0 ? Colors.white : Colors.white.withOpacity(0.5),
-                                  borderRadius: BorderRadius.circular(1),
-                                ),
-                              )),
+                              children: List.generate(3, (index) {
+                                final isSelected = (_currentHeroIndex % 3) == index;
+                                return AnimatedContainer(
+                                  duration: const Duration(milliseconds: 300),
+                                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                                  width: isSelected ? 32 : 24,
+                                  height: 4,
+                                  decoration: BoxDecoration(
+                                    color: isSelected ? Colors.black : Colors.white.withValues(alpha: 0.5),
+                                    borderRadius: BorderRadius.circular(2),
+                                  ),
+                                );
+                              }),
                             ),
                           ),
                         ],

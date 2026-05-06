@@ -564,7 +564,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                 children: [
                   Text(
                     'REFER FRIEND',
-                    style: GoogleFonts.montserrat(color: foreground, fontSize: 24, fontWeight: FontWeight.w900, fontStyle: FontStyle.italic),
+                    style: GoogleFonts.montserrat(color: foreground, fontSize: 24, fontWeight: FontWeight.w900),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -737,8 +737,8 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                       child: isLoading
                         ? CircularProgressIndicator(color: theme.colorScheme.surface, strokeWidth: 2)
                         : Text(
-                            'SUBMIT LEAD VERIFICATION',
-                            style: GoogleFonts.montserrat(color: theme.colorScheme.surface, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2),
+                            'SUBMIT',
+                            style: GoogleFonts.montserrat(color: theme.colorScheme.surface, fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 2),
                           ),
                     ),
                   ),

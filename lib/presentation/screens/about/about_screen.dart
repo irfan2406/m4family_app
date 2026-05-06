@@ -476,22 +476,31 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         child: Stack(
           children: [
             CachedNetworkImage(
-              imageUrl: 'https://images.unsplash.com/photo-1464938050520-ef2270bb8ce8?auto=format&fit=crop&q=80',
+              imageUrl: ref.read(apiClientProvider).resolveUrl('/uploads/media/south_mumbai_skyline_luxury_residence_1774856627856.png'),
               fit: BoxFit.cover,
               width: double.infinity,
               height: double.infinity,
               placeholder: (context, url) => Container(color: Colors.black12),
             ),
-            Container(color: Colors.black45),
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.transparent, Colors.black26, Colors.black87],
+                  stops: const [0.0, 0.5, 1.0],
+                ),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.all(32),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('THE COLLECTIVE', style: GoogleFonts.montserrat(color: Colors.white60, fontSize: 10, fontWeight: FontWeight.w400, letterSpacing: 3)),
+                  Text('THE COLLECTIVE', style: GoogleFonts.montserrat(color: Colors.white60, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 3)),
                   const SizedBox(height: 4),
-                  Text('M4 LEGACY', style: GoogleFonts.montserrat(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w400, letterSpacing: -1)),
+                  Text('M4 LEGACY', style: GoogleFonts.montserrat(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w900, letterSpacing: -1, height: 1.1)),
                 ],
               ),
             ),

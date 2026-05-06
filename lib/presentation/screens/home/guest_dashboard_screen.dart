@@ -51,9 +51,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
   void initState() {
     super.initState();
     _fetchData();
-    _heroTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
-      if (mounted) {
-        setState(() => _heroIndex = (_heroIndex + 1) % 3);
+    _heroTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      if (mounted && _projects.isNotEmpty) {
+        setState(() => _heroIndex = (_heroIndex + 1) % (_projects.length > 5 ? 5 : _projects.length));
       }
     });
   }
@@ -283,8 +283,12 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       child: Builder(
                     builder: (context) {
                       final mainImage = _projects.isNotEmpty 
-                          ? (_projects[0]['heroImage'] ?? _projects[0]['image'] ?? 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80')
-                          : 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80';
+                          ? (_projects[_heroIndex % _projects.length]['heroImage'] ?? _projects[_heroIndex % _projects.length]['image'] ?? 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80')
+                          : [
+                              'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80',
+                              'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
+                              'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80'
+                            ][_heroIndex % 3];
                       
                       return Stack(
                         children: [
@@ -303,17 +307,26 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(32),
-                                child: CachedNetworkImage(
-                                  imageUrl: mainImage.toString().startsWith('http') 
-                                      ? mainImage.toString() 
-                                      : ref.read(apiClientProvider).resolveUrl(mainImage.toString()),
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) => Container(color: Colors.black12),
-                                  errorWidget: (context, url, error) => Container(
-                                    color: Colors.white10,
-                                    child: const Center(child: Icon(LucideIcons.image, color: Colors.white24, size: 50)),
-                                  ),
-                                ),
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 800),
+                          transitionBuilder: (Widget child, Animation<double> animation) {
+                            return FadeTransition(opacity: animation, child: child);
+                          },
+                          child: CachedNetworkImage(
+                            key: ValueKey<int>(_heroIndex),
+                            imageUrl: mainImage.toString().startsWith('http') 
+                                ? mainImage.toString() 
+                                : ref.read(apiClientProvider).resolveUrl(mainImage.toString()),
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                            height: double.infinity,
+                            placeholder: (context, url) => Container(color: Colors.black12),
+                            errorWidget: (context, url, error) => Container(
+                              color: Colors.white10,
+                              child: const Center(child: Icon(LucideIcons.image, color: Colors.white24, size: 50)),
+                            ),
+                          ),
+                        ),
                               ),
                             ),
                           ),
@@ -340,6 +353,29 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                               ),
                             ),
                           ),
+
+                          // Pagination Dots
+                          Positioned(
+                            bottom: 24,
+                            left: 0,
+                            right: 0,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: List.generate(3, (index) {
+                                final isSelected = (_heroIndex % 3) == index;
+                                return AnimatedContainer(
+                                  duration: const Duration(milliseconds: 300),
+                                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                                  width: isSelected ? 32 : 24,
+                                  height: 4,
+                                  decoration: BoxDecoration(
+                                    color: isSelected ? Colors.black : Colors.white.withValues(alpha: 0.5),
+                                    borderRadius: BorderRadius.circular(2),
+                                  ),
+                                );
+                              }),
+                            ),
+                          ),
                         ],
                       );
                     },
@@ -351,12 +387,15 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             ),
           ),
           SliverPadding(
-            padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 32),
+            padding: const EdgeInsets.only(bottom: 32),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: _buildTabsSection(),
+                Transform.translate(
+                  offset: const Offset(0, -80),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: _buildTabsSection(),
+                  ),
                 ),
                 const SizedBox(height: 60),
                 Padding(
@@ -391,18 +430,22 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'OUR PHILOSOPHY', 
-          style: GoogleFonts.montserrat(
-            color: isDark ? Colors.white : Colors.black, 
-            fontSize: 22, 
-            fontWeight: FontWeight.w400, 
-            letterSpacing: 2
-          )
+          'OUR PHILOSOPHY',
+          style: GoogleFonts.dmSerifDisplay(
+            fontSize: 32,
+            fontWeight: FontWeight.w400,
+            color: Theme.of(context).colorScheme.onSurface,
+            letterSpacing: -0.5,
+          ),
         ),
         const SizedBox(height: 24),
         RichText(
           text: TextSpan(
-            style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.7), fontSize: 13, height: 1.8),
+            style: GoogleFonts.montserrat(
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              fontSize: 14,
+              height: 1.8,
+            ),
             children: [
               const TextSpan(text: 'To redefine modern luxury living by crafting homes with cutting edge design, enduring quality and thoughtful amenities delivered with trust, transparency, timeliness, and a human touch that creates lasting value for every homeowner. '),
               WidgetSpan(
@@ -447,9 +490,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                                 color: isSelected 
                                     ? (isDark ? Colors.white : Colors.black) 
                                     : (isDark ? Colors.white : Colors.black).withValues(alpha: 0.4), 
-                                fontSize: 10, 
-                                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500, 
-                                letterSpacing: 1.5
+                                fontSize: 12, 
+                                fontWeight: FontWeight.w900, 
+                                letterSpacing: 2,
                               )
                             ),
                             const SizedBox(height: 10),
@@ -467,30 +510,6 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       ),
                     );
                   }).toList(),
-                ),
-              ),
-            ),
-            const SizedBox(width: 16),
-            GestureDetector(
-              onTap: () {
-                if (_activeTab == 'Communities') {
-                  context.push('/communities');
-                } else if (_activeTab == 'Media') {
-                  context.push('/media');
-                } else {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const ProjectListScreen()));
-                }
-              },
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: Text(
-                  'VIEW ALL', 
-                  style: GoogleFonts.montserrat(
-                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.9), 
-                    fontSize: 10, 
-                    fontWeight: FontWeight.w700, 
-                    letterSpacing: 1,
-                  )
                 ),
               ),
             ),
@@ -629,9 +648,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                   children: [
                     Text(
                       (item['title'] ?? item['name'] ?? '').toString().toUpperCase(), 
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         color: Colors.white, 
-                        fontSize: 18, 
+                        fontSize: 22, 
                         fontWeight: FontWeight.w400,
                         letterSpacing: -0.5,
                       )
@@ -644,8 +663,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.montserrat(
-                        color: Colors.white.withValues(alpha: 0.5), 
-                        fontSize: 8, 
+                        color: Colors.white.withValues(alpha: 0.7), 
+                        fontSize: 10, 
                         fontWeight: FontWeight.w800, 
                         letterSpacing: 0.5,
                         height: 1.4,
@@ -701,31 +720,17 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Header (Matches Image 4)
+        // Header (Matches User Portal)
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'FEATURED',
-                style: GoogleFonts.montserrat(
-                  color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
-                  fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                  letterSpacing: 4,
-                ),
-              ),
-              Text(
-                'PROPERTIES',
-                style: GoogleFonts.montserrat(
-                  color: isDark ? Colors.white : Colors.black,
-                  fontSize: 32,
-                  fontWeight: FontWeight.w400,
-                  letterSpacing: 1,
-                ),
-              ),
-            ],
+          child: Text(
+            'FEATURED PROPERTY',
+            style: GoogleFonts.dmSerifDisplay(
+              fontSize: 32,
+              fontWeight: FontWeight.w400,
+              color: Theme.of(context).colorScheme.onSurface,
+              letterSpacing: -0.5,
+            ),
           ),
         ),
         const SizedBox(height: 40),
@@ -767,9 +772,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('FEATURED PROPERTY', style: GoogleFonts.montserrat(color: const Color(0xFFC5A358), fontSize: 10, fontWeight: FontWeight.w400, letterSpacing: 2)),
+                              Text('FEATURED PROPERTY', style: GoogleFonts.montserrat(color: const Color(0xFFC5A358), fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2)),
                               const SizedBox(height: 12),
-                              Text(project['title'] ?? '', style: GoogleFonts.dmSerifDisplay(color: Colors.white, fontSize: 40)),
+                              Text((project['title'] ?? '').toString().toUpperCase(), style: GoogleFonts.dmSerifDisplay(color: Colors.white, fontSize: 32, height: 1, letterSpacing: -1)),
                               const SizedBox(height: 16),
                               Text(
                                 (project['startingPrice'] ?? project['description'] ?? '').toUpperCase(),
@@ -871,12 +876,14 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'EXPLORE, CONNECT', 
-          style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 32, fontWeight: FontWeight.w400, letterSpacing: -1),
-        ),
-        Text(
-          'AND ENGAGE WITH US', 
-          style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 32, fontWeight: FontWeight.w400, letterSpacing: -1, height: 1.2),
+          'EXPLORE, CONNECT\nAND ENGAGE WITH US',
+          style: GoogleFonts.dmSerifDisplay(
+            fontSize: 32,
+            fontWeight: FontWeight.w400,
+            color: Theme.of(context).colorScheme.onSurface,
+            letterSpacing: -1,
+            height: 1.1,
+          ),
         ),
         const SizedBox(height: 48),
         GridView.count(

@@ -215,8 +215,8 @@ class ProjectListScreen extends ConsumerWidget {
                               'DISCOVER',
                               style: GoogleFonts.montserrat(
                                 fontSize: 10,
-                                fontWeight: FontWeight.w400,
-                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.55),
+                                fontWeight: FontWeight.w600,
+                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.85),
                                 letterSpacing: 3,
                               ),
                             ),
@@ -317,7 +317,7 @@ class ProjectListScreen extends ConsumerWidget {
                             fontWeight: isSelected ? FontWeight.w900 : FontWeight.bold,
                             color: isSelected 
                                 ? (Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white)
-                                : Theme.of(context).colorScheme.onSurface.withOpacity(0.35),
+                                : Theme.of(context).colorScheme.onSurface.withOpacity(0.55),
                             letterSpacing: 1,
                           ),
                         ),
@@ -673,7 +673,7 @@ class _FilterSection extends StatelessWidget {
       children: [
         Text(
           title, 
-          style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3), letterSpacing: 2)
+          style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.55), letterSpacing: 2)
         ),
         const SizedBox(height: 16),
         Wrap(
