@@ -41,6 +41,10 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
     final accentColor = isInvestor ? const Color(0xFFC5A358) : Colors.white;
 
     void navigateTo(int index) {
+      final currentIndex = ref.read(navigationProvider);
+      if (currentIndex != index) {
+        ref.read(previousNavigationProvider.notifier).state = currentIndex;
+      }
       ref.read(navigationProvider.notifier).state = index;
       Navigator.pop(context); // Close drawer
     }

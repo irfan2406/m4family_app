@@ -15,6 +15,7 @@ import 'package:m4_mobile/presentation/screens/content/content_hub_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final navigationProvider = StateProvider<int>((ref) => 0);
+final previousNavigationProvider = StateProvider<int>((ref) => 0);
 final inquiryScrollTriggerProvider = StateProvider<int>((ref) => 0);
 final contentHubTypeProvider = StateProvider<String>((ref) => 'media');
 

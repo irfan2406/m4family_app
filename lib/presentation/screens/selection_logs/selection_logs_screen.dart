@@ -80,7 +80,14 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
       child: Row(
         children: [
           GestureDetector(
-            onTap: () => ref.read(navigationProvider.notifier).state = 3,
+            onTap: () {
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              } else {
+                final prevIndex = ref.read(previousNavigationProvider);
+                ref.read(navigationProvider.notifier).state = prevIndex;
+              }
+            },
             child: Container(
               width: 40,
               height: 40,

@@ -161,16 +161,48 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // 🖼️ IMMERSIVE MEDIA HEADER (YouTube Style)
+                  // 🏷️ STANDARDIZED HEADER (Web Parity)
+                  SafeArea(
+                    bottom: false,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _buildCircleButton(
+                            icon: LucideIcons.arrowLeft,
+                            onTap: () => Navigator.pop(context),
+                          ),
+                          Column(
+                            children: [
+                              Text(
+                                widget.content['type'].toString().toUpperCase(),
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 2,
+                                  color: scheme.onSurface,
+                                ),
+                              ),
+                            ],
+                          ),
+                          _buildCircleButton(
+                            icon: LucideIcons.share2,
+                            onTap: () => _shareContent(apiClient),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  // 🖼️ MEDIA PLAYER (Fixed 16:9)
                   Stack(
                     children: [
                       Container(
                         width: double.infinity,
                         color: Colors.black,
                         child: AspectRatio(
-                          aspectRatio: hasVideo && _isVideoInitialized && _videoPlayerController != null
-                              ? _videoPlayerController!.value.aspectRatio
-                              : 16 / 10,
+                          aspectRatio: 16 / 9,
                           child: hasVideo
                               ? (_isVideoInitialized && _chewieController != null
                                   ? Chewie(controller: _chewieController!)
@@ -199,27 +231,25 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         ),
                       ),
                       
-                      // 🏷️ OVERLAY HEADER BUTTONS
-                      Positioned(
-                        top: MediaQuery.of(context).padding.top + 10,
-                        left: 20,
-                        right: 20,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            _buildCircleButton(
-                              icon: LucideIcons.arrowLeft,
-                              onTap: () => Navigator.pop(context),
-                              isOverMedia: true,
+                      // 🔘 THREE-DOT MENU ICON (Upper Side)
+                      if (hasVideo)
+                        Positioned(
+                          top: 15,
+                          right: 15,
+                          child: GestureDetector(
+                            onTap: () {
+                              // Open player options if needed
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.2),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(LucideIcons.moreVertical, color: Colors.white, size: 20),
                             ),
-                            _buildCircleButton(
-                              icon: LucideIcons.share2,
-                              onTap: () => _shareContent(apiClient),
-                              isOverMedia: true,
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
                     ],
                   ),
 

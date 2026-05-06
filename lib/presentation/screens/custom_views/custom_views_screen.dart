@@ -7,6 +7,7 @@ import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
 import 'package:go_router/go_router.dart';
@@ -19,9 +20,10 @@ class CustomViewsScreen extends ConsumerWidget {
     final currentStep = ref.watch(customViewsStepProvider);
     final isSubmitted = false;
 
-    return Material(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      child: SafeArea(
+    return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      drawer: const ConditionalDrawer(),
+      body: SafeArea(
         child: Column(
           children: [
             // Header
@@ -39,10 +41,9 @@ class CustomViewsScreen extends ConsumerWidget {
                         if (Navigator.canPop(context)) {
                           Navigator.pop(context);
                         } else {
-                          // Return to Profile tab
-                          ref.read(navigationProvider.notifier).state = 3;
-                          ref.read(guestNavigationProvider.notifier).state = 3;
-                          context.go('/profile');
+                          // Return to previous tab contextually
+                          final prevIndex = ref.read(previousNavigationProvider);
+                          ref.read(navigationProvider.notifier).state = prevIndex;
                         }
                       }
                     },
@@ -82,7 +83,20 @@ class CustomViewsScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 36), // Balance the row
+                   Builder(
+                    builder: (context) => GestureDetector(
+                      onTap: () => Scaffold.of(context).openDrawer(),
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1)),
+                        ),
+                        child: Icon(LucideIcons.moreHorizontal, size: 20, color: Theme.of(context).colorScheme.onSurface),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -128,9 +142,18 @@ class CustomViewsScreen extends ConsumerWidget {
                                     'PERSONALISE',
                                     style: GoogleFonts.montserrat(
                                       fontSize: 22,
-                                      fontWeight: FontWeight.w200,
+                                      fontWeight: FontWeight.w400,
                                       color: Theme.of(context).colorScheme.onSurface,
                                       letterSpacing: 6,
+                                      shadows: [
+                                        Shadow(
+                                          color: Theme.of(context).brightness == Brightness.light 
+                                              ? Colors.white.withOpacity(0.5) 
+                                              : Colors.black.withOpacity(0.5),
+                                          offset: const Offset(0, 1),
+                                          blurRadius: 4,
+                                        ),
+                                      ],
                                     ),
                                   ),
                                   Text(
@@ -139,6 +162,15 @@ class CustomViewsScreen extends ConsumerWidget {
                                       fontSize: 28,
                                       fontWeight: FontWeight.w900,
                                       color: Theme.of(context).colorScheme.onSurface,
+                                      shadows: [
+                                        Shadow(
+                                          color: Theme.of(context).brightness == Brightness.light 
+                                              ? Colors.white.withOpacity(0.5) 
+                                              : Colors.black.withOpacity(0.5),
+                                          offset: const Offset(0, 1),
+                                          blurRadius: 4,
+                                        ),
+                                      ],
                                     ),
                                   ),
                                   const SizedBox(height: 8),

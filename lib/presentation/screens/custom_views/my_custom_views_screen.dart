@@ -81,7 +81,8 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
               if (Navigator.canPop(context)) {
                 Navigator.pop(context);
               } else {
-                ref.read(navigationProvider.notifier).state = 3;
+                final prevIndex = ref.read(previousNavigationProvider);
+                ref.read(navigationProvider.notifier).state = prevIndex;
               }
             },
             child: Container(
