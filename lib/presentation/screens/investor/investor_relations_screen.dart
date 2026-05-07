@@ -8,6 +8,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 
 class InvestorRelationsScreen extends ConsumerStatefulWidget {
   const InvestorRelationsScreen({super.key});
@@ -156,7 +157,28 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
           icon: Icon(LucideIcons.arrowLeft, color: isDark ? Colors.white70 : Colors.black54),
           onPressed: () => Navigator.pop(context),
         ),
+        actions: [
+          Builder(
+            builder: (context) => GestureDetector(
+              onTap: () => Scaffold.of(context).openDrawer(),
+              child: Container(
+                margin: const EdgeInsets.only(right: 16, top: 12, bottom: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.white : Colors.black,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Icon(
+                  LucideIcons.moreHorizontal, 
+                  color: isDark ? Colors.black : Colors.white, 
+                  size: 20
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
+      drawer: const ConditionalDrawer(),
       body: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,

@@ -46,8 +46,18 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
         ref.read(previousNavigationProvider.notifier).state = currentIndex;
       }
       ref.read(navigationProvider.notifier).state = index;
-      Navigator.pop(context); // Close drawer
+      
+      // Close drawer first
+      Navigator.pop(context); 
+      
+      // Then pop back to the main shell (index 0 of the root navigator usually)
+      // to ensure the tab switch is visible.
+      while (Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
     }
+
+    final currentRouteName = ModalRoute.of(context)?.settings.name;
 
     return Drawer(
       width: MediaQuery.of(context).size.width * 0.85,
@@ -112,7 +122,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                       _SidebarItem(
                         icon: LucideIcons.home,
                         label: 'Home',
-                        isActive: currentIndex == 0,
+                        isActive: currentIndex == 0 && currentRouteName == null,
                         activeColor: accentColor,
                         onTap: () => navigateTo(0),
                       ),
@@ -196,57 +206,74 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                         activeColor: accentColor,
                         onTap: () => navigateTo(5),
                       ),
-
-                      _SidebarItem(
-                        icon: LucideIcons.headphones, 
-                        label: 'Support',
-                        isActive: currentIndex == 2,
-                        activeColor: accentColor,
-                        onTap: () => navigateTo(2),
-                      ),
                       
                       _SidebarItem(
                         icon: LucideIcons.info, 
                         label: 'Who we are',
+                        isActive: currentRouteName == 'about',
                         onTap: () {
                           Navigator.pop(context);
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const AboutScreen()));
+                          if (currentRouteName == 'about') return;
+                          Navigator.push(context, MaterialPageRoute(
+                            settings: const RouteSettings(name: 'about'),
+                            builder: (context) => const AboutScreen()
+                          ));
                         },
                       ),
 
                       _SidebarItem(
                         icon: LucideIcons.headphones, 
                         label: 'Contact Us',
+                        isActive: currentRouteName == 'contact',
                         onTap: () {
                           Navigator.pop(context);
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const ContactScreen()));
+                          if (currentRouteName == 'contact') return;
+                          Navigator.push(context, MaterialPageRoute(
+                            settings: const RouteSettings(name: 'contact'),
+                            builder: (context) => const ContactScreen()
+                          ));
                         },
                       ),
 
                       _SidebarItem(
                         icon: LucideIcons.briefcase, 
                         label: 'Careers',
+                        isActive: currentRouteName == 'careers',
                         onTap: () {
                           Navigator.pop(context);
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const CareersScreen()));
+                          if (currentRouteName == 'careers') return;
+                          Navigator.push(context, MaterialPageRoute(
+                            settings: const RouteSettings(name: 'careers'),
+                            builder: (context) => const CareersScreen()
+                          ));
                         },
                       ),
 
                       _SidebarItem(
                         icon: LucideIcons.trendingUp, 
                         label: 'Investor Relations',
+                        isActive: currentRouteName == 'investor-relations',
                         onTap: () {
                           Navigator.pop(context);
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const InvestorRelationsScreen()));
+                          if (currentRouteName == 'investor-relations') return;
+                          Navigator.push(context, MaterialPageRoute(
+                            settings: const RouteSettings(name: 'investor-relations'),
+                            builder: (context) => const InvestorRelationsScreen()
+                          ));
                         },
                       ),
 
                       _SidebarItem(
                         icon: LucideIcons.fileText, 
                         label: 'Pages',
+                        isActive: currentRouteName == 'pages-list',
                         onTap: () {
                           Navigator.pop(context);
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const PagesListScreen()));
+                          if (currentRouteName == 'pages-list') return;
+                          Navigator.push(context, MaterialPageRoute(
+                            settings: const RouteSettings(name: 'pages-list'),
+                            builder: (context) => const PagesListScreen()
+                          ));
                         },
                       ),
 

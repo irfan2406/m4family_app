@@ -48,112 +48,123 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                   child: Text('MENU', style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.5), fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 4)),
                 ),
                 Expanded(
-                    child: ListView(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      children: [
-                        _MenuItem(label: 'HOME', icon: LucideIcons.home, isActive: GoRouterState.of(context).uri.path == '/home', onTap: () => context.go('/home')),
-                        _MenuItem(label: 'COMMUNITY', icon: LucideIcons.building2, isActive: GoRouterState.of(context).uri.path == '/communities', onTap: () => context.push('/communities')),
-                        _MenuItem(label: 'PROPERTIES', icon: LucideIcons.layoutGrid, isActive: GoRouterState.of(context).uri.path == '/projects', onTap: () => context.push('/projects')),
-                        
-                        _DropdownMenuItem(
-                          label: 'CONTENT HUB',
-                          icon: LucideIcons.bell,
-                          isOpen: _isContentOpen,
-                          onToggle: () => setState(() => _isContentOpen = !_isContentOpen),
-                          subItems: [
-                            _SubItem(label: 'MEDIA', icon: LucideIcons.playCircle, onTap: () {
-                              context.push('/media');
-                              Navigator.pop(context);
-                            }),
-                            _SubItem(label: 'HIGHLIGHTS', icon: LucideIcons.zap, onTap: () {
-                              context.push('/highlights');
-                              Navigator.pop(context);
-                            }),
-                            _SubItem(label: 'EVENTS', icon: LucideIcons.calendar, onTap: () {
-                              context.push('/events');
-                              Navigator.pop(context);
-                            }),
-                            _SubItem(label: 'BLOG', icon: LucideIcons.fileText, onTap: () {
-                              context.push('/blog');
-                              Navigator.pop(context);
-                            }),
-                          ],
-                        ),
-                        
-                        _MenuItem(label: 'CUSTOM VIEWS', icon: LucideIcons.sparkles, isActive: GoRouterState.of(context).uri.path == '/custom-views', onTap: () => context.push('/custom-views')),
-                        _MenuItem(label: 'WHO WE ARE', icon: LucideIcons.info, isActive: GoRouterState.of(context).uri.path == '/about', onTap: () => context.push('/about')),
-                        
-                        _DropdownMenuItem(
-                          label: 'CONNECT',
-                          icon: LucideIcons.share2,
-                          isOpen: _isConnectOpen,
-                          onToggle: () => setState(() => _isConnectOpen = !_isConnectOpen),
-                          subItems: [
-                            _SubItem(label: 'CP LOGIN', icon: LucideIcons.user, onTap: () => context.go('/login')),
-                            _SubItem(label: 'INVESTOR LOGIN', icon: LucideIcons.crown, onTap: () => context.go('/login')),
-                            _SubItem(label: 'CUSTOMER LOGIN', icon: LucideIcons.users, onTap: () => context.go('/login')),
-                          ],
-                        ),
-                        
-                        _MenuItem(label: 'CAREERS', icon: LucideIcons.briefcase, isActive: GoRouterState.of(context).uri.path == '/careers', onTap: () => context.push('/careers')),
-                        _MenuItem(label: 'CONTACT', icon: LucideIcons.phone, isActive: GoRouterState.of(context).uri.path == '/contact', onTap: () => context.push('/contact')),
+                  child: ListView(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    children: [
+                      _MenuItem(label: 'Home', icon: LucideIcons.home, isActive: GoRouterState.of(context).uri.path == '/home', onTap: () => context.go('/home')),
+                      _MenuItem(label: 'Community', icon: LucideIcons.building2, isActive: GoRouterState.of(context).uri.path == '/communities', onTap: () => context.push('/communities')),
+                      _MenuItem(label: 'Properties', icon: LucideIcons.layoutGrid, isActive: GoRouterState.of(context).uri.path == '/projects', onTap: () => context.push('/projects')),
                       
+                      _DropdownMenuItem(
+                        label: 'Content Hub',
+                        icon: LucideIcons.bell,
+                        isOpen: _isContentOpen,
+                        onToggle: () => setState(() => _isContentOpen = !_isContentOpen),
+                        subItems: [
+                          _SubItem(label: 'Media', icon: LucideIcons.playCircle, onTap: () {
+                            context.push('/media');
+                            Navigator.pop(context);
+                          }),
+                          _SubItem(label: 'Highlights', icon: LucideIcons.zap, onTap: () {
+                            context.push('/highlights');
+                            Navigator.pop(context);
+                          }),
+                          _SubItem(label: 'Events', icon: LucideIcons.calendar, onTap: () {
+                            context.push('/events');
+                            Navigator.pop(context);
+                          }),
+                          _SubItem(label: 'Blog', icon: LucideIcons.fileText, onTap: () {
+                            context.push('/blog');
+                            Navigator.pop(context);
+                          }),
+                        ],
+                      ),
+                      
+                      _MenuItem(label: 'Custom Views', icon: LucideIcons.sparkles, isActive: GoRouterState.of(context).uri.path == '/custom-views', onTap: () => context.push('/custom-views')),
+                      _MenuItem(label: 'Who We Are', icon: LucideIcons.info, isActive: GoRouterState.of(context).uri.path == '/about', onTap: () => context.push('/about')),
+                      
+                      _DropdownMenuItem(
+                        label: 'Connect',
+                        icon: LucideIcons.share2,
+                        isOpen: _isConnectOpen,
+                        onToggle: () => setState(() => _isConnectOpen = !_isConnectOpen),
+                        subItems: [
+                          _SubItem(label: 'CP Login', icon: LucideIcons.user, onTap: () => context.go('/login')),
+                          _SubItem(label: 'Investor Login', icon: LucideIcons.crown, onTap: () => context.go('/login')),
+                          _SubItem(label: 'Customer Login', icon: LucideIcons.users, onTap: () => context.go('/login')),
+                        ],
+                      ),
+                      
+                      _MenuItem(label: 'Careers', icon: LucideIcons.briefcase, isActive: GoRouterState.of(context).uri.path == '/careers', onTap: () => context.push('/careers')),
+                      _MenuItem(label: 'Contact', icon: LucideIcons.phone, isActive: GoRouterState.of(context).uri.path == '/contact', onTap: () => context.push('/contact')),
+                    
                       const SizedBox(height: 32),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 14),
                         child: Text('QUICK ACTIONS', style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.6), fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 3)),
                       ),
                       const SizedBox(height: 12),
-                      _QuickActionItem(label: 'ENQUIRY', icon: LucideIcons.mail, onTap: () => context.push('/contact')),
-                      _QuickActionItem(label: 'CALL', icon: LucideIcons.phone, onTap: () => launchUrl(Uri.parse('tel:+912246018844'))),
-                      _QuickActionItem(label: 'WHATSAPP', icon: LucideIcons.messageSquare, onTap: () => launchUrl(Uri.parse('https://wa.me/912246018844'))),
-                      _QuickActionItem(label: 'LOCATION', icon: LucideIcons.mapPin, onTap: () => launchUrl(Uri.parse('https://maps.google.com'))),
+                      _QuickActionItem(label: 'Enquiry', icon: LucideIcons.mail, onTap: () => context.push('/contact')),
+                      _QuickActionItem(label: 'Call', icon: LucideIcons.phone, onTap: () => launchUrl(Uri.parse('tel:+912246018844'))),
+                      _QuickActionItem(label: 'WhatsApp', icon: LucideIcons.messageSquare, onTap: () => launchUrl(Uri.parse('https://wa.me/912246018844'))),
+                      _QuickActionItem(label: 'Location', icon: LucideIcons.mapPin, onTap: () => launchUrl(Uri.parse('https://maps.google.com'))),
                     ],
                   ),
                 ),
+                
+                // Bottom section
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('THEME MODE', style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
+                      Text('THEME MODE', style: GoogleFonts.montserrat(color: isDark ? Colors.white70 : Colors.black87, fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1)),
                       GestureDetector(
                         onTap: () {
                           ref.read(themeProvider.notifier).setTheme(isDark ? ThemeMode.light : ThemeMode.dark);
                         },
                         child: Container(
-                          padding: const EdgeInsets.all(8),
+                          padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.3)),
+                            color: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
                             borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
                           ),
-                          child: Icon(isDark ? LucideIcons.moon : LucideIcons.sparkles, color: isDark ? Colors.white : Colors.black, size: 16),
+                          child: Icon(isDark ? LucideIcons.sparkles : LucideIcons.moon, color: isDark ? Colors.white : Colors.black, size: 18),
                         ),
                       )
                     ],
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 12, 24, 100), // Increased bottom padding to 100
+                  padding: const EdgeInsets.fromLTRB(24, 12, 24, 40),
                   child: Container(
                     width: double.infinity,
-                    height: 56,
+                    height: 60,
                     decoration: BoxDecoration(
-                      color: Colors.red.withOpacity(0.08),
+                      color: Colors.red.withOpacity(0.12),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.red.withOpacity(0.2)),
+                      border: Border.all(color: Colors.red.withOpacity(0.1)),
                     ),
                     child: InkWell(
-                        onTap: () => context.go('/onboarding'),
-                        borderRadius: BorderRadius.circular(20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(LucideIcons.logOut, color: Colors.red, size: 18),
-                            const SizedBox(width: 12),
-                            Text('EXIT APP', style: GoogleFonts.montserrat(color: Colors.red, fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 1)),
-                          ],
-                        ),
+                      onTap: () => context.go('/onboarding'),
+                      borderRadius: BorderRadius.circular(20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(LucideIcons.logOut, color: Colors.red, size: 20),
+                          const SizedBox(width: 12),
+                          Text(
+                            'EXIT APP', 
+                            style: GoogleFonts.montserrat(
+                              color: Colors.red, 
+                              fontWeight: FontWeight.w900, 
+                              fontSize: 13, 
+                              letterSpacing: 1
+                            )
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -176,36 +187,26 @@ class _MenuItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Row(
-      children: [
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          width: 4,
-          height: isActive ? 24 : 0,
-          decoration: BoxDecoration(
-            color: isDark ? Colors.white : Colors.black,
-            borderRadius: BorderRadius.circular(2),
-            boxShadow: [
-              BoxShadow(color: (isDark ? Colors.white : Colors.black).withOpacity(0.5), blurRadius: 8)
-            ],
-          ),
+    return ListTile(
+      onTap: onTap,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+      leading: Container(
+        width: 44, height: 44,
+        decoration: BoxDecoration(
+          color: isActive ? (isDark ? Colors.white : Colors.black).withOpacity(0.15) : (isDark ? Colors.white : Colors.black).withOpacity(0.08), 
+          borderRadius: BorderRadius.circular(12),
         ),
-        Expanded(
-          child: ListTile(
-            onTap: onTap,
-            leading: Container(
-              width: 40, height: 40,
-              decoration: BoxDecoration(
-                color: isActive ? (isDark ? Colors.white : Colors.black).withOpacity(0.15) : (isDark ? Colors.white : Colors.black).withOpacity(0.08), 
-                borderRadius: BorderRadius.circular(12),
-                border: isActive ? Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.2)) : null,
-              ),
-              child: Icon(icon, color: isActive ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white.withOpacity(0.4) : Colors.black.withOpacity(0.5)), size: 18),
-            ),
-            title: Text(label, style: GoogleFonts.montserrat(color: isActive ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white.withOpacity(0.7) : Colors.black.withOpacity(0.8)), fontSize: 13, fontWeight: isActive ? FontWeight.w900 : FontWeight.w800, letterSpacing: 1.2)),
-          ),
-        ),
-      ],
+        child: Icon(icon, color: isActive ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white.withOpacity(0.4) : Colors.black.withOpacity(0.5)), size: 20),
+      ),
+      title: Text(
+        label, 
+        style: GoogleFonts.montserrat(
+          color: isActive ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white.withOpacity(0.7) : Colors.black.withOpacity(0.8)), 
+          fontSize: 15, 
+          fontWeight: isActive ? FontWeight.w800 : FontWeight.w700,
+          letterSpacing: -0.2
+        )
+      ),
     );
   }
 }
@@ -225,17 +226,25 @@ class _DropdownMenuItem extends StatelessWidget {
       children: [
         ListTile(
           onTap: onToggle,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
           leading: Container(
-            width: 40, height: 40,
+            width: 44, height: 44,
             decoration: BoxDecoration(
               color: isOpen ? (isDark ? Colors.white : Colors.black).withOpacity(0.15) : (isDark ? Colors.white : Colors.black).withOpacity(0.08), 
               borderRadius: BorderRadius.circular(12),
-              border: isOpen ? Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.2)) : null,
             ),
-            child: Icon(icon, color: isOpen ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white.withOpacity(0.4) : Colors.black.withOpacity(0.5)), size: 18),
+            child: Icon(icon, color: isOpen ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white.withOpacity(0.4) : Colors.black.withOpacity(0.5)), size: 20),
           ),
-          title: Text(label, style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(isOpen ? 1.0 : 0.8), fontSize: 13, fontWeight: FontWeight.w900, letterSpacing: 1.2)),
-          trailing: Icon(isOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown, color: isDark ? Colors.white.withOpacity(0.3) : Colors.black.withOpacity(0.3), size: 16),
+          title: Text(
+            label, 
+            style: GoogleFonts.montserrat(
+              color: (isDark ? Colors.white : Colors.black).withOpacity(isOpen ? 1.0 : 0.8), 
+              fontSize: 15, 
+              fontWeight: FontWeight.w700,
+              letterSpacing: -0.2
+            )
+          ),
+          trailing: Icon(isOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown, color: isDark ? Colors.white30 : Colors.black26, size: 18),
         ),
         if (isOpen) ...subItems,
       ],
@@ -257,8 +266,15 @@ class _SubItem extends StatelessWidget {
       child: ListTile(
         onTap: onTap,
         dense: true,
-        leading: Icon(icon, size: 14, color: (isDark ? Colors.white : Colors.black).withOpacity(0.3)),
-        title: Text(label, style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.5), fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 1)),
+        leading: Icon(icon, size: 16, color: (isDark ? Colors.white : Colors.black).withOpacity(0.3)),
+        title: Text(
+          label, 
+          style: GoogleFonts.montserrat(
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.5), 
+            fontSize: 13, 
+            fontWeight: FontWeight.w600
+          )
+        ),
       ),
     );
   }
@@ -275,12 +291,21 @@ class _QuickActionItem extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return ListTile(
       onTap: onTap,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14),
       leading: Container(
-        width: 40, height: 40,
+        width: 44, height: 44,
         decoration: BoxDecoration(color: (isDark ? Colors.white : Colors.black).withOpacity(0.08), borderRadius: BorderRadius.circular(12)),
         child: Icon(icon, color: (isDark ? Colors.white : Colors.black).withOpacity(0.5), size: 18),
       ),
-      title: Text(label, style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.6), fontSize: 13, fontWeight: FontWeight.w800, letterSpacing: 1.2)),
+      title: Text(
+        label, 
+        style: GoogleFonts.montserrat(
+          color: (isDark ? Colors.white : Colors.black).withOpacity(0.8), 
+          fontSize: 15, 
+          fontWeight: FontWeight.w700,
+          letterSpacing: -0.2
+        )
+      ),
     );
   }
 }

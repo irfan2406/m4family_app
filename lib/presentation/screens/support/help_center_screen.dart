@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:m4_mobile/presentation/screens/support/contact_support_screen.dart';
+import 'package:m4_mobile/presentation/screens/support/contact_screen.dart';
 
 
 class HelpCenterScreen extends StatefulWidget {
@@ -238,7 +238,7 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const ContactSupportScreen()),
+                      MaterialPageRoute(builder: (context) => const ContactScreen()),
                     );
                   },
                   style: ElevatedButton.styleFrom(

@@ -332,8 +332,8 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
 
                       // About Section
                       _SectionHeader(
-                        title: 'ABOUT THE\nCOMMUNITY',
-                        subtitle: 'ABOUT ${widget.community['title']?.toString().toUpperCase()}',
+                        title: widget.community['title']?.toString() ?? 'Community',
+                        subtitle: 'About the community',
                       ),
                       const SizedBox(height: 25),
                       Text(
@@ -349,7 +349,10 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                       const SizedBox(height: 50),
 
                       // Benefits
-                      const _SectionHeader(title: 'BENEFITS', subtitle: 'LIFESTYLE ADVANTAGES'),
+                      _SectionHeader(
+                          title: 'Benefits', 
+                          subtitle: '${widget.community['title']?.toString() ?? 'Community'} Lifestyle Advantages'
+                      ),
                       const SizedBox(height: 30),
                       GridView.builder(
                         shrinkWrap: true,
@@ -410,9 +413,9 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            const _SectionHeader(
-                              title: 'PROJECTS',
-                              subtitle: 'EXPLORE ARCHITECTURAL MASTERPIECES',
+                            _SectionHeader(
+                              title: 'Projects',
+                              subtitle: 'Explore ${widget.community['title']?.toString() ?? 'Community'} Masterpieces',
                             ),
                             TextButton(
                               onPressed: () => Navigator.push(
@@ -499,6 +502,21 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                                 ),
                                               ),
                                               const SizedBox(height: 4),
+                                              if (project['startingPrice'] != null && 
+                                                  project['startingPrice'].toString().toLowerCase() != 'price on request' &&
+                                                  project['startingPrice'].toString().toLowerCase() != 'upon request')
+                                                Padding(
+                                                  padding: const EdgeInsets.only(bottom: 2),
+                                                  child: Text(
+                                                    project['startingPrice'].toString().toUpperCase(),
+                                                    style: GoogleFonts.inter(
+                                                      color: Colors.white70,
+                                                      fontSize: 10,
+                                                      fontWeight: FontWeight.w700,
+                                                      letterSpacing: 0.5,
+                                                    ),
+                                                  ),
+                                                ),
                                               Row(
                                                 children: [
                                                   const Icon(LucideIcons.mapPin, color: Colors.white54, size: 10),
@@ -748,10 +766,10 @@ class _SectionHeader extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.lora(
                     color: isDark ? Colors.white : Colors.black,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w900,
+                    fontSize: 26,
+                    fontWeight: FontWeight.w400,
                     height: 1.1,
                   ),
                 ),
@@ -759,8 +777,8 @@ class _SectionHeader extends StatelessWidget {
                 Text(
                   subtitle,
                   style: GoogleFonts.inter(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(0.4),
-                    fontSize: 8,
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+                    fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
                   ),
@@ -978,24 +996,27 @@ class CommunityProjectsScreen extends ConsumerWidget {
                                           ),
                                         ],
                                       ),
-                                      const SizedBox(height: 15),
-                                      Text(
-                                        'STARTING FROM',
-                                        style: GoogleFonts.inter(
-                                          color: Colors.white.withOpacity(0.4),
-                                          fontSize: 7,
-                                          fontWeight: FontWeight.w900,
-                                          letterSpacing: 1,
+                                      if (project['startingPrice'] != null && 
+                                          project['startingPrice'].toString().toLowerCase() != 'price on request' &&
+                                          project['startingPrice'].toString().toLowerCase() != 'upon request') ...[
+                                        Text(
+                                          'STARTING FROM',
+                                          style: GoogleFonts.inter(
+                                            color: Colors.white.withOpacity(0.4),
+                                            fontSize: 7,
+                                            fontWeight: FontWeight.w900,
+                                            letterSpacing: 1,
+                                          ),
                                         ),
-                                      ),
-                                      Text(
-                                        (project['roiTarget'] ?? project['startingPrice'] ?? 'UPON REQUEST').toString().toUpperCase(),
-                                        style: GoogleFonts.lora(
-                                          color: Colors.white,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w600,
+                                        Text(
+                                          project['startingPrice'].toString().toUpperCase(),
+                                          style: GoogleFonts.lora(
+                                            color: Colors.white,
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
-                                      ),
+                                      ],
                                       const SizedBox(height: 4),
                                       Text(
                                         '* ARTISTIC IMPRESSION',

@@ -28,6 +28,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
+  final _scrollController = ScrollController();
   bool _isSubmitting = false;
 
   @override
@@ -35,6 +36,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     _nameController.dispose();
     _phoneController.dispose();
     _emailController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -52,6 +54,24 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     { 'year': "2019", 'title': "South Mumbai Scaling", 'desc': "Expanded our footprint with institutional-grade developments in elite neighborhoods." },
     { 'year': "2023", 'title': "Ocean View", 'desc': "Unveiled our signature coastal address, blending modern luxury with timeless seaside charm." },
     { 'year': "Present", 'title': "Future Forward", 'desc': "Continuing to shape spaces that endure through generations with innovation and trust." },
+  ];
+
+  static const List<Map<String, dynamic>> _defaultSections = [
+    {
+      'title': "Our Philosophy",
+      'icon': "Eye",
+      'content': "To redefine the horizon of Mumbai by crafting iconic architectural landmarks that harmonize luxury, sustainability, and enduring value."
+    },
+    {
+      'title': "Our Mission",
+      'icon': "Target",
+      'content': "To deliver uncompromising quality and institutional-grade excellence in every square foot, fostering trust and a sense of belonging for our community."
+    },
+    {
+      'title': "Core Values",
+      'icon': "ShieldCheck",
+      'content': "Integrity, Transparency, and Innovation drive every decision we make, ensuring our legacy remains as solid as the structures we build."
+    }
   ];
 
   static const List<Map<String, dynamic>> _pillars = [
@@ -156,6 +176,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 child: _isLoading 
                     ? Center(child: CircularProgressIndicator(color: isDark ? Colors.white24 : Colors.black12))
                     : SingleChildScrollView(
+                        controller: _scrollController,
                         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
                         child: AnimatedSwitcher(
                           duration: const Duration(milliseconds: 400),
@@ -173,79 +194,111 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
 
   Widget _buildStepIndicator() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+    
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
       decoration: BoxDecoration(
         color: (isDark ? Colors.black : Colors.white).withOpacity(0.3),
         border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.05))),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: List.generate(_steps.length, (idx) {
-          final step = _steps[idx];
-          final isActive = _currentStep == idx;
-          final isCompleted = idx < _currentStep;
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final totalWidth = constraints.maxWidth;
+          final stepWidth = totalWidth / _steps.length;
+          final progressWidth = stepWidth * _currentStep + (stepWidth / 2);
 
-          return Expanded(
-            child: GestureDetector(
-              onTap: () => setState(() => _currentStep = idx),
-              child: Column(
-                children: [
-                  Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      // Connecting line
-                      if (idx < _steps.length - 1)
-                        Positioned(
-                          right: -500, // Large enough to span
-                          left: 20,
-                          top: 18,
-                          child: Container(
-                            height: 2,
-                            color: isCompleted 
-                                ? (isDark ? Colors.white24 : Colors.black12) 
-                                : (isDark ? Colors.white10 : Colors.black.withOpacity(0.05)),
-                          ),
-                        ),
-                      
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        width: 36,
-                        height: 36,
-                        decoration: BoxDecoration(
-                          color: isActive ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.04)),
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: isActive ? (isDark ? Colors.white : Colors.black) : (isDark ? (isDark ? Colors.white24 : Colors.black12) : (isDark ? Colors.white10 : Colors.black.withOpacity(0.05))),
-                            width: 2,
-                          ),
-                          boxShadow: isActive ? [
-                            BoxShadow(color: (isDark ? Colors.white : Colors.black).withOpacity(0.3), blurRadius: 15)
-                          ] : null,
-                        ),
-                        child: Icon(
-                          step['icon'],
-                          color: isActive ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white : Colors.black),
-                          size: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    step['label'].toString().toUpperCase(),
-                    style: GoogleFonts.montserrat(
-                      color: isActive ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white : Colors.black),
-                      fontSize: 7,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 1,
-                    ),
-                  ),
-                ],
+          return Stack(
+            children: [
+              // Background connecting line
+              Positioned(
+                top: 20,
+                left: stepWidth / 2,
+                right: stepWidth / 2,
+                child: Container(
+                  height: 2,
+                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                ),
               ),
-            ),
+              // Animated Progress Line
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.easeInOut,
+                top: 20,
+                left: stepWidth / 2,
+                width: (_currentStep == 0) ? 0 : (stepWidth * _currentStep),
+                child: Container(
+                  height: 2,
+                  color: colorScheme.primary,
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: List.generate(_steps.length, (idx) {
+                  final step = _steps[idx];
+                  final isActive = _currentStep == idx;
+                  final isCompleted = idx < _currentStep;
+
+                  return Expanded(
+                    child: GestureDetector(
+                    onTap: () {
+                      setState(() => _currentStep = idx);
+                      _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+                    },
+                      child: Column(
+                        children: [
+                          AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: isActive 
+                                  ? colorScheme.primary 
+                                  : isCompleted 
+                                      ? (isDark ? Colors.black : Colors.white)
+                                      : (isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.04)),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: isActive 
+                                    ? colorScheme.primary 
+                                    : isCompleted 
+                                        ? colorScheme.primary 
+                                        : (isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.1)),
+                                width: 2,
+                              ),
+                              boxShadow: isActive ? [
+                                BoxShadow(color: colorScheme.primary.withOpacity(0.3), blurRadius: 15)
+                              ] : null,
+                            ),
+                            child: Icon(
+                              step['icon'],
+                              color: isActive 
+                                  ? Colors.white 
+                                  : isCompleted 
+                                      ? colorScheme.primary 
+                                      : (isDark ? Colors.white60 : Colors.black38),
+                              size: 16,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            step['label'].toString().toUpperCase(),
+                            style: GoogleFonts.inter(
+                              color: isActive ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white38 : Colors.black38),
+                              fontSize: 8,
+                              fontWeight: isActive ? FontWeight.w900 : FontWeight.w700,
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }),
+              ),
+            ],
           );
-        }),
+        },
       ),
     );
   }
@@ -297,6 +350,9 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
 
   Widget _buildJourneyStep() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+    final List milestones = (_cmsData?['milestones'] as List?) ?? _milestones;
+
     return Column(
       key: const ValueKey('step_1'),
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -306,28 +362,41 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: _milestones.length,
+          itemCount: milestones.length,
           itemBuilder: (context, idx) {
-            final item = _milestones[idx];
+            final item = milestones[idx];
             return IntrinsicHeight(
               child: Row(
                 children: [
                   Column(
                     children: [
                       Container(
-                        width: 14,
-                        height: 14,
+                        width: 24,
+                        height: 24,
+                        padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
                           color: isDark ? Colors.black : Colors.white,
                           shape: BoxShape.circle,
-                          border: Border.all(color: isDark ? Colors.white : Colors.black, width: 3),
+                          border: Border.all(color: colorScheme.primary, width: 4),
+                          boxShadow: [
+                            BoxShadow(color: colorScheme.primary.withOpacity(0.2), blurRadius: 10)
+                          ],
+                        ),
+                        child: Container(
+                          decoration: BoxDecoration(color: colorScheme.primary, shape: BoxShape.circle),
                         ),
                       ),
                       if (idx < _milestones.length - 1)
                         Expanded(
                           child: Container(
                             width: 2,
-                            color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [colorScheme.primary, colorScheme.primary.withOpacity(0.1)],
+                              ),
+                            ),
                           ),
                         ),
                     ],
@@ -335,23 +404,38 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   const SizedBox(width: 24),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(bottom: 40),
+                      padding: const EdgeInsets.only(bottom: 40, top: 4),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             item['year']!,
-                            style: GoogleFonts.montserrat(color: isDark ? Colors.white54 : Colors.black45, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 2),
+                            style: GoogleFonts.inter(
+                              color: colorScheme.primary,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 2,
+                            ),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             item['title']!.toUpperCase(),
-                            style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 18, fontWeight: FontWeight.w400),
+                            style: GoogleFonts.montserrat(
+                              color: isDark ? Colors.white : Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: -0.5,
+                            ),
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 8),
                           Text(
-                            item['desc']!,
-                            style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 12, height: 1.6),
+                            (item['desc'] ?? item['content'] ?? '').toString(),
+                            style: GoogleFonts.inter(
+                              color: isDark ? Colors.white70 : Colors.black54,
+                              fontSize: 12,
+                              height: 1.6,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ],
                       ),
@@ -368,6 +452,9 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
 
   Widget _buildPillarsStep() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+    final List pillars = (_cmsData?['pillars'] as List?) ?? _pillars;
+
     return Column(
       key: const ValueKey('step_2'),
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -381,13 +468,17 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             crossAxisCount: 2,
             mainAxisSpacing: 16,
             crossAxisSpacing: 16,
-            childAspectRatio: 0.85,
+            childAspectRatio: 0.8,
           ),
-          itemCount: _pillars.length,
+          itemCount: pillars.length,
           itemBuilder: (context, idx) {
-            final pillar = _pillars[idx];
+            final pillar = pillars[idx];
+            final iconData = (pillar['icon'] is IconData) 
+                ? pillar['icon'] 
+                : _getIconData(pillar['icon'].toString());
+
             return Container(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 color: isDark ? Colors.white.withOpacity(0.03) : Colors.black.withOpacity(0.04),
                 borderRadius: BorderRadius.circular(32),
@@ -396,17 +487,36 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(pillar['icon'], color: isDark ? Colors.white : Colors.black, size: 28),
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: colorScheme.primary.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Icon(iconData, color: colorScheme.primary, size: 22),
+                  ),
                   const SizedBox(height: 16),
                   Text(
-                    pillar['title'],
-                    style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 10, fontWeight: FontWeight.w400, letterSpacing: 2),
+                    pillar['title'].toString().toUpperCase(),
+                    style: GoogleFonts.inter(
+                      color: isDark ? Colors.white : Colors.black,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 2,
+                    ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 8),
                   Text(
                     pillar['desc'],
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 8, fontWeight: FontWeight.w400, height: 1.5),
+                    style: GoogleFonts.inter(
+                      color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+                      fontSize: 9,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: -0.5,
+                      height: 1.4,
+                    ),
                   ),
                 ],
               ),
@@ -419,20 +529,18 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
 
   Widget _buildPhilosophyStep() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final sections = (_cmsData?['sections'] as List?) ?? [];
+    final List sections = (_cmsData?['sections'] as List?) ?? _defaultSections;
+    
     return Column(
       key: const ValueKey('step_3'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionHeader(LucideIcons.eye, 'OUR PHILOSOPHY'),
         const SizedBox(height: 40),
-        if (sections.isEmpty)
-          const Center(child: Text('NO DATA AVAILABLE', style: TextStyle(color: Colors.white10)))
-        else
-          ...sections.map((section) => Padding(
-                padding: const EdgeInsets.only(bottom: 24),
-                child: _buildPhilosophyCard(section),
-              )),
+        ...sections.map((section) => Padding(
+          padding: const EdgeInsets.only(bottom: 24),
+          child: _buildPhilosophyCard(Map<String, dynamic>.from(section)),
+        )),
       ],
     ).animate().fadeIn();
   }
@@ -444,24 +552,71 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionHeader(LucideIcons.sparkles, 'INTERACTIVE LIVING'),
-        const SizedBox(height: 24),
+        const SizedBox(height: 32),
+        _buildPhilosophyQuote(),
+        const SizedBox(height: 32),
         Text(
           'EXPERIENCE THE FUTURE OF HOME PERSONALISATION. OUR PROPRIETARY CUSTOM VIEWS SUITE ALLOWS YOU TO VISUALISE AND CRAFT YOUR DREAM SPACE BEFORE IT\'S EVEN BUILT.',
           textAlign: TextAlign.center,
-          style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 11, fontWeight: FontWeight.w400, height: 1.8),
+          style: GoogleFonts.montserrat(
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+            height: 1.8,
+            letterSpacing: 0.5,
+          ),
         ),
         const SizedBox(height: 40),
         Row(
           children: [
-            Expanded(child: _buildPromoImage('https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80')),
+            Expanded(child: _buildPromoImage(ref.read(apiClientProvider).resolveUrl('/public/premium_interior_modern_living_room_1774856579067.png'))),
             const SizedBox(width: 16),
-            Expanded(child: _buildPromoImage('https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&q=80')),
+            Expanded(child: _buildPromoImage(ref.read(apiClientProvider).resolveUrl('/public/premium_kitchen_modular_modern_1774856602851.png'))),
           ],
         ),
         const SizedBox(height: 40),
         _buildFinalCTA(),
       ],
     ).animate().fadeIn();
+  }
+
+  Widget _buildPhilosophyQuote() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
+    return Container(
+      padding: const EdgeInsets.all(32),
+      decoration: BoxDecoration(
+        color: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
+        borderRadius: BorderRadius.circular(40),
+        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'CUSTOMER VIEWS',
+            style: GoogleFonts.inter(
+              color: colorScheme.primary,
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 2,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            '"AT M4 FAMILY, WE BELIEVE THAT LUXURY IS DEEPLY PERSONAL. OUR \'CUSTOMER VIEWS\' PHILOSOPHY ENSURES THAT EVERY RESIDENT\'S PERSPECTIVE IS VALUED, ALLOWING FOR A COLLABORATIVE APPROACH TO CREATING LIVING SPACES THAT REFLECT INDIVIDUAL LIFESTYLES AND ASPIRATIONS. WE INVITE YOU TO EXPLORE OUR BESPOKE PERSONALISATION OPTIONS, WHERE YOUR VISION MEETS OUR ARCHITECTURAL EXCELLENCE."',
+            style: GoogleFonts.inter(
+              color: (isDark ? Colors.white : Colors.black).withOpacity(0.7),
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+              height: 1.7,
+              fontStyle: FontStyle.italic,
+              letterSpacing: 0.2,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildHeroCard() {
@@ -512,15 +667,40 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
 
   Widget _buildSectionHeader(IconData icon, String title) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.04), borderRadius: BorderRadius.circular(12)),
-          child: Icon(icon, color: isDark ? Colors.white : Colors.black, size: 18),
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            color: (isDark ? Colors.black : Colors.white).withOpacity(0.8),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Center(
+                child: Icon(icon, color: colorScheme.primary, size: 18),
+              ),
+            ),
+          ),
         ),
         const SizedBox(width: 16),
-        Text(title, style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 18, fontWeight: FontWeight.w400, letterSpacing: -0.5)),
+        Text(
+          title,
+          style: GoogleFonts.montserrat(
+            color: isDark ? Colors.white : Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.w900,
+            letterSpacing: -1,
+          ),
+        ),
       ],
     );
   }
@@ -540,24 +720,62 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
 
   Widget _buildPhilosophyCard(Map<String, dynamic> section) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
     return _buildGlassCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(LucideIcons.target, color: isDark ? Colors.white38 : Colors.black26, size: 16),
-              const SizedBox(width: 12),
-              Text(
-                section['title'].toString().toUpperCase(),
-                style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 14, fontWeight: FontWeight.w400),
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: colorScheme.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Center(
+                  child: Icon(LucideIcons.target, color: colorScheme.primary, size: 20),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      section['title'].toString().toUpperCase(),
+                      style: GoogleFonts.montserrat(
+                        color: isDark ? Colors.white : Colors.black,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Container(
+                      width: 32,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: colorScheme.primary.withOpacity(0.4),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
           Text(
-            section['content'],
-            style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 11, fontWeight: FontWeight.w400, height: 1.6, letterSpacing: 1),
+            section['content'].toString().toUpperCase(),
+            style: GoogleFonts.inter(
+              color: (isDark ? Colors.white : Colors.black).withOpacity(0.7),
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+              height: 1.6,
+              letterSpacing: 0.5,
+            ),
           ),
         ],
       ),
@@ -586,65 +804,136 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
   }
 
   Widget _buildFinalCTA() {
+    final colorScheme = Theme.of(context).colorScheme;
     return Container(
-      padding: const EdgeInsets.all(40),
+      width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(40),
+        color: Colors.black,
+        borderRadius: BorderRadius.circular(48),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 30,
-            offset: const Offset(0, 10),
+            color: Colors.black.withOpacity(0.4),
+            blurRadius: 40,
+            offset: const Offset(0, 20),
           )
         ],
       ),
-      child: Column(
-        children: [
-          const Icon(LucideIcons.compass, color: Colors.black, size: 32),
-          const SizedBox(height: 24),
-          Text(
-            'YOUR DESIGN JOURNEY', 
-            style: GoogleFonts.montserrat(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w400, letterSpacing: -1)
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'PERSONALISE EVERY DETAIL', 
-            style: GoogleFonts.montserrat(color: Colors.black54, fontSize: 9, fontWeight: FontWeight.w400, letterSpacing: 2)
-          ),
-          const SizedBox(height: 24),
-          Text(
-            'choose your materials, explore configurations, and see your vision come to life with m4 custom views.'.toUpperCase(),
-            textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(color: Colors.black45, fontSize: 10, fontWeight: FontWeight.bold, height: 1.6),
-          ),
-          const SizedBox(height: 32),
-          SizedBox(
-            width: double.infinity,
-            height: 60,
-            child: ElevatedButton(
-              onPressed: () => _showCustomEnquiryForm(context),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                elevation: 0,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(48),
+        child: Stack(
+          children: [
+            Positioned(
+              top: -100,
+              right: -100,
+              child: Container(
+                width: 300,
+                height: 300,
+                decoration: BoxDecoration(
+                  gradient: RadialGradient(
+                    colors: [colorScheme.primary.withOpacity(0.15), Colors.transparent],
+                  ),
+                ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(40),
+              child: Column(
                 children: [
-                  Text('ENQUIRE FOR CUSTOM VIEWS', style: GoogleFonts.montserrat(fontWeight: FontWeight.w400, fontSize: 11, letterSpacing: 1)),
-                  const SizedBox(width: 8),
-                  const Icon(LucideIcons.chevronRight, size: 14),
+                  Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white.withOpacity(0.1)),
+                    ),
+                    child: const Icon(LucideIcons.compass, color: Colors.white, size: 28),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'YOUR DESIGN JOURNEY', 
+                    style: GoogleFonts.montserrat(
+                      color: Colors.white, 
+                      fontSize: 22, 
+                      fontWeight: FontWeight.w900, 
+                      letterSpacing: -1
+                    )
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'PERSONALISE EVERY DETAIL', 
+                    style: GoogleFonts.inter(
+                      color: Colors.white.withOpacity(0.5), 
+                      fontSize: 10, 
+                      fontWeight: FontWeight.w900, 
+                      letterSpacing: 2
+                    )
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'CHOOSE YOUR MATERIALS, EXPLORE CONFIGURATIONS, AND SEE YOUR VISION COME TO LIFE WITH M4 CUSTOM VIEWS.',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.inter(
+                      color: Colors.white.withOpacity(0.7), 
+                      fontSize: 11, 
+                      fontWeight: FontWeight.w600, 
+                      height: 1.6,
+                      letterSpacing: 0.2
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 64,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        final authState = ref.read(authProvider);
+                        if (authState.status == AuthStatus.authenticated) {
+                          // Update navigation state to Custom Views (index 6)
+                          ref.read(navigationProvider.notifier).state = 6;
+                          
+                          // If this screen was pushed onto the navigator stack, 
+                          // we need to pop back to the shell to see the tab switch.
+                          while (Navigator.of(context).canPop()) {
+                            Navigator.of(context).pop();
+                          }
+                        } else {
+                          _showCustomEnquiryForm(context);
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                        elevation: 0,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            ref.read(authProvider).status == AuthStatus.authenticated 
+                                ? 'CUSTOM VIEWS' 
+                                : 'ENQUIRE FOR CUSTOM VIEWS', 
+                            style: GoogleFonts.inter(
+                              fontWeight: FontWeight.w900, 
+                              fontSize: 11, 
+                              letterSpacing: 1
+                            )
+                          ),
+                          const SizedBox(width: 12),
+                          const Icon(LucideIcons.chevronRight, size: 16),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
-
   void _showCustomEnquiryForm(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -801,40 +1090,62 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                     child: Padding(
                       padding: const EdgeInsets.only(right: 12),
                       child: TextButton(
-                        onPressed: () => setState(() => _currentStep--),
+                        onPressed: () {
+                          setState(() => _currentStep--);
+                          _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+                        },
                         style: TextButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 20),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
-                            side: BorderSide(color: isDark ? Colors.white12 : Colors.black12),
+                            side: BorderSide(color: isDark ? Colors.white24 : Colors.black, width: 1.5),
                           ),
                         ),
-                        child: Text('BACK', style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w400, fontSize: 10, letterSpacing: 2)),
+                        child: Text('BACK', style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w900, fontSize: 10, letterSpacing: 2)),
                       ),
                     ),
                   ),
-                Expanded(
-                  flex: 2,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (_currentStep < _steps.length - 1) {
-                        setState(() => _currentStep++);
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: isDark ? Colors.white : Colors.black,
-                      foregroundColor: isDark ? Colors.black : Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 20),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                    ),
-                    child: Text(
-                      _currentStep == _steps.length - 1 ? 'FINISH' : 'NEXT STEP',
-                      style: GoogleFonts.montserrat(fontWeight: FontWeight.w900, fontSize: 10, letterSpacing: 2),
+                if (_currentStep < _steps.length - 1)
+                  Expanded(
+                    flex: 2,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (_currentStep < _steps.length - 1) {
+                          setState(() => _currentStep++);
+                          _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: isDark ? Colors.white : Colors.black,
+                        foregroundColor: isDark ? Colors.black : Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      ),
+                      child: Text(
+                        'NEXT STEP',
+                        style: GoogleFonts.montserrat(fontWeight: FontWeight.w900, fontSize: 10, letterSpacing: 2),
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
     );
+  }
+
+  IconData _getIconData(String? iconName) {
+    switch (iconName) {
+      case 'Users': return LucideIcons.users;
+      case 'Target': return LucideIcons.target;
+      case 'Trophy': return LucideIcons.trophy;
+      case 'Award': return LucideIcons.award;
+      case 'ShieldCheck': return LucideIcons.shieldCheck;
+      case 'Compass': return LucideIcons.compass;
+      case 'Sparkles': return LucideIcons.sparkles;
+      case 'Eye': return LucideIcons.eye;
+      case 'Milestone': return LucideIcons.milestone;
+      case 'Heart': return LucideIcons.heart;
+      case 'Briefcase': return LucideIcons.briefcase;
+      default: return LucideIcons.helpCircle;
+    }
   }
 }

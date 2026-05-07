@@ -28,6 +28,19 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
   bool _isSubmitting = false;
 
   @override
+  void initState() {
+    super.initState();
+    // Pre-populate if user is logged in
+    final authState = ref.read(authProvider);
+    if (authState.user != null) {
+      final user = authState.user!;
+      _fullNameController.text = user['fullName'] ?? '${user['firstName'] ?? ''} ${user['lastName'] ?? ''}'.trim();
+      _emailController.text = user['email'] ?? '';
+      _phoneController.text = user['phone'] ?? '';
+    }
+  }
+
+  @override
   void dispose() {
     _fullNameController.dispose();
     _phoneController.dispose();
@@ -202,10 +215,10 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                     Text(
                       (widget.job['location'] ?? 'MUMBAI').toString().toUpperCase(),
                       style: GoogleFonts.montserrat(
-                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
+                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.4),
                         fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 2,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 3,
                       ),
                     ),
                   ],
@@ -256,18 +269,22 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        padding: const EdgeInsets.all(20),
+                        width: 64,
+                        height: 64,
                         decoration: BoxDecoration(
-                          color: _resumeFile != null ? Colors.black : (isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05)),
+                          color: _resumeFile != null ? Colors.black : (isDark ? Colors.white : Colors.black),
                           shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 20, offset: const Offset(0, 10))
+                          ]
                         ),
                         child: Icon(
                           _resumeFile != null ? LucideIcons.fileCheck : LucideIcons.rocket,
-                          color: _resumeFile != null ? Colors.white : (isDark ? Colors.white : Colors.black),
-                          size: 32,
+                          color: _resumeFile != null ? Colors.white : (isDark ? Colors.black : Colors.white),
+                          size: 30,
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 24),
                       Text(
                         _resumeFile != null 
                             ? _resumeFile!.path.split('/').last.toUpperCase()

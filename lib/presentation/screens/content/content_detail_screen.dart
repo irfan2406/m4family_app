@@ -75,6 +75,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           ),
           autoInitialize: true,
           allowFullScreen: true,
+          showOptions: false, // Disable default dots to use our custom top-right one
           deviceOrientationsOnEnterFullScreen: _videoPlayerController!.value.aspectRatio < 1 
               ? [DeviceOrientation.portraitUp] 
               : [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight],
@@ -231,20 +232,21 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         ),
                       ),
                       
-                      // 🔘 THREE-DOT MENU ICON (Upper Side)
+                      // 🔘 THREE-DOT MENU ICON (Upper Right Side)
                       if (hasVideo)
                         Positioned(
                           top: 15,
                           right: 15,
                           child: GestureDetector(
                             onTap: () {
-                              // Open player options if needed
+                              // Open custom options dialog if needed
                             },
                             child: Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.2),
+                                color: Colors.black.withOpacity(0.3),
                                 shape: BoxShape.circle,
+                                border: Border.all(color: Colors.white.withOpacity(0.1)),
                               ),
                               child: const Icon(LucideIcons.moreVertical, color: Colors.white, size: 20),
                             ),

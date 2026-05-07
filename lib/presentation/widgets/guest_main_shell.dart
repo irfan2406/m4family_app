@@ -64,11 +64,11 @@ class _GuestNavigationPill extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.only(bottom: 48),
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: isDark ? Colors.black.withValues(alpha: 0.95) : Colors.white.withValues(alpha: 0.95),
+        color: isDark ? Colors.black.withOpacity(0.9) : Colors.white.withOpacity(0.9),
         borderRadius: BorderRadius.circular(100),
-        border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08)),
+        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
         boxShadow: [
           BoxShadow(
             color: (isDark ? Colors.black : Colors.grey).withValues(alpha: 0.4),
@@ -83,13 +83,13 @@ class _GuestNavigationPill extends StatelessWidget {
         children: [
           _NavIcon(icon: LucideIcons.home, isActive: currentIndex == 0, onTap: () => onTap(0)),
           const SizedBox(width: 12),
-          _NavIcon(icon: LucideIcons.layoutGrid, isActive: currentIndex == 1, onTap: () => onTap(1)),
+          _NavIcon(icon: LucideIcons.building2, isActive: currentIndex == 1, onTap: () => onTap(1)),
           const SizedBox(width: 12),
           _NavIcon(icon: LucideIcons.info, isActive: currentIndex == 2, onTap: () => onTap(2)),
           const SizedBox(width: 12),
           _NavIcon(icon: LucideIcons.briefcase, isActive: currentIndex == 3, onTap: () => onTap(3)),
           const SizedBox(width: 12),
-          _NavIcon(icon: LucideIcons.phone, isActive: currentIndex == 4, onTap: () => onTap(4)),
+          _NavIcon(icon: LucideIcons.headphones, isActive: currentIndex == 4, onTap: () => onTap(4)),
         ],
       ),
     );
@@ -109,17 +109,17 @@ class _NavIcon extends StatelessWidget {
     return _ScaleButton(
       onTap: onTap,
       child: Container(
-        width: 60,
-        height: 60,
+        width: 56,
+        height: 56,
         decoration: BoxDecoration(
           color: isActive ? (isDark ? Colors.white : Colors.black) : Colors.transparent,
           shape: BoxShape.circle,
-          boxShadow: isActive ? [BoxShadow(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.2), blurRadius: 15)] : [],
+          boxShadow: isActive ? [BoxShadow(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1), blurRadius: 10)] : [],
         ),
         child: Center(
           child: Icon(
             icon, 
-            color: isActive ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white70 : Colors.black87), 
+            color: isActive ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white70 : Colors.black54), 
             size: 24
           ),
         ),

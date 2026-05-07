@@ -38,9 +38,13 @@ class NotificationListScreen extends ConsumerWidget {
                             if (Navigator.canPop(context)) {
                               Navigator.pop(context);
                             } else {
-                              // Reset to index 3 (Profile)
-                              ref.read(navigationProvider.notifier).state = 3;
-                              ref.read(cpNavigationIndexProvider.notifier).state = 3;
+                              // Use previous navigation index
+                              final previousIndex = ref.read(previousNavigationProvider);
+                              ref.read(navigationProvider.notifier).state = previousIndex;
+                              // For CP portal if applicable
+                              try {
+                                ref.read(cpNavigationIndexProvider.notifier).state = previousIndex;
+                              } catch (_) {}
                             }
                           },
                           icon: Icon(LucideIcons.arrowLeft, color: Theme.of(context).colorScheme.onSurface, size: 18),
@@ -53,7 +57,7 @@ class NotificationListScreen extends ConsumerWidget {
                               Text(
                                 'NOTIFICATIONS',
                                 style: GoogleFonts.montserrat(
-                                  fontSize: 24,
+                                  fontSize: 18,
                                   fontWeight: FontWeight.w900,
                                   color: Theme.of(context).colorScheme.onSurface,
                                   letterSpacing: 2,

@@ -244,7 +244,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                 children: [
                   // ⭐️ Tagline (Living the M4 Life)
                   Transform.translate(
-                    offset: const Offset(0, -60),
+                    offset: const Offset(0, -50),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 0),
                       child: ColorFiltered(
@@ -268,7 +268,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                         child: Image.asset(
                           'assets/living_m4_life.png',
                           width: MediaQuery.of(context).size.width,
-                          height: 300,
+                          height: 200, // 👈 Reduced from 300
                           fit: BoxFit.fitWidth,
                         ),
                       ),
@@ -277,7 +277,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
 
                   // Hero Image Container
                   Transform.translate(
-                    offset: const Offset(0, -120),
+                    offset: const Offset(0, -110), // 👈 Adjusted from -140 to fix overlap
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24),
                       child: Builder(
@@ -391,25 +391,25 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             sliver: SliverList(
               delegate: SliverChildListDelegate([
                 Transform.translate(
-                  offset: const Offset(0, -80),
+                  offset: const Offset(0, -60),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: _buildTabsSection(),
                   ),
                 ),
-                const SizedBox(height: 60),
+                const SizedBox(height: 30),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: _buildPhilosophy(),
                 ),
-                const SizedBox(height: 100),
+                const SizedBox(height: 60),
                 _buildFeaturedSection(),
-                const SizedBox(height: 100),
+                const SizedBox(height: 40),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: _buildConnectGrid(),
                 ),
-                const SizedBox(height: 100),
+                const SizedBox(height: 40),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: _buildInterestForm(),
@@ -720,7 +720,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Header (Matches User Portal)
+        // ⭐️ Header (Matched with Our Philosophy)
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Text(
@@ -735,111 +735,166 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         ),
         const SizedBox(height: 40),
 
-        // Main Card
-        ClipRRect(
-          borderRadius: BorderRadius.circular(40),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 24),
-              decoration: BoxDecoration(
-                color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.black.withValues(alpha: 0.02),
-                borderRadius: BorderRadius.circular(40),
-                border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08)),
-              ),
-              child: Column(
-                children: [
-                  ClipRRect(
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
-                    child: Stack(
-                      children: [
-                        CachedNetworkImage(
-                          imageUrl: apiClient.resolveUrl(project['heroImage'] ?? ''),
-                          height: 420, width: double.infinity, fit: BoxFit.cover,
-                          placeholder: (context, url) => Container(color: Colors.black12),
-                          errorWidget: (context, url, error) => const Icon(Icons.error),
-                        ),
-                        Positioned(
-                          top: 24, right: 24,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.5), borderRadius: BorderRadius.circular(4)),
-                            child: Text('ARTISTIC IMPRESSION', style: GoogleFonts.montserrat(color: Colors.white, fontSize: 7, fontWeight: FontWeight.w800)),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 40, left: 32, right: 32,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('FEATURED PROPERTY', style: GoogleFonts.montserrat(color: const Color(0xFFC5A358), fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2)),
-                              const SizedBox(height: 12),
-                              Text((project['title'] ?? '').toString().toUpperCase(), style: GoogleFonts.dmSerifDisplay(color: Colors.white, fontSize: 32, height: 1, letterSpacing: -1)),
-                              const SizedBox(height: 16),
-                              Text(
-                                (project['startingPrice'] ?? project['description'] ?? '').toUpperCase(),
-                                maxLines: 2, overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.montserrat(color: Colors.white70, fontSize: 10, height: 1.6, fontWeight: FontWeight.w400, letterSpacing: 1.5),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+        // ⭐️ Main Artistic Card
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 24),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(50),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                blurRadius: 40,
+                offset: const Offset(0, 20),
+              )
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(50),
+            child: Stack(
+              children: [
+                CachedNetworkImage(
+                  imageUrl: apiClient.resolveUrl(project['heroImage'] ?? ''),
+                  height: 520, 
+                  width: double.infinity, 
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Container(color: Colors.black12),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                ),
+                // Gradient Overlay
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withOpacity(0.7),
+                        ],
+                        stops: const [0.5, 1.0],
+                      ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 40, 24, 40),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            _buildFeatureIcon(LucideIcons.building2, 'FULLY FURNISHED'),
-                            _buildFeatureIcon(LucideIcons.mapPin, 'PRIME LOCATION'),
-                            _buildFeatureIcon(LucideIcons.smartphone, 'SMART HOMES'),
-                          ],
-                        ),
-                        const SizedBox(height: 40),
-                        Row(
-                          children: [
-                            _ScaleButton(
-                              onTap: () => setState(() => _featuredIndex = (_featuredIndex - 1 + _projects.length) % _projects.length),
-                              child: Container(
-                                padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1), shape: BoxShape.circle),
-                                child: Icon(LucideIcons.arrowLeft, color: isDark ? Colors.white : Colors.black, size: 20),
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: _ScaleButton(
-                                onTap: () => context.push('/projects/${project['_id']}', extra: project),
-                                child: Container(
-                                  height: 56,
-                                  decoration: BoxDecoration(color: isDark ? Colors.white : Colors.black, borderRadius: BorderRadius.circular(16)),
-                                  child: Center(
-                                    child: Text('READ MORE', style: GoogleFonts.montserrat(color: isDark ? Colors.black : Colors.white, fontWeight: FontWeight.w400, fontSize: 13, letterSpacing: 2)),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            _ScaleButton(
-                              onTap: () => setState(() => _featuredIndex = (_featuredIndex + 1) % _projects.length),
-                              child: Container(
-                                padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1), shape: BoxShape.circle),
-                                child: Icon(LucideIcons.arrowRight, color: isDark ? Colors.white : Colors.black, size: 20),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                ),
+                // Artistic Impression Badge
+                Positioned(
+                  top: 24, right: 24,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.6), 
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(color: Colors.white.withOpacity(0.2)),
+                    ),
+                    child: Text(
+                      'ARTISTIC IMPRESSION', 
+                      style: GoogleFonts.montserrat(color: Colors.white, fontSize: 7, fontWeight: FontWeight.w900, letterSpacing: 1.5)
                     ),
                   ),
-                ],
-              ),
+                ),
+                // Content Overlay
+                Positioned(
+                  bottom: 40, left: 32, right: 32,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'FEATURED PROPERTY', 
+                        style: GoogleFonts.montserrat(color: const Color(0xFFC5A358), fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2.5)
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        (project['title'] ?? '').toString(), 
+                        style: GoogleFonts.lora(color: Colors.white, fontSize: 44, fontWeight: FontWeight.w400, height: 1, letterSpacing: -1)
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        (project['startingPrice'] ?? project['description'] ?? '').toUpperCase(),
+                        maxLines: 2, 
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.montserrat(color: Colors.white.withOpacity(0.8), fontSize: 9, height: 1.6, fontWeight: FontWeight.w900, letterSpacing: 1.2),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
+          ),
+        ),
+
+        const SizedBox(height: 48),
+
+        // ⭐️ Feature Icons (Synchronized with Web Grid)
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildFeatureIcon(LucideIcons.building2, 'FULLY\nFURNISHED'),
+              _buildFeatureIcon(LucideIcons.mapPin, 'PRIME\nLOCATION'),
+              _buildFeatureIcon(LucideIcons.smartphone, 'SMART\nHOMES'),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 48),
+
+        // ⭐️ Center Navigation (Synchronized with Web)
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _ScaleButton(
+                onTap: () => setState(() => _featuredIndex = (_featuredIndex - 1 + _projects.length) % _projects.length),
+                child: Container(
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
+                  ),
+                  child: Icon(LucideIcons.arrowLeft, color: isDark ? Colors.white : Colors.black, size: 20),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _ScaleButton(
+                  onTap: () => context.push('/projects/${project['_id']}', extra: project),
+                  child: Container(
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white : Colors.black, 
+                      borderRadius: BorderRadius.circular(14),
+                      boxShadow: [
+                        BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 20, offset: const Offset(0, 10))
+                      ],
+                    ),
+                    child: Center(
+                      child: Text(
+                        'READ MORE', 
+                        style: GoogleFonts.montserrat(color: isDark ? Colors.black : Colors.white, fontWeight: FontWeight.w900, fontSize: 12, letterSpacing: 3)
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              _ScaleButton(
+                onTap: () => setState(() => _featuredIndex = (_featuredIndex + 1) % _projects.length),
+                child: Container(
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
+                  ),
+                  child: Icon(LucideIcons.arrowRight, color: isDark ? Colors.white : Colors.black, size: 20),
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -875,6 +930,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // ⭐️ Header (Matched with Register Interest)
         Text(
           'EXPLORE, CONNECT\nAND ENGAGE WITH US',
           style: GoogleFonts.dmSerifDisplay(
@@ -885,59 +941,90 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             height: 1.1,
           ),
         ),
-        const SizedBox(height: 48),
-        GridView.count(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: 2,
-          mainAxisSpacing: 1,
-          crossAxisSpacing: 1,
-          childAspectRatio: 0.9,
-          children: List.generate(4, (i) {
-            final items = [
-              {'title': 'EXPLORE PROPERTIES', 'desc': 'Browse our portfolio of properties', 'icon': LucideIcons.building2, 'route': '/projects'},
-              {'title': 'BOOK A VIEWING', 'desc': 'Schedule a visit to our show apartment', 'icon': LucideIcons.calendarDays, 'action': _scrollToInterestForm},
-              {'title': 'SALES VIDEO CALL', 'desc': 'Talk to one of our sales expert', 'icon': LucideIcons.play, 'link': 'https://wa.me/912246018844'},
-              {'title': 'REGISTER INTEREST', 'desc': 'Register your interest in our properties', 'icon': LucideIcons.user, 'action': _scrollToInterestForm},
-            ];
-            final item = items[i];
-            return ClipRRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                child: Container(
-                  color: isDark ? Colors.white.withValues(alpha: 0.02) : Colors.black.withValues(alpha: 0.03),
-                  child: InkWell(
-                onTap: () {
-                  if (item['action'] != null) {
-                    (item['action'] as Function)();
-                  } else if (item['link'] != null) {
-                    launchUrl(Uri.parse(item['link'] as String), mode: LaunchMode.externalApplication);
-                  } else if (item['route'] == '/projects') {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const ProjectListScreen()));
-                  }
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(item['icon'] as IconData, color: isDark ? Colors.white : Colors.black, size: 28),
-                      const SizedBox(height: 20),
-                      Text(item['title'] as String, textAlign: TextAlign.center, style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w500, fontSize: 10, letterSpacing: 1.2)),
-                      const SizedBox(height: 8),
-                      Text(item['desc'] as String, textAlign: TextAlign.center, style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 9)),
-                    ],
-                  ),
-                ),
-              ),
+        const SizedBox(height: 40),
+
+        // ⭐️ Unified Grid Card
+        Container(
+          decoration: BoxDecoration(
+            color: isDark ? Colors.white.withOpacity(0.03) : Colors.black.withOpacity(0.02),
+            borderRadius: BorderRadius.circular(32),
+            border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.08)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.03),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              )
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(32),
+            child: GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 2,
+              mainAxisSpacing: 1,
+              crossAxisSpacing: 1,
+              childAspectRatio: 0.95,
+              children: [
+                _buildConnectItem(LucideIcons.building2, 'EXPLORE PROJECTS', 'Browse our portfolio of properties', () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ProjectListScreen()))),
+                _buildConnectItem(LucideIcons.calendarDays, 'BOOK A VIEWING', 'Schedule a visit to our show apartment', _scrollToInterestForm),
+                _buildConnectItem(LucideIcons.image, 'MEDIA GALLERY', 'Watch films and view property renders', () => context.push('/media')),
+                _buildConnectItem(LucideIcons.user, 'REGISTER INTEREST', 'Register your interest in our properties', _scrollToInterestForm),
+              ],
             ),
           ),
-        );
-      }),
-    ),
-  ],
-);
-}
+        ),
+      ],
+    );
+  }
+
+  Widget _buildConnectItem(IconData icon, String title, String desc, VoidCallback onTap) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                shape: BoxShape.circle,
+                border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
+              ),
+              child: Icon(icon, color: isDark ? Colors.white : Colors.black, size: 20),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.montserrat(
+                color: isDark ? Colors.white : Colors.black,
+                fontWeight: FontWeight.w900,
+                fontSize: 10,
+                letterSpacing: 1,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              desc,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.montserrat(
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+                fontSize: 8,
+                fontWeight: FontWeight.w500,
+                height: 1.4,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget _buildInterestForm() {
     final isDark = Theme.of(context).brightness == Brightness.dark;

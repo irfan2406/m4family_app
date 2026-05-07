@@ -32,7 +32,8 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
       if (response.data['status'] == true && response.data['data'] is List) {
         setState(() {
           _pages = (response.data['data'] as List).where((p) => 
-            p['published'] == true || p['status'] == 'published'
+            (p['published'] == true || p['status'] == 'published') && 
+            p['portal'] == 'user'
           ).toList();
           _isLoading = false;
         });
@@ -100,11 +101,12 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Browse all published pages.',
+                      'DIRECT CONTENT ACCESS',
                       style: GoogleFonts.inter(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
+                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 2,
                       ),
                     ),
                   ],
@@ -142,6 +144,8 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
 
   Widget _buildPageCard(Map<String, dynamic> page, int index) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final portal = (page['portal'] ?? 'user').toString().toUpperCase();
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Material(
@@ -183,28 +187,57 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            (page['title'] ?? 'Untitled').toString(),
-                            style: GoogleFonts.montserrat(
-                              color: Theme.of(context).colorScheme.onSurface,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
                           Row(
                             children: [
-                              Icon(LucideIcons.globe, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3), size: 12),
-                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  (page['title'] ?? 'Untitled').toString().toUpperCase(),
+                                  style: GoogleFonts.montserrat(
+                                    color: Theme.of(context).colorScheme.onSurface,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w800,
+                                    letterSpacing: -0.5,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
+                                ),
+                                child: Text(
+                                  portal,
+                                  style: GoogleFonts.inter(
+                                    color: (isDark ? Colors.white : Colors.black).withOpacity(0.4),
+                                    fontSize: 8,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: 1,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 6),
+                          Row(
+                            children: [
                               Text(
-                                '/${page['slug'] ?? ''}',
-                                style: GoogleFonts.inter(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.38), fontSize: 11, fontWeight: FontWeight.w500),
+                                'DYNAMIC CONTENT',
+                                style: GoogleFonts.inter(
+                                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.3),
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 1,
+                                ),
                               ),
                             ],
                           ),
                         ],
                       ),
                     ),
+                    const SizedBox(width: 12),
                     Icon(LucideIcons.arrowRight, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3), size: 20),
                   ],
                 ),

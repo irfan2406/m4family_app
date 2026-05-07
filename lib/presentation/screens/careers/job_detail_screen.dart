@@ -7,13 +7,44 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:m4_mobile/presentation/screens/careers/job_apply_screen.dart';
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 
-class JobDetailScreen extends StatelessWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/core/network/api_client.dart';
+import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+
+class JobDetailScreen extends ConsumerStatefulWidget {
   final Map<String, dynamic> job;
 
   const JobDetailScreen({super.key, required this.job});
 
   @override
+  ConsumerState<JobDetailScreen> createState() => _JobDetailScreenState();
+}
+
+class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
+  Map<String, dynamic>? _configData;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchConfig();
+  }
+
+  Future<void> _fetchConfig() async {
+    try {
+      final apiClient = ref.read(apiClientProvider);
+      final response = await apiClient.getSystemConfig();
+      final resData = response.data;
+      if (resData is Map) {
+        if (resData['status'] == true || resData['status'] == 'true') {
+          if (mounted) setState(() => _configData = resData['data']);
+        }
+      }
+    } catch (_) {}
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final job = widget.job;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: isDark ? Colors.black : Colors.white,
@@ -112,7 +143,7 @@ class JobDetailScreen extends StatelessWidget {
                         fontWeight: FontWeight.w900,
                         fontSize: 32,
                         letterSpacing: -1.5,
-                        height: 1.1,
+                        height: 0.95,
                       ),
                     ),
                     const SizedBox(height: 32),
@@ -127,7 +158,7 @@ class JobDetailScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 48),
 
-                    // Job Description Toggle
+                    // Job Description
                     Text(
                       'JOB DESCRIPTION',
                       style: GoogleFonts.montserrat(
@@ -138,25 +169,61 @@ class JobDetailScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 24),
-
-                    // Description Content
-                    Container(
-                      padding: const EdgeInsets.all(32),
-                      decoration: BoxDecoration(
-                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
-                        borderRadius: BorderRadius.circular(40),
-                        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
-                      ),
-                      child: Text(
-                        (job['description'] ?? 'WE ARE LOOKING FOR A HIGH-PERFORMING ${job['title']} TO HELP US MEET OUR CUSTOMER ACQUISITION AND REVENUE GROWTH TARGETS BY KEEPING OUR COMPANY COMPETITIVE AND INNOVATIVE.').toString(),
-                        style: GoogleFonts.montserrat(
-                          color: (isDark ? Colors.white : Colors.black).withOpacity(0.85),
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          height: 1.8,
-                        ),
+                    Text(
+                      (job['description'] ?? '').toString(),
+                      style: GoogleFonts.montserrat(
+                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.85),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        height: 1.8,
                       ),
                     ),
+                    const SizedBox(height: 48),
+
+                    // Responsibilities
+                    if (job['responsibilities'] != null && (job['responsibilities'] as List).isNotEmpty) ...[
+                      _buildSectionHeader('CORE RESPONSIBILITIES', isDark),
+                      const SizedBox(height: 24),
+                      ...((job['responsibilities'] as List).map((item) => _buildListItem(item.toString(), isDark))),
+                      const SizedBox(height: 48),
+                    ],
+
+                    // Requirements
+                    if (job['requirements'] != null && (job['requirements'] as List).isNotEmpty) ...[
+                      _buildSectionHeader('REQUIREMENTS', isDark),
+                      const SizedBox(height: 24),
+                      Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        children: (job['requirements'] as List).map((item) => _buildRequirementChip(item.toString(), isDark)).toList(),
+                      ),
+                      const SizedBox(height: 48),
+                    ],
+
+                    // Benefits
+                    if (job['benefits'] != null && (job['benefits'] as List).isNotEmpty) ...[
+                      _buildSectionHeader('BENEFITS', isDark),
+                      const SizedBox(height: 24),
+                      GridView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                          childAspectRatio: 1.5,
+                        ),
+                        itemCount: (job['benefits'] as List).length,
+                        itemBuilder: (context, index) {
+                          return _buildBenefitCard((job['benefits'] as List)[index].toString(), isDark);
+                        },
+                      ),
+                      const SizedBox(height: 48),
+                    ],
+
+                    // Contact Info
+                    _buildRecruitmentContact(isDark),
+
                     const SizedBox(height: 120),
                   ],
                 ),
@@ -202,6 +269,167 @@ class JobDetailScreen extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildRecruitmentContact(bool isDark) {
+    final email = _configData?['contact_email'] ?? 'hr@m4family.com';
+    final phone = _configData?['contact_phone'] ?? '+91 99308 50993';
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'DIRECT RECRUITMENT CONTACT',
+          style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.3), fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 4),
+        ),
+        const SizedBox(height: 24),
+        Container(
+          padding: const EdgeInsets.all(32),
+          decoration: BoxDecoration(
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
+            borderRadius: BorderRadius.circular(40),
+            border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+          ),
+          child: Column(
+            children: [
+              _buildContactRow(LucideIcons.mail, 'EMAIL RECRUITMENT', email, isDark),
+              const SizedBox(height: 24),
+              _buildContactRow(LucideIcons.phone, 'CAREER HELPLINE', phone, isDark),
+            ],
+          ),
+        ),
+      ],
+    ).animate().fadeIn(delay: 200.ms);
+  }
+
+  Widget _buildContactRow(IconData icon, String label, String value, bool isDark) {
+    return Row(
+      children: [
+        Container(
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05), borderRadius: BorderRadius.circular(16)),
+          child: Icon(icon, color: isDark ? Colors.white70 : Colors.black87, size: 20),
+        ),
+        const SizedBox(width: 20),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label, style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.4), fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1)),
+              const SizedBox(height: 2),
+              Text(value, style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 12, fontWeight: FontWeight.w900)),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSectionHeader(String title, bool isDark) {
+    return Text(
+      title,
+      style: GoogleFonts.montserrat(
+        color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
+        fontSize: 10,
+        fontWeight: FontWeight.w900,
+        letterSpacing: 3,
+      ),
+    );
+  }
+
+  Widget _buildListItem(String text, bool isDark) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 20,
+            height: 20,
+            decoration: BoxDecoration(
+              color: colorScheme.primary.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: Icon(LucideIcons.checkCircle2, color: colorScheme.primary, size: 14),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              text,
+              style: GoogleFonts.inter(
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.8),
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                height: 1.5,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRequirementChip(String text, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white : Colors.black,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: [
+          BoxShadow(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 4))
+        ],
+      ),
+      child: Text(
+        text.toUpperCase(),
+        style: GoogleFonts.montserrat(
+          color: isDark ? Colors.black : Colors.white,
+          fontSize: 9,
+          fontWeight: FontWeight.w900,
+          letterSpacing: 1.5,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBenefitCard(String text, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(LucideIcons.heart, color: isDark ? Colors.white70 : Colors.black87, size: 14),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            text.toUpperCase(),
+            style: GoogleFonts.montserrat(
+              color: isDark ? Colors.white : Colors.black,
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1,
+            ),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
       ),
     );
   }

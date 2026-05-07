@@ -233,7 +233,7 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/cp/contact',
-      builder: (context, state) => const ContactSupportScreen(),
+      builder: (context, state) => const ContactScreen(),
     ),
     GoRoute(
       path: '/cp/support',
@@ -296,7 +296,7 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/support/contact',
-      builder: (context, state) => const ContactSupportScreen(),
+      builder: (context, state) => const ContactScreen(),
     ),
     GoRoute(
       path: '/notifications',
@@ -360,7 +360,7 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/contact',
-      builder: (context, state) => const ContactSupportScreen(),
+      builder: (context, state) => const ContactScreen(),
     ),
     GoRoute(
       path: '/communities/:id',
