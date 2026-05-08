@@ -397,12 +397,11 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                     child: _buildTabsSection(),
                   ),
                 ),
-                const SizedBox(height: 30),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: _buildPhilosophy(),
                 ),
-                const SizedBox(height: 60),
+                const SizedBox(height: 40),
                 _buildFeaturedSection(),
                 const SizedBox(height: 40),
                 Padding(
@@ -560,7 +559,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       },
       child: Container(
         width: 300,
-        margin: const EdgeInsets.only(right: 20, bottom: 20),
+        margin: const EdgeInsets.only(right: 20, bottom: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(40),
           boxShadow: [

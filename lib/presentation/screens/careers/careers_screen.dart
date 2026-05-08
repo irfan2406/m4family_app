@@ -12,6 +12,8 @@ import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/screens/careers/job_detail_screen.dart';
 import 'package:m4_mobile/presentation/screens/careers/job_apply_screen.dart';
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
+import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
+import 'package:go_router/go_router.dart';
 
 class CareersScreen extends ConsumerStatefulWidget {
   const CareersScreen({super.key});
@@ -93,19 +95,19 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Careers', 
+            Text('CAREERS', 
                 style: GoogleFonts.montserrat(
                   color: isDark ? Colors.white : Colors.black, 
                   fontWeight: FontWeight.w900, 
-                  fontSize: 18, 
-                  letterSpacing: -1
+                  fontSize: 14, 
+                  letterSpacing: 0.5
                 )),
             Text('JOIN OUR ARCHITECTURAL LEGACY', 
                 style: GoogleFonts.montserrat(
                   color: (isDark ? Colors.white : Colors.black).withOpacity(0.5), 
                   fontWeight: FontWeight.w900, 
-                  fontSize: 8, 
-                  letterSpacing: 2
+                  fontSize: 7, 
+                  letterSpacing: 1.5
                 )),
           ],
         ),
@@ -117,9 +119,15 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
           ),
         ),
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(LucideIcons.arrowLeft, color: isDark ? Colors.white70 : Colors.black54),
-          onPressed: () => Navigator.pop(context),
+        leadingWidth: 72,
+        leading: Center(
+          child: _HeaderCircleAction(
+            icon: LucideIcons.arrowLeft, 
+            onTap: () {
+              ref.read(guestNavigationProvider.notifier).state = 0;
+              context.go('/home');
+            },
+          ),
         ),
         actions: [
           Builder(
@@ -179,10 +187,10 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
     final title = _cmsData?['title'] ?? 'BUILD YOUR\nLEGACY';
     final content = _cmsData?['content'] ?? 'Explore opportunities to join M4 Family. We create spaces that redefine living.';
 
-    // Clean title: If it's "Careers at M4", just use "Careers" to match web
-    String displayTitle = title.toString();
-    if (displayTitle.toUpperCase().contains('CAREERS')) {
-      displayTitle = 'Careers';
+    // Clean title: Ensure it says "CAREERS AT M4" to match web
+    String displayTitle = title.toString().toUpperCase();
+    if (!displayTitle.contains('M4')) {
+      displayTitle = 'CAREERS AT\nM4';
     }
 
     // Clean content: Remove the <h1> title if it exists to avoid redundancy
@@ -409,6 +417,38 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _HeaderCircleAction extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const _HeaderCircleAction({required this.icon, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 36,
+        height: 36,
+        decoration: BoxDecoration(
+          color: isDark ? Colors.white.withOpacity(0.1) : Colors.white,
+          shape: BoxShape.circle,
+          border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            )
+          ],
+        ),
+        child: Icon(icon, color: isDark ? Colors.white : Colors.black, size: 18),
+      ),
     );
   }
 }

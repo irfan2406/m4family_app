@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:ui';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:go_router/go_router.dart';
 
 class GuestCustomViewsScreen extends ConsumerStatefulWidget {
   const GuestCustomViewsScreen({super.key});
@@ -64,64 +66,61 @@ class _GuestCustomViewsScreenState extends ConsumerState<GuestCustomViewsScreen>
       body: CustomScrollView(
         controller: _scrollController,
         slivers: [
-          // 🔝 Sticky Header
-          SliverToBoxAdapter(
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(25, 60, 15, 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Container(
-                      width: 45,
-                      height: 45,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
-                        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
-                      ),
-                      child: Icon(LucideIcons.chevronLeft, color: isDark ? Colors.white : Colors.black, size: 20),
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            'INTERACTIVE LIVING',
-                            style: GoogleFonts.montserrat(
-                              color: isDark ? Colors.white : Colors.black,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 0,
-                            ),
-                          ),
-                          Text(
-                            'M4 CUSTOM SHOWCASE',
-                            style: GoogleFonts.montserrat(
-                              color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
-                              fontSize: 8,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 2,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(width: 8),
-                      Builder(
-                        builder: (context) => IconButton(
-                          icon: Icon(LucideIcons.moreHorizontal, color: isDark ? Colors.white : Colors.black, size: 28),
-                          onPressed: () => Scaffold.of(context).openDrawer(),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+        // 🔝 Premium Header
+        SliverAppBar(
+          pinned: true,
+          backgroundColor: (isDark ? Colors.black : Colors.white).withOpacity(0.8),
+          elevation: 0,
+          leadingWidth: 72,
+          toolbarHeight: 80,
+          flexibleSpace: ClipRRect(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: Container(color: Colors.transparent),
             ),
           ),
+          leading: Center(
+            child: _HeaderCircleAction(
+              icon: LucideIcons.arrowLeft, 
+              onTap: () => context.go('/home'),
+            ),
+          ),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('INTERACTIVE LIVING', 
+                  style: GoogleFonts.montserrat(
+                    color: isDark ? Colors.white : Colors.black, 
+                    fontWeight: FontWeight.w900, 
+                    fontSize: 14, 
+                    letterSpacing: 0.5
+                  )),
+              Text('M4 CUSTOM SHOWCASE', 
+                  style: GoogleFonts.montserrat(
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(0.5), 
+                    fontWeight: FontWeight.w900, 
+                    fontSize: 7, 
+                    letterSpacing: 1.5
+                  )),
+            ],
+          ),
+          actions: [
+            Builder(
+              builder: (context) => GestureDetector(
+                onTap: () => Scaffold.of(context).openDrawer(),
+                child: Container(
+                  margin: const EdgeInsets.only(right: 16, top: 20, bottom: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.white : Colors.black,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Icon(LucideIcons.moreHorizontal, color: isDark ? Colors.black : Colors.white, size: 18),
+                ),
+              ),
+            ),
+          ],
+        ),
 
           // 🎭 Hero Section
           SliverPadding(
@@ -170,7 +169,7 @@ class _GuestCustomViewsScreenState extends ConsumerState<GuestCustomViewsScreen>
                 crossAxisCount: 2,
                 mainAxisSpacing: 25,
                 crossAxisSpacing: 25,
-                childAspectRatio: 0.8,
+                childAspectRatio: 0.7,
               ),
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
@@ -201,10 +200,9 @@ class _GuestCustomViewsScreenState extends ConsumerState<GuestCustomViewsScreen>
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 begin: Alignment.bottomCenter,
-                                end: Alignment.topCenter,
+                                end: Alignment.center,
                                 colors: [
-                                  Colors.black.withOpacity(0.6),
-                                  Colors.transparent,
+                                  Colors.black.withOpacity(0.7),
                                   Colors.transparent,
                                 ],
                               ),
@@ -238,6 +236,38 @@ class _GuestCustomViewsScreenState extends ConsumerState<GuestCustomViewsScreen>
             child: SizedBox(height: 100),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _HeaderCircleAction extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const _HeaderCircleAction({required this.icon, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 36,
+        height: 36,
+        decoration: BoxDecoration(
+          color: isDark ? Colors.white.withOpacity(0.1) : Colors.white,
+          shape: BoxShape.circle,
+          border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            )
+          ],
+        ),
+        child: Icon(icon, color: isDark ? Colors.white : Colors.black, size: 18),
       ),
     );
   }

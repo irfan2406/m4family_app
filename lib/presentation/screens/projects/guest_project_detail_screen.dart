@@ -11,6 +11,8 @@ import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:m4_mobile/presentation/widgets/sidebar_menu.dart';
+import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class GuestProjectDetailScreen extends ConsumerStatefulWidget {
@@ -27,22 +29,25 @@ class GuestProjectDetailScreen extends ConsumerStatefulWidget {
   ConsumerState<GuestProjectDetailScreen> createState() => _GuestProjectDetailScreenState();
 }
 
-class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScreen> with SingleTickerProviderStateMixin {
-
+class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScreen> {
+  List<dynamic> _paymentPlans = [];
   dynamic _fullProject;
   List<dynamic> _updates = [];
   List<dynamic> _inventory = [];
   List<dynamic> _progressPhases = [];
+  List<String> _interiorImages = [];
+  List<String> _exteriorImages = [];
   bool _isLoading = true;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
   bool _isFavorited = false;
   String _mediaFilter = 'ALL';
   String _selectedConfig = '3 BHK';
   bool _showFullOverview = false;
   bool _showFullProgress = false;
-
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -65,6 +70,28 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
         setState(() {
           if (results[0].data['status'] == true) {
             _fullProject = results[0].data['data'];
+            // Extract interior and exterior images
+            final media = _fullProject?['media'] as List? ?? [];
+            
+            // Extract exterior images (matching web logic)
+            final List<String> ext = [];
+            if (_fullProject?['exteriorImages'] != null) {
+              ext.addAll((_fullProject!['exteriorImages'] as List).map((e) => e.toString()));
+            }
+            ext.addAll(media
+                .where((m) => m['category']?.toString().toUpperCase() == 'EXTERIOR')
+                .map((m) => m['url'].toString()));
+            _exteriorImages = ext.toSet().toList(); // Remove duplicates
+
+            // Extract interior images (matching web logic)
+            final List<String> int = [];
+            if (_fullProject?['interiorImages'] != null) {
+              int.addAll((_fullProject!['interiorImages'] as List).map((e) => e.toString()));
+            }
+            int.addAll(media
+                .where((m) => m['category']?.toString().toUpperCase() == 'INTERIOR')
+                .map((m) => m['url'].toString()));
+            _interiorImages = int.toSet().toList(); // Remove duplicates
           }
           if (results[1].data['status'] == true) {
             _updates = results[1].data['data'] ?? [];
@@ -122,6 +149,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     _nameController.dispose();
     _phoneController.dispose();
     _emailController.dispose();
+    _locationController.dispose();
     super.dispose();
   }
 
@@ -144,12 +172,13 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
         'email': _emailController.text.trim().isNotEmpty ? _emailController.text.trim() : null,
         'interest': type == 'VC' ? 'Video Call' : type == 'Site Visit' ? 'Site Visit' : 'Buying',
         'configuration': _selectedConfig,
+        'location': _locationController.text.trim().isNotEmpty ? _locationController.text.trim() : null,
         'source': 'mobile_app',
         'projectId': widget.projectId,
         'project': project?['title'] ?? 'General',
         'message': plan != null 
             ? 'Inquiry about payment plan: $plan for project ${project?['title']}' 
-            : '${type == 'VC' ? 'Video Call' : type == 'Site Visit' ? 'Site Visit' : 'General'} request for project ${project?['title']}',
+            : '${type == 'VC' ? 'Video Call' : type == 'Site Visit' ? 'Site Visit' : 'General'} request for project ${project?['title']}${_locationController.text.isNotEmpty ? ' from ${_locationController.text}' : ''}',
       });
 
       if (res.data['status'] == true) {
@@ -172,7 +201,6 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     final planName = plan is Map ? plan['name']?.toString() : plan?.toString();
     final projectTitle = project?['title'] ?? 'this project';
 
-    // Prefill auth user data if available
     final authUser = ref.read(authProvider).user;
     if (authUser != null) {
       _nameController.text = authUser['fullName']?.toString() ?? authUser['username']?.toString() ?? '';
@@ -186,23 +214,26 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
       backgroundColor: Colors.transparent,
       builder: (context) => StatefulBuilder(
         builder: (context, setModalState) => Container(
-          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom + 20),
           decoration: BoxDecoration(
             color: isDark ? const Color(0xFF0F1115) : Colors.white,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
-            border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1), width: 0.5),
-            boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 20, offset: const Offset(0, -5))],
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               const SizedBox(height: 12),
               Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(2))),
-              const SizedBox(height: 8),
               Align(
                 alignment: Alignment.topRight,
                 child: IconButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () {
+                    if (Navigator.canPop(context)) {
+                      Navigator.pop(context);
+                    } else {
+                      Navigator.pushReplacementNamed(context, '/guest/home');
+                    }
+                  },
                   icon: Icon(LucideIcons.x, color: isDark ? Colors.white38 : Colors.black38, size: 20),
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                 ),
@@ -213,40 +244,45 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                      Text(
-                      type == 'VC' ? 'BOOK A VIDEO CALL' : type == 'Site Visit' ? 'BOOK A SITE VISIT' : 'REQUEST DETAILS',
-                      style: GoogleFonts.montserrat(fontSize: 18, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: -0.5),
+                      type == 'VC' ? 'SCHEDULE A VIDEO CALL' : 'SCHEDULE A BOOK TOUR',
+                      style: GoogleFonts.montserrat(fontSize: 32, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, height: 1.1, letterSpacing: -1.5),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 16),
                     Text(
-                      'INQUIRY FOR ${projectTitle.toUpperCase()}',
+                      'A BESPOKE SHOWCASE OF LUXURY AT ${projectTitle.toUpperCase()}.',
                       style: GoogleFonts.montserrat(fontSize: 9, color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.w900, letterSpacing: 1),
                     ),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 40),
                     
-                    Text('PREFERRED CONFIGURATION *', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1)),
+                    _buildInquiryField('Full Name', _nameController, LucideIcons.user),
+                    const SizedBox(height: 16),
+                    _buildInquiryField('Email Address', _emailController, LucideIcons.mail),
+                    const SizedBox(height: 16),
+                    _buildInquiryField('Phone Number', _phoneController, LucideIcons.phone),
+                    
+                    const SizedBox(height: 32),
+                    Text('PREFERRED CONFIGURATION', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1)),
                     const SizedBox(height: 12),
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
-                      children: ["1 BHK", "2 BHK", "3 BHK", "4 BHK", "Penthouse"].map((config) {
+                      children: ["2 BHK", "3 BHK", "4 BHK", "PENTHOUSE"].map((config) {
                         final isActive = _selectedConfig == config;
                         return GestureDetector(
                           onTap: () => setModalState(() => _selectedConfig = config),
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                             decoration: BoxDecoration(
-                              color: isActive 
-                                ? (isDark ? Colors.white : Colors.black) 
-                                : (isDark ? Colors.white.withValues(alpha: 0.03) : Colors.black.withValues(alpha: 0.04)),
+                              color: isActive ? Colors.black : Colors.transparent,
                               borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: isActive ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05))),
+                              border: Border.all(color: isActive ? Colors.black : (isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05))),
                             ),
                             child: Text(
                               config, 
                               style: GoogleFonts.montserrat(
                                 fontSize: 8, 
                                 fontWeight: FontWeight.w900, 
-                                color: isActive ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white38 : Colors.black38)
+                                color: isActive ? Colors.white : (isDark ? Colors.white38 : Colors.black38)
                               ),
                             ),
                           ),
@@ -254,51 +290,25 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                       }).toList(),
                     ),
                     
-                    const SizedBox(height: 24),
-                    _buildInquiryField('FULL NAME *', _nameController, LucideIcons.user),
-                    const SizedBox(height: 16),
-                    _buildInquiryField('PHONE NUMBER *', _phoneController, LucideIcons.phone),
-                    const SizedBox(height: 16),
-                    _buildInquiryField('EMAIL (OPTIONAL)', _emailController, LucideIcons.mail),
-                    
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 40),
                     _ScaleButton(
                       onTap: () => _submitInquiry(type, planName),
                       child: Container(
                         width: double.infinity,
                         padding: const EdgeInsets.symmetric(vertical: 20),
                         decoration: BoxDecoration(
-                          color: isDark ? Colors.white : Colors.black,
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1), 
-                              blurRadius: 20, 
-                              offset: const Offset(0, 10)
-                            )
-                          ],
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'SUBMIT INQUIRY',
-                              style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: isDark ? Colors.black : Colors.white, letterSpacing: 1),
-                            ),
-                            const SizedBox(width: 8),
-                            Icon(LucideIcons.arrowUpRight, color: isDark ? Colors.black : Colors.white, size: 14),
-                          ],
+                        child: Center(
+                          child: Text(
+                            type == 'VC' ? 'CONFIRM VIDEO CALL' : 'CONFIRM SITE VISIT', 
+                            style: GoogleFonts.montserrat(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1.5)
+                          )
                         ),
                       ),
                     ),
                     const SizedBox(height: 24),
-                    Center(
-                      child: Text(
-                        'OUR ADVISOR WILL CONTACT YOU WITHIN 24 HOURS',
-                        style: GoogleFonts.montserrat(fontSize: 7, color: isDark ? Colors.white24 : Colors.black26, fontWeight: FontWeight.w900, letterSpacing: 1),
-                      ),
-                    ),
-                    const SizedBox(height: 32),
                   ],
                 ),
               ),
@@ -311,53 +321,38 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
 
   Widget _buildInquiryField(String label, TextEditingController controller, IconData icon) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1)),
-        const SizedBox(height: 10),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          decoration: BoxDecoration(
-            color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.black.withValues(alpha: 0.04),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
-          ),
-          child: TextField(
-            controller: controller,
-            style: GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black),
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              icon: Icon(icon, color: isDark ? Colors.white24 : Colors.black26, size: 16),
-              contentPadding: const EdgeInsets.symmetric(vertical: 16),
-            ),
-          ),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF8FAFC),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.08)),
+      ),
+      child: TextField(
+        controller: controller,
+        style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black),
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          hintText: label,
+          hintStyle: GoogleFonts.montserrat(fontSize: 11, color: isDark ? Colors.white24 : Colors.black26),
+          contentPadding: const EdgeInsets.symmetric(vertical: 16),
         ),
-      ],
+      ),
     );
   }
 
-  void _openHeroGallery(dynamic project, String category) {
-    final List<dynamic> media = project?['media'] as List? ?? [];
-    final List<String> list = [];
-    
-    if (category == 'EXTERIOR') {
-      list.addAll((project?['exteriorImages'] as List?)?.cast<String>() ?? []);
-      list.addAll(media.where((m) => m['category']?.toString().toUpperCase() == 'EXTERIOR').map((m) => m['url']?.toString() ?? '').where((u) => u.isNotEmpty));
-    } else if (category == 'INTERIOR') {
-      list.addAll((project?['interiorImages'] as List?)?.cast<String>() ?? []);
-      list.addAll(media.where((m) => m['category']?.toString().toUpperCase() == 'INTERIOR').map((m) => m['url']?.toString() ?? '').where((u) => u.isNotEmpty));
-    }
-
-    if (list.isNotEmpty) {
-      _showMediaLightbox(list[0], 'IMAGE');
+  void _openHeroGallery(List<String> urls) {
+    if (urls.isNotEmpty) {
+      _showMediaLightbox(urls, 'IMAGE');
     } else {
       _launchAction('Gallery coming soon!', null);
     }
   }
 
-  void _showMediaLightbox(String url, String type) {
+  void _showMediaLightbox(List<String> urls, String type) {
     final apiClient = ref.read(apiClientProvider);
+    final PageController pageController = PageController();
+    
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -370,26 +365,80 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
           body: Stack(
             fit: StackFit.expand,
             children: [
-              Center(
-                child: InteractiveViewer(
-                  child: CachedNetworkImage(
-                    imageUrl: apiClient.resolveUrl(url),
-                    fit: BoxFit.contain,
-                    placeholder: (context, url) => const Center(child: CircularProgressIndicator(color: Colors.white24)),
-                    errorWidget: (context, url, error) => const Icon(LucideIcons.image, color: Colors.white24, size: 50),
+              PageView.builder(
+                controller: pageController,
+                itemCount: urls.length,
+                itemBuilder: (context, index) {
+                  return Center(
+                    child: InteractiveViewer(
+                      child: CachedNetworkImage(
+                        imageUrl: apiClient.resolveUrl(urls[index]),
+                        fit: BoxFit.contain,
+                        placeholder: (context, url) => const Center(child: CircularProgressIndicator(color: Colors.white24)),
+                        errorWidget: (context, url, error) => const Icon(LucideIcons.image, color: Colors.white24, size: 50),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              if (urls.length > 1) ...[
+                Positioned(
+                  left: 10,
+                  top: 0,
+                  bottom: 0,
+                  child: Center(
+                    child: IconButton(
+                      onPressed: () => pageController.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut),
+                      icon: Icon(LucideIcons.chevronLeft, color: Colors.white.withValues(alpha: 0.4), size: 20),
+                    ),
                   ),
                 ),
-              ),
+                Positioned(
+                  right: 10,
+                  top: 0,
+                  bottom: 0,
+                  child: Center(
+                    child: IconButton(
+                      onPressed: () => pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut),
+                      icon: Icon(LucideIcons.chevronRight, color: Colors.white.withValues(alpha: 0.4), size: 20),
+                    ),
+                  ),
+                ),
+              ],
               Positioned(
                 top: MediaQuery.of(context).padding.top + 20,
                 right: 20,
-                child: IconButton(
-                  icon: const Icon(LucideIcons.x, color: Colors.white),
-                  onPressed: () => Navigator.pop(context),
+                child: _CircleAction(
+                  icon: LucideIcons.x, 
+                  onTap: () => Navigator.pop(context),
+                  color: Colors.white,
                 ),
               ),
-              if (type == 'VIDEO')
-                const Center(child: Icon(LucideIcons.playCircle, color: Colors.white, size: 60)),
+              if (urls.length > 1)
+                Positioned(
+                  bottom: 50,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.5),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: ListenableBuilder(
+                        listenable: pageController,
+                        builder: (context, child) {
+                          final page = (pageController.hasClients ? (pageController.page?.round() ?? 0) : 0) + 1;
+                          return Text(
+                            '$page / ${urls.length}',
+                            style: GoogleFonts.montserrat(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ),
         );
@@ -401,6 +450,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
   Widget build(BuildContext context) {
     final project = _fullProject ?? widget.projectData;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final apiClient = ref.read(apiClientProvider);
 
     if (_isLoading && project == null) {
       return Scaffold(
@@ -412,7 +462,9 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     }
 
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: isDark ? Colors.black : Colors.white,
+      drawer: SidebarMenu(),
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -421,57 +473,51 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildHero(project, isDark),
-                const SizedBox(height: 12),
-                GridView.count(
+                const SizedBox(height: 20),
+                Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: 1.1,
-                  children: [
-                    _OverviewActionCard(label: 'VIDEO CALL', value: 'Connect Now', icon: LucideIcons.video, isAction: true, onTap: () => _showRequestDetailsDialog(project, null, 'VC')),
-                    _OverviewActionCard(label: 'COMPLETION', value: '${project?['completion'] ?? 0}%', icon: LucideIcons.checkCircle2),
-                    _OverviewActionCard(label: 'COLLECTION', value: project?['units']?.toString() ?? '40', icon: LucideIcons.layoutGrid),
-                    _OverviewActionCard(label: 'SITE VISIT', value: 'Book Tour', icon: LucideIcons.eye, isAction: true, onTap: () => _showRequestDetailsDialog(project, null, 'Site Visit')),
-                  ],
+                  child: Row(
+                    children: [
+                      _HeroMediaThumb(
+                        label: 'EXTERIOR', 
+                        imageUrl: _exteriorImages.isNotEmpty ? apiClient.resolveUrl(_exteriorImages.first) : apiClient.resolveUrl(project?['heroImage']),
+                        onTap: () => _openHeroGallery(_exteriorImages)
+                      ),
+                      const SizedBox(width: 12),
+                      _HeroMediaThumb(
+                        label: 'INTERIOR', 
+                        imageUrl: _interiorImages.isNotEmpty ? apiClient.resolveUrl(_interiorImages.first) : apiClient.resolveUrl(project?['heroImage']),
+                        onTap: () => _openHeroGallery(_interiorImages)
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 24),
-                _buildOverviewSection(project),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Row(
+                    children: [
+                      Expanded(child: _OverviewActionCard(label: 'VIDEO CALL', value: 'Connect Now', icon: LucideIcons.video, isAction: true, onTap: () => _showRequestDetailsDialog(project, null, 'VC'))),
+                      const SizedBox(width: 10),
+                      Expanded(child: _OverviewActionCard(label: 'COMPLETION', value: '${project?['completion'] ?? 0}%', icon: LucideIcons.checkCircle2)),
+                      const SizedBox(width: 10),
+                      Expanded(child: _OverviewActionCard(label: 'SITE VISIT', value: 'Book Tour', icon: LucideIcons.eye, isAction: true, onTap: () => _showRequestDetailsDialog(project, null, 'Site Visit'))),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 32),
-                _buildConstructionSection(project),
+                _buildOverviewSection(project),
                 const SizedBox(height: 32),
                 _buildAmenitiesSection(project),
                 const SizedBox(height: 32),
+                _buildConstructionSection(project),
+                const SizedBox(height: 32),
+                _buildPaymentPlansSection(),
+                const SizedBox(height: 32),
+                _buildInterestSection(project),
+                const SizedBox(height: 32),
                 _buildLocationSection(project),
-                const SizedBox(height: 150),
-              ],
-            ),
-          ),
-          // Bottom actions removed for Guest Portal parity with web
-          Positioned(
-            top: MediaQuery.of(context).padding.top + 16,
-            left: 20,
-            right: 20,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _CircleAction(icon: LucideIcons.chevronLeft, onTap: () => Navigator.pop(context)),
-                Row(
-                  children: [
-                    _CircleAction(
-                      icon: LucideIcons.share2, 
-                      onTap: () => Share.share('Check out ${project?['title']} on M4 Family!')
-                    ),
-                    const SizedBox(width: 12),
-                    _CircleAction(
-                      icon: LucideIcons.heart, 
-                      onTap: () => setState(() => _isFavorited = !_isFavorited),
-                      color: _isFavorited ? Colors.red : Colors.white,
-                    ),
-                  ],
-                ),
+                const SizedBox(height: 100),
               ],
             ),
           ),
@@ -480,105 +526,130 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     );
   }
 
-
   Widget _buildHero(dynamic project, bool isDark) {
     final apiClient = ref.read(apiClientProvider);
     final heroUrl = apiClient.resolveUrl(project?['heroImage'] ?? project?['coverImage']);
 
-    return SizedBox(
-      height: 520,
-      width: double.infinity,
+    return AspectRatio(
+      aspectRatio: 16 / 9,
       child: Stack(
         fit: StackFit.expand,
         children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(bottom: Radius.circular(56)),
-            child: CachedNetworkImage(
-              imageUrl: heroUrl, 
-              fit: BoxFit.cover,
-              placeholder: (context, url) => Container(color: Colors.black12),
-              errorWidget: (context, url, error) => const Icon(Icons.error),
-            ),
+          CachedNetworkImage(
+            imageUrl: heroUrl, 
+            fit: BoxFit.cover,
+            placeholder: (context, url) => Container(color: Colors.black12),
+            errorWidget: (context, url, error) => const Icon(Icons.error),
           ),
           Container(
             decoration: BoxDecoration(
-              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(56)),
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.black.withValues(alpha: 0.3),
+                  Colors.black.withValues(alpha: 0.1),
                   Colors.transparent,
-                  Colors.black.withValues(alpha: 0.8),
+                  (isDark ? Colors.black : Colors.white).withValues(alpha: 0.9),
+                  (isDark ? Colors.black : Colors.white),
                 ],
+                stops: const [0.0, 0.4, 0.85, 1.0],
               ),
             ),
           ),
-          // Artistic Impression Badge
-          if (project?['status']?.toString().toLowerCase() != 'completed')
-            Positioned(
-              top: MediaQuery.of(context).padding.top + 80,
-              right: 20,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.5),
-                  borderRadius: BorderRadius.circular(30),
-                  border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
-                ),
-                child: Text('ARTISTIC IMPRESSION', style: GoogleFonts.montserrat(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
-              ),
-            ),
-          // Media Thumbnails
           Positioned(
-            bottom: 40,
-            left: 24,
-            child: Row(
-              children: [
-                _HeroMediaThumb(
-                  label: 'EXTERIOR', 
-                  imageUrl: (_getCategoryThumbnail(project, 'EXTERIOR') != null && _getCategoryThumbnail(project, 'EXTERIOR')!.isNotEmpty)
-                      ? apiClient.resolveUrl(_getCategoryThumbnail(project, 'EXTERIOR')!)
-                      : heroUrl, 
-                  onTap: () => _openHeroGallery(project, 'EXTERIOR')
-                ),
-                const SizedBox(width: 14),
-                _HeroMediaThumb(
-                  label: 'INTERIOR', 
-                  imageUrl: (_getCategoryThumbnail(project, 'INTERIOR') != null && _getCategoryThumbnail(project, 'INTERIOR')!.isNotEmpty)
-                      ? apiClient.resolveUrl(_getCategoryThumbnail(project, 'INTERIOR')!)
-                      : heroUrl, 
-                  onTap: () => _openHeroGallery(project, 'INTERIOR')
-                ),
-              ],
-            ),
-          ),
-          // Project Identity
-          Positioned(
-            bottom: 140,
+            bottom: 24,
             left: 24,
             right: 24,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                  decoration: BoxDecoration(color: M4Theme.premiumBlue, borderRadius: BorderRadius.circular(6)),
-                  child: Text((project?['status']?.toString().toUpperCase() ?? 'ONGOING'), style: GoogleFonts.montserrat(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1)),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  (project?['title']?.toString() ?? 'Project Name'),
-                  style: GoogleFonts.dmSerifDisplay(color: Colors.white, fontSize: 64, height: 1, letterSpacing: -1),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(4)),
+                  child: Text((project?['status']?.toString().toUpperCase() ?? 'ONGOING'), style: GoogleFonts.montserrat(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1)),
                 ),
                 const SizedBox(height: 12),
+                Text(
+                  (project?['title']?.toString() ?? 'Project Name').toUpperCase(),
+                  style: GoogleFonts.montserrat(
+                    color: isDark ? Colors.white : Colors.black, 
+                    fontSize: 32, 
+                    height: 1.0, 
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -1.5,
+                  ),
+                ),
+                const SizedBox(height: 8),
                 Row(
                   children: [
-                    const Icon(LucideIcons.mapPin, color: Colors.white60, size: 14),
+                    Icon(LucideIcons.mapPin, color: isDark ? Colors.white70 : Colors.black.withValues(alpha: 0.7), size: 14),
                     const SizedBox(width: 6),
                     Text(
-                      ((project?['location'] is Map ? project?['location']?['name'] : project?['location'])?.toString() ?? 'MAZGAON').toUpperCase(),
-                      style: GoogleFonts.montserrat(color: Colors.white60, fontSize: 13, fontWeight: FontWeight.w900, letterSpacing: 2),
+                      (project?['locationName'] ?? project?['location']?['name'] ?? 'Mazgaon').toString().toUpperCase(),
+                      style: GoogleFonts.montserrat(
+                        color: isDark ? Colors.white : Colors.black, 
+                        fontSize: 12, 
+                        fontWeight: FontWeight.w900, 
+                        letterSpacing: 1
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Positioned(
+            bottom: 100,
+            right: 24,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(100),
+                boxShadow: [
+                  BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10, offset: const Offset(0, 4))
+                ],
+              ),
+              child: Text(
+                'ARTISTIC IMPRESSION',
+                style: GoogleFonts.montserrat(
+                  fontSize: 8, 
+                  fontWeight: FontWeight.w900, 
+                  color: Colors.black, 
+                  letterSpacing: 1
+                ),
+              ),
+            ),
+          ),
+          // Scrollable Header Actions (Match Web Absolute Logic)
+          Positioned(
+            top: MediaQuery.of(context).padding.top + 6,
+            left: 16,
+            right: 16,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _SquareAction(
+                  icon: LucideIcons.chevronLeft, 
+                  onTap: () {
+                    if (context.canPop()) {
+                      context.pop();
+                    } else {
+                      // Safety fallback if opened directly
+                      context.go('/home');
+                    }
+                  }
+                ),
+                Row(
+                  children: [
+                    _SquareAction(
+                      icon: LucideIcons.share2, 
+                      onTap: () => Share.share('Check out ${project?['title']} on M4 Family!')
+                    ),
+                    const SizedBox(width: 8),
+                    _SquareAction(
+                      icon: LucideIcons.moreHorizontal, 
+                      onTap: () => _scaffoldKey.currentState?.openDrawer()
                     ),
                   ],
                 ),
@@ -590,111 +661,107 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     );
   }
 
+  Widget _buildOverviewSection(dynamic project) {
+    final flyerUrl = project?['flyer'] ?? project?['brochure'];
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionHeader('Overview'),
+          const SizedBox(height: 24),
+          Text(
+            'EXPERIENCE THE PINNACLE OF LUXURY LIVING WITH FLOOR-TO-CEILING WINDOWS, ITALIAN MARBLE FLOORING, AND SMART HOME AUTOMATION.',
+            style: GoogleFonts.montserrat(
+              fontSize: 11, 
+              color: isDark ? Colors.white.withValues(alpha: 0.8) : Colors.black.withValues(alpha: 0.8), 
+              fontWeight: FontWeight.w900,
+              height: 1.6,
+              letterSpacing: 0.5
+            ),
+          ),
+          if (flyerUrl != null) ...[
+            const SizedBox(height: 32),
+            _MultimediaAssetCard(
+              title: 'PROJECT FLYER',
+              subtitle: 'HIGH RES • PDF',
+              icon: LucideIcons.fileText,
+              onView: () => _launchAction('Opening...', flyerUrl),
+              onDownload: () => _launchAction('Downloading...', flyerUrl),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
 
   Widget _buildSectionHeader(String title) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       children: [
-        Container(width: 24, height: 1.5, color: M4Theme.premiumBlue),
-        const SizedBox(width: 12),
+        Container(width: 40, height: 1.5, color: isDark ? Colors.white : Colors.black),
+        const SizedBox(width: 16),
         Text(
           title.toUpperCase(), 
           style: GoogleFonts.montserrat(
-            fontSize: 11, 
+            fontSize: 12, 
             fontWeight: FontWeight.w900, 
             color: isDark ? Colors.white : Colors.black, 
-            letterSpacing: 3
+            letterSpacing: 4
           )
         ),
       ],
     );
   }
 
-  Widget _buildOverviewSection(dynamic project) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionHeader('Overview'),
-        const SizedBox(height: 24),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              project?['description'] ?? 'Experience the pinnacle of luxury living with floor-to-ceiling windows, Italian marble flooring, and smart home automation.',
-              maxLines: _showFullOverview ? null : 3,
-              overflow: _showFullOverview ? TextOverflow.visible : TextOverflow.ellipsis,
-              style: GoogleFonts.montserrat(
-                fontSize: 11, 
-                color: isDark ? Colors.white.withValues(alpha: 0.6) : Colors.black.withValues(alpha: 0.6), 
-                height: 1.8, 
-                fontWeight: FontWeight.w900,
-                letterSpacing: 0,
-                decoration: TextDecoration.none,
-              ).copyWith(height: 1.8),
-            ),
-            if ((project?['description']?.length ?? 100) > 150)
-              GestureDetector(
-                onTap: () => setState(() => _showFullOverview = !_showFullOverview),
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 12),
-                  child: Text(
-                    _showFullOverview ? 'SHOW LESS' : 'READ MORE',
-                    style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 1),
-                  ),
-                ),
-              ),
-          ],
-        ),
-        const SizedBox(height: 32),
-        _MultimediaAssetCard(
-          title: 'PROJECT FLYER',
-          subtitle: 'HIGH RES • PDF',
-          icon: LucideIcons.fileText,
-          onView: () => _launchAction('Opening...', project?['flyer']),
-          onDownload: () => _launchAction('Downloading...', project?['flyer']),
-        ),
-      ],
-    );
-  }
-
   Widget _buildConstructionSection(dynamic project) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionHeader('Construction Progress'),
-        const SizedBox(height: 24),
-        _ConstructionDashboardCard(
-          overallProgress: project?['completion'] ?? 0,
-          estimatedCompletion: (project?['estimatedCompletionDate'] ?? project?['possessionDate'] ?? 'Q1 2029').toString().toUpperCase(),
-          phases: _progressPhases,
-          showFullProgress: _showFullProgress,
-          onToggleReadMore: () => setState(() => _showFullProgress = !_showFullProgress),
-          onPhaseTap: (url) => _showMediaLightbox(url, 'IMAGE'),
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionHeader('Construction Progress'),
+          const SizedBox(height: 24),
+          _ConstructionDashboardCard(
+            overallProgress: project?['completion'] ?? 0,
+            estimatedCompletion: (project?['estimatedCompletionDate'] ?? project?['possessionDate'] ?? 'Q1 2029').toString().toUpperCase(),
+            phases: _progressPhases,
+            showFullProgress: _showFullProgress,
+            onToggleReadMore: () => setState(() => _showFullProgress = !_showFullProgress),
+            onPhaseTap: (url) => _showMediaLightbox([url], 'IMAGE'),
+            projectName: project?['title'] ?? 'PROJECT',
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildAmenitiesSection(dynamic project) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionHeader('Amenities'),
-        const SizedBox(height: 24),
-        _buildAmenities(project),
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionHeader('Amenities'),
+          const SizedBox(height: 24),
+          _buildAmenities(project),
+        ],
+      ),
     );
   }
 
   Widget _buildLocationSection(dynamic project) {
-     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildSectionHeader('Location'),
-        const SizedBox(height: 24),
-        _buildLocation(project),
-      ],
+     return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionHeader('Location'),
+          const SizedBox(height: 24),
+          _buildLocation(project),
+        ],
+      ),
     );
   }
 
@@ -864,7 +931,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                     Positioned(
                       bottom: 25,
                       left: 20,
-                      child: Text('Open in Maps â†—', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.bold, color: M4Theme.premiumBlue, decoration: TextDecoration.underline)),
+                      child: Text('Open in Maps ↗', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.bold, color: M4Theme.premiumBlue, decoration: TextDecoration.underline)),
                     ),
                   ],
                 ),
@@ -875,22 +942,158 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     );
 
   }
+  Widget _buildInterestSection(dynamic project) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionHeader('Express Interest'),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF0F1115) : Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
+              boxShadow: isDark ? [] : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                )
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('INITIALIZE YOUR PREMIUM EXPERIENCE', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 1.5)),
+                const SizedBox(height: 24),
+                _InterestInput(hint: 'FULL NAME *', controller: _nameController),
+                const SizedBox(height: 16),
+                _InterestInput(hint: 'EMAIL ADDRESS', controller: _emailController),
+                const SizedBox(height: 16),
+                _InterestInput(hint: 'PHONE NUMBER *', controller: _phoneController),
+                const SizedBox(height: 16),
+                _InterestInput(hint: 'YOUR LOCATION (E.G. DUBAI, UAE)', controller: _locationController),
+                const SizedBox(height: 24),
+                _ScaleButton(
+                  onTap: () => _submitInquiry('General'),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 18),
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white : Colors.black,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Center(child: Text('REGISTER INTEREST', style: GoogleFonts.montserrat(color: isDark ? Colors.black : Colors.white, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2))),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPaymentPlansSection() {
+    if (_paymentPlans.isEmpty) return const SizedBox.shrink();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionHeader('Payment Plans'),
+          const SizedBox(height: 16),
+          ..._paymentPlans.map((plan) => Container(
+            margin: const EdgeInsets.only(bottom: 16),
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF1F5F9),
+              borderRadius: BorderRadius.circular(32),
+              border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(plan['name']?.toString().toUpperCase() ?? 'STANDARD PLAN', style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 0.5)),
+                    const Icon(LucideIcons.wallet, color: M4Theme.premiumBlue, size: 16),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                ...(plan['items'] as List? ?? []).map((item) => Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(color: M4Theme.premiumBlue.withValues(alpha: 0.1), shape: BoxShape.circle),
+                        child: Center(child: Text('${item['percentage']}%', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue))),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(item['description']?.toString().toUpperCase() ?? 'INSTALLMENT', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 0.5)),
+                            Text('INSTALLMENT ${item['installmentNumber'] ?? ''}', style: GoogleFonts.montserrat(fontSize: 8, color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                )).toList(),
+              ],
+            ),
+          )).toList(),
+        ],
+      ),
+    );
+  }
+
   String? _getCategoryThumbnail(dynamic project, String category) {
-    final List<dynamic> media = project?['media'] as List? ?? [];
-    if (category == 'EXTERIOR') {
-      final ext = (project?['exteriorImages'] as List?)?.firstOrNull;
-      if (ext != null) return ext.toString();
-      final fromMedia = media.firstWhere((m) => m['category']?.toString().toUpperCase() == 'EXTERIOR', orElse: () => null);
-      if (fromMedia != null) return fromMedia['url']?.toString();
-    } else if (category == 'INTERIOR') {
-      final int = (project?['interiorImages'] as List?)?.firstOrNull;
-      if (int != null) return int.toString();
-      final fromMedia = media.firstWhere((m) => m['category']?.toString().toUpperCase() == 'INTERIOR', orElse: () => null);
-      if (fromMedia != null) return fromMedia['url']?.toString();
-    }
+    if (category == 'EXTERIOR') return _exteriorImages.firstOrNull;
+    if (category == 'INTERIOR') return _interiorImages.firstOrNull;
     return null;
   }
 } // End of _GuestProjectDetailScreenState
+
+class _InterestInput extends StatelessWidget {
+  final String hint;
+  final IconData? icon;
+  final TextEditingController controller;
+  const _InterestInput({required this.hint, this.icon, required this.controller});
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF8FAFC),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.08)),
+      ),
+      child: TextField(
+        controller: controller,
+        style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black),
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          hintText: hint,
+          hintStyle: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: isDark ? Colors.white24 : Colors.black26, letterSpacing: 1),
+          icon: icon != null ? Icon(icon, size: 14, color: M4Theme.premiumBlue) : null,
+        ),
+      ),
+    );
+  }
+}
 
 class _OverviewActionCard extends StatelessWidget {
   final String label;
@@ -914,46 +1117,51 @@ class _OverviewActionCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(20),
+        height: 140,
+        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF1F5F9),
+          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.white,
           borderRadius: BorderRadius.circular(32),
           border: Border.all(
-            color: isAction 
-              ? M4Theme.premiumBlue.withValues(alpha: 0.3) 
-              : (isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05)),
-            width: 1.5,
+            color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05),
+            width: 1,
           ),
+          boxShadow: isDark ? [] : [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            )
+          ],
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Icon(icon, color: isAction ? M4Theme.premiumBlue : (isDark ? Colors.white38 : Colors.black38), size: 16),
-            const SizedBox(height: 12),
-            Text(
-              label.toUpperCase(), 
-              style: GoogleFonts.montserrat(
-                color: isDark ? Colors.white38 : Colors.black38, 
-                fontSize: 8, 
-                fontWeight: FontWeight.w900, 
-                letterSpacing: 2,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 4),
-            FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(
-                value, 
-                style: GoogleFonts.montserrat(
-                  color: isDark ? Colors.white : Colors.black, 
-                  fontSize: 24, 
-                  fontWeight: FontWeight.w900, 
-                  letterSpacing: -0.5,
+            Icon(icon, color: isDark ? Colors.white38 : Colors.black38, size: 24),
+            Column(
+              children: [
+                Text(
+                  label.toUpperCase(), 
+                  style: GoogleFonts.montserrat(
+                    color: isDark ? Colors.white38 : Colors.black38, 
+                    fontSize: 8, 
+                    fontWeight: FontWeight.w900, 
+                    letterSpacing: 1.5,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-              ),
+                const SizedBox(height: 4),
+                Text(
+                  value, 
+                  style: GoogleFonts.montserrat(
+                    color: isDark ? Colors.white : Colors.black, 
+                    fontSize: 14, 
+                    fontWeight: FontWeight.w900, 
+                    letterSpacing: -0.2,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
           ],
         ),
@@ -980,11 +1188,10 @@ class _CircleAction extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.2),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
+              color: Colors.black.withValues(alpha: 0.05),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, size: 20, color: color ?? Colors.white),
+            child: Icon(icon, size: 18, color: color ?? Colors.white),
           ),
         ),
       ),
@@ -1032,12 +1239,12 @@ class _HeroMediaThumb extends StatelessWidget {
     return _ScaleButton(
       onTap: onTap,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: Container(
-            width: 72,
-            height: 72,
+            width: 60,
+            height: 60,
             decoration: BoxDecoration(
               color: Colors.black.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(16),
@@ -1148,6 +1355,13 @@ class _MultimediaAssetCard extends StatelessWidget {
             color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
             borderRadius: BorderRadius.circular(40),
             border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05)),
+            boxShadow: isDark ? [] : [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 30,
+                offset: const Offset(0, 10),
+              )
+            ],
           ),
           child: Row(
             children: [
@@ -1196,13 +1410,12 @@ class _AssetButton extends StatelessWidget {
     return _ScaleButton(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
-          color: isOutline ? Colors.transparent : (isDark ? Colors.white : Colors.black),
-          borderRadius: BorderRadius.circular(30),
-          border: isOutline ? Border.all(color: isDark ? Colors.white24 : Colors.black12, width: 1.5) : null,
+          color: isOutline ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white : Colors.black),
+          borderRadius: BorderRadius.circular(10),
         ),
-        child: Text(label, style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isOutline ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.black : Colors.white), letterSpacing: 1)),
+        child: Text(label, style: GoogleFonts.montserrat(fontSize: 7.5, fontWeight: FontWeight.w900, color: isDark ? Colors.black : Colors.white, letterSpacing: 1.0)),
       ),
     );
   }
@@ -1215,6 +1428,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
   final bool showFullProgress;
   final VoidCallback onToggleReadMore;
   final Function(String) onPhaseTap;
+  final String projectName;
 
   const _ConstructionDashboardCard({
     required this.overallProgress, 
@@ -1223,6 +1437,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
     required this.showFullProgress,
     required this.onToggleReadMore,
     required this.onPhaseTap,
+    required this.projectName,
   });
 
   @override
@@ -1232,9 +1447,9 @@ class _ConstructionDashboardCard extends ConsumerWidget {
     
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(40),
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0F1115) : const Color(0xFFF4F4F5),
+        color: isDark ? const Color(0xFF0F1115) : const Color(0xFFF8FAFC),
         borderRadius: BorderRadius.circular(40),
         border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
       ),
@@ -1260,7 +1475,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                           overflow: showFullProgress ? TextOverflow.visible : TextOverflow.ellipsis,
                           style: GoogleFonts.montserrat(
                             fontSize: 11, 
-                            color: isDark ? Colors.white38 : Colors.black38, 
+                            color: isDark ? Colors.white.withValues(alpha: 0.5) : Colors.black.withValues(alpha: 0.6), 
                             height: 1.6, 
                             fontWeight: FontWeight.bold
                           ),
@@ -1306,14 +1521,43 @@ class _ConstructionDashboardCard extends ConsumerWidget {
           ),
           if (phases.isNotEmpty) ...[
             const SizedBox(height: 64),
+            // Timeline Slider
+            Row(
+              children: [
+                Text('2026', style: GoogleFonts.montserrat(fontSize: 18, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue)),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Stack(
+                    alignment: Alignment.centerLeft,
+                    children: [
+                      Container(height: 1, color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.1)),
+                      Container(
+                        width: 12,
+                        height: 12,
+                        decoration: BoxDecoration(
+                          color: isDark ? Colors.black : Colors.white,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: M4Theme.premiumBlue, width: 2),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 32),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               clipBehavior: Clip.none,
-              child: Row(
-                children: phases.map((phase) {
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2), // Tiny nudge
+                child: Row(
+                  children: phases.map((phase) {
                   final imageUrl = apiClient.resolveUrl(phase['image'] ?? (phase['images'] as List?)?.first);
+                  final status = phase['status']?.toString().toUpperCase() ?? 'UPCOMING';
+                  
                   return Container(
-                    width: 320,
+                    width: 300,
                     margin: const EdgeInsets.only(right: 24),
                     decoration: BoxDecoration(
                       color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
@@ -1325,39 +1569,61 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                       children: [
                         _ScaleButton(
                           onTap: () => onPhaseTap(imageUrl),
-                          child: ClipRRect(
-                            borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
-                            child: CachedNetworkImage(
-                              imageUrl: imageUrl, 
-                              height: 220, 
-                              width: 320, 
-                              fit: BoxFit.cover, 
-                              placeholder: (c, u) => Container(height: 220, color: Colors.white10),
-                              errorWidget: (c, e, s) => Container(height: 220, color: Colors.white10),
-                            ),
+                          child: Stack(
+                            children: [
+                              ClipRRect(
+                                borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+                                child: CachedNetworkImage(
+                                  imageUrl: imageUrl, 
+                                  height: 200, 
+                                  width: 300, 
+                                  fit: BoxFit.cover, 
+                                  placeholder: (c, u) => Container(height: 200, color: Colors.white10),
+                                  errorWidget: (c, e, s) => Container(height: 200, color: Colors.white10),
+                                ),
+                              ),
+                              Positioned(
+                                top: 16,
+                                left: 16,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: status == 'COMPLETED' ? Colors.green : (status == 'IN PROGRESS' ? M4Theme.premiumBlue : Colors.black54),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Text(status, style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1)),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(28),
+                          padding: const EdgeInsets.all(24),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(phase['name']?.toString().toUpperCase() ?? 'INITIAL PHASE', style: GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 1.5)),
+                              Text(projectName.toUpperCase(), style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 1)),
                               const SizedBox(height: 16),
                               Row(
                                 children: [
-                                  SizedBox(
-                                    width: 32,
-                                    height: 32,
-                                    child: CircularProgressIndicator(
-                                      value: (phase['progressPercent'] ?? phase['progress'] ?? 0).toDouble() / 100,
-                                      strokeWidth: 3,
-                                      backgroundColor: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05),
-                                      valueColor: const AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
-                                    ),
+                                  Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      SizedBox(
+                                        width: 36,
+                                        height: 36,
+                                        child: CircularProgressIndicator(
+                                          value: (phase['progressPercent'] ?? phase['progress'] ?? 0).toDouble() / 100,
+                                          strokeWidth: 3,
+                                          backgroundColor: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05),
+                                          valueColor: const AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
+                                        ),
+                                      ),
+                                      Text('${phase['progressPercent'] ?? phase['progress'] ?? 0}%', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900)),
+                                    ],
                                   ),
                                   const SizedBox(width: 16),
-                                  Text('${phase['progressPercent'] ?? phase['progress'] ?? 0}% COMPLETED', style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1)),
+                                  Expanded(child: Text(phase['name']?.toString().toUpperCase() ?? 'PHASE', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: isDark ? Colors.white.withValues(alpha: 0.7) : Colors.black.withValues(alpha: 0.7), letterSpacing: 1.5))),
                                 ],
                               ),
                             ],
@@ -1369,6 +1635,89 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                 }).toList(),
               ),
             ),
+          ),
+          const SizedBox(height: 64),
+            // Phase Tracking List
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('PHASE TRACKING', style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 2)),
+                    Text('REAL-TIME DEVELOPMENT STATUS', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.bold, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 0.5)),
+                  ],
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(color: M4Theme.premiumBlue.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
+                  child: Text('${phases.length} MILESTONES', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue)),
+                ),
+              ],
+            ),
+            const SizedBox(height: 32),
+            ...phases.asMap().entries.map((entry) {
+              final idx = entry.key;
+              final phase = entry.value;
+              final progress = (phase['progressPercent'] ?? phase['progress'] ?? 0).toDouble();
+              
+              return Container(
+                margin: const EdgeInsets.only(bottom: 16, left: 4, right: 4),
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
+                  boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 15, offset: const Offset(0, 6))],
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(12)),
+                          child: Center(child: Text((idx + 1).toString().padLeft(2, '0'), style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black38))),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(phase['name']?.toString().toUpperCase() ?? 'PHASE', style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900)),
+                              Row(
+                                children: [
+                                  Container(width: 6, height: 6, decoration: BoxDecoration(color: progress >= 100 ? Colors.green : (progress > 0 ? M4Theme.premiumBlue : Colors.grey), shape: BoxShape.circle)),
+                                  const SizedBox(width: 8),
+                                  Text(phase['status']?.toString().toUpperCase() ?? 'UPCOMING', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.bold, color: isDark ? Colors.white38 : Colors.black38)),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        Text('${progress.toInt()}%', style: GoogleFonts.montserrat(fontSize: 18, fontWeight: FontWeight.w900)),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: TweenAnimationBuilder<double>(
+                        duration: const Duration(milliseconds: 1500),
+                        curve: Curves.easeOutQuart,
+                        tween: Tween<double>(begin: 0, end: progress / 100),
+                        builder: (context, value, _) => LinearProgressIndicator(
+                          value: value,
+                          minHeight: 6,
+                          backgroundColor: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF1F5F9),
+                          valueColor: const AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
           ],
         ],
       ),
@@ -1404,6 +1753,39 @@ class _FilterChip extends StatelessWidget {
           ),
         ),
       ).animate(target: isActive ? 1 : 0).scale(duration: 100.ms, end: const Offset(0.95, 0.95)),
+    );
+  }
+}
+
+class _SquareAction extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+  final Color? color;
+
+  const _SquareAction({required this.icon, required this.onTap, this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return _ScaleButton(
+      onTap: onTap,
+      child: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: color ?? (isDark ? Colors.white.withValues(alpha: 0.1) : Colors.white),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05)),
+          boxShadow: isDark ? [] : [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4)
+            )
+          ],
+        ),
+        child: Icon(icon, color: isDark ? Colors.white : Colors.black, size: 20),
+      ),
     );
   }
 }
