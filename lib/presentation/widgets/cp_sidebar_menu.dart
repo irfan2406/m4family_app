@@ -8,6 +8,7 @@ import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
+import 'package:m4_mobile/core/providers/theme_provider.dart';
 
 class CpSidebarMenu extends ConsumerStatefulWidget {
   const CpSidebarMenu({super.key});
@@ -32,7 +33,8 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
   @override
   Widget build(BuildContext context) {
     final idx = ref.watch(cpNavigationIndexProvider);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final themeMode = ref.watch(themeProvider);
+    final isDark = themeMode == ThemeMode.dark;
 
     return Drawer(
       width: MediaQuery.of(context).size.width * 0.8,
@@ -203,6 +205,43 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                         label: 'Referral',
                         isActive: false,
                         onTap: () => _go('/cp/referral'),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Theme Mode Toggle
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'THEME MODE',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 2,
+                          color: isDark ? Colors.white38 : Colors.grey[600],
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          ref.read(themeProvider.notifier).setTheme(isDark ? ThemeMode.light : ThemeMode.dark);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
+                          ),
+                          child: Icon(
+                            isDark ? LucideIcons.sparkles : LucideIcons.moon,
+                            color: isDark ? Colors.white : Colors.black,
+                            size: 18,
+                          ),
+                        ),
                       ),
                     ],
                   ),

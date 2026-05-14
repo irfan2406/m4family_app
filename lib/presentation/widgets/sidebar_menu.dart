@@ -16,6 +16,7 @@ import 'package:m4_mobile/presentation/screens/pages/pages_list_screen.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
 import 'package:m4_mobile/presentation/screens/content/content_hub_screen.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/core/providers/theme_provider.dart';
 
 
 
@@ -30,11 +31,14 @@ class SidebarMenu extends ConsumerStatefulWidget {
 
 class _SidebarMenuState extends ConsumerState<SidebarMenu> {
   bool _isContentOpen = false;
+  bool _isCustomViewsOpen = false;
 
   @override
   Widget build(BuildContext context) {
     final currentIndex = ref.watch(navigationProvider);
     final authState = ref.watch(authProvider);
+    final themeMode = ref.watch(themeProvider);
+    final isDark = themeMode == ThemeMode.dark;
     final user = authState.user;
     final role = user?['role']?.toString().toLowerCase();
     final isInvestor = role == 'investor';
@@ -183,20 +187,24 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                         ],
                       ),
 
-                      _SidebarItem(
-                        icon: LucideIcons.layoutGrid, 
-                        label: 'My Custom Views', // 👈 Added for web parity
-                        isActive: currentIndex == 7,
-                        activeColor: accentColor,
-                        onTap: () => navigateTo(7),
-                      ),
-
-                      _SidebarItem(
-                        icon: LucideIcons.sparkles, 
+                      // 🎨 Custom Views Dropdown
+                      _SidebarDropdown(
+                        icon: LucideIcons.sparkles,
                         label: 'Custom Views',
-                        isActive: currentIndex == 6,
-                        activeColor: accentColor,
-                        onTap: () => navigateTo(6),
+                        isOpen: _isCustomViewsOpen,
+                        onToggle: () => setState(() => _isCustomViewsOpen = !_isCustomViewsOpen),
+                        subItems: [
+                          _SidebarSubItem(
+                            label: 'My Custom Views',
+                            icon: LucideIcons.logIn,
+                            onTap: () => navigateTo(7),
+                          ),
+                          _SidebarSubItem(
+                            label: 'Custom Views',
+                            icon: LucideIcons.logIn,
+                            onTap: () => navigateTo(6),
+                          ),
+                        ],
                       ),
                       
                       _SidebarItem(
@@ -323,13 +331,50 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                   ),
                 ),
                 
+                // Theme Mode Toggle
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'THEME MODE',
+                        style: GoogleFonts.montserrat(
+                          color: isDark ? Colors.white70 : Colors.black87,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 2,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          ref.read(themeProvider.notifier).setTheme(isDark ? ThemeMode.light : ThemeMode.dark);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
+                          ),
+                          child: Icon(
+                            isDark ? LucideIcons.sparkles : LucideIcons.moon,
+                            color: isDark ? Colors.white : Colors.black,
+                            size: 18,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
                 // Bottom Actions
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
                     border: Border(
                       top: BorderSide(
-                        color: Colors.white.withOpacity(Theme.of(context).brightness == Brightness.dark ? 0.05 : 0.2),
+                        color: Colors.white.withOpacity(isDark ? 0.05 : 0.2),
                       ),
                     ),
                     gradient: LinearGradient(
@@ -337,7 +382,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                       end: Alignment.bottomCenter,
                       colors: [
                         Colors.transparent,
-                        (Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white).withOpacity(0.2),
+                        (isDark ? Colors.black : Colors.white).withOpacity(0.2),
                       ],
                     ),
                   ),

@@ -35,16 +35,10 @@ class CustomViewsScreen extends ConsumerWidget {
                     onTap: () {
                       if (currentStep > 0) {
                         ref.read(customViewsStepProvider.notifier).state = currentStep - 1;
-                      } else if (currentStep == 0) {
-                        ref.read(customViewsStepProvider.notifier).state = -1;
                       } else {
-                        if (Navigator.canPop(context)) {
-                          Navigator.pop(context);
-                        } else {
-                          // Return to previous tab contextually
-                          final prevIndex = ref.read(previousNavigationProvider);
-                          ref.read(navigationProvider.notifier).state = prevIndex;
-                        }
+                        // Return to previous tab contextually
+                        final prevIndex = ref.read(previousNavigationProvider);
+                        ref.read(navigationProvider.notifier).state = prevIndex;
                       }
                     },
                     child: Container(
@@ -112,7 +106,7 @@ class CustomViewsScreen extends ConsumerWidget {
                         fit: StackFit.expand,
                         children: [
                           Image.network(
-                            'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?q=80&w=1974&auto=format&fit=crop',
+                            'https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=2000&auto=format&fit=crop',
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) => Container(
                               color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
@@ -391,42 +385,52 @@ class _StepIconIndicator extends ConsumerWidget {
     final currentStep = ref.watch(customViewsStepProvider);
     final activeStep = currentStep == -1 ? 0 : currentStep;
     final bookingId = ref.watch(customViewsBookingIdProvider);
-    final isAllotted = bookingId != null && index == 0;
     
-    // Web uses >= for filled state (current + previous steps filled)
-    final isFilled = activeStep >= index;
+    // Web logic: If bookingId exists, Step 0 is ALLOTTED and locked
+    final bool isAllotted = bookingId != null && index == 0;
+    final bool isFilled = activeStep >= index;
+    final bool isActive = activeStep == index;
+
+    final foreground = Theme.of(context).colorScheme.onSurface;
+    final surface = Theme.of(context).colorScheme.surface;
 
     return GestureDetector(
       onTap: isAllotted ? null : () => ref.read(customViewsStepProvider.notifier).state = index,
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: isFilled ? Theme.of(context).colorScheme.onSurface : Colors.transparent,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: isFilled ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+      child: Opacity(
+        opacity: isAllotted && !isActive ? 0.5 : 1.0,
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: isFilled ? foreground : Colors.transparent,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: isFilled ? foreground : foreground.withOpacity(0.1),
+                ),
+                boxShadow: isActive ? [
+                  BoxShadow(color: foreground.withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 4))
+                ] : null,
+              ),
+              child: Icon(
+                isAllotted ? LucideIcons.check : icon,
+                size: 16,
+                color: isFilled ? surface : foreground,
               ),
             ),
-            child: Icon(
-              isAllotted ? LucideIcons.check : icon,
-              size: 16,
-              color: isFilled ? Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.onSurface,
+            const SizedBox(height: 6),
+            Text(
+              isAllotted ? 'ALLOTTED' : title,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.montserrat(
+                fontSize: 7,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 0.8,
+                color: isFilled ? foreground : foreground.withOpacity(0.3),
+              ),
             ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            isAllotted ? 'ALLOTTED' : title,
-            textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
-              fontSize: 7,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 0.8,
-              color: isFilled || isAllotted ? Theme.of(context).colorScheme.onSurface : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

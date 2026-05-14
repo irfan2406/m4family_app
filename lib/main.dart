@@ -117,7 +117,11 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/login',
-      builder: (context, state) => const LoginScreen(),
+      builder: (context, state) {
+        final step = int.tryParse(state.uri.queryParameters['step'] ?? '0') ?? 0;
+        final role = state.uri.queryParameters['role'] ?? 'CUSTOMER';
+        return LoginScreen(initialStep: step, initialRole: role);
+      },
     ),
     GoRoute(
       path: '/auth/cp/login',

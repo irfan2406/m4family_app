@@ -89,9 +89,18 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                         isOpen: _isConnectOpen,
                         onToggle: () => setState(() => _isConnectOpen = !_isConnectOpen),
                         subItems: [
-                          _SubItem(label: 'CP Login', icon: LucideIcons.user, onTap: () => context.go('/login')),
-                          _SubItem(label: 'Investor Login', icon: LucideIcons.crown, onTap: () => context.go('/login')),
-                          _SubItem(label: 'Customer Login', icon: LucideIcons.users, onTap: () => context.go('/login')),
+                          _SubItem(label: 'CP Login', icon: LucideIcons.logIn, onTap: () {
+                            context.push('/auth/cp/login?from=guest');
+                            Navigator.pop(context);
+                          }),
+                          _SubItem(label: 'Investor Login', icon: LucideIcons.logIn, onTap: () {
+                            context.push('/login?role=INVESTOR&step=1');
+                            Navigator.pop(context);
+                          }),
+                          _SubItem(label: 'Customer Login', icon: LucideIcons.logIn, onTap: () {
+                            context.push('/login?step=1');
+                            Navigator.pop(context);
+                          }),
                         ],
                       ),
                       
@@ -255,8 +264,9 @@ class _DropdownMenuItem extends StatelessWidget {
 class _SubItem extends StatelessWidget {
   final String label;
   final IconData icon;
+  final Color? color;
   final VoidCallback onTap;
-  const _SubItem({required this.label, required this.icon, required this.onTap});
+  const _SubItem({required this.label, required this.icon, this.color, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -266,7 +276,7 @@ class _SubItem extends StatelessWidget {
       child: ListTile(
         onTap: onTap,
         dense: true,
-        leading: Icon(icon, size: 16, color: (isDark ? Colors.white : Colors.black).withOpacity(0.3)),
+        leading: Icon(icon, size: 16, color: color ?? (isDark ? Colors.white : Colors.black).withOpacity(0.3)),
         title: Text(
           label, 
           style: GoogleFonts.montserrat(

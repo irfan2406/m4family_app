@@ -7,7 +7,14 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
-  const LoginScreen({super.key});
+  final int initialStep;
+  final String initialRole;
+
+  const LoginScreen({
+    super.key,
+    this.initialStep = 0,
+    this.initialRole = 'CUSTOMER',
+  });
 
   @override
   ConsumerState<LoginScreen> createState() => _LoginScreenState();
@@ -18,8 +25,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final List<TextEditingController> _otpControllers = List.generate(6, (index) => TextEditingController());
   final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
   
-  int _step = 0; // 0: Options, 1: Phone, 2: OTP
-  String _selectedRole = 'CUSTOMER';
+  late int _step;
+  late String _selectedRole;
+
+  @override
+  void initState() {
+    super.initState();
+    _step = widget.initialStep;
+    _selectedRole = widget.initialRole;
+  }
 
   @override
   void dispose() {
@@ -119,48 +133,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return Column(
       children: [
         // Main Logo
-        Container(
+        Image.asset(
+          'assets/m4_family_logo.png',
           width: 80,
-          height: 80,
-          decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.4),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.white.withOpacity(0.1)),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Image.asset(
-              'assets/m4_family_logo.png',
-              color: const Color(0xFFFFD700),
-              colorBlendMode: BlendMode.srcIn,
-            ),
-          ),
-        ).animate().scale(duration: 500.ms, curve: Curves.easeOut),
-        
-        const SizedBox(height: 24),
-        
-        Text(
-          'M4 FAMILY',
-          style: GoogleFonts.montserrat(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            letterSpacing: 2,
-          ),
-        ).animate().fadeIn(delay: 200.ms),
-        
-        const SizedBox(height: 8),
-        
-        Text(
-          'CORPORATE IDENTITY & PREMIUM ASSETS',
-          textAlign: TextAlign.center,
-          style: GoogleFonts.montserrat(
-            fontSize: 10,
-            fontWeight: FontWeight.w600,
-            color: Colors.white54,
-            letterSpacing: 3,
-          ),
-        ).animate().fadeIn(delay: 400.ms),
+          color: Colors.white,
+        ),
       ],
     );
   }
@@ -220,35 +197,57 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return Column(
       key: const ValueKey('phone'),
       children: [
-        Row(
-          children: [
-            IconButton(
-              icon: const Icon(LucideIcons.chevronLeft, color: Colors.white),
-              onPressed: () => setState(() => _step = 0),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: GestureDetector(
+            onTap: () => context.go('/home'),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.white.withOpacity(0.2)),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(LucideIcons.chevronLeft, color: Colors.white, size: 18),
+                  const SizedBox(width: 16),
+                  Text(
+                    'BACK TO GUEST PORTAL',
+                    style: GoogleFonts.montserrat(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 12,
+                      letterSpacing: 2.5,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(width: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'PHONE GATEWAY',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    letterSpacing: 1,
-                  ),
-                ),
-                Text(
-                  'SECURE MULTI-FACTOR AUTHENTICATION',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white54,
-                    letterSpacing: 1,
-                  ),
-                ),
-              ],
+          ),
+        ),
+        const SizedBox(height: 48),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'PHONE GATEWAY',
+              style: GoogleFonts.montserrat(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                letterSpacing: 1,
+              ),
+            ),
+            Text(
+              'SECURE MULTI-FACTOR AUTHENTICATION',
+              style: GoogleFonts.montserrat(
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                color: Colors.white54,
+                letterSpacing: 1,
+              ),
             ),
           ],
         ),
@@ -259,6 +258,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           hint: '+971 50 XXX XXXX',
           icon: LucideIcons.phone,
           keyboardType: TextInputType.phone,
+        ),
+        const SizedBox(height: 16),
+        Text(
+          'A secure one-time access token will be dispatched via WhatsApp for identity validation.',
+          style: GoogleFonts.montserrat(
+            fontSize: 10,
+            color: Colors.white38,
+            height: 1.5,
+          ),
         ),
         const SizedBox(height: 32),
         SizedBox(
@@ -271,7 +279,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
               foregroundColor: Colors.black,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
               padding: const EdgeInsets.symmetric(horizontal: 24),
             ),
             child: authState.status == AuthStatus.loading
@@ -281,7 +289,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   children: [
                     Text(
                       'REQUEST TOKEN',
-                      style: GoogleFonts.montserrat(fontWeight: FontWeight.bold, letterSpacing: 2),
+                      style: GoogleFonts.montserrat(fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 1),
                     ),
                     const Icon(LucideIcons.arrowRight, size: 20),
                   ],
@@ -296,37 +304,57 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return Column(
       key: const ValueKey('otp'),
       children: [
-        Row(
-          children: [
-            IconButton(
-              icon: const Icon(LucideIcons.chevronLeft, color: Colors.white),
-              onPressed: () => setState(() => _step = 1),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        Align(
+          alignment: Alignment.centerLeft,
+          child: GestureDetector(
+            onTap: () => setState(() => _step = 1),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.white.withOpacity(0.1)),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
+                  const Icon(LucideIcons.chevronLeft, color: Colors.white70, size: 14),
+                  const SizedBox(width: 8),
                   Text(
-                    'FINAL CHECK',
+                    'BACK',
                     style: GoogleFonts.montserrat(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                      letterSpacing: 1,
-                    ),
-                  ),
-                  Text(
-                    'WHATSAPP CODE SENT TO ${authState.identifier}',
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white54,
+                      color: Colors.white70,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 9,
                       letterSpacing: 1,
                     ),
                   ),
                 ],
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 32),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'FINAL CHECK',
+              style: GoogleFonts.montserrat(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                letterSpacing: 1,
+              ),
+            ),
+            Text(
+              'WHATSAPP CODE SENT TO ${authState.identifier}',
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.montserrat(
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                color: Colors.white54,
+                letterSpacing: 1,
               ),
             ),
           ],

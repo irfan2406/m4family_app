@@ -1546,14 +1546,17 @@ class _ConstructionDashboardCard extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 32),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              clipBehavior: Clip.none,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 2), // Tiny nudge
-                child: Row(
-                  children: phases.map((phase) {
-                  final imageUrl = apiClient.resolveUrl(phase['image'] ?? (phase['images'] as List?)?.first);
+            SizedBox(
+              height: 480,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                itemCount: phases.length,
+                itemBuilder: (context, index) {
+                  final phase = phases[index];
+                  final phaseImages = phase['images'] as List?;
+                  final firstPhaseImg = (phaseImages != null && phaseImages.isNotEmpty) ? phaseImages[0] : '';
+                  final imageUrl = apiClient.resolveUrl(phase['image'] ?? firstPhaseImg);
                   final status = phase['status']?.toString().toUpperCase() ?? 'UPCOMING';
                   
                   return Container(
@@ -1602,7 +1605,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(projectName.toUpperCase(), style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 1)),
+                              Text(projectName.toUpperCase(), style: GoogleFonts.dmSerifDisplay(fontSize: 12, fontWeight: FontWeight.bold, color: isDark ? Colors.white : const Color(0xFF0F172A), letterSpacing: 1)),
                               const SizedBox(height: 16),
                               Row(
                                 children: [
@@ -1623,7 +1626,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                     ],
                                   ),
                                   const SizedBox(width: 16),
-                                  Expanded(child: Text(phase['name']?.toString().toUpperCase() ?? 'PHASE', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: isDark ? Colors.white.withValues(alpha: 0.7) : Colors.black.withValues(alpha: 0.7), letterSpacing: 1.5))),
+                                  Expanded(child: Text((phase['name'] ?? phase['phaseName'] ?? 'PHASE').toString().toUpperCase(), style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: isDark ? Colors.white.withValues(alpha: 0.7) : Colors.black.withValues(alpha: 0.7), letterSpacing: 1.5))),
                                 ],
                               ),
                             ],
@@ -1632,10 +1635,9 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                       ],
                     ),
                   );
-                }).toList(),
+                },
               ),
             ),
-          ),
           const SizedBox(height: 64),
             // Phase Tracking List
             Row(
@@ -1656,68 +1658,89 @@ class _ConstructionDashboardCard extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 32),
-            ...phases.asMap().entries.map((entry) {
-              final idx = entry.key;
-              final phase = entry.value;
-              final progress = (phase['progressPercent'] ?? phase['progress'] ?? 0).toDouble();
-              
-              return Container(
-                margin: const EdgeInsets.only(bottom: 16, left: 4, right: 4),
-                padding: const EdgeInsets.all(24),
-                decoration: BoxDecoration(
-                  color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
-                  boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 15, offset: const Offset(0, 6))],
-                ),
-                child: Column(
-                  children: [
-                    Row(
+            SizedBox(
+              height: 140,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                itemCount: phases.length,
+                itemBuilder: (context, index) {
+                  final phase = phases[index];
+                  final progress = (phase['progressPercent'] ?? phase['progress'] ?? 0).toDouble();
+                  final status = phase['status']?.toString().toUpperCase() ?? 'UPCOMING';
+                  
+                  return Container(
+                    width: 280,
+                    margin: const EdgeInsets.only(right: 16),
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
+                      boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 15, offset: const Offset(0, 6))],
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(12)),
-                          child: Center(child: Text((idx + 1).toString().padLeft(2, '0'), style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black38))),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(phase['name']?.toString().toUpperCase() ?? 'PHASE', style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900)),
-                              Row(
+                        Row(
+                          children: [
+                            Container(
+                              width: 36,
+                              height: 36,
+                              decoration: BoxDecoration(color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(10)),
+                              child: Center(child: Text((index + 1).toString().padLeft(2, '0'), style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black38))),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Container(width: 6, height: 6, decoration: BoxDecoration(color: progress >= 100 ? Colors.green : (progress > 0 ? M4Theme.premiumBlue : Colors.grey), shape: BoxShape.circle)),
-                                  const SizedBox(width: 8),
-                                  Text(phase['status']?.toString().toUpperCase() ?? 'UPCOMING', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.bold, color: isDark ? Colors.white38 : Colors.black38)),
+                                  Text((phase['name'] ?? phase['phaseName'] ?? 'PHASE').toString().toUpperCase(), style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white : const Color(0xFF1E293B))),
+                                  Row(
+                                    children: [
+                                      Container(width: 6, height: 6, decoration: BoxDecoration(color: progress >= 100 ? Colors.green : (progress > 0 ? M4Theme.premiumBlue : Colors.grey), shape: BoxShape.circle)),
+                                      const SizedBox(width: 6),
+                                      Text(status, style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.bold, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 0.5)),
+                                    ],
+                                  ),
                                 ],
                               ),
-                            ],
-                          ),
+                            ),
+                            Text('${progress.toInt()}%', style: GoogleFonts.montserrat(fontSize: 16, fontWeight: FontWeight.w900, color: isDark ? Colors.white : const Color(0xFF0F172A))),
+                          ],
                         ),
-                        Text('${progress.toInt()}%', style: GoogleFonts.montserrat(fontSize: 18, fontWeight: FontWeight.w900)),
+                        const SizedBox(height: 12),
+                        Stack(
+                          children: [
+                            Container(
+                              height: 6,
+                              width: double.infinity,
+                              decoration: BoxDecoration(color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(10)),
+                            ),
+                            TweenAnimationBuilder<double>(
+                              duration: const Duration(milliseconds: 1500),
+                              curve: Curves.easeOutQuart,
+                              tween: Tween<double>(begin: 0, end: progress / 100),
+                              builder: (context, value, _) => FractionallySizedBox(
+                                widthFactor: value,
+                                child: Container(
+                                  height: 6,
+                                  decoration: BoxDecoration(
+                                    gradient: const LinearGradient(colors: [M4Theme.premiumBlue, Color(0xFF6366F1)]),
+                                    borderRadius: BorderRadius.circular(10),
+                                    boxShadow: [BoxShadow(color: M4Theme.premiumBlue.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 2))],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
-                    const SizedBox(height: 20),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: TweenAnimationBuilder<double>(
-                        duration: const Duration(milliseconds: 1500),
-                        curve: Curves.easeOutQuart,
-                        tween: Tween<double>(begin: 0, end: progress / 100),
-                        builder: (context, value, _) => LinearProgressIndicator(
-                          value: value,
-                          minHeight: 6,
-                          backgroundColor: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF1F5F9),
-                          valueColor: const AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
+                  );
+                },
+              ),
+            ),
           ],
         ],
       ),

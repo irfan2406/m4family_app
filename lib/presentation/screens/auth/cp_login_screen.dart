@@ -50,13 +50,14 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                 colors: [
                   Colors.black.withValues(alpha: 0.55),
                   Colors.black.withValues(alpha: 0.75),
+                  Colors.black,
                 ],
               ),
             ),
           ),
           SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 28),
+              padding: const EdgeInsets.symmetric(horizontal: 32),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -65,11 +66,16 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       IconButton(
-                        style: IconButton.styleFrom(
-                          backgroundColor: Colors.white.withValues(alpha: 0.1),
+                        onPressed: () => context.go('/home'),
+                        icon: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.05),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.white.withOpacity(0.1)),
+                          ),
+                          child: const Icon(LucideIcons.chevronLeft, color: Colors.white70, size: 18),
                         ),
-                        onPressed: () => context.go('/login'),
-                        icon: const Icon(LucideIcons.chevronLeft, color: Colors.white),
                       ),
                       Container(
                         padding: const EdgeInsets.all(10),
@@ -82,49 +88,74 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 24),
                   if (fromGuest) ...[
-                    const SizedBox(height: 12),
-                    OutlinedButton(
-                      onPressed: () => context.go('/home'),
-                      child: Text(
-                        'BACK TO GUEST PORTAL',
-                        style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 2),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: GestureDetector(
+                        onTap: () => context.go('/home'),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.05),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: Colors.white.withOpacity(0.15)),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(LucideIcons.chevronLeft, color: Colors.white, size: 16),
+                              const SizedBox(width: 12),
+                              Text(
+                                'BACK TO GUEST PORTAL',
+                                style: GoogleFonts.montserrat(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 11,
+                                  letterSpacing: 2,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
+                    const SizedBox(height: 48),
                   ],
-                  const SizedBox(height: 32),
                   Text(
-                    'CHANNEL PARTNER',
+                    'CHANNEL\nPARTNER',
                     style: GoogleFonts.montserrat(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 48,
+                      fontWeight: FontWeight.w900,
                       color: Colors.white,
-                      letterSpacing: -0.5,
+                      height: 1.1,
+                      letterSpacing: -1,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
                   Text(
                     'AUTHORIZED PARTNER ACCESS PORTAL',
                     style: GoogleFonts.montserrat(
                       fontSize: 10,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w700,
                       color: Colors.white54,
-                      letterSpacing: 3,
+                      letterSpacing: 2,
                     ),
                   ),
-                  const SizedBox(height: 36),
+                  const SizedBox(height: 48),
                   _Field(
                     label: 'CHANNEL PARTNER ID',
                     controller: _cpIdController,
                     icon: LucideIcons.user,
                     hint: 'CP-XXXXX',
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 24),
                   _Field(
                     label: 'PRIVATE PASSWORD',
                     controller: _passwordController,
                     icon: LucideIcons.lock,
                     obscure: true,
+                    hint: '••••••••',
                   ),
                   const SizedBox(height: 16),
                   Row(
@@ -138,9 +169,9 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                           'FORGOT PASSWORD?',
                           style: GoogleFonts.montserrat(
                             fontSize: 10,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w800,
                             color: Colors.white54,
-                            letterSpacing: 2,
+                            letterSpacing: 1.5,
                           ),
                         ),
                       ),
@@ -152,20 +183,20 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                           'REGISTER NOW',
                           style: GoogleFonts.montserrat(
                             fontSize: 10,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w900,
                             color: Colors.purpleAccent,
-                            letterSpacing: 2,
+                            letterSpacing: 1.5,
                           ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 32),
                   Consumer(
                     builder: (context, ref, _) {
                       final loading = ref.watch(authProvider.select((s) => s.status == AuthStatus.loading));
                       return SizedBox(
-                        height: 56,
+                        height: 64,
                         child: FilledButton(
                           onPressed: loading
                               ? null
@@ -186,7 +217,8 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                                 },
                           style: FilledButton.styleFrom(
                             backgroundColor: Colors.purple.shade600,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+                            padding: const EdgeInsets.symmetric(horizontal: 24),
                           ),
                           child: loading
                               ? const SizedBox(
@@ -195,33 +227,39 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                                   child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                                 )
                               : Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       'AUTHORIZE ACCESS',
-                                      style: GoogleFonts.montserrat(fontWeight: FontWeight.bold, letterSpacing: 2),
+                                      style: GoogleFonts.montserrat(fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 1.5),
                                     ),
-                                    const SizedBox(width: 12),
-                                    const Icon(LucideIcons.arrowRight, size: 20),
+                                    Container(
+                                      padding: const EdgeInsets.all(6),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withOpacity(0.2),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(LucideIcons.arrowRight, size: 18),
+                                    ),
                                   ],
                                 ),
                         ),
                       );
                     },
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 48),
                   Text(
                     'M4 FAMILY PARTNER NETWORK\nSECURE • VERIFIED • TRUSTED',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.montserrat(
-                      fontSize: 9,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
                       color: Colors.white38,
                       letterSpacing: 2,
                       height: 1.6,
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 32),
                 ],
               ),
             ),

@@ -124,34 +124,70 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Colors.black.withValues(alpha: 0.55), Colors.black.withValues(alpha: 0.85)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black.withValues(alpha: 0.55),
+                  Colors.black.withValues(alpha: 0.85),
+                  Colors.black,
+                ],
               ),
             ),
           ),
           SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 32),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  if (fromGuest)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: OutlinedButton(
-                        onPressed: () => context.go('/home'),
-                        child: Text(
-                          'BACK TO GUEST PORTAL',
-                          style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 2),
+                  const SizedBox(height: 16),
+                  if (fromGuest) ...[
+                    Align(
+                      alignment: Alignment.center,
+                      child: GestureDetector(
+                        onTap: () => context.go('/home'),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.05),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: Colors.white.withOpacity(0.15)),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(LucideIcons.chevronLeft, color: Colors.white, size: 16),
+                              const SizedBox(width: 12),
+                              Text(
+                                'BACK TO GUEST PORTAL',
+                                style: GoogleFonts.montserrat(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 11,
+                                  letterSpacing: 2.5,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
+                    const SizedBox(height: 32),
+                  ],
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       IconButton(
-                        style: IconButton.styleFrom(backgroundColor: Colors.white.withValues(alpha: 0.1)),
                         onPressed: () => context.go('/auth/cp/login${fromGuest ? '?from=guest' : ''}'),
-                        icon: const Icon(LucideIcons.chevronLeft, color: Colors.white),
+                        icon: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.05),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.white.withOpacity(0.1)),
+                          ),
+                          child: const Icon(LucideIcons.chevronLeft, color: Colors.white70, size: 18),
+                        ),
                       ),
                       Container(
                         padding: const EdgeInsets.all(12),
@@ -164,47 +200,50 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 32),
                   Text(
-                    'PARTNER REGISTRATION',
+                    'PARTNER\nREGISTRATION',
                     style: GoogleFonts.montserrat(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 42,
+                      fontWeight: FontWeight.w900,
                       color: Colors.white,
+                      height: 1.1,
+                      letterSpacing: -1,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
                   Text(
                     'JOIN M4 FAMILY CHANNEL PARTNER NETWORK',
                     style: GoogleFonts.montserrat(
                       fontSize: 10,
+                      fontWeight: FontWeight.w700,
                       color: Colors.white54,
                       letterSpacing: 2,
                     ),
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 48),
                   _section('PERSONAL INFORMATION'),
                   _CpField(label: 'FULL NAME *', controller: _fullName, icon: LucideIcons.user, hint: 'John Doe'),
-                  _CpField(label: 'COMPANY NAME *', controller: _companyName, icon: LucideIcons.building2),
-                  _CpField(label: 'EMAIL *', controller: _email, icon: LucideIcons.mail, keyboard: TextInputType.emailAddress),
-                  _CpField(label: 'PHONE *', controller: _phone, icon: LucideIcons.phone, keyboard: TextInputType.phone),
-                  const SizedBox(height: 16),
+                  _CpField(label: 'COMPANY NAME *', controller: _companyName, icon: LucideIcons.building2, hint: 'ABC Realty Pvt Ltd'),
+                  _CpField(label: 'EMAIL *', controller: _email, icon: LucideIcons.mail, keyboard: TextInputType.emailAddress, hint: 'john@example.com'),
+                  _CpField(label: 'PHONE *', controller: _phone, icon: LucideIcons.phone, keyboard: TextInputType.phone, hint: '+91 XXXXX XXXXX'),
+                  const SizedBox(height: 24),
                   _section('RERA CREDENTIALS'),
-                  _CpField(label: 'RERA NUMBER *', controller: _reraNumber, icon: LucideIcons.fileText),
-                  _CpField(label: 'RERA ID *', controller: _reraId, icon: LucideIcons.fileText),
-                  const SizedBox(height: 16),
+                  _CpField(label: 'RERA NUMBER *', controller: _reraNumber, icon: LucideIcons.fileText, hint: '1234567'),
+                  _CpField(label: 'RERA ID *', controller: _reraId, icon: LucideIcons.fileText, hint: 'RERA-123-456'),
+                  const SizedBox(height: 24),
                   _section('ACCOUNT SETUP'),
                   _CpField(label: 'CHANNEL PARTNER ID *', controller: _cpId, icon: LucideIcons.sparkles, hint: 'CP-XXXXX'),
-                  _CpField(label: 'PASSWORD *', controller: _password, icon: LucideIcons.lock, obscure: true),
-                  _CpField(label: 'CONFIRM PASSWORD *', controller: _confirmPassword, icon: LucideIcons.lock, obscure: true),
-                  const SizedBox(height: 28),
+                  _CpField(label: 'PASSWORD *', controller: _password, icon: LucideIcons.lock, obscure: true, hint: '••••••••'),
+                  _CpField(label: 'CONFIRM PASSWORD *', controller: _confirmPassword, icon: LucideIcons.lock, obscure: true, hint: '••••••••'),
+                  const SizedBox(height: 48),
                   SizedBox(
-                    height: 56,
+                    height: 64,
                     child: FilledButton(
                       onPressed: _submitting ? null : _submit,
                       style: FilledButton.styleFrom(
                         backgroundColor: Colors.purple.shade600,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
                       ),
                       child: _submitting
                           ? const SizedBox(
@@ -212,20 +251,34 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                               height: 22,
                               child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                             )
-                          : Text(
-                              'COMPLETE REGISTRATION',
-                              style: GoogleFonts.montserrat(fontWeight: FontWeight.bold, letterSpacing: 2),
+                          : Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'COMPLETE REGISTRATION',
+                                  style: GoogleFonts.montserrat(fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 1.5),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.all(6),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.2),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(LucideIcons.arrowRight, size: 18),
+                                ),
+                              ],
                             ),
                     ),
                   ),
+                  const SizedBox(height: 24),
                   TextButton(
                     onPressed: () => context.go('/auth/cp/login${fromGuest ? '?from=guest' : ''}'),
                     child: Text(
                       'ALREADY HAVE AN ACCOUNT? LOGIN',
-                      style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white54, letterSpacing: 2),
+                      style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.white54, letterSpacing: 2),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 32),
                 ],
               ),
             ),

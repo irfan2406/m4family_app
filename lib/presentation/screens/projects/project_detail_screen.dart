@@ -737,7 +737,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
 
   Widget _buildHero(dynamic project, bool isDark) {
     final apiClient = ref.read(apiClientProvider);
-    final heroUrl = apiClient.resolveUrl(project?['heroImage'] ?? project?['coverImage'] ?? (project?['heroImages'] as List?)?.first ?? '');
+    final heroImages = project?['heroImages'] as List?;
+    final firstHero = (heroImages != null && heroImages.isNotEmpty) ? heroImages[0] : '';
+    final heroUrl = apiClient.resolveUrl(project?['heroImage'] ?? project?['coverImage'] ?? firstHero);
 
     return AspectRatio(
       aspectRatio: 1920 / 1080,
@@ -845,7 +847,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
 
   Widget _buildMediaQuickActions(dynamic project, bool isDark) {
     final apiClient = ref.read(apiClientProvider);
-    final heroUrl = apiClient.resolveUrl(project?['heroImage'] ?? project?['coverImage'] ?? (project?['heroImages'] as List?)?.first ?? '');
+    final heroImages = project?['heroImages'] as List?;
+    final firstHero = (heroImages != null && heroImages.isNotEmpty) ? heroImages[0] : '';
+    final heroUrl = apiClient.resolveUrl(project?['heroImage'] ?? project?['coverImage'] ?? firstHero);
     
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -2505,11 +2509,18 @@ class _ConstructionDashboardCard extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 48),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: phases.map((phase) {
-                final imageUrl = apiClient.resolveUrl(phase['image'] ?? (phase['images'] as List?)?.first);
+          // Construction Dashboard Cards
+          SizedBox(
+            height: 360,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              itemCount: phases.length,
+              itemBuilder: (context, index) {
+                final phase = phases[index];
+                final phaseImages = phase['images'] as List?;
+                final firstPhaseImg = (phaseImages != null && phaseImages.isNotEmpty) ? phaseImages[0] : '';
+                final imageUrl = apiClient.resolveUrl(phase['image'] ?? firstPhaseImg);
                 return Container(
                   width: 260,
                   margin: const EdgeInsets.only(right: 16),
@@ -2541,11 +2552,11 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              phase['name']?.toString().toUpperCase() ?? 'INITIAL PHASE', 
+                              (phase['name'] ?? phase['phaseName'] ?? 'PHASE').toString().toUpperCase(), 
                               style: GoogleFonts.montserrat(
-                                fontSize: 11, 
+                                fontSize: 12, 
                                 fontWeight: FontWeight.w900, 
-                                color: isDark ? Colors.white : Colors.black, 
+                                color: isDark ? Colors.white : const Color(0xFF0F172A), 
                                 letterSpacing: 1
                               )
                             ),
@@ -2579,7 +2590,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     ],
                   ),
                 );
-              }).toList(),
+              },
             ),
           ),
         ],
