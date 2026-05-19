@@ -398,24 +398,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen> with 
                     ),
                     const SizedBox(height: 24),
                     
-                    if (authUser != null)
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                        decoration: BoxDecoration(
-                          color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(width: 6, height: 6, decoration: const BoxDecoration(color: Color(0xFF10B981), shape: BoxShape.circle)),
-                            const SizedBox(width: 12),
-                            Text(
-                              'ACTING AS: ${authUser['email']?.toString().toUpperCase()}',
-                              style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: isDark ? Colors.white70 : Colors.black87, letterSpacing: 0.5),
-                            ),
-                          ],
-                        ),
-                      ),
+                    
                     
                     const SizedBox(height: 32),
                     
