@@ -9,6 +9,14 @@ import 'package:m4_mobile/presentation/providers/selection_logs_provider.dart';
 import 'package:m4_mobile/presentation/providers/custom_views_provider.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 
+// Category-specific icons for spec items (mirrors web IconMap).
+const Map<String, IconData> _kSpecIconMap = {
+  'flooring': LucideIcons.layers,
+  'doors': LucideIcons.box,
+  'bath': LucideIcons.paintBucket,
+  'lighting': LucideIcons.sparkles,
+};
+
 class SelectionLogsScreen extends ConsumerStatefulWidget {
   const SelectionLogsScreen({super.key});
 
@@ -190,42 +198,101 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
 
   Widget _buildEmptyState() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(32),
-            decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
-              shape: BoxShape.circle,
-              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
-            ),
-            child: Icon(LucideIcons.fileStack, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1), size: 48),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            'NO LOGS FOUND',
-            style: GoogleFonts.montserrat(
-              color: Theme.of(context).colorScheme.onSurface,
-              fontWeight: FontWeight.w900,
-              fontSize: 14,
-              letterSpacing: 2,
+    final foreground = Theme.of(context).colorScheme.onSurface;
+    return ListView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      children: [
+        SizedBox(height: MediaQuery.of(context).size.height * 0.12),
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 56, horizontal: 24),
+          decoration: BoxDecoration(
+            color: foreground.withOpacity(0.02),
+            borderRadius: BorderRadius.circular(40),
+            border: Border.all(
+              color: foreground.withOpacity(0.12),
+              style: BorderStyle.solid,
+              width: 1,
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            'YOUR CUSTOMIZATION HISTORY WILL APPEAR HERE',
-            style: GoogleFonts.montserrat(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
-              fontWeight: FontWeight.bold,
-              fontSize: 9,
-              letterSpacing: 1,
-            ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+                ),
+                child: Icon(LucideIcons.layout, color: foreground.withOpacity(0.3), size: 32),
+              ),
+              const SizedBox(height: 24),
+              Text(
+                'NO CUSTOMIZATION LOGS FOUND',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.montserrat(
+                  color: foreground.withOpacity(0.5),
+                  fontWeight: FontWeight.w900,
+                  fontSize: 11,
+                  letterSpacing: 2,
+                ),
+              ),
+              const SizedBox(height: 16),
+              _PressableScale(
+                onTap: () {
+                  // Navigate to My Custom Views (/my-custom-views).
+                  ref.read(navigationProvider.notifier).state = 7;
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                  child: Text(
+                    'START CUSTOMIZING',
+                    style: GoogleFonts.montserrat(
+                      color: const Color(0xFFFFD700),
+                      fontWeight: FontWeight.w900,
+                      fontSize: 11,
+                      letterSpacing: 1.5,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     ).animate().fadeIn();
+  }
+}
+
+class _PressableScale extends StatefulWidget {
+  final Widget child;
+  final VoidCallback onTap;
+  const _PressableScale({required this.child, required this.onTap});
+
+  @override
+  State<_PressableScale> createState() => _PressableScaleState();
+}
+
+class _PressableScaleState extends State<_PressableScale> {
+  bool _pressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => setState(() => _pressed = true),
+      onTapUp: (_) => setState(() => _pressed = false),
+      onTapCancel: () => setState(() => _pressed = false),
+      onTap: widget.onTap,
+      child: AnimatedScale(
+        scale: _pressed ? 0.94 : 1.0,
+        duration: const Duration(milliseconds: 120),
+        child: widget.child,
+      ),
+    );
   }
 }
 
@@ -472,7 +539,6 @@ class _LogDetailDialog extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final foreground = Theme.of(context).colorScheme.onSurface;
     final id = log['_id']?.toString() ?? '';
     final shortId = id.length >= 6 ? id.substring(id.length - 6).toUpperCase() : id;
@@ -544,6 +610,24 @@ class _LogDetailDialog extends ConsumerWidget {
                       letterSpacing: -1,
                     ),
                   ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Icon(LucideIcons.mapPin, size: 14, color: const Color(0xFFFFD700).withOpacity(0.6)),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          'LOCATION: ${space.toUpperCase()}',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w900,
+                            color: foreground.withOpacity(0.5),
+                            letterSpacing: 2,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 40),
                   Text(
                     'CHOSEN SPECIFICATIONS',
@@ -555,23 +639,9 @@ class _LogDetailDialog extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  ...selections.entries.map((entry) => _buildSpecItem(context, entry.key, entry.value)),
-                  const SizedBox(height: 24),
-                  Row(
-                    children: [
-                      Icon(LucideIcons.mapPin, size: 12, color: foreground.withOpacity(0.3)),
-                      const SizedBox(width: 6),
-                      Text(
-                        'LOCATION: ${space.toUpperCase()}',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 9,
-                          fontWeight: FontWeight.w900,
-                          color: foreground.withOpacity(0.3),
-                          letterSpacing: 2,
-                        ),
-                      ),
-                    ],
-                  ),
+                  ...selections.entries
+                      .where((entry) => entry.key != 'space')
+                      .map((entry) => _buildSpecItem(context, entry.key, entry.value)),
                   const SizedBox(height: 40),
                   Text(
                     'PROTOCOL STATUS',
@@ -591,7 +661,9 @@ class _LogDetailDialog extends ConsumerWidget {
                       border: Border.all(color: foreground.withOpacity(0.05)),
                     ),
                     child: Text(
-                      'Your selection is currently under review by our interior consultants. We will contact you shortly.',
+                      (status == 'PENDING' || status == 'REQUESTED')
+                          ? 'Your selection is currently under review by our interior consultants. We will contact you shortly.'
+                          : 'This request has been ${status.toLowerCase()} and logged in your asset history.',
                       style: GoogleFonts.montserrat(
                         fontSize: 12,
                         height: 1.6,
@@ -695,6 +767,9 @@ class _LogDetailDialog extends ConsumerWidget {
       displayValue = value['name'] ?? value['title'] ?? value['label'] ?? value.toString();
     }
 
+    // Category-specific icon, fallback to box for unknown categories.
+    final IconData specIcon = _kSpecIconMap[key.toLowerCase()] ?? LucideIcons.box;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -712,7 +787,7 @@ class _LogDetailDialog extends ConsumerWidget {
               color: foreground.withOpacity(0.05),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(LucideIcons.box, size: 16, color: foreground.withOpacity(0.5)),
+            child: Icon(specIcon, size: 16, color: foreground.withValues(alpha: 0.5)),
           ),
           const SizedBox(width: 16),
           Expanded(

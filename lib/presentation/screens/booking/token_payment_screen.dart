@@ -3,14 +3,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:dio/dio.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_detail_screen.dart';
+import 'package:m4_mobile/presentation/screens/booking/booking_confirmation_screen.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'dart:io';
 
 class TokenPaymentScreen extends ConsumerStatefulWidget {
   final dynamic project;
@@ -33,35 +34,139 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
   bool _agreed = false;
   bool _isLoading = false;
   bool _isSuccess = false;
-  File? _documentFile;
+
+  // Unit selection state
+  List<dynamic> _availableUnits = [];
+  String _selectedUnitId = '';
+  bool _isLoadingUnits = false;
+  String? _unitsError;
+
+  // Document management state
+  final List<Map<String, String>> _documents = [];
+  bool _isUploading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchAvailableUnits();
+  }
+
+  Future<void> _fetchAvailableUnits() async {
+    setState(() {
+      _isLoadingUnits = true;
+      _unitsError = null;
+    });
+    try {
+      final apiClient = ref.read(apiClientProvider);
+      final res = await apiClient.get(
+        '/api/inventory',
+        queryParameters: {
+          'projectId': widget.projectId,
+          'status': 'AVAILABLE',
+        },
+      );
+
+      if (res.data['status'] == true) {
+        setState(() {
+          _availableUnits = res.data['data'] ?? [];
+          _isLoadingUnits = false;
+        });
+      } else {
+        setState(() {
+          _availableUnits = [];
+          _isLoadingUnits = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _unitsError = 'Failed to load available units.';
+        _isLoadingUnits = false;
+      });
+    }
+  }
+
+  void _showToast(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
 
   Future<void> _pickDocument() async {
+    if (_isUploading) return;
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['jpg', 'pdf', 'png'],
     );
 
-    if (result != null) {
-      setState(() => _documentFile = File(result.files.single.path!));
+    if (result == null) return;
+    final picked = result.files.single;
+    if (picked.path == null) return;
+    final fileName = picked.name;
+
+    setState(() => _isUploading = true);
+    try {
+      final apiClient = ref.read(apiClientProvider);
+      final formData = FormData.fromMap({
+        'file': await MultipartFile.fromFile(picked.path!, filename: fileName),
+      });
+      final res = await apiClient.post('/api/upload', formData);
+
+      final fileUrl = res.data['data']?['fileUrl'] ?? res.data['fileUrl'];
+      if (res.data['status'] == true && fileUrl != null) {
+        setState(() {
+          _documents.add({'name': fileName, 'url': fileUrl.toString()});
+        });
+        _showToast('$fileName uploaded successfully');
+      } else {
+        _showToast(res.data['message']?.toString() ?? 'Failed to upload document');
+      }
+    } catch (e) {
+      _showToast('An error occurred during document upload');
+    } finally {
+      if (mounted) setState(() => _isUploading = false);
     }
   }
 
+  void _removeDocument(int index) {
+    setState(() => _documents.removeAt(index));
+  }
+
   Future<void> _submitBooking() async {
+    if (_selectedUnitId.isEmpty) {
+      _showToast('Please select a unit to reserve.');
+      return;
+    }
     setState(() => _isLoading = true);
     try {
       final apiClient = ref.read(apiClientProvider);
       final res = await apiClient.post('/api/bookings', {
         'project': widget.projectId,
+        'unit': _selectedUnitId,
         'type': 'Token Reservation',
         'amount': widget.project?['tokenAmount'] ?? '1,00,000',
         'paymentMethod': _selectedMethod,
         'status': 'Pending',
         'scheduledDate': DateTime.now().toIso8601String(),
         'plan': widget.plan?['name'],
+        'documents': _documents
+            .map((d) => {...d, 'uploadedAt': DateTime.now().toIso8601String()})
+            .toList(),
       });
 
       if (res.data['status'] == true) {
-        setState(() => _isSuccess = true);
+        if (!mounted) return;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => BookingConfirmationScreen(
+              projectId: widget.projectId,
+              project: widget.project,
+              bookingId: (res.data['data']?['_id'] ?? res.data['data']?['id'])?.toString(),
+              amount: (widget.project?['tokenAmount'] ?? '1,00,000').toString(),
+            ),
+          ),
+        );
       }
     } catch (e) {
       if (mounted) {
@@ -72,6 +177,16 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  String _unitLabel(dynamic unit) {
+    final unitNumber = unit['unitNumber'] ?? 'Unit';
+    final tower = unit['tower'] ?? 'N/A';
+    final floor = unit['floor'] != null ? unit['floor'].toString() : 'N/A';
+    final config = unit['configuration'] ?? unit['config'] ?? '';
+    final rawPrice = (unit['basePrice'] ?? unit['price'] ?? '0').toString().replaceAll(',', '');
+    final price = double.tryParse(rawPrice)?.toStringAsFixed(0) ?? rawPrice;
+    return '$unitNumber - Tower $tower - Floor $floor ($config) - $price AED';
   }
 
   Widget _buildPaymentMethod(String name, IconData icon, bool isDark) {
@@ -203,7 +318,125 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                 ],
               ),
             ).animate().fadeIn().scale(begin: const Offset(0.95, 0.95)),
-            
+
+            // Unit Selection Section
+            const SizedBox(height: 48),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'SELECT UNIT',
+                  style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1.5),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: M4Theme.premiumBlue.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    'REQUIRED',
+                    style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 1),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: isDark ? Colors.white.withValues(alpha: 0.02) : Colors.white,
+                borderRadius: BorderRadius.circular(40),
+                border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
+                boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 40, offset: const Offset(0, 20))],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'AVAILABLE UNITS',
+                    style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1.5),
+                  ),
+                  const SizedBox(height: 16),
+                  if (_isLoadingUnits)
+                    const SizedBox(
+                      height: 56,
+                      child: Center(child: CircularProgressIndicator(color: M4Theme.premiumBlue)),
+                    )
+                  else if (_unitsError != null)
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.red.withValues(alpha: 0.05),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: Colors.red.withValues(alpha: 0.1)),
+                      ),
+                      child: Center(
+                        child: Text(
+                          _unitsError!.toUpperCase(),
+                          style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: Colors.red, letterSpacing: 1),
+                        ),
+                      ),
+                    )
+                  else if (_availableUnits.isEmpty)
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.red.withValues(alpha: 0.05),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(color: Colors.red.withValues(alpha: 0.1)),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'NO AVAILABLE UNITS FOUND FOR THIS PROJECT.',
+                          style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: Colors.red, letterSpacing: 1),
+                        ),
+                      ),
+                    )
+                  else
+                    Container(
+                      height: 56,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      decoration: BoxDecoration(
+                        color: isDark ? Colors.white.withValues(alpha: 0.04) : Colors.black.withValues(alpha: 0.03),
+                        borderRadius: BorderRadius.circular(32),
+                        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          isExpanded: true,
+                          value: _selectedUnitId.isEmpty ? null : _selectedUnitId,
+                          hint: Text(
+                            '-- Select a Unit / Apartment --',
+                            style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w700, color: isDark ? Colors.white38 : Colors.black38),
+                          ),
+                          icon: Icon(LucideIcons.chevronDown, color: isDark ? Colors.white38 : Colors.black38, size: 18),
+                          dropdownColor: isDark ? const Color(0xFF1A1C20) : Colors.white,
+                          style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w700, color: isDark ? Colors.white : Colors.black),
+                          items: _availableUnits.map<DropdownMenuItem<String>>((unit) {
+                            return DropdownMenuItem<String>(
+                              value: unit['_id']?.toString() ?? '',
+                              child: Text(
+                                _unitLabel(unit),
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w700, color: isDark ? Colors.white : Colors.black),
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (value) => setState(() => _selectedUnitId = value ?? ''),
+                        ),
+                      ),
+                    ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'A UNIT IS LOCKED EXCLUSIVELY TO YOUR PROFILE ONCE THE TOKEN RESERVATION PAYMENT IS PROCESSED.',
+                    style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1, height: 1.6),
+                  ),
+                ],
+              ),
+            ).animate().fadeIn(delay: 100.ms).moveX(begin: -20, end: 0),
+
             const SizedBox(height: 48),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -226,7 +459,59 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
               ],
             ),
             const SizedBox(height: 24),
-            
+
+            // Uploaded documents list
+            ..._documents.asMap().entries.map((entry) {
+              final i = entry.key;
+              final doc = entry.value;
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.black.withValues(alpha: 0.03),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: M4Theme.premiumBlue.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(LucideIcons.fileText, color: M4Theme.premiumBlue, size: 18),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Text(
+                          doc['name']!.toUpperCase(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 0.5),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      GestureDetector(
+                        onTap: () => _removeDocument(i),
+                        child: Container(
+                          width: 32,
+                          height: 32,
+                          decoration: BoxDecoration(
+                            color: Colors.red.withValues(alpha: 0.08),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: const Icon(LucideIcons.x, color: Colors.red, size: 16),
+                        ),
+                      ),
+                    ],
+                  ),
+                ).animate().fadeIn().moveX(begin: -10, end: 0),
+              );
+            }),
+
             // Upload Area
             GestureDetector(
               onTap: _pickDocument,
@@ -237,28 +522,37 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                   borderType: BorderType.RRect,
                   radius: const Radius.circular(32),
                   dashPattern: const [6, 6],
-                  color: isDark ? Colors.white12 : Colors.black12,
+                  color: _isUploading ? M4Theme.premiumBlue.withValues(alpha: 0.5) : (isDark ? Colors.white12 : Colors.black12),
                   strokeWidth: 1,
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 48),
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white.withOpacity(0.02) : Colors.white,
+                      color: _isUploading
+                          ? M4Theme.premiumBlue.withValues(alpha: 0.04)
+                          : (isDark ? Colors.white.withValues(alpha: 0.02) : Colors.white),
                       borderRadius: BorderRadius.circular(32),
                     ),
                     child: Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(LucideIcons.upload, color: isDark ? Colors.white24 : Colors.black26, size: 32),
+                          if (_isUploading)
+                            const SizedBox(
+                              width: 32,
+                              height: 32,
+                              child: CircularProgressIndicator(color: M4Theme.premiumBlue, strokeWidth: 3),
+                            )
+                          else
+                            Icon(LucideIcons.upload, color: isDark ? Colors.white24 : Colors.black26, size: 32),
                           const SizedBox(height: 20),
                           Text(
-                            'QUICK UPLOAD DOCUMENTS',
+                            _isUploading ? 'UPLOADING SECURITY VAULT...' : 'QUICK UPLOAD DOCUMENTS',
                             style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black),
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            _documentFile != null ? _documentFile!.path.split('/').last : 'TAP TO UPLOAD AADHAAR, PAN OR IDENTITY PROOF',
+                            _isUploading ? 'ESTABLISHING ENCRYPTED CONNECTION' : 'TAP TO UPLOAD AADHAAR, PAN OR IDENTITY PROOF',
                             style: GoogleFonts.montserrat(fontSize: 8, color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.bold),
                           ),
                         ],
@@ -332,7 +626,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _agreed && !_isLoading ? _submitBooking : null,
+                onPressed: _agreed && !_isLoading && _selectedUnitId.isNotEmpty ? _submitBooking : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isDark ? Colors.white : Colors.black,
                   foregroundColor: isDark ? Colors.black : Colors.white,

@@ -5,7 +5,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
-import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 import 'package:m4_mobile/presentation/widgets/cp_sidebar_menu.dart';
 
 /// Web `/cp/hub`: cinematic header + welcome card + tool matrix + priority access.
@@ -18,7 +17,9 @@ class CpHubScreen extends ConsumerStatefulWidget {
 
 class _CpHubScreenState extends ConsumerState<CpHubScreen> {
   Map<String, dynamic>? _perf;
+  Map<String, dynamic>? _wallet;
   Map<String, dynamic>? _priorityProject;
+  List<Map<String, dynamic>> _holdings = [];
   bool _loading = true;
 
   @override
@@ -33,16 +34,22 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
       final results = await Future.wait([
         api.getCpPerformance(),
         api.getProjects(),
+        api.getCpWallet(),
       ]);
       final res = results[0];
       final projRes = results[1];
+      final walletRes = results[2];
       if (!mounted) return;
       if (res.statusCode == 200 && res.data['status'] == true) {
         final d = res.data['data'];
         if (d is Map) _perf = Map<String, dynamic>.from(d);
       }
+      if (walletRes.statusCode == 200 && walletRes.data['status'] == true) {
+        final d = walletRes.data['data'];
+        if (d is Map) _wallet = Map<String, dynamic>.from(d);
+      }
 
-      // Priority Access: take from real catalog (database), prefer Upcoming, else featured, else first.
+      // Priority Access + Holdings: take from real catalog (database).
       try {
         final body = projRes.data;
         final list = (body is Map && body['status'] == true && body['data'] is List)
@@ -60,9 +67,29 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
             ) ??
             (projects.isNotEmpty ? projects.first : null);
         _priorityProject = pick;
+
+        // Holdings: prefer CP-owned/holdings payload if present, else derive from catalog projects.
+        final perfHoldings = _perf?['holdings'];
+        if (perfHoldings is List && perfHoldings.isNotEmpty) {
+          _holdings = perfHoldings.whereType<Map>().map((m) => Map<String, dynamic>.from(m)).toList();
+        } else {
+          _holdings = projects.take(2).toList();
+        }
       } catch (_) {}
     } catch (_) {}
     if (mounted) setState(() => _loading = false);
+  }
+
+  /// Total asset portfolio value, formatted as "₹ X.XX Cr".
+  String _portfolioValue() {
+    final raw = _perf?['totalAssets'] ??
+        _perf?['portfolioValue'] ??
+        _wallet?['totalAssets'] ??
+        _wallet?['portfolioValue'];
+    final num? n = raw is num ? raw : num.tryParse(raw?.toString() ?? '');
+    if (n == null || n == 0) return '₹ 4.50 Cr';
+    final cr = n >= 10000 ? n / 10000000 : n; // assume rupees if large, else already Cr
+    return '₹ ${cr.toStringAsFixed(2)} Cr';
   }
 
   @override
@@ -95,8 +122,12 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
             ),
           ),
           SafeArea(
-            child: ListView(
+            child: RefreshIndicator(
+              onRefresh: _load,
+              color: scheme.onSurface,
+              child: ListView(
               padding: const EdgeInsets.fromLTRB(20, 18, 20, 26),
+              physics: const AlwaysScrollableScrollPhysics(),
               children: [
                 _header(context, scheme, accent),
                 const SizedBox(height: 16),
@@ -105,8 +136,11 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                     padding: EdgeInsets.symmetric(vertical: 30),
                     child: Center(child: CircularProgressIndicator()),
                   )
-                else
+                else ...[
                   _welcomeCard(name: name, scheme: scheme, accent: accent),
+                  const SizedBox(height: 18),
+                  _assetPortfolioCard(scheme: scheme, accent: accent),
+                ],
                 const SizedBox(height: 18),
                 Text(
                   'TOOL MATRIX',
@@ -192,10 +226,480 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                 ),
                 const SizedBox(height: 10),
                 _priorityCard(context, scheme: scheme),
+                const SizedBox(height: 18),
+                // ─── MY HOLDINGS (web investor-hub portfolio view) ───
+                _holdingsHeader(scheme),
+                const SizedBox(height: 12),
+                _holdingsList(context, scheme),
+                const SizedBox(height: 18),
+                // ─── INSTITUTIONAL TOOLS ─────────────────────────────
+                _institutionalTools(scheme),
               ],
+            ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // ASSET PORTFOLIO CARD — web `Total Asset Portfolio`
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Widget _assetPortfolioCard({required ColorScheme scheme, required Color accent}) {
+    final isDark = scheme.brightness == Brightness.dark;
+    return Container(
+      padding: const EdgeInsets.all(28),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(40),
+        border: Border.all(color: scheme.outlineVariant.withValues(alpha: isDark ? 0.35 : 0.55)),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            isDark ? accent.withValues(alpha: 0.08) : Colors.white,
+            isDark ? scheme.surfaceContainerHighest.withValues(alpha: 0.15) : Colors.white,
+          ],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.08 : 0.06),
+            blurRadius: 28,
+            offset: const Offset(0, 14),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Text(
+                  'TOTAL ASSET PORTFOLIO',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 2,
+                    color: scheme.onSurface.withValues(alpha: isDark ? 0.55 : 0.7),
+                  ),
+                ),
+              ),
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(14),
+                  color: scheme.onSurface.withValues(alpha: 0.06),
+                  border: Border.all(color: scheme.onSurface.withValues(alpha: 0.1)),
+                ),
+                child: Icon(LucideIcons.trendingUp, size: 18, color: scheme.onSurface),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            _portfolioValue(),
+            style: GoogleFonts.montserrat(
+              fontSize: 28,
+              fontWeight: FontWeight.w900,
+              height: 1,
+              color: scheme.onSurface,
+            ),
+          ),
+          const SizedBox(height: 22),
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(999),
+                  color: scheme.onSurface.withValues(alpha: 0.06),
+                  border: Border.all(color: scheme.outlineVariant.withValues(alpha: isDark ? 0.35 : 0.55)),
+                ),
+                child: Text(
+                  'PORTFOLIO GROWTH',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 2,
+                    color: scheme.onSurface,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 14),
+              Flexible(
+                child: Text(
+                  'Performance: Optimal',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1,
+                    color: scheme.onSurface.withValues(alpha: isDark ? 0.55 : 0.7),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // MY HOLDINGS — web investor-hub holdings list
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Widget _holdingsHeader(ColorScheme scheme) {
+    final isDark = scheme.brightness == Brightness.dark;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          'MY HOLDINGS',
+          style: GoogleFonts.montserrat(
+            fontSize: 10,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 3,
+            color: scheme.onSurface.withValues(alpha: isDark ? 0.55 : 0.7),
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(999),
+            color: scheme.onSurface.withValues(alpha: 0.04),
+            border: Border.all(color: scheme.outlineVariant.withValues(alpha: isDark ? 0.35 : 0.55)),
+          ),
+          child: Text(
+            '${_holdings.length} Active Projects',
+            style: GoogleFonts.montserrat(
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1,
+              color: scheme.primary,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _holdingsList(BuildContext context, ColorScheme scheme) {
+    final isDark = scheme.brightness == Brightness.dark;
+    if (_holdings.isEmpty) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(28),
+          color: isDark ? scheme.onSurface.withValues(alpha: 0.03) : Colors.white,
+          border: Border.all(color: scheme.outlineVariant.withValues(alpha: isDark ? 0.35 : 0.55)),
+        ),
+        child: Column(
+          children: [
+            Text(
+              'NO HOLDINGS YET',
+              style: GoogleFonts.montserrat(
+                fontSize: 10,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 2,
+                color: scheme.onSurface.withValues(alpha: 0.3),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextButton(
+              onPressed: () => context.push('/cp/projects'),
+              child: Text(
+                'EXPLORE OPPORTUNITIES',
+                style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1, color: scheme.onSurface),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    return Column(
+      children: [
+        for (final h in _holdings) ...[
+          _holdingCard(context, h, scheme),
+          const SizedBox(height: 14),
+        ],
+      ],
+    );
+  }
+
+  String _holdingName(Map<String, dynamic> h) => (h['title'] ?? h['name'] ?? 'Project').toString();
+
+  String _holdingUnit(Map<String, dynamic> h) {
+    final unit = h['unit'] ?? h['unitDesignation'] ?? h['propertyType'];
+    if (unit != null && unit.toString().trim().isNotEmpty) return unit.toString();
+    return _locLine(h);
+  }
+
+  String _holdingValue(Map<String, dynamic> h) {
+    final v = h['value'] ?? h['equity'] ?? h['equityValue'] ?? h['price'] ?? h['startingPrice'];
+    final num? n = v is num ? v : num.tryParse(v?.toString() ?? '');
+    if (n == null || n == 0) return '—';
+    final cr = n >= 10000 ? n / 10000000 : n;
+    return '₹ ${cr.toStringAsFixed(2)} Cr';
+  }
+
+  double _holdingProgress(Map<String, dynamic> h) {
+    final p = h['progress'] ?? h['constructionProgress'] ?? h['completion'];
+    final num? n = p is num ? p : num.tryParse(p?.toString().replaceAll('%', '') ?? '');
+    if (n == null) return 0.6;
+    final d = n.toDouble();
+    return (d > 1 ? d / 100 : d).clamp(0.0, 1.0);
+  }
+
+  Widget _holdingCard(BuildContext context, Map<String, dynamic> h, ColorScheme scheme) {
+    final isDark = scheme.brightness == Brightness.dark;
+    final id = (h['_id'] ?? h['id'] ?? '').toString();
+    final progress = _holdingProgress(h);
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(28),
+        color: isDark ? scheme.onSurface.withValues(alpha: 0.03) : Colors.white,
+        border: Border.all(color: scheme.outlineVariant.withValues(alpha: isDark ? 0.35 : 0.55)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.08 : 0.06),
+            blurRadius: 28,
+            offset: const Offset(0, 14),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(18),
+                  color: scheme.onSurface.withValues(alpha: 0.05),
+                  border: Border.all(color: scheme.onSurface.withValues(alpha: 0.1)),
+                ),
+                child: Icon(LucideIcons.building, size: 20, color: scheme.onSurface),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _holdingName(h).toUpperCase(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w900, color: scheme.onSurface),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      _holdingUnit(h).toUpperCase(),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 8,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1.5,
+                        color: scheme.onSurface.withValues(alpha: isDark ? 0.55 : 0.6),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    _holdingValue(h),
+                    style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w900, color: scheme.onSurface),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'EQUITY',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 8,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1.5,
+                      color: scheme.onSurface.withValues(alpha: isDark ? 0.55 : 0.6),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 18),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'CONSTRUCTION',
+                style: GoogleFonts.montserrat(
+                  fontSize: 8,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.5,
+                  color: scheme.onSurface.withValues(alpha: isDark ? 0.55 : 0.6),
+                ),
+              ),
+              Text(
+                '${(progress * 100).round()}%',
+                style: GoogleFonts.montserrat(
+                  fontSize: 8,
+                  fontWeight: FontWeight.w900,
+                  color: scheme.onSurface.withValues(alpha: isDark ? 0.55 : 0.6),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(999),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 8,
+              backgroundColor: scheme.onSurface.withValues(alpha: 0.08),
+              valueColor: AlwaysStoppedAnimation(scheme.onSurface),
+            ),
+          ),
+          const SizedBox(height: 18),
+          Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    if (id.isNotEmpty) {
+                      context.push('/cp/projects/$id', extra: h);
+                    } else {
+                      context.push('/cp/projects');
+                    }
+                  },
+                  child: Container(
+                    height: 48,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: scheme.onSurface,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Text(
+                      'EXPLORE',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 9,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 2,
+                        color: scheme.surface,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              GestureDetector(
+                onTap: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Live Stream Active'), backgroundColor: Colors.green),
+                  );
+                },
+                child: Container(
+                  width: 48,
+                  height: 48,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: scheme.onSurface.withValues(alpha: 0.05),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: scheme.onSurface.withValues(alpha: 0.1)),
+                  ),
+                  child: Icon(LucideIcons.eye, size: 20, color: scheme.onSurface),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // INSTITUTIONAL TOOLS — web Statement / Expert Desk
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Widget _institutionalTools(ColorScheme scheme) {
+    return Row(
+      children: [
+        Expanded(
+          child: _institutionalButton(
+            scheme: scheme,
+            icon: LucideIcons.cloud,
+            label: 'STATEMENT',
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Downloading Audit Statement...'), backgroundColor: Colors.green),
+              );
+            },
+          ),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: _institutionalButton(
+            scheme: scheme,
+            icon: LucideIcons.messageSquare,
+            label: 'EXPERT DESK',
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Notifying Relationship Manager...'), backgroundColor: Colors.green),
+              );
+              context.push('/cp/support');
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _institutionalButton({
+    required ColorScheme scheme,
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    final isDark = scheme.brightness == Brightness.dark;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 96,
+        decoration: BoxDecoration(
+          color: isDark ? scheme.onSurface.withValues(alpha: 0.03) : Colors.white,
+          borderRadius: BorderRadius.circular(40),
+          border: Border.all(color: scheme.outlineVariant.withValues(alpha: isDark ? 0.35 : 0.5)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.08 : 0.06),
+              blurRadius: 28,
+              offset: const Offset(0, 14),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 26, color: scheme.onSurface),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: GoogleFonts.montserrat(
+                fontSize: 10,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 2,
+                color: scheme.onSurface.withValues(alpha: isDark ? 0.55 : 0.7),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

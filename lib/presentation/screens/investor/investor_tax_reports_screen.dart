@@ -7,18 +7,24 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 
-/// `GET /api/cp/tax-reports` — Fiscal compliance documents (TDS / statements).
-/// Web parity: app/(cp)/cp/tax-reports/page.tsx
-class CpTaxReportsScreen extends ConsumerStatefulWidget {
-  const CpTaxReportsScreen({super.key});
+/// `GET /api/investor/tax-reports` — Fiscal compliance documents
+/// (Consolidated Tax Statement, Capital Gains, TDS, Dividend Income, etc.).
+/// Web parity: app/investor/tax-reports/page.tsx
+class InvestorTaxReportsScreen extends ConsumerStatefulWidget {
+  const InvestorTaxReportsScreen({super.key});
 
   @override
-  ConsumerState<CpTaxReportsScreen> createState() => _CpTaxReportsScreenState();
+  ConsumerState<InvestorTaxReportsScreen> createState() =>
+      _InvestorTaxReportsScreenState();
 }
 
-class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
+class _InvestorTaxReportsScreenState
+    extends ConsumerState<InvestorTaxReportsScreen> {
+  static const Color _gold = Color(0xFFFFD700);
+
   List<dynamic> _rows = [];
   bool _loading = true;
+  bool _error = false;
   String? _yearFilter;
 
   @override
@@ -28,10 +34,18 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
   }
 
   Future<void> _load() async {
-    setState(() => _loading = true);
+    setState(() {
+      _loading = true;
+      _error = false;
+    });
     try {
-      // Fetch all rows so the year selector can show every available FY.
-      final res = await ref.read(apiClientProvider).getCpTaxReports();
+      final apiClient = ref.read(apiClientProvider);
+      // Fetch the currently-selected year (or all rows on first load so the
+      // year selector can surface every available FY).
+      final res = await apiClient.get(
+        '/api/investor/tax-reports',
+        queryParameters: _yearFilter != null ? {'year': _yearFilter} : null,
+      );
       if (!mounted) return;
       if (res.statusCode == 200 && res.data['status'] == true) {
         final d = res.data['data'];
@@ -42,8 +56,12 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
             _yearFilter = _years.first;
           }
         }
+      } else {
+        _error = true;
       }
-    } catch (_) {}
+    } catch (_) {
+      _error = true;
+    }
     if (mounted) setState(() => _loading = false);
   }
 
@@ -68,7 +86,7 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
         .toList();
   }
 
-  /// Sum of TDS for the selected year — matches web's ₹42,500 summary.
+  /// Sum of TDS for the selected year — matches web's summary card.
   num get _totalTaxDeducted {
     num total = 0;
     for (final m in _filtered) {
@@ -102,7 +120,8 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
         elevation: 0,
         leading: IconButton(
           icon: Icon(LucideIcons.arrowLeft, color: textPrimary),
-          onPressed: () => context.pop(),
+          onPressed: () =>
+              context.canPop() ? context.pop() : context.go('/investor/home'),
         ),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,27 +148,77 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
         ),
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator(color: M4Theme.premiumBlue))
-          : RefreshIndicator(
-              color: M4Theme.premiumBlue,
-              onRefresh: _load,
-              child: ListView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: EdgeInsets.zero,
-                children: [
-                  _yearSelector(textPrimary, muted, card, border),
-                  _summaryCard(isDark, textPrimary, muted, border),
-                  _documentList(isDark, textPrimary, muted, card, border),
-                  const SizedBox(height: 24),
-                ],
+          ? const Center(
+              child: CircularProgressIndicator(color: M4Theme.premiumBlue),
+            )
+          : _error
+              ? _errorState(textPrimary, muted)
+              : RefreshIndicator(
+                  color: M4Theme.premiumBlue,
+                  onRefresh: _load,
+                  child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: EdgeInsets.zero,
+                    children: [
+                      _yearSelector(textPrimary, muted, card, border),
+                      _summaryCard(isDark, textPrimary, muted, border),
+                      _documentList(isDark, textPrimary, muted, card, border),
+                      const SizedBox(height: 24),
+                    ],
+                  ),
+                ),
+    );
+  }
+
+  // ─── Error State ──────────────────────────────────────────────────────────────
+  Widget _errorState(Color textPrimary, Color muted) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(LucideIcons.alertCircle, size: 40, color: muted),
+            const SizedBox(height: 16),
+            Text(
+              'Unable to load tax reports.',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.montserrat(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: textPrimary,
               ),
             ),
+            const SizedBox(height: 16),
+            OutlinedButton.icon(
+              onPressed: _load,
+              icon: const Icon(LucideIcons.refreshCw, size: 14),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: textPrimary,
+                side: BorderSide(color: muted),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              label: Text(
+                'RETRY',
+                style: GoogleFonts.montserrat(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
   // ─── Year Selector ──────────────────────────────────────────────────────────
   Widget _yearSelector(Color textPrimary, Color muted, Color card, Color border) {
     final years = _years;
+    if (years.isEmpty) return const SizedBox.shrink();
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
       decoration: BoxDecoration(
@@ -166,17 +235,16 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
                 onTap: () => setState(() => _yearFilter = year),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
-                    color: selected ? const Color(0xFF8B5CF6) : card,
+                    color: selected ? _gold : card,
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: selected ? const Color(0xFF8B5CF6) : border,
-                    ),
+                    border: Border.all(color: selected ? _gold : border),
                     boxShadow: selected
                         ? [
                             BoxShadow(
-                              color: const Color(0xFF8B5CF6).withValues(alpha: 0.3),
+                              color: _gold.withValues(alpha: 0.3),
                               blurRadius: 15,
                             ),
                           ]
@@ -188,7 +256,7 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1,
-                      color: selected ? Colors.white : muted,
+                      color: selected ? Colors.black : muted,
                     ),
                   ),
                 ),
@@ -202,7 +270,8 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
 
   // ─── Summary Card ─────────────────────────────────────────────────────────────
   Widget _summaryCard(bool isDark, Color textPrimary, Color muted, Color border) {
-    final fmt = NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0);
+    final fmt =
+        NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0);
     final total = _totalTaxDeducted;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
@@ -276,7 +345,8 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
                   style: OutlinedButton.styleFrom(
                     foregroundColor: textPrimary,
                     side: BorderSide(color: border),
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
                     minimumSize: const Size(0, 32),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -388,7 +458,7 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
             borderRadius: BorderRadius.circular(12),
             onTap: id.isEmpty
                 ? () => _toast('Opening $name')
-                : () => context.push('/cp/tax-reports/$id', extra: m),
+                : () => context.push('/investor/tax-reports/$id', extra: m),
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -442,7 +512,8 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
                             ),
                             if (size.isNotEmpty) ...[
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
                                 child: Container(
                                   width: 3,
                                   height: 3,
@@ -482,7 +553,8 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(color: border),
                         ),
-                        child: Icon(LucideIcons.download, size: 16, color: muted),
+                        child:
+                            Icon(LucideIcons.download, size: 16, color: muted),
                       ),
                     ),
                   ),

@@ -302,7 +302,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Widget _buildFamilySection(dynamic user, bool isDark) {
-    return Container(
+    return GestureDetector(
+      onTap: () => context.push('/profile/family'),
+      child: Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF18181B) : Colors.white,
@@ -331,6 +333,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           ),
           Icon(LucideIcons.chevronRight, size: 16, color: isDark ? Colors.white24 : Colors.black26),
         ],
+      ),
       ),
     );
   }

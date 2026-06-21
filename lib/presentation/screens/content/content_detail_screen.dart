@@ -11,6 +11,8 @@ import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:flutter/services.dart';
+import 'package:m4_mobile/core/theme/app_theme.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ContentDetailScreen extends ConsumerStatefulWidget {
   final dynamic content;
@@ -327,6 +329,10 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           ),
                         ],
 
+                        // 📅 EVENT-SPECIFIC SECTIONS (only for type == 'event' and when API provides the fields)
+                        if (widget.content['type']?.toString().toLowerCase() == 'event')
+                          ..._buildEventSections(apiClient),
+
                         const SizedBox(height: 60),
 
                         // 🔘 SHARE ARTICLE BUTTON (Bottom)
@@ -431,6 +437,387 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         ),
       ),
     );
+  }
+
+  // ─── EVENT-SPECIFIC SECTIONS ────────────────────────────────────────────────
+  // Defensive: each section only renders when the API actually returns the field.
+  // Mirrors guest_project_detail_screen.dart styling (Montserrat, rounded cards,
+  // dark/light branch, M4Theme.premiumBlue accent, lucide icons).
+  List<Widget> _buildEventSections(ApiClient apiClient) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final eventDate = widget.content['eventDate'] ?? widget.content['startTime'];
+    final eventTime = widget.content['eventTime'] ?? widget.content['startTime'];
+    final rawLocation = widget.content['location'];
+    final location = (rawLocation is Map ? rawLocation['name'] : rawLocation) ??
+        widget.content['venue'];
+    final attendees = widget.content['attendees'] as List? ?? [];
+    final attendeeCount = widget.content['attendeeCount'] ?? attendees.length;
+    final rsvpUrl = widget.content['rsvpUrl'] ?? widget.content['registerUrl'];
+    final eventStatus = widget.content['eventStatus']?.toString();
+
+    final hasDate = eventDate != null && eventDate.toString().isNotEmpty;
+    final hasTime = eventTime != null && eventTime.toString().isNotEmpty;
+    final hasLocation = location != null && location.toString().isNotEmpty;
+    final hasAttendees = attendees.isNotEmpty ||
+        (attendeeCount is int ? attendeeCount > 0 : (widget.content['attendeeCount'] != null));
+    final hasRsvp = rsvpUrl != null && rsvpUrl.toString().isNotEmpty;
+    final hasStatus = eventStatus != null && eventStatus.isNotEmpty;
+
+    // If the API hasn't added event-specific fields yet, render nothing.
+    if (!hasDate && !hasTime && !hasLocation && !hasAttendees && !hasRsvp && !hasStatus) {
+      return const [];
+    }
+
+    return [
+      const SizedBox(height: 30),
+
+      if (hasStatus) ...[
+        _buildEventStatusBadge(eventStatus, isDark),
+        const SizedBox(height: 20),
+      ],
+
+      if (hasDate || hasTime) ...[
+        _buildEventDateTimeCard(eventDate, eventTime, isDark),
+        const SizedBox(height: 16),
+      ],
+
+      if (hasLocation) ...[
+        _buildEventLocation(location.toString(), isDark),
+        const SizedBox(height: 16),
+      ],
+
+      if (hasAttendees) ...[
+        _buildEventAttendees(attendees, attendeeCount, isDark),
+        const SizedBox(height: 16),
+      ],
+
+      if (hasRsvp) ...[
+        const SizedBox(height: 14),
+        _buildRsvpButton(rsvpUrl.toString()),
+      ],
+    ];
+  }
+
+  String _formatEventDate(dynamic raw) {
+    final parsed = DateTime.tryParse(raw?.toString() ?? '');
+    if (parsed == null) return raw?.toString() ?? '';
+    return DateFormat('EEEE, MMMM d, yyyy').format(parsed);
+  }
+
+  String _formatEventTime(dynamic raw) {
+    final parsed = DateTime.tryParse(raw?.toString() ?? '');
+    if (parsed == null) return raw?.toString() ?? '';
+    String range = DateFormat('h:mm a').format(parsed);
+    final endRaw = widget.content['endTime'] ?? widget.content['eventEndTime'];
+    final end = DateTime.tryParse(endRaw?.toString() ?? '');
+    if (end != null) range = '$range - ${DateFormat('h:mm a').format(end)}';
+    return range;
+  }
+
+  Widget _buildEventStatusBadge(String status, bool isDark) {
+    Color color;
+    switch (status.toUpperCase()) {
+      case 'TODAY':
+        color = const Color(0xFFFFD700);
+        break;
+      case 'ENDED':
+        color = isDark ? Colors.white38 : Colors.black38;
+        break;
+      case 'CANCELLED':
+        color = const Color(0xFFEF4444);
+        break;
+      case 'UPCOMING':
+      default:
+        color = M4Theme.premiumBlue;
+        break;
+    }
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(30),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
+        ),
+        child: Text(
+          status.toUpperCase(),
+          style: GoogleFonts.montserrat(
+            fontSize: 9,
+            fontWeight: FontWeight.w900,
+            color: color,
+            letterSpacing: 1.5,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEventCard({required Widget child, required bool isDark}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06),
+        ),
+        boxShadow: isDark
+            ? []
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                )
+              ],
+      ),
+      child: child,
+    );
+  }
+
+  Widget _buildEventInfoRow({
+    required IconData icon,
+    required String label,
+    required String value,
+    required bool isDark,
+  }) {
+    return Row(
+      children: [
+        Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            color: M4Theme.premiumBlue.withValues(alpha: 0.1),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(icon, size: 20, color: M4Theme.premiumBlue),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label.toUpperCase(),
+                style: GoogleFonts.montserrat(
+                  fontSize: 8,
+                  fontWeight: FontWeight.w900,
+                  color: isDark ? Colors.white38 : Colors.black38,
+                  letterSpacing: 1.5,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                value,
+                style: GoogleFonts.montserrat(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w900,
+                  color: isDark ? Colors.white : Colors.black,
+                  letterSpacing: -0.2,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEventDateTimeCard(dynamic eventDate, dynamic eventTime, bool isDark) {
+    final hasDate = eventDate != null && eventDate.toString().isNotEmpty;
+    final hasTime = eventTime != null && eventTime.toString().isNotEmpty;
+    return _buildEventCard(
+      isDark: isDark,
+      child: Column(
+        children: [
+          if (hasDate)
+            _buildEventInfoRow(
+              icon: LucideIcons.calendar,
+              label: 'Date',
+              value: _formatEventDate(eventDate),
+              isDark: isDark,
+            ),
+          if (hasDate && hasTime) const SizedBox(height: 18),
+          if (hasTime)
+            _buildEventInfoRow(
+              icon: LucideIcons.clock,
+              label: 'Time',
+              value: _formatEventTime(eventTime),
+              isDark: isDark,
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEventLocation(String location, bool isDark) {
+    return GestureDetector(
+      onTap: () => _launchUrl('https://www.google.com/maps?q=${Uri.encodeComponent(location)}'),
+      child: _buildEventCard(
+        isDark: isDark,
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: M4Theme.premiumBlue.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(LucideIcons.mapPin, size: 20, color: M4Theme.premiumBlue),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'LOCATION',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 8,
+                      fontWeight: FontWeight.w900,
+                      color: isDark ? Colors.white38 : Colors.black38,
+                      letterSpacing: 1.5,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    location,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w900,
+                      color: isDark ? Colors.white : Colors.black,
+                      letterSpacing: -0.2,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'VIEW ON MAPS ↗',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 8,
+                      fontWeight: FontWeight.w900,
+                      color: M4Theme.premiumBlue,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEventAttendees(List attendees, dynamic attendeeCount, bool isDark) {
+    final count = attendeeCount is int
+        ? attendeeCount
+        : int.tryParse(attendeeCount?.toString() ?? '') ?? attendees.length;
+    final visible = attendees.take(5).toList();
+    return _buildEventCard(
+      isDark: isDark,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(LucideIcons.users, size: 16, color: M4Theme.premiumBlue),
+              const SizedBox(width: 10),
+              Text(
+                '$count ATTENDING',
+                style: GoogleFonts.montserrat(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w900,
+                  color: isDark ? Colors.white : Colors.black,
+                  letterSpacing: 1,
+                ),
+              ),
+            ],
+          ),
+          if (visible.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            Row(
+              children: visible.map((a) {
+                final name = (a is Map ? (a['name'] ?? a['fullName']) : a)?.toString() ?? '';
+                final initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
+                return Container(
+                  margin: const EdgeInsets.only(right: 10),
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: M4Theme.premiumBlue.withValues(alpha: 0.12),
+                    shape: BoxShape.circle,
+                    border: Border.all(color: M4Theme.premiumBlue.withValues(alpha: 0.3)),
+                  ),
+                  child: Center(
+                    child: Text(
+                      initial,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w900,
+                        color: M4Theme.premiumBlue,
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRsvpButton(String rsvpUrl) {
+    return GestureDetector(
+      onTap: () => _launchUrl(rsvpUrl),
+      child: Container(
+        width: double.infinity,
+        height: 65,
+        decoration: BoxDecoration(
+          color: const Color(0xFF0A0A0A),
+          borderRadius: BorderRadius.circular(35),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.15),
+              blurRadius: 30,
+              offset: const Offset(0, 15),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'RSVP TO EVENT',
+              style: GoogleFonts.montserrat(
+                fontSize: 12,
+                fontWeight: FontWeight.w900,
+                color: Colors.white,
+                letterSpacing: 2,
+              ),
+            ),
+            const SizedBox(width: 15),
+            const Icon(LucideIcons.calendarCheck, size: 20, color: Colors.white),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _launchUrl(String url) async {
+    final apiClient = ref.read(apiClientProvider);
+    final resolved = apiClient.resolveUrl(url);
+    final uri = Uri.parse(resolved);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(
+        uri,
+        mode: resolved.startsWith('http') ? LaunchMode.inAppBrowserView : LaunchMode.platformDefault,
+      );
+    }
   }
 
   IconData _getIcon(String type) {

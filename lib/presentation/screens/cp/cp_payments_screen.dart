@@ -162,6 +162,12 @@ class _CpPaymentsScreenState extends ConsumerState<CpPaymentsScreen> {
                       return Card(
                         margin: const EdgeInsets.only(bottom: 10),
                         child: ListTile(
+                          onTap: id.isEmpty
+                              ? null
+                              : () => context.push(
+                                    '/cp/payments/$id',
+                                    extra: Map<String, dynamic>.from(c as Map),
+                                  ),
                           leading: const CircleAvatar(
                             child: Icon(LucideIcons.arrowDownLeft, size: 18),
                           ),

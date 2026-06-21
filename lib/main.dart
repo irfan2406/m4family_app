@@ -9,17 +9,60 @@ import 'package:m4_mobile/presentation/screens/auth/cp_signup_screen.dart';
 import 'package:m4_mobile/presentation/screens/auth/cp_forgot_password_screen.dart';
 import 'package:m4_mobile/presentation/screens/auth/onboarding_screen.dart';
 import 'package:m4_mobile/presentation/screens/profile/profile_settings_screen.dart';
+import 'package:m4_mobile/presentation/screens/profile/guest_profile_screen.dart';
+import 'package:m4_mobile/presentation/screens/profile/family_members_screen.dart';
+import 'package:m4_mobile/presentation/screens/profile/app_settings_screen.dart';
+import 'package:m4_mobile/presentation/screens/profile/portfolio_screen.dart';
+import 'package:m4_mobile/presentation/screens/support/ticket_detail_screen.dart';
+import 'package:m4_mobile/presentation/screens/search/search_screen.dart';
+import 'package:m4_mobile/presentation/screens/projects/premium_upsell_screen.dart';
+import 'package:m4_mobile/presentation/screens/projects/premium_checkout_screen.dart';
 import 'package:m4_mobile/presentation/screens/profile/referral_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/schedule_visit_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/support_logs_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/support_screen.dart';
+import 'package:m4_mobile/presentation/screens/support/help_center_screen.dart';
+import 'package:m4_mobile/presentation/screens/support/support_tickets_screen.dart';
+import 'package:m4_mobile/presentation/screens/support/create_ticket_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/contact_support_screen.dart';
 import 'package:m4_mobile/presentation/screens/profile/my_property_screen.dart';
+import 'package:m4_mobile/presentation/screens/booking/booking_start_screen.dart';
+import 'package:m4_mobile/presentation/screens/booking/inquiry_screen.dart';
+import 'package:m4_mobile/presentation/screens/booking/site_visit_screen.dart';
+import 'package:m4_mobile/presentation/screens/booking/payment_plan_screen.dart';
+import 'package:m4_mobile/presentation/screens/booking/token_payment_screen.dart';
+import 'package:m4_mobile/presentation/screens/booking/booking_confirmation_screen.dart';
 import 'package:m4_mobile/presentation/screens/profile/legal_vault_screen.dart';
 import 'package:m4_mobile/presentation/screens/profile/deactivate_account_screen.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
 import 'package:m4_mobile/presentation/widgets/cp_main_shell.dart';
+import 'package:m4_mobile/presentation/widgets/investor_main_shell.dart';
+import 'package:m4_mobile/presentation/providers/investor_shell_provider.dart';
+import 'package:m4_mobile/presentation/screens/investor/investor_login_screen.dart';
+import 'package:m4_mobile/presentation/screens/investor/investor_portfolio_screen.dart';
+import 'package:m4_mobile/presentation/screens/investor/investor_payments_screen.dart';
+import 'package:m4_mobile/presentation/screens/investor/investor_payment_detail_screen.dart';
+import 'package:m4_mobile/presentation/screens/investor/investor_installments_screen.dart';
+import 'package:m4_mobile/presentation/screens/investor/investor_tax_reports_screen.dart';
+import 'package:m4_mobile/presentation/screens/investor/investor_tax_report_detail_screen.dart';
+import 'package:m4_mobile/presentation/screens/investor/investor_documents_screen.dart';
+import 'package:m4_mobile/presentation/screens/investor/investor_document_detail_screen.dart';
+import 'package:m4_mobile/presentation/screens/investor/investor_project_detail_screen.dart';
+import 'package:m4_mobile/presentation/screens/investor/investor_elite_screen.dart';
+import 'package:m4_mobile/presentation/screens/investor/investor_elite_cp_connect_screen.dart';
+import 'package:m4_mobile/presentation/screens/investor/investor_elite_investor_connect_screen.dart';
+import 'package:m4_mobile/presentation/screens/investor/investor_referral_screen.dart';
+import 'package:m4_mobile/presentation/screens/investor/investor_referral_active_screen.dart';
+import 'package:m4_mobile/presentation/screens/investor/investor_referral_closed_screen.dart';
+import 'package:m4_mobile/presentation/screens/investor/investor_cp_screen.dart';
+import 'package:m4_mobile/presentation/screens/investor/investor_settings_screen.dart';
+import 'package:m4_mobile/presentation/screens/investor/investor_security_screen.dart';
+import 'package:m4_mobile/presentation/screens/investor/investor_change_password_screen.dart';
+import 'package:m4_mobile/presentation/screens/investor/investor_profile_details_screen.dart';
+import 'package:m4_mobile/presentation/screens/investor/investor_profile_change_password_screen.dart';
+import 'package:m4_mobile/presentation/screens/investor/investor_delete_account_screen.dart';
+import 'package:m4_mobile/presentation/screens/investor/investor_purge_cache_screen.dart';
 import 'package:m4_mobile/presentation/screens/notifications/notification_list_screen.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/screens/about/about_screen.dart';
@@ -27,12 +70,29 @@ import 'package:m4_mobile/presentation/screens/communities/community_list_screen
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
 import 'package:m4_mobile/presentation/screens/careers/careers_screen.dart';
 import 'package:m4_mobile/presentation/screens/communities/community_detail_screen.dart';
+import 'package:m4_mobile/presentation/screens/communities/community_projects_screen.dart';
+import 'package:m4_mobile/presentation/screens/pages/page_detail_screen.dart';
 import 'package:m4_mobile/presentation/screens/projects/guest_project_detail_screen.dart';
 import 'package:m4_mobile/presentation/screens/custom_views/custom_views_screen.dart';
 import 'package:m4_mobile/presentation/screens/custom_views/guest_custom_views_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/contact_screen.dart';
 import 'package:m4_mobile/presentation/screens/content_hub/content_hub_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_dashboard_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_booking_start_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_payment_plan_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_booking_confirmation_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_token_payment_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_referral_redeem_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_payment_detail_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_elite_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_residential_connect_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_security_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_change_password_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_tax_report_detail_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_profile_details_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_delete_account_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_employees_screen.dart';
+import 'package:m4_mobile/presentation/screens/cp/cp_purge_cache_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_referral_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_payments_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_tracker_screen.dart';
@@ -216,6 +276,430 @@ final GoRouter _router = GoRouter(
       builder: (context, state) => const CpEliteInvestorConnectScreen(),
     ),
     GoRoute(
+      path: '/cp/elite',
+      builder: (context, state) => const CpEliteScreen(),
+    ),
+    GoRoute(
+      path: '/cp/elite/residential-connect',
+      builder: (context, state) => const CpResidentialConnectScreen(),
+    ),
+    GoRoute(
+      path: '/cp/booking/start',
+      builder: (context, state) => const CpBookingStartScreen(),
+    ),
+    GoRoute(
+      path: '/cp/booking/payment-plan',
+      builder: (context, state) => CpPaymentPlanScreen(
+        projectId: state.uri.queryParameters['projectId'] ?? '',
+        project: state.extra,
+      ),
+    ),
+    GoRoute(
+      path: '/cp/booking/confirmation',
+      builder: (context, state) => CpBookingConfirmationScreen(
+        projectId: state.uri.queryParameters['projectId'] ?? '',
+        bookingId: state.uri.queryParameters['bookingId'],
+        amount: state.uri.queryParameters['amount'],
+        project: state.extra as Map<String, dynamic>?,
+      ),
+    ),
+    GoRoute(
+      path: '/cp/booking/token-payment',
+      builder: (context, state) => CpTokenPaymentScreen(
+        projectId: state.uri.queryParameters['projectId'] ?? '',
+      ),
+    ),
+    GoRoute(
+      path: '/cp/referral/redeem',
+      builder: (context, state) => const CpReferralRedeemScreen(),
+    ),
+    GoRoute(
+      path: '/cp/payments/:id',
+      builder: (context, state) => CpPaymentDetailScreen(
+        commissionId: state.pathParameters['id']!,
+        initialData: state.extra as Map<String, dynamic>?,
+      ),
+    ),
+    // --- CP breadth (reuse existing screens + new CP profile/security screens) ---
+    GoRoute(
+      path: '/cp/notifications',
+      builder: (context, state) => NotificationListScreen(),
+    ),
+    GoRoute(
+      path: '/cp/communities',
+      builder: (context, state) => const CommunityListScreen(),
+    ),
+    GoRoute(
+      path: '/cp/communities/:slug',
+      builder: (context, state) => CommunityDetailScreen(
+        community: state.extra ?? {'_id': state.pathParameters['slug']!},
+      ),
+    ),
+    GoRoute(
+      path: '/cp/communities/:slug/projects',
+      builder: (context, state) => CommunityProjectsListScreen(
+        slug: state.pathParameters['slug']!,
+      ),
+    ),
+    GoRoute(
+      path: '/cp/events',
+      builder: (context, state) => const GuestContentHubScreen(
+        title: 'M4 EVENTS',
+        subtitle: 'Stay updated with our latest upcoming events.',
+        typeIcon: LucideIcons.calendar,
+        emptyMessage: 'No event posts found',
+        contentType: 'event',
+      ),
+    ),
+    GoRoute(
+      path: '/cp/highlights',
+      builder: (context, state) => const GuestContentHubScreen(
+        title: 'PROJECT\nHIGHLIGHTS',
+        subtitle: 'Stay updated with our latest achievements and milestones.',
+        typeIcon: LucideIcons.zap,
+        emptyMessage: 'No highlights posts found',
+        contentType: 'highlight',
+      ),
+    ),
+    GoRoute(
+      path: '/cp/media',
+      builder: (context, state) => const GuestContentHubScreen(
+        title: 'MEDIA\nGALLERY',
+        subtitle: 'Stay updated with our latest multimedia releases.',
+        typeIcon: LucideIcons.play,
+        emptyMessage: 'No media posts found',
+        contentType: 'media',
+      ),
+    ),
+    GoRoute(
+      path: '/cp/support/help-center',
+      builder: (context, state) => const HelpCenterScreen(),
+    ),
+    GoRoute(
+      path: '/cp/help',
+      builder: (context, state) => const HelpCenterScreen(),
+    ),
+    GoRoute(
+      path: '/cp/support/tickets',
+      builder: (context, state) => const SupportTicketsScreen(),
+    ),
+    GoRoute(
+      path: '/cp/support/tickets/:id',
+      builder: (context, state) => TicketDetailScreen(
+        ticketId: state.pathParameters['id']!,
+        initialTicket: state.extra as Map<String, dynamic>?,
+      ),
+    ),
+    GoRoute(
+      path: '/cp/support/new-ticket',
+      builder: (context, state) => const CreateTicketScreen(),
+    ),
+    GoRoute(
+      path: '/cp/support/logs',
+      builder: (context, state) => const SupportLogsScreen(),
+    ),
+    GoRoute(
+      path: '/cp/documents',
+      builder: (context, state) => const LegalVaultScreen(),
+    ),
+    GoRoute(
+      path: '/cp/documents/:id',
+      builder: (context, state) => const LegalVaultScreen(),
+    ),
+    GoRoute(
+      path: '/cp/customization',
+      builder: (context, state) => MyCustomViewsScreen(),
+    ),
+    GoRoute(
+      path: '/cp/customization/detail',
+      builder: (context, state) => MyCustomViewsScreen(),
+    ),
+    GoRoute(
+      path: '/cp/custom-views',
+      builder: (context, state) => MyCustomViewsScreen(),
+    ),
+    GoRoute(
+      path: '/cp/search',
+      builder: (context, state) => const SearchScreen(),
+    ),
+    GoRoute(
+      path: '/cp/about',
+      builder: (context, state) => const AboutScreen(),
+    ),
+    GoRoute(
+      path: '/cp/careers',
+      builder: (context, state) => const CareersScreen(),
+    ),
+    GoRoute(
+      path: '/cp/privacy-policy',
+      builder: (context, state) => const PageDetailScreen(slug: 'privacy-policy'),
+    ),
+    GoRoute(
+      path: '/cp/projects/premium-upsell',
+      builder: (context, state) => const PremiumUpsellScreen(),
+    ),
+    GoRoute(
+      path: '/cp/projects/premium-upsell/checkout',
+      builder: (context, state) => const PremiumCheckoutScreen(),
+    ),
+    GoRoute(
+      path: '/cp/profile/app-settings',
+      builder: (context, state) => const AppSettingsScreen(),
+    ),
+    GoRoute(
+      path: '/cp/profile/portfolio',
+      builder: (context, state) => const PortfolioScreen(),
+    ),
+    GoRoute(
+      path: '/cp/security',
+      builder: (context, state) => const CpSecurityScreen(),
+    ),
+    GoRoute(
+      path: '/cp/change-password',
+      builder: (context, state) => const CpChangePasswordScreen(),
+    ),
+    GoRoute(
+      path: '/cp/tax-reports/:id',
+      builder: (context, state) => CpTaxReportDetailScreen(
+        reportId: state.pathParameters['id']!,
+        initialData: state.extra as Map<String, dynamic>?,
+      ),
+    ),
+    GoRoute(
+      path: '/cp/profile/details',
+      builder: (context, state) => const CpProfileDetailsScreen(),
+    ),
+    GoRoute(
+      path: '/cp/profile/delete-account',
+      builder: (context, state) => const CpDeleteAccountScreen(),
+    ),
+    GoRoute(
+      path: '/cp/profile/employees',
+      builder: (context, state) => const CpEmployeesScreen(),
+    ),
+    GoRoute(
+      path: '/cp/profile/purge-cache',
+      builder: (context, state) => const CpPurgeCacheScreen(),
+    ),
+    // --- Investor portal ---
+    GoRoute(
+      path: '/investor/login',
+      builder: (context, state) => const InvestorLoginScreen(),
+    ),
+    GoRoute(
+      path: '/investor/home',
+      builder: (context, state) {
+        WidgetsBinding.instance.addPostFrameCallback(
+          (_) => ProviderScope.containerOf(context).read(investorNavigationIndexProvider.notifier).state = 0,
+        );
+        return const InvestorMainShell();
+      },
+    ),
+    GoRoute(
+      path: '/investor/projects',
+      builder: (context, state) {
+        WidgetsBinding.instance.addPostFrameCallback(
+          (_) => ProviderScope.containerOf(context).read(investorNavigationIndexProvider.notifier).state = 1,
+        );
+        return const InvestorMainShell();
+      },
+    ),
+    GoRoute(
+      path: '/investor/support',
+      builder: (context, state) {
+        WidgetsBinding.instance.addPostFrameCallback(
+          (_) => ProviderScope.containerOf(context).read(investorNavigationIndexProvider.notifier).state = 2,
+        );
+        return const InvestorMainShell();
+      },
+    ),
+    GoRoute(
+      path: '/investor/profile',
+      builder: (context, state) {
+        WidgetsBinding.instance.addPostFrameCallback(
+          (_) => ProviderScope.containerOf(context).read(investorNavigationIndexProvider.notifier).state = 3,
+        );
+        return const InvestorMainShell();
+      },
+    ),
+    // Investor money / portfolio (new investor-specific screens)
+    GoRoute(path: '/investor/portfolio', builder: (context, state) => const InvestorPortfolioScreen()),
+    GoRoute(path: '/investor/profile/portfolio', builder: (context, state) => const InvestorPortfolioScreen()),
+    GoRoute(path: '/investor/payments', builder: (context, state) => const InvestorPaymentsScreen()),
+    GoRoute(
+      path: '/investor/payments/:id',
+      builder: (context, state) => InvestorPaymentDetailScreen(
+        paymentId: state.pathParameters['id']!,
+        initialData: state.extra as Map<String, dynamic>?,
+      ),
+    ),
+    GoRoute(path: '/investor/installments', builder: (context, state) => const InvestorInstallmentsScreen()),
+    GoRoute(path: '/investor/tax-reports', builder: (context, state) => const InvestorTaxReportsScreen()),
+    GoRoute(
+      path: '/investor/tax-reports/:id',
+      builder: (context, state) => InvestorTaxReportDetailScreen(
+        reportId: state.pathParameters['id']!,
+        initialData: state.extra as Map<String, dynamic>?,
+      ),
+    ),
+    GoRoute(path: '/investor/documents', builder: (context, state) => const InvestorDocumentsScreen()),
+    GoRoute(
+      path: '/investor/documents/:id',
+      builder: (context, state) => InvestorDocumentDetailScreen(documentId: state.pathParameters['id']!),
+    ),
+    // Investor projects — premium-upsell BEFORE :id so it isn't captured as a param
+    GoRoute(path: '/investor/projects/premium-upsell', builder: (context, state) => const PremiumUpsellScreen()),
+    GoRoute(path: '/investor/projects/premium-upsell/checkout', builder: (context, state) => const PremiumCheckoutScreen()),
+    GoRoute(
+      path: '/investor/projects/:id',
+      builder: (context, state) => InvestorProjectDetailScreen(projectId: state.pathParameters['id']!),
+    ),
+    GoRoute(
+      path: '/investor/projects/:id/3d-view',
+      builder: (context, state) => InvestorProjectDetailScreen(projectId: state.pathParameters['id']!),
+    ),
+    // Investor elite
+    GoRoute(path: '/investor/elite', builder: (context, state) => const InvestorEliteScreen()),
+    GoRoute(path: '/investor/elite/cp-connect', builder: (context, state) => const InvestorEliteCpConnectScreen()),
+    GoRoute(path: '/investor/elite/investor-connect', builder: (context, state) => const InvestorEliteInvestorConnectScreen()),
+    GoRoute(path: '/investor/elite/residential-connect', builder: (context, state) => const CpResidentialConnectScreen()),
+    // Investor referral
+    GoRoute(path: '/investor/referral', builder: (context, state) => const InvestorReferralScreen()),
+    GoRoute(path: '/investor/referral/active', builder: (context, state) => const InvestorReferralActiveScreen()),
+    GoRoute(path: '/investor/referral/closed', builder: (context, state) => const InvestorReferralClosedScreen()),
+    // Investor settings / security / profile subroutes
+    GoRoute(path: '/investor/cp', builder: (context, state) => const InvestorCpScreen()),
+    GoRoute(path: '/investor/settings', builder: (context, state) => const InvestorSettingsScreen()),
+    GoRoute(path: '/investor/security', builder: (context, state) => const InvestorSecurityScreen()),
+    GoRoute(path: '/investor/change-password', builder: (context, state) => const InvestorChangePasswordScreen()),
+    GoRoute(path: '/investor/profile/details', builder: (context, state) => const InvestorProfileDetailsScreen()),
+    GoRoute(path: '/investor/profile/change-password', builder: (context, state) => const InvestorProfileChangePasswordScreen()),
+    GoRoute(path: '/investor/profile/delete-account', builder: (context, state) => const InvestorDeleteAccountScreen()),
+    GoRoute(path: '/investor/profile/purge-cache', builder: (context, state) => const InvestorPurgeCacheScreen()),
+    GoRoute(path: '/investor/profile/family', builder: (context, state) => const FamilyMembersScreen()),
+    GoRoute(path: '/investor/profile/app-settings', builder: (context, state) => const AppSettingsScreen()),
+    GoRoute(path: '/investor/profile/ticket-logs', builder: (context, state) => const SupportLogsScreen()),
+    GoRoute(path: '/investor/profile/ticket-logs/new', builder: (context, state) => const CreateTicketScreen()),
+    // Investor reuse routes (existing screens)
+    GoRoute(path: '/investor/communities', builder: (context, state) => const CommunityListScreen()),
+    GoRoute(
+      path: '/investor/communities/:slug',
+      builder: (context, state) => CommunityDetailScreen(community: state.extra ?? {'_id': state.pathParameters['slug']!}),
+    ),
+    GoRoute(
+      path: '/investor/communities/:slug/projects',
+      builder: (context, state) => CommunityProjectsListScreen(slug: state.pathParameters['slug']!),
+    ),
+    GoRoute(path: '/investor/notifications', builder: (context, state) => NotificationListScreen()),
+    GoRoute(path: '/investor/search', builder: (context, state) => const SearchScreen()),
+    GoRoute(path: '/investor/custom-views', builder: (context, state) => MyCustomViewsScreen()),
+    GoRoute(path: '/investor/my-custom-views', builder: (context, state) => MyCustomViewsScreen()),
+    GoRoute(path: '/investor/about', builder: (context, state) => const AboutScreen()),
+    GoRoute(path: '/investor/careers', builder: (context, state) => const CareersScreen()),
+    GoRoute(path: '/investor/contact', builder: (context, state) => const ContactScreen()),
+    GoRoute(path: '/investor/privacy-policy', builder: (context, state) => const PageDetailScreen(slug: 'privacy-policy')),
+    GoRoute(path: '/investor/help', builder: (context, state) => const HelpCenterScreen()),
+    GoRoute(
+      path: '/investor/events',
+      builder: (context, state) => const GuestContentHubScreen(
+        title: 'M4 EVENTS',
+        subtitle: 'Stay updated with our latest upcoming events.',
+        typeIcon: LucideIcons.calendar,
+        emptyMessage: 'No event posts found',
+        contentType: 'event',
+      ),
+    ),
+    GoRoute(
+      path: '/investor/highlights',
+      builder: (context, state) => const GuestContentHubScreen(
+        title: 'PROJECT\nHIGHLIGHTS',
+        subtitle: 'Stay updated with our latest achievements and milestones.',
+        typeIcon: LucideIcons.zap,
+        emptyMessage: 'No highlights posts found',
+        contentType: 'highlight',
+      ),
+    ),
+    GoRoute(
+      path: '/investor/media',
+      builder: (context, state) => const GuestContentHubScreen(
+        title: 'MEDIA\nGALLERY',
+        subtitle: 'Stay updated with our latest multimedia releases.',
+        typeIcon: LucideIcons.play,
+        emptyMessage: 'No media posts found',
+        contentType: 'media',
+      ),
+    ),
+    GoRoute(
+      path: '/investor/blog',
+      builder: (context, state) => const GuestContentHubScreen(
+        title: 'M4 BLOG',
+        subtitle: 'Stay updated with our latest insights and news.',
+        typeIcon: LucideIcons.fileText,
+        emptyMessage: 'No blog posts found',
+        contentType: 'blog',
+      ),
+    ),
+    GoRoute(path: '/investor/support/help-center', builder: (context, state) => const HelpCenterScreen()),
+    GoRoute(path: '/investor/support/logs', builder: (context, state) => const SupportLogsScreen()),
+    GoRoute(path: '/investor/support/new-ticket', builder: (context, state) => const CreateTicketScreen()),
+    GoRoute(path: '/investor/support/tickets', builder: (context, state) => const SupportTicketsScreen()),
+    GoRoute(
+      path: '/investor/support/tickets/:id',
+      builder: (context, state) => TicketDetailScreen(
+        ticketId: state.pathParameters['id']!,
+        initialTicket: state.extra as Map<String, dynamic>?,
+      ),
+    ),
+    // Investor booking flow (reuse user booking screens, projectId via query)
+    GoRoute(
+      path: '/investor/booking/start',
+      builder: (context, state) => BookingStartScreen(
+        projectId: state.uri.queryParameters['projectId'] ?? '',
+        project: state.extra,
+      ),
+    ),
+    GoRoute(
+      path: '/investor/booking/inquiry',
+      builder: (context, state) => InquiryScreen(
+        projectId: state.uri.queryParameters['projectId'] ?? '',
+        project: state.extra,
+      ),
+    ),
+    GoRoute(
+      path: '/investor/booking/site-visit',
+      builder: (context, state) => SiteVisitScreen(
+        projectId: state.uri.queryParameters['projectId'] ?? '',
+        project: state.extra,
+      ),
+    ),
+    GoRoute(
+      path: '/investor/booking/payment-plan',
+      builder: (context, state) => PaymentPlanScreen(
+        projectId: state.uri.queryParameters['projectId'] ?? '',
+        project: state.extra,
+      ),
+    ),
+    GoRoute(
+      path: '/investor/booking/token-payment',
+      builder: (context, state) => TokenPaymentScreen(
+        projectId: state.uri.queryParameters['projectId'] ?? '',
+        project: state.extra,
+      ),
+    ),
+    GoRoute(
+      path: '/investor/booking/confirmation',
+      builder: (context, state) => BookingConfirmationScreen(
+        projectId: state.uri.queryParameters['projectId'] ?? '',
+        project: state.extra,
+        bookingId: state.uri.queryParameters['bookingId'],
+        amount: state.uri.queryParameters['amount'],
+      ),
+    ),
+    GoRoute(
+      path: '/investor/booking/my-bookings',
+      builder: (context, state) => const MyPropertyScreen(),
+    ),
+    GoRoute(
       path: '/cp/tax-reports',
       builder: (context, state) => const CpTaxReportsScreen(),
     ),
@@ -257,6 +741,41 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/profile/settings',
       builder: (context, state) => const ProfileSettingsScreen(),
+    ),
+    GoRoute(
+      path: '/guest/profile',
+      builder: (context, state) => const GuestProfileScreen(),
+    ),
+    GoRoute(
+      path: '/profile/family',
+      builder: (context, state) => const FamilyMembersScreen(),
+    ),
+    GoRoute(
+      path: '/profile/app-settings',
+      builder: (context, state) => const AppSettingsScreen(),
+    ),
+    GoRoute(
+      path: '/profile/portfolio',
+      builder: (context, state) => const PortfolioScreen(),
+    ),
+    GoRoute(
+      path: '/support/tickets/:id',
+      builder: (context, state) => TicketDetailScreen(
+        ticketId: state.pathParameters['id']!,
+        initialTicket: state.extra as Map<String, dynamic>?,
+      ),
+    ),
+    GoRoute(
+      path: '/search',
+      builder: (context, state) => const SearchScreen(),
+    ),
+    GoRoute(
+      path: '/projects/premium-upsell',
+      builder: (context, state) => const PremiumUpsellScreen(),
+    ),
+    GoRoute(
+      path: '/projects/premium-checkout',
+      builder: (context, state) => const PremiumCheckoutScreen(),
     ),
     GoRoute(
       path: '/profile/referral',
@@ -373,6 +892,16 @@ final GoRouter _router = GoRouter(
       ),
     ),
     GoRoute(
+      path: '/communities/:slug/projects',
+      builder: (context, state) => CommunityProjectsListScreen(
+        slug: state.pathParameters['slug']!,
+      ),
+    ),
+    GoRoute(
+      path: '/guest/privacy-policy',
+      builder: (context, state) => const PageDetailScreen(slug: 'privacy-policy'),
+    ),
+    GoRoute(
       path: '/projects/:id',
       builder: (context, state) => GuestProjectDetailScreen(
         projectId: state.pathParameters['id']!,
@@ -454,6 +983,9 @@ class ConditionalHomeShell extends ConsumerWidget {
       final role = user?['role']?.toString().toLowerCase();
       if (role == 'cp') {
         return const CpMainShell();
+      }
+      if (role == 'investor') {
+        return const InvestorMainShell();
       }
       return const MainShell();
     }

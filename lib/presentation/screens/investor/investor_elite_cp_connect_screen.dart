@@ -6,16 +6,20 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 
-/// Web `/cp/elite/cp-connect` — institutional partner network (curated demo data).
-/// Parity build: premium glass cards, Verified Node Matrix, Accelerator Protocol.
-class CpEliteCpConnectScreen extends ConsumerStatefulWidget {
-  const CpEliteCpConnectScreen({super.key});
+/// Web `/investor/elite/cp-connect` — institutional CP / partner network from the
+/// investor perspective: active partners, payouts, lead pipeline stats and a
+/// Verified Node Matrix of partner cards (expert, region, rating, active projects).
+/// Parity build: premium glass cards, search, Accelerator Protocol benefits.
+class InvestorEliteCpConnectScreen extends ConsumerStatefulWidget {
+  const InvestorEliteCpConnectScreen({super.key});
 
   @override
-  ConsumerState<CpEliteCpConnectScreen> createState() => _CpEliteCpConnectScreenState();
+  ConsumerState<InvestorEliteCpConnectScreen> createState() =>
+      _InvestorEliteCpConnectScreenState();
 }
 
-class _CpEliteCpConnectScreenState extends ConsumerState<CpEliteCpConnectScreen> {
+class _InvestorEliteCpConnectScreenState
+    extends ConsumerState<InvestorEliteCpConnectScreen> {
   final _search = TextEditingController();
   String _q = '';
 
@@ -82,14 +86,18 @@ class _CpEliteCpConnectScreenState extends ConsumerState<CpEliteCpConnectScreen>
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(LucideIcons.arrowLeft, color: scheme.onSurface),
-          onPressed: () => context.pop(),
+          onPressed: () =>
+              context.canPop() ? context.pop() : context.go('/investor/home'),
         ),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               'Partners Portal',
-              style: GoogleFonts.montserrat(fontWeight: FontWeight.w800, fontSize: 16, color: scheme.onSurface),
+              style: GoogleFonts.montserrat(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 16,
+                  color: scheme.onSurface),
             ),
             Text(
               'INSTITUTIONAL CP NETWORK',
@@ -138,7 +146,12 @@ class _CpEliteCpConnectScreenState extends ConsumerState<CpEliteCpConnectScreen>
               // Dashboard stats
               ..._stats.map((s) => Padding(
                     padding: const EdgeInsets.only(bottom: 12),
-                    child: _StatCard(stat: s, card: card, border: border, scheme: scheme, muted: muted),
+                    child: _StatCard(
+                        stat: s,
+                        card: card,
+                        border: border,
+                        scheme: scheme,
+                        muted: muted),
                   )),
 
               const SizedBox(height: 12),
@@ -160,7 +173,8 @@ class _CpEliteCpConnectScreenState extends ConsumerState<CpEliteCpConnectScreen>
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: scheme.primary.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(999),
@@ -196,7 +210,9 @@ class _CpEliteCpConnectScreenState extends ConsumerState<CpEliteCpConnectScreen>
                   child: Center(
                     child: Column(
                       children: [
-                        Icon(LucideIcons.searchX, size: 36, color: scheme.onSurface.withValues(alpha: 0.25)),
+                        Icon(LucideIcons.searchX,
+                            size: 36,
+                            color: scheme.onSurface.withValues(alpha: 0.25)),
                         const SizedBox(height: 12),
                         Text(
                           'NO MATCHES FOUND',
@@ -250,7 +266,8 @@ class _CpEliteCpConnectScreenState extends ConsumerState<CpEliteCpConnectScreen>
           ),
           prefixIcon: Icon(LucideIcons.search, size: 20, color: scheme.primary),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 18),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 8, vertical: 18),
         ),
         onChanged: (v) => setState(() => _q = v.trim().toLowerCase()),
       ),
@@ -272,7 +289,8 @@ class _Partner {
   final String rating;
   final int activeProjects;
   final String image;
-  const _Partner(this.name, this.expert, this.region, this.rating, this.activeProjects, this.image);
+  const _Partner(this.name, this.expert, this.region, this.rating,
+      this.activeProjects, this.image);
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -312,7 +330,9 @@ class _StatCardState extends State<_StatCard> {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: _pressed ? scheme.surfaceContainerHighest.withValues(alpha: 0.6) : widget.card,
+            color: _pressed
+                ? scheme.surfaceContainerHighest.withValues(alpha: 0.6)
+                : widget.card,
             borderRadius: BorderRadius.circular(24),
             border: Border.all(color: widget.border),
           ),
@@ -325,7 +345,8 @@ class _StatCardState extends State<_StatCard> {
                 decoration: BoxDecoration(
                   color: scheme.surface,
                   borderRadius: BorderRadius.circular(15),
-                  border: Border.all(color: scheme.primary.withValues(alpha: 0.25)),
+                  border:
+                      Border.all(color: scheme.primary.withValues(alpha: 0.25)),
                 ),
                 child: Icon(widget.stat.icon, size: 22, color: scheme.primary),
               ),
@@ -366,7 +387,8 @@ class _StatCardState extends State<_StatCard> {
                   shape: BoxShape.circle,
                   border: Border.all(color: widget.border),
                 ),
-                child: Icon(LucideIcons.chevronRight, size: 18, color: widget.muted),
+                child: Icon(LucideIcons.chevronRight,
+                    size: 18, color: widget.muted),
               ),
             ],
           ),
@@ -418,7 +440,9 @@ class _PartnerCardState extends State<_PartnerCard> {
         margin: const EdgeInsets.only(bottom: 14),
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          color: _pressed ? scheme.surfaceContainerHighest.withValues(alpha: 0.6) : widget.card,
+          color: _pressed
+              ? scheme.surfaceContainerHighest.withValues(alpha: 0.6)
+              : widget.card,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(color: widget.border),
         ),
@@ -537,7 +561,8 @@ class _PartnerCardState extends State<_PartnerCard> {
                     height: 48,
                     child: OutlinedButton.icon(
                       onPressed: widget.onMessage,
-                      icon: Icon(LucideIcons.messageCircle, size: 16, color: scheme.primary),
+                      icon: Icon(LucideIcons.messageCircle,
+                          size: 16, color: scheme.primary),
                       label: Text(
                         'TRANSMIT',
                         style: GoogleFonts.montserrat(
@@ -549,8 +574,11 @@ class _PartnerCardState extends State<_PartnerCard> {
                       ),
                       style: OutlinedButton.styleFrom(
                         backgroundColor: scheme.surface,
-                        side: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.5)),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        side: BorderSide(
+                            color:
+                                scheme.outlineVariant.withValues(alpha: 0.5)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
                       ),
                     ),
                   ),
@@ -561,7 +589,8 @@ class _PartnerCardState extends State<_PartnerCard> {
                     height: 48,
                     child: FilledButton.icon(
                       onPressed: widget.onCall,
-                      icon: Icon(LucideIcons.phone, size: 16, color: scheme.surface),
+                      icon: Icon(LucideIcons.phone,
+                          size: 16, color: scheme.surface),
                       label: Text(
                         'LINK-UP',
                         style: GoogleFonts.montserrat(
@@ -575,7 +604,8 @@ class _PartnerCardState extends State<_PartnerCard> {
                         backgroundColor: scheme.onSurface,
                         foregroundColor: scheme.surface,
                         elevation: 3,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
                       ),
                     ),
                   ),
@@ -646,7 +676,8 @@ class _AcceleratorCard extends StatelessWidget {
                           color: scheme.surface,
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Icon(LucideIcons.zap, size: 24, color: scheme.primary),
+                        child: Icon(LucideIcons.zap,
+                            size: 24, color: scheme.primary),
                       ),
                       const SizedBox(width: 14),
                       Expanded(
@@ -681,14 +712,16 @@ class _AcceleratorCard extends StatelessWidget {
                     child: FilledButton(
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Yield structures coming soon.')),
+                          const SnackBar(
+                              content: Text('Yield structures coming soon.')),
                         );
                       },
                       style: FilledButton.styleFrom(
                         backgroundColor: scheme.surface,
                         foregroundColor: scheme.onSurface,
                         elevation: 3,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
                       ),
                       child: Text(
                         'VIEW YIELD STRUCTURES',

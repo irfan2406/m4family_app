@@ -169,6 +169,16 @@ class ApiClient {
     return dio.post('/api/cp/employees', data: body);
   }
 
+  /// Web `PATCH /api/cp/employees/:id` — body: `{ name, phone, email? }`.
+  Future<Response> updateCpEmployee(String id, Map<String, dynamic> body) async {
+    return dio.patch('/api/cp/employees/$id', data: body);
+  }
+
+  /// Web `DELETE /api/cp/employees/:id`.
+  Future<Response> deleteCpEmployee(String id) async {
+    return dio.delete('/api/cp/employees/$id');
+  }
+
   /// Paginated site visits (web `GET /api/cp/visits`).
   Future<Response> getCpVisits({int page = 1, int limit = 10}) async {
     return dio.get('/api/cp/visits', queryParameters: {'page': page, 'limit': limit});
@@ -352,6 +362,40 @@ class ApiClient {
     return dio.post('/api/tickets', data: data);
   }
 
+  /// Single ticket with its message thread (web `GET /api/tickets/:id`).
+  Future<Response> getTicketDetail(String ticketId) async {
+    return dio.get('/api/tickets/$ticketId');
+  }
+
+  /// Append a message to a ticket (web `POST /api/tickets/:id/messages`).
+  Future<Response> postTicketMessage(
+    String ticketId, {
+    required String text,
+    String? attachment,
+  }) async {
+    return dio.post('/api/tickets/$ticketId/messages', data: {
+      'text': text,
+      if (attachment != null) 'attachment': attachment,
+    });
+  }
+
+  /// Generic file upload (web `POST /api/upload` → `data.fileUrl`).
+  Future<Response> uploadFile(String filePath) async {
+    final fileName = filePath.split('/').last;
+    final formData = FormData.fromMap({
+      'file': await MultipartFile.fromFile(filePath, filename: fileName),
+    });
+    return dio.post(
+      '/api/upload',
+      data: formData,
+      options: Options(
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      ),
+    );
+  }
+
   // CMS Methods
   Future<Response> getCmsPages() async {
     return dio.get('/api/cms');
@@ -416,6 +460,36 @@ class ApiClient {
 
   Future<Response> getMyPreferences() async {
     return dio.get('/api/user/preferences');
+  }
+
+  // ─── Investor (`/api/investor/*`) ────────────────────────────────────────────
+  /// Web `/investor/login` → `POST /api/investor/login` (identifier = investorId / email / phone).
+  Future<Response> investorLogin(String identifier, String password) async {
+    return dio.post('/api/investor/login', data: {
+      'identifier': identifier,
+      'password': password,
+    });
+  }
+
+  /// Aggregated investor home overview (portfolio, priority project, reports, network).
+  Future<Response> getInvestorHubDashboard() async {
+    return dio.get('/api/investor/hub/dashboard');
+  }
+
+  /// Raw investor portfolio (list of investments).
+  Future<Response> getInvestorPortfolio() async {
+    return dio.get('/api/investor/portfolio');
+  }
+
+  /// Secure investor vault documents (`GET /api/investor/documents`).
+  Future<Response> getInvestorDocuments() async {
+    return dio.get('/api/investor/documents');
+  }
+
+  /// Investor tax / fiscal compliance statements (web `GET /api/investor/tax-reports`).
+  Future<Response> getInvestorTaxReports({String? year}) async {
+    final q = year != null ? <String, dynamic>{'year': year} : null;
+    return dio.get('/api/investor/tax-reports', queryParameters: q);
   }
 
   // Investor & Referrals

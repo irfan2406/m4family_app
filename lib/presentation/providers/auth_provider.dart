@@ -133,6 +133,51 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
+  /// Web `/investor/login`: identifier (investorId / email / phone) + password; rejects non-investor roles.
+  Future<String?> loginInvestorWithPassword(String identifier, String password) async {
+    state = state.copyWith(status: AuthStatus.loading, error: null);
+    try {
+      final response = await _apiClient.investorLogin(identifier.trim(), password);
+      final ok = response.statusCode == 200 && response.data['status'] == true;
+      if (!ok) {
+        final msg = response.data['message']?.toString() ?? 'Login failed';
+        state = state.copyWith(status: AuthStatus.initial, error: null);
+        return msg;
+      }
+      final data = response.data['data'];
+      final role = data['user']?['role']?.toString().toLowerCase();
+      if (role != 'investor') {
+        state = state.copyWith(status: AuthStatus.initial, error: null);
+        return 'Access denied. This portal is reserved for premium investors.';
+      }
+      // Investor login returns `token` (CP returns `accessToken`).
+      final token = (data['token'] ?? data['accessToken'])?.toString();
+      if (token == null || token.isEmpty) {
+        state = state.copyWith(status: AuthStatus.initial, error: null);
+        return 'Login failed: missing session token.';
+      }
+      await _storage.write(key: 'jwt_token', value: token);
+      final userResponse = await _apiClient.getCurrentUser();
+      final raw = userResponse.data['data'] ?? userResponse.data;
+      Map<String, dynamic>? userMap;
+      if (raw is Map<String, dynamic>) {
+        userMap = raw;
+      } else if (raw is Map) {
+        userMap = Map<String, dynamic>.from(raw);
+      }
+      state = state.copyWith(status: AuthStatus.authenticated, user: userMap);
+      return null;
+    } on DioException catch (e) {
+      final data = e.response?.data;
+      final msg = data is Map ? data['message']?.toString() : null;
+      state = state.copyWith(status: AuthStatus.initial, error: null);
+      return msg ?? e.message ?? 'Login failed';
+    } catch (e) {
+      state = state.copyWith(status: AuthStatus.initial, error: null);
+      return e.toString();
+    }
+  }
+
   Future<void> verifyOtp(String code) async {
     if (state.identifier == null) return;
     state = state.copyWith(status: AuthStatus.loading);

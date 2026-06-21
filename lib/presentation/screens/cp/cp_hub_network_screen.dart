@@ -16,6 +16,7 @@ class CpHubNetworkScreen extends ConsumerStatefulWidget {
 
 class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
   List<dynamic> _list = [];
+  Map<String, dynamic>? _wallet;
   bool _loading = true;
 
   @override
@@ -26,14 +27,37 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
 
   Future<void> _load() async {
     try {
-      final res = await ref.read(apiClientProvider).getCpReferrals();
+      final api = ref.read(apiClientProvider);
+      final res = await api.getCpReferrals();
       if (!mounted) return;
       if (res.statusCode == 200 && res.data['status'] == true) {
         final d = res.data['data'];
         if (d is List) _list = List<dynamic>.from(d);
       }
+      final w = await api.getCpWallet();
+      if (!mounted) return;
+      if (w.statusCode == 200 && w.data['status'] == true) {
+        final d = w.data['data'];
+        if (d is Map) _wallet = Map<String, dynamic>.from(d);
+      }
     } catch (_) {}
     if (mounted) setState(() => _loading = false);
+  }
+
+  num _balance() {
+    final w = _wallet;
+    if (w == null) return 0;
+    return (w['balance'] ?? w['availableBalance'] ?? 0) as num? ?? 0;
+  }
+
+  String _formatNumber(num n) {
+    if (n >= 1000) {
+      return n.toStringAsFixed(0).replaceAllMapped(
+        RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
+        (m) => '${m[1]},',
+      );
+    }
+    return n.toStringAsFixed(0);
   }
 
   @override
@@ -41,7 +65,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
     final scheme = Theme.of(context).colorScheme;
     const purple = Color(0xFFA855F7);
 
-    final events = const [
+    const events = [
       {
         'title': 'Annual Partner Gala',
         'date': 'Dec 15, 2024',
@@ -69,6 +93,31 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
                 children: [
+                  // ─── Referral Network Stats ──────────────────
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildStatCard(
+                          scheme,
+                          icon: LucideIcons.users,
+                          label: 'TOTAL REFERRALS',
+                          value: '${members.length}',
+                          accent: purple,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: _buildStatCard(
+                          scheme,
+                          icon: LucideIcons.wallet,
+                          label: 'COMMISSION',
+                          value: 'AED ${_formatNumber(_balance())}',
+                          accent: const Color(0xFFFFD700),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -140,10 +189,19 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                   ],
                   const SizedBox(height: 10),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Icon(LucideIcons.users, size: 16, color: purple),
-                      const SizedBox(width: 8),
-                      Text('Member Spotlight', style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 0.2)),
+                      Row(
+                        children: [
+                          const Icon(LucideIcons.users, size: 16, color: purple),
+                          const SizedBox(width: 8),
+                          Text('Member Spotlight', style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 0.2)),
+                        ],
+                      ),
+                      TextButton(
+                        onPressed: () => context.push('/cp/referral'),
+                        child: Text('VIEW ALL REFERRALS', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1.6, color: purple)),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 10),
@@ -235,6 +293,53 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                 ],
               ),
             ),
+    );
+  }
+
+  Widget _buildStatCard(
+    ColorScheme scheme, {
+    required IconData icon,
+    required String label,
+    required String value,
+    required Color accent,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.4)),
+        color: scheme.onSurface.withValues(alpha: 0.03),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: accent.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, size: 16, color: accent),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.montserrat(fontSize: 18, fontWeight: FontWeight.w900),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: GoogleFonts.montserrat(
+              fontSize: 8,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1.2,
+              color: scheme.onSurface.withValues(alpha: 0.5),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -30,6 +30,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
   List<dynamic> _projects = [];
   bool _projectsLoading = true;
   bool _isSubmitting = false;
+  String _selectedProject = 'Any';
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -99,7 +100,9 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
         'phone': _phoneController.text,
         'location': _locationController.text,
         'interest': 'Community Interest',
-        'message': 'Expressing interest in community: ${widget.community['title']}',
+        'message': 'Expressing interest in community: ${widget.community['title']}'
+            '${_selectedProject != 'Any' ? ' | Interested Project: $_selectedProject' : ''}',
+        'projectName': _selectedProject != 'Any' ? _selectedProject : widget.community['title'],
         'source': 'Mobile Guest Portal',
       });
 
@@ -111,6 +114,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
         _emailController.clear();
         _phoneController.clear();
         _locationController.clear();
+        setState(() => _selectedProject = 'Any');
       }
     } catch (e) {
       if (mounted) {
@@ -579,6 +583,8 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                             ],
                           ),
                           const SizedBox(height: 12),
+                          _buildProjectDropdown(),
+                          const SizedBox(height: 12),
                           _buildInput('Your Location (e.g. Dubai, UAE) *', _locationController),
                           const SizedBox(height: 20),
                           SizedBox(
@@ -728,6 +734,93 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
             fontWeight: FontWeight.w900,
             letterSpacing: 2,
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProjectDropdown() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white : Colors.black;
+    return Container(
+      height: 56,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      decoration: BoxDecoration(
+        color: textColor.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: textColor.withValues(alpha: 0.05)),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: _selectedProject,
+          isExpanded: true,
+          icon: Icon(LucideIcons.chevronDown, color: textColor.withValues(alpha: 0.4), size: 18),
+          dropdownColor: isDark ? const Color(0xFF111111) : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          style: GoogleFonts.inter(color: textColor, fontSize: 13, fontWeight: FontWeight.bold),
+          hint: Text(
+            'SELECT PROPERTY / PROJECT',
+            style: GoogleFonts.inter(
+              color: textColor.withValues(alpha: 0.3),
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 2,
+            ),
+          ),
+          selectedItemBuilder: (context) {
+            return <String>[
+              'Any',
+              ..._projects.map((p) => (p['title'] ?? '').toString()),
+            ].map((label) {
+              final display = label == 'Any' ? 'ANY PROJECT / PROPERTY' : label.toUpperCase();
+              return Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  display,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.inter(
+                    color: textColor.withValues(alpha: 0.6),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 2,
+                  ),
+                ),
+              );
+            }).toList();
+          },
+          items: [
+            DropdownMenuItem<String>(
+              value: 'Any',
+              child: Text(
+                'ANY PROJECT / PROPERTY',
+                style: GoogleFonts.inter(
+                  color: textColor,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 2,
+                ),
+              ),
+            ),
+            ..._projects.map((project) {
+              final title = (project['title'] ?? '').toString();
+              return DropdownMenuItem<String>(
+                value: title,
+                child: Text(
+                  title.toUpperCase(),
+                  style: GoogleFonts.inter(
+                    color: textColor,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 2,
+                  ),
+                ),
+              );
+            }),
+          ],
+          onChanged: (value) {
+            if (value != null) setState(() => _selectedProject = value);
+          },
         ),
       ),
     );

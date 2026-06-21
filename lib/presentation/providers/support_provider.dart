@@ -139,6 +139,71 @@ class SupportNotifier extends StateNotifier<SupportState> {
     }
   }
 
+  /// Fetch a single ticket (with its message thread). Returns the raw
+  /// ticket map (`data`) or null on failure. The detail screen keeps its
+  /// own local message list, mirroring the web page.
+  Future<Map<String, dynamic>?> fetchTicketDetail(String id) async {
+    try {
+      final apiClient = _ref.read(apiClientProvider);
+      final response = await apiClient.getTicketDetail(id);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.data['data'];
+        if (data is Map<String, dynamic>) return data;
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Post a message (optionally with an attachment URL) and return the
+  /// refreshed ticket map, or null on failure.
+  Future<Map<String, dynamic>?> sendMessage(
+    String ticketId,
+    String text, [
+    String? attachmentUrl,
+  ]) async {
+    try {
+      final apiClient = _ref.read(apiClientProvider);
+      final response = await apiClient.postTicketMessage(
+        ticketId,
+        text: text,
+        attachment: attachmentUrl,
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final data = response.data['data'];
+        if (data is Map<String, dynamic>) return data;
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Upload a file then send it as an attachment message. Returns the
+  /// refreshed ticket map, or null on failure.
+  Future<Map<String, dynamic>?> uploadAndSendAttachment(
+    String ticketId,
+    String filePath, {
+    String? caption,
+  }) async {
+    try {
+      final apiClient = _ref.read(apiClientProvider);
+      final uploadRes = await apiClient.uploadFile(filePath);
+      final fileUrl = uploadRes.data?['data']?['fileUrl'] as String?;
+      if (fileUrl == null || fileUrl.isEmpty) return null;
+      return sendMessage(
+        ticketId,
+        (caption != null && caption.trim().isNotEmpty)
+            ? caption.trim()
+            : 'Sent an attachment',
+        fileUrl,
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
   Future<void> fetchDocuments() async {
     state = state.copyWith(isLoading: true, error: null);
     try {

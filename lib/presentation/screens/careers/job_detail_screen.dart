@@ -1,15 +1,11 @@
 import 'dart:ui';
-import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:m4_mobile/presentation/screens/careers/job_apply_screen.dart';
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:m4_mobile/core/network/api_client.dart';
-import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 
 class JobDetailScreen extends ConsumerStatefulWidget {
   final Map<String, dynamic> job;
@@ -21,27 +17,6 @@ class JobDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
-  Map<String, dynamic>? _configData;
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchConfig();
-  }
-
-  Future<void> _fetchConfig() async {
-    try {
-      final apiClient = ref.read(apiClientProvider);
-      final response = await apiClient.getSystemConfig();
-      final resData = response.data;
-      if (resData is Map) {
-        if (resData['status'] == true || resData['status'] == 'true') {
-          if (mounted) setState(() => _configData = resData['data']);
-        }
-      }
-    } catch (_) {}
-  }
-
   @override
   Widget build(BuildContext context) {
     final job = widget.job;
@@ -153,14 +128,17 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                       children: [
                         _buildMetaBadge(LucideIcons.mapPin, (job['location'] ?? 'Mumbai').toString(), isDark),
                         const SizedBox(width: 12),
-                        _buildMetaBadge(LucideIcons.clock, (job['type'] ?? 'Full-time').toString(), isDark),
+                        if ((job['salary'] ?? '').toString().isNotEmpty)
+                          Flexible(
+                            child: _buildMetaBadge(LucideIcons.dollarSign, job['salary'].toString(), isDark),
+                          ),
                       ],
                     ),
                     const SizedBox(height: 48),
 
                     // Job Description
                     Text(
-                      'JOB DESCRIPTION',
+                      'ROLE OVERVIEW',
                       style: GoogleFonts.montserrat(
                         color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
                         fontSize: 10,
@@ -182,7 +160,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
 
                     // Responsibilities
                     if (job['responsibilities'] != null && (job['responsibilities'] as List).isNotEmpty) ...[
-                      _buildSectionHeader('CORE RESPONSIBILITIES', isDark),
+                      _buildSectionHeader('KEY RESPONSIBILITIES', isDark),
                       const SizedBox(height: 24),
                       ...((job['responsibilities'] as List).map((item) => _buildListItem(item.toString(), isDark))),
                       const SizedBox(height: 48),
@@ -192,17 +170,18 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                     if (job['requirements'] != null && (job['requirements'] as List).isNotEmpty) ...[
                       _buildSectionHeader('REQUIREMENTS', isDark),
                       const SizedBox(height: 24),
-                      Wrap(
-                        spacing: 12,
-                        runSpacing: 12,
-                        children: (job['requirements'] as List).map((item) => _buildRequirementChip(item.toString(), isDark)).toList(),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: (job['requirements'] as List)
+                            .map((item) => _buildRequirementBullet(item.toString(), isDark))
+                            .toList(),
                       ),
                       const SizedBox(height: 48),
                     ],
 
                     // Benefits
                     if (job['benefits'] != null && (job['benefits'] as List).isNotEmpty) ...[
-                      _buildSectionHeader('BENEFITS', isDark),
+                      _buildSectionHeader('WHY JOIN US?', isDark),
                       const SizedBox(height: 24),
                       GridView.builder(
                         shrinkWrap: true,
@@ -220,9 +199,6 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                       ),
                       const SizedBox(height: 48),
                     ],
-
-                    // Contact Info
-                    _buildRecruitmentContact(isDark),
 
                     const SizedBox(height: 120),
                   ],
@@ -273,61 +249,6 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
     );
   }
 
-  Widget _buildRecruitmentContact(bool isDark) {
-    final email = _configData?['contact_email'] ?? 'hr@m4family.com';
-    final phone = _configData?['contact_phone'] ?? '+91 99308 50993';
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'DIRECT RECRUITMENT CONTACT',
-          style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.3), fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 4),
-        ),
-        const SizedBox(height: 24),
-        Container(
-          padding: const EdgeInsets.all(32),
-          decoration: BoxDecoration(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
-            borderRadius: BorderRadius.circular(40),
-            border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
-          ),
-          child: Column(
-            children: [
-              _buildContactRow(LucideIcons.mail, 'EMAIL RECRUITMENT', email, isDark),
-              const SizedBox(height: 24),
-              _buildContactRow(LucideIcons.phone, 'CAREER HELPLINE', phone, isDark),
-            ],
-          ),
-        ),
-      ],
-    ).animate().fadeIn(delay: 200.ms);
-  }
-
-  Widget _buildContactRow(IconData icon, String label, String value, bool isDark) {
-    return Row(
-      children: [
-        Container(
-          width: 48,
-          height: 48,
-          decoration: BoxDecoration(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05), borderRadius: BorderRadius.circular(16)),
-          child: Icon(icon, color: isDark ? Colors.white70 : Colors.black87, size: 20),
-        ),
-        const SizedBox(width: 20),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(label, style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.4), fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1)),
-              const SizedBox(height: 2),
-              Text(value, style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 12, fontWeight: FontWeight.w900)),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildSectionHeader(String title, bool isDark) {
     return Text(
       title,
@@ -375,24 +296,34 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
     );
   }
 
-  Widget _buildRequirementChip(String text, bool isDark) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.white : Colors.black,
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 4))
+  Widget _buildRequirementBullet(String text, bool isDark) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Small accent dot (matches web: w-1.5 h-1.5 rounded-full bg-accent/50 mt-2)
+          Container(
+            margin: const EdgeInsets.only(top: 8, left: 4, right: 16),
+            width: 6,
+            height: 6,
+            decoration: BoxDecoration(
+              color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+              shape: BoxShape.circle,
+            ),
+          ),
+          Expanded(
+            child: Text(
+              text,
+              style: GoogleFonts.montserrat(
+                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.8),
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                height: 1.5,
+              ),
+            ),
+          ),
         ],
-      ),
-      child: Text(
-        text.toUpperCase(),
-        style: GoogleFonts.montserrat(
-          color: isDark ? Colors.black : Colors.white,
-          fontSize: 9,
-          fontWeight: FontWeight.w900,
-          letterSpacing: 1.5,
-        ),
       ),
     );
   }
@@ -447,13 +378,17 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
         children: [
           Icon(icon, color: isDark ? Colors.white70 : Colors.black54, size: 14),
           const SizedBox(width: 8),
-          Text(
-            text.toUpperCase(),
-            style: GoogleFonts.montserrat(
-              color: isDark ? Colors.white70 : Colors.black54,
-              fontSize: 9,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.5,
+          Flexible(
+            child: Text(
+              text.toUpperCase(),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.montserrat(
+                color: isDark ? Colors.white70 : Colors.black54,
+                fontSize: 9,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 1.5,
+              ),
             ),
           ),
         ],
