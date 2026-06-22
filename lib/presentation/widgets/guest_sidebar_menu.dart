@@ -94,7 +94,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                             Navigator.pop(context);
                           }),
                           _SubItem(label: 'Investor Login', icon: LucideIcons.logIn, onTap: () {
-                            context.push('/login?role=INVESTOR&step=1');
+                            context.push('/investor/login');
                             Navigator.pop(context);
                           }),
                           _SubItem(label: 'Customer Login', icon: LucideIcons.logIn, onTap: () {

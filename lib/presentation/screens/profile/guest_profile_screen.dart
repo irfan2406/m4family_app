@@ -275,7 +275,7 @@ class GuestProfileScreen extends ConsumerWidget {
                         const SizedBox(height: 16),
                         // Investor login
                         _ScaleTap(
-                          onTap: () => context.go('/login?role=INVESTOR'),
+                          onTap: () => context.go('/investor/login'),
                           child: Container(
                             height: 56,
                             decoration: BoxDecoration(
