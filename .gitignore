@@ -7,11 +7,6 @@
 build/
 
 # Android related
-**/android/app/src/main/res/drawable-*/
-**/android/app/src/main/res/mipmap-*/
-**/android/app/src/main/res/values-night/
-**/android/app/src/main/res/values/
-**/android/gradle/wrapper/gradle-wrapper.properties
 .gradle/
 Captures/
 android/app/debug/
@@ -48,9 +43,8 @@ DerivedData/
 *.vsprops
 *.csv
 
-# Web code exclusion (as requested)
+# Web code exclusion (as requested) — NOTE: removed bare "app/" which wrongly matched android/app/
 node_modules/
-app/
 server/
 server.ts
 next.config.js
