@@ -881,7 +881,10 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
           _buildSectionHeader('Construction Progress'),
           const SizedBox(height: 24),
           _ConstructionDashboardCard(
-            overallProgress: project?['completion'] ?? 0,
+            // Web parity: overall % = average of phase progress (falls back to project.completion).
+            overallProgress: _progressPhases.isNotEmpty
+                ? (_progressPhases.fold<num>(0, (a, p) => a + ((p['progressPercent'] ?? p['progress'] ?? 0) as num)) / _progressPhases.length).round()
+                : (project?['completion'] ?? 0),
             estimatedCompletion: (project?['estimatedCompletionDate'] ?? project?['possessionDate'] ?? 'Q1 2029').toString().toUpperCase(),
             phases: _progressPhases,
             showFullProgress: _showFullProgress,
@@ -926,6 +929,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     final amenitiesRaw = project?['amenities'] as List? ?? [];
     if (amenitiesRaw.isEmpty) return const _EmptyTabContent(message: 'Coming soon');
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final apiClient = ref.read(apiClientProvider);
 
     return GridView.builder(
       shrinkWrap: true,
@@ -941,12 +945,31 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
       itemBuilder: (context, index) {
         final amenity = amenitiesRaw[index];
         final name = (amenity is Map ? (amenity['name']?.toString() ?? 'Amenity') : amenity.toString()).toUpperCase();
+        final iconUrl = amenity is Map ? amenity['icon']?.toString() : null;
+        final hasUploadedIcon = iconUrl != null && iconUrl.isNotEmpty &&
+            (iconUrl.startsWith('/') || iconUrl.startsWith('http') || iconUrl.contains('.'));
+        const gold = Color(0xFFDFBA6B);
 
-        // Web parity: gold amenity icon (#dfba6b), no card, label below.
+        // Web parity (LuxuryAmenityIcon): render the backend-uploaded icon
+        // gold-tinted when present; otherwise fall back to a mapped icon.
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(_getAmenityIcon(name), color: const Color(0xFFDFBA6B), size: 40),
+            SizedBox(
+              width: 42,
+              height: 42,
+              child: hasUploadedIcon
+                  ? ColorFiltered(
+                      colorFilter: const ColorFilter.mode(gold, BlendMode.srcIn),
+                      child: CachedNetworkImage(
+                        imageUrl: apiClient.resolveUrl(iconUrl),
+                        fit: BoxFit.contain,
+                        placeholder: (c, u) => const SizedBox.shrink(),
+                        errorWidget: (c, u, e) => Icon(_getAmenityIcon(name), color: gold, size: 38),
+                      ),
+                    )
+                  : Icon(_getAmenityIcon(name), color: gold, size: 40),
+            ),
             const SizedBox(height: 10),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
