@@ -10,6 +10,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
+import 'package:m4_mobile/presentation/widgets/m4_image.dart';
 
 /// Mirrors web `app/(cp)/cp/home/page.tsx` layout: hero, search, chips, recommended,
 /// videos, philosophy, featured property, action grid, partner inquiry.
@@ -332,11 +333,11 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                           if (heroImg.isNotEmpty)
                             AnimatedSwitcher(
                               duration: const Duration(milliseconds: 800),
-                              child: CachedNetworkImage(
+                              child: M4Image(
                                 key: ValueKey(heroImg),
                                 imageUrl: heroImg,
                                 fit: BoxFit.cover,
-                                errorWidget: (_, __, ___) => Container(color: Colors.grey[200]),
+                                errorWidget: Container(color: Colors.grey[200]),
                               ),
                             ),
                           // Premium Gradient Overlay
@@ -626,7 +627,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                                   child: Stack(
                                     fit: StackFit.expand,
                                     children: [
-                                      CachedNetworkImage(imageUrl: _heroUrl(p), fit: BoxFit.cover),
+                                      M4Image(imageUrl: _heroUrl(p), fit: BoxFit.cover),
                                       Container(
                                         decoration: BoxDecoration(
                                           gradient: LinearGradient(
@@ -802,7 +803,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                             child: Stack(
                               fit: StackFit.expand,
                               children: [
-                                CachedNetworkImage(imageUrl: _secondImg(p), fit: BoxFit.cover),
+                                M4Image(imageUrl: _secondImg(p), fit: BoxFit.cover),
                                 Container(color: Colors.black.withValues(alpha: 0.35)),
                                 const Center(
                                   child: Icon(LucideIcons.play, color: Colors.white, size: 44),
@@ -887,7 +888,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                             child: Stack(
                               fit: StackFit.expand,
                               children: [
-                                CachedNetworkImage(
+                                M4Image(
                                   imageUrl: _heroUrl(currentFeatured),
                                   fit: BoxFit.cover,
                                 ),

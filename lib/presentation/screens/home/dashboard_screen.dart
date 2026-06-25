@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:m4_mobile/presentation/widgets/m4_image.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -401,14 +402,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                   transitionBuilder: (Widget child, Animation<double> animation) {
                                     return FadeTransition(opacity: animation, child: child);
                                   },
-                                  child: CachedNetworkImage(
+                                  child: M4Image(
                                     key: ValueKey<int>(_currentHeroIndex),
-                                    imageUrl: apiClient.resolveUrl(mainImage),
+                                    imageUrl: mainImage,
                                     fit: BoxFit.cover,
                                     width: double.infinity,
                                     height: double.infinity,
-                                    placeholder: (context, url) => Container(color: Colors.black12),
-                                    errorWidget: (context, url, error) => Container(
+                                    placeholder: Container(color: Colors.black12),
+                                    errorWidget: Container(
                                       color: Colors.white10,
                                       child: const Center(child: Icon(LucideIcons.image, color: Colors.white24, size: 50)),
                                     ),
@@ -551,7 +552,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             return _CommunityCard(
                               title: item['title'] ?? 'UNTITLED',
                               description: item['overview'] ?? item['description'] ?? 'Explore this master-planned community',
-                              imageUrl: apiClient.resolveUrl(item['image'] ?? (item['heroImages'] is List ? item['heroImages'][0] : null)),
+                              imageUrl: item['image'] ?? (item['heroImages'] is List ? item['heroImages'][0] : null),
                               onTap: () {
                                 Navigator.push(
                                   context,
@@ -574,7 +575,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                               title: item['title']?.toString() ?? 'Untitled',
                               location: locationName,
                               status: item['status']?.toString() ?? '',
-                              imageUrl: apiClient.resolveUrl(imageUrl),
+                              imageUrl: imageUrl,
                               startingPrice: item['startingPrice']?.toString() ?? '',
                               onTap: () {
                                 final projectId = item['_id']?.toString() ?? item['id']?.toString() ?? '';
@@ -692,13 +693,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(40),
                                     child: imageUrl.isNotEmpty
-                                        ? CachedNetworkImage(
-                                            imageUrl: apiClient.resolveUrl(imageUrl), 
+                                        ? M4Image(
+                                            imageUrl: imageUrl, 
                                             fit: BoxFit.cover,
                                             height: 480,
                                             width: double.infinity,
-                                            placeholder: (context, url) => Container(height: 480, color: Colors.black12),
-                                            errorWidget: (context, url, error) => Container(
+                                            placeholder: Container(height: 480, color: Colors.black12),
+                                            errorWidget: Container(
                                               height: 480,
                                               width: double.infinity,
                                               color: Colors.white.withOpacity(0.05),
@@ -1088,12 +1089,12 @@ class _ProjectCard extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(20),
                     child: hasImage
-                        ? CachedNetworkImage(
+                        ? M4Image(
                             imageUrl: imageUrl,
                             width: double.infinity,
                             fit: BoxFit.cover,
-                            placeholder: (context, url) => Container(color: Colors.black12),
-                            errorWidget: (_, __, ___) => Container(
+                            placeholder: Container(color: Colors.black12),
+                            errorWidget: Container(
                               color: Colors.white.withOpacity(0.05),
                               child: const Center(child: Icon(LucideIcons.building, color: Colors.white24, size: 40)),
                             ),
@@ -1803,13 +1804,13 @@ class _CommunityCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(35),
           child: Stack(
             children: [
-              CachedNetworkImage(
+              M4Image(
                 imageUrl: imageUrl,
                 height: double.infinity,
                 width: double.infinity,
                 fit: BoxFit.cover,
-                placeholder: (context, url) => Container(color: Colors.black12),
-                errorWidget: (_, __, ___) => Container(color: Colors.white10),
+                placeholder: Container(color: Colors.black12),
+                errorWidget: Container(color: Colors.white10),
               ),
               Container(
                 decoration: BoxDecoration(

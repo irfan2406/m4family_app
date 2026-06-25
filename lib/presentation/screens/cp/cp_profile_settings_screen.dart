@@ -231,7 +231,7 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
         decoration: BoxDecoration(
           color: isDark ? const Color(0xFF09090B) : Colors.white,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-          border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+          border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05)),
         ),
         child: Column(
           children: [
@@ -246,7 +246,7 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
-                        color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
+                        color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Text("DONE", style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.blue)),
@@ -564,12 +564,10 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
                         const SizedBox(height: 16),
                         _accountCard(scheme),
                         const SizedBox(height: 32),
-                        _sectionBar('SECURITY & ACCESS', scheme),
-                        const SizedBox(height: 16),
                         _changePasscodeButton(scheme),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 16),
                         _sessionsButton(scheme),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 16),
                         _deleteAccountTextButton(scheme),
                         const SizedBox(height: 40),
                         Center(
@@ -666,38 +664,23 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
           ),
           const SizedBox(width: 10),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
               children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 6,
-                      height: 6,
-                      decoration: const BoxDecoration(shape: BoxShape.circle, color: _purple),
-                    ),
-                    const SizedBox(width: 8),
-                    Flexible(
-                      child: Text(
-                        'CONFIGURATION',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: -0.3,
-                          color: _purple,
-                        ),
-                      ),
-                    ),
-                  ],
+                Container(
+                  width: 6,
+                  height: 6,
+                  decoration: const BoxDecoration(shape: BoxShape.circle, color: _purple),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  'PRIVATE OFFICE SETTINGS',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 2,
-                    color: scheme.onSurface.withValues(alpha: 0.52),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
+                    'CONFIGURATION',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -0.5,
+                      color: scheme.onSurface.withValues(alpha: 0.9),
+                    ),
                   ),
                 ),
               ],
@@ -1029,13 +1012,13 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
                   constraints: const BoxConstraints(minHeight: 48),
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF1E1E24),
+                    color: scheme.surface.withValues(alpha: 0.72),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.35)),
+                    border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.55)),
                   ),
                   child: Row(
                     children: [
-                      Icon(LucideIcons.calendar, size: 16, color: Colors.white.withValues(alpha: 0.65)),
+                      Icon(LucideIcons.calendar, size: 16, color: scheme.onSurface.withValues(alpha: 0.5)),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
@@ -1045,13 +1028,13 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
                           style: GoogleFonts.montserrat(
                             fontWeight: FontWeight.w700,
                             fontSize: 14,
-                            color: Colors.white.withValues(
-                              alpha: _dobIso == null || _dobIso!.isEmpty ? 0.5 : 0.95,
+                            color: scheme.onSurface.withValues(
+                              alpha: _dobIso == null || _dobIso!.isEmpty ? 0.5 : 0.92,
                             ),
                           ),
                         ),
                       ),
-                      Icon(LucideIcons.chevronDown, size: 16, color: Colors.white.withValues(alpha: 0.5)),
+                      Icon(LucideIcons.chevronDown, size: 16, color: scheme.onSurface.withValues(alpha: 0.5)),
                     ],
                   ),
                 ),
@@ -1184,13 +1167,13 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
               height: 18,
               child: CircularProgressIndicator(strokeWidth: 2, color: scheme.onSurface.withValues(alpha: 0.3)),
             )
-          :               Text(
-                'PERMANENTLY DEACTIVATE ACCOUNT',
+          : Text(
+              'DELETE ACCOUNT PERMANENTLY',
               style: GoogleFonts.montserrat(
                 fontSize: 8,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 2.5,
-                color: scheme.onSurface.withValues(alpha: 0.48),
+                color: scheme.onSurface.withValues(alpha: 0.4),
               ),
             ),
     );

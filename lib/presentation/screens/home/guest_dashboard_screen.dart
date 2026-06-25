@@ -752,12 +752,21 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             child: Stack(
               children: [
                 CachedNetworkImage(
-                  imageUrl: apiClient.resolveUrl(project['heroImage'] ?? ''),
-                  height: 520, 
-                  width: double.infinity, 
+                  imageUrl: () {
+                    final img = (project['heroImage'] ?? project['image'] ?? project['coverImage'] ?? '').toString();
+                    if (img.isEmpty) {
+                      return 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80';
+                    }
+                    return img.startsWith('http') ? img : apiClient.resolveUrl(img);
+                  }(),
+                  height: 520,
+                  width: double.infinity,
                   fit: BoxFit.cover,
                   placeholder: (context, url) => Container(color: Colors.black12),
-                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                  errorWidget: (context, url, error) => Container(
+                    color: const Color(0xFF1A1A1A),
+                    child: const Center(child: Icon(LucideIcons.building2, color: Colors.white24, size: 64)),
+                  ),
                 ),
                 // Gradient Overlay
                 Positioned.fill(
