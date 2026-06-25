@@ -37,11 +37,17 @@ class ApiClient {
       ),
     );
 
-    // Logging for Debugging
+    // Minimal logging only. Dumping full request/response bodies (which include
+    // base64 image data) flooded logcat with tens of thousands of lines per
+    // screen and janked the UI thread (frozen screen on restart). Keep just the
+    // request line + errors.
     dio.interceptors.add(PrettyDioLogger(
-      requestHeader: true,
-      requestBody: true,
-      responseBody: true,
+      request: true,
+      requestHeader: false,
+      requestBody: false,
+      responseHeader: false,
+      responseBody: false,
+      error: true,
       compact: true,
     ));
   }
