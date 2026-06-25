@@ -4,7 +4,6 @@ import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_home_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_profile_screen.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
-import 'package:m4_mobile/presentation/screens/cp/cp_dashboard_screen.dart';
 import 'package:m4_mobile/presentation/screens/cp/cp_tracker_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/support_screen.dart';
 import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
@@ -18,9 +17,9 @@ class CpMainShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final idx = ref.watch(cpNavigationIndexProvider);
 
+    // 5 tabs matching web AppShell CP bar: Home, Tracker, Projects, Support, Profile.
     final screens = [
       const CpHomeScreen(),
-      const CpDashboardScreen(embeddedInShell: true),
       const CpTrackerScreen(embeddedInShell: true),
       const ProjectListScreen(cpCatalogMode: true),
       const SupportScreen(),

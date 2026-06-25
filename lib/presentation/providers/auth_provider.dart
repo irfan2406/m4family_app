@@ -15,6 +15,9 @@ class AuthState {
   final String? devOtp;
   final String? role;
   final Map<String, dynamic>? user;
+  // True once the initial stored-token check has completed (prevents the
+  // guest-shell flash on cold start while resolving the session).
+  final bool bootstrapped;
 
   AuthState({
     this.status = AuthStatus.initial,
@@ -23,6 +26,7 @@ class AuthState {
     this.devOtp,
     this.role,
     this.user,
+    this.bootstrapped = false,
   });
 
   AuthState copyWith({
@@ -32,6 +36,7 @@ class AuthState {
     String? devOtp,
     String? role,
     Map<String, dynamic>? user,
+    bool? bootstrapped,
   }) {
     return AuthState(
       status: status ?? this.status,
@@ -40,6 +45,7 @@ class AuthState {
       devOtp: devOtp ?? this.devOtp,
       role: role ?? this.role,
       user: user ?? this.user,
+      bootstrapped: bootstrapped ?? this.bootstrapped,
     );
   }
 }
@@ -57,6 +63,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     if (token != null) {
       await fetchMe();
     }
+    if (mounted) state = state.copyWith(bootstrapped: true);
   }
 
   Future<void> fetchMe() async {

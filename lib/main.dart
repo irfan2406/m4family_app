@@ -978,6 +978,11 @@ class ConditionalHomeShell extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final status = ref.watch(authProvider.select((s) => s.status));
     final user = ref.watch(authProvider.select((s) => s.user));
+    final bootstrapped = ref.watch(authProvider.select((s) => s.bootstrapped));
+
+    // Cold start: show the splash (not the guest shell) until the stored
+    // session resolves, then route straight to the correct portal.
+    if (!bootstrapped) return const SplashScreen();
 
     if (status == AuthStatus.authenticated) {
       final role = user?['role']?.toString().toLowerCase();

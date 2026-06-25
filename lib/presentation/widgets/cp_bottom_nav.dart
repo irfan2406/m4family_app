@@ -16,7 +16,6 @@ class CpBottomNav extends StatelessWidget {
 
   static const _icons = <IconData>[
     LucideIcons.home,
-    LucideIcons.layoutGrid,
     LucideIcons.barChart3,
     LucideIcons.compass,
     LucideIcons.messageSquare,

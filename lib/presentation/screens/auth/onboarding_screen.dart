@@ -20,7 +20,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 3500),
+      duration: const Duration(milliseconds: 1800),
     )..forward().then((_) {
         if (mounted) {
           context.go('/home');
@@ -100,7 +100,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
                                 ),
                               ],
                             ),
-                          ).animate().moveX(begin: -160, end: 160, duration: 3500.ms, curve: Curves.linear),
+                          ).animate().moveX(begin: -160, end: 160, duration: 1800.ms, curve: Curves.linear),
                         ),
                       ),
                     ],
