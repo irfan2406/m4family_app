@@ -1,19 +1,22 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
-import 'package:m4_mobile/presentation/providers/project_provider.dart';
-import 'package:m4_mobile/presentation/widgets/m4_image.dart';
+import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
 
-/// Mirrors web `app/(cp)/cp/home/page.tsx` layout: hero, search, chips, recommended,
-/// videos, philosophy, featured property, action grid, partner inquiry.
+/// Mirrors web `app/(cp)/cp/home/page.tsx`, which renders the same
+/// `SharedHomePage` component as the guest/user home. This is a TAB inside
+/// [CpMainShell] (which owns the Scaffold + drawer + bottom nav), so this
+/// widget returns only the scroll body — the header "..." button calls
+/// `Scaffold.of(context).openDrawer()` to open the shell's `CpSidebarMenu`.
 class CpHomeScreen extends ConsumerStatefulWidget {
   const CpHomeScreen({super.key});
 
@@ -22,1234 +25,1139 @@ class CpHomeScreen extends ConsumerStatefulWidget {
 }
 
 class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
-  final _inquiryKey = GlobalKey();
-  final _nameController = TextEditingController();
-  final _phoneController = TextEditingController();
-  final _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
+  final GlobalKey _interestFormKey = GlobalKey();
 
-  String _searchQuery = '';
-  String _selectedFilter = 'All';
-  String? _projectId;
+  int _heroIndex = 0;
+  List<dynamic> _projects = [];
+  List<dynamic> _communities = [];
+  List<dynamic> _media = [];
+  bool _loading = true;
+  String _activeTab = 'Communities';
+  int _featuredIndex = 0;
+
+  // Interest form controllers
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _messageController = TextEditingController();
   bool _submitting = false;
-  int _heroImgIndex = 0;
-  int _featuredPropIndex = 0;
+  bool _agreedToTerms = false;
+
   Timer? _heroTimer;
-  String _heroCycleFeaturedId = '';
-
-  static const _filters = ['All', 'Ongoing', 'Upcoming'];
-
-  static const _philosophyBody =
-      'To redefine modern luxury living by crafting homes with cutting edge design, enduring quality and thoughtful amenities delivered with trust, transparency, timeliness, and a human touch that creates lasting value for every homeowner.';
 
   @override
-  void dispose() {
-    _heroTimer?.cancel();
-    _nameController.dispose();
-    _phoneController.dispose();
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  List<String> _heroUrls(dynamic p) {
-    final imgs = p['images'];
-    if (imgs is List && imgs.isNotEmpty) {
-      return imgs.map((e) => e.toString()).toList();
-    }
-    if (p['heroImage'] != null) return [p['heroImage'].toString()];
-    return ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9'];
-  }
-
-  String _heroUrl(dynamic p) => _heroUrls(p).first;
-
-  String _secondImg(dynamic p) {
-    final u = _heroUrls(p);
-    return u.length > 1 ? u[1] : u.first;
-  }
-
-  String _locLine(dynamic p) {
-    final loc = p['location'];
-    if (loc is String) return loc.split(',').first.trim();
-    if (loc is Map) return (loc['name']?.toString() ?? '').split(',').first.trim();
-    return '';
-  }
-
-  String _starting(dynamic p) {
-    return (p['startingPrice'] ?? p['price'] ?? '').toString();
-  }
-
-  String _desc(dynamic p) {
-    return (p['description'] ?? p['shortDescription'] ?? '').toString();
-  }
-
-  bool _statusMatch(String selected, dynamic p) {
-    if (selected == 'All') return true;
-    var st = p['status']?.toString() ?? '';
-    if (st == 'Completed') st = 'Ongoing';
-    return st == selected;
-  }
-
-  List<dynamic> _filtered(List<dynamic> projects) {
-    final q = _searchQuery.toLowerCase();
-    return projects.where((p) {
-      final title = p['title']?.toString().toLowerCase() ?? '';
-      final loc = _locLine(p).toLowerCase();
-      final searchOk = q.isEmpty || title.contains(q) || loc.contains(q);
-      return searchOk && _statusMatch(_selectedFilter, p);
-    }).toList();
-  }
-
-  void _syncHeroTimer(dynamic featured) {
-    final fid = featured?['_id']?.toString() ?? featured?['id']?.toString() ?? '';
-    if (fid == _heroCycleFeaturedId) return;
-    _heroCycleFeaturedId = fid;
-    _heroTimer?.cancel();
-    _heroTimer = null;
-    _heroImgIndex = 0;
-    if (featured == null) return;
-    final urls = _heroUrls(featured);
-    if (urls.length <= 1) return;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      _heroTimer?.cancel();
-      _heroTimer = Timer.periodic(const Duration(seconds: 5), (_) {
-        if (!mounted) return;
-        setState(() => _heroImgIndex = (_heroImgIndex + 1) % urls.length);
-      });
+  void initState() {
+    super.initState();
+    _fetchData();
+    _heroTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      if (mounted && _projects.isNotEmpty) {
+        setState(() => _heroIndex = (_heroIndex + 1) % (_projects.length > 5 ? 5 : _projects.length));
+      }
     });
   }
 
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _nameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _messageController.dispose();
+    _heroTimer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _fetchData() async {
+    try {
+      final apiClient = ref.read(apiClientProvider);
+      final results = await Future.wait([
+        apiClient.getProjects(),
+        apiClient.getCommunities(),
+        apiClient.getContent('media'),
+      ]);
+
+      if (mounted) {
+        setState(() {
+          _projects = results[0].data['data'] ?? [];
+          _communities = results[1].data['data'] ?? [];
+          _media = results[2].data['data'] ?? [];
+
+          // Fill blank space with placeholder media when none returned.
+          if (_media.isEmpty) {
+            _media = [
+              {
+                '_id': 'dummy1',
+                'title': 'CLÉDOR LUXURY LIVING',
+                'thumbnail': 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80',
+                'description': 'Discover the epitome of refinement in our latest architectural masterpiece.',
+                'slug': 'cledor-luxury-living'
+              },
+              {
+                '_id': 'dummy2',
+                'title': 'OCEAN VIEW RESIDENCES',
+                'thumbnail': 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
+                'description': 'Where horizon meets home. Experience coastal elegance like never before.',
+                'slug': 'ocean-view-residences'
+              },
+              {
+                '_id': 'dummy3',
+                'title': 'URBAN SANCTUARY',
+                'thumbnail': 'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80',
+                'description': 'A peaceful retreat in the heart of the city.',
+                'slug': 'urban-sanctuary'
+              }
+            ];
+          }
+          _loading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  void _scrollToInterestForm() {
+    final ctx = _interestFormKey.currentContext;
+    if (ctx != null) {
+      Scrollable.ensureVisible(ctx, duration: const Duration(seconds: 1), curve: Curves.easeInOut);
+    }
+  }
+
   Future<void> _submitInterest() async {
-    final name = _nameController.text.trim();
-    final phone = _phoneController.text.trim();
-    if (name.isEmpty || phone.isEmpty || _projectId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all fields')),
-      );
+    if (_nameController.text.isEmpty || _emailController.text.isEmpty || _phoneController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please fill all required fields (*)')));
       return;
     }
+    if (!_agreedToTerms) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please agree to the Privacy Policy')));
+      return;
+    }
+
     setState(() => _submitting = true);
     try {
+      final apiClient = ref.read(apiClientProvider);
       final user = ref.read(authProvider).user;
-      final display = user?['firstName']?.toString() ??
+      final partner = user?['firstName']?.toString() ??
           user?['companyName']?.toString() ??
           user?['phone']?.toString() ??
           'Partner';
-      final api = ref.read(apiClientProvider);
-      final res = await api.submitLead({
-        'name': name,
-        'phone': phone,
+      await apiClient.submitLead({
+        'name': _nameController.text,
+        'email': _emailController.text,
+        'phone': _phoneController.text,
+        'message': _messageController.text,
+        'interest': 'Channel Partner Interest',
         'source': 'cp app',
-        'projectId': _projectId,
-        'userId': display,
-        'notes': 'Submitted via Channel Partner Application',
+        'userId': partner,
       });
-      if (!mounted) return;
-      if (res.statusCode == 200 || res.statusCode == 201) {
-        final ok = res.data['status'] == true;
-        if (ok) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Interest registered. Our RM will contact you shortly.')),
-          );
-          _nameController.clear();
-          _phoneController.clear();
-          setState(() => _projectId = null);
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(res.data['message']?.toString() ?? 'Failed')),
-          );
-        }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Interest registered successfully!'), backgroundColor: Colors.green));
+        _nameController.clear();
+        _emailController.clear();
+        _phoneController.clear();
+        _messageController.clear();
+        setState(() => _agreedToTerms = false);
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
-        );
-      }
+      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Submission failed: $e')));
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
   }
 
-  void _showFilterSheet() {
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-      ),
-      builder: (ctx) => Padding(
-        padding: EdgeInsets.only(
-          left: 24,
-          right: 24,
-          top: 16,
-          bottom: MediaQuery.of(ctx).padding.bottom + 24,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Center(
-              child: Container(
-                width: 48,
-                height: 5,
-                decoration: BoxDecoration(
-                  color: Theme.of(ctx).colorScheme.outline.withValues(alpha: 0.35),
-                  borderRadius: BorderRadius.circular(3),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              'QUICK FILTERS',
-              style: GoogleFonts.montserrat(fontWeight: FontWeight.w800, fontSize: 16),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'PROPERTY TYPE',
-              style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 2, color: Theme.of(ctx).hintColor),
-            ),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: ['Residential', 'Commercial']
-                  .map(
-                    (t) => FilterChip(
-                      label: Text(t, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700)),
-                      selected: false,
-                      onSelected: (_) {},
-                    ),
-                  )
-                  .toList(),
-            ),
-            const SizedBox(height: 24),
-            FilledButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('SHOW RESULTS'),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  InputDecoration _inquiryDec(ColorScheme scheme, {required String hint}) {
-    final isLight = scheme.brightness == Brightness.light;
-    final accent = isLight ? Colors.black : scheme.primary;
-    return InputDecoration(
-      hintText: hint,
-      hintStyle: GoogleFonts.montserrat(
-        fontSize: 12,
-        fontWeight: FontWeight.w700,
-        color: scheme.onSurface.withValues(alpha: isLight ? 0.55 : 0.5),
-      ),
-      filled: true,
-      fillColor: scheme.surfaceContainerHighest.withValues(alpha: isLight ? 0.16 : 0.2),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(18),
-        borderSide: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.5)),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(18),
-        borderSide: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.5)),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(18),
-        borderSide: BorderSide(color: accent.withValues(alpha: 0.85), width: 1.2),
-      ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    // Sidebar quick action: scroll partner inquiry into view.
     ref.listen<int>(cpInquiryScrollTriggerProvider, (prev, next) {
       if (next > 0 && (prev == null || next > prev)) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          final ctx = _inquiryKey.currentContext;
-          if (ctx != null) Scrollable.ensureVisible(ctx, duration: const Duration(milliseconds: 450));
-        });
+        WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToInterestForm());
       }
     });
 
-    final projectsAsync = ref.watch(projectsProvider);
-    final scheme = Theme.of(context).colorScheme;
-    final isLight = scheme.brightness == Brightness.light;
-    final accent = isLight ? Colors.black : scheme.primary;
+    if (_loading) {
+      return Material(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: Center(child: CircularProgressIndicator(color: M4Theme.premiumBlue)),
+      );
+    }
 
-    return projectsAsync.when(
-      loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, _) => Center(child: Text('Failed to load: $e')),
-      data: (projects) {
-        dynamic featured;
-        for (final p in projects) {
-          if (p['featured'] == true) {
-            featured = p;
-            break;
-          }
-        }
-        featured ??= projects.isNotEmpty ? projects.first : null;
-        final filtered = _filtered(projects);
-        final heroUrls = featured != null ? _heroUrls(featured) : <String>[];
-        final heroImg = heroUrls.isNotEmpty ? heroUrls[_heroImgIndex % heroUrls.length] : '';
-
-        _syncHeroTimer(featured);
-
-        final currentFeatured = projects.isNotEmpty
-            ? projects[_featuredPropIndex % projects.length]
-            : null;
-
-        String displayLocation = '';
-        if (featured != null && featured['location'] != null) {
-          final loc = featured['location'];
-          if (loc is Map) {
-            displayLocation = loc['name']?.toString() ?? '';
-          } else {
-            displayLocation = loc.toString();
-          }
-        }
-
-        final scheme = Theme.of(context).colorScheme;
-
-        return CustomScrollView(
-          controller: _scrollController,
-          physics: const BouncingScrollPhysics(),
-          slivers: [
-            // Immersive Hero Section (Matches Web Parity)
-            SliverToBoxAdapter(
-              child: Stack(
-                clipBehavior: Clip.none,
+    return Material(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: CustomScrollView(
+        controller: _scrollController,
+        slivers: [
+          // HEADER (Web Parity): M4 logo + "..." menu opening the shell drawer.
+          SliverAppBar(
+            pinned: true,
+            toolbarHeight: 120,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.9),
+            automaticallyImplyLeading: false,
+            elevation: 0,
+            titleSpacing: 0,
+            title: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // 1. Full-Section Hero Image
-                  ClipRRect(
-                    borderRadius: const BorderRadius.vertical(bottom: Radius.circular(40)),
-                    child: SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.72, 
-                      width: double.infinity,
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          if (heroImg.isNotEmpty)
-                            AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 800),
-                              child: M4Image(
-                                key: ValueKey(heroImg),
-                                imageUrl: heroImg,
-                                fit: BoxFit.cover,
-                                errorWidget: Container(color: Colors.grey[200]),
-                              ),
-                            ),
-                          // Premium Gradient Overlay
-                          Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.white.withOpacity(0.4),
-                                  Colors.white.withOpacity(0.0),
-                                  Colors.black.withOpacity(0.9),
-                                ],
-                                stops: const [0.0, 0.4, 1.0],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  // 2. Cinematic Header (Living the M4 Life)
-                  Positioned(
-                    top: MediaQuery.of(context).padding.top + 16,
-                    left: 28,
-                    right: 24,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            'Living the\n' + 'M4 Life'.toUpperCase(),
-                            style: GoogleFonts.montserrat(
-                              fontSize: 32,
-                              fontWeight: FontWeight.w900,
-                              height: 1.0,
-                              letterSpacing: -0.8,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                        Builder(
-                          builder: (ctx) => Material(
-                            color: Colors.white.withOpacity(0.8),
-                            borderRadius: BorderRadius.circular(14),
-                            child: InkWell(
-                              onTap: () => Scaffold.of(ctx).openDrawer(),
-                              borderRadius: BorderRadius.circular(14),
-                              child: Container(
-                                width: 50,
-                                height: 50,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(14),
-                                  border: Border.all(color: Colors.black.withOpacity(0.05)),
-                                ),
-                                child: const Icon(LucideIcons.moreHorizontal, color: Colors.black, size: 22),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // 3. Floating Search Bar
-                  Positioned(
-                    top: MediaQuery.of(context).padding.top + 106,
-                    left: 20,
-                    right: 20,
-                    child: Container(
-                      height: 58,
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(18),
-                        boxShadow: [
-                          BoxShadow(color: Colors.black.withOpacity(0.12), blurRadius: 25, offset: const Offset(0, 10)),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(LucideIcons.search, size: 20, color: Colors.grey[400]),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: TextField(
-                              onChanged: (v) => setState(() => _searchQuery = v),
-                              decoration: InputDecoration(
-                                hintText: 'Search residences...',
-                                border: InputBorder.none,
-                                hintStyle: GoogleFonts.montserrat(color: Colors.grey, fontWeight: FontWeight.w600, fontSize: 13),
-                              ),
-                            ),
-                          ),
-                          Icon(LucideIcons.slidersHorizontal, size: 20, color: Colors.grey[400]),
-                        ],
-                      ),
-                    ),
-                  ),
-
-                  // 4. Status Filter Tabs
-                  Positioned(
-                    top: MediaQuery.of(context).padding.top + 184,
-                    left: 0,
-                    right: 0,
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        children: _filters.map((filter) {
-                          final isSelected = _selectedFilter == filter;
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 10),
-                            child: ChoiceChip(
-                              label: Text(
-                                filter.toUpperCase(),
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w900,
-                                  color: isSelected ? Colors.white : Colors.black,
-                                  letterSpacing: 1.5,
-                                ),
-                              ),
-                              selected: isSelected,
-                              onSelected: (v) => setState(() => _selectedFilter = filter),
-                              selectedColor: Colors.black,
-                              backgroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-                              side: BorderSide.none,
-                              elevation: isSelected ? 4 : 0,
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ),
-
-                  // Artistic Impression Badge
-                  Positioned(
-                    top: MediaQuery.of(context).padding.top + 265,
-                    right: 20,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.4),
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      child: Text(
-                        'ARTISTIC IMPRESSION',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 7,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 2,
-                          color: Colors.white.withOpacity(0.9),
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  // 5. Featured Property Metadata
-                  if (featured != null)
-                    Positioned(
-                      left: 24,
-                      bottom: 32,
-                      right: 24,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(100),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  'FEATURED',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.w900,
-                                    letterSpacing: 1.5,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Container(width: 5, height: 5, decoration: const BoxDecoration(color: Color(0xFF9333EA), shape: BoxShape.circle)),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 18),
-                          Text(
-                            featured?['title']?.toString().toUpperCase() ?? '',
-                            style: GoogleFonts.montserrat(
-                              fontSize: 42,
-                              fontWeight: FontWeight.w900,
-                              height: 0.9,
-                              letterSpacing: -1.5,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Row(
-                            children: [
-                              const Icon(LucideIcons.mapPin, size: 14, color: Colors.white),
-                              const SizedBox(width: 8),
-                              Text(
-                                displayLocation.toUpperCase(),
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w800,
-                                  letterSpacing: 2.5,
-                                  color: Colors.white.withOpacity(0.9),
-                                ),
-                              ),
+                  ColorFiltered(
+                    colorFilter: ColorFilter.matrix(
+                      Theme.of(context).brightness == Brightness.dark
+                          ? const [
+                              // Invert logo for dark mode
+                              -1, 0, 0, 0, 255,
+                              0, -1, 0, 0, 255,
+                              0, 0, -1, 0, 255,
+                              0, 0, 0, 1, 0,
+                            ]
+                          : const [
+                              // Identity matrix for light mode
+                              1, 0, 0, 0, 0,
+                              0, 1, 0, 0, 0,
+                              0, 0, 1, 0, 0,
+                              0, 0, 0, 1, 0,
                             ],
-                          ),
-                        ],
+                    ),
+                    child: Image.asset(
+                      'assets/m4_family_logo.png',
+                      height: 85,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  Builder(
+                    builder: (context) => GestureDetector(
+                      onTap: () => Scaffold.of(context).openDrawer(),
+                      child: Container(
+                        width: 56,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : Colors.black,
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Icon(
+                          LucideIcons.moreHorizontal,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.black
+                              : Colors.white,
+                          size: 24,
+                        ),
                       ),
                     ),
+                  ),
                 ],
               ),
             ),
+          ),
 
-            // Gap
-            const SliverToBoxAdapter(child: SizedBox(height: 40)),
-
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
-                  children: [
-                    Text(
-                      'RECOMMENDED FOR YOU',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 2.5,
-                        color: scheme.onSurface.withOpacity(0.5),
-                      ),
+          // TAGLINE & HERO SECTION
+          SliverToBoxAdapter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // Tagline (Living the M4 Life) — script image, not text.
+                Transform.translate(
+                  offset: const Offset(0, -50),
+                  child: ColorFiltered(
+                    colorFilter: ColorFilter.matrix(
+                      Theme.of(context).brightness == Brightness.dark
+                          ? const [
+                              // Dark Mode: Invert and boost to white
+                              -5.0, 0, 0, 0, 255,
+                              0, -5.0, 0, 0, 255,
+                              0, -5.0, 0, 0, 255,
+                              0, 0, 0, 1, 0,
+                            ]
+                          : const [
+                              // Light Mode: Crush to black
+                              5.0, 0, 0, 0, -150,
+                              0, 5.0, 0, 0, -150,
+                              0, 0, 5.0, 0, -150,
+                              0, 0, 0, 1, 0,
+                            ],
                     ),
-                    InkWell(
-                      onTap: () => context.push('/cp/projects'),
-                      child: Text(
-                        'VIEW ALL',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 1,
-                          color: Colors.black,
-                        ),
-                      ),
+                    child: Image.asset(
+                      'assets/living_m4_life.png',
+                      width: MediaQuery.of(context).size.width,
+                      height: 200,
+                      fit: BoxFit.fitWidth,
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
 
-            SliverToBoxAdapter(
-              child: SizedBox(
-                height: 380,
-                child: filtered.isEmpty
-                    ? const Center(child: Text('No results found'))
-                    : ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                        itemCount: filtered.length,
-                        itemBuilder: (context, i) {
-                          final p = filtered[i];
-                          final id = p['_id']?.toString() ?? p['id']?.toString() ?? '';
-                          final status = (p['status'] ?? 'Upcoming').toString();
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 14),
-                            child: GestureDetector(
-                              onTap: () {
-                                if (id.isNotEmpty) context.push('/cp/projects/$id', extra: Map<String, dynamic>.from(p as Map));
-                              },
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(28),
-                                child: SizedBox(
-                                  width: 280,
-                                  child: Stack(
-                                    fit: StackFit.expand,
-                                    children: [
-                                      M4Image(imageUrl: _heroUrl(p), fit: BoxFit.cover),
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                            begin: Alignment.topCenter,
-                                            end: Alignment.bottomCenter,
-                                            colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
-                                          ),
-                                        ),
+                // Hero carousel (4:3, auto-cycle, badge, dots).
+                Transform.translate(
+                  offset: const Offset(0, -110),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Builder(
+                      builder: (context) {
+                        final mainImage = _projects.isNotEmpty
+                            ? (_projects[_heroIndex % _projects.length]['heroImage'] ??
+                                _projects[_heroIndex % _projects.length]['image'] ??
+                                _projects[_heroIndex % _projects.length]['coverImage'] ??
+                                'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80')
+                            : [
+                                'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80',
+                                'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
+                                'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80'
+                              ][_heroIndex % 3];
+
+                        return Stack(
+                          children: [
+                            AspectRatio(
+                              aspectRatio: 4 / 3,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(32),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withValues(alpha: 0.15),
+                                      blurRadius: 30,
+                                      offset: const Offset(0, 15),
+                                    ),
+                                  ],
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(32),
+                                  child: AnimatedSwitcher(
+                                    duration: const Duration(milliseconds: 800),
+                                    transitionBuilder: (Widget child, Animation<double> animation) {
+                                      return FadeTransition(opacity: animation, child: child);
+                                    },
+                                    child: CachedNetworkImage(
+                                      key: ValueKey<int>(_heroIndex),
+                                      imageUrl: mainImage.toString().startsWith('http')
+                                          ? mainImage.toString()
+                                          : ref.read(apiClientProvider).resolveUrl(mainImage.toString()),
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                      height: double.infinity,
+                                      placeholder: (context, url) => Container(color: Colors.black12),
+                                      errorWidget: (context, url, error) => Container(
+                                        color: Colors.white10,
+                                        child: const Center(child: Icon(LucideIcons.image, color: Colors.white24, size: 50)),
                                       ),
-                                      Positioned(
-                                        top: 10,
-                                        right: 10,
-                                        child: Container(
-                                          padding: const EdgeInsets.all(4),
-                                          decoration: BoxDecoration(
-                                            color: Colors.black.withOpacity(0.45),
-                                            borderRadius: BorderRadius.circular(4),
-                                            border: Border.all(color: Colors.white24),
-                                          ),
-                                          child: Text(
-                                            'ARTISTIC IMPRESSION',
-                                            style: GoogleFonts.montserrat(fontSize: 6, fontWeight: FontWeight.w800, letterSpacing: 1, color: Colors.white70),
-                                          ),
-                                        ),
-                                      ),
-                                      Positioned(
-                                        top: 10,
-                                        left: 10,
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white.withOpacity(0.65),
-                                            borderRadius: BorderRadius.circular(6),
-                                          ),
-                                          child: Text(
-                                            status.toUpperCase(),
-                                            style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w800),
-                                          ),
-                                        ),
-                                      ),
-                                      Positioned(
-                                        left: 16,
-                                        right: 16,
-                                        bottom: 16,
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              (p['title'] ?? '').toString().toUpperCase(),
-                                              maxLines: 2,
-                                              style: GoogleFonts.montserrat(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.w700,
-                                                fontSize: 18,
-                                                height: 1.1,
-                                                letterSpacing: -0.2,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 6),
-                                            Row(
-                                              children: [
-                                                const Icon(LucideIcons.mapPin, size: 12, color: Colors.white70),
-                                                const SizedBox(width: 4),
-                                                Expanded(
-                                                  child: Text(
-                                                    _locLine(p).toUpperCase(),
-                                                    style: GoogleFonts.montserrat(
-                                                      fontSize: 9,
-                                                      letterSpacing: 2,
-                                                      color: Colors.white70,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 12),
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                  child: Container(
-                                                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.white.withOpacity(0.08),
-                                                      borderRadius: BorderRadius.circular(16),
-                                                      border: Border.all(color: Colors.white12),
-                                                    ),
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      children: [
-                                                        Text(
-                                                          'STARTING FROM',
-                                                          style: GoogleFonts.montserrat(
-                                                            fontSize: 7.5,
-                                                            fontWeight: FontWeight.w800,
-                                                            color: Colors.white70,
-                                                            letterSpacing: 1.2,
-                                                          ),
-                                                        ),
-                                                        const SizedBox(height: 2),
-                                                        Text(
-                                                          _starting(p).isEmpty ? '18% YOY' : (_starting(p) + ' YOY'),
-                                                          style: GoogleFonts.montserrat(
-                                                            fontSize: 18,
-                                                            fontWeight: FontWeight.w900,
-                                                            color: Colors.white,
-                                                            height: 1.1,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                                const SizedBox(width: 10),
-                                                Container(
-                                                  width: 48,
-                                                  height: 48,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white.withOpacity(0.12),
-                                                    borderRadius: BorderRadius.circular(16),
-                                                    border: Border.all(color: Colors.white12),
-                                                  ),
-                                                  child: const Icon(LucideIcons.chevronRight, color: Colors.white, size: 20),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          );
-                        },
-                      ),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                child: Text(
-                  'PROPERTY RENDERS & VIDEOS',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 2,
-                    color: scheme.onSurface.withOpacity(0.5),
-                  ),
-                ),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: SizedBox(
-                height: 200,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  itemCount: projects.length > 3 ? 3 : projects.length,
-                  itemBuilder: (context, i) {
-                    final p = projects[i];
-                    final id = p['_id']?.toString() ?? p['id']?.toString() ?? '';
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 14),
-                      child: GestureDetector(
-                        onTap: () {
-                          if (id.isNotEmpty) context.push('/cp/projects/$id', extra: Map<String, dynamic>.from(p as Map));
-                        },
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(28),
-                          child: SizedBox(
-                            width: 300,
-                            child: Stack(
-                              fit: StackFit.expand,
-                              children: [
-                                M4Image(imageUrl: _secondImg(p), fit: BoxFit.cover),
-                                Container(color: Colors.black.withValues(alpha: 0.35)),
-                                const Center(
-                                  child: Icon(LucideIcons.play, color: Colors.white, size: 44),
+
+                            // Artistic Impression Badge
+                            Positioned(
+                              top: 16,
+                              right: 16,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withValues(alpha: 0.4),
+                                  borderRadius: BorderRadius.circular(4),
+                                  border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                                 ),
-                                Positioned(
-                                  bottom: 14,
-                                  left: 20,
-                                  child: Text(
-                                    (p['title'] ?? '').toString().toUpperCase(),
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: 2,
-                                      color: Colors.white,
-                                    ),
+                                child: Text(
+                                  'ARTISTIC IMPRESSION',
+                                  style: GoogleFonts.montserrat(
+                                    color: Colors.white,
+                                    fontSize: 7,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: 1.5,
                                   ),
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
+
+                            // Pagination Dots
+                            Positioned(
+                              bottom: 24,
+                              left: 0,
+                              right: 0,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: List.generate(3, (index) {
+                                  final isSelected = (_heroIndex % 3) == index;
+                                  return AnimatedContainer(
+                                    duration: const Duration(milliseconds: 300),
+                                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                                    width: isSelected ? 32 : 24,
+                                    height: 4,
+                                    decoration: BoxDecoration(
+                                      color: isSelected ? Colors.black : Colors.white.withValues(alpha: 0.5),
+                                      borderRadius: BorderRadius.circular(2),
+                                    ),
+                                  );
+                                }),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.only(bottom: 32),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate([
+                Transform.translate(
+                  offset: const Offset(0, -60),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: _buildTabsSection(),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: _buildPhilosophy(),
+                ),
+                const SizedBox(height: 40),
+                _buildFeaturedSection(),
+                const SizedBox(height: 40),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: _buildConnectGrid(),
+                ),
+                const SizedBox(height: 40),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: _buildInterestForm(),
+                ),
+                const SizedBox(height: 120),
+              ]),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPhilosophy() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'OUR PHILOSOPHY',
+          style: GoogleFonts.dmSerifDisplay(
+            fontSize: 32,
+            fontWeight: FontWeight.w400,
+            color: Theme.of(context).colorScheme.onSurface,
+            letterSpacing: -0.5,
+          ),
+        ),
+        const SizedBox(height: 24),
+        RichText(
+          text: TextSpan(
+            style: GoogleFonts.montserrat(
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+              fontSize: 14,
+              height: 1.8,
+            ),
+            children: [
+              const TextSpan(text: 'To redefine modern luxury living by crafting homes with cutting edge design, enduring quality and thoughtful amenities delivered with trust, transparency, timeliness, and a human touch that creates lasting value for every homeowner. '),
+              WidgetSpan(
+                child: GestureDetector(
+                  onTap: () => context.push('/cp/about'),
+                  child: Text('Who We Are', style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.bold, decoration: TextDecoration.underline)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTabsSection() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                child: Row(
+                  children: ['communities', 'properties', 'media'].map((tab) {
+                    final isSelected = _activeTab.toLowerCase() == tab;
+                    return GestureDetector(
+                      onTap: () => setState(() => _activeTab = tab[0].toUpperCase() + tab.substring(1)),
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              tab.toUpperCase(),
+                              style: GoogleFonts.montserrat(
+                                color: isSelected
+                                    ? (isDark ? Colors.white : Colors.black)
+                                    : (isDark ? Colors.white : Colors.black).withValues(alpha: 0.4),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 2,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            if (isSelected)
+                              Container(
+                                width: 24,
+                                height: 2,
+                                decoration: BoxDecoration(
+                                  color: isDark ? Colors.white : Colors.black,
+                                  borderRadius: BorderRadius.circular(1),
+                                ),
+                              ),
+                          ],
                         ),
                       ),
                     );
-                  },
+                  }).toList(),
                 ),
               ),
             ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 28, 20, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Our Philosophy'.toUpperCase(),
-                      style: GoogleFonts.montserrat(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 2,
-                        color: scheme.onSurface.withOpacity(0.5),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      _philosophyBody,
-                      style: TextStyle(
-                        fontSize: 14,
-                        height: 1.6,
-                        color: Colors.black.withOpacity(0.7),
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    Text(
-                      'Featured Property'.toUpperCase(),
-                      style: GoogleFonts.montserrat(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 2,
-                        color: scheme.onSurface.withOpacity(0.5),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-                ),
+          ],
+        ),
+        const SizedBox(height: 32),
+        SizedBox(
+          height: 360,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
+            itemCount: _activeTab == 'Communities'
+                ? _communities.length
+                : (_activeTab == 'Media' ? _media.length : _projects.length),
+            itemBuilder: (context, index) {
+              final item = _activeTab == 'Communities'
+                  ? _communities[index]
+                  : (_activeTab == 'Media' ? _media[index] : _projects[index]);
+              return _buildTabCard(item);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTabCard(dynamic item) {
+    final isCommunity = _activeTab.toLowerCase() == 'communities';
+    final isMedia = _activeTab.toLowerCase() == 'media';
+    final apiClient = ref.read(apiClientProvider);
+
+    final imageUrl = apiClient.resolveUrl(isCommunity
+        ? (item['image'] ?? 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80')
+        : (isMedia
+            ? (item['thumbnail'] ?? item['image'] ?? 'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80')
+            : (item['heroImage'] ?? 'https://images.unsplash.com/photo-1613545325278-f24b0cae1224?auto=format&fit=crop&q=80')));
+
+    return _ScaleButton(
+      onTap: () {
+        if (isCommunity) {
+          context.push('/cp/communities/${item['_id']}', extra: item);
+        } else if (isMedia) {
+          context.push('/cp/media');
+        } else {
+          context.push('/cp/projects/${item['_id']}', extra: item);
+        }
+      },
+      child: Container(
+        width: 300,
+        margin: const EdgeInsets.only(right: 20, bottom: 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(40),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.15),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            )
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(40),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // High Resolution Image
+              CachedNetworkImage(
+                imageUrl: imageUrl,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(color: Colors.black12),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
-            ),
-            if (currentFeatured != null)
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                    children: [
-                      AspectRatio(
-                        aspectRatio: 3 / 4,
-                        child: GestureDetector(
-                          onTap: () {
-                            final id = currentFeatured['_id']?.toString() ?? currentFeatured['id']?.toString() ?? '';
-                            if (id.isNotEmpty) context.push('/cp/projects/$id', extra: Map<String, dynamic>.from(currentFeatured as Map));
-                          },
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(40),
-                            child: Stack(
-                              fit: StackFit.expand,
-                              children: [
-                                M4Image(
-                                  imageUrl: _heroUrl(currentFeatured),
-                                  fit: BoxFit.cover,
-                                ),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                      colors: [
-                                        Colors.transparent,
-                                        Colors.black.withValues(alpha: 0.75),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  top: 14,
-                                  right: 14,
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                    decoration: BoxDecoration(
-                                      color: Colors.black.withValues(alpha: 0.45),
-                                      borderRadius: BorderRadius.circular(4),
-                                      border: Border.all(color: Colors.white24),
-                                    ),
-                                    child: Text(
-                                      'ARTISTIC IMPRESSION',
-                                      style: GoogleFonts.montserrat(fontSize: 7, fontWeight: FontWeight.w800, letterSpacing: 2, color: Colors.white70),
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  left: 24,
-                                  right: 24,
-                                  bottom: 32,
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'FEATURED SELECTION',
-                                        style: TextStyle(
-                                          fontSize: 9,
-                                          fontWeight: FontWeight.w700,
-                                          letterSpacing: 3,
-                                          color: Colors.white.withOpacity(0.8),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        (currentFeatured['title'] ?? '').toString(),
-                                        style: GoogleFonts.dmSerifDisplay(
-                                          fontSize: 30,
-                                          fontWeight: FontWeight.w300,
-                                          color: Colors.white,
-                                          height: 1,
-                                        ),
-                                      ),
-                                      if (_desc(currentFeatured).isNotEmpty) ...[
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          _desc(currentFeatured),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.montserrat(
-                                            fontSize: 10,
-                                            height: 1.4,
-                                            letterSpacing: 1,
-                                            color: Colors.white70,
-                                          ),
-                                        ),
-                                      ],
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 14),
-                      Row(
-                        children: [
-                          Material(
-                            color: scheme.surfaceContainerHighest,
-                            borderRadius: BorderRadius.circular(16),
-                            child: InkWell(
-                              onTap: () => setState(() {
-                                _featuredPropIndex = (_featuredPropIndex - 1 + projects.length) % projects.length;
-                              }),
-                              borderRadius: BorderRadius.circular(16),
-                              child: const SizedBox(width: 48, height: 52, child: Icon(LucideIcons.arrowLeft)),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: FilledButton(
-                              style: FilledButton.styleFrom(
-                                backgroundColor: Colors.black,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(vertical: 18),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                              ),
-                              onPressed: () {
-                                final id = currentFeatured['_id']?.toString() ?? currentFeatured['id']?.toString() ?? '';
-                                if (id.isNotEmpty) context.push('/cp/projects/$id', extra: Map<String, dynamic>.from(currentFeatured as Map));
-                              },
-                              child: Text(
-                                'EXPLORE NOW',
-                                style: GoogleFonts.montserrat(fontWeight: FontWeight.w900, letterSpacing: 3, fontSize: 11),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Material(
-                            color: scheme.surfaceContainerHighest,
-                            borderRadius: BorderRadius.circular(16),
-                            child: InkWell(
-                              onTap: () => setState(() {
-                                _featuredPropIndex = (_featuredPropIndex + 1) % projects.length;
-                              }),
-                              borderRadius: BorderRadius.circular(16),
-                              child: const SizedBox(width: 48, height: 52, child: Icon(LucideIcons.arrowRight)),
-                            ),
-                          ),
-                        ],
-                      ),
+
+              // High-End Gradient Overlay
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    stops: const [0.3, 1.0],
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withValues(alpha: 0.85),
                     ],
                   ),
                 ),
               ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 28, 16, 0),
-                child: GridView.count(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 14,
-                  crossAxisSpacing: 14,
-                  childAspectRatio: 1.05,
-                  children: [
-                    _ActionTile(
-                      icon: LucideIcons.layoutGrid,
-                      title: 'EXPLORE',
-                      subtitle: 'VIEW ALL PROJECTS',
-                      onTap: () => context.push('/cp/projects'),
+
+              // Play Icon for Media
+              if (isMedia)
+                Center(
+                  child: Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.4), width: 2),
                     ),
-                    _ActionTile(
-                      icon: LucideIcons.mapPin,
-                      title: 'VISIT',
-                      subtitle: 'BOOK A SITE TOUR',
-                      onTap: () {
-                        final ctx = _inquiryKey.currentContext;
-                        if (ctx != null) Scrollable.ensureVisible(ctx, duration: const Duration(milliseconds: 400));
-                      },
+                    child: const Center(
+                      child: Icon(LucideIcons.play, color: Colors.white, size: 30),
                     ),
-                    _ActionTile(
-                      icon: LucideIcons.play,
-                      title: 'VIDEO',
-                      subtitle: 'WATCH WALKTHROUGHS',
-                      onTap: () => context.push('/cp/updates'),
-                    ),
-                    _ActionTile(
-                      icon: LucideIcons.userCheck,
-                      title: 'REGISTER',
-                      subtitle: 'PRIORITY ACCESS',
-                      onTap: () {
-                        final ctx = _inquiryKey.currentContext;
-                        if (ctx != null) Scrollable.ensureVisible(ctx, duration: const Duration(milliseconds: 400));
-                      },
-                    ),
-                  ],
+                  ).animate().scale(begin: const Offset(0.8, 0.8), curve: Curves.elasticOut, duration: 800.ms),
                 ),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 36, 20, 0),
+
+              // Badge (for Properties/Media)
+              if (!isCommunity)
+                Positioned(
+                  top: 24,
+                  right: 24,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.6),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                    ),
+                    child: Text(
+                      isMedia
+                          ? 'MEDIA'
+                          : (item['status']?.toString() ?? 'ONGOING').toUpperCase(),
+                      style: GoogleFonts.montserrat(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w400, letterSpacing: 1),
+                    ),
+                  ),
+                ),
+
+              // Content Section
+              Positioned(
+                bottom: 24,
+                left: 24,
+                right: 24,
                 child: Column(
-                  key: _inquiryKey,
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Partner Inquiry'.toUpperCase(),
-                      style: GoogleFonts.montserrat(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.black,
+                      (item['title'] ?? item['name'] ?? '').toString().toUpperCase(),
+                      style: GoogleFonts.dmSerifDisplay(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w400,
                         letterSpacing: -0.5,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 10),
                     Text(
-                      'CHANNEL PARTNER EXCLUSIVE',
+                      (isCommunity
+                              ? (item['overview'] ?? item['description'] ?? '')
+                              : (item['location'] is Map ? item['location']['name'] : item['location'] ?? 'MAZGAON'))
+                          .toString()
+                          .toUpperCase(),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.montserrat(
+                        color: Colors.white.withValues(alpha: 0.7),
                         fontSize: 10,
                         fontWeight: FontWeight.w800,
-                        letterSpacing: 4,
-                        color: scheme.outline,
+                        letterSpacing: 0.5,
+                        height: 1.4,
                       ),
                     ),
                     const SizedBox(height: 24),
-                    TextField(
-                      controller: _nameController,
-                      decoration: _inquiryDec(scheme, hint: 'Client Full Name *'),
-                      style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
-                    ),
-                    const SizedBox(height: 14),
-                    TextField(
-                      controller: _phoneController,
-                      keyboardType: TextInputType.phone,
-                      decoration: _inquiryDec(scheme, hint: 'Client Phone Number *'),
-                      style: GoogleFonts.montserrat(fontWeight: FontWeight.w600),
-                    ),
-                    const SizedBox(height: 14),
-                    Theme(
-                      data: Theme.of(context).copyWith(
-                        focusColor: accent,
-                        canvasColor: scheme.surface,
-                        cardColor: scheme.surface,
-                        colorScheme: Theme.of(context).colorScheme.copyWith(primary: accent),
-                        dropdownMenuTheme: DropdownMenuThemeData(
-                          menuStyle: MenuStyle(
-                            backgroundColor: WidgetStatePropertyAll(scheme.surface),
-                            surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          isCommunity ? 'EXPLORE COMMUNITY' : (isMedia ? 'READ ARTICLE' : 'VIEW PROPERTY'),
+                          style: GoogleFonts.montserrat(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w400,
+                            letterSpacing: 1.2,
                           ),
-                          textStyle: GoogleFonts.montserrat(fontWeight: FontWeight.w600, color: scheme.onSurface),
                         ),
-                      ),
-                      child: DropdownButtonFormField<String>(
-                        value: _projectId,
-                        decoration: _inquiryDec(scheme, hint: 'Select Project'),
-                        items: [
-                          for (final p in projects)
-                            if ((p['_id']?.toString() ?? p['id']?.toString() ?? '').isNotEmpty)
-                              DropdownMenuItem<String>(
-                                value: p['_id']?.toString() ?? p['id']!.toString(),
-                                child: Text(
-                                  p['title']?.toString() ?? 'Project',
-                                  style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 0.6),
-                                ),
-                              ),
-                        ],
-                        onChanged: (v) => setState(() => _projectId = v),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 56,
-                      child: FilledButton(
-                        onPressed: _submitting ? null : _submitInterest,
-                        style: FilledButton.styleFrom(
-                          backgroundColor: scheme.onSurface,
-                          foregroundColor: scheme.surface,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                        ),
-                        child: _submitting
-                            ? const SizedBox(
-                                width: 22,
-                                height: 22,
-                                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.2),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
                               )
-                            : Text(
-                                'SUBMIT INTEREST',
-                                style: GoogleFonts.montserrat(fontWeight: FontWeight.w900, letterSpacing: 4, fontSize: 11),
-                              ),
-                      ),
+                            ],
+                          ),
+                          child: const Icon(LucideIcons.arrowRight, color: Colors.black, size: 18),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 48),
                   ],
                 ),
               ),
-            ),
-          ],
-        );
-      },
+            ],
+          ),
+        ),
+      ),
     );
   }
-}
 
-class _ActionTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
-
-  const _ActionTile({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildFeaturedSection() {
+    if (_projects.isEmpty) return const SizedBox.shrink();
+    final project = _projects[_featuredIndex % _projects.length];
+    final apiClient = ref.read(apiClientProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF18181B) : Colors.white,
-        borderRadius: BorderRadius.circular(40),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Header (Matched with Our Philosophy)
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Text(
+            'FEATURED PROPERTY',
+            style: GoogleFonts.dmSerifDisplay(
+              fontSize: 32,
+              fontWeight: FontWeight.w400,
+              color: Theme.of(context).colorScheme.onSurface,
+              letterSpacing: -0.5,
+            ),
           ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(40),
-          child: Padding(
-            padding: const EdgeInsets.all(18),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+        ),
+        const SizedBox(height: 40),
+
+        // Main Artistic Card
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 24),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(50),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.2),
+                blurRadius: 40,
+                offset: const Offset(0, 20),
+              )
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(50),
+            child: Stack(
               children: [
-                // Icon Container (Silver/Grey Circle like web)
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: isDark ? Colors.white.withOpacity(0.08) : const Color(0xFFF3F4F6),
-                  ),
-                  child: Icon(
-                    icon, 
-                    size: 20, 
-                    color: isDark ? Colors.white : const Color(0xFF1F2937),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  title,
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.montserrat(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: -0.2,
-                    color: isDark ? Colors.white : Colors.black,
+                CachedNetworkImage(
+                  imageUrl: () {
+                    final img = (project['heroImage'] ?? project['image'] ?? project['coverImage'] ?? '').toString();
+                    if (img.isEmpty) {
+                      return 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80';
+                    }
+                    return img.startsWith('http') ? img : apiClient.resolveUrl(img);
+                  }(),
+                  height: 520,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Container(color: Colors.black12),
+                  errorWidget: (context, url, error) => Container(
+                    color: const Color(0xFF1A1A1A),
+                    child: const Center(child: Icon(LucideIcons.building2, color: Colors.white24, size: 64)),
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  subtitle,
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  style: GoogleFonts.montserrat(
-                    fontSize: 8,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1,
-                    color: isDark ? Colors.white60 : const Color(0xFF6B7280),
+                // Gradient Overlay
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          Colors.black.withValues(alpha: 0.7),
+                        ],
+                        stops: const [0.5, 1.0],
+                      ),
+                    ),
+                  ),
+                ),
+                // Artistic Impression Badge
+                Positioned(
+                  top: 24,
+                  right: 24,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.6),
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                    ),
+                    child: Text(
+                      'ARTISTIC IMPRESSION',
+                      style: GoogleFonts.montserrat(color: Colors.white, fontSize: 7, fontWeight: FontWeight.w900, letterSpacing: 1.5),
+                    ),
+                  ),
+                ),
+                // Content Overlay
+                Positioned(
+                  bottom: 40,
+                  left: 32,
+                  right: 32,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'FEATURED PROPERTY',
+                        style: GoogleFonts.montserrat(color: const Color(0xFFC5A358), fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2.5),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        (project['title'] ?? '').toString(),
+                        style: GoogleFonts.lora(color: Colors.white, fontSize: 44, fontWeight: FontWeight.w400, height: 1, letterSpacing: -1),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        (project['startingPrice'] ?? project['description'] ?? '').toString().toUpperCase(),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.montserrat(color: Colors.white.withValues(alpha: 0.8), fontSize: 9, height: 1.6, fontWeight: FontWeight.w900, letterSpacing: 1.2),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
           ),
         ),
+
+        const SizedBox(height: 48),
+
+        // Feature Icons (Synchronized with Web Grid)
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildFeatureIcon(LucideIcons.building2, 'FULLY\nFURNISHED'),
+              _buildFeatureIcon(LucideIcons.mapPin, 'PRIME\nLOCATION'),
+              _buildFeatureIcon(LucideIcons.clock, '20 MIN FROM\nSHEIKH ZAYED RD'),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 48),
+
+        // Center Navigation (prev / Read More / next)
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _ScaleButton(
+                onTap: () => setState(() => _featuredIndex = (_featuredIndex - 1 + _projects.length) % _projects.length),
+                child: Container(
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1)),
+                  ),
+                  child: Icon(LucideIcons.arrowLeft, color: isDark ? Colors.white : Colors.black, size: 20),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _ScaleButton(
+                  onTap: () => context.push('/cp/projects/${project['_id']}', extra: project),
+                  child: Container(
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white : Colors.black,
+                      borderRadius: BorderRadius.circular(14),
+                      boxShadow: [
+                        BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 20, offset: const Offset(0, 10))
+                      ],
+                    ),
+                    child: Center(
+                      child: Text(
+                        'READ MORE',
+                        style: GoogleFonts.montserrat(color: isDark ? Colors.black : Colors.white, fontWeight: FontWeight.w900, fontSize: 12, letterSpacing: 3),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              _ScaleButton(
+                onTap: () => setState(() => _featuredIndex = (_featuredIndex + 1) % _projects.length),
+                child: Container(
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1)),
+                  ),
+                  child: Icon(LucideIcons.arrowRight, color: isDark ? Colors.white : Colors.black, size: 20),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFeatureIcon(IconData icon, String label) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Column(
+      children: [
+        Icon(icon, color: isDark ? Colors.white : Colors.black, size: 24),
+        const SizedBox(height: 8),
+        Text(label, textAlign: TextAlign.center, style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 1.5)),
+      ],
+    );
+  }
+
+  Widget _buildConnectGrid() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Header (Matched with Register Interest)
+        Text(
+          'EXPLORE, CONNECT\nAND ENGAGE WITH US',
+          style: GoogleFonts.dmSerifDisplay(
+            fontSize: 32,
+            fontWeight: FontWeight.w400,
+            color: Theme.of(context).colorScheme.onSurface,
+            letterSpacing: -1,
+            height: 1.1,
+          ),
+        ),
+        const SizedBox(height: 40),
+
+        // Unified Grid Card
+        Container(
+          decoration: BoxDecoration(
+            color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.black.withValues(alpha: 0.02),
+            borderRadius: BorderRadius.circular(32),
+            border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.03),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              )
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(32),
+            child: GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 2,
+              mainAxisSpacing: 1,
+              crossAxisSpacing: 1,
+              childAspectRatio: 0.95,
+              children: [
+                _buildConnectItem(LucideIcons.building2, 'EXPLORE PROJECTS', 'Browse our portfolio of properties', () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ProjectListScreen(cpCatalogMode: true)))),
+                _buildConnectItem(LucideIcons.calendarDays, 'BOOK A VIEWING', 'Schedule a visit to our show apartment', _scrollToInterestForm),
+                _buildConnectItem(LucideIcons.image, 'MEDIA GALLERY', 'Watch films and view property renders', () => context.push('/cp/media')),
+                _buildConnectItem(LucideIcons.user, 'REGISTER INTEREST', 'Register your interest in our properties', _scrollToInterestForm),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildConnectItem(IconData icon, String title, String desc, VoidCallback onTap) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                shape: BoxShape.circle,
+                border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1)),
+              ),
+              child: Icon(icon, color: isDark ? Colors.white : Colors.black, size: 20),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.montserrat(
+                color: isDark ? Colors.white : Colors.black,
+                fontWeight: FontWeight.w900,
+                fontSize: 10,
+                letterSpacing: 1,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              desc,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.montserrat(
+                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+                fontSize: 8,
+                fontWeight: FontWeight.w500,
+                height: 1.4,
+              ),
+            ),
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildInterestForm() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Column(
+      key: _interestFormKey,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'REGISTER YOUR\nINTEREST',
+          style: GoogleFonts.dmSerifDisplay(
+            color: isDark ? Colors.white : Colors.black,
+            fontSize: 32,
+            fontWeight: FontWeight.w400,
+            letterSpacing: -1,
+            height: 1.1,
+          ),
+        ),
+        const SizedBox(height: 48),
+        _buildLuxuryInput('Full Name *', _nameController),
+        const SizedBox(height: 16),
+        _buildLuxuryInput('Email *', _emailController),
+        const SizedBox(height: 16),
+        _buildLuxuryInput('Phone Number *', _phoneController, keyboardType: TextInputType.phone, hint: '+91'),
+        const SizedBox(height: 16),
+        _buildLuxuryInput('Message', _messageController, isLong: true),
+        const SizedBox(height: 24),
+        Row(
+          children: [
+            Checkbox(
+              value: _agreedToTerms,
+              onChanged: (val) => setState(() => _agreedToTerms = val ?? false),
+              activeColor: isDark ? Colors.white : Colors.black,
+              checkColor: isDark ? Colors.black : Colors.white,
+              side: BorderSide(color: isDark ? Colors.white24 : Colors.black26),
+            ),
+            Expanded(
+              child: Text("I've read and agree to the Privacy Policy", style: GoogleFonts.montserrat(color: isDark ? Colors.white54 : Colors.black54, fontSize: 11, letterSpacing: 1)),
+            ),
+          ],
+        ),
+        const SizedBox(height: 32),
+        SizedBox(
+          width: double.infinity,
+          height: 64,
+          child: _ScaleButton(
+            onTap: _submitting ? () {} : _submitInterest,
+            child: Container(
+              decoration: BoxDecoration(color: isDark ? Colors.white : Colors.black, borderRadius: BorderRadius.circular(16)),
+              child: Center(
+                child: _submitting
+                    ? CircularProgressIndicator(color: isDark ? Colors.black : Colors.white)
+                    : Text('SUBMIT INTEREST', style: GoogleFonts.montserrat(color: isDark ? Colors.black : Colors.white, fontWeight: FontWeight.w400, letterSpacing: 2)),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLuxuryInput(String label, TextEditingController controller, {bool isLong = false, TextInputType? keyboardType, String? hint}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? Colors.black : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.12)),
+        boxShadow: isDark
+            ? []
+            : [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 20, offset: const Offset(0, 10))],
+      ),
+      child: TextField(
+        controller: controller,
+        keyboardType: keyboardType,
+        style: TextStyle(color: isDark ? Colors.white : Colors.black),
+        maxLines: isLong ? 5 : 1,
+        decoration: InputDecoration(
+          hintText: hint ?? label,
+          hintStyle: GoogleFonts.montserrat(color: isDark ? Colors.white54 : Colors.black45, fontSize: 13),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          border: InputBorder.none,
+        ),
+      ),
+    );
+  }
+}
+
+class _ScaleButton extends StatefulWidget {
+  final Widget child;
+  final VoidCallback onTap;
+  const _ScaleButton({required this.child, required this.onTap});
+
+  @override
+  State<_ScaleButton> createState() => _ScaleButtonState();
+}
+
+class _ScaleButtonState extends State<_ScaleButton> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scale;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 100));
+    _scale = Tween<double>(begin: 1.0, end: 0.95).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => _controller.forward(),
+      onTapUp: (_) => _controller.reverse(),
+      onTapCancel: () => _controller.reverse(),
+      onTap: widget.onTap,
+      child: ScaleTransition(scale: _scale, child: widget.child),
     );
   }
 }
