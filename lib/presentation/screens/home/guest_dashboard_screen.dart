@@ -580,7 +580,10 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                 imageUrl: imageUrl, 
                 fit: BoxFit.cover,
                 placeholder: (context, url) => Container(color: Colors.black12),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
+                errorWidget: (context, url, error) => Container(
+                  color: const Color(0xFF1A1A1A),
+                  child: const Center(child: Icon(LucideIcons.building2, color: Colors.white24, size: 40)),
+                ),
               ),
               
               // 🌫️ High-End Gradient Overlay

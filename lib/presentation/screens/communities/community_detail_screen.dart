@@ -235,7 +235,10 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                           imageUrl: heroImageUrl,
                           fit: BoxFit.cover,
                           placeholder: (context, url) => Container(color: Colors.black12),
-                          errorWidget: (context, url, error) => const Icon(Icons.error),
+                          errorWidget: (context, url, error) => Container(
+                            color: const Color(0xFF1A1A1A),
+                            child: const Center(child: Icon(LucideIcons.building2, color: Colors.white24, size: 40)),
+                          ),
                         ),
                         Container(
                           decoration: BoxDecoration(
@@ -476,7 +479,10 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                           imageUrl: apiClient.resolveUrl(project['heroImage'] ?? project['image']),
                                           fit: BoxFit.cover,
                                           placeholder: (context, url) => Container(color: Colors.black12),
-                                          errorWidget: (context, url, error) => const Icon(Icons.error),
+                                          errorWidget: (context, url, error) => Container(
+                            color: const Color(0xFF1A1A1A),
+                            child: const Center(child: Icon(LucideIcons.building2, color: Colors.white24, size: 40)),
+                          ),
                                         ),
                                         Container(
                                           decoration: BoxDecoration(
@@ -653,7 +659,10 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                   color: Colors.black.withOpacity(0.5),
                                   colorBlendMode: BlendMode.darken,
                                   placeholder: (context, url) => Container(color: Colors.black54),
-                                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                                  errorWidget: (context, url, error) => Container(
+                            color: const Color(0xFF1A1A1A),
+                            child: const Center(child: Icon(LucideIcons.building2, color: Colors.white24, size: 40)),
+                          ),
                                 ),
                                 Positioned(
                                   bottom: 30,
@@ -1014,7 +1023,10 @@ class CommunityProjectsScreen extends ConsumerWidget {
                               imageUrl: apiClient.resolveUrl(project['heroImage'] ?? project['image']),
                               fit: BoxFit.cover,
                               placeholder: (context, url) => Container(color: Colors.black12),
-                              errorWidget: (context, url, error) => const Icon(Icons.error),
+                              errorWidget: (context, url, error) => Container(
+                            color: const Color(0xFF1A1A1A),
+                            child: const Center(child: Icon(LucideIcons.building2, color: Colors.white24, size: 40)),
+                          ),
                             ),
                           Container(
                             decoration: BoxDecoration(

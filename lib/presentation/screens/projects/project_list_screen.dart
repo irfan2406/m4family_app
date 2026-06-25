@@ -13,6 +13,8 @@ import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
 import 'package:m4_mobile/presentation/screens/projects/guest_project_detail_screen.dart';
+import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
+import 'package:m4_mobile/presentation/widgets/cp_sidebar_menu.dart';
 
 /// Channel Partner catalog: set [cpCatalogMode] so back + detail routes match web `/cp/projects`.
 class ProjectListScreen extends ConsumerWidget {
@@ -155,6 +157,7 @@ class ProjectListScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      drawer: cpCatalogMode ? const CpSidebarMenu() : const ConditionalDrawer(),
       body: SafeArea(
         child: Column(
           children: [
@@ -214,29 +217,20 @@ class ProjectListScreen extends ConsumerWidget {
                             Text(
                               'DISCOVER',
                               style: GoogleFonts.montserrat(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.85),
+                                fontSize: 9,
+                                fontWeight: FontWeight.w700,
+                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.45),
                                 letterSpacing: 3,
                               ),
                             ),
+                            const SizedBox(height: 2),
                             Text(
                               'M4 PROPERTIES',
-                              style: GoogleFonts.dmSerifDisplay(
-                                fontSize: 32,
-                                fontWeight: FontWeight.w400,
-                                color: Theme.of(context).colorScheme.onSurface,
-                                letterSpacing: -1,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              '${filteredProjects.length} PROPERTIES AVAILABLE',
                               style: GoogleFonts.montserrat(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w500,
-                                color: M4Theme.premiumBlue,
-                                letterSpacing: 1.5,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w800,
+                                color: Theme.of(context).colorScheme.onSurface,
+                                letterSpacing: -0.3,
                               ),
                             ),
                           ],
@@ -246,36 +240,44 @@ class ProjectListScreen extends ConsumerWidget {
                   ),
                   Row(
                     children: [
-                      // Filter Icon
-                      GestureDetector(
-                        onTap: () => _showFilterBottomSheet(context, ref),
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
-                          ),
-                          child: Icon(LucideIcons.slidersHorizontal, size: 16, color: Theme.of(context).colorScheme.onSurface),
+                      // View toggle pill (grid | list) — web parity
+                      Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.08)),
+                        ),
+                        child: Row(
+                          children: [
+                            _ViewToggleBtn(
+                              icon: LucideIcons.layoutGrid,
+                              active: isGridView,
+                              onTap: () => ref.read(projectLayoutProvider.notifier).state = true,
+                            ),
+                            const SizedBox(width: 4),
+                            _ViewToggleBtn(
+                              icon: LucideIcons.list,
+                              active: !isGridView,
+                              onTap: () => ref.read(projectLayoutProvider.notifier).state = false,
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      // Grid/List Toggle Icon
-                      GestureDetector(
-                        onTap: () => ref.read(projectLayoutProvider.notifier).state = !isGridView,
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: isGridView ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white : Colors.black).withOpacity(0.05),
-                            borderRadius: BorderRadius.circular(10),
-                            border: isGridView ? null : Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
-                          ),
-                          child: Icon(
-                            isGridView ? LucideIcons.layoutGrid : LucideIcons.list,
-                            size: 16,
-                            color: isGridView 
-                                ? (isDark ? Colors.black : Colors.white)
-                                : (isDark ? Colors.white : Colors.black),
+                      const SizedBox(width: 12),
+                      // "..." menu -> sidebar drawer (web parity)
+                      Builder(
+                        builder: (ctx) => GestureDetector(
+                          onTap: () => Scaffold.of(ctx).openDrawer(),
+                          child: Container(
+                            width: 48,
+                            height: 36,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: isDark ? Colors.white : Colors.black,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(LucideIcons.moreHorizontal, size: 18, color: isDark ? Colors.black : Colors.white),
                           ),
                         ),
                       ),
@@ -344,7 +346,11 @@ class ProjectListScreen extends ConsumerWidget {
                     final rawHero = project['heroImage']?.toString() ??
                         ((heroImages != null && heroImages.isNotEmpty) ? heroImages[0].toString() : null) ??
                         ((images != null && images.isNotEmpty) ? images[0].toString() : null);
-                    final imageUrl = apiClient.resolveUrl(rawHero);
+                    // Web parity: fall back to a default building photo when a project
+                    // has no image, instead of showing a broken-image icon.
+                    final imageUrl = (rawHero == null || rawHero.isEmpty)
+                        ? 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80'
+                        : apiClient.resolveUrl(rawHero);
                     return GestureDetector(
                       onTap: () {
                         if (projectId.isEmpty) return;
@@ -406,6 +412,9 @@ class _ProjectGridItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final loc = project['location'];
+    final locName = (loc is Map ? (loc['name']?.toString() ?? '') : (loc?.toString() ?? ''));
+    final locationLabel = (locName.isEmpty ? 'N/A' : locName).split(',').first;
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
       height: 200, // Enforce 16:9 aspect ratio parity with web (approx for mobile width)
@@ -424,7 +433,10 @@ class _ProjectGridItem extends StatelessWidget {
             imageUrl: imageUrl, 
             fit: BoxFit.cover,
             placeholder: (context, url) => Container(color: Colors.black12),
-            errorWidget: (context, url, error) => const Icon(Icons.error),
+            errorWidget: (context, url, error) => Container(
+              color: const Color(0xFF1A1A1A),
+              child: const Center(child: Icon(LucideIcons.building2, color: Colors.white24, size: 40)),
+            ),
           ),
           // Subtle Gradient Overlay for text readability on images
           Container(
@@ -442,20 +454,29 @@ class _ProjectGridItem extends StatelessWidget {
             ),
           ),
 
-          // Top Badges
-          Positioned(
-            top: 20,
-            left: 20,
-            right: 20,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _Badge(text: project['status']?.toUpperCase() ?? 'LIVE ESTATE'),
-                if (project['status']?.toString().toLowerCase() != 'completed')
-                  const _Badge(text: 'ARTISTIC IMPRESSION'),
-              ],
+          // Artistic Impression badge (web parity: only this badge, top-right, dark glass)
+          if (project['status']?.toString().toLowerCase() != 'completed')
+            Positioned(
+              top: 20,
+              right: 20,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.4),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.white.withOpacity(0.1)),
+                ),
+                child: Text(
+                  'ARTISTIC IMPRESSION',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 7,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white.withOpacity(0.6),
+                    letterSpacing: 1.5,
+                  ),
+                ),
+              ),
             ),
-          ),
 
           // Bottom Content
           Positioned(
@@ -466,41 +487,41 @@ class _ProjectGridItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Title & Location
+                // Location (above) + Title — web order
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        project['title'] ?? 'M4 PROJECT',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.white,
-                          letterSpacing: -0.5,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 6),
                       Row(
                         children: [
-                          const Icon(LucideIcons.mapPin, size: 14, color: Colors.white70),
+                          const Icon(LucideIcons.mapPin, size: 13, color: Colors.white70),
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
-                              project['location']?['name'] ?? 'N/A',
+                              locationLabel.toUpperCase(),
                               style: GoogleFonts.montserrat(
-                                fontSize: 13,
+                                fontSize: 10,
                                 color: Colors.white70,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 1,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 1.5,
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        project['title'] ?? 'M4 PROJECT',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                          letterSpacing: -0.5,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
@@ -564,7 +585,10 @@ class _ProjectListRowItem extends StatelessWidget {
                 imageUrl: imageUrl, 
                 fit: BoxFit.cover,
                 placeholder: (context, url) => Container(color: Colors.black12),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
+                errorWidget: (context, url, error) => Container(
+              color: const Color(0xFF1A1A1A),
+              child: const Center(child: Icon(LucideIcons.building2, color: Colors.white24, size: 40)),
+            ),
               ),
             ),
           ),
@@ -623,6 +647,37 @@ class _ProjectListRowItem extends StatelessWidget {
         ],
       ),
     ).animate().fadeIn().slideX(begin: 0.1, end: 0);
+  }
+}
+
+class _ViewToggleBtn extends StatelessWidget {
+  final IconData icon;
+  final bool active;
+  final VoidCallback onTap;
+  const _ViewToggleBtn({required this.icon, required this.active, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 32,
+        height: 32,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: active ? (isDark ? Colors.white : Colors.black) : Colors.transparent,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(
+          icon,
+          size: 16,
+          color: active
+              ? (isDark ? Colors.black : Colors.white)
+              : Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+        ),
+      ),
+    );
   }
 }
 

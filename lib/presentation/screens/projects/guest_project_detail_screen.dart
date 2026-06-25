@@ -539,7 +539,10 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
             imageUrl: heroUrl, 
             fit: BoxFit.cover,
             placeholder: (context, url) => Container(color: Colors.black12),
-            errorWidget: (context, url, error) => const Icon(Icons.error),
+            errorWidget: (context, url, error) => Container(
+              color: const Color(0xFF1A1A1A),
+              child: const Center(child: Icon(LucideIcons.building2, color: Colors.white24, size: 40)),
+            ),
           ),
           Container(
             decoration: BoxDecoration(
@@ -907,7 +910,10 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                       color: isDark ? Colors.black.withValues(alpha: 0.6) : Colors.white.withValues(alpha: 0.6),
                       colorBlendMode: BlendMode.dstATop,
                       placeholder: (context, url) => Container(color: isDark ? Colors.black26 : Colors.black12),
-                      errorWidget: (context, url, error) => const Icon(Icons.error),
+                      errorWidget: (context, url, error) => Container(
+              color: const Color(0xFF1A1A1A),
+              child: const Center(child: Icon(LucideIcons.building2, color: Colors.white24, size: 40)),
+            ),
                     ),
                     Positioned(
                       bottom: 20,
