@@ -14,6 +14,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:m4_mobile/presentation/widgets/sidebar_menu.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class GuestProjectDetailScreen extends ConsumerStatefulWidget {
   final dynamic projectData; 
@@ -474,25 +475,31 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
               children: [
                 _buildHero(project, isDark),
                 const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Row(
-                    children: [
-                      _HeroMediaThumb(
-                        label: 'EXTERIOR', 
-                        imageUrl: _exteriorImages.isNotEmpty ? apiClient.resolveUrl(_exteriorImages.first) : apiClient.resolveUrl(project?['heroImage']),
-                        onTap: () => _openHeroGallery(_exteriorImages)
-                      ),
-                      const SizedBox(width: 12),
-                      _HeroMediaThumb(
-                        label: 'INTERIOR', 
-                        imageUrl: _interiorImages.isNotEmpty ? apiClient.resolveUrl(_interiorImages.first) : apiClient.resolveUrl(project?['heroImage']),
-                        onTap: () => _openHeroGallery(_interiorImages)
-                      ),
-                    ],
+                // Web parity: only show Exterior/Interior quick-access when those images exist.
+                if (_exteriorImages.isNotEmpty || _interiorImages.isNotEmpty) ...[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Row(
+                      children: [
+                        if (_exteriorImages.isNotEmpty)
+                          _HeroMediaThumb(
+                            label: 'EXTERIOR',
+                            imageUrl: apiClient.resolveUrl(_exteriorImages.first),
+                            onTap: () => _openHeroGallery(_exteriorImages),
+                          ),
+                        if (_exteriorImages.isNotEmpty && _interiorImages.isNotEmpty)
+                          const SizedBox(width: 12),
+                        if (_interiorImages.isNotEmpty)
+                          _HeroMediaThumb(
+                            label: 'INTERIOR',
+                            imageUrl: apiClient.resolveUrl(_interiorImages.first),
+                            onTap: () => _openHeroGallery(_interiorImages),
+                          ),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 24),
+                  const SizedBox(height: 24),
+                ],
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Row(
@@ -599,29 +606,6 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                   ],
                 ),
               ],
-            ),
-          ),
-          Positioned(
-            bottom: 100,
-            right: 24,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(100),
-                boxShadow: [
-                  BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10, offset: const Offset(0, 4))
-                ],
-              ),
-              child: Text(
-                'ARTISTIC IMPRESSION',
-                style: GoogleFonts.montserrat(
-                  fontSize: 8, 
-                  fontWeight: FontWeight.w900, 
-                  color: Colors.black, 
-                  letterSpacing: 1
-                ),
-              ),
             ),
           ),
           // Scrollable Header Actions (Match Web Absolute Logic)
@@ -787,34 +771,30 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
       itemBuilder: (context, index) {
         final amenity = amenitiesRaw[index];
         final name = (amenity is Map ? (amenity['name']?.toString() ?? 'Amenity') : amenity.toString()).toUpperCase();
-        
-        return Container(
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF0F1115) : const Color(0xFFF4F4F5),
-            borderRadius: BorderRadius.circular(32),
-            border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(_getAmenityIcon(name), color: isDark ? Colors.white.withValues(alpha: 0.6) : Colors.black.withValues(alpha: 0.6), size: 28),
-              const SizedBox(height: 16),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Text(
-                  name,
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.montserrat(
-                    fontSize: 8, 
-                    fontWeight: FontWeight.w900, 
-                    color: isDark ? Colors.white.withValues(alpha: 0.8) : Colors.black.withValues(alpha: 0.8), 
-                    letterSpacing: 1,
-                    height: 1.2,
-                  ),
+
+        // Web parity: gold amenity icon (#dfba6b), no card, label below.
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(_getAmenityIcon(name), color: const Color(0xFFDFBA6B), size: 40),
+            const SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Text(
+                name,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.montserrat(
+                  fontSize: 8.5,
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? Colors.white.withValues(alpha: 0.8) : Colors.black.withValues(alpha: 0.8),
+                  letterSpacing: 0.5,
+                  height: 1.2,
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         );
       },
     );
@@ -883,68 +863,15 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
   }
 
   Widget _buildLocation(dynamic project) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final locName = (project?['location'] is Map ? project?['location']?['name'] : project?['location'])?.toString() ?? 'Mazgaon, Mumbai';
-    
-    return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _ScaleButton(
-            onTap: () => _launchAction('Opening Maps...', 'https://www.google.com/maps?q=${Uri.encodeComponent(locName)}'),
-            child: Container(
-              height: 220,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E1F21) : const Color(0xFFF4F4F5),
-                borderRadius: BorderRadius.circular(32),
-                border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(32),
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    CachedNetworkImage(
-                      imageUrl: 'https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80', 
-                      fit: BoxFit.cover,
-                      color: isDark ? Colors.black.withValues(alpha: 0.6) : Colors.white.withValues(alpha: 0.6),
-                      colorBlendMode: BlendMode.dstATop,
-                      placeholder: (context, url) => Container(color: isDark ? Colors.black26 : Colors.black12),
-                      errorWidget: (context, url, error) => Container(
-              color: const Color(0xFF1A1A1A),
-              child: const Center(child: Icon(LucideIcons.building2, color: Colors.white24, size: 40)),
-            ),
-                    ),
-                    Positioned(
-                      bottom: 20,
-                      right: 20,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: isDark ? const Color(0xFF1E293B) : Colors.white.withValues(alpha: 0.9),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(LucideIcons.mapPin, color: M4Theme.premiumBlue, size: 12),
-                            const SizedBox(width: 8),
-                            Text('VIEW ON MAPS', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 1)),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 25,
-                      left: 20,
-                      child: Text('Open in Maps ↗', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.bold, color: M4Theme.premiumBlue, decoration: TextDecoration.underline)),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ],
+    final rawLoc = (project?['location'] is Map ? project?['location']?['name'] : project?['location'])?.toString() ?? '';
+    const defaultLoc = 'NA 604, 6th Floor, M4 Aura Heights, Grant Road, Mumbai - 400007';
+    final invalid = rawLoc.trim().isEmpty || ['NA', 'N/A', 'NONE'].contains(rawLoc.trim().toUpperCase());
+    final loc = invalid ? defaultLoc : rawLoc;
+
+    // Web parity: embedded Google Map (iframe -> WebView) + View on Maps button.
+    return _LocationMap(
+      location: loc,
+      onOpenMaps: () => _launchAction('Opening Maps...', 'https://www.google.com/maps?q=${Uri.encodeComponent(loc)}'),
     );
 
   }
@@ -1814,6 +1741,71 @@ class _SquareAction extends StatelessWidget {
           ],
         ),
         child: Icon(icon, color: isDark ? Colors.white : Colors.black, size: 20),
+      ),
+    );
+  }
+}
+
+class _LocationMap extends StatefulWidget {
+  final String location;
+  final VoidCallback onOpenMaps;
+  const _LocationMap({required this.location, required this.onOpenMaps});
+
+  @override
+  State<_LocationMap> createState() => _LocationMapState();
+}
+
+class _LocationMapState extends State<_LocationMap> {
+  late final WebViewController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    final url = 'https://www.google.com/maps?q=${Uri.encodeComponent(widget.location)}&output=embed';
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setBackgroundColor(Colors.transparent)
+      ..loadRequest(Uri.parse(url));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      height: 280,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(32),
+        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          WebViewWidget(controller: _controller),
+          Positioned(
+            top: 16,
+            right: 16,
+            child: _ScaleButton(
+              onTap: widget.onOpenMaps,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF1E293B) : Colors.white.withValues(alpha: 0.95),
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.15), blurRadius: 10)],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(LucideIcons.mapPin, color: M4Theme.premiumBlue, size: 12),
+                    const SizedBox(width: 6),
+                    Text('VIEW ON MAPS', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 1)),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
