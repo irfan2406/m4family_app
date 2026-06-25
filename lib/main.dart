@@ -926,31 +926,27 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Matches the onboarding splash (black bg + white M4 logo) so the brief
+    // hand-off from onboarding to this screen (while the session resolves) is
+    // seamless with no color flash.
     return Scaffold(
+      backgroundColor: Colors.black,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Main Logo
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.4),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: Colors.white.withOpacity(0.1)),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Image.asset(
-                  'assets/m4_family_logo.png',
-                  color: const Color(0xFFFFD700),
-                  colorBlendMode: BlendMode.srcIn,
-                ),
-              ),
-            ).animate().scale(duration: 500.ms, curve: Curves.easeOut),
-            const SizedBox(height: 24),
-            const CircularProgressIndicator(color: Colors.black),
+            Image.asset(
+              'assets/m4_family_logo.png',
+              width: 200,
+              fit: BoxFit.contain,
+              color: Colors.white,
+            ).animate().fadeIn(duration: 400.ms, curve: Curves.easeOut),
+            const SizedBox(height: 32),
+            const SizedBox(
+              width: 22,
+              height: 22,
+              child: CircularProgressIndicator(color: Colors.white24, strokeWidth: 2),
+            ),
           ],
         ),
       ),
