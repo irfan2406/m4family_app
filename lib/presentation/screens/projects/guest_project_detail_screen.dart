@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -116,7 +117,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     }
   }
 
-  void _launchAction(String message, [String? url]) async {
+  void _launchAction(String message, [String? url, bool isError = false]) async {
     if (url != null && url.isNotEmpty) {
       if (url.startsWith('tel:')) {
         await SupportHandlers.launchCall(url.replaceFirst('tel:', ''));
@@ -142,10 +143,68 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message, style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.bold)),
-        backgroundColor: M4Theme.premiumBlue,
+        content: Text(message, style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.bold, color: isError ? Colors.white : Colors.black)),
+        backgroundColor: isError ? const Color(0xFFDC2626) : M4Theme.premiumBlue,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
+  }
+
+  // iOS-style wheel date+time picker (matches the web IOSDateTimePicker).
+  Future<DateTime?> _pickIosDateTime(DateTime initial) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final minDate = DateTime.now().subtract(const Duration(minutes: 1));
+    if (initial.isBefore(minDate)) initial = DateTime.now().add(const Duration(minutes: 30));
+    DateTime temp = initial;
+    return showModalBottomSheet<DateTime>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (sheetCtx) => Container(
+        height: 340,
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF0B111E) : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+        ),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(sheetCtx),
+                    child: Text('CANCEL', style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : Colors.black54, letterSpacing: 1)),
+                  ),
+                  Text('SCHEDULE', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 2)),
+                  TextButton(
+                    onPressed: () => Navigator.pop(sheetCtx, temp),
+                    child: Text('DONE', style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 1)),
+                  ),
+                ],
+              ),
+            ),
+            Divider(height: 1, color: isDark ? Colors.white12 : Colors.black12),
+            Expanded(
+              child: CupertinoTheme(
+                data: CupertinoThemeData(
+                  brightness: isDark ? Brightness.dark : Brightness.light,
+                  textTheme: CupertinoTextThemeData(
+                    dateTimePickerTextStyle: GoogleFonts.montserrat(fontSize: 17, fontWeight: FontWeight.w700, color: isDark ? Colors.white : Colors.black),
+                  ),
+                ),
+                child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.dateAndTime,
+                  initialDateTime: initial,
+                  minimumDate: minDate,
+                  use24hFormat: false,
+                  onDateTimeChanged: (dt) => temp = dt,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -164,13 +223,13 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     final name = _nameController.text.trim();
     final phone = _phoneController.text.trim();
     if (name.isEmpty || phone.isEmpty) {
-      _launchAction('Please enter your name and phone number', null);
+      _launchAction('Please enter your name and phone number', null, true);
       return;
     }
     final isBooking = type == 'VC' || type == 'Site Visit';
     // Web parity: a Video Call / Site Visit requires a scheduled date + time.
     if (isBooking && (_leadDate == null || _leadTime == null)) {
-      _launchAction('Please schedule a date and time for your visit', null);
+      _launchAction('Please schedule a date and time for your visit', null, true);
       return;
     }
 
@@ -213,10 +272,10 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
           _launchAction(isBooking ? 'Booking request received! Our team will call you to confirm the time.' : 'Interest registered! Our team will contact you shortly.', null);
         }
       } else {
-        _launchAction(res.data['message'] ?? 'Failed to submit', null);
+        _launchAction(res.data['message'] ?? 'Failed to submit', null, true);
       }
     } catch (e) {
-      _launchAction('Connection error. Please try again.', null);
+      _launchAction('Connection error. Please try again.', null, true);
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -331,11 +390,16 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                     const SizedBox(height: 10),
                     GestureDetector(
                       onTap: () async {
-                        final now = DateTime.now();
-                        final d = await showDatePicker(context: context, initialDate: _leadDate ?? now, firstDate: now, lastDate: now.add(const Duration(days: 365)));
-                        if (d == null) return;
-                        final t = await showTimePicker(context: context, initialTime: _leadTime ?? TimeOfDay.now());
-                        setModalState(() { _leadDate = d; _leadTime = t; });
+                        final initial = _leadDate != null
+                            ? DateTime(_leadDate!.year, _leadDate!.month, _leadDate!.day, _leadTime?.hour ?? 10, _leadTime?.minute ?? 0)
+                            : DateTime.now().add(const Duration(hours: 1));
+                        final dt = await _pickIosDateTime(initial);
+                        if (dt != null) {
+                          setModalState(() {
+                            _leadDate = DateTime(dt.year, dt.month, dt.day);
+                            _leadTime = TimeOfDay(hour: dt.hour, minute: dt.minute);
+                          });
+                        }
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
