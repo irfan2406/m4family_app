@@ -48,6 +48,11 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
   String _selectedConfig = '3 BHK';
   bool _showFullOverview = false;
   bool _showFullProgress = false;
+  // Booking dialog (web parity): visit type toggle + scheduled date/time + notes.
+  String _leadType = 'VC';
+  DateTime? _leadDate;
+  TimeOfDay? _leadTime;
+  final TextEditingController _notesController = TextEditingController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -151,6 +156,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     _phoneController.dispose();
     _emailController.dispose();
     _locationController.dispose();
+    _notesController.dispose();
     super.dispose();
   }
 
@@ -161,34 +167,53 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
       _launchAction('Please enter your name and phone number', null);
       return;
     }
+    final isBooking = type == 'VC' || type == 'Site Visit';
+    // Web parity: a Video Call / Site Visit requires a scheduled date + time.
+    if (isBooking && (_leadDate == null || _leadTime == null)) {
+      _launchAction('Please schedule a date and time for your visit', null);
+      return;
+    }
 
     setState(() => _isLoading = true);
     try {
       final apiClient = ref.read(apiClientProvider);
       final project = _fullProject ?? widget.projectData;
-      
+      final interest = type == 'VC' ? 'Video Call' : type == 'Site Visit' ? 'Site Visit' : 'General Enquiry';
+
+      String? visitDate;
+      String? visitTime;
+      if (isBooking && _leadDate != null) {
+        final d = _leadDate!;
+        visitDate = '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+        visitTime = _leadTime?.format(context);
+      }
+      final notes = _notesController.text.trim();
+
       final res = await apiClient.submitLead({
         'name': name,
         'phone': phone,
         'email': _emailController.text.trim().isNotEmpty ? _emailController.text.trim() : null,
-        'interest': type == 'VC' ? 'Video Call' : type == 'Site Visit' ? 'Site Visit' : 'Buying',
+        'interest': interest,
         'configuration': _selectedConfig,
+        if (visitDate != null) 'visitDate': visitDate,
+        if (visitTime != null) 'visitTime': visitTime,
+        if (notes.isNotEmpty) 'notes': notes,
         'location': _locationController.text.trim().isNotEmpty ? _locationController.text.trim() : null,
         'source': 'mobile_app',
         'projectId': widget.projectId,
         'project': project?['title'] ?? 'General',
-        'message': plan != null 
-            ? 'Inquiry about payment plan: $plan for project ${project?['title']}' 
-            : '${type == 'VC' ? 'Video Call' : type == 'Site Visit' ? 'Site Visit' : 'General'} request for project ${project?['title']}${_locationController.text.isNotEmpty ? ' from ${_locationController.text}' : ''}',
+        'message': isBooking
+            ? 'Requested $interest for ${project?['title']}'
+            : 'Express interest in ${project?['title']}${_locationController.text.trim().isNotEmpty ? ' • Location: ${_locationController.text.trim()}' : ''}',
       });
 
       if (res.data['status'] == true) {
         if (mounted) {
           Navigator.pop(context);
-          _launchAction(type == 'General' ? 'Inquiry submitted! Our advisor will contact you shortly.' : 'Booking request received! Our team will call you to confirm the time.', null);
+          _launchAction(isBooking ? 'Booking request received! Our team will call you to confirm the time.' : 'Interest registered! Our team will contact you shortly.', null);
         }
       } else {
-        _launchAction(res.data['message'] ?? 'Failed to submit inquiry', null);
+        _launchAction(res.data['message'] ?? 'Failed to submit', null);
       }
     } catch (e) {
       _launchAction('Connection error. Please try again.', null);
@@ -208,6 +233,11 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
       _phoneController.text = authUser['phone']?.toString() ?? '';
       _emailController.text = authUser['email']?.toString() ?? '';
     }
+    // Reset booking state for this open (web: leadType/date/time/notes).
+    _leadType = type == 'Site Visit' ? 'Site Visit' : 'VC';
+    _leadDate = null;
+    _leadTime = null;
+    _notesController.clear();
 
     showModalBottomSheet(
       context: context,
@@ -245,8 +275,8 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                      Text(
-                      type == 'VC' ? 'SCHEDULE A VIDEO CALL' : 'SCHEDULE A BOOK TOUR',
-                      style: GoogleFonts.montserrat(fontSize: 32, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, height: 1.1, letterSpacing: -1.5),
+                      _leadType == 'VC' ? 'BOOK A VIDEO CALL' : 'BOOK A SITE VISIT',
+                      style: GoogleFonts.montserrat(fontSize: 26, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, height: 1.1, letterSpacing: -1),
                     ),
                     const SizedBox(height: 16),
                     Text(
@@ -261,50 +291,113 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                     const SizedBox(height: 16),
                     _buildInquiryField('Phone Number', _phoneController, LucideIcons.phone),
                     
-                    const SizedBox(height: 32),
-                    Text('PREFERRED CONFIGURATION', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1)),
-                    const SizedBox(height: 12),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: ["2 BHK", "3 BHK", "4 BHK", "PENTHOUSE"].map((config) {
-                        final isActive = _selectedConfig == config;
-                        return GestureDetector(
-                          onTap: () => setModalState(() => _selectedConfig = config),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                            decoration: BoxDecoration(
-                              color: isActive ? Colors.black : Colors.transparent,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: isActive ? Colors.black : (isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05))),
-                            ),
-                            child: Text(
-                              config, 
-                              style: GoogleFonts.montserrat(
-                                fontSize: 8, 
-                                fontWeight: FontWeight.w900, 
-                                color: isActive ? Colors.white : (isDark ? Colors.white38 : Colors.black38)
+                    const SizedBox(height: 28),
+                    // Visit Type toggle (web parity)
+                    Text('VISIT TYPE', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : Colors.black54, letterSpacing: 1.5)),
+                    const SizedBox(height: 10),
+                    Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06)),
+                      ),
+                      child: Row(
+                        children: [
+                          for (final opt in const [['Site Visit', 'Site Visit'], ['Video Call', 'VC']])
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () => setModalState(() => _leadType = opt[1]),
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  decoration: BoxDecoration(
+                                    color: _leadType == opt[1] ? (isDark ? Colors.white : Colors.black) : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(9),
+                                  ),
+                                  child: Text(
+                                    opt[0].toUpperCase(),
+                                    style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1, color: _leadType == opt[1] ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white54 : Colors.black54)),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        );
-                      }).toList(),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    // Schedule date + time (web parity: IOSDateTimePicker)
+                    Text('SCHEDULE', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : Colors.black54, letterSpacing: 1.5)),
+                    const SizedBox(height: 10),
+                    GestureDetector(
+                      onTap: () async {
+                        final now = DateTime.now();
+                        final d = await showDatePicker(context: context, initialDate: _leadDate ?? now, firstDate: now, lastDate: now.add(const Duration(days: 365)));
+                        if (d == null) return;
+                        final t = await showTimePicker(context: context, initialTime: _leadTime ?? TimeOfDay.now());
+                        setModalState(() { _leadDate = d; _leadTime = t; });
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+                        decoration: BoxDecoration(
+                          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF8FAFC),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.08)),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(LucideIcons.calendar, size: 16, color: M4Theme.premiumBlue),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                _leadDate == null
+                                    ? 'SELECT DATE & TIME'
+                                    : '${_leadDate!.day}/${_leadDate!.month}/${_leadDate!.year}   ${_leadTime?.format(context) ?? ''}',
+                                style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w800, color: isDark ? Colors.white : Colors.black, letterSpacing: 0.5),
+                              ),
+                            ),
+                            Icon(LucideIcons.chevronRight, size: 16, color: isDark ? Colors.white38 : Colors.black38),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    // Additional notes (web parity)
+                    Text('ADDITIONAL NOTES', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : Colors.black54, letterSpacing: 1.5)),
+                    const SizedBox(height: 10),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF8FAFC),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.08)),
+                      ),
+                      child: TextField(
+                        controller: _notesController,
+                        maxLines: 3,
+                        style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black),
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'SPECIFIC REQUIREMENTS, PICKUP DETAILS, ETC...',
+                          hintStyle: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w800, color: isDark ? Colors.white24 : Colors.black26, letterSpacing: 0.5),
+                        ),
+                      ),
                     ),
                     
                     const SizedBox(height: 40),
                     _ScaleButton(
-                      onTap: () => _submitInquiry(type, planName),
+                      onTap: () => _submitInquiry(_leadType, planName),
                       child: Container(
                         width: double.infinity,
                         padding: const EdgeInsets.symmetric(vertical: 20),
                         decoration: BoxDecoration(
-                          color: Colors.black,
+                          color: isDark ? Colors.white : Colors.black,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Center(
                           child: Text(
-                            type == 'VC' ? 'CONFIRM VIDEO CALL' : 'CONFIRM SITE VISIT', 
-                            style: GoogleFonts.montserrat(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1.5)
+                            'CONFIRM BOOKING',
+                            style: GoogleFonts.montserrat(color: isDark ? Colors.black : Colors.white, fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1.5)
                           )
                         ),
                       ),
