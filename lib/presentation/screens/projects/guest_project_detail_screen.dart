@@ -13,6 +13,7 @@ import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:m4_mobile/presentation/widgets/sidebar_menu.dart';
+import 'package:m4_mobile/presentation/widgets/luxury_amenity_icon.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -945,30 +946,18 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
       itemBuilder: (context, index) {
         final amenity = amenitiesRaw[index];
         final name = (amenity is Map ? (amenity['name']?.toString() ?? 'Amenity') : amenity.toString()).toUpperCase();
-        final iconUrl = amenity is Map ? amenity['icon']?.toString() : null;
-        final hasUploadedIcon = iconUrl != null && iconUrl.isNotEmpty &&
-            (iconUrl.startsWith('/') || iconUrl.startsWith('http') || iconUrl.contains('.'));
-        const gold = Color(0xFFDFBA6B);
+        final rawIcon = amenity is Map ? amenity['icon']?.toString() : null;
+        final hasUploadedIcon = rawIcon != null && rawIcon.isNotEmpty &&
+            (rawIcon.startsWith('/') || rawIcon.startsWith('http') || rawIcon.contains('.'));
 
-        // Web parity (LuxuryAmenityIcon): render the backend-uploaded icon
-        // gold-tinted when present; otherwise fall back to a mapped icon.
+        // Web parity: full LuxuryAmenityIcon (uploaded icon -> name-mapped SVG -> Lucide).
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(
-              width: 42,
-              height: 42,
-              child: hasUploadedIcon
-                  ? ColorFiltered(
-                      colorFilter: const ColorFilter.mode(gold, BlendMode.srcIn),
-                      child: CachedNetworkImage(
-                        imageUrl: apiClient.resolveUrl(iconUrl),
-                        fit: BoxFit.contain,
-                        placeholder: (c, u) => const SizedBox.shrink(),
-                        errorWidget: (c, u, e) => Icon(_getAmenityIcon(name), color: gold, size: 38),
-                      ),
-                    )
-                  : Icon(_getAmenityIcon(name), color: gold, size: 40),
+            LuxuryAmenityIcon(
+              name: name,
+              iconUrl: hasUploadedIcon ? apiClient.resolveUrl(rawIcon) : null,
+              size: 42,
             ),
             const SizedBox(height: 10),
             Padding(
