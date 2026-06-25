@@ -217,7 +217,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
         builder: (context, setModalState) => Container(
           padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom + 20),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF0F1115) : Colors.white,
+            color: isDark ? const Color(0xFF0B111E) : Colors.white,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
           ),
           child: Column(
@@ -464,7 +464,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
 
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: isDark ? Colors.black : Colors.white,
+      backgroundColor: isDark ? M4Theme.background : Colors.white,
       drawer: SidebarMenu(),
       body: Stack(
         children: [
@@ -500,6 +500,49 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                   ),
                   const SizedBox(height: 24),
                 ],
+                // Title + Location — web parity (below the hero, on the content bg)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        (project?['title']?.toString() ?? 'Project Name').toUpperCase(),
+                        style: GoogleFonts.dmSerifDisplay(
+                          color: isDark ? Colors.white : const Color(0xFF09090B),
+                          fontSize: 28,
+                          height: 1.0,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.08)),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(LucideIcons.mapPin, color: isDark ? Colors.white70 : Colors.black87, size: 14),
+                            const SizedBox(width: 6),
+                            Text(
+                              (project?['locationName'] ?? (project?['location'] is Map ? project?['location']?['name'] : project?['location']) ?? 'Mazgaon').toString(),
+                              style: GoogleFonts.montserrat(
+                                color: isDark ? Colors.white : Colors.black,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Row(
@@ -559,53 +602,24 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                 colors: [
                   Colors.black.withValues(alpha: 0.1),
                   Colors.transparent,
-                  (isDark ? Colors.black : Colors.white).withValues(alpha: 0.9),
-                  (isDark ? Colors.black : Colors.white),
+                  (isDark ? M4Theme.background : Colors.white).withValues(alpha: 0.9),
+                  (isDark ? M4Theme.background : Colors.white),
                 ],
                 stops: const [0.0, 0.4, 0.85, 1.0],
               ),
             ),
           ),
+          // Web parity: hero shows ONLY the status badge (bottom-left).
           Positioned(
             bottom: 24,
             left: 24,
-            right: 24,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(4)),
-                  child: Text((project?['status']?.toString().toUpperCase() ?? 'ONGOING'), style: GoogleFonts.montserrat(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1)),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  (project?['title']?.toString() ?? 'Project Name').toUpperCase(),
-                  style: GoogleFonts.montserrat(
-                    color: isDark ? Colors.white : Colors.black, 
-                    fontSize: 32, 
-                    height: 1.0, 
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -1.5,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Icon(LucideIcons.mapPin, color: isDark ? Colors.white70 : Colors.black.withValues(alpha: 0.7), size: 14),
-                    const SizedBox(width: 6),
-                    Text(
-                      (project?['locationName'] ?? project?['location']?['name'] ?? 'Mazgaon').toString().toUpperCase(),
-                      style: GoogleFonts.montserrat(
-                        color: isDark ? Colors.white : Colors.black, 
-                        fontSize: 12, 
-                        fontWeight: FontWeight.w900, 
-                        letterSpacing: 1
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(4)),
+              child: Text(
+                (project?['status']?.toString().toUpperCase() ?? 'ONGOING'),
+                style: GoogleFonts.montserrat(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.5),
+              ),
             ),
           ),
           // Scrollable Header Actions (Match Web Absolute Logic)
@@ -675,7 +689,6 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
               subtitle: 'HIGH RES • PDF',
               icon: LucideIcons.fileText,
               onView: () => _launchAction('Opening...', flyerUrl),
-              onDownload: () => _launchAction('Downloading...', flyerUrl),
             ),
           ],
         ],
@@ -887,7 +900,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
           Container(
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF0F1115) : Colors.white,
+              color: isDark ? const Color(0xFF0B111E) : Colors.white,
               borderRadius: BorderRadius.circular(24),
               border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
               boxShadow: isDark ? [] : [
@@ -1382,7 +1395,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0F1115) : const Color(0xFFF8FAFC),
+        color: isDark ? const Color(0xFF0B111E) : const Color(0xFFF8FAFC),
         borderRadius: BorderRadius.circular(40),
         border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
       ),
@@ -1764,7 +1777,7 @@ class _LocationMapState extends State<_LocationMap> {
     final url = 'https://www.google.com/maps?q=${Uri.encodeComponent(widget.location)}&output=embed';
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(Colors.transparent)
+      ..setBackgroundColor(const Color(0xFFE8EAED))
       ..loadRequest(Uri.parse(url));
   }
 
@@ -1774,6 +1787,7 @@ class _LocationMapState extends State<_LocationMap> {
     return Container(
       height: 280,
       decoration: BoxDecoration(
+        color: const Color(0xFFE8EAED),
         borderRadius: BorderRadius.circular(32),
         border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
       ),

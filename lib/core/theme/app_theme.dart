@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class M4Theme {
-  // Premium Zinc Palette (Web Match)
-  static const Color background = Color(0xFF000000); // Pitch Black
-  static const Color surface = Color(0xFF09090B);    // Deep Zinc
-  static const Color institutionalBlack = Color(0xFF09090B); 
-  static const Color premiumBlue = institutionalBlack; // Redefine for backward compatibility if needed, but it's now neutral
-  
+  // Web-matched "Ultra Deep Slate" dark palette (globals.css .dark tokens).
+  static const Color background = Color(0xFF04060B); // hsl(222 47% 3%) deep slate
+  static const Color surface = Color(0xFF0B111E);    // hsl(222 47% 8%) card
+  static const Color institutionalBlack = Color(0xFF0B111E);
+  // Accent used for section labels/highlights. Was near-black (invisible on dark);
+  // now the M4 gold so it reads on both light and dark surfaces.
+  static const Color premiumBlue = Color(0xFFC5A358); // M4 gold accent
+
   static const Color textPrimary = Color(0xFFF8FAFC);
-  static const Color textSecondary = Color(0xFFA1A1AA); // Zinc-400
-  static const Color border = Color(0xFF27272A);      // Zinc-800
+  static const Color textSecondary = Color(0xFFCFD7E2); // hsl(215 25% 85%) bright muted (web)
+  static const Color border = Color(0xFF10192D);        // hsl(222 47% 12%)
 
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true,
@@ -24,6 +26,7 @@ class M4Theme {
       onPrimary: Colors.white,
       onSurface: Color(0xFF09090B),
       outline: Color(0xFFE4E4E7),    // Zinc-200
+      surfaceTint: Colors.transparent,
     ),
     textTheme: GoogleFonts.montserratTextTheme().copyWith(
       displayLarge: GoogleFonts.montserrat(
@@ -71,6 +74,7 @@ class M4Theme {
       background: background,
       onPrimary: background,
       onSurface: textPrimary,
+      surfaceTint: Colors.transparent, // no M3 elevation tint (kills the muddy cast)
     ),
     textTheme: GoogleFonts.montserratTextTheme().copyWith(
       displayLarge: GoogleFonts.montserrat(
@@ -105,7 +109,7 @@ class M4Theme {
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: premiumBlue,
+        backgroundColor: textPrimary,
         foregroundColor: background,
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
         shape: RoundedRectangleBorder(
