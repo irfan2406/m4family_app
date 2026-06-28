@@ -71,6 +71,7 @@ class ProjectListScreen extends ConsumerWidget {
                         final selectedLocs = ref.watch(selectedLocationsProvider);
                         final selectedConfigs = ref.watch(selectedConfigsProvider);
                         final selectedAreas = ref.watch(selectedAreasProvider);
+                        final selectedTypes = ref.watch(selectedTypesProvider);
 
                         return ListView(
                           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -105,6 +106,17 @@ class ProjectListScreen extends ConsumerWidget {
                                 final current = List<String>.from(ref.read(selectedAreasProvider));
                                 if (current.contains(val)) current.remove(val); else current.add(val);
                                 ref.read(selectedAreasProvider.notifier).state = current;
+                              },
+                            ),
+                            const SizedBox(height: 32),
+                            _FilterSection(
+                              title: 'PROPERTY TYPE',
+                              options: const ["RESIDENTIAL", "COMMERCIAL"],
+                              selectedOptions: selectedTypes,
+                              onToggle: (val) {
+                                final current = List<String>.from(ref.read(selectedTypesProvider));
+                                if (current.contains(val)) current.remove(val); else current.add(val);
+                                ref.read(selectedTypesProvider.notifier).state = current;
                               },
                             ),
                             const SizedBox(height: 48),
@@ -163,82 +175,95 @@ class ProjectListScreen extends ConsumerWidget {
           children: [
             // 🏷️ Custom Header
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 20, 24, 20),
+              padding: const EdgeInsets.fromLTRB(16, 20, 16, 20),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          if (cpCatalogMode) {
-                            ref.read(cpNavigationIndexProvider.notifier).state = 0;
-                            context.go('/home');
-                            return;
-                          }
-                          if (Navigator.canPop(context)) {
-                            Navigator.pop(context);
-                          }
-                          ref.read(navigationProvider.notifier).state = 0;
-                          ref.read(guestNavigationProvider.notifier).state = 0;
-                        },
-                        borderRadius: BorderRadius.circular(12),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Icon(LucideIcons.arrowLeft, color: Theme.of(context).colorScheme.onSurface, size: 24),
+                  Expanded(
+                    child: Row(
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            if (cpCatalogMode) {
+                              ref.read(cpNavigationIndexProvider.notifier).state = 0;
+                              context.go('/home');
+                              return;
+                            }
+                            if (Navigator.canPop(context)) {
+                              Navigator.pop(context);
+                            }
+                            ref.read(navigationProvider.notifier).state = 0;
+                            ref.read(guestNavigationProvider.notifier).state = 0;
+                          },
+                          borderRadius: BorderRadius.circular(12),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Icon(LucideIcons.arrowLeft, color: Theme.of(context).colorScheme.onSurface, size: 24),
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 16),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (cpCatalogMode) ...[
-                            Text(
-                              'M4 PROPERTIES',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 22,
-                                fontWeight: FontWeight.w900,
-                                color: Theme.of(context).colorScheme.onSurface,
-                                letterSpacing: -0.5,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              'DISCOVER CURATED LUXURY',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 9,
-                                fontWeight: FontWeight.w700,
-                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.45),
-                                letterSpacing: 2.5,
-                              ),
-                            ),
-                          ] else ...[
-                            Text(
-                              'DISCOVER',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 9,
-                                fontWeight: FontWeight.w700,
-                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.45),
-                                letterSpacing: 3,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              'M4 PROPERTIES',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w800,
-                                color: Theme.of(context).colorScheme.onSurface,
-                                letterSpacing: -0.3,
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ],
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (cpCatalogMode) ...[
+                                Text(
+                                  'M4 PROPERTIES',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w900,
+                                    color: Theme.of(context).colorScheme.onSurface,
+                                    letterSpacing: -0.5,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  'CURATED LUXURY',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 8,
+                                    fontWeight: FontWeight.w700,
+                                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.45),
+                                    letterSpacing: 1.5,
+                                  ),
+                                ),
+                              ] else ...[
+                                Text(
+                                  'DISCOVER',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 8,
+                                    fontWeight: FontWeight.w700,
+                                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.45),
+                                    letterSpacing: 2,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  'M4 PROPERTIES',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w800,
+                                    color: Theme.of(context).colorScheme.onSurface,
+                                    letterSpacing: -0.3,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
+                  const SizedBox(width: 8),
                   Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       // View toggle pill (grid | list) — web parity
                       Container(
@@ -264,13 +289,29 @@ class ProjectListScreen extends ConsumerWidget {
                           ],
                         ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 6),
+                      // Filter button (sliders icon)
+                      GestureDetector(
+                        onTap: () => _showFilterBottomSheet(context, ref),
+                        child: Container(
+                          width: 40,
+                          height: 36,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.08)),
+                          ),
+                          child: Icon(LucideIcons.sliders, size: 16, color: Theme.of(context).colorScheme.onSurface),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
                       // "..." menu -> sidebar drawer (web parity)
                       Builder(
                         builder: (ctx) => GestureDetector(
                           onTap: () => Scaffold.of(ctx).openDrawer(),
                           child: Container(
-                            width: 48,
+                            width: 40,
                             height: 36,
                             alignment: Alignment.center,
                             decoration: BoxDecoration(

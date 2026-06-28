@@ -39,7 +39,7 @@ class GuestMainShell extends ConsumerWidget {
             index: currentIndex,
             children: screens,
           ),
-          if (!isDrawerOpen && currentIndex != 2)
+          if (!isDrawerOpen)
             Align(
               alignment: Alignment.bottomCenter,
               child: _GuestNavigationPill(

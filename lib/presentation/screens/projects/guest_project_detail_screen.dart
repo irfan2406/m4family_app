@@ -56,6 +56,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
   TimeOfDay? _leadTime;
   final TextEditingController _notesController = TextEditingController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  String? _modalErrorMessage;
 
   @override
   void initState() {
@@ -220,17 +221,25 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     super.dispose();
   }
 
-  Future<void> _submitInquiry(String type, [String? plan]) async {
+  Future<void> _submitInquiry(String type, [String? plan, StateSetter? setModalState]) async {
     final name = _nameController.text.trim();
     final phone = _phoneController.text.trim();
     if (name.isEmpty || phone.isEmpty) {
-      _launchAction('Please enter your name and phone number', null, true);
+      if (setModalState != null) {
+        setModalState(() => _modalErrorMessage = 'Please enter your name and phone number');
+      } else {
+        _launchAction('Please enter your name and phone number', null, true);
+      }
       return;
     }
     final isBooking = type == 'VC' || type == 'Site Visit';
     // Web parity: a Video Call / Site Visit requires a scheduled date + time.
     if (isBooking && (_leadDate == null || _leadTime == null)) {
-      _launchAction('Please schedule a date and time for your visit', null, true);
+      if (setModalState != null) {
+        setModalState(() => _modalErrorMessage = 'Please schedule a date and time for your visit');
+      } else {
+        _launchAction('Please schedule a date and time for your visit', null, true);
+      }
       return;
     }
 
@@ -273,12 +282,57 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
           _launchAction(isBooking ? 'Booking request received! Our team will call you to confirm the time.' : 'Interest registered! Our team will contact you shortly.', null);
         }
       } else {
-        _launchAction(res.data['message'] ?? 'Failed to submit', null, true);
+        final err = res.data['message'] ?? 'Failed to submit';
+        if (setModalState != null) {
+          setModalState(() => _modalErrorMessage = err);
+        } else {
+          _launchAction(err, null, true);
+        }
       }
     } catch (e) {
-      _launchAction('Connection error. Please try again.', null, true);
+      const err = 'Connection error. Please try again.';
+      if (setModalState != null) {
+        setModalState(() => _modalErrorMessage = err);
+      } else {
+        _launchAction(err, null, true);
+      }
     } finally {
       if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  void _startCinematicTour(BuildContext context, dynamic project) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: false,
+      barrierColor: Colors.black.withOpacity(0.85),
+      transitionDuration: const Duration(milliseconds: 400),
+      pageBuilder: (ctx, animation, secondaryAnimation) {
+        return _CinematicTourOverlay(
+          project: project,
+          onBookVideoCall: () {
+            Navigator.pop(ctx);
+            _showRequestDetailsDialog(project, null, 'VC');
+          },
+          onBookSiteVisit: () {
+            Navigator.pop(ctx);
+            _showRequestDetailsDialog(project, null, 'Site Visit');
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _launchThreeSixty(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not launch virtual tour link')),
+        );
+      }
     }
   }
 
@@ -297,6 +351,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     _leadType = type == 'Site Visit' ? 'Site Visit' : 'VC';
     _leadDate = null;
     _leadTime = null;
+    _modalErrorMessage = null;
     _notesController.clear();
 
     showModalBottomSheet(
@@ -450,8 +505,37 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                     ),
                     
                     const SizedBox(height: 40),
+                    if (_modalErrorMessage != null) ...[
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFDC2626),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          _modalErrorMessage!,
+                          style: GoogleFonts.montserrat(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
                     _ScaleButton(
-                      onTap: () => _submitInquiry(_leadType, planName),
+                      onTap: () {
+                        final name = _nameController.text.trim();
+                        final phone = _phoneController.text.trim();
+                        if (name.isEmpty || phone.isEmpty) {
+                          setModalState(() => _modalErrorMessage = 'Please enter your name and phone number');
+                          return;
+                        }
+                        if (_leadDate == null || _leadTime == null) {
+                          setModalState(() => _modalErrorMessage = 'Please schedule a date and time for your visit');
+                          return;
+                        }
+                        setModalState(() => _modalErrorMessage = null);
+                        _submitInquiry(_leadType, planName, setModalState);
+                      },
                       child: Container(
                         width: double.infinity,
                         padding: const EdgeInsets.symmetric(vertical: 20),
@@ -633,31 +717,46 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
               children: [
                 _buildHero(project, isDark),
                 const SizedBox(height: 20),
-                // Web parity: only show Exterior/Interior quick-access when those images exist.
-                if (_exteriorImages.isNotEmpty || _interiorImages.isNotEmpty) ...[
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Row(
+                // Quick-access row: Exterior, Interior (Web parity: no VR or Cinematic shown on guest portal)
+                Builder(
+                  builder: (context) {
+                    final hasExterior = _exteriorImages.isNotEmpty;
+                    final hasInterior = _interiorImages.isNotEmpty;
+
+                    if (!hasExterior && !hasInterior) {
+                      return const SizedBox.shrink();
+                    }
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        if (_exteriorImages.isNotEmpty)
-                          _HeroMediaThumb(
-                            label: 'EXTERIOR',
-                            imageUrl: apiClient.resolveUrl(_exteriorImages.first),
-                            onTap: () => _openHeroGallery(_exteriorImages),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          child: Wrap(
+                            spacing: 12,
+                            runSpacing: 12,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              if (hasExterior)
+                                _HeroMediaThumb(
+                                  label: 'EXTERIOR',
+                                  imageUrl: apiClient.resolveUrl(_exteriorImages.first),
+                                  onTap: () => _openHeroGallery(_exteriorImages),
+                                ),
+                              if (hasInterior)
+                                _HeroMediaThumb(
+                                  label: 'INTERIOR',
+                                  imageUrl: apiClient.resolveUrl(_interiorImages.first),
+                                  onTap: () => _openHeroGallery(_interiorImages),
+                                ),
+                            ],
                           ),
-                        if (_exteriorImages.isNotEmpty && _interiorImages.isNotEmpty)
-                          const SizedBox(width: 12),
-                        if (_interiorImages.isNotEmpty)
-                          _HeroMediaThumb(
-                            label: 'INTERIOR',
-                            imageUrl: apiClient.resolveUrl(_interiorImages.first),
-                            onTap: () => _openHeroGallery(_interiorImages),
-                          ),
+                        ),
+                        const SizedBox(height: 24),
                       ],
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                ],
+                    );
+                  }
+                ),
                 // Title + Location — web parity (below the hero, on the content bg)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -707,7 +806,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                     children: [
                       Expanded(child: _OverviewActionCard(label: 'VIDEO CALL', value: 'Connect Now', icon: LucideIcons.video, isAction: true, onTap: () => _showRequestDetailsDialog(project, null, 'VC'))),
                       const SizedBox(width: 10),
-                      Expanded(child: _OverviewActionCard(label: 'COMPLETION', value: '${project?['completion'] ?? 0}%', icon: LucideIcons.checkCircle2)),
+                      Expanded(child: _OverviewActionCard(label: 'COMPLETION', value: '${project?['completion'] ?? 0}%', icon: LucideIcons.calendar)),
                       const SizedBox(width: 10),
                       Expanded(child: _OverviewActionCard(label: 'SITE VISIT', value: 'Book Tour', icon: LucideIcons.eye, isAction: true, onTap: () => _showRequestDetailsDialog(project, null, 'Site Visit'))),
                     ],
@@ -1089,7 +1188,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                 const SizedBox(height: 16),
                 _InterestInput(hint: 'EMAIL ADDRESS', controller: _emailController),
                 const SizedBox(height: 16),
-                _InterestInput(hint: 'PHONE NUMBER *', controller: _phoneController),
+                _InterestInput(hint: '+91 98653 21250 *', controller: _phoneController),
                 const SizedBox(height: 16),
                 _InterestInput(hint: 'YOUR LOCATION (E.G. DUBAI, UAE)', controller: _locationController),
                 const SizedBox(height: 24),
@@ -1341,11 +1440,15 @@ class _BottomIconAction extends StatelessWidget {
 class _HeroMediaThumb extends StatelessWidget {
   final String label;
   final String? imageUrl;
+  final bool isVR;
+  final bool isCinematic;
   final VoidCallback onTap;
 
   const _HeroMediaThumb({
     required this.label, 
     this.imageUrl, 
+    this.isVR = false,
+    this.isCinematic = false,
     required this.onTap
   });
 
@@ -1369,21 +1472,45 @@ class _HeroMediaThumb extends StatelessWidget {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                if (imageUrl != null)
-                  CachedNetworkImage(
-                    imageUrl: imageUrl!, 
-                    fit: BoxFit.cover, 
-                    errorWidget: (c, e, s) => Container(color: Colors.white10),
-                    placeholder: (c, e) => Container(color: Colors.white10),
+                if (isVR || isCinematic)
+                  Container(
+                    color: Colors.black.withValues(alpha: 0.4),
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            isVR ? LucideIcons.refreshCw : LucideIcons.playCircle, 
+                            color: Colors.white, 
+                            size: 16
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            label,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.montserrat(color: Colors.white, fontSize: 6, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                else ...[
+                  if (imageUrl != null)
+                    CachedNetworkImage(
+                      imageUrl: imageUrl!, 
+                      fit: BoxFit.cover, 
+                      errorWidget: (c, e, s) => Container(color: Colors.white10),
+                      placeholder: (c, e) => Container(color: Colors.white10),
+                    ),
+                  Container(color: Colors.black.withValues(alpha: 0.3)),
+                  Center(
+                    child: Text(
+                      label,
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.montserrat(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                    ),
                   ),
-                Container(color: Colors.black.withValues(alpha: 0.3)),
-                Center(
-                  child: Text(
-                    label,
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.montserrat(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 0.5),
-                  ),
-                ),
+                ],
               ],
             ),
           ),
@@ -1579,7 +1706,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   children: [
                     Text('ESTIMATED COMPLETION DATE', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 1)),
                     const SizedBox(height: 12),
-                    Text(estimatedCompletion, style: GoogleFonts.dmSerifDisplay(fontSize: 64, color: isDark ? Colors.white : Colors.black, height: 1)),
+                    Text(estimatedCompletion, style: GoogleFonts.dmSerifDisplay(fontSize: 42, color: isDark ? Colors.white : Colors.black, height: 1)),
                     const SizedBox(height: 24),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1590,9 +1717,9 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                           overflow: showFullProgress ? TextOverflow.visible : TextOverflow.ellipsis,
                           style: GoogleFonts.montserrat(
                             fontSize: 11, 
-                            color: isDark ? Colors.white.withValues(alpha: 0.5) : Colors.black.withValues(alpha: 0.6), 
+                            color: isDark ? Colors.white54 : Colors.black54, 
                             height: 1.6, 
-                            fontWeight: FontWeight.bold
+                            fontWeight: FontWeight.w500
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -1662,7 +1789,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
             ),
             const SizedBox(height: 32),
             SizedBox(
-              height: 480,
+              height: 305,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -1675,8 +1802,8 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   final status = phase['status']?.toString().toUpperCase() ?? 'UPCOMING';
                   
                   return Container(
-                    width: 300,
-                    margin: const EdgeInsets.only(right: 24),
+                    width: 240,
+                    margin: const EdgeInsets.only(right: 16),
                     decoration: BoxDecoration(
                       color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
                       borderRadius: BorderRadius.circular(32),
@@ -1693,11 +1820,27 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                 borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
                                 child: CachedNetworkImage(
                                   imageUrl: imageUrl, 
-                                  height: 200, 
-                                  width: 300, 
+                                  height: 140, 
+                                  width: 240, 
                                   fit: BoxFit.cover, 
-                                  placeholder: (c, u) => Container(height: 200, color: Colors.white10),
-                                  errorWidget: (c, e, s) => Container(height: 200, color: Colors.white10),
+                                  placeholder: (c, u) => Container(
+                                    height: 140, 
+                                    color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
+                                    child: Icon(
+                                      LucideIcons.image,
+                                      color: isDark ? Colors.white24 : Colors.black26,
+                                      size: 24,
+                                    ),
+                                  ),
+                                  errorWidget: (c, e, s) => Container(
+                                    height: 140, 
+                                    color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
+                                    child: Icon(
+                                      LucideIcons.image,
+                                      color: isDark ? Colors.white24 : Colors.black26,
+                                      size: 24,
+                                    ),
+                                  ),
                                 ),
                               ),
                               Positioned(
@@ -1716,32 +1859,34 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(24),
+                          padding: const EdgeInsets.all(16),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(projectName.toUpperCase(), style: GoogleFonts.dmSerifDisplay(fontSize: 12, fontWeight: FontWeight.bold, color: isDark ? Colors.white : const Color(0xFF0F172A), letterSpacing: 1)),
-                              const SizedBox(height: 16),
+                              Text(projectName.toUpperCase(), style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.bold, color: isDark ? Colors.white : const Color(0xFF0F172A), letterSpacing: 1)),
+                              const SizedBox(height: 12),
                               Row(
                                 children: [
                                   Stack(
                                     alignment: Alignment.center,
                                     children: [
                                       SizedBox(
-                                        width: 36,
-                                        height: 36,
-                                        child: CircularProgressIndicator(
-                                          value: (phase['progressPercent'] ?? phase['progress'] ?? 0).toDouble() / 100,
-                                          strokeWidth: 3,
-                                          backgroundColor: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05),
-                                          valueColor: const AlwaysStoppedAnimation<Color>(M4Theme.premiumBlue),
+                                        width: 32,
+                                        height: 32,
+                                        child: CustomPaint(
+                                          painter: _DashedCirclePainter(
+                                            progress: (phase['progressPercent'] ?? phase['progress'] ?? 0).toDouble() / 100,
+                                            color: M4Theme.premiumBlue,
+                                            backgroundColor: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1),
+                                            strokeWidth: 2.5,
+                                          ),
                                         ),
                                       ),
-                                      Text('${phase['progressPercent'] ?? phase['progress'] ?? 0}%', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900)),
+                                      Text('${phase['progressPercent'] ?? phase['progress'] ?? 0}%', style: GoogleFonts.montserrat(fontSize: 7, fontWeight: FontWeight.w900)),
                                     ],
                                   ),
-                                  const SizedBox(width: 16),
-                                  Expanded(child: Text((phase['name'] ?? phase['phaseName'] ?? 'PHASE').toString().toUpperCase(), style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: isDark ? Colors.white.withValues(alpha: 0.7) : Colors.black.withValues(alpha: 0.7), letterSpacing: 1.5))),
+                                  const SizedBox(width: 12),
+                                  Expanded(child: Text((phase['name'] ?? phase['phaseName'] ?? 'PHASE').toString().toUpperCase(), style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: isDark ? Colors.white.withValues(alpha: 0.7) : Colors.black.withValues(alpha: 0.7), letterSpacing: 1.2))),
                                 ],
                               ),
                             ],
@@ -1943,11 +2088,36 @@ class _LocationMapState extends State<_LocationMap> {
   @override
   void initState() {
     super.initState();
-    final url = 'https://www.google.com/maps?q=${Uri.encodeComponent(widget.location)}&output=embed';
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0xFFE8EAED))
-      ..loadRequest(Uri.parse(url));
+      ..setBackgroundColor(const Color(0xFF0B111E));
+
+    final locEncoded = Uri.encodeComponent(widget.location);
+    final htmlContent = '''
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+          <style>
+            body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #0b111e; }
+            iframe {
+              width: 100%;
+              height: 100%;
+              border: 0;
+              filter: invert(90%) hue-rotate(180deg) brightness(95%) contrast(90%);
+            }
+          </style>
+        </head>
+        <body>
+          <iframe 
+            src="https://www.google.com/maps?q=$locEncoded&output=embed"
+            allowfullscreen
+            loading="lazy"
+          ></iframe>
+        </body>
+      </html>
+    ''';
+    _controller.loadHtmlString(htmlContent);
   }
 
   @override
@@ -1956,9 +2126,19 @@ class _LocationMapState extends State<_LocationMap> {
     return Container(
       height: 280,
       decoration: BoxDecoration(
-        color: const Color(0xFFE8EAED),
-        borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
+        color: isDark ? const Color(0xFF0B111E) : Colors.white,
+        borderRadius: BorderRadius.circular(40),
+        border: Border.all(
+          color: isDark ? const Color(0xFF0B111E) : Colors.white,
+          width: 4,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.15),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          )
+        ],
       ),
       clipBehavior: Clip.antiAlias,
       child: Stack(
@@ -1973,8 +2153,9 @@ class _LocationMapState extends State<_LocationMap> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF1E293B) : Colors.white.withValues(alpha: 0.95),
+                  color: isDark ? const Color(0xFF0B111E) : Colors.white.withValues(alpha: 0.95),
                   borderRadius: BorderRadius.circular(30),
+                  border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.08)),
                   boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.15), blurRadius: 10)],
                 ),
                 child: Row(
@@ -1998,25 +2179,31 @@ class _DashedCirclePainter extends CustomPainter {
   final double progress;
   final Color color;
   final Color backgroundColor;
+  final double? strokeWidth;
 
-  _DashedCirclePainter({required this.progress, required this.color, required this.backgroundColor});
+  _DashedCirclePainter({
+    required this.progress, 
+    required this.color, 
+    required this.backgroundColor,
+    this.strokeWidth,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;
-    const strokeWidth = 4.0;
+    final actualStrokeWidth = strokeWidth ?? 4.0;
     const dashCount = 60;
     const gap = 0.5;
 
     final bgPaint = Paint()
       ..color = backgroundColor
-      ..strokeWidth = strokeWidth
+      ..strokeWidth = actualStrokeWidth
       ..style = PaintingStyle.stroke;
 
     final progressPaint = Paint()
       ..color = color
-      ..strokeWidth = strokeWidth
+      ..strokeWidth = actualStrokeWidth
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
@@ -2050,4 +2237,473 @@ class _DashedCirclePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => true;
+}
+
+class _CinematicTourOverlay extends StatefulWidget {
+  final dynamic project;
+  final VoidCallback onBookVideoCall;
+  final VoidCallback onBookSiteVisit;
+
+  const _CinematicTourOverlay({
+    required this.project,
+    required this.onBookVideoCall,
+    required this.onBookSiteVisit,
+  });
+
+  @override
+  State<_CinematicTourOverlay> createState() => _CinematicTourOverlayState();
+}
+
+class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
+  int _currentStep = 0;
+  final PageController _pageController = PageController();
+  List<String> _uniqueImages = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _compileImages();
+  }
+
+  void _compileImages() {
+    final List<String> imgs = [];
+    final project = widget.project;
+    if (project['heroImage'] != null && project['heroImage'].toString().isNotEmpty) {
+      imgs.add(project['heroImage'].toString());
+    }
+    if (project['heroImages'] is List) {
+      imgs.addAll((project['heroImages'] as List).map((e) => e.toString()));
+    }
+    if (project['images'] is List) {
+      imgs.addAll((project['images'] as List).map((e) => e.toString()));
+    }
+    if (project['exteriorImages'] is List) {
+      imgs.addAll((project['exteriorImages'] as List).map((e) => e.toString()));
+    }
+    if (project['interiorImages'] is List) {
+      imgs.addAll((project['interiorImages'] as List).map((e) => e.toString()));
+    }
+    _uniqueImages = imgs.toSet().where((img) => img.isNotEmpty).toList();
+    if (_uniqueImages.isEmpty) {
+      _uniqueImages.add('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final title = (widget.project['title']?.toString() ?? 'M4 Estate').toUpperCase();
+    final description = widget.project['description']?.toString() ?? 'A curated luxury development by M4 Properties.';
+    final primaryImg = _uniqueImages.first;
+
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            // Immersive background step-dependent
+            Positioned.fill(
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 500),
+                child: _buildBackground(primaryImg),
+              ),
+            ),
+            
+            // Content
+            Column(
+              children: [
+                // Top Progress Indicators & Close button
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 20, 24, 10),
+                  child: Row(
+                    children: [
+                      // Linear step progress bars
+                      Expanded(
+                        child: Row(
+                          children: List.generate(4, (index) {
+                            return Expanded(
+                              child: Container(
+                                height: 3,
+                                margin: const EdgeInsets.symmetric(horizontal: 3),
+                                decoration: BoxDecoration(
+                                  color: index <= _currentStep 
+                                      ? M4Theme.premiumBlue 
+                                      : Colors.white.withOpacity(0.2),
+                                  borderRadius: BorderRadius.circular(1.5),
+                                ),
+                              ),
+                            );
+                          }),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      // Close button
+                      GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: Container(
+                          width: 36,
+                          height: 36,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withOpacity(0.1),
+                          ),
+                          child: const Icon(LucideIcons.x, color: Colors.white, size: 18),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Main step content
+                Expanded(
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 400),
+                    child: _buildStepContent(title, description),
+                  ),
+                ),
+
+                // Footer Navigation
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 10, 24, 30),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Back Button
+                      if (_currentStep > 0)
+                        GestureDetector(
+                          onTap: () => setState(() => _currentStep--),
+                          child: Text(
+                            'BACK',
+                            style: GoogleFonts.montserrat(
+                              color: Colors.white.withOpacity(0.6),
+                              fontSize: 10,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 2.0,
+                            ),
+                          ),
+                        )
+                      else
+                        const SizedBox.shrink(),
+
+                      // Continue Button
+                      GestureDetector(
+                        onTap: () {
+                          if (_currentStep < 3) {
+                            setState(() => _currentStep++);
+                          } else {
+                            Navigator.pop(context);
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            _currentStep == 3 ? 'CLOSE EXPLORER' : 'CONTINUE',
+                            style: GoogleFonts.montserrat(
+                              color: Colors.black,
+                              fontSize: 9,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 1.5,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBackground(String primaryImg) {
+    if (_currentStep == 0) {
+      return ImageBackground(imageUrl: primaryImg, blur: 0);
+    } else if (_currentStep == 1) {
+      return ImageBackground(imageUrl: primaryImg, blur: 15);
+    } else {
+      return Container(color: Colors.black);
+    }
+  }
+
+  Widget _buildStepContent(String title, String description) {
+    switch (_currentStep) {
+      case 0:
+        return _buildStep0(title);
+      case 1:
+        return _buildStep1(description);
+      case 2:
+        return _buildStep2();
+      case 3:
+        return _buildStep3();
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+
+  Widget _buildStep0(String title) {
+    return Container(
+      key: const ValueKey('step0'),
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.dmSerifDisplay(
+              color: Colors.white,
+              fontSize: 36,
+              height: 1.1,
+              letterSpacing: -0.5,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Container(width: 40, height: 1.5, color: M4Theme.premiumBlue),
+          const SizedBox(height: 16),
+          Text(
+            'DISCOVER THE UNSEEN',
+            style: GoogleFonts.montserrat(
+              color: Colors.white70,
+              fontSize: 9,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 4.0,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStep1(String description) {
+    return Container(
+      key: const ValueKey('step1'),
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      alignment: Alignment.center,
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.08),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: Colors.white.withOpacity(0.15), width: 1.5),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'THE VISION',
+              style: GoogleFonts.montserrat(
+                color: M4Theme.premiumBlue,
+                fontSize: 10,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 3.0,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              description,
+              style: GoogleFonts.montserrat(
+                color: Colors.white.withOpacity(0.85),
+                fontSize: 13,
+                height: 1.6,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.05, end: 0);
+  }
+
+  Widget _buildStep2() {
+    return Container(
+      key: const ValueKey('step2'),
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'VISUAL DISCOVERY',
+            style: GoogleFonts.montserrat(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 3.0,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Swipe to explore design details.',
+            style: GoogleFonts.montserrat(
+              color: Colors.white38,
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 32),
+          SizedBox(
+            height: 300,
+            child: PageView.builder(
+              controller: _pageController,
+              itemCount: _uniqueImages.length,
+              itemBuilder: (context, index) {
+                final img = _uniqueImages[index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(24),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.white24, width: 1.5),
+                      ),
+                      child: ImageBackground(imageUrl: img, blur: 0),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 24),
+          // Page indicators
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(_uniqueImages.length, (index) {
+              return ListenableBuilder(
+                listenable: _pageController,
+                builder: (context, _) {
+                  final page = _pageController.hasClients ? (_pageController.page ?? 0).round() : 0;
+                  final isSelected = page == index;
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    width: isSelected ? 16 : 6,
+                    height: 6,
+                    margin: const EdgeInsets.symmetric(horizontal: 3),
+                    decoration: BoxDecoration(
+                      color: isSelected ? Colors.white : Colors.white24,
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                  );
+                },
+              );
+            }),
+          ),
+        ],
+      ),
+    ).animate().fadeIn(duration: 400.ms);
+  }
+
+  Widget _buildStep3() {
+    return Container(
+      key: const ValueKey('step3'),
+      padding: const EdgeInsets.symmetric(horizontal: 32),
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: M4Theme.premiumBlue.withOpacity(0.2),
+              border: Border.all(color: M4Theme.premiumBlue, width: 2),
+            ),
+            child: const Icon(LucideIcons.check, color: M4Theme.premiumBlue, size: 36),
+          ).animate().scale(delay: 150.ms, duration: 400.ms, curve: Curves.easeOutBack),
+          const SizedBox(height: 32),
+          Text(
+            'YOUR JOURNEY STARTS HERE',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.montserrat(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 2.0,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'Select a booking mode to interact with our developers.',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.montserrat(
+              color: Colors.white38,
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 48),
+          
+          // Action buttons
+          SizedBox(
+            width: double.infinity,
+            height: 56,
+            child: ElevatedButton(
+              onPressed: widget.onBookVideoCall,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: M4Theme.premiumBlue,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              ),
+              child: Text(
+                'BOOK VIDEO CALL',
+                style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 2),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            height: 56,
+            child: OutlinedButton(
+              onPressed: widget.onBookSiteVisit,
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: Colors.white24, width: 1.5),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              ),
+              child: Text(
+                'CONTINUE TO SITE VISIT',
+                style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 2),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ).animate().fadeIn(duration: 400.ms);
+  }
+}
+
+class ImageBackground extends StatelessWidget {
+  final String imageUrl;
+  final double blur;
+
+  const ImageBackground({required this.imageUrl, required this.blur});
+
+  @override
+  Widget build(BuildContext context) {
+    final client = ProviderScope.containerOf(context).read(apiClientProvider);
+    final resolvedUrl = client.resolveUrl(imageUrl);
+    final childImage = CachedNetworkImage(
+      imageUrl: resolvedUrl,
+      fit: BoxFit.cover,
+      placeholder: (context, url) => Container(color: Colors.black26),
+      errorWidget: (context, url, error) => Image.network(
+        'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80',
+        fit: BoxFit.cover,
+      ),
+    );
+
+    if (blur == 0) return childImage;
+
+    return ImageFiltered(
+      imageFilter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
+      child: childImage,
+    );
+  }
 }

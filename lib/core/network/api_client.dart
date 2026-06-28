@@ -530,7 +530,7 @@ class ApiClient {
 
   String resolveUrl(String? url) {
     if (url == null || url.isEmpty) return "";
-    if (url.startsWith('http') || url.startsWith('tel:') || url.startsWith('mailto:')) return url;
+    if (url.startsWith('http') || url.startsWith('data:') || url.startsWith('tel:') || url.startsWith('mailto:')) return url;
 
     String root = baseUrl;
     if (root.endsWith('/api')) root = root.substring(0, root.length - 4);

@@ -111,14 +111,15 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
       backgroundColor: isDark ? Colors.black : Colors.white,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        centerTitle: true,
         title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text('WHO WE ARE', 
                 style: GoogleFonts.montserrat(
                   color: isDark ? Colors.white : Colors.black, 
                   fontWeight: FontWeight.bold, 
-                  fontSize: 16, 
+                  fontSize: 14, 
                   letterSpacing: 2
                 )),
             Text('M4 FAMILY COLLECTIVE', 
@@ -126,7 +127,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   color: isDark ? Colors.white : Colors.black, 
                   fontWeight: FontWeight.w400, 
                   fontSize: 8, 
-                  letterSpacing: 3
+                  letterSpacing: 2
                 )),
           ],
         ),
@@ -138,24 +139,55 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           ),
         ),
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(LucideIcons.arrowLeft, color: isDark ? Colors.white : Colors.black),
-          onPressed: () {
-            if (Navigator.of(context).canPop()) {
-              Navigator.pop(context);
-            } else {
-              ref.read(guestNavigationProvider.notifier).state = 0;
-            }
-          },
+        leadingWidth: 56,
+        leading: Center(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 12),
+            child: InkWell(
+              onTap: () {
+                if (Navigator.of(context).canPop()) {
+                  Navigator.pop(context);
+                } else {
+                  ref.read(guestNavigationProvider.notifier).state = 0;
+                }
+              },
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                width: 36,
+                height: 36,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.08)),
+                ),
+                child: Icon(LucideIcons.arrowLeft, color: isDark ? Colors.white : Colors.black, size: 16),
+              ),
+            ),
+          ),
         ),
         actions: [
           Builder(
-            builder: (context) => IconButton(
-              icon: Icon(LucideIcons.moreHorizontal, color: isDark ? Colors.white : Colors.black, size: 28),
-              onPressed: () => Scaffold.of(context).openDrawer(),
+            builder: (context) => Center(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 12),
+                child: InkWell(
+                  onTap: () => Scaffold.of(context).openDrawer(),
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    width: 40,
+                    height: 36,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white : Colors.black,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(LucideIcons.moreHorizontal, size: 18, color: isDark ? Colors.black : Colors.white),
+                  ),
+                ),
+              ),
             ),
           ),
-          const SizedBox(width: 8),
         ],
       ),
       drawer: const ConditionalDrawer(),
@@ -177,14 +209,19 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                     ? Center(child: CircularProgressIndicator(color: isDark ? Colors.white24 : Colors.black12))
                     : SingleChildScrollView(
                         controller: _scrollController,
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-                        child: AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 400),
-                          child: _getStepContent(),
+                        padding: const EdgeInsets.fromLTRB(24, 32, 24, 120),
+                        child: Column(
+                          children: [
+                            AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 400),
+                              child: _getStepContent(),
+                            ),
+                            const SizedBox(height: 32),
+                            _buildNavigationButtons(),
+                          ],
                         ),
                       ),
               ),
-              _buildNavigationButtons(),
             ],
           ),
         ),
@@ -241,10 +278,11 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
 
                   return Expanded(
                     child: GestureDetector(
-                    onTap: () {
-                      setState(() => _currentStep = idx);
-                      _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
-                    },
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        setState(() => _currentStep = idx);
+                        _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+                      },
                       child: Column(
                         children: [
                           AnimatedContainer(
@@ -273,7 +311,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                             child: Icon(
                               step['icon'],
                               color: isActive 
-                                  ? Colors.white 
+                                  ? (isDark ? Colors.black : Colors.white)
                                   : isCompleted 
                                       ? colorScheme.primary 
                                       : (isDark ? Colors.white60 : Colors.black38),
@@ -1074,61 +1112,60 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
 
   Widget _buildNavigationButtons() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final isLastStep = _currentStep == _steps.length - 1;
-
-    return Container(
-      padding: const EdgeInsets.fromLTRB(24, 16, 24, 40),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.black : Colors.white,
-        border: Border(top: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05))),
-      ),
-      child: Row(
-              children: [
-                if (_currentStep > 0)
-                  Expanded(
-                    flex: 1,
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 12),
-                      child: TextButton(
-                        onPressed: () {
-                          setState(() => _currentStep--);
-                          _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
-                        },
-                        style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 20),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                            side: BorderSide(color: isDark ? Colors.white24 : Colors.black, width: 1.5),
-                          ),
-                        ),
-                        child: Text('BACK', style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w900, fontSize: 10, letterSpacing: 2)),
-                      ),
-                    ),
+ 
+    return Row(
+      children: [
+        if (_currentStep > 0)
+          Expanded(
+            flex: 1,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 12),
+              child: OutlinedButton(
+                onPressed: () {
+                  setState(() => _currentStep--);
+                  _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+                },
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 18),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                if (_currentStep < _steps.length - 1)
-                  Expanded(
-                    flex: 2,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (_currentStep < _steps.length - 1) {
-                          setState(() => _currentStep++);
-                          _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: isDark ? Colors.white : Colors.black,
-                        foregroundColor: isDark ? Colors.black : Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 20),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                      ),
-                      child: Text(
-                        'NEXT STEP',
-                        style: GoogleFonts.montserrat(fontWeight: FontWeight.w900, fontSize: 10, letterSpacing: 2),
-                      ),
-                    ),
-                  ),
-              ],
+                  side: BorderSide(color: isDark ? Colors.white24 : Colors.black26, width: 1.5),
+                ),
+                child: Text('BACK', style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w900, fontSize: 10, letterSpacing: 2)),
+              ),
             ),
+          ),
+        if (_currentStep < _steps.length - 1)
+          Expanded(
+            flex: 2,
+            child: ElevatedButton(
+              onPressed: () {
+                if (_currentStep < _steps.length - 1) {
+                  setState(() => _currentStep++);
+                  _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: isDark ? Colors.white : Colors.black,
+                foregroundColor: isDark ? Colors.black : Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 18),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'NEXT STEP',
+                    style: GoogleFonts.montserrat(fontWeight: FontWeight.w900, fontSize: 10, letterSpacing: 2),
+                  ),
+                  const SizedBox(width: 8),
+                  Icon(LucideIcons.chevronRight, size: 14, color: isDark ? Colors.black : Colors.white),
+                ],
+              ),
+            ),
+          ),
+      ],
     );
   }
 

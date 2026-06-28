@@ -25,7 +25,6 @@ class CareersScreen extends ConsumerStatefulWidget {
 class _CareersScreenState extends ConsumerState<CareersScreen> {
   List<dynamic> _jobs = [];
   Map<String, dynamic>? _cmsData;
-  Map<String, dynamic>? _configData;
   bool _isLoading = true;
   String _activeCategory = 'ALL';
   final List<String> _categories = ["ALL", "SALES", "HR", "MARKETING", "PROJECT MANAGEMENT", "OPERATIONS"];
@@ -67,16 +66,6 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
         }
       }
 
-      // 3. Config
-      final confRes = await apiClient.getSystemConfig();
-      if (confRes.data is Map) {
-        final Map<String, dynamic> data = Map<String, dynamic>.from(confRes.data);
-        if (data['status'] == true || data['status'] == 'true') {
-          _configData = data['data'];
-          debugPrint("SUCCESS: FETCHED CONFIG DATA");
-        }
-      }
-      
       debugPrint("--- END FETCHING CAREERS ---");
       
     } catch (e) {
@@ -92,22 +81,23 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
       backgroundColor: isDark ? Colors.black : Colors.white,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        centerTitle: true,
         title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text('CAREERS', 
                 style: GoogleFonts.montserrat(
                   color: isDark ? Colors.white : Colors.black, 
-                  fontWeight: FontWeight.w900, 
+                  fontWeight: FontWeight.bold, 
                   fontSize: 14, 
-                  letterSpacing: 0.5
+                  letterSpacing: 2
                 )),
             Text('JOIN OUR ARCHITECTURAL LEGACY', 
                 style: GoogleFonts.montserrat(
                   color: (isDark ? Colors.white : Colors.black).withOpacity(0.5), 
-                  fontWeight: FontWeight.w900, 
-                  fontSize: 7, 
-                  letterSpacing: 1.5
+                  fontWeight: FontWeight.w400, 
+                  fontSize: 8, 
+                  letterSpacing: 2
                 )),
           ],
         ),
@@ -119,28 +109,49 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
           ),
         ),
         elevation: 0,
-        leadingWidth: 72,
+        leadingWidth: 56,
         leading: Center(
-          child: _HeaderCircleAction(
-            icon: LucideIcons.arrowLeft, 
-            onTap: () {
-              ref.read(guestNavigationProvider.notifier).state = 0;
-              context.go('/home');
-            },
+          child: Padding(
+            padding: const EdgeInsets.only(left: 12),
+            child: InkWell(
+              onTap: () {
+                ref.read(guestNavigationProvider.notifier).state = 0;
+                context.go('/home');
+              },
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                width: 36,
+                height: 36,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.08)),
+                ),
+                child: Icon(LucideIcons.arrowLeft, color: isDark ? Colors.white : Colors.black, size: 16),
+              ),
+            ),
           ),
         ),
         actions: [
           Builder(
-            builder: (context) => GestureDetector(
-              onTap: () => Scaffold.of(context).openDrawer(),
-              child: Container(
-                margin: const EdgeInsets.only(right: 16, top: 12, bottom: 12),
-                padding: const EdgeInsets.symmetric(horizontal: 14),
-                decoration: BoxDecoration(
-                  color: isDark ? Colors.white : Colors.black,
-                  borderRadius: BorderRadius.circular(20),
+            builder: (context) => Center(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 12),
+                child: InkWell(
+                  onTap: () => Scaffold.of(context).openDrawer(),
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    width: 40,
+                    height: 36,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white : Colors.black,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(LucideIcons.moreHorizontal, size: 18, color: isDark ? Colors.black : Colors.white),
+                  ),
                 ),
-                child: Icon(LucideIcons.moreHorizontal, color: isDark ? Colors.black : Colors.white, size: 18),
               ),
             ),
           ),
@@ -171,8 +182,6 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                       _buildCategoryFilter(),
                       const SizedBox(height: 40),
                       _buildJobList(),
-                      const SizedBox(height: 64),
-                      _buildRecruitmentContact(),
                       const SizedBox(height: 120),
                     ],
                   ),
@@ -356,67 +365,24 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                   ],
                 ),
               ),
-              Icon(LucideIcons.chevronRight, color: (isDark ? Colors.white : Colors.black).withOpacity(0.3), size: 20),
+              Container(
+                width: 36,
+                height: 36,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.white : Colors.black,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  LucideIcons.chevronRight, 
+                  color: isDark ? Colors.black : Colors.white, 
+                  size: 16
+                ),
+              ),
             ],
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildRecruitmentContact() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final email = _configData?['contact_email'] ?? 'hr@m4family.com';
-    final phone = _configData?['contact_phone'] ?? '+91 99308 50993';
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'RECRUITMENT CONTACT',
-          style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.3), fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 4),
-        ),
-        const SizedBox(height: 24),
-        Container(
-          padding: const EdgeInsets.all(32),
-          decoration: BoxDecoration(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
-            borderRadius: BorderRadius.circular(40),
-            border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
-          ),
-          child: Column(
-            children: [
-              _buildContactRow(LucideIcons.mail, 'EMAIL RECRUITMENT', email, isDark),
-              const SizedBox(height: 24),
-              _buildContactRow(LucideIcons.phone, 'CAREER HELPLINE', phone, isDark),
-            ],
-          ),
-        ),
-      ],
-    ).animate().fadeIn(delay: 200.ms);
-  }
-
-  Widget _buildContactRow(IconData icon, String label, String value, bool isDark) {
-    return Row(
-      children: [
-        Container(
-          width: 48,
-          height: 48,
-          decoration: BoxDecoration(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05), borderRadius: BorderRadius.circular(16)),
-          child: Icon(icon, color: isDark ? Colors.white70 : Colors.black87, size: 20),
-        ),
-        const SizedBox(width: 20),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(label, style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.4), fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1)),
-              const SizedBox(height: 2),
-              Text(value, style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 12, fontWeight: FontWeight.w900)),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }

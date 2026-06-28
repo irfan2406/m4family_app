@@ -123,8 +123,9 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
       backgroundColor: isDark ? Colors.black : Colors.white,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        centerTitle: true,
         title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
               (widget.job['title'] ?? '').toString().toUpperCase(),
@@ -141,24 +142,62 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
               (widget.job['department'] ?? '').toString().toUpperCase(),
               style: GoogleFonts.montserrat(
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
-                fontWeight: FontWeight.w900,
-                fontSize: 9,
+                fontWeight: FontWeight.w400,
+                fontSize: 8,
                 letterSpacing: 2,
               ),
             ),
           ],
         ),
-        backgroundColor: Colors.transparent,
+        backgroundColor: (isDark ? Colors.black : Colors.white).withOpacity(0.8),
+        flexibleSpace: ClipRRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: Container(color: Colors.transparent),
+          ),
+        ),
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(LucideIcons.arrowLeft, color: isDark ? Colors.white70 : Colors.black54),
-          onPressed: () => Navigator.pop(context),
+        leadingWidth: 56,
+        leading: Center(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 12),
+            child: InkWell(
+              onTap: () => Navigator.pop(context),
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                width: 36,
+                height: 36,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.08)),
+                ),
+                child: Icon(LucideIcons.arrowLeft, color: isDark ? Colors.white : Colors.black, size: 16),
+              ),
+            ),
+          ),
         ),
         actions: [
           Builder(
-            builder: (context) => IconButton(
-              icon: Icon(LucideIcons.moreHorizontal, color: isDark ? Colors.white : Colors.black),
-              onPressed: () => Scaffold.of(context).openDrawer(),
+            builder: (context) => Center(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 12),
+                child: InkWell(
+                  onTap: () => Scaffold.of(context).openDrawer(),
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    width: 40,
+                    height: 36,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white : Colors.black,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(LucideIcons.moreHorizontal, size: 18, color: isDark ? Colors.black : Colors.white),
+                  ),
+                ),
+              ),
             ),
           ),
         ],
@@ -315,7 +354,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                     elevation: 0,
                   ),
                   child: _isSubmitting
-                      ? const CircularProgressIndicator(color: Colors.black)
+                      ? CircularProgressIndicator(color: isDark ? Colors.black : Colors.white)
                       : Text(
                           'SUBMIT APPLICATION',
                           style: GoogleFonts.montserrat(

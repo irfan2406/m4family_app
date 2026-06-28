@@ -76,6 +76,10 @@ dependencies:
   flutter_widget_from_html: ^0.17.2
 
 
+dependency_overrides:
+  lucide_icons:
+    path: ./packages/lucide_icons
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

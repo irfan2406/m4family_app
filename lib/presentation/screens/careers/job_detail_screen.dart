@@ -25,8 +25,9 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
       backgroundColor: isDark ? Colors.black : Colors.white,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        centerTitle: true,
         title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
               (job['title'] ?? '').toString().toUpperCase(),
@@ -43,8 +44,8 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
               (job['department'] ?? '').toString().toUpperCase(),
               style: GoogleFonts.montserrat(
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
-                fontWeight: FontWeight.w900,
-                fontSize: 9,
+                fontWeight: FontWeight.w400,
+                fontSize: 8,
                 letterSpacing: 2,
               ),
             ),
@@ -58,15 +59,47 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
           ),
         ),
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(LucideIcons.arrowLeft, color: isDark ? Colors.white70 : Colors.black54),
-          onPressed: () => Navigator.pop(context),
+        leadingWidth: 56,
+        leading: Center(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 12),
+            child: InkWell(
+              onTap: () => Navigator.pop(context),
+              borderRadius: BorderRadius.circular(12),
+              child: Container(
+                width: 36,
+                height: 36,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.08)),
+                ),
+                child: Icon(LucideIcons.arrowLeft, color: isDark ? Colors.white : Colors.black, size: 16),
+              ),
+            ),
+          ),
         ),
         actions: [
           Builder(
-            builder: (context) => IconButton(
-              icon: Icon(LucideIcons.moreHorizontal, color: isDark ? Colors.white : Colors.black),
-              onPressed: () => Scaffold.of(context).openDrawer(),
+            builder: (context) => Center(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 12),
+                child: InkWell(
+                  onTap: () => Scaffold.of(context).openDrawer(),
+                  borderRadius: BorderRadius.circular(12),
+                  child: Container(
+                    width: 40,
+                    height: 36,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white : Colors.black,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(LucideIcons.moreHorizontal, size: 18, color: isDark ? Colors.black : Colors.white),
+                  ),
+                ),
+              ),
             ),
           ),
         ],
@@ -166,14 +199,37 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                       const SizedBox(height: 48),
                     ],
 
-                    // Requirements
+                    // Requirements (web matching tag badges)
                     if (job['requirements'] != null && (job['requirements'] as List).isNotEmpty) ...[
                       _buildSectionHeader('REQUIREMENTS', isDark),
                       const SizedBox(height: 24),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
                         children: (job['requirements'] as List)
-                            .map((item) => _buildRequirementBullet(item.toString(), isDark))
+                            .map((item) => Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                  decoration: BoxDecoration(
+                                    color: isDark ? Colors.white : Colors.black,
+                                    borderRadius: BorderRadius.circular(10),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.15),
+                                        blurRadius: 10,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Text(
+                                    item.toString().toUpperCase(),
+                                    style: GoogleFonts.montserrat(
+                                      color: isDark ? Colors.black : Colors.white,
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 9,
+                                      letterSpacing: 1.5,
+                                    ),
+                                  ),
+                                ))
                             .toList(),
                       ),
                       const SizedBox(height: 48),

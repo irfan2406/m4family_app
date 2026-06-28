@@ -5,6 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:ui';
+import 'dart:convert';
 import 'package:m4_mobile/presentation/widgets/guest_sidebar_menu.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
@@ -312,19 +313,13 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                           transitionBuilder: (Widget child, Animation<double> animation) {
                             return FadeTransition(opacity: animation, child: child);
                           },
-                          child: CachedNetworkImage(
+                          child: _buildProjectImage(
+                            mainImage.toString(),
                             key: ValueKey<int>(_heroIndex),
-                            imageUrl: mainImage.toString().startsWith('http') 
-                                ? mainImage.toString() 
-                                : ref.read(apiClientProvider).resolveUrl(mainImage.toString()),
-                            fit: BoxFit.cover,
                             width: double.infinity,
                             height: double.infinity,
-                            placeholder: (context, url) => Container(color: Colors.black12),
-                            errorWidget: (context, url, error) => Container(
-                              color: Colors.white10,
-                              child: const Center(child: Icon(LucideIcons.image, color: Colors.white24, size: 50)),
-                            ),
+                            errorIcon: LucideIcons.image,
+                            errorIconSize: 50,
                           ),
                         ),
                               ),
@@ -538,14 +533,11 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
   Widget _buildTabCard(dynamic item) {
     final isCommunity = _activeTab.toLowerCase() == 'communities';
     final isMedia = _activeTab.toLowerCase() == 'media';
-    final apiClient = ref.read(apiClientProvider);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    
-    final imageUrl = apiClient.resolveUrl(isCommunity 
+    final rawImage = (isCommunity
         ? (item['image'] ?? 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80')
-        : (isMedia 
+        : (isMedia
             ? (item['thumbnail'] ?? item['image'] ?? 'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80')
-            : (item['heroImage'] ?? 'https://images.unsplash.com/photo-1613545325278-f24b0cae1224?auto=format&fit=crop&q=80')));
+            : (item['heroImage'] ?? 'https://images.unsplash.com/photo-1613545325278-f24b0cae1224?auto=format&fit=crop&q=80'))).toString();
 
     return _ScaleButton(
       onTap: () {
@@ -576,15 +568,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             fit: StackFit.expand,
             children: [
               // 🖼️ High Resolution Image
-              CachedNetworkImage(
-                imageUrl: imageUrl, 
-                fit: BoxFit.cover,
-                placeholder: (context, url) => Container(color: Colors.black12),
-                errorWidget: (context, url, error) => Container(
-                  color: const Color(0xFF1A1A1A),
-                  child: const Center(child: Icon(LucideIcons.building2, color: Colors.white24, size: 40)),
-                ),
-              ),
+              _buildProjectImage(rawImage, errorIconSize: 40),
               
               // 🌫️ High-End Gradient Overlay
               Container(
@@ -713,10 +697,60 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     );
   }
 
+  /// Renders a project image the same way the web does (see web `getAssetUrl`):
+  /// inline base64 `data:` URIs are decoded with [Image.memory] (CachedNetworkImage
+  /// can only fetch network URLs), `http(s)` URLs load directly, and relative
+  /// paths are resolved against the API host. Empty values fall back to a stock image.
+  Widget _buildProjectImage(
+    String raw, {
+    Key? key,
+    double? width,
+    double? height,
+    BoxFit fit = BoxFit.cover,
+    IconData errorIcon = LucideIcons.building2,
+    double errorIconSize = 64,
+  }) {
+    Widget errorBox() => Container(
+          color: const Color(0xFF1A1A1A),
+          child: Center(child: Icon(errorIcon, color: Colors.white24, size: errorIconSize)),
+        );
+
+    final src = raw.trim().isEmpty
+        ? 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80'
+        : raw.trim();
+
+    if (src.startsWith('data:')) {
+      try {
+        final base64Str = src.substring(src.indexOf(',') + 1).replaceAll(RegExp(r'\s'), '');
+        final bytes = base64Decode(base64Str);
+        return Image.memory(
+          bytes,
+          key: key,
+          width: width,
+          height: height,
+          fit: fit,
+          errorBuilder: (_, __, ___) => errorBox(),
+        );
+      } catch (_) {
+        return errorBox();
+      }
+    }
+
+    final url = src.startsWith('http') ? src : ref.read(apiClientProvider).resolveUrl(src);
+    return CachedNetworkImage(
+      key: key,
+      imageUrl: url,
+      width: width,
+      height: height,
+      fit: fit,
+      placeholder: (context, u) => Container(color: Colors.black12),
+      errorWidget: (context, u, e) => errorBox(),
+    );
+  }
+
   Widget _buildFeaturedSection() {
     if (_projects.isEmpty) return const SizedBox.shrink();
     final project = _projects[_featuredIndex % _projects.length];
-    final apiClient = ref.read(apiClientProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Column(
@@ -754,22 +788,16 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             borderRadius: BorderRadius.circular(50),
             child: Stack(
               children: [
-                CachedNetworkImage(
-                  imageUrl: () {
-                    final img = (project['heroImage'] ?? project['image'] ?? project['coverImage'] ?? '').toString();
-                    if (img.isEmpty) {
-                      return 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80';
+                _buildProjectImage(
+                  () {
+                    final hero = project['heroImages'];
+                    if (hero is List && hero.isNotEmpty && hero.first != null && hero.first.toString().trim().isNotEmpty) {
+                      return hero.first.toString();
                     }
-                    return img.startsWith('http') ? img : apiClient.resolveUrl(img);
+                    return (project['heroImage'] ?? project['image'] ?? project['coverImage'] ?? '').toString();
                   }(),
                   height: 520,
                   width: double.infinity,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(color: Colors.black12),
-                  errorWidget: (context, url, error) => Container(
-                    color: const Color(0xFF1A1A1A),
-                    child: const Center(child: Icon(LucideIcons.building2, color: Colors.white24, size: 64)),
-                  ),
                 ),
                 // Gradient Overlay
                 Positioned.fill(
@@ -820,8 +848,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        (project['startingPrice'] ?? project['description'] ?? '').toUpperCase(),
-                        maxLines: 2, 
+                        'Live smart at Aura Heights—space-efficient 1 & 2 BHK homes with curated amenities and rare parking solutions.'.toUpperCase(),
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.montserrat(color: Colors.white.withOpacity(0.8), fontSize: 9, height: 1.6, fontWeight: FontWeight.w900, letterSpacing: 1.2),
                       ),
@@ -843,7 +871,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             children: [
               _buildFeatureIcon(LucideIcons.building2, 'FULLY\nFURNISHED'),
               _buildFeatureIcon(LucideIcons.mapPin, 'PRIME\nLOCATION'),
-              _buildFeatureIcon(LucideIcons.smartphone, 'SMART\nHOMES'),
+              _buildFeatureIcon(LucideIcons.smartphone, '20 MIN FROM\nSHEIKH ZAYED RD'),
             ],
           ),
         ),
