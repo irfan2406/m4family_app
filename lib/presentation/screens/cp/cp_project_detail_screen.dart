@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +30,8 @@ class CpProjectDetailScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<CpProjectDetailScreen> createState() => _CpProjectDetailScreenState();
+  ConsumerState<CpProjectDetailScreen> createState() =>
+      _CpProjectDetailScreenState();
 }
 
 class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
@@ -121,12 +124,20 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
   int _overallProgressPct() {
     // Mirror web logic: pick latest Completed/In Progress phase, fallback to `completion`.
     try {
-      final phases = _progress.whereType<Map>().map((m) => Map<String, dynamic>.from(m)).toList();
-      phases.sort((a, b) => ((a['phaseOrder'] ?? 0) as num).toInt().compareTo(((b['phaseOrder'] ?? 0) as num).toInt()));
-      final last = phases.where((p) {
-        final s = (p['status'] ?? '').toString();
-        return s == 'Completed' || s == 'In Progress';
-      }).isNotEmpty
+      final phases = _progress
+          .whereType<Map>()
+          .map((m) => Map<String, dynamic>.from(m))
+          .toList();
+      phases.sort(
+        (a, b) => ((a['phaseOrder'] ?? 0) as num).toInt().compareTo(
+          ((b['phaseOrder'] ?? 0) as num).toInt(),
+        ),
+      );
+      final last =
+          phases.where((p) {
+            final s = (p['status'] ?? '').toString();
+            return s == 'Completed' || s == 'In Progress';
+          }).isNotEmpty
           ? phases.where((p) {
               final s = (p['status'] ?? '').toString();
               return s == 'Completed' || s == 'In Progress';
@@ -150,6 +161,44 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     }
     final hero = p['heroImage']?.toString();
     return api.resolveUrl(hero);
+  }
+
+  /// Renders a project image, handling base64 `data:` URIs (which
+  /// CachedNetworkImage cannot fetch) via [Image.memory]; http/relative URLs go
+  /// through the network loader. Mirrors the web, which puts data: URIs straight
+  /// into an <img>.
+  Widget _projectImage(
+    String? raw, {
+    BoxFit fit = BoxFit.cover,
+    Widget? errorWidget,
+  }) {
+    final fallback =
+        errorWidget ??
+        Container(color: Theme.of(context).colorScheme.surfaceContainerHighest);
+    final s = raw?.trim() ?? '';
+    if (s.isEmpty) return fallback;
+    if (s.startsWith('data:')) {
+      try {
+        final bytes = base64Decode(
+          s.substring(s.indexOf(',') + 1).replaceAll(RegExp(r'\s'), ''),
+        );
+        return Image.memory(
+          bytes,
+          fit: fit,
+          errorBuilder: (_, __, ___) => fallback,
+        );
+      } catch (_) {
+        return fallback;
+      }
+    }
+    final url = s.startsWith('http')
+        ? s
+        : ref.read(apiClientProvider).resolveUrl(s);
+    return CachedNetworkImage(
+      imageUrl: url,
+      fit: fit,
+      errorWidget: (_, __, ___) => fallback,
+    );
   }
 
   String _locationLine() {
@@ -180,26 +229,35 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     setState(() => _liked = next);
     try {
       final prefs = await SharedPreferences.getInstance();
-      final ids = (prefs.getStringList('cp_favorites') ?? const <String>[]).toList();
+      final ids = (prefs.getStringList('cp_favorites') ?? const <String>[])
+          .toList();
       ids.removeWhere((x) => x == widget.projectId);
       if (next) ids.add(widget.projectId);
       await prefs.setStringList('cp_favorites', ids);
     } catch (_) {}
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(next ? 'Saved to favorites' : 'Removed from favorites')),
+      SnackBar(
+        content: Text(next ? 'Saved to favorites' : 'Removed from favorites'),
+      ),
     );
   }
 
   Future<void> _shareProject() async {
-    final title = (_project?['title'] ?? widget.projectData?['title'] ?? 'Project').toString();
-    final link = ref.read(apiClientProvider).resolveUrl('/cp/projects/${widget.projectId}');
+    final title =
+        (_project?['title'] ?? widget.projectData?['title'] ?? 'Project')
+            .toString();
+    final link = ref
+        .read(apiClientProvider)
+        .resolveUrl('/cp/projects/${widget.projectId}');
     await Share.share('Check out $title on M4 Family!\n$link');
   }
 
   void _openOrWarn(String? url, [String message = 'Not available']) {
     if (url == null || url.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
       return;
     }
     _openUrl(url);
@@ -249,7 +307,9 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         final res = await ref.read(apiClientProvider).getCpEmployees();
         final body = res.data;
         if (body is Map && body['status'] == true && body['data'] is List) {
-          _employees = (body['data'] as List).map((e) => Map<String, dynamic>.from(e as Map)).toList();
+          _employees = (body['data'] as List)
+              .map((e) => Map<String, dynamic>.from(e as Map))
+              .toList();
         }
       } catch (_) {}
     }
@@ -257,7 +317,10 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     // prefill with auth user
     final u = ref.read(authProvider).user;
     if (u != null) {
-      _clientName.text = (u['fullName'] ?? '${u['firstName'] ?? ''} ${u['lastName'] ?? ''}').toString().trim();
+      _clientName.text =
+          (u['fullName'] ?? '${u['firstName'] ?? ''} ${u['lastName'] ?? ''}')
+              .toString()
+              .trim();
       _clientPhone.text = (u['phone'] ?? '').toString();
       _clientEmail.text = (u['email'] ?? '').toString();
     }
@@ -275,7 +338,9 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         final res = await ref.read(apiClientProvider).getCpEmployees();
         final body = res.data;
         if (body is Map && body['status'] == true && body['data'] is List) {
-          _employees = (body['data'] as List).map((e) => Map<String, dynamic>.from(e as Map)).toList();
+          _employees = (body['data'] as List)
+              .map((e) => Map<String, dynamic>.from(e as Map))
+              .toList();
         }
       } catch (_) {}
     }
@@ -283,30 +348,47 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     final typedEmp = _regEmployeeEntered.text.trim();
     final hasPick = _regEmployeeId != null && _regEmployeeId!.isNotEmpty;
     if (!typedEmp.isNotEmpty && !hasPick) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Enter employee name or select from list')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Enter employee name or select from list'),
+        ),
+      );
       return;
     }
-    if (_regClientName.text.trim().isEmpty || _regClientPhone.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Enter client name and number')));
+    if (_regClientName.text.trim().isEmpty ||
+        _regClientPhone.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Enter client name and number')),
+      );
       return;
     }
     if (_regClientEmail.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Enter email address')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Enter email address')));
       return;
     }
 
     final selectName = hasPick
-        ? _employees.firstWhere((e) => e['_id']?.toString() == _regEmployeeId, orElse: () => {})['name']?.toString() ?? ''
+        ? _employees
+                  .firstWhere(
+                    (e) => e['_id']?.toString() == _regEmployeeId,
+                    orElse: () => {},
+                  )['name']
+                  ?.toString() ??
+              ''
         : '';
     final employeeName = selectName.isNotEmpty ? selectName : typedEmp;
     final notesStaff = typedEmp.isNotEmpty && hasPick
         ? 'Entered: $typedEmp • Selected: $selectName'
         : typedEmp.isNotEmpty
-            ? 'Staff (entered): $typedEmp'
-            : 'Staff (selected): $selectName';
+        ? 'Staff (entered): $typedEmp'
+        : 'Staff (selected): $selectName';
     final loc = _regLocation.text.trim();
 
-    final sourceId = ref.read(authProvider).user?['_id']?.toString() ?? ref.read(authProvider).user?['id']?.toString();
+    final sourceId =
+        ref.read(authProvider).user?['_id']?.toString() ??
+        ref.read(authProvider).user?['id']?.toString();
 
     setState(() => _regSubmitting = true);
     try {
@@ -315,7 +397,8 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         'name': _regClientName.text.trim(),
         'email': _regClientEmail.text.trim(),
         'phone': _regClientPhone.text.trim(),
-        'projectId': p['_id']?.toString() ?? p['id']?.toString() ?? widget.projectId,
+        'projectId':
+            p['_id']?.toString() ?? p['id']?.toString() ?? widget.projectId,
         'project': (p['title'] ?? 'Project').toString(),
         'interest': 'Registration',
         'status': 'new',
@@ -325,12 +408,15 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         'notes': 'Registration form (CP) • $notesStaff',
         if (loc.isNotEmpty) 'location': loc,
         if (sourceId != null && sourceId.length == 24) 'sourceId': sourceId,
-        if (hasPick && (_regEmployeeId?.length ?? 0) == 24) 'assignedTo': _regEmployeeId,
+        if (hasPick && (_regEmployeeId?.length ?? 0) == 24)
+          'assignedTo': _regEmployeeId,
       });
       if (!mounted) return;
       final ok = res.data is Map ? (res.data as Map)['status'] == true : false;
       if (ok) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Registration submitted')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Registration submitted')));
         _regEmployeeEntered.clear();
         _regClientName.clear();
         _regClientPhone.clear();
@@ -338,12 +424,21 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         _regLocation.clear();
         setState(() => _regEmployeeId = null);
       } else {
-        final msg = res.data is Map ? (res.data as Map)['message']?.toString() : null;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg ?? 'Submission failed')));
+        final msg = res.data is Map
+            ? (res.data as Map)['message']?.toString()
+            : null;
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(msg ?? 'Submission failed')));
       }
     } on DioException catch (e) {
-      final msg = e.response?.data is Map ? (e.response!.data as Map)['message']?.toString() : null;
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg ?? 'Submission failed')));
+      final msg = e.response?.data is Map
+          ? (e.response!.data as Map)['message']?.toString()
+          : null;
+      if (mounted)
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(msg ?? 'Submission failed')));
     } finally {
       if (mounted) setState(() => _regSubmitting = false);
     }
@@ -357,9 +452,14 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       initialDate: DateTime.now(),
     );
     if (d == null || !mounted) return;
-    final t = await showTimePicker(context: context, initialTime: TimeOfDay.now());
+    final t = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
     if (t == null || !mounted) return;
-    setState(() => _videoCallDt = DateTime(d.year, d.month, d.day, t.hour, t.minute));
+    setState(
+      () => _videoCallDt = DateTime(d.year, d.month, d.day, t.hour, t.minute),
+    );
   }
 
   Future<void> _submitVideoCallLead() async {
@@ -369,25 +469,45 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     final typedEmp = _employeeEntered.text.trim();
     final hasPick = _employeeId != null && _employeeId!.isNotEmpty;
     if (!typedEmp.isNotEmpty && !hasPick) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Enter or select employee name')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Enter or select employee name')),
+      );
       return;
     }
-    if (_clientName.text.trim().isEmpty || _clientPhone.text.trim().isEmpty || _clientEmail.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Enter client name, number, and email')));
+    if (_clientName.text.trim().isEmpty ||
+        _clientPhone.text.trim().isEmpty ||
+        _clientEmail.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Enter client name, number, and email')),
+      );
       return;
     }
     if (_videoCallDt == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Select date and time')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Select date and time')));
       return;
     }
 
     final selectName = hasPick
-        ? _employees.firstWhere((e) => e['_id']?.toString() == _employeeId, orElse: () => {})['name']?.toString() ?? ''
+        ? _employees
+                  .firstWhere(
+                    (e) => e['_id']?.toString() == _employeeId,
+                    orElse: () => {},
+                  )['name']
+                  ?.toString() ??
+              ''
         : '';
     final employeeName = selectName.isNotEmpty ? selectName : typedEmp;
-    final notesStaff = typedEmp.isNotEmpty && hasPick ? 'Entered: $typedEmp • Selected: $selectName' : typedEmp.isNotEmpty ? 'Staff (entered): $typedEmp' : 'Staff (selected): $selectName';
+    final notesStaff = typedEmp.isNotEmpty && hasPick
+        ? 'Entered: $typedEmp • Selected: $selectName'
+        : typedEmp.isNotEmpty
+        ? 'Staff (entered): $typedEmp'
+        : 'Staff (selected): $selectName';
 
-    final sourceId = ref.read(authProvider).user?['_id']?.toString() ?? ref.read(authProvider).user?['id']?.toString();
+    final sourceId =
+        ref.read(authProvider).user?['_id']?.toString() ??
+        ref.read(authProvider).user?['id']?.toString();
 
     setState(() => _leadSubmitting = true);
     try {
@@ -396,30 +516,44 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         'name': _clientName.text.trim(),
         'phone': _clientPhone.text.trim(),
         'email': _clientEmail.text.trim(),
-        'projectId': p['_id']?.toString() ?? p['id']?.toString() ?? widget.projectId,
+        'projectId':
+            p['_id']?.toString() ?? p['id']?.toString() ?? widget.projectId,
         'project': (p['title'] ?? 'Project').toString(),
         'interest': 'Video Call',
         'status': 'new',
         'source': 'cp',
-        'message': 'CP video call • Employee: $employeeName • ${(p['title'] ?? '').toString()}',
+        'message':
+            'CP video call • Employee: $employeeName • ${(p['title'] ?? '').toString()}',
         'notes': 'Video call booking • $notesStaff',
         'visitDate': _videoCallDt!.toIso8601String(),
         'visitTime': DateFormat.jm().format(_videoCallDt!.toLocal()),
         if (sourceId != null && sourceId.length == 24) 'sourceId': sourceId,
-        if (hasPick && (_employeeId?.length ?? 0) == 24) 'assignedTo': _employeeId,
+        if (hasPick && (_employeeId?.length ?? 0) == 24)
+          'assignedTo': _employeeId,
       });
       if (!mounted) return;
       final ok = res.data is Map ? (res.data as Map)['status'] == true : false;
       if (ok) {
         setState(() => _leadOpen = false);
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Request submitted')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Request submitted')));
       } else {
-        final msg = res.data is Map ? (res.data as Map)['message']?.toString() : null;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg ?? 'Submission failed')));
+        final msg = res.data is Map
+            ? (res.data as Map)['message']?.toString()
+            : null;
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(msg ?? 'Submission failed')));
       }
     } on DioException catch (e) {
-      final msg = e.response?.data is Map ? (e.response!.data as Map)['message']?.toString() : null;
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg ?? 'Submission failed')));
+      final msg = e.response?.data is Map
+          ? (e.response!.data as Map)['message']?.toString()
+          : null;
+      if (mounted)
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(msg ?? 'Submission failed')));
     } finally {
       if (mounted) setState(() => _leadSubmitting = false);
     }
@@ -428,8 +562,12 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final accent = scheme.brightness == Brightness.light ? Colors.black : scheme.primary;
-    final accentFg = scheme.brightness == Brightness.light ? Colors.white : scheme.onPrimary;
+    final accent = scheme.brightness == Brightness.light
+        ? Colors.black
+        : scheme.primary;
+    final accentFg = scheme.brightness == Brightness.light
+        ? Colors.white
+        : scheme.onPrimary;
     final p = _project ?? widget.projectData;
 
     if (_loading) {
@@ -441,7 +579,12 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     if (p == null) {
       return Scaffold(
         backgroundColor: scheme.surface,
-        appBar: AppBar(leading: IconButton(icon: const Icon(LucideIcons.arrowLeft), onPressed: () => context.pop())),
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(LucideIcons.arrowLeft),
+            onPressed: () => context.pop(),
+          ),
+        ),
         body: const Center(child: Text('Project not found')),
       );
     }
@@ -451,18 +594,22 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     final status = (p['status'] ?? 'Ongoing').toString().toUpperCase();
     final hero = _heroImage();
 
-    final exteriorThumb = (p['exteriorImages'] is List && (p['exteriorImages'] as List).isNotEmpty)
+    final exteriorThumb =
+        (p['exteriorImages'] is List &&
+            (p['exteriorImages'] as List).isNotEmpty)
         ? (p['exteriorImages'] as List).first?.toString()
         : (p['heroImages'] is List && (p['heroImages'] as List).isNotEmpty)
-            ? (p['heroImages'] as List).first?.toString()
-            : p['heroImage']?.toString();
-    final interiorThumb = (p['interiorImages'] is List && (p['interiorImages'] as List).isNotEmpty)
+        ? (p['heroImages'] as List).first?.toString()
+        : p['heroImage']?.toString();
+    final interiorThumb =
+        (p['interiorImages'] is List &&
+            (p['interiorImages'] as List).isNotEmpty)
         ? (p['interiorImages'] as List).first?.toString()
         : (p['heroImages'] is List && (p['heroImages'] as List).length > 1)
-            ? (p['heroImages'] as List)[1]?.toString()
-            : (p['heroImages'] is List && (p['heroImages'] as List).isNotEmpty)
-                ? (p['heroImages'] as List).first?.toString()
-                : p['heroImage']?.toString();
+        ? (p['heroImages'] as List)[1]?.toString()
+        : (p['heroImages'] is List && (p['heroImages'] as List).isNotEmpty)
+        ? (p['heroImages'] as List).first?.toString()
+        : p['heroImage']?.toString();
 
     return Scaffold(
       backgroundColor: scheme.surface,
@@ -474,12 +621,8 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 child: Stack(
                   children: [
                     AspectRatio(
-                      aspectRatio: 0.82,
-                      child: CachedNetworkImage(
-                        imageUrl: hero,
-                        fit: BoxFit.cover,
-                        errorWidget: (_, __, ___) => Container(color: scheme.surfaceContainerHighest),
-                      ),
+                      aspectRatio: 1920 / 1080,
+                      child: _projectImage(hero, fit: BoxFit.cover),
                     ),
                     Positioned.fill(
                       child: Container(
@@ -530,112 +673,26 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                       ),
                     ),
                     Positioned(
-                      left: 20,
-                      right: 20,
-                      bottom: 90,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: accent,
-                              borderRadius: BorderRadius.circular(999),
-                            ),
-                            child: Text(
-                              status,
-                              style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2, color: accentFg),
-                            ),
+                      left: 24,
+                      bottom: 20,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: accent,
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: Text(
+                          status,
+                          style: GoogleFonts.montserrat(
+                            fontSize: 8,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 2,
+                            color: accentFg,
                           ),
-                          const SizedBox(height: 6),
-                          Text(
-                            title.toUpperCase(),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.montserrat(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 0.8,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                            decoration: BoxDecoration(
-                              color: Colors.black.withValues(alpha: 0.35),
-                              borderRadius: BorderRadius.circular(14),
-                              border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(LucideIcons.mapPin, size: 14, color: Colors.white70),
-                                const SizedBox(width: 6),
-                                Flexible(
-                                  child: Text(
-                                    _locationLine(),
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.white),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Positioned(
-                      left: 20,
-                      bottom: 18,
-                      child: Row(
-                        children: [
-                          _thumbButton(
-                            label: 'Exterior',
-                            url: exteriorThumb,
-                            scheme: scheme,
-                            onTap: () {
-                              final urls = _stringList(p['exteriorImages']);
-                              if (urls.isNotEmpty) {
-                                _openGallery(urls);
-                              } else {
-                                final hero = _stringList(p['heroImages']);
-                                final fallback = hero.isNotEmpty ? hero : [p['heroImage']?.toString() ?? ''].where((x) => x.isNotEmpty).toList();
-                                _openGallery(fallback);
-                              }
-                            },
-                          ),
-                          const SizedBox(width: 10),
-                          _thumbButton(
-                            label: 'Interior',
-                            url: interiorThumb,
-                            scheme: scheme,
-                            onTap: () {
-                              final urls = _stringList(p['interiorImages']);
-                              if (urls.isNotEmpty) {
-                                _openGallery(urls);
-                              } else {
-                                final hero = _stringList(p['heroImages']);
-                                final fallback = hero.length > 1 ? [hero[1]] : hero;
-                                _openGallery(fallback);
-                              }
-                            },
-                          ),
-                          const SizedBox(width: 10),
-                          _vrButton(
-                            scheme: scheme,
-                            onTap: () {
-                              final u = p['threeSixtyUrl']?.toString();
-                              if (u != null && u.isNotEmpty) {
-                                _openUrl(u);
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('360° Virtual Tour coming soon')),
-                                );
-                              }
-                            },
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   ],
@@ -643,29 +700,159 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               ),
               SliverToBoxAdapter(
                 child: Transform.translate(
-                  offset: const Offset(0, -10),
+                  offset: const Offset(0, 12),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         const SizedBox(height: 6),
-                        GridView.count(
-                          crossAxisCount: 2,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          crossAxisSpacing: 8,
-                          mainAxisSpacing: 8,
-                          childAspectRatio: 2.35,
+                        // Exterior / Interior / 360 thumbnails — below the hero (web parity)
+                        Row(
                           children: [
-                            _statCard('Completion', '$overallPct%', scheme),
-                            _actionCard('Video Call', 'Connect Now', LucideIcons.video, scheme, onTap: _openVideoCallSheet),
-                            _actionCard(
-                              'Site Visit',
-                              'Book Private Tour',
-                              LucideIcons.eye,
-                              scheme,
-                              onTap: () => context.push('/cp/booking/site-visit?projectId=${widget.projectId}'),
+                            _thumbButton(
+                              label: 'Exterior',
+                              url: exteriorThumb,
+                              scheme: scheme,
+                              onTap: () {
+                                final urls = _stringList(p['exteriorImages']);
+                                if (urls.isNotEmpty) {
+                                  _openGallery(urls);
+                                } else {
+                                  final hero = _stringList(p['heroImages']);
+                                  final fallback = hero.isNotEmpty
+                                      ? hero
+                                      : [
+                                          p['heroImage']?.toString() ?? '',
+                                        ].where((x) => x.isNotEmpty).toList();
+                                  _openGallery(fallback);
+                                }
+                              },
+                            ),
+                            const SizedBox(width: 10),
+                            _thumbButton(
+                              label: 'Interior',
+                              url: interiorThumb,
+                              scheme: scheme,
+                              onTap: () {
+                                final urls = _stringList(p['interiorImages']);
+                                if (urls.isNotEmpty) {
+                                  _openGallery(urls);
+                                } else {
+                                  final hero = _stringList(p['heroImages']);
+                                  final fallback = hero.length > 1
+                                      ? [hero[1]]
+                                      : hero;
+                                  _openGallery(fallback);
+                                }
+                              },
+                            ),
+                            const SizedBox(width: 10),
+                            _vrButton(
+                              scheme: scheme,
+                              onTap: () {
+                                final u = p['threeSixtyUrl']?.toString();
+                                if (u != null && u.isNotEmpty) {
+                                  _openUrl(u);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                        '360° Virtual Tour coming soon',
+                                      ),
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 24),
+                        // Title + location (dark, below hero — web parity)
+                        Text(
+                          title.toUpperCase(),
+                          style: GoogleFonts.montserrat(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 0.4,
+                            color: scheme.onSurface,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color: scheme.outlineVariant.withValues(
+                                  alpha: 0.5,
+                                ),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  LucideIcons.mapPin,
+                                  size: 13,
+                                  color: scheme.onSurface.withValues(
+                                    alpha: 0.7,
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  _locationLine(),
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w800,
+                                    color: scheme.onSurface.withValues(
+                                      alpha: 0.85,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 22),
+                        // 3 equal stat cards in one row (web parity)
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(
+                              child: _webStatCard(
+                                'Video Call',
+                                'Connect Now',
+                                LucideIcons.video,
+                                scheme,
+                                onTap: _openVideoCallSheet,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _webStatCard(
+                                'Completion',
+                                '$overallPct%',
+                                LucideIcons.calendar,
+                                scheme,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _webStatCard(
+                                'Site Visit',
+                                'Book Tour',
+                                LucideIcons.eye,
+                                scheme,
+                                onTap: () => context.push(
+                                  '/cp/booking/site-visit?projectId=${widget.projectId}',
+                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -673,12 +860,13 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         _sectionTitle('Overview', scheme, accent),
                         const SizedBox(height: 12),
                         Text(
-                          '${(p['description'] ?? '').toString()} Experience the pinnacle of luxury living with floor-to-ceiling windows, Italian marble flooring, and smart home automation.',
+                          'EXPERIENCE THE PINNACLE OF LUXURY LIVING WITH FLOOR-TO-CEILING WINDOWS, ITALIAN MARBLE FLOORING, AND SMART HOME AUTOMATION.',
                           style: GoogleFonts.montserrat(
-                            fontSize: 14,
+                            fontSize: 11,
                             fontWeight: FontWeight.w700,
-                            color: scheme.onSurface.withValues(alpha: 0.78),
-                            height: 1.6,
+                            letterSpacing: -0.2,
+                            color: scheme.onSurfaceVariant,
+                            height: 1.5,
                           ),
                         ),
                         const SizedBox(height: 18),
@@ -703,7 +891,11 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                           icon: LucideIcons.image,
                           title: 'Floor Plans',
                           subtitle: 'Images • JPG/PNG',
-                          url: (p['plans'] is List && (p['plans'] as List).isNotEmpty) ? _stringUrl((p['plans'] as List).first) : null,
+                          url:
+                              (p['plans'] is List &&
+                                  (p['plans'] as List).isNotEmpty)
+                              ? _stringUrl((p['plans'] as List).first)
+                              : null,
                         ),
                         const SizedBox(height: 10),
                         _assetRow(
@@ -774,14 +966,22 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             borderRadius: BorderRadius.circular(14),
             border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
           ),
-          child: Icon(icon, size: 18, color: filled ? (activeColor ?? accent) : Colors.white),
+          child: Icon(
+            icon,
+            size: 18,
+            color: filled ? (activeColor ?? accent) : Colors.white,
+          ),
         ),
       ),
     );
   }
 
-  Widget _thumbButton({required String label, required String? url, required ColorScheme scheme, required VoidCallback onTap}) {
-    final resolved = url == null ? null : ref.read(apiClientProvider).resolveUrl(url);
+  Widget _thumbButton({
+    required String label,
+    required String? url,
+    required ColorScheme scheme,
+    required VoidCallback onTap,
+  }) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -792,17 +992,22 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           height: 66,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.7), width: 2),
-            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.35), blurRadius: 18, offset: const Offset(0, 8))],
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.7),
+              width: 2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.35),
+                blurRadius: 18,
+                offset: const Offset(0, 8),
+              ),
+            ],
           ),
           clipBehavior: Clip.antiAlias,
           child: Stack(
             children: [
-              Positioned.fill(
-                child: resolved == null
-                    ? Container(color: scheme.surfaceContainerHighest)
-                    : CachedNetworkImage(imageUrl: resolved, fit: BoxFit.cover),
-              ),
+              Positioned.fill(child: _projectImage(url, fit: BoxFit.cover)),
               Positioned(
                 left: 0,
                 right: 0,
@@ -810,9 +1015,18 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 child: Text(
                   label,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.white, shadows: const [
-                    Shadow(blurRadius: 6, color: Colors.black, offset: Offset(0, 2)),
-                  ]),
+                  style: GoogleFonts.montserrat(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.white,
+                    shadows: const [
+                      Shadow(
+                        blurRadius: 6,
+                        color: Colors.black,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -834,8 +1048,17 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           height: 66,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.7), width: 2),
-            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.35), blurRadius: 18, offset: const Offset(0, 8))],
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.7),
+              width: 2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.35),
+                blurRadius: 18,
+                offset: const Offset(0, 8),
+              ),
+            ],
           ),
           alignment: Alignment.center,
           child: Column(
@@ -843,7 +1066,13 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             children: [
               const Icon(LucideIcons.glasses, size: 26),
               const SizedBox(height: 2),
-              Text('360°', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900)),
+              Text(
+                '360°',
+                style: GoogleFonts.montserrat(
+                  fontSize: 9,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
             ],
           ),
         ),
@@ -851,68 +1080,64 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     );
   }
 
-  Widget _statCard(String label, String value, ColorScheme scheme) {
-    return Container(
-      padding: const EdgeInsets.all(12),
+  /// Web-parity stat card: icon on top, centred label + value, fixed height —
+  /// used for the Video Call / Completion / Site Visit row.
+  Widget _webStatCard(
+    String label,
+    String value,
+    IconData icon,
+    ColorScheme scheme, {
+    VoidCallback? onTap,
+  }) {
+    final card = Container(
+      height: 128,
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.45)),
         color: scheme.surfaceContainerHighest.withValues(alpha: 0.35),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: scheme.outlineVariant.withValues(alpha: 0.45),
+        ),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(label.toUpperCase(), style: GoogleFonts.montserrat(fontSize: 7, fontWeight: FontWeight.w900, letterSpacing: 2, color: scheme.onSurfaceVariant)),
-          const SizedBox(height: 3),
-          Text(value, style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: scheme.onSurface)),
+          Icon(icon, size: 20, color: scheme.onSurface.withValues(alpha: 0.25)),
+          const SizedBox(height: 10),
+          Text(
+            label.toUpperCase(),
+            textAlign: TextAlign.center,
+            style: GoogleFonts.montserrat(
+              fontSize: 8,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1.5,
+              color: scheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.montserrat(
+              fontSize: 13,
+              fontWeight: FontWeight.w800,
+              color: scheme.onSurface,
+              height: 1.1,
+            ),
+          ),
         ],
       ),
     );
-  }
-
-  Widget _actionCard(String label, String value, IconData icon, ColorScheme scheme, {required VoidCallback onTap}) {
-    final isLight = scheme.brightness == Brightness.light;
-    final accent = isLight ? Colors.black : scheme.primary;
+    if (onTap == null) return card;
     return Material(
-      color: scheme.surfaceContainerHighest.withValues(alpha: 0.35),
-      borderRadius: BorderRadius.circular(14),
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(24),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
-        child: Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: scheme.primary.withValues(alpha: 0.18)),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 34,
-                height: 34,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: accent.withValues(alpha: 0.08),
-                ),
-                child: Icon(icon, size: 18, color: accent),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(label.toUpperCase(), style: GoogleFonts.montserrat(fontSize: 7, fontWeight: FontWeight.w900, letterSpacing: 2, color: scheme.onSurfaceVariant)),
-                    const SizedBox(height: 3),
-                    Text(value, style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: scheme.onSurface)),
-                  ],
-                ),
-              ),
-              Icon(LucideIcons.chevronRight, size: 18, color: scheme.onSurfaceVariant.withValues(alpha: 0.6)),
-            ],
-          ),
-        ),
+        borderRadius: BorderRadius.circular(24),
+        child: card,
       ),
     );
   }
@@ -924,13 +1149,24 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         const SizedBox(width: 10),
         Text(
           title.toUpperCase(),
-          style: GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w900, letterSpacing: 3, color: scheme.onSurface),
+          style: GoogleFonts.montserrat(
+            fontSize: 13,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 3,
+            color: scheme.onSurface,
+          ),
         ),
       ],
     );
   }
 
-  Widget _assetRow(ColorScheme scheme, {required IconData icon, required String title, required String subtitle, required String? url}) {
+  Widget _assetRow(
+    ColorScheme scheme, {
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required String? url,
+  }) {
     final isLight = scheme.brightness == Brightness.light;
     final accent = isLight ? Colors.black : scheme.primary;
     final titleColor = scheme.onSurface.withValues(alpha: isLight ? 0.92 : 1);
@@ -939,8 +1175,12 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: scheme.outlineVariant.withValues(alpha: isLight ? 0.55 : 0.4)),
-        color: scheme.surfaceContainerHighest.withValues(alpha: isLight ? 0.12 : 0.25),
+        border: Border.all(
+          color: scheme.outlineVariant.withValues(alpha: isLight ? 0.55 : 0.4),
+        ),
+        color: scheme.surfaceContainerHighest.withValues(
+          alpha: isLight ? 0.12 : 0.25,
+        ),
       ),
       child: Row(
         children: [
@@ -987,13 +1227,29 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               OutlinedButton(
                 onPressed: () => _openOrWarn(url, '$title not available'),
                 style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  side: BorderSide(color: scheme.onSurface.withValues(alpha: isLight ? 0.65 : 0.22)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  side: BorderSide(
+                    color: scheme.onSurface.withValues(
+                      alpha: isLight ? 0.65 : 0.22,
+                    ),
+                  ),
                   foregroundColor: accent,
                   disabledForegroundColor: accent.withValues(alpha: 0.65),
                 ),
-                child: Text('VIEW', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.2)),
+                child: Text(
+                  'VIEW',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.2,
+                  ),
+                ),
               ),
               const SizedBox(width: 10),
               SizedBox(
@@ -1003,12 +1259,22 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                   onPressed: () => _openOrWarn(url, '$title not available'),
                   style: OutlinedButton.styleFrom(
                     padding: EdgeInsets.zero,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    side: BorderSide(color: scheme.onSurface.withValues(alpha: isLight ? 0.65 : 0.22)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    side: BorderSide(
+                      color: scheme.onSurface.withValues(
+                        alpha: isLight ? 0.65 : 0.22,
+                      ),
+                    ),
                     foregroundColor: accent,
                     disabledForegroundColor: accent.withValues(alpha: 0.65),
                   ),
-                  child: Icon(LucideIcons.download, size: 18, color: scheme.onSurface),
+                  child: Icon(
+                    LucideIcons.download,
+                    size: 18,
+                    color: scheme.onSurface,
+                  ),
                 ),
               ),
             ],
@@ -1024,7 +1290,13 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     final am = p['amenities'];
     final list = am is List ? am : <dynamic>[];
     if (list.isEmpty) {
-      return Text('No amenities listed', style: GoogleFonts.montserrat(color: scheme.onSurfaceVariant, fontSize: 11));
+      return Text(
+        'No amenities listed',
+        style: GoogleFonts.montserrat(
+          color: scheme.onSurfaceVariant,
+          fontSize: 11,
+        ),
+      );
     }
     return GridView.builder(
       shrinkWrap: true,
@@ -1037,11 +1309,14 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       itemCount: list.length.clamp(0, 12),
       itemBuilder: (context, i) {
         final raw = list[i];
-        final name = (raw is String ? raw : (raw is Map ? raw['name'] : raw)).toString();
+        final name = (raw is String ? raw : (raw is Map ? raw['name'] : raw))
+            .toString();
         return Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(26),
-            border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.35)),
+            border: Border.all(
+              color: scheme.outlineVariant.withValues(alpha: 0.35),
+            ),
             color: scheme.surfaceContainerHighest.withValues(alpha: 0.22),
           ),
           padding: const EdgeInsets.all(12),
@@ -1055,7 +1330,11 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                   shape: BoxShape.circle,
                   color: accent.withValues(alpha: 0.08),
                 ),
-                child: Icon(LucideIcons.sparkles, size: 18, color: scheme.onSurfaceVariant),
+                child: Icon(
+                  LucideIcons.sparkles,
+                  size: 18,
+                  color: scheme.onSurfaceVariant,
+                ),
               ),
               const SizedBox(height: 10),
               Text(
@@ -1063,7 +1342,12 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.1, color: scheme.onSurface.withValues(alpha: 0.8)),
+                style: GoogleFonts.montserrat(
+                  fontSize: 8,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.1,
+                  color: scheme.onSurface.withValues(alpha: 0.8),
+                ),
               ),
             ],
           ),
@@ -1080,7 +1364,9 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(34),
-        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.35)),
+        border: Border.all(
+          color: scheme.outlineVariant.withValues(alpha: 0.35),
+        ),
         color: scheme.surfaceContainerHighest.withValues(alpha: 0.22),
       ),
       child: Row(
@@ -1112,7 +1398,12 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 const SizedBox(height: 14),
                 Text(
                   'As the project progresses, significant milestones are reached, showcasing our team’s dedication and expertise.',
-                  style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w600, color: scheme.onSurfaceVariant, height: 1.6),
+                  style: GoogleFonts.montserrat(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: scheme.onSurfaceVariant,
+                    height: 1.6,
+                  ),
                 ),
               ],
             ),
@@ -1136,8 +1427,22 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('$pct%', style: GoogleFonts.montserrat(fontSize: 22, fontWeight: FontWeight.w900)),
-                        Text('OVERALL', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w800, color: scheme.onSurfaceVariant, letterSpacing: 1)),
+                        Text(
+                          '$pct%',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w900,
+                          ),
+                        ),
+                        Text(
+                          'OVERALL',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w800,
+                            color: scheme.onSurfaceVariant,
+                            letterSpacing: 1,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -1153,8 +1458,16 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
   Widget _progressTimeline(ColorScheme scheme) {
     final isLight = scheme.brightness == Brightness.light;
     final accent = isLight ? Colors.black : scheme.primary;
-    final phases = _progress.whereType<Map>().map((m) => Map<String, dynamic>.from(m)).toList()
-      ..sort((a, b) => ((a['phaseOrder'] ?? 0) as num).toInt().compareTo(((b['phaseOrder'] ?? 0) as num).toInt()));
+    final phases =
+        _progress
+            .whereType<Map>()
+            .map((m) => Map<String, dynamic>.from(m))
+            .toList()
+          ..sort(
+            (a, b) => ((a['phaseOrder'] ?? 0) as num).toInt().compareTo(
+              ((b['phaseOrder'] ?? 0) as num).toInt(),
+            ),
+          );
 
     return SizedBox(
       height: 260,
@@ -1165,12 +1478,15 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         separatorBuilder: (_, __) => const SizedBox(width: 12),
         itemBuilder: (context, i) {
           final ph = phases[i];
-          final img = (ph['images'] is List && (ph['images'] as List).isNotEmpty)
+          final img =
+              (ph['images'] is List && (ph['images'] as List).isNotEmpty)
               ? _stringUrl((ph['images'] as List).first)
               : _stringUrl(ph['image']);
           final status = (ph['status'] ?? 'In Progress').toString();
           final name = (ph['name'] ?? ph['phaseName'] ?? 'Phase').toString();
-          final pct = (ph['progressPercent'] is num) ? (ph['progressPercent'] as num).toInt().clamp(0, 100) : 0;
+          final pct = (ph['progressPercent'] is num)
+              ? (ph['progressPercent'] as num).toInt().clamp(0, 100)
+              : 0;
 
           Color badgeBg;
           Color badgeFg;
@@ -1189,7 +1505,9 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             width: 240,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(26),
-              border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.35)),
+              border: Border.all(
+                color: scheme.outlineVariant.withValues(alpha: 0.35),
+              ),
               color: scheme.surfaceContainerHighest.withValues(alpha: 0.22),
             ),
             clipBehavior: Clip.antiAlias,
@@ -1200,14 +1518,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      if (img != null && img.isNotEmpty)
-                        CachedNetworkImage(
-                          imageUrl: ref.read(apiClientProvider).resolveUrl(img),
-                          fit: BoxFit.cover,
-                          errorWidget: (_, __, ___) => Container(color: scheme.surfaceContainerHighest),
-                        )
-                      else
-                        Container(color: scheme.surfaceContainerHighest),
+                      _projectImage(img, fit: BoxFit.cover),
                       Positioned.fill(
                         child: Material(
                           color: Colors.transparent,
@@ -1220,7 +1531,11 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                                 _openGallery([img]);
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('No progress images available')),
+                                  const SnackBar(
+                                    content: Text(
+                                      'No progress images available',
+                                    ),
+                                  ),
                                 );
                               }
                             },
@@ -1231,11 +1546,22 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         top: 12,
                         left: 12,
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                          decoration: BoxDecoration(color: badgeBg, borderRadius: BorderRadius.circular(999)),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: badgeBg,
+                            borderRadius: BorderRadius.circular(999),
+                          ),
                           child: Text(
                             status.toUpperCase(),
-                            style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1, color: badgeFg),
+                            style: GoogleFonts.montserrat(
+                              fontSize: 8,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 1,
+                              color: badgeFg,
+                            ),
                           ),
                         ),
                       ),
@@ -1247,7 +1573,10 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                               gradient: LinearGradient(
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
-                                colors: [Colors.transparent, Colors.black.withValues(alpha: 0.55)],
+                                colors: [
+                                  Colors.transparent,
+                                  Colors.black.withValues(alpha: 0.55),
+                                ],
                               ),
                             ),
                           ),
@@ -1265,7 +1594,11 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         name.toUpperCase(),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1.2),
+                        style: GoogleFonts.montserrat(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.2,
+                        ),
                       ),
                       const SizedBox(height: 10),
                       Row(
@@ -1280,14 +1613,19 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                                     value: pct / 100.0,
                                     strokeWidth: 3,
                                     color: accent,
-                                    backgroundColor: scheme.onSurface.withValues(alpha: 0.12),
+                                    backgroundColor: scheme.onSurface
+                                        .withValues(alpha: 0.12),
                                   ),
                                 ),
                                 Positioned.fill(
                                   child: Center(
                                     child: Text(
                                       '$pct%',
-                                      style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: scheme.onSurfaceVariant),
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 9,
+                                        fontWeight: FontWeight.w900,
+                                        color: scheme.onSurfaceVariant,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -1300,7 +1638,12 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                               (_project?['title'] ?? '').toString(),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w800, color: scheme.onSurfaceVariant, letterSpacing: 0.6),
+                              style: GoogleFonts.montserrat(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w800,
+                                color: scheme.onSurfaceVariant,
+                                letterSpacing: 0.6,
+                              ),
                             ),
                           ),
                         ],
@@ -1331,17 +1674,32 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text('Registration', style: GoogleFonts.montserrat(fontSize: 18, fontWeight: FontWeight.w600)),
+          Text(
+            'Registration',
+            style: GoogleFonts.montserrat(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
           const SizedBox(height: 12),
           _cpLabel(scheme, 'Enter employee name'),
           const SizedBox(height: 6),
-          _cpField(controller: _regEmployeeEntered, hint: 'EMPLOYEE NAME', scheme: scheme),
+          _cpField(
+            controller: _regEmployeeEntered,
+            hint: 'EMPLOYEE NAME',
+            scheme: scheme,
+          ),
           const SizedBox(height: 12),
           _cpLabel(scheme, 'Name of the employee'),
           const SizedBox(height: 2),
           Text(
             'SELECT A NAME FROM THE LIST',
-            style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w800, letterSpacing: 1.4, color: scheme.onSurfaceVariant.withValues(alpha: 0.8)),
+            style: GoogleFonts.montserrat(
+              fontSize: 8,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 1.4,
+              color: scheme.onSurfaceVariant.withValues(alpha: 0.8),
+            ),
           ),
           const SizedBox(height: 6),
           Theme(
@@ -1349,11 +1707,15 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               focusColor: accent,
               canvasColor: scheme.surface,
               cardColor: scheme.surface,
-              colorScheme: Theme.of(context).colorScheme.copyWith(primary: accent),
+              colorScheme: Theme.of(
+                context,
+              ).colorScheme.copyWith(primary: accent),
               dropdownMenuTheme: DropdownMenuThemeData(
                 menuStyle: MenuStyle(
                   backgroundColor: WidgetStatePropertyAll(scheme.surface),
-                  surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
+                  surfaceTintColor: const WidgetStatePropertyAll(
+                    Colors.transparent,
+                  ),
                 ),
                 textStyle: GoogleFonts.montserrat(
                   fontWeight: FontWeight.w700,
@@ -1365,7 +1727,12 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               initialValue: _regEmployeeId,
               items: [
                 const DropdownMenuItem(value: null, child: Text('— Select —')),
-                ..._employees.map((e) => DropdownMenuItem(value: e['_id']?.toString(), child: Text((e['name'] ?? '').toString()))),
+                ..._employees.map(
+                  (e) => DropdownMenuItem(
+                    value: e['_id']?.toString(),
+                    child: Text((e['name'] ?? '').toString()),
+                  ),
+                ),
               ],
               onChanged: (v) => setState(() => _regEmployeeId = v),
               decoration: _cpInputDec(scheme, hint: '— Select —'),
@@ -1374,15 +1741,29 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           const SizedBox(height: 12),
           _cpLabel(scheme, 'Client Name'),
           const SizedBox(height: 6),
-          _cpField(controller: _regClientName, hint: 'CLIENT NAME', scheme: scheme),
+          _cpField(
+            controller: _regClientName,
+            hint: 'CLIENT NAME',
+            scheme: scheme,
+          ),
           const SizedBox(height: 12),
           _cpLabel(scheme, 'Client Number'),
           const SizedBox(height: 6),
-          _cpField(controller: _regClientPhone, hint: 'PHONE NUMBER', scheme: scheme, keyboardType: TextInputType.phone),
+          _cpField(
+            controller: _regClientPhone,
+            hint: 'PHONE NUMBER',
+            scheme: scheme,
+            keyboardType: TextInputType.phone,
+          ),
           const SizedBox(height: 12),
           _cpLabel(scheme, 'E-mail'),
           const SizedBox(height: 6),
-          _cpField(controller: _regClientEmail, hint: 'EMAIL ADDRESS', scheme: scheme, keyboardType: TextInputType.emailAddress),
+          _cpField(
+            controller: _regClientEmail,
+            hint: 'EMAIL ADDRESS',
+            scheme: scheme,
+            keyboardType: TextInputType.emailAddress,
+          ),
           const SizedBox(height: 12),
           _cpLabel(scheme, 'Location'),
           const SizedBox(height: 6),
@@ -1394,11 +1775,23 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               backgroundColor: btnBg,
               foregroundColor: btnFg,
               minimumSize: const Size.fromHeight(52),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
             ),
             child: _regSubmitting
-                ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                : Text('SUBMIT', style: GoogleFonts.montserrat(fontWeight: FontWeight.w900, letterSpacing: 3)),
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Text(
+                    'SUBMIT',
+                    style: GoogleFonts.montserrat(
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 3,
+                    ),
+                  ),
           ),
         ],
       ),
@@ -1440,9 +1833,14 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 onTap: () {
                   final phone = (_project?['contactPhone'] ?? '').toString();
                   if (phone.isNotEmpty) {
-                    launchUrl(Uri.parse('https://wa.me/$phone'), mode: LaunchMode.externalApplication);
+                    launchUrl(
+                      Uri.parse('https://wa.me/$phone'),
+                      mode: LaunchMode.externalApplication,
+                    );
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Contact not available')));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Contact not available')),
+                    );
                   }
                 },
               ),
@@ -1451,12 +1849,16 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           const SizedBox(width: 16),
           Expanded(
             child: FilledButton(
-              onPressed: () => context.push('/cp/booking/site-visit?projectId=${widget.projectId}'),
+              onPressed: () => context.push(
+                '/cp/booking/site-visit?projectId=${widget.projectId}',
+              ),
               style: FilledButton.styleFrom(
                 backgroundColor: accent,
                 foregroundColor: accentFg,
                 minimumSize: const Size.fromHeight(50),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
                 elevation: 10,
                 shadowColor: accent.withValues(alpha: 0.3),
               ),
@@ -1475,7 +1877,11 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     );
   }
 
-  Widget _ctaCircleIcon({required IconData icon, required ColorScheme scheme, required VoidCallback onTap}) {
+  Widget _ctaCircleIcon({
+    required IconData icon,
+    required ColorScheme scheme,
+    required VoidCallback onTap,
+  }) {
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -1486,7 +1892,9 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           height: 48,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.5)),
+            border: Border.all(
+              color: scheme.outlineVariant.withValues(alpha: 0.5),
+            ),
             color: scheme.surface,
           ),
           child: Icon(icon, size: 20, color: scheme.onSurface),
@@ -1496,15 +1904,21 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
   }
 
   Widget _locationCard(Map<String, dynamic> p, ColorScheme scheme) {
-    const defaultLoc = 'NA 604, 6th Floor, M4 Aura Heights, Grant Road, Mumbai - 400007';
-    bool invalid(String s) => s.isEmpty || ['NA', 'N/A', 'na', 'n/a', 'None', 'none'].contains(s.trim());
+    const defaultLoc =
+        'NA 604, 6th Floor, M4 Aura Heights, Grant Road, Mumbai - 400007';
+    bool invalid(String s) =>
+        s.isEmpty ||
+        ['NA', 'N/A', 'na', 'n/a', 'None', 'none'].contains(s.trim());
     final raw = p['location'];
-    final loc = raw is String ? raw : (raw is Map ? (raw['name'] ?? '').toString() : '');
+    final loc = raw is String
+        ? raw
+        : (raw is Map ? (raw['name'] ?? '').toString() : '');
     final effective = invalid(loc) ? defaultLoc : loc;
     final isLight = scheme.brightness == Brightness.light;
     final btnBg = isLight ? Colors.black : scheme.primary;
     final btnFg = isLight ? Colors.white : scheme.onPrimary;
-    final embed = 'https://www.google.com/maps?q=${Uri.encodeComponent(effective)}&output=embed';
+    final embed =
+        'https://www.google.com/maps?q=${Uri.encodeComponent(effective)}&output=embed';
 
     final controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -1515,27 +1929,42 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       height: 280,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(34),
-        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.35), width: 4),
+        border: Border.all(
+          color: scheme.outlineVariant.withValues(alpha: 0.35),
+          width: 4,
+        ),
         color: scheme.surfaceContainerHighest.withValues(alpha: 0.18),
       ),
       clipBehavior: Clip.antiAlias,
       child: Stack(
         children: [
-          Positioned.fill(
-            child: WebViewWidget(controller: controller),
-          ),
+          Positioned.fill(child: WebViewWidget(controller: controller)),
           Positioned(
             top: 14,
             right: 14,
             child: FilledButton.icon(
-              onPressed: () => _openUrl('https://www.google.com/maps?q=${Uri.encodeComponent(effective)}'),
+              onPressed: () => _openUrl(
+                'https://www.google.com/maps?q=${Uri.encodeComponent(effective)}',
+              ),
               icon: const Icon(LucideIcons.mapPin, size: 16),
-              label: Text('VIEW ON MAPS', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2)),
+              label: Text(
+                'VIEW ON MAPS',
+                style: GoogleFonts.montserrat(
+                  fontSize: 9,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 2,
+                ),
+              ),
               style: FilledButton.styleFrom(
                 backgroundColor: btnBg,
                 foregroundColor: btnFg,
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 10,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(999),
+                ),
               ),
             ),
           ),
@@ -1559,13 +1988,24 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               padding: const EdgeInsets.fromLTRB(18, 14, 18, 18),
               decoration: BoxDecoration(
                 color: scheme.surface,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(34)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(34),
+                ),
               ),
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Center(child: Container(width: 40, height: 4, decoration: BoxDecoration(color: scheme.onSurface.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(99)))),
+                    Center(
+                      child: Container(
+                        width: 40,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: scheme.onSurface.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(99),
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 14),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1573,9 +2013,26 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('VIDEO CALL', style: GoogleFonts.montserrat(fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: -0.2)),
+                            Text(
+                              'VIDEO CALL',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: -0.2,
+                              ),
+                            ),
                             const SizedBox(height: 2),
-                            Text((_project?['title'] ?? '').toString().toUpperCase(), style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1.4, color: scheme.onSurfaceVariant)),
+                            Text(
+                              (_project?['title'] ?? '')
+                                  .toString()
+                                  .toUpperCase(),
+                              style: GoogleFonts.montserrat(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 1.4,
+                                color: scheme.onSurfaceVariant,
+                              ),
+                            ),
                           ],
                         ),
                         IconButton(
@@ -1587,17 +2044,37 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     const SizedBox(height: 12),
                     _cpLabel(scheme, 'Enter employee name'),
                     const SizedBox(height: 6),
-                    _cpField(controller: _employeeEntered, hint: 'EMPLOYEE NAME', scheme: scheme),
+                    _cpField(
+                      controller: _employeeEntered,
+                      hint: 'EMPLOYEE NAME',
+                      scheme: scheme,
+                    ),
                     const SizedBox(height: 12),
                     _cpLabel(scheme, 'Name of the employee'),
                     const SizedBox(height: 2),
-                    Text('SELECT A NAME FROM THE LIST', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w800, letterSpacing: 1.4, color: scheme.onSurfaceVariant.withValues(alpha: 0.8))),
+                    Text(
+                      'SELECT A NAME FROM THE LIST',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 8,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1.4,
+                        color: scheme.onSurfaceVariant.withValues(alpha: 0.8),
+                      ),
+                    ),
                     const SizedBox(height: 6),
                     DropdownButtonFormField<String>(
                       initialValue: _employeeId,
                       items: [
-                        const DropdownMenuItem(value: null, child: Text('— Select —')),
-                        ..._employees.map((e) => DropdownMenuItem(value: e['_id']?.toString(), child: Text((e['name'] ?? '').toString()))),
+                        const DropdownMenuItem(
+                          value: null,
+                          child: Text('— Select —'),
+                        ),
+                        ..._employees.map(
+                          (e) => DropdownMenuItem(
+                            value: e['_id']?.toString(),
+                            child: Text((e['name'] ?? '').toString()),
+                          ),
+                        ),
                       ],
                       onChanged: (v) => setState(() => _employeeId = v),
                       decoration: _cpInputDec(scheme, hint: '— Select —'),
@@ -1605,25 +2082,45 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     const SizedBox(height: 12),
                     _cpLabel(scheme, 'Client Name'),
                     const SizedBox(height: 6),
-                    _cpField(controller: _clientName, hint: 'CLIENT NAME', scheme: scheme),
+                    _cpField(
+                      controller: _clientName,
+                      hint: 'CLIENT NAME',
+                      scheme: scheme,
+                    ),
                     const SizedBox(height: 12),
                     _cpLabel(scheme, 'Client Number'),
                     const SizedBox(height: 6),
-                    _cpField(controller: _clientPhone, hint: 'PHONE NUMBER', scheme: scheme, keyboardType: TextInputType.phone),
+                    _cpField(
+                      controller: _clientPhone,
+                      hint: 'PHONE NUMBER',
+                      scheme: scheme,
+                      keyboardType: TextInputType.phone,
+                    ),
                     const SizedBox(height: 12),
                     _cpLabel(scheme, 'E-mail'),
                     const SizedBox(height: 6),
-                    _cpField(controller: _clientEmail, hint: 'EMAIL ADDRESS', scheme: scheme, keyboardType: TextInputType.emailAddress),
+                    _cpField(
+                      controller: _clientEmail,
+                      hint: 'EMAIL ADDRESS',
+                      scheme: scheme,
+                      keyboardType: TextInputType.emailAddress,
+                    ),
                     const SizedBox(height: 12),
                     OutlinedButton.icon(
                       onPressed: _pickVideoDt,
                       icon: const Icon(LucideIcons.calendar),
                       label: Text(
-                        _videoCallDt == null ? 'Select date & time' : DateFormat('d MMM y, h:mm a').format(_videoCallDt!.toLocal()),
+                        _videoCallDt == null
+                            ? 'Select date & time'
+                            : DateFormat(
+                                'd MMM y, h:mm a',
+                              ).format(_videoCallDt!.toLocal()),
                       ),
                       style: OutlinedButton.styleFrom(
                         minimumSize: const Size.fromHeight(52),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                         foregroundColor: accent,
                         side: BorderSide(color: accent.withValues(alpha: 0.55)),
                       ),
@@ -1635,11 +2132,23 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         backgroundColor: btnBg,
                         foregroundColor: btnFg,
                         minimumSize: const Size.fromHeight(52),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                       ),
                       child: _leadSubmitting
-                          ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
-                          : Text('SUBMIT', style: GoogleFonts.montserrat(fontWeight: FontWeight.w900, letterSpacing: 3)),
+                          ? const SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : Text(
+                              'SUBMIT',
+                              style: GoogleFonts.montserrat(
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 3,
+                              ),
+                            ),
                     ),
                   ],
                 ),
@@ -1688,12 +2197,26 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         color: scheme.onSurface.withValues(alpha: isLight ? 0.55 : 0.45),
       ),
       filled: true,
-      fillColor: scheme.surfaceContainerHighest.withValues(alpha: isLight ? 0.16 : 0.2),
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.5))),
-      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.5))),
+      fillColor: scheme.surfaceContainerHighest.withValues(
+        alpha: isLight ? 0.16 : 0.2,
+      ),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide(
+          color: scheme.outlineVariant.withValues(alpha: 0.5),
+        ),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: BorderSide(
+          color: scheme.outlineVariant.withValues(alpha: 0.5),
+        ),
+      ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: BorderSide(color: scheme.onSurface.withValues(alpha: isLight ? 0.8 : 0.65)),
+        borderSide: BorderSide(
+          color: scheme.onSurface.withValues(alpha: isLight ? 0.8 : 0.65),
+        ),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
     );
@@ -1713,15 +2236,17 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 itemCount: _gallery.length,
                 onPageChanged: (i) => setState(() => _galleryIndex = i),
                 itemBuilder: (context, i) {
-                  final url = ref.read(apiClientProvider).resolveUrl(_gallery[i]);
                   return InteractiveViewer(
                     minScale: 1,
                     maxScale: 4,
                     child: Center(
-                      child: CachedNetworkImage(
-                        imageUrl: url,
+                      child: _projectImage(
+                        _gallery[i],
                         fit: BoxFit.contain,
-                        errorWidget: (_, __, ___) => Icon(LucideIcons.imageOff, color: Colors.white.withValues(alpha: 0.7)),
+                        errorWidget: Icon(
+                          LucideIcons.imageOff,
+                          color: Colors.white.withValues(alpha: 0.7),
+                        ),
                       ),
                     ),
                   );
@@ -1746,8 +2271,15 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                       onPressed: _galleryIndex <= 0
                           ? null
                           : () {
-                              final next = (_galleryIndex - 1).clamp(0, _gallery.length - 1);
-                              ctrl.animateToPage(next, duration: const Duration(milliseconds: 220), curve: Curves.easeOut);
+                              final next = (_galleryIndex - 1).clamp(
+                                0,
+                                _gallery.length - 1,
+                              );
+                              ctrl.animateToPage(
+                                next,
+                                duration: const Duration(milliseconds: 220),
+                                curve: Curves.easeOut,
+                              );
                             },
                       icon: const Icon(LucideIcons.chevronLeft),
                       color: Colors.white,
@@ -1765,8 +2297,15 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                       onPressed: _galleryIndex >= _gallery.length - 1
                           ? null
                           : () {
-                              final next = (_galleryIndex + 1).clamp(0, _gallery.length - 1);
-                              ctrl.animateToPage(next, duration: const Duration(milliseconds: 220), curve: Curves.easeOut);
+                              final next = (_galleryIndex + 1).clamp(
+                                0,
+                                _gallery.length - 1,
+                              );
+                              ctrl.animateToPage(
+                                next,
+                                duration: const Duration(milliseconds: 220),
+                                curve: Curves.easeOut,
+                              );
                             },
                       icon: const Icon(LucideIcons.chevronRight),
                       color: Colors.white,
@@ -1779,7 +2318,10 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 right: 16,
                 child: Text(
                   '${_galleryIndex + 1} / ${_gallery.length}',
-                  style: GoogleFonts.montserrat(color: Colors.white, fontWeight: FontWeight.w800),
+                  style: GoogleFonts.montserrat(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
               ),
               if (_gallery.length > 1)
@@ -1797,7 +2339,9 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         margin: const EdgeInsets.symmetric(horizontal: 4),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: i == _galleryIndex ? (isLight ? Colors.white : Colors.white) : Colors.white.withValues(alpha: 0.35),
+                          color: i == _galleryIndex
+                              ? (isLight ? Colors.white : Colors.white)
+                              : Colors.white.withValues(alpha: 0.35),
                         ),
                       ),
                     ),
@@ -1810,4 +2354,3 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     );
   }
 }
-
