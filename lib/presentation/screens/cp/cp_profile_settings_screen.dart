@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,16 +10,19 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
 
 /// CP Configuration — parity with web `app/(cp)/cp/settings/page.tsx`.
 class CpProfileSettingsScreen extends ConsumerStatefulWidget {
   const CpProfileSettingsScreen({super.key});
 
   @override
-  ConsumerState<CpProfileSettingsScreen> createState() => _CpProfileSettingsScreenState();
+  ConsumerState<CpProfileSettingsScreen> createState() =>
+      _CpProfileSettingsScreenState();
 }
 
-class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScreen> {
+class _CpProfileSettingsScreenState
+    extends ConsumerState<CpProfileSettingsScreen> {
   static const _purple = Color(0xFF9333EA);
   static const _indigo = Color(0xFF4F46E5);
 
@@ -142,13 +144,15 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
       }
       if (newUrl == null || newUrl.isEmpty) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Upload failed')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('Upload failed')));
         }
         return;
       }
-      final patch = await ref.read(apiClientProvider).updateMe({'avatarUrl': newUrl});
+      final patch = await ref.read(apiClientProvider).updateMe({
+        'avatarUrl': newUrl,
+      });
       final ok = patch.data is Map && (patch.data as Map)['status'] == true;
       if (ok) {
         setState(() => _avatarUrl = newUrl);
@@ -159,15 +163,23 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
           );
         }
       } else {
-        final msg = patch.data is Map ? (patch.data as Map)['message']?.toString() : null;
+        final msg = patch.data is Map
+            ? (patch.data as Map)['message']?.toString()
+            : null;
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg ?? 'Update failed')));
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(msg ?? 'Update failed')));
         }
       }
     } on DioException catch (e) {
       if (mounted) {
-        final m = e.response?.data is Map ? (e.response!.data as Map)['message']?.toString() : null;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m ?? 'Upload failed')));
+        final m = e.response?.data is Map
+            ? (e.response!.data as Map)['message']?.toString()
+            : null;
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(m ?? 'Upload failed')));
       }
     } finally {
       if (mounted) setState(() => _uploadingAvatar = false);
@@ -201,104 +213,165 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
           );
         }
       } else {
-        final msg = res.data is Map ? (res.data as Map)['message']?.toString() : null;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg ?? 'Update failed')));
+        final msg = res.data is Map
+            ? (res.data as Map)['message']?.toString()
+            : null;
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(msg ?? 'Update failed')));
       }
     } on DioException catch (e) {
       if (mounted) {
-        final m = e.response?.data is Map ? (e.response!.data as Map)['message']?.toString() : null;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m ?? e.message ?? 'Network error')));
+        final m = e.response?.data is Map
+            ? (e.response!.data as Map)['message']?.toString()
+            : null;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(m ?? e.message ?? 'Network error')),
+        );
       }
     } finally {
       if (mounted) setState(() => _saving = false);
     }
   }
 
+  // Web parity: `IOSDateTimePicker` with mode="date" — absolute Day/Month/Year
+  // wheels (no relative "Today" labels), "Select Date" title, CANCEL/CONFIRM
+  // (not a live-commits-on-scroll "Done" button), and no minDate restriction
+  // for a birthdate (web only applies minDate to future-scheduling pickers).
   Future<void> _pickDob() async {
     final now = DateTime.now();
     final initial = _dobIso != null
         ? DateTime.tryParse(_dobIso!) ?? DateTime(now.year - 30, 1, 1)
         : DateTime(now.year - 30, 1, 1);
-    
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    DateTime tempDate = initial;
 
-    showModalBottomSheet(
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    DateTime temp = initial;
+
+    final result = await showModalBottomSheet<DateTime>(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (context) => Container(
-        height: 350,
+      isScrollControlled: true,
+      builder: (sheetCtx) => Container(
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF09090B) : Colors.white,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-          border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05)),
+          color: isDark ? const Color(0xFF0B111E) : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         ),
+        padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(25, 20, 25, 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("SELECT BIRTHDAY", style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 1, color: isDark ? Colors.white : Colors.black)),
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      decoration: BoxDecoration(
-                        color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Text("DONE", style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.blue)),
-                    ),
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: (isDark ? Colors.white : Colors.black).withValues(
+                    alpha: 0.15,
                   ),
-                ],
+                  borderRadius: BorderRadius.circular(99),
+                ),
               ),
             ),
-            const Divider(thickness: 0.5),
-            Expanded(
-              child: CupertinoTheme(
-                data: CupertinoThemeData(
-                  brightness: isDark ? Brightness.dark : Brightness.light,
-                  textTheme: CupertinoTextThemeData(
-                    dateTimePickerTextStyle: GoogleFonts.montserrat(
-                      color: isDark ? Colors.white : Colors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
+            const SizedBox(height: 16),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'SELECT DATE',
+                style: GoogleFonts.montserrat(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 0.5,
+                  color: isDark ? Colors.white : Colors.black,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            WheelDateTimePicker(
+              initial: temp,
+              isDark: isDark,
+              showTime: false,
+              onChanged: (dt) => temp = dt,
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.pop(sheetCtx),
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size.fromHeight(52),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      side: BorderSide(
+                        color: (isDark ? Colors.white : Colors.black)
+                            .withValues(alpha: 0.2),
+                      ),
+                      foregroundColor: isDark ? Colors.white : Colors.black,
+                    ),
+                    child: Text(
+                      'CANCEL',
+                      style: GoogleFonts.montserrat(
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1,
+                      ),
                     ),
                   ),
                 ),
-                child: CupertinoDatePicker(
-                  mode: CupertinoDatePickerMode.date,
-                  initialDateTime: tempDate,
-                  maximumDate: now,
-                  onDateTimeChanged: (DateTime picked) {
-                    setState(() {
-                      _dobIso = DateFormat('yyyy-MM-dd').format(picked);
-                    });
-                  },
+                const SizedBox(width: 12),
+                Expanded(
+                  child: FilledButton(
+                    onPressed: () => Navigator.pop(sheetCtx, temp),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: isDark ? Colors.white : Colors.black,
+                      foregroundColor: isDark ? Colors.black : Colors.white,
+                      minimumSize: const Size.fromHeight(52),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    child: Text(
+                      'CONFIRM',
+                      style: GoogleFonts.montserrat(
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
           ],
         ),
       ),
     );
+    if (result != null && mounted) {
+      setState(() => _dobIso = DateFormat('yyyy-MM-dd').format(result));
+    }
   }
 
   Future<void> _deactivateSessions() async {
     final go = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Deactivate sessions?', style: GoogleFonts.montserrat(fontWeight: FontWeight.w800)),
+        title: Text(
+          'Deactivate sessions?',
+          style: GoogleFonts.montserrat(fontWeight: FontWeight.w800),
+        ),
         content: const Text(
           'You will be logged out everywhere, including this device.',
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: Text('Continue', style: TextStyle(color: Theme.of(ctx).colorScheme.error)),
+            child: Text(
+              'Continue',
+              style: TextStyle(color: Theme.of(ctx).colorScheme.error),
+            ),
           ),
         ],
       ),
@@ -314,12 +387,18 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
         if (!mounted) return;
         context.go('/auth/cp/login');
       } else {
-        final msg = res.data is Map ? (res.data as Map)['message']?.toString() : null;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg ?? 'Failed')));
+        final msg = res.data is Map
+            ? (res.data as Map)['message']?.toString()
+            : null;
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(msg ?? 'Failed')));
       }
     } on DioException catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message ?? 'Error')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.message ?? 'Error')));
       }
     } finally {
       if (mounted) setState(() => _sessionsBusy = false);
@@ -330,15 +409,24 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
     final go = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Permanent deactivation', style: GoogleFonts.montserrat(fontWeight: FontWeight.w800)),
+        title: Text(
+          'Permanent deactivation',
+          style: GoogleFonts.montserrat(fontWeight: FontWeight.w800),
+        ),
         content: const Text(
           'CRITICAL: This will remove your data from M4 Family. Continue?',
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: Text('Deactivate', style: TextStyle(color: Theme.of(ctx).colorScheme.error)),
+            child: Text(
+              'Deactivate',
+              style: TextStyle(color: Theme.of(ctx).colorScheme.error),
+            ),
           ),
         ],
       ),
@@ -354,12 +442,18 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
         if (!mounted) return;
         context.go('/auth/cp/login');
       } else {
-        final msg = res.data is Map ? (res.data as Map)['message']?.toString() : null;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg ?? 'Failed')));
+        final msg = res.data is Map
+            ? (res.data as Map)['message']?.toString()
+            : null;
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(msg ?? 'Failed')));
       }
     } on DioException catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message ?? 'Error')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.message ?? 'Error')));
       }
     } finally {
       if (mounted) setState(() => _deleteBusy = false);
@@ -379,7 +473,9 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
             Future<void> submit() async {
               if (_newPass.text.length < 4) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Passcode must be at least 4 digits')),
+                  const SnackBar(
+                    content: Text('Passcode must be at least 4 digits'),
+                  ),
                 );
                 return;
               }
@@ -391,12 +487,15 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
               }
               setDialogState(() => submitting = true);
               try {
-                final res = await ref.read(apiClientProvider).changePassword(
+                final res = await ref
+                    .read(apiClientProvider)
+                    .changePassword(
                       currentPassword: _curPass.text,
                       newPassword: _newPass.text,
                     );
                 if (!context.mounted) return;
-                final ok = res.data is Map && (res.data as Map)['status'] == true;
+                final ok =
+                    res.data is Map && (res.data as Map)['status'] == true;
                 if (ok) {
                   Navigator.of(ctx).pop();
                   _curPass.clear();
@@ -404,20 +503,28 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
                   _confPass.clear();
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Passcode updated successfully')),
+                      const SnackBar(
+                        content: Text('Passcode updated successfully'),
+                      ),
                     );
                   }
                 } else {
-                  final msg = res.data is Map ? (res.data as Map)['message']?.toString() : null;
+                  final msg = res.data is Map
+                      ? (res.data as Map)['message']?.toString()
+                      : null;
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(msg ?? 'Failed to update passcode')),
+                      SnackBar(
+                        content: Text(msg ?? 'Failed to update passcode'),
+                      ),
                     );
                   }
                 }
               } on DioException catch (e) {
                 if (mounted) {
-                  final m = e.response?.data is Map ? (e.response!.data as Map)['message']?.toString() : null;
+                  final m = e.response?.data is Map
+                      ? (e.response!.data as Map)['message']?.toString()
+                      : null;
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(m ?? 'Error updating passcode')),
                   );
@@ -428,10 +535,16 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
             }
 
             return AlertDialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(28),
+              ),
               title: Text(
                 'UPDATE SECURITY PASSCODE',
-                style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 1.2),
+                style: GoogleFonts.montserrat(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.2,
+                ),
               ),
               content: SingleChildScrollView(
                 child: Column(
@@ -458,21 +571,38 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
               actions: [
                 TextButton(
                   onPressed: submitting ? null : () => Navigator.pop(ctx),
-                  child: Text('CANCEL', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w800)),
+                  child: Text(
+                    'CANCEL',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 9,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
                 ),
                 FilledButton(
                   onPressed: submitting ? null : submit,
                   style: FilledButton.styleFrom(
                     backgroundColor: _purple,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                   ),
                   child: submitting
                       ? const SizedBox(
                           width: 18,
                           height: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
                         )
-                      : Text('CONFIRM', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w800)),
+                      : Text(
+                          'CONFIRM',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
                 ),
               ],
             );
@@ -488,7 +618,11 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
       children: [
         Text(
           label.toUpperCase(),
-          style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w800, letterSpacing: 1.5),
+          style: GoogleFonts.montserrat(
+            fontSize: 8,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 1.5,
+          ),
         ),
         const SizedBox(height: 6),
         TextField(
@@ -496,10 +630,15 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
           obscureText: true,
           keyboardType: TextInputType.number,
           textAlign: TextAlign.center,
-          style: GoogleFonts.montserrat(fontWeight: FontWeight.w700, letterSpacing: 6),
+          style: GoogleFonts.montserrat(
+            fontWeight: FontWeight.w700,
+            letterSpacing: 6,
+          ),
           decoration: InputDecoration(
             filled: true,
-            fillColor: Theme.of(ctx).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+            fillColor: Theme.of(
+              ctx,
+            ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
           ),
         ),
@@ -524,7 +663,10 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
                   SizedBox(
                     width: 48,
                     height: 48,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: scheme.primary),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: scheme.primary,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   Text(
@@ -579,7 +721,9 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
                                   fontSize: 8,
                                   fontWeight: FontWeight.w900,
                                   letterSpacing: 4,
-                                  color: scheme.onSurface.withValues(alpha: 0.2),
+                                  color: scheme.onSurface.withValues(
+                                    alpha: 0.2,
+                                  ),
                                 ),
                               ),
                               const SizedBox(height: 4),
@@ -589,7 +733,9 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
                                   fontSize: 7,
                                   fontWeight: FontWeight.w900,
                                   letterSpacing: 2,
-                                  color: scheme.onSurface.withValues(alpha: 0.12),
+                                  color: scheme.onSurface.withValues(
+                                    alpha: 0.12,
+                                  ),
                                 ),
                               ),
                             ],
@@ -607,45 +753,18 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
     );
   }
 
-  Widget _ambient() {
-    return IgnorePointer(
-      child: Stack(
-        children: [
-          Positioned(
-            top: -80,
-            left: -60,
-            child: Container(
-              width: 280,
-              height: 280,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: _purple.withValues(alpha: 0.08),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: -100,
-            right: -80,
-            child: Container(
-              width: 320,
-              height: 320,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: _indigo.withValues(alpha: 0.05),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  Widget _ambient() => const SizedBox.shrink();
 
   Widget _header(BuildContext context, ColorScheme scheme) {
     return Container(
       padding: const EdgeInsets.fromLTRB(12, 10, 16, 14),
       decoration: BoxDecoration(
         color: scheme.surface.withValues(alpha: 0.4),
-        border: Border(bottom: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.35))),
+        border: Border(
+          bottom: BorderSide(
+            color: scheme.outlineVariant.withValues(alpha: 0.35),
+          ),
+        ),
       ),
       child: Row(
         children: [
@@ -658,7 +777,11 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
               child: SizedBox(
                 width: 32,
                 height: 32,
-                child: Icon(LucideIcons.arrowLeft, size: 18, color: scheme.onSurfaceVariant),
+                child: Icon(
+                  LucideIcons.arrowLeft,
+                  size: 18,
+                  color: scheme.onSurfaceVariant,
+                ),
               ),
             ),
           ),
@@ -669,7 +792,10 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
                 Container(
                   width: 6,
                   height: 6,
-                  decoration: const BoxDecoration(shape: BoxShape.circle, color: _purple),
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: _purple,
+                  ),
                 ),
                 const SizedBox(width: 8),
                 Flexible(
@@ -691,7 +817,11 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
               gradient: const LinearGradient(colors: [_purple, _indigo]),
               borderRadius: BorderRadius.circular(8),
               boxShadow: [
-                BoxShadow(color: _purple.withValues(alpha: 0.25), blurRadius: 12, offset: const Offset(0, 4)),
+                BoxShadow(
+                  color: _purple.withValues(alpha: 0.25),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
               ],
             ),
             child: Material(
@@ -700,12 +830,18 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
                 onTap: _saving ? null : _save,
                 borderRadius: BorderRadius.circular(8),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   child: _saving
                       ? const SizedBox(
                           width: 16,
                           height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
                         )
                       : Text(
                           'SAVE CHANGES',
@@ -735,7 +871,10 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
             color: scheme.primary,
             borderRadius: BorderRadius.circular(2),
             boxShadow: [
-              BoxShadow(color: scheme.primary.withValues(alpha: 0.35), blurRadius: 8),
+              BoxShadow(
+                color: scheme.primary.withValues(alpha: 0.35),
+                blurRadius: 8,
+              ),
             ],
           ),
         ),
@@ -758,11 +897,17 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
       padding: const EdgeInsets.fromLTRB(18, 20, 18, 20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.45)),
+        border: Border.all(
+          color: scheme.outlineVariant.withValues(alpha: 0.45),
+        ),
         color: scheme.surfaceContainerHighest.withValues(alpha: 0.35),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.35 : 0.07),
+            color: Colors.black.withValues(
+              alpha: Theme.of(context).brightness == Brightness.dark
+                  ? 0.35
+                  : 0.07,
+            ),
             blurRadius: 24,
             offset: const Offset(0, 12),
           ),
@@ -783,33 +928,53 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
                       padding: const EdgeInsets.all(2),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(color: scheme.primary.withValues(alpha: 0.22), width: 2),
-                        color: scheme.surfaceContainerHigh.withValues(alpha: 0.25),
+                        border: Border.all(
+                          color: scheme.primary.withValues(alpha: 0.22),
+                          width: 2,
+                        ),
+                        color: scheme.surfaceContainerHigh.withValues(
+                          alpha: 0.25,
+                        ),
                       ),
                       child: ClipOval(
                         child: _avatarUrl != null && _avatarUrl!.isNotEmpty
                             ? CachedNetworkImage(
-                                imageUrl: ref.read(apiClientProvider).resolveUrl(_avatarUrl!),
+                                imageUrl: ref
+                                    .read(apiClientProvider)
+                                    .resolveUrl(_avatarUrl!),
                                 fit: BoxFit.cover,
                                 alignment: Alignment.center,
                                 memCacheWidth: 192,
                                 memCacheHeight: 192,
                                 fadeInDuration: Duration.zero,
-                                errorWidget: (_, __, ___) =>
-                                    Icon(LucideIcons.user, size: 40, color: scheme.outline),
+                                errorWidget: (_, __, ___) => Icon(
+                                  LucideIcons.user,
+                                  size: 40,
+                                  color: scheme.outline,
+                                ),
                               )
-                            : Icon(LucideIcons.user, size: 40, color: scheme.outline.withValues(alpha: 0.35)),
+                            : Icon(
+                                LucideIcons.user,
+                                size: 40,
+                                color: scheme.outline.withValues(alpha: 0.35),
+                              ),
                       ),
                     ),
                     if (_uploadingAvatar)
                       Positioned.fill(
                         child: Container(
-                          decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.black54),
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.black54,
+                          ),
                           child: const Center(
                             child: SizedBox(
                               width: 28,
                               height: 28,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
@@ -825,7 +990,11 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
                           onTap: _uploadingAvatar ? null : _pickAndUploadAvatar,
                           child: Padding(
                             padding: const EdgeInsets.all(8),
-                            child: Icon(LucideIcons.camera, size: 16, color: scheme.onPrimary),
+                            child: Icon(
+                              LucideIcons.camera,
+                              size: 16,
+                              color: scheme.onPrimary,
+                            ),
                           ),
                         ),
                       ),
@@ -835,7 +1004,11 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
                 const SizedBox(height: 10),
                 Text(
                   'ACCOUNT AVATAR',
-                  style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2),
+                  style: GoogleFonts.montserrat(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 2,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -867,7 +1040,11 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
                     ),
                     decoration: _inputDec(
                       scheme,
-                      prefix: Icon(LucideIcons.user, size: 16, color: scheme.onSurface.withValues(alpha: 0.5)),
+                      prefix: Icon(
+                        LucideIcons.user,
+                        size: 16,
+                        color: scheme.onSurface.withValues(alpha: 0.5),
+                      ),
                     ),
                   ),
                 ),
@@ -905,28 +1082,47 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
                     fontSize: 14,
                     color: scheme.onSurface.withValues(alpha: 0.92),
                   ),
-                  decoration: _inputDec(
-                    scheme,
-                    prefix: Icon(LucideIcons.mail, size: 16, color: scheme.onSurface.withValues(alpha: 0.5)),
-                  ).copyWith(
-                    filled: true,
-                    fillColor: scheme.surface.withValues(alpha: 0.85),
-                    contentPadding: const EdgeInsets.fromLTRB(12, 14, 96, 14),
-                  ),
+                  decoration:
+                      _inputDec(
+                        scheme,
+                        prefix: Icon(
+                          LucideIcons.mail,
+                          size: 16,
+                          color: scheme.onSurface.withValues(alpha: 0.5),
+                        ),
+                      ).copyWith(
+                        filled: true,
+                        fillColor: scheme.surface.withValues(alpha: 0.85),
+                        contentPadding: const EdgeInsets.fromLTRB(
+                          12,
+                          14,
+                          96,
+                          14,
+                        ),
+                      ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(right: 12),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFF10B981).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(999),
-                      border: Border.all(color: const Color(0xFF10B981).withValues(alpha: 0.25)),
+                      border: Border.all(
+                        color: const Color(0xFF10B981).withValues(alpha: 0.25),
+                      ),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(LucideIcons.check, size: 12, color: Color(0xFF10B981)),
+                        const Icon(
+                          LucideIcons.check,
+                          size: 12,
+                          color: Color(0xFF10B981),
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           'VERIFIED',
@@ -958,7 +1154,11 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
               ),
               decoration: _inputDec(
                 scheme,
-                prefix: Icon(LucideIcons.phone, size: 16, color: scheme.onSurface.withValues(alpha: 0.5)),
+                prefix: Icon(
+                  LucideIcons.phone,
+                  size: 16,
+                  color: scheme.onSurface.withValues(alpha: 0.5),
+                ),
               ),
             ),
           ),
@@ -1010,31 +1210,48 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
                 borderRadius: BorderRadius.circular(20),
                 child: Container(
                   constraints: const BoxConstraints(minHeight: 48),
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
                     color: scheme.surface.withValues(alpha: 0.72),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.55)),
+                    border: Border.all(
+                      color: scheme.outlineVariant.withValues(alpha: 0.55),
+                    ),
                   ),
                   child: Row(
                     children: [
-                      Icon(LucideIcons.calendar, size: 16, color: scheme.onSurface.withValues(alpha: 0.5)),
+                      Icon(
+                        LucideIcons.calendar,
+                        size: 16,
+                        color: scheme.onSurface.withValues(alpha: 0.5),
+                      ),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
                           _dobIso == null || _dobIso!.isEmpty
                               ? 'dd-mm-yyyy'
-                              : DateFormat('dd-MM-yyyy').format(DateTime.parse(_dobIso!)),
+                              : DateFormat(
+                                  'dd-MM-yyyy',
+                                ).format(DateTime.parse(_dobIso!)),
                           style: GoogleFonts.montserrat(
                             fontWeight: FontWeight.w700,
                             fontSize: 14,
                             color: scheme.onSurface.withValues(
-                              alpha: _dobIso == null || _dobIso!.isEmpty ? 0.5 : 0.92,
+                              alpha: _dobIso == null || _dobIso!.isEmpty
+                                  ? 0.5
+                                  : 0.92,
                             ),
                           ),
                         ),
                       ),
-                      Icon(LucideIcons.chevronDown, size: 16, color: scheme.onSurface.withValues(alpha: 0.5)),
+                      Icon(
+                        LucideIcons.chevronDown,
+                        size: 16,
+                        color: scheme.onSurface.withValues(alpha: 0.5),
+                      ),
                     ],
                   ),
                 ),
@@ -1049,18 +1266,27 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
   InputDecoration _inputDec(ColorScheme scheme, {Widget? prefix}) {
     return InputDecoration(
       isDense: true,
-      prefixIcon: prefix != null ? Padding(padding: const EdgeInsets.only(left: 12, right: 8), child: prefix) : null,
+      prefixIcon: prefix != null
+          ? Padding(
+              padding: const EdgeInsets.only(left: 12, right: 8),
+              child: prefix,
+            )
+          : null,
       prefixIconConstraints: const BoxConstraints(minWidth: 40, minHeight: 48),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       filled: true,
       fillColor: scheme.surface.withValues(alpha: 0.72),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(20),
-        borderSide: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.55)),
+        borderSide: BorderSide(
+          color: scheme.outlineVariant.withValues(alpha: 0.55),
+        ),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(20),
-        borderSide: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.55)),
+        borderSide: BorderSide(
+          color: scheme.outlineVariant.withValues(alpha: 0.55),
+        ),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(20),
@@ -1101,7 +1327,9 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.45)),
+            border: Border.all(
+              color: scheme.outlineVariant.withValues(alpha: 0.45),
+            ),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1115,7 +1343,11 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
                   color: scheme.onSurface.withValues(alpha: 0.82),
                 ),
               ),
-              Icon(LucideIcons.chevronRight, size: 18, color: scheme.onSurface.withValues(alpha: 0.45)),
+              Icon(
+                LucideIcons.chevronRight,
+                size: 18,
+                color: scheme.onSurface.withValues(alpha: 0.45),
+              ),
             ],
           ),
         ),
@@ -1142,7 +1374,10 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
               ? SizedBox(
                   width: 20,
                   height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2, color: scheme.error),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: scheme.error,
+                  ),
                 )
               : Text(
                   'SECURITY LOGOUT (ALL DEVICES)',
@@ -1165,7 +1400,10 @@ class _CpProfileSettingsScreenState extends ConsumerState<CpProfileSettingsScree
           ? SizedBox(
               width: 18,
               height: 18,
-              child: CircularProgressIndicator(strokeWidth: 2, color: scheme.onSurface.withValues(alpha: 0.3)),
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: scheme.onSurface.withValues(alpha: 0.3),
+              ),
             )
           : Text(
               'DELETE ACCOUNT PERMANENTLY',

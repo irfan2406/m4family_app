@@ -8,17 +8,17 @@ class ApiClient {
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   ApiClient({required this.baseUrl})
-      : dio = Dio(
-          BaseOptions(
-            baseUrl: baseUrl,
-            connectTimeout: const Duration(seconds: 30),
-            receiveTimeout: const Duration(seconds: 30),
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-            },
-          ),
-        ) {
+    : dio = Dio(
+        BaseOptions(
+          baseUrl: baseUrl,
+          connectTimeout: const Duration(seconds: 30),
+          receiveTimeout: const Duration(seconds: 30),
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+        ),
+      ) {
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
@@ -41,18 +41,23 @@ class ApiClient {
     // base64 image data) flooded logcat with tens of thousands of lines per
     // screen and janked the UI thread (frozen screen on restart). Keep just the
     // request line + errors.
-    dio.interceptors.add(PrettyDioLogger(
-      request: true,
-      requestHeader: false,
-      requestBody: false,
-      responseHeader: false,
-      responseBody: false,
-      error: true,
-      compact: true,
-    ));
+    dio.interceptors.add(
+      PrettyDioLogger(
+        request: true,
+        requestHeader: false,
+        requestBody: false,
+        responseHeader: false,
+        responseBody: false,
+        error: true,
+        compact: true,
+      ),
+    );
   }
 
-  Future<Response> get(String path, {Map<String, dynamic>? queryParameters}) async {
+  Future<Response> get(
+    String path, {
+    Map<String, dynamic>? queryParameters,
+  }) async {
     return dio.get(path, queryParameters: queryParameters);
   }
 
@@ -70,26 +75,29 @@ class ApiClient {
 
   // Auth Methods
   Future<Response> sendOtp(String identifier, String role) async {
-    return dio.post('/api/auth/send-otp', data: {
-      'identifier': identifier,
-      'role': role,
-    });
+    return dio.post(
+      '/api/auth/send-otp',
+      data: {'identifier': identifier, 'role': role},
+    );
   }
 
-  Future<Response> verifyOtp(String identifier, String code, String role) async {
-    return dio.post('/api/auth/verify-otp', data: {
-      'identifier': identifier,
-      'token': code,
-      'role': role,
-    });
+  Future<Response> verifyOtp(
+    String identifier,
+    String code,
+    String role,
+  ) async {
+    return dio.post(
+      '/api/auth/verify-otp',
+      data: {'identifier': identifier, 'token': code, 'role': role},
+    );
   }
 
   /// Password login (web CP: `identifier` = CP ID / phone / email).
   Future<Response> loginWithPassword(String identifier, String password) async {
-    return dio.post('/api/auth/login', data: {
-      'identifier': identifier,
-      'password': password,
-    });
+    return dio.post(
+      '/api/auth/login',
+      data: {'identifier': identifier, 'password': password},
+    );
   }
 
   /// Registration (web CP signup: `role`: `CP`, plus CP fields).
@@ -98,7 +106,10 @@ class ApiClient {
   }
 
   Future<Response> forgotPassword(String identifier) async {
-    return dio.post('/api/auth/forgot-password', data: {'identifier': identifier});
+    return dio.post(
+      '/api/auth/forgot-password',
+      data: {'identifier': identifier},
+    );
   }
 
   Future<Response> resetPassword({
@@ -106,11 +117,14 @@ class ApiClient {
     required String token,
     required String newPassword,
   }) async {
-    return dio.post('/api/auth/reset-password', data: {
-      'identifier': identifier,
-      'token': token,
-      'newPassword': newPassword,
-    });
+    return dio.post(
+      '/api/auth/reset-password',
+      data: {
+        'identifier': identifier,
+        'token': token,
+        'newPassword': newPassword,
+      },
+    );
   }
 
   Future<Response> getCurrentUser() async {
@@ -176,7 +190,10 @@ class ApiClient {
   }
 
   /// Web `PATCH /api/cp/employees/:id` — body: `{ name, phone, email? }`.
-  Future<Response> updateCpEmployee(String id, Map<String, dynamic> body) async {
+  Future<Response> updateCpEmployee(
+    String id,
+    Map<String, dynamic> body,
+  ) async {
     return dio.patch('/api/cp/employees/$id', data: body);
   }
 
@@ -187,11 +204,20 @@ class ApiClient {
 
   /// Paginated site visits (web `GET /api/cp/visits`).
   Future<Response> getCpVisits({int page = 1, int limit = 10}) async {
-    return dio.get('/api/cp/visits', queryParameters: {'page': page, 'limit': limit});
+    return dio.get(
+      '/api/cp/visits',
+      queryParameters: {'page': page, 'limit': limit},
+    );
   }
 
   Future<Response> patchCpVisitStatus(String id, String status) async {
     return dio.patch('/api/cp/visits/$id/status', data: {'status': status});
+  }
+
+  /// Create a CP-booked site visit (web `POST /api/cp/visits` — schedule-visit
+  /// form: projectId, employeeId, visitDate, clientName, clientPhone, notes).
+  Future<Response> createCpVisit(Map<String, dynamic> data) async {
+    return dio.post('/api/cp/visits', data: data);
   }
 
   /// Authenticated leads list (filters: `source`, `status`, etc.).
@@ -223,16 +249,17 @@ class ApiClient {
   }
 
   Future<Response> getProjectUpdates(String projectId) async {
-    return dio.get('/api/catalog/updates', queryParameters: {
-      'project': projectId,
-      'status': 'Published',
-    });
+    return dio.get(
+      '/api/catalog/updates',
+      queryParameters: {'project': projectId, 'status': 'Published'},
+    );
   }
 
   Future<Response> getGlobalUpdates() async {
-    return dio.get('/api/catalog/updates', queryParameters: {
-      'status': 'Published',
-    });
+    return dio.get(
+      '/api/catalog/updates',
+      queryParameters: {'status': 'Published'},
+    );
   }
 
   Future<Response> getProjectProgress(String projectId) async {
@@ -291,10 +318,10 @@ class ApiClient {
     required String currentPassword,
     required String newPassword,
   }) async {
-    return dio.patch('/api/auth/change-password', data: {
-      'currentPassword': currentPassword,
-      'newPassword': newPassword,
-    });
+    return dio.patch(
+      '/api/auth/change-password',
+      data: {'currentPassword': currentPassword, 'newPassword': newPassword},
+    );
   }
 
   Future<Response> logoutAllSessions() async {
@@ -313,11 +340,7 @@ class ApiClient {
     return dio.post(
       '/api/upload',
       data: formData,
-      options: Options(
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      ),
+      options: Options(headers: {'Content-Type': 'multipart/form-data'}),
     );
   }
 
@@ -341,30 +364,29 @@ class ApiClient {
   }
 
   Future<Response> createTicket(Map<String, dynamic> data) async {
-    if (data.containsKey('attachments') && (data['attachments'] as List).isNotEmpty) {
+    if (data.containsKey('attachments') &&
+        (data['attachments'] as List).isNotEmpty) {
       final List<String> filePaths = List<String>.from(data['attachments']);
       final Map<String, dynamic> formDataMap = Map<String, dynamic>.from(data);
-      
+
       final List<MultipartFile> multipartFiles = [];
       for (final path in filePaths) {
         final fileName = path.split('/').last;
-        multipartFiles.add(await MultipartFile.fromFile(path, filename: fileName));
+        multipartFiles.add(
+          await MultipartFile.fromFile(path, filename: fileName),
+        );
       }
-      
+
       formDataMap['attachments'] = multipartFiles;
       final formData = FormData.fromMap(formDataMap);
-      
+
       return dio.post(
         '/api/tickets',
         data: formData,
-        options: Options(
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        ),
+        options: Options(headers: {'Content-Type': 'multipart/form-data'}),
       );
     }
-    
+
     return dio.post('/api/tickets', data: data);
   }
 
@@ -379,10 +401,10 @@ class ApiClient {
     required String text,
     String? attachment,
   }) async {
-    return dio.post('/api/tickets/$ticketId/messages', data: {
-      'text': text,
-      if (attachment != null) 'attachment': attachment,
-    });
+    return dio.post(
+      '/api/tickets/$ticketId/messages',
+      data: {'text': text, if (attachment != null) 'attachment': attachment},
+    );
   }
 
   /// Generic file upload (web `POST /api/upload` → `data.fileUrl`).
@@ -394,11 +416,7 @@ class ApiClient {
     return dio.post(
       '/api/upload',
       data: formData,
-      options: Options(
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      ),
+      options: Options(headers: {'Content-Type': 'multipart/form-data'}),
     );
   }
 
@@ -412,7 +430,11 @@ class ApiClient {
   }
 
   // Content Hub Methods
-  Future<Response> getContent(String type, {String role = 'guest', String? projectId}) async {
+  Future<Response> getContent(
+    String type, {
+    String role = 'guest',
+    String? projectId,
+  }) async {
     final Map<String, dynamic> params = {
       'type': type,
       'role': role,
@@ -447,11 +469,7 @@ class ApiClient {
     return dio.post(
       '/api/careers/upload/resume',
       data: formData,
-      options: Options(
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      ),
+      options: Options(headers: {'Content-Type': 'multipart/form-data'}),
     );
   }
 
@@ -471,10 +489,10 @@ class ApiClient {
   // ─── Investor (`/api/investor/*`) ────────────────────────────────────────────
   /// Web `/investor/login` → `POST /api/investor/login` (identifier = investorId / email / phone).
   Future<Response> investorLogin(String identifier, String password) async {
-    return dio.post('/api/investor/login', data: {
-      'identifier': identifier,
-      'password': password,
-    });
+    return dio.post(
+      '/api/investor/login',
+      data: {'identifier': identifier, 'password': password},
+    );
   }
 
   /// Aggregated investor home overview (portfolio, priority project, reports, network).
@@ -530,7 +548,11 @@ class ApiClient {
 
   String resolveUrl(String? url) {
     if (url == null || url.isEmpty) return "";
-    if (url.startsWith('http') || url.startsWith('data:') || url.startsWith('tel:') || url.startsWith('mailto:')) return url;
+    if (url.startsWith('http') ||
+        url.startsWith('data:') ||
+        url.startsWith('tel:') ||
+        url.startsWith('mailto:'))
+      return url;
 
     String root = baseUrl;
     if (root.endsWith('/api')) root = root.substring(0, root.length - 4);
@@ -540,6 +562,3 @@ class ApiClient {
     return '$root$path';
   }
 }
-
-
-

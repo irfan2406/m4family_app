@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/luxury_amenity_icon.dart';
+import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -41,10 +43,17 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
   List<dynamic> _progress = [];
   bool _liked = false;
 
+  /// Decoded base64 `data:` images cached by URI so a rebuild (e.g. the heart
+  /// toggle's setState) reuses the SAME provider instead of re-decoding and
+  /// reloading the image — which caused the visible flicker.
+  final Map<String, ImageProvider> _dataUriImages = {};
+
   // Video call lead dialog
   bool _leadOpen = false;
   bool _leadSubmitting = false;
   List<Map<String, dynamic>> _employees = [];
+  List<Map<String, dynamic>> _allProjects = [];
+  String? _selectedProjectId;
   String _employeeMode = 'select'; // select | enter
   String? _employeeId;
   final _employeeEntered = TextEditingController();
@@ -52,6 +61,8 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
   final _clientPhone = TextEditingController();
   final _clientEmail = TextEditingController();
   DateTime? _videoCallDt;
+  String _visitType = 'Video Call'; // Video Call | Site Visit (web VISIT TYPE)
+  bool _showFullProgressDesc = false; // "Read more" toggle (web parity)
 
   // Registration (interest) form — web section `#registration`
   bool _regSubmitting = false;
@@ -180,11 +191,15 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     if (s.isEmpty) return fallback;
     if (s.startsWith('data:')) {
       try {
-        final bytes = base64Decode(
-          s.substring(s.indexOf(',') + 1).replaceAll(RegExp(r'\s'), ''),
+        // Cache the provider per data URI so rebuilds reuse it (no re-decode /
+        // reload -> no flicker when setState fires, e.g. tapping the heart).
+        final provider = _dataUriImages[s] ??= MemoryImage(
+          base64Decode(
+            s.substring(s.indexOf(',') + 1).replaceAll(RegExp(r'\s'), ''),
+          ),
         );
-        return Image.memory(
-          bytes,
+        return Image(
+          image: provider,
           fit: fit,
           errorBuilder: (_, __, ___) => fallback,
         );
@@ -315,17 +330,22 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       } catch (_) {}
     }
 
-    // prefill with auth user
-    final u = ref.read(authProvider).user;
-    if (u != null) {
-      _clientName.text =
-          (u['fullName'] ?? '${u['firstName'] ?? ''} ${u['lastName'] ?? ''}')
-              .toString()
-              .trim();
-      _clientPhone.text = (u['phone'] ?? '').toString();
-      _clientEmail.text = (u['email'] ?? '').toString();
+    // Fetch all projects for the "Select Project" dropdown (web parity).
+    if (_allProjects.isEmpty) {
+      try {
+        final res = await ref.read(apiClientProvider).getProjects();
+        final body = res.data;
+        final list = body is Map ? body['data'] : null;
+        if (list is List) {
+          _allProjects = list
+              .map((e) => Map<String, dynamic>.from(e as Map))
+              .toList();
+        }
+      } catch (_) {}
     }
 
+    // Web parity: client fields start EMPTY — don't prefill with the CP's own
+    // account details. "Select Project" also starts unselected, matching web.
     if (mounted) setState(() => _leadOpen = true);
   }
 
@@ -445,22 +465,117 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     }
   }
 
+  // iOS-style wheel date+time picker (matches the web IOSDateTimePicker).
   Future<void> _pickVideoDt() async {
-    final d = await showDatePicker(
+    final now = DateTime.now();
+    DateTime temp = _videoCallDt ?? now.add(const Duration(minutes: 30));
+    if (temp.isBefore(now)) temp = now.add(const Duration(minutes: 30));
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final result = await showModalBottomSheet<DateTime>(
       context: context,
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
-      initialDate: DateTime.now(),
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (sheetCtx) => Container(
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF0B111E) : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+        ),
+        padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: (isDark ? Colors.white : Colors.black).withValues(
+                    alpha: 0.15,
+                  ),
+                  borderRadius: BorderRadius.circular(99),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'SELECT DATE & TIME',
+                style: GoogleFonts.montserrat(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 0.5,
+                  color: isDark ? Colors.white : Colors.black,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            // Web parity: absolute Day/Month/Year + Hour/Min/AM-PM wheels (the
+            // web's IOSDateTimePicker never shows relative labels like "Today").
+            // CupertinoDatePicker's dateAndTime mode always shows those relative
+            // labels with no way to disable them, so this is a custom picker.
+            WheelDateTimePicker(
+              initial: temp,
+              minDate: now,
+              isDark: isDark,
+              onChanged: (dt) => temp = dt,
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.pop(sheetCtx),
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size.fromHeight(52),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      side: BorderSide(
+                        color: (isDark ? Colors.white : Colors.black)
+                            .withValues(alpha: 0.2),
+                      ),
+                      foregroundColor: isDark ? Colors.white : Colors.black,
+                    ),
+                    child: Text(
+                      'CANCEL',
+                      style: GoogleFonts.montserrat(
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: FilledButton(
+                    onPressed: () => Navigator.pop(sheetCtx, temp),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: isDark ? Colors.white : Colors.black,
+                      foregroundColor: isDark ? Colors.black : Colors.white,
+                      minimumSize: const Size.fromHeight(52),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    child: Text(
+                      'CONFIRM',
+                      style: GoogleFonts.montserrat(
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
-    if (d == null || !mounted) return;
-    final t = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-    if (t == null || !mounted) return;
-    setState(
-      () => _videoCallDt = DateTime(d.year, d.month, d.day, t.hour, t.minute),
-    );
+    if (result != null && mounted) {
+      setState(() => _videoCallDt = result);
+    }
   }
 
   Future<void> _submitVideoCallLead() async {
@@ -510,6 +625,24 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         ref.read(authProvider).user?['_id']?.toString() ??
         ref.read(authProvider).user?['id']?.toString();
 
+    // "Select Project" overrides the project this video call is registered
+    // against; falls back to the project this page opened for.
+    final chosenProject = _selectedProjectId == null
+        ? null
+        : _allProjects.firstWhere(
+            (proj) =>
+                (proj['_id'] ?? proj['id'])?.toString() == _selectedProjectId,
+            orElse: () => {},
+          );
+    final effectiveProjectId =
+        chosenProject?['_id']?.toString() ??
+        chosenProject?['id']?.toString() ??
+        p['_id']?.toString() ??
+        p['id']?.toString() ??
+        widget.projectId;
+    final effectiveProjectTitle =
+        (chosenProject?['title'] ?? p['title'] ?? 'Project').toString();
+
     setState(() => _leadSubmitting = true);
     try {
       final api = ref.read(apiClientProvider);
@@ -517,10 +650,9 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         'name': _clientName.text.trim(),
         'phone': _clientPhone.text.trim(),
         'email': _clientEmail.text.trim(),
-        'projectId':
-            p['_id']?.toString() ?? p['id']?.toString() ?? widget.projectId,
-        'project': (p['title'] ?? 'Project').toString(),
-        'interest': 'Video Call',
+        'projectId': effectiveProjectId,
+        'project': effectiveProjectTitle,
+        'interest': _visitType,
         'status': 'new',
         'source': 'cp',
         'message':
@@ -662,7 +794,11 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                               ),
                               const SizedBox(width: 10),
                               _iconPill(
-                                icon: LucideIcons.heart,
+                                // Lucide heart is outline-only; use the filled
+                                // Material heart when liked so it visibly fills red.
+                                icon: _liked
+                                    ? Icons.favorite
+                                    : LucideIcons.heart,
                                 filled: _liked,
                                 activeColor: Colors.red,
                                 onTap: _toggleLiked,
@@ -915,9 +1051,14 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         const SizedBox(height: 12),
                         _progressCard(p, overallPct, scheme),
                         if (_progress.isNotEmpty) ...[
+                          const SizedBox(height: 20),
+                          _progressYearHeader(scheme),
                           const SizedBox(height: 16),
                           _progressTimeline(scheme),
+                          const SizedBox(height: 24),
+                          _phaseTrackingSection(scheme),
                         ],
+                        const SizedBox(height: 26),
                         _sectionTitle('Registration', scheme, accent),
                         const SizedBox(height: 12),
                         _registrationCard(scheme),
@@ -1402,12 +1543,31 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 ),
                 const SizedBox(height: 14),
                 Text(
-                  'As the project progresses, significant milestones are reached, showcasing our team’s dedication and expertise.',
+                  'As the project progresses, significant milestones are reached, showcasing our team’s dedication and expertise. We are steadily moving closer to our completion goal, ensuring quality and safety at every step. Each phase is handled with precision to meet our luxury standards and timeline.',
+                  maxLines: _showFullProgressDesc ? null : 3,
+                  overflow: _showFullProgressDesc
+                      ? TextOverflow.visible
+                      : TextOverflow.ellipsis,
                   style: GoogleFonts.montserrat(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                     color: scheme.onSurfaceVariant,
                     height: 1.6,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                GestureDetector(
+                  onTap: () => setState(
+                    () => _showFullProgressDesc = !_showFullProgressDesc,
+                  ),
+                  child: Text(
+                    _showFullProgressDesc ? 'Show less' : 'Read more',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: accent,
+                      decoration: TextDecoration.underline,
+                    ),
                   ),
                 ),
               ],
@@ -1595,8 +1755,10 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Web parity: the project title is the card's heading;
+                      // the phase name sits next to the small progress ring.
                       Text(
-                        name.toUpperCase(),
+                        (_project?['title'] ?? '').toString().toUpperCase(),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.montserrat(
@@ -1640,7 +1802,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              (_project?['title'] ?? '').toString(),
+                              name.toUpperCase(),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.montserrat(
@@ -1661,6 +1823,250 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           );
         },
       ),
+    );
+  }
+
+  // "2026" year label + horizontal timeline rail with a dot marker, above the
+  // phase preview cards. Web hardcodes this year label verbatim, so this
+  // mirrors that rather than deriving it from data.
+  Widget _progressYearHeader(ColorScheme scheme) {
+    final isLight = scheme.brightness == Brightness.light;
+    final accent = isLight ? Colors.black : scheme.primary;
+    return Row(
+      children: [
+        Text(
+          '2026',
+          style: GoogleFonts.montserrat(
+            fontSize: 20,
+            fontWeight: FontWeight.w900,
+            color: accent,
+          ),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Stack(
+            alignment: Alignment.centerLeft,
+            children: [
+              Container(
+                height: 1,
+                color: scheme.outlineVariant.withValues(alpha: 0.4),
+              ),
+              Container(
+                width: 12,
+                height: 12,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: scheme.surface,
+                  border: Border.all(color: accent, width: 2),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  // "PHASE TRACKING" — header + milestone count badge, then a scrollable list
+  // of phase cards (index, name, status dot, percentage, progress bar).
+  Widget _phaseTrackingSection(ColorScheme scheme) {
+    final isLight = scheme.brightness == Brightness.light;
+    final accent = isLight ? Colors.black : scheme.primary;
+    final phases =
+        _progress
+            .whereType<Map>()
+            .map((m) => Map<String, dynamic>.from(m))
+            .toList()
+          ..sort(
+            (a, b) => ((a['phaseOrder'] ?? 0) as num).toInt().compareTo(
+              ((b['phaseOrder'] ?? 0) as num).toInt(),
+            ),
+          );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'PHASE TRACKING',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 2,
+                    color: scheme.onSurface,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'REAL-TIME DEVELOPMENT STATUS',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 8,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1,
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(999),
+                border: Border.all(color: accent.withValues(alpha: 0.25)),
+                color: accent.withValues(alpha: 0.06),
+              ),
+              child: Text(
+                '${phases.length} MILESTONES',
+                style: GoogleFonts.montserrat(
+                  fontSize: 8,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1,
+                  color: accent,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        SizedBox(
+          height: 112,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: phases.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 12),
+            itemBuilder: (context, i) {
+              final ph = phases[i];
+              final status = (ph['status'] ?? 'In Progress').toString();
+              final name = (ph['name'] ?? ph['phaseName'] ?? 'Phase')
+                  .toString();
+              final pct = (ph['progressPercent'] is num)
+                  ? (ph['progressPercent'] as num).toInt().clamp(0, 100)
+                  : 0;
+
+              Color dotColor;
+              if (status == 'Completed') {
+                dotColor = Colors.green;
+              } else if (status == 'In Progress') {
+                dotColor = accent;
+              } else {
+                dotColor = scheme.onSurfaceVariant.withValues(alpha: 0.4);
+              }
+
+              return Container(
+                width: 220,
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: scheme.outlineVariant.withValues(alpha: 0.3),
+                  ),
+                  color: scheme.surfaceContainerHighest.withValues(alpha: 0.14),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 30,
+                          height: 30,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: scheme.onSurface.withValues(alpha: 0.05),
+                            border: Border.all(
+                              color: scheme.outlineVariant.withValues(
+                                alpha: 0.3,
+                              ),
+                            ),
+                          ),
+                          child: Text(
+                            (i + 1).toString().padLeft(2, '0'),
+                            style: GoogleFonts.montserrat(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w900,
+                              color: scheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                name.toUpperCase(),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 0.6,
+                                  color: scheme.onSurface,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  Container(
+                                    width: 6,
+                                    height: 6,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: dotColor,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    status.toUpperCase(),
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: 8,
+                                      fontWeight: FontWeight.w800,
+                                      letterSpacing: 0.6,
+                                      color: scheme.onSurfaceVariant,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        Text(
+                          '$pct%',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w900,
+                            color: scheme.onSurface,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(99),
+                      child: LinearProgressIndicator(
+                        value: pct / 100.0,
+                        minHeight: 4,
+                        color: accent,
+                        backgroundColor: scheme.onSurface.withValues(
+                          alpha: 0.08,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -2056,25 +2462,30 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                       ],
                     ),
                     const SizedBox(height: 12),
-                    _cpLabel(scheme, 'Enter employee name'),
+                    _cpLabel(scheme, 'Select Project'),
                     const SizedBox(height: 6),
-                    _cpField(
-                      controller: _employeeEntered,
-                      hint: 'EMPLOYEE NAME',
-                      scheme: scheme,
-                    ),
-                    const SizedBox(height: 12),
-                    _cpLabel(scheme, 'Name of the employee'),
-                    const SizedBox(height: 2),
-                    Text(
-                      'SELECT A NAME FROM THE LIST',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 8,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 1.4,
-                        color: scheme.onSurfaceVariant.withValues(alpha: 0.8),
+                    DropdownButtonFormField<String>(
+                      initialValue: _selectedProjectId,
+                      items: [
+                        const DropdownMenuItem(
+                          value: null,
+                          child: Text('— Select Project —'),
+                        ),
+                        ..._allProjects.map(
+                          (proj) => DropdownMenuItem(
+                            value: (proj['_id'] ?? proj['id'])?.toString(),
+                            child: Text((proj['title'] ?? '').toString()),
+                          ),
+                        ),
+                      ],
+                      onChanged: (v) => setState(() => _selectedProjectId = v),
+                      decoration: _cpInputDec(
+                        scheme,
+                        hint: '— Select Project —',
                       ),
                     ),
+                    const SizedBox(height: 12),
+                    _cpLabel(scheme, 'Assigned Employee'),
                     const SizedBox(height: 6),
                     DropdownButtonFormField<String>(
                       initialValue: _employeeId,
@@ -2089,10 +2500,22 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                             child: Text((e['name'] ?? '').toString()),
                           ),
                         ),
+                        const DropdownMenuItem(
+                          value: 'other',
+                          child: Text('+ OTHER (TYPE NAME)'),
+                        ),
                       ],
                       onChanged: (v) => setState(() => _employeeId = v),
                       decoration: _cpInputDec(scheme, hint: '— Select —'),
                     ),
+                    if (_employeeId == 'other') ...[
+                      const SizedBox(height: 8),
+                      _cpField(
+                        controller: _employeeEntered,
+                        hint: 'TYPE EMPLOYEE NAME HERE',
+                        scheme: scheme,
+                      ),
+                    ],
                     const SizedBox(height: 12),
                     _cpLabel(scheme, 'Client Name'),
                     const SizedBox(height: 6),
@@ -2120,6 +2543,22 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                       keyboardType: TextInputType.emailAddress,
                     ),
                     const SizedBox(height: 12),
+                    _cpLabel(scheme, 'Visit Type'),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _visitTypeChip('Video Call', accent, scheme),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: _visitTypeChip('Site Visit', accent, scheme),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    _cpLabel(scheme, 'Date & Time'),
+                    const SizedBox(height: 6),
                     OutlinedButton.icon(
                       onPressed: _pickVideoDt,
                       icon: const Icon(LucideIcons.calendar),
@@ -2168,6 +2607,40 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 ),
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _visitTypeChip(String label, Color accent, ColorScheme scheme) {
+    final selected = _visitType == label;
+    final isLight = scheme.brightness == Brightness.light;
+    return GestureDetector(
+      onTap: () => setState(() => _visitType = label),
+      child: Container(
+        height: 48,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: selected
+              ? accent
+              : scheme.surfaceContainerHighest.withValues(alpha: 0.16),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: selected
+                ? accent
+                : scheme.outlineVariant.withValues(alpha: 0.5),
+          ),
+        ),
+        child: Text(
+          label.toUpperCase(),
+          style: GoogleFonts.montserrat(
+            fontSize: 11,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 1,
+            color: selected
+                ? (isLight ? Colors.white : Colors.black)
+                : scheme.onSurface,
           ),
         ),
       ),
