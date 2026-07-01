@@ -1195,7 +1195,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                         end: Alignment.bottomCenter,
                         colors: [
                           Colors.transparent,
-                          Colors.black.withValues(alpha: 0.7),
+                          Colors.black.withValues(alpha: 0.55),
                         ],
                         stops: const [0.5, 1.0],
                       ),
@@ -1240,37 +1240,38 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                       Text(
                         'FEATURED PROPERTY',
                         style: GoogleFonts.montserrat(
-                          color: const Color(0xFFC5A358),
+                          color: const Color(0xFFC4A484),
                           fontSize: 9,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 2.5,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 1.8,
                         ),
                       ),
                       const SizedBox(height: 12),
+                      // Web renders this in Montserrat (globals.css forces
+                      // montserrat !important over the font-serif class), light
+                      // weight, text-4xl, tracking-tight.
                       Text(
                         (project['title'] ?? '').toString(),
-                        style: GoogleFonts.lora(
-                          color: Colors.white,
-                          fontSize: 44,
-                          fontWeight: FontWeight.w400,
+                        style: GoogleFonts.montserrat(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          fontSize: 36,
+                          fontWeight: FontWeight.w300,
                           height: 1,
-                          letterSpacing: -1,
+                          letterSpacing: -0.5,
                         ),
                       ),
                       const SizedBox(height: 16),
+                      // Hardcoded subtitle to match web SharedHomePage.
                       Text(
-                        (project['startingPrice'] ??
-                                project['description'] ??
-                                '')
-                            .toString()
+                        'Live smart at Aura Heights—space-efficient 1 & 2 BHK homes with curated amenities and rare parking solutions.'
                             .toUpperCase(),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.montserrat(
                           color: Colors.white.withValues(alpha: 0.8),
-                          fontSize: 9,
-                          height: 1.6,
-                          fontWeight: FontWeight.w900,
+                          fontSize: 10,
+                          height: 1.5,
+                          fontWeight: FontWeight.w500,
                           letterSpacing: 1.2,
                         ),
                       ),

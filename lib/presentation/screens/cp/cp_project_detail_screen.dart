@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/luxury_amenity_icon.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -822,7 +823,6 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         const SizedBox(height: 22),
                         // 3 equal stat cards in one row (web parity)
                         Row(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Expanded(
                               child: _webStatCard(
@@ -904,6 +904,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                           title: 'Walkthrough',
                           subtitle: 'Cinematic Tour • 4K',
                           url: p['walkthrough']?.toString(),
+                          watchOnly: true,
                         ),
                         const SizedBox(height: 26),
                         _sectionTitle('Amenities', scheme, accent),
@@ -1166,6 +1167,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     required String title,
     required String subtitle,
     required String? url,
+    bool watchOnly = false,
   }) {
     final isLight = scheme.brightness == Brightness.light;
     final accent = isLight ? Colors.black : scheme.primary;
@@ -1221,44 +1223,41 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             ),
           ),
           const SizedBox(width: 10),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              OutlinedButton(
-                onPressed: () => _openOrWarn(url, '$title not available'),
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  side: BorderSide(
-                    color: scheme.onSurface.withValues(
-                      alpha: isLight ? 0.65 : 0.22,
-                    ),
-                  ),
-                  foregroundColor: accent,
-                  disabledForegroundColor: accent.withValues(alpha: 0.65),
+          if (watchOnly)
+            // Single filled WATCH button (web parity for Walkthrough).
+            FilledButton(
+              onPressed: () => _openOrWarn(url, '$title not available'),
+              style: FilledButton.styleFrom(
+                backgroundColor: scheme.onSurface,
+                foregroundColor: scheme.surface,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 26,
+                  vertical: 14,
                 ),
-                child: Text(
-                  'VIEW',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 1.2,
-                  ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              const SizedBox(width: 10),
-              SizedBox(
-                width: 44,
-                height: 44,
-                child: OutlinedButton(
+              child: Text(
+                'WATCH',
+                style: GoogleFonts.montserrat(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.4,
+                ),
+              ),
+            )
+          else
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                OutlinedButton(
                   onPressed: () => _openOrWarn(url, '$title not available'),
                   style: OutlinedButton.styleFrom(
-                    padding: EdgeInsets.zero,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -1270,23 +1269,44 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     foregroundColor: accent,
                     disabledForegroundColor: accent.withValues(alpha: 0.65),
                   ),
-                  child: Icon(
-                    LucideIcons.download,
-                    size: 18,
-                    color: scheme.onSurface,
+                  child: Text(
+                    'VIEW',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1.2,
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
+                const SizedBox(width: 10),
+                // Filled download button (web: bg-foreground text-background).
+                SizedBox(
+                  width: 44,
+                  height: 44,
+                  child: Material(
+                    color: scheme.onSurface,
+                    borderRadius: BorderRadius.circular(12),
+                    child: InkWell(
+                      onTap: () => _openOrWarn(url, '$title not available'),
+                      borderRadius: BorderRadius.circular(12),
+                      child: Center(
+                        child: Icon(
+                          LucideIcons.download,
+                          size: 18,
+                          color: scheme.surface,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
         ],
       ),
     );
   }
 
   Widget _amenitiesGrid(Map<String, dynamic> p, ColorScheme scheme) {
-    final isLight = scheme.brightness == Brightness.light;
-    final accent = isLight ? Colors.black : scheme.primary;
     final am = p['amenities'];
     final list = am is List ? am : <dynamic>[];
     if (list.isEmpty) {
@@ -1303,54 +1323,39 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 16,
+        childAspectRatio: 1.0,
       ),
-      itemCount: list.length.clamp(0, 12),
+      itemCount: list.length,
       itemBuilder: (context, i) {
         final raw = list[i];
         final name = (raw is String ? raw : (raw is Map ? raw['name'] : raw))
             .toString();
-        return Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(26),
-            border: Border.all(
-              color: scheme.outlineVariant.withValues(alpha: 0.35),
+        final iconRaw = raw is Map ? raw['icon']?.toString() : null;
+        final iconUrl = (iconRaw != null && iconRaw.isNotEmpty)
+            ? ref.read(apiClientProvider).resolveUrl(iconRaw)
+            : null;
+        // Web parity: gold, name-mapped LuxuryAmenityIcon + Title-case label,
+        // no card background.
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            LuxuryAmenityIcon(name: name, iconUrl: iconUrl, size: 44),
+            const SizedBox(height: 10),
+            Text(
+              name,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.montserrat(
+                fontSize: 9.5,
+                fontWeight: FontWeight.w600,
+                height: 1.2,
+                color: scheme.onSurface.withValues(alpha: 0.8),
+              ),
             ),
-            color: scheme.surfaceContainerHighest.withValues(alpha: 0.22),
-          ),
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: accent.withValues(alpha: 0.08),
-                ),
-                child: Icon(
-                  LucideIcons.sparkles,
-                  size: 18,
-                  color: scheme.onSurfaceVariant,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                name.toUpperCase(),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.montserrat(
-                  fontSize: 8,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 1.1,
-                  color: scheme.onSurface.withValues(alpha: 0.8),
-                ),
-              ),
-            ],
-          ),
+          ],
         );
       },
     );
@@ -1682,25 +1687,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             ),
           ),
           const SizedBox(height: 12),
-          _cpLabel(scheme, 'Enter employee name'),
-          const SizedBox(height: 6),
-          _cpField(
-            controller: _regEmployeeEntered,
-            hint: 'EMPLOYEE NAME',
-            scheme: scheme,
-          ),
-          const SizedBox(height: 12),
-          _cpLabel(scheme, 'Name of the employee'),
-          const SizedBox(height: 2),
-          Text(
-            'SELECT A NAME FROM THE LIST',
-            style: GoogleFonts.montserrat(
-              fontSize: 8,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 1.4,
-              color: scheme.onSurfaceVariant.withValues(alpha: 0.8),
-            ),
-          ),
+          _cpLabel(scheme, 'Employee Name'),
           const SizedBox(height: 6),
           Theme(
             data: Theme.of(context).copyWith(
@@ -1733,11 +1720,24 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     child: Text((e['name'] ?? '').toString()),
                   ),
                 ),
+                const DropdownMenuItem(
+                  value: 'other',
+                  child: Text('+ OTHER (TYPE NAME)'),
+                ),
               ],
               onChanged: (v) => setState(() => _regEmployeeId = v),
               decoration: _cpInputDec(scheme, hint: '— Select —'),
             ),
           ),
+          // Conditional free-text field — only when "Other" is picked (web parity).
+          if (_regEmployeeId == 'other') ...[
+            const SizedBox(height: 8),
+            _cpField(
+              controller: _regEmployeeEntered,
+              hint: 'TYPE EMPLOYEE NAME HERE',
+              scheme: scheme,
+            ),
+          ],
           const SizedBox(height: 12),
           _cpLabel(scheme, 'Client Name'),
           const SizedBox(height: 6),
@@ -1751,7 +1751,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           const SizedBox(height: 6),
           _cpField(
             controller: _regClientPhone,
-            hint: 'PHONE NUMBER',
+            hint: '+91 98653 21250',
             scheme: scheme,
             keyboardType: TextInputType.phone,
           ),
@@ -1767,7 +1767,11 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           const SizedBox(height: 12),
           _cpLabel(scheme, 'Location'),
           const SizedBox(height: 6),
-          _cpField(controller: _regLocation, hint: 'LOCATION', scheme: scheme),
+          _cpField(
+            controller: _regLocation,
+            hint: 'CITY, COUNTRY',
+            scheme: scheme,
+          ),
           const SizedBox(height: 14),
           FilledButton(
             onPressed: _regSubmitting ? null : _submitRegistration,
@@ -1786,7 +1790,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
                 : Text(
-                    'SUBMIT',
+                    'PROCEED',
                     style: GoogleFonts.montserrat(
                       fontWeight: FontWeight.w900,
                       letterSpacing: 3,
@@ -1920,10 +1924,20 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     final embed =
         'https://www.google.com/maps?q=${Uri.encodeComponent(effective)}&output=embed';
 
+    // Google's embed URL only renders inside an <iframe>; loading it directly
+    // shows "must be used in an iframe". Wrap it in a minimal HTML page (this is
+    // what the web does with its <iframe>).
+    final mapHtml =
+        '<!DOCTYPE html><html><head>'
+        '<meta name="viewport" content="width=device-width, initial-scale=1.0">'
+        '<style>html,body{margin:0;padding:0;height:100%;overflow:hidden;background:transparent;}'
+        'iframe{border:0;width:100%;height:100%;}</style></head>'
+        '<body><iframe src="$embed" allowfullscreen loading="lazy" '
+        'referrerpolicy="no-referrer-when-downgrade"></iframe></body></html>';
     final controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0x00000000))
-      ..loadRequest(Uri.parse(embed));
+      ..loadHtmlString(mapHtml);
 
     return Container(
       height: 280,
@@ -2161,11 +2175,12 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
   }
 
   Widget _cpLabel(ColorScheme scheme, String text) {
+    // Web labels are uppercase (text-[10.5px] font-black uppercase).
     return Text(
-      text,
+      text.toUpperCase(),
       style: GoogleFonts.montserrat(
-        fontSize: 11,
-        fontWeight: FontWeight.w800,
+        fontSize: 10.5,
+        fontWeight: FontWeight.w900,
         color: scheme.onSurface,
         letterSpacing: 0.2,
       ),
