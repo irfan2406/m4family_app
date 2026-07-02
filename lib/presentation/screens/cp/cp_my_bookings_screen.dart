@@ -374,12 +374,12 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: _kv(
+                    // Web parity: unit specs are bold, NOT italic.
                     label: 'UNIT SPECS',
                     value: '#$unitNo • $configuration'.toUpperCase(),
                     icon: null,
                     scheme: scheme,
                     rightAlign: true,
-                    italic: true,
                   ),
                 ),
               ),
@@ -470,9 +470,11 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                   borderRadius: BorderRadius.circular(999),
                   child: Container(
                     height: 10,
+                    // Web parity (bg-black/20): a clearly-visible track so the
+                    // empty bar shows on every card, even at 0%.
                     decoration: BoxDecoration(
-                      color: Colors.black.withValues(
-                        alpha: isDark ? 0.25 : 0.10,
+                      color: (isDark ? Colors.white : Colors.black).withValues(
+                        alpha: isDark ? 0.28 : 0.16,
                       ),
                     ),
                     child: TweenAnimationBuilder<double>(
@@ -540,14 +542,29 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
               ),
               const Spacer(),
               if (id.isNotEmpty)
-                Text(
-                  'CP-TRK / ${id.substring(id.length - (id.length >= 8 ? 8 : id.length)).toUpperCase()}',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 9,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 2.6,
-                    fontStyle: FontStyle.italic,
-                    color: muted.withValues(alpha: 0.35),
+                // Web parity: tracking id in a rounded pill, non-italic.
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: onSurf.withValues(alpha: 0.03),
+                    borderRadius: BorderRadius.circular(999),
+                    border: Border.all(
+                      color: (isDark ? Colors.white : Colors.black).withValues(
+                        alpha: 0.06,
+                      ),
+                    ),
+                  ),
+                  child: Text(
+                    'CP-TRK / ${id.substring(id.length - (id.length >= 8 ? 8 : id.length)).toUpperCase()}',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 8,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1.5,
+                      color: muted.withValues(alpha: 0.75),
+                    ),
                   ),
                 ),
             ],
