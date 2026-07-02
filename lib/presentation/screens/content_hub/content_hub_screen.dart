@@ -4,10 +4,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
-import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/screens/content/content_detail_screen.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
+import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 
 class GuestContentHubScreen extends ConsumerStatefulWidget {
   final String title;
@@ -26,10 +26,12 @@ class GuestContentHubScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<GuestContentHubScreen> createState() => _GuestContentHubScreenState();
+  ConsumerState<GuestContentHubScreen> createState() =>
+      _GuestContentHubScreenState();
 }
 
 class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   List<dynamic> _items = [];
   bool _isLoading = true;
 
@@ -56,10 +58,11 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
     try {
       final apiClient = ref.read(apiClientProvider);
       final authState = ref.read(authProvider);
-      
+
       String userRole = 'guest';
       if (authState.status == AuthStatus.authenticated) {
-        final rawRole = authState.user?['role']?.toString().toLowerCase() ?? 'user';
+        final rawRole =
+            authState.user?['role']?.toString().toLowerCase() ?? 'user';
         userRole = rawRole == 'customer' ? 'user' : rawRole;
       }
 
@@ -68,7 +71,9 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
         role: userRole,
       );
 
-      if (res.statusCode == 200 && res.data['status'] == true && res.data['data'] is List) {
+      if (res.statusCode == 200 &&
+          res.data['status'] == true &&
+          res.data['data'] is List) {
         setState(() {
           _items = res.data['data'];
           _isLoading = false;
@@ -92,13 +97,18 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
 
   IconData _getIcon() {
     switch (widget.contentType.toLowerCase()) {
-      case 'media': return LucideIcons.playCircle;
+      case 'media':
+        return LucideIcons.playCircle;
       case 'highlight':
-      case 'highlights': return LucideIcons.zap;
-      case 'blog': return LucideIcons.fileText;
+      case 'highlights':
+        return LucideIcons.zap;
+      case 'blog':
+        return LucideIcons.fileText;
       case 'event':
-      case 'events': return LucideIcons.calendar;
-      default: return widget.typeIcon;
+      case 'events':
+        return LucideIcons.calendar;
+      default:
+        return widget.typeIcon;
     }
   }
 
@@ -108,15 +118,17 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
     final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
+      key: _scaffoldKey,
+      drawer: const ConditionalDrawer(),
       backgroundColor: scheme.surface,
       body: Container(
         decoration: BoxDecoration(
           gradient: RadialGradient(
             center: Alignment.topLeft,
             radius: 1.5,
-            colors: isDark 
-              ? [const Color(0xFF1A1A1A), const Color(0xFF0A0A0A)]
-              : [scheme.surface, scheme.surfaceContainerLowest],
+            colors: isDark
+                ? [const Color(0xFF1A1A1A), const Color(0xFF0A0A0A)]
+                : [scheme.surface, scheme.surfaceContainerLowest],
           ),
         ),
         child: SafeArea(
@@ -124,7 +136,10 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
             children: [
               // 🏷️ STANDARDIZED HEADER (Web Parity)
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 15,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -179,7 +194,11 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                             color: const Color(0xFF60A5FA).withOpacity(0.1),
                             shape: BoxShape.circle,
                           ),
-                          child: Icon(_getIcon(), color: const Color(0xFF60A5FA), size: 18),
+                          child: Icon(
+                            _getIcon(),
+                            color: const Color(0xFF60A5FA),
+                            size: 18,
+                          ),
                         ),
                         const SizedBox(width: 15),
                         Text(
@@ -220,14 +239,19 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
 
               Expanded(
                 child: _isLoading
-                    ? const Center(child: CircularProgressIndicator(color: Color(0xFF60A5FA)))
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: Color(0xFF60A5FA),
+                        ),
+                      )
                     : _items.isEmpty
-                        ? _buildEmptyState()
-                        : ListView.builder(
-                            padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
-                            itemCount: _items.length,
-                            itemBuilder: (context, index) => _buildContentCard(_items[index], index),
-                          ),
+                    ? _buildEmptyState()
+                    : ListView.builder(
+                        padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
+                        itemCount: _items.length,
+                        itemBuilder: (context, index) =>
+                            _buildContentCard(_items[index], index),
+                      ),
               ),
             ],
           ),
@@ -236,7 +260,10 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
     );
   }
 
-  Widget _buildCircleButton({required IconData icon, required VoidCallback onTap}) {
+  Widget _buildCircleButton({
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
     final scheme = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: onTap,
@@ -263,9 +290,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
   Widget _buildMenuButton() {
     final scheme = Theme.of(context).colorScheme;
     return GestureDetector(
-      onTap: () {
-        Scaffold.of(context).openDrawer();
-      },
+      onTap: () => _scaffoldKey.currentState?.openDrawer(),
       child: Container(
         width: 56,
         height: 48,
@@ -280,7 +305,11 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
             ),
           ],
         ),
-        child: Icon(LucideIcons.moreHorizontal, size: 24, color: scheme.surface),
+        child: Icon(
+          LucideIcons.moreHorizontal,
+          size: 24,
+          color: scheme.surface,
+        ),
       ),
     );
   }
@@ -328,11 +357,12 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
 
   Widget _buildContentCard(dynamic item, int index) {
     final apiClient = ref.read(apiClientProvider);
-    final String? rawImage = (item['image'] != null && item['image'].toString().isNotEmpty) 
-        ? item['image'] 
+    final String? rawImage =
+        (item['image'] != null && item['image'].toString().isNotEmpty)
+        ? item['image']
         : (item['thumbnail'] != null && item['thumbnail'].toString().isNotEmpty)
-            ? item['thumbnail']
-            : item['coverImage'];
+        ? item['thumbnail']
+        : item['coverImage'];
     final imageUrl = apiClient.resolveUrl(rawImage);
     final date = DateTime.tryParse(item['createdAt'] ?? '') ?? DateTime.now();
     final formattedDate = DateFormat('MM/dd/yyyy').format(date);
@@ -393,13 +423,18 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: const Color(0xFF60A5FA).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
-                            (item['type'] ?? widget.contentType).toString().toUpperCase(),
+                            (item['type'] ?? widget.contentType)
+                                .toString()
+                                .toUpperCase(),
                             style: GoogleFonts.montserrat(
                               fontSize: 7,
                               fontWeight: FontWeight.w900,
@@ -454,7 +489,11 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                             letterSpacing: 1,
                           ),
                         ),
-                        const Icon(LucideIcons.arrowRight, size: 14, color: Color(0xFF60A5FA)),
+                        const Icon(
+                          LucideIcons.arrowRight,
+                          size: 14,
+                          color: Color(0xFF60A5FA),
+                        ),
                       ],
                     ),
                   ],
@@ -469,18 +508,29 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
 
   String _getTitle() {
     switch (widget.contentType.toLowerCase()) {
-      case 'media': return 'MEDIA GALLERY';
+      case 'media':
+        return 'MEDIA GALLERY';
       case 'highlight':
-      case 'highlights': return 'PROJECT HIGHLIGHTS';
+      case 'highlights':
+        return 'PROJECT HIGHLIGHTS';
       case 'event':
-      case 'events': return 'M4 EVENTS';
-      case 'blog': return 'M4 BLOG';
-      default: return widget.title.replaceAll('\n', ' ').toUpperCase();
+      case 'events':
+        return 'M4 EVENTS';
+      case 'blog':
+        return 'M4 BLOG';
+      default:
+        return widget.title.replaceAll('\n', ' ').toUpperCase();
     }
   }
 
   String _getSubtitle() {
     final type = widget.contentType.toLowerCase();
-    return 'Stay updated with our latest ${type == 'media' ? 'multimedia releases' : (type == 'highlight' || type == 'highlights') ? 'achievements and milestones' : (type == 'event' || type == 'events') ? 'upcoming events' : 'insights and news'}.';
+    return 'Stay updated with our latest ${type == 'media'
+        ? 'multimedia releases'
+        : (type == 'highlight' || type == 'highlights')
+        ? 'achievements and milestones'
+        : (type == 'event' || type == 'events')
+        ? 'upcoming events'
+        : 'insights and news'}.';
   }
 }

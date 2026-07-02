@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
@@ -20,7 +19,8 @@ class ContentDetailScreen extends ConsumerStatefulWidget {
   const ContentDetailScreen({super.key, required this.content});
 
   @override
-  ConsumerState<ContentDetailScreen> createState() => _ContentDetailScreenState();
+  ConsumerState<ContentDetailScreen> createState() =>
+      _ContentDetailScreenState();
 }
 
 class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
@@ -40,17 +40,22 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
       final apiClient = ref.read(apiClientProvider);
       final resolvedUrl = apiClient.resolveUrl(videoUrl);
       final imageUrl = apiClient.resolveUrl(
-        (widget.content['image'] != null && widget.content['image'].toString().isNotEmpty) 
-            ? widget.content['image'] 
-            : widget.content['thumbnail']
+        (widget.content['image'] != null &&
+                widget.content['image'].toString().isNotEmpty)
+            ? widget.content['image']
+            : widget.content['thumbnail'],
       );
 
       try {
-        _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(resolvedUrl));
-        
+        _videoPlayerController = VideoPlayerController.networkUrl(
+          Uri.parse(resolvedUrl),
+        );
+
         // Add a timeout to initialization
-        await _videoPlayerController!.initialize().timeout(const Duration(seconds: 15));
-        
+        await _videoPlayerController!.initialize().timeout(
+          const Duration(seconds: 15),
+        );
+
         _chewieController = ChewieController(
           videoPlayerController: _videoPlayerController!,
           autoPlay: false,
@@ -69,38 +74,61 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 if (imageUrl.isNotEmpty)
                   Opacity(
                     opacity: 0.3,
-                    child: Image.network(imageUrl, width: double.infinity, height: double.infinity, fit: BoxFit.cover),
+                    child: Image.network(
+                      imageUrl,
+                      width: double.infinity,
+                      height: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                const Center(child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)),
+                const Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2,
+                  ),
+                ),
               ],
             ),
           ),
           autoInitialize: true,
           allowFullScreen: true,
-          showOptions: false, // Disable default dots to use our custom top-right one
-          deviceOrientationsOnEnterFullScreen: _videoPlayerController!.value.aspectRatio < 1 
-              ? [DeviceOrientation.portraitUp] 
-              : [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight],
+          showOptions:
+              false, // Disable default dots to use our custom top-right one
+          deviceOrientationsOnEnterFullScreen:
+              _videoPlayerController!.value.aspectRatio < 1
+              ? [DeviceOrientation.portraitUp]
+              : [
+                  DeviceOrientation.landscapeLeft,
+                  DeviceOrientation.landscapeRight,
+                ],
           deviceOrientationsAfterFullScreen: [DeviceOrientation.portraitUp],
-          systemOverlaysOnEnterFullScreen: [], // Immersive mode (hide status bar)
+          systemOverlaysOnEnterFullScreen:
+              [], // Immersive mode (hide status bar)
           systemOverlaysAfterFullScreen: SystemUiOverlay.values,
           errorBuilder: (context, errorMessage) {
             return Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(LucideIcons.alertCircle, color: Colors.white, size: 40),
+                  const Icon(
+                    LucideIcons.alertCircle,
+                    color: Colors.white,
+                    size: 40,
+                  ),
                   const SizedBox(height: 10),
                   Text(
                     'Video format not supported or unreachable',
-                    style: GoogleFonts.inter(color: Colors.white.withOpacity(0.6), fontSize: 12),
+                    style: GoogleFonts.inter(
+                      color: Colors.white.withOpacity(0.6),
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               ),
             );
           },
         );
-        
+
         if (mounted) {
           setState(() {
             _isVideoInitialized = true;
@@ -125,17 +153,62 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     final String title = widget.content['title'] ?? 'M4 Family Article';
     final String slug = widget.content['slug'] ?? '';
     final String type = widget.content['type'] ?? 'media';
-    
+
     // Construct web URL based on API base URL
     String webUrl = apiClient.baseUrl;
-    if (webUrl.endsWith('/api')) webUrl = webUrl.substring(0, webUrl.length - 4);
+    if (webUrl.endsWith('/api'))
+      webUrl = webUrl.substring(0, webUrl.length - 4);
     if (webUrl.endsWith('/')) webUrl = webUrl.substring(0, webUrl.length - 1);
-    
+
     final String fullUrl = '$webUrl/$type/$slug';
-    
+
     Share.share(
       'Check out this article from M4 Family: $title\n\nRead more at: $fullUrl',
       subject: title,
+    );
+  }
+
+  // Options menu for the video (the "..." button) — currently a Share action.
+  void _showVideoMenu(ApiClient apiClient) {
+    final scheme = Theme.of(context).colorScheme;
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: scheme.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 8),
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: scheme.onSurface.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(99),
+              ),
+            ),
+            const SizedBox(height: 8),
+            ListTile(
+              leading: Icon(LucideIcons.share2, color: scheme.onSurface),
+              title: Text(
+                'Share',
+                style: GoogleFonts.montserrat(
+                  fontWeight: FontWeight.w700,
+                  color: scheme.onSurface,
+                ),
+              ),
+              onTap: () {
+                Navigator.pop(ctx);
+                _shareContent(apiClient);
+              },
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
     );
   }
 
@@ -144,15 +217,21 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     final scheme = Theme.of(context).colorScheme;
     final apiClient = ref.read(apiClientProvider);
 
-    final String? rawImage = (widget.content['image'] != null && widget.content['image'].toString().isNotEmpty) 
-        ? widget.content['image'] 
-        : (widget.content['thumbnail'] != null && widget.content['thumbnail'].toString().isNotEmpty)
-            ? widget.content['thumbnail']
-            : widget.content['coverImage'];
+    final String? rawImage =
+        (widget.content['image'] != null &&
+            widget.content['image'].toString().isNotEmpty)
+        ? widget.content['image']
+        : (widget.content['thumbnail'] != null &&
+              widget.content['thumbnail'].toString().isNotEmpty)
+        ? widget.content['thumbnail']
+        : widget.content['coverImage'];
     final imageUrl = apiClient.resolveUrl(rawImage);
-    final date = DateTime.tryParse(widget.content['createdAt'] ?? '') ?? DateTime.now();
+    final date =
+        DateTime.tryParse(widget.content['createdAt'] ?? '') ?? DateTime.now();
     final formattedDate = DateFormat('MM/dd/yyyy').format(date);
-    final hasVideo = widget.content['videoUrl'] != null && widget.content['videoUrl'].toString().isNotEmpty;
+    final hasVideo =
+        widget.content['videoUrl'] != null &&
+        widget.content['videoUrl'].toString().isNotEmpty;
 
     return Scaffold(
       backgroundColor: scheme.surface,
@@ -168,7 +247,10 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                   SafeArea(
                     bottom: false,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 15,
+                      ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -207,50 +289,67 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         child: AspectRatio(
                           aspectRatio: 16 / 9,
                           child: hasVideo
-                              ? (_isVideoInitialized && _chewieController != null
-                                  ? Chewie(controller: _chewieController!)
-                                  : Container(
-                                      color: Colors.black,
-                                      child: Stack(
-                                        children: [
-                                          if (imageUrl.isNotEmpty)
-                                            Opacity(
-                                              opacity: 0.3,
-                                              child: Image.network(imageUrl, width: double.infinity, height: double.infinity, fit: BoxFit.cover),
+                              ? (_isVideoInitialized &&
+                                        _chewieController != null
+                                    ? Chewie(controller: _chewieController!)
+                                    : Container(
+                                        color: Colors.black,
+                                        child: Stack(
+                                          children: [
+                                            if (imageUrl.isNotEmpty)
+                                              Opacity(
+                                                opacity: 0.3,
+                                                child: Image.network(
+                                                  imageUrl,
+                                                  width: double.infinity,
+                                                  height: double.infinity,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            const Center(
+                                              child: CircularProgressIndicator(
+                                                color: Colors.white,
+                                                strokeWidth: 2,
+                                              ),
                                             ),
-                                          const Center(child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)),
-                                        ],
-                                      ),
-                                    ))
-                              : (imageUrl.isNotEmpty 
-                                  ? Image.network(imageUrl, fit: BoxFit.cover)
-                                  : Center(
-                                      child: Icon(
-                                        _getIcon(widget.content['type'] ?? 'media'),
-                                        color: Colors.white.withOpacity(0.1),
-                                        size: 60,
-                                      ),
-                                    )),
+                                          ],
+                                        ),
+                                      ))
+                              : (imageUrl.isNotEmpty
+                                    ? Image.network(imageUrl, fit: BoxFit.cover)
+                                    : Center(
+                                        child: Icon(
+                                          _getIcon(
+                                            widget.content['type'] ?? 'media',
+                                          ),
+                                          color: Colors.white.withOpacity(0.1),
+                                          size: 60,
+                                        ),
+                                      )),
                         ),
                       ),
-                      
+
                       // 🔘 THREE-DOT MENU ICON (Upper Right Side)
                       if (hasVideo)
                         Positioned(
                           top: 15,
                           right: 15,
                           child: GestureDetector(
-                            onTap: () {
-                              // Open custom options dialog if needed
-                            },
+                            onTap: () => _showVideoMenu(apiClient),
                             child: Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
                                 color: Colors.black.withOpacity(0.3),
                                 shape: BoxShape.circle,
-                                border: Border.all(color: Colors.white.withOpacity(0.1)),
+                                border: Border.all(
+                                  color: Colors.white.withOpacity(0.1),
+                                ),
                               ),
-                              child: const Icon(LucideIcons.moreVertical, color: Colors.white, size: 20),
+                              child: const Icon(
+                                LucideIcons.moreVertical,
+                                color: Colors.white,
+                                size: 20,
+                              ),
                             ),
                           ),
                         ),
@@ -265,7 +364,10 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         Row(
                           children: [
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 6,
+                              ),
                               decoration: BoxDecoration(
                                 color: const Color(0xFF60A5FA).withOpacity(0.1),
                                 borderRadius: BorderRadius.circular(10),
@@ -308,7 +410,8 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         const SizedBox(height: 30),
 
                         Text(
-                          widget.content['description'] ?? 'No description provided.',
+                          widget.content['description'] ??
+                              'No description provided.',
                           style: GoogleFonts.inter(
                             fontSize: 15,
                             color: scheme.onSurface.withOpacity(0.6),
@@ -317,7 +420,10 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           ),
                         ),
 
-                        if (widget.content['content'] != null && widget.content['content'].toString().isNotEmpty) ...[
+                        if (widget.content['content'] != null &&
+                            widget.content['content']
+                                .toString()
+                                .isNotEmpty) ...[
                           const SizedBox(height: 20),
                           HtmlWidget(
                             widget.content['content'],
@@ -330,7 +436,8 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         ],
 
                         // 📅 EVENT-SPECIFIC SECTIONS (only for type == 'event' and when API provides the fields)
-                        if (widget.content['type']?.toString().toLowerCase() == 'event')
+                        if (widget.content['type']?.toString().toLowerCase() ==
+                            'event')
                           ..._buildEventSections(apiClient),
 
                         const SizedBox(height: 60),
@@ -349,7 +456,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                             decoration: BoxDecoration(
                               color: Colors.transparent,
                               borderRadius: BorderRadius.circular(35),
-                              border: Border.all(color: scheme.onSurface.withOpacity(0.1)),
+                              border: Border.all(
+                                color: scheme.onSurface.withOpacity(0.1),
+                              ),
                             ),
                             child: Center(
                               child: Text(
@@ -376,7 +485,12 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     );
   }
 
-  Widget _buildCircleButton({required IconData icon, required VoidCallback onTap, bool isBlack = false, bool isOverMedia = false}) {
+  Widget _buildCircleButton({
+    required IconData icon,
+    required VoidCallback onTap,
+    bool isBlack = false,
+    bool isOverMedia = false,
+  }) {
     final scheme = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: onTap,
@@ -384,20 +498,32 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         width: 48,
         height: 48,
         decoration: BoxDecoration(
-          color: isOverMedia 
-              ? Colors.black.withOpacity(0.3) 
+          color: isOverMedia
+              ? Colors.black.withOpacity(0.3)
               : (isBlack ? const Color(0xFF0A0A0A) : scheme.surface),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: isOverMedia ? Colors.white.withOpacity(0.1) : scheme.onSurface.withOpacity(0.05)),
-          boxShadow: isOverMedia ? [] : [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
-            ),
-          ],
+          border: Border.all(
+            color: isOverMedia
+                ? Colors.white.withOpacity(0.1)
+                : scheme.onSurface.withOpacity(0.05),
+          ),
+          boxShadow: isOverMedia
+              ? []
+              : [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
         ),
-        child: Icon(icon, size: 20, color: isOverMedia ? Colors.white : (isBlack ? Colors.white : scheme.onSurface)),
+        child: Icon(
+          icon,
+          size: 20,
+          color: isOverMedia
+              ? Colors.white
+              : (isBlack ? Colors.white : scheme.onSurface),
+        ),
       ),
     );
   }
@@ -446,10 +572,13 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
   List<Widget> _buildEventSections(ApiClient apiClient) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final eventDate = widget.content['eventDate'] ?? widget.content['startTime'];
-    final eventTime = widget.content['eventTime'] ?? widget.content['startTime'];
+    final eventDate =
+        widget.content['eventDate'] ?? widget.content['startTime'];
+    final eventTime =
+        widget.content['eventTime'] ?? widget.content['startTime'];
     final rawLocation = widget.content['location'];
-    final location = (rawLocation is Map ? rawLocation['name'] : rawLocation) ??
+    final location =
+        (rawLocation is Map ? rawLocation['name'] : rawLocation) ??
         widget.content['venue'];
     final attendees = widget.content['attendees'] as List? ?? [];
     final attendeeCount = widget.content['attendeeCount'] ?? attendees.length;
@@ -459,13 +588,21 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     final hasDate = eventDate != null && eventDate.toString().isNotEmpty;
     final hasTime = eventTime != null && eventTime.toString().isNotEmpty;
     final hasLocation = location != null && location.toString().isNotEmpty;
-    final hasAttendees = attendees.isNotEmpty ||
-        (attendeeCount is int ? attendeeCount > 0 : (widget.content['attendeeCount'] != null));
+    final hasAttendees =
+        attendees.isNotEmpty ||
+        (attendeeCount is int
+            ? attendeeCount > 0
+            : (widget.content['attendeeCount'] != null));
     final hasRsvp = rsvpUrl != null && rsvpUrl.toString().isNotEmpty;
     final hasStatus = eventStatus != null && eventStatus.isNotEmpty;
 
     // If the API hasn't added event-specific fields yet, render nothing.
-    if (!hasDate && !hasTime && !hasLocation && !hasAttendees && !hasRsvp && !hasStatus) {
+    if (!hasDate &&
+        !hasTime &&
+        !hasLocation &&
+        !hasAttendees &&
+        !hasRsvp &&
+        !hasStatus) {
       return const [];
     }
 
@@ -562,7 +699,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06),
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.black.withValues(alpha: 0.06),
         ),
         boxShadow: isDark
             ? []
@@ -571,7 +710,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                   color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 20,
                   offset: const Offset(0, 10),
-                )
+                ),
               ],
       ),
       child: child,
@@ -626,7 +765,11 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     );
   }
 
-  Widget _buildEventDateTimeCard(dynamic eventDate, dynamic eventTime, bool isDark) {
+  Widget _buildEventDateTimeCard(
+    dynamic eventDate,
+    dynamic eventTime,
+    bool isDark,
+  ) {
     final hasDate = eventDate != null && eventDate.toString().isNotEmpty;
     final hasTime = eventTime != null && eventTime.toString().isNotEmpty;
     return _buildEventCard(
@@ -655,7 +798,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
 
   Widget _buildEventLocation(String location, bool isDark) {
     return GestureDetector(
-      onTap: () => _launchUrl('https://www.google.com/maps?q=${Uri.encodeComponent(location)}'),
+      onTap: () => _launchUrl(
+        'https://www.google.com/maps?q=${Uri.encodeComponent(location)}',
+      ),
       child: _buildEventCard(
         isDark: isDark,
         child: Row(
@@ -667,7 +812,11 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 color: M4Theme.premiumBlue.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(LucideIcons.mapPin, size: 20, color: M4Theme.premiumBlue),
+              child: const Icon(
+                LucideIcons.mapPin,
+                size: 20,
+                color: M4Theme.premiumBlue,
+              ),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -712,7 +861,11 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     );
   }
 
-  Widget _buildEventAttendees(List attendees, dynamic attendeeCount, bool isDark) {
+  Widget _buildEventAttendees(
+    List attendees,
+    dynamic attendeeCount,
+    bool isDark,
+  ) {
     final count = attendeeCount is int
         ? attendeeCount
         : int.tryParse(attendeeCount?.toString() ?? '') ?? attendees.length;
@@ -724,7 +877,11 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         children: [
           Row(
             children: [
-              const Icon(LucideIcons.users, size: 16, color: M4Theme.premiumBlue),
+              const Icon(
+                LucideIcons.users,
+                size: 16,
+                color: M4Theme.premiumBlue,
+              ),
               const SizedBox(width: 10),
               Text(
                 '$count ATTENDING',
@@ -741,7 +898,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
             const SizedBox(height: 16),
             Row(
               children: visible.map((a) {
-                final name = (a is Map ? (a['name'] ?? a['fullName']) : a)?.toString() ?? '';
+                final name =
+                    (a is Map ? (a['name'] ?? a['fullName']) : a)?.toString() ??
+                    '';
                 final initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
                 return Container(
                   margin: const EdgeInsets.only(right: 10),
@@ -750,7 +909,9 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                   decoration: BoxDecoration(
                     color: M4Theme.premiumBlue.withValues(alpha: 0.12),
                     shape: BoxShape.circle,
-                    border: Border.all(color: M4Theme.premiumBlue.withValues(alpha: 0.3)),
+                    border: Border.all(
+                      color: M4Theme.premiumBlue.withValues(alpha: 0.3),
+                    ),
                   ),
                   child: Center(
                     child: Text(
@@ -801,7 +962,11 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               ),
             ),
             const SizedBox(width: 15),
-            const Icon(LucideIcons.calendarCheck, size: 20, color: Colors.white),
+            const Icon(
+              LucideIcons.calendarCheck,
+              size: 20,
+              color: Colors.white,
+            ),
           ],
         ),
       ),
@@ -815,18 +980,25 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     if (await canLaunchUrl(uri)) {
       await launchUrl(
         uri,
-        mode: resolved.startsWith('http') ? LaunchMode.inAppBrowserView : LaunchMode.platformDefault,
+        mode: resolved.startsWith('http')
+            ? LaunchMode.inAppBrowserView
+            : LaunchMode.platformDefault,
       );
     }
   }
 
   IconData _getIcon(String type) {
     switch (type.toLowerCase()) {
-      case 'media': return LucideIcons.playCircle;
-      case 'highlight': return LucideIcons.zap;
-      case 'blog': return LucideIcons.fileText;
-      case 'event': return LucideIcons.calendar;
-      default: return LucideIcons.image;
+      case 'media':
+        return LucideIcons.playCircle;
+      case 'highlight':
+        return LucideIcons.zap;
+      case 'blog':
+        return LucideIcons.fileText;
+      case 'event':
+        return LucideIcons.calendar;
+      default:
+        return LucideIcons.image;
     }
   }
 }

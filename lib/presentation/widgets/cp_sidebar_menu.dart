@@ -415,16 +415,16 @@ class _SubItem extends StatelessWidget {
               child: Icon(
                 LucideIcons.logIn,
                 size: 14,
-                color: isDark ? Colors.white38 : Colors.black26,
+                color: isDark ? Colors.white70 : Colors.black54,
               ),
             ),
             const SizedBox(width: 12),
             Text(
               label,
               style: GoogleFonts.montserrat(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: isDark ? Colors.white54 : Colors.grey[700],
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: isDark ? Colors.white : Colors.black87,
               ),
             ),
           ],
