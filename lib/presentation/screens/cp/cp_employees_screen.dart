@@ -426,36 +426,45 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                     _statusBadge(isActive),
                   ],
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 7),
+                // Bigger + darker phone / email so they read clearly.
                 Row(
                   children: [
-                    Icon(LucideIcons.phone, size: 11, color: muted),
-                    const SizedBox(width: 6),
+                    Icon(
+                      LucideIcons.phone,
+                      size: 13,
+                      color: textPrimary.withValues(alpha: 0.7),
+                    ),
+                    const SizedBox(width: 7),
                     Text(
                       phone,
                       style: GoogleFonts.montserrat(
-                        fontSize: 9,
+                        fontSize: 11,
                         fontWeight: FontWeight.w800,
-                        color: muted,
+                        color: textPrimary.withValues(alpha: 0.78),
                         letterSpacing: 0.3,
                       ),
                     ),
                   ],
                 ),
                 if (email.isNotEmpty) ...[
-                  const SizedBox(height: 3),
+                  const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(LucideIcons.mail, size: 11, color: muted),
-                      const SizedBox(width: 6),
+                      Icon(
+                        LucideIcons.mail,
+                        size: 13,
+                        color: textPrimary.withValues(alpha: 0.7),
+                      ),
+                      const SizedBox(width: 7),
                       Flexible(
                         child: Text(
                           email,
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.montserrat(
-                            fontSize: 9,
+                            fontSize: 10.5,
                             fontWeight: FontWeight.w600,
-                            color: muted,
+                            color: textPrimary.withValues(alpha: 0.65),
                           ),
                         ),
                       ),
@@ -697,9 +706,9 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                     child: Text(
                       label,
                       style: GoogleFonts.montserrat(
-                        fontSize: 8,
+                        fontSize: 9,
                         fontWeight: FontWeight.w900,
-                        color: muted,
+                        color: textPrimary.withValues(alpha: 0.8),
                         letterSpacing: 0.5,
                       ),
                     ),
@@ -793,9 +802,10 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                   ),
                 ),
                 FilledButton(
+                  // Web parity: black save button (white in dark mode).
                   style: FilledButton.styleFrom(
-                    backgroundColor: _purple,
-                    foregroundColor: Colors.white,
+                    backgroundColor: isDark ? Colors.white : Colors.black,
+                    foregroundColor: isDark ? Colors.black : Colors.white,
                   ),
                   onPressed: saving
                       ? null
