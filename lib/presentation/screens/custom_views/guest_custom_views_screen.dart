@@ -5,6 +5,9 @@ import 'dart:ui';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
+import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
+import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 
@@ -46,10 +49,24 @@ class _GuestCustomViewsScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final role = (ref.watch(authProvider).user?['role'] ?? '')
+        .toString()
+        .toLowerCase();
+    final isCp = role == 'cp';
 
     return Scaffold(
       backgroundColor: isDark ? Colors.black : Colors.white,
       drawer: const ConditionalDrawer(),
+      extendBody: true,
+      bottomNavigationBar: isCp
+          ? CpBottomNav(
+              currentIndex: -1,
+              onTap: (i) {
+                ref.read(cpNavigationIndexProvider.notifier).state = i;
+                if (context.canPop()) context.pop();
+              },
+            )
+          : null,
       body: CustomScrollView(
         controller: _scrollController,
         slivers: [

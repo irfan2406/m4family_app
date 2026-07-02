@@ -988,7 +988,7 @@ class _FilterSection extends StatelessWidget {
           style: GoogleFonts.montserrat(
             fontSize: 10,
             fontWeight: FontWeight.w900,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.55),
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.75),
             letterSpacing: 2,
           ),
         ),
@@ -998,6 +998,8 @@ class _FilterSection extends StatelessWidget {
           runSpacing: 12,
           children: options.map((opt) {
             final isSelected = selectedOptions.contains(opt);
+            final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+            final onSurface = Theme.of(context).colorScheme.onSurface;
             return GestureDetector(
               onTap: () => onToggle(opt),
               child: AnimatedContainer(
@@ -1006,26 +1008,29 @@ class _FilterSection extends StatelessWidget {
                   horizontal: 22,
                   vertical: 14,
                 ),
+                // Web parity: white pill with soft shadow + dark text
+                // (unselected); solid dark pill when selected.
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? (Theme.of(context).brightness == Brightness.dark
-                            ? Colors.white
-                            : Colors.black)
-                      : Theme.of(
-                          context,
-                        ).colorScheme.onSurface.withOpacity(0.04),
-                  borderRadius: BorderRadius.circular(
-                    30,
-                  ), // Rounded pill like web
+                      ? (isDarkMode ? Colors.white : Colors.black)
+                      : (isDarkMode
+                            ? Colors.white.withOpacity(0.06)
+                            : Colors.white),
+                  borderRadius: BorderRadius.circular(30),
                   border: Border.all(
                     color: isSelected
-                        ? (Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white
-                              : Colors.black)
-                        : Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withOpacity(0.08),
+                        ? (isDarkMode ? Colors.white : Colors.black)
+                        : onSurface.withOpacity(0.1),
                   ),
+                  boxShadow: (isSelected || isDarkMode)
+                      ? null
+                      : [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                 ),
                 child: Text(
                   opt.toUpperCase(),
@@ -1033,12 +1038,8 @@ class _FilterSection extends StatelessWidget {
                     fontSize: 9,
                     fontWeight: FontWeight.w900,
                     color: isSelected
-                        ? (Theme.of(context).brightness == Brightness.dark
-                              ? Colors.black
-                              : Colors.white)
-                        : Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withOpacity(0.5),
+                        ? (isDarkMode ? Colors.black : Colors.white)
+                        : onSurface.withOpacity(0.85),
                     letterSpacing: 1,
                   ),
                 ),

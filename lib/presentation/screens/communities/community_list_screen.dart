@@ -9,6 +9,8 @@ import 'dart:ui';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/presentation/providers/communities_provider.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
+import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
 import 'package:m4_mobile/presentation/screens/communities/community_detail_screen.dart';
 
 class CommunityListScreen extends ConsumerStatefulWidget {
@@ -34,9 +36,25 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
   Widget build(BuildContext context) {
     final state = ref.watch(communitiesProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    // Partner-menu screens show the CP bottom nav (pushed over the shell, so
+    // a tab tap pops back and selects that shell tab). Only for CP role.
+    final role = (ref.watch(authProvider).user?['role'] ?? '')
+        .toString()
+        .toLowerCase();
+    final isCp = role == 'cp';
     return Scaffold(
       backgroundColor: isDark ? Colors.black : Colors.white,
       drawer: const ConditionalDrawer(),
+      extendBody: true,
+      bottomNavigationBar: isCp
+          ? CpBottomNav(
+              currentIndex: -1,
+              onTap: (i) {
+                ref.read(cpNavigationIndexProvider.notifier).state = i;
+                if (Navigator.canPop(context)) Navigator.pop(context);
+              },
+            )
+          : null,
       body: CustomScrollView(
         slivers: [
           // 🔝 Header — web parity: back button + "M4 FAMILY / DEVELOPMENTS"

@@ -6,6 +6,9 @@ import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 import 'package:m4_mobile/presentation/widgets/cp_sidebar_menu.dart';
+import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
+import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
+import 'package:go_router/go_router.dart';
 
 class CpBlogScreen extends ConsumerStatefulWidget {
   const CpBlogScreen({super.key});
@@ -49,6 +52,14 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
     return Scaffold(
       backgroundColor: scheme.surface,
       drawer: const CpSidebarMenu(),
+      extendBody: true,
+      bottomNavigationBar: CpBottomNav(
+        currentIndex: -1,
+        onTap: (i) {
+          ref.read(cpNavigationIndexProvider.notifier).state = i;
+          if (context.canPop()) context.pop();
+        },
+      ),
       body: CustomScrollView(
         slivers: [
           // Standardized Header (Web Parity)
@@ -66,7 +77,9 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                   icon: const Icon(LucideIcons.arrowLeft, size: 20),
                   style: IconButton.styleFrom(
                     backgroundColor: scheme.onSurface.withOpacity(0.05),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
                     fixedSize: const Size(48, 48),
                   ),
                 ),
@@ -101,11 +114,17 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                   padding: const EdgeInsets.only(right: 20),
                   child: IconButton(
                     onPressed: () => Scaffold.of(ctx).openDrawer(),
-                    icon: const Icon(LucideIcons.moreHorizontal, size: 22, color: Colors.white),
+                    icon: const Icon(
+                      LucideIcons.moreHorizontal,
+                      size: 22,
+                      color: Colors.white,
+                    ),
                     style: IconButton.styleFrom(
                       backgroundColor: Colors.black,
                       foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
                       fixedSize: const Size(56, 48),
                     ),
                   ),
@@ -126,11 +145,19 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                       Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: (isLight ? Colors.black : scheme.primary).withOpacity(0.1),
+                          color: (isLight ? Colors.black : scheme.primary)
+                              .withOpacity(0.1),
                           borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: (isLight ? Colors.black : scheme.primary).withOpacity(0.2)),
+                          border: Border.all(
+                            color: (isLight ? Colors.black : scheme.primary)
+                                .withOpacity(0.2),
+                          ),
                         ),
-                        child: Icon(LucideIcons.fileText, size: 20, color: isLight ? Colors.black : scheme.primary),
+                        child: Icon(
+                          LucideIcons.fileText,
+                          size: 20,
+                          color: isLight ? Colors.black : scheme.primary,
+                        ),
                       ),
                       const SizedBox(width: 14),
                       Text(
@@ -180,11 +207,19 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(LucideIcons.fileX, size: 64, color: scheme.onSurface.withOpacity(0.1)),
+                  Icon(
+                    LucideIcons.fileX,
+                    size: 64,
+                    color: scheme.onSurface.withOpacity(0.1),
+                  ),
                   const SizedBox(height: 16),
                   Text(
                     'No blog posts found',
-                    style: GoogleFonts.montserrat(fontSize: 18, fontWeight: FontWeight.w900, color: isLight ? Colors.black : Colors.white),
+                    style: GoogleFonts.montserrat(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w900,
+                      color: isLight ? Colors.black : Colors.white,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -201,13 +236,10 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(24, 32, 24, 100),
               sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final item = _items[index];
-                    return _BlogCard(item: item);
-                  },
-                  childCount: _items.length,
-                ),
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  final item = _items[index];
+                  return _BlogCard(item: item);
+                }, childCount: _items.length),
               ),
             ),
         ],
@@ -227,7 +259,9 @@ class _BlogCard extends ConsumerWidget {
     final isLight = !isDark;
     final api = ref.read(apiClientProvider);
 
-    final imageUrl = api.resolveUrl(item['image'] ?? item['thumbnail'] ?? item['coverImage']);
+    final imageUrl = api.resolveUrl(
+      item['image'] ?? item['thumbnail'] ?? item['coverImage'],
+    );
     final date = DateTime.tryParse(item['createdAt'] ?? '') ?? DateTime.now();
     final formattedDate = DateFormat('MMMM dd, yyyy').format(date);
 
@@ -258,7 +292,8 @@ class _BlogCard extends ConsumerWidget {
                 CachedNetworkImage(
                   imageUrl: imageUrl,
                   fit: BoxFit.cover,
-                  placeholder: (_, __) => Container(color: scheme.surfaceContainerHighest),
+                  placeholder: (_, __) =>
+                      Container(color: scheme.surfaceContainerHighest),
                   errorWidget: (_, __, ___) => Container(
                     color: scheme.surfaceContainerHighest,
                     child: const Icon(LucideIcons.image, color: Colors.grey),
@@ -280,7 +315,10 @@ class _BlogCard extends ConsumerWidget {
                   top: 20,
                   right: 20,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(100),
@@ -309,7 +347,11 @@ class _BlogCard extends ConsumerWidget {
               children: [
                 Row(
                   children: [
-                    Icon(LucideIcons.calendar, size: 12, color: scheme.onSurface.withOpacity(0.3)),
+                    Icon(
+                      LucideIcons.calendar,
+                      size: 12,
+                      color: scheme.onSurface.withOpacity(0.3),
+                    ),
                     const SizedBox(width: 6),
                     Text(
                       formattedDate.toUpperCase(),
@@ -321,9 +363,20 @@ class _BlogCard extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    Container(width: 4, height: 4, decoration: BoxDecoration(color: scheme.primary.withOpacity(0.4), shape: BoxShape.circle)),
+                    Container(
+                      width: 4,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: scheme.primary.withOpacity(0.4),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
                     const SizedBox(width: 12),
-                    Icon(LucideIcons.user, size: 12, color: scheme.onSurface.withOpacity(0.3)),
+                    Icon(
+                      LucideIcons.user,
+                      size: 12,
+                      color: scheme.onSurface.withOpacity(0.3),
+                    ),
                     const SizedBox(width: 6),
                     Text(
                       'BY M4 TEAM',
@@ -368,7 +421,7 @@ class _BlogCard extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     TextButton.icon(
-                      onPressed: () {}, 
+                      onPressed: () {},
                       icon: const Icon(LucideIcons.arrowRight, size: 16),
                       label: Text(
                         'READ MORE',
@@ -379,7 +432,9 @@ class _BlogCard extends ConsumerWidget {
                         ),
                       ),
                       style: TextButton.styleFrom(
-                        foregroundColor: isLight ? Colors.black : scheme.primary,
+                        foregroundColor: isLight
+                            ? Colors.black
+                            : scheme.primary,
                         padding: EdgeInsets.zero,
                       ),
                     ),
@@ -388,7 +443,9 @@ class _BlogCard extends ConsumerWidget {
                       icon: const Icon(LucideIcons.share2, size: 18),
                       style: IconButton.styleFrom(
                         backgroundColor: scheme.onSurface.withOpacity(0.05),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                     ),
                   ],

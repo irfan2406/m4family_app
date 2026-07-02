@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
+import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
 
 /// Web parity: the "Register Interest" form (web `/cp/home#interest-form`).
 /// Full Name, Email, Phone, Message, a privacy-policy checkbox, and a black
@@ -127,6 +129,14 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      extendBody: true,
+      bottomNavigationBar: CpBottomNav(
+        currentIndex: -1,
+        onTap: (i) {
+          ref.read(cpNavigationIndexProvider.notifier).state = i;
+          if (context.canPop()) context.pop();
+        },
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(24, 12, 24, 48),

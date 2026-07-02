@@ -8,6 +8,8 @@ import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/screens/content/content_detail_screen.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
+import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
+import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 
 class GuestContentHubScreen extends ConsumerStatefulWidget {
   final String title;
@@ -116,11 +118,25 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final scheme = Theme.of(context).colorScheme;
+    final role = (ref.watch(authProvider).user?['role'] ?? '')
+        .toString()
+        .toLowerCase();
+    final isCp = role == 'cp';
 
     return Scaffold(
       key: _scaffoldKey,
       drawer: const ConditionalDrawer(),
       backgroundColor: scheme.surface,
+      extendBody: true,
+      bottomNavigationBar: isCp
+          ? CpBottomNav(
+              currentIndex: -1,
+              onTap: (i) {
+                ref.read(cpNavigationIndexProvider.notifier).state = i;
+                if (Navigator.canPop(context)) Navigator.pop(context);
+              },
+            )
+          : null,
       body: Container(
         decoration: BoxDecoration(
           gradient: RadialGradient(
