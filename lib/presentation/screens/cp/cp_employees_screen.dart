@@ -6,6 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
+import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
 
 /// Web `/cp/profile/employees` — CP team management.
 /// Lists employees (`GET /api/cp/employees`) with add / edit / delete dialogs
@@ -18,7 +20,9 @@ class CpEmployeesScreen extends ConsumerStatefulWidget {
 }
 
 class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
-  static const Color _gold = Color(0xFFFFD700);
+  // Web parity: the CP accent is purple (only the header dot uses it); the
+  // icons/buttons are neutral grey, not gold.
+  static const Color _purple = Color(0xFF9333EA);
 
   bool _loading = true;
   String? _error;
@@ -44,7 +48,9 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
         _employees = List<dynamic>.from(body['data']);
       } else {
         _employees = [];
-        _error = body is Map ? body['message']?.toString() : 'Failed to load employees';
+        _error = body is Map
+            ? body['message']?.toString()
+            : 'Failed to load employees';
         _error ??= 'Failed to load employees';
       }
     } on DioException catch (e) {
@@ -91,10 +97,16 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
         }
         _toast('Employee added successfully');
       } else {
-        _toast(data is Map ? (data['message']?.toString() ?? 'Failed to add employee') : 'Failed to add employee');
+        _toast(
+          data is Map
+              ? (data['message']?.toString() ?? 'Failed to add employee')
+              : 'Failed to add employee',
+        );
       }
     } on DioException catch (e) {
-      final m = e.response?.data is Map ? (e.response!.data as Map)['message']?.toString() : e.message;
+      final m = e.response?.data is Map
+          ? (e.response!.data as Map)['message']?.toString()
+          : e.message;
       _toast(m ?? 'Failed to add employee');
     } catch (_) {
       _toast('Failed to add employee');
@@ -118,10 +130,16 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
         }
         _toast('Employee updated successfully');
       } else {
-        _toast(data is Map ? (data['message']?.toString() ?? 'Failed to update employee') : 'Failed to update employee');
+        _toast(
+          data is Map
+              ? (data['message']?.toString() ?? 'Failed to update employee')
+              : 'Failed to update employee',
+        );
       }
     } on DioException catch (e) {
-      final m = e.response?.data is Map ? (e.response!.data as Map)['message']?.toString() : e.message;
+      final m = e.response?.data is Map
+          ? (e.response!.data as Map)['message']?.toString()
+          : e.message;
       _toast(m ?? 'Failed to update employee');
     } catch (_) {
       _toast('Failed to update employee');
@@ -134,13 +152,23 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
       final res = await apiClient.deleteCpEmployee(id);
       final data = res.data;
       if (data is Map && data['status'] == true) {
-        setState(() => _employees = _employees.where((e) => e['_id']?.toString() != id).toList());
+        setState(
+          () => _employees = _employees
+              .where((e) => e['_id']?.toString() != id)
+              .toList(),
+        );
         _toast('Employee deleted successfully');
       } else {
-        _toast(data is Map ? (data['message']?.toString() ?? 'Failed to delete employee') : 'Failed to delete employee');
+        _toast(
+          data is Map
+              ? (data['message']?.toString() ?? 'Failed to delete employee')
+              : 'Failed to delete employee',
+        );
       }
     } on DioException catch (e) {
-      final m = e.response?.data is Map ? (e.response!.data as Map)['message']?.toString() : e.message;
+      final m = e.response?.data is Map
+          ? (e.response!.data as Map)['message']?.toString()
+          : e.message;
       _toast(m ?? 'Failed to delete employee');
     } catch (_) {
       _toast('Failed to delete employee');
@@ -152,35 +180,62 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : Colors.white;
     final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
-    final border = isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06);
+    final muted = (isDark ? Colors.white : Colors.black).withValues(
+      alpha: 0.62,
+    );
+    final border = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.black.withValues(alpha: 0.06);
 
     return Scaffold(
       backgroundColor: bg,
+      extendBody: true,
+      // Web parity: persistent CP bottom nav. This screen is pushed on top of
+      // the shell, so a tab tap pops back and selects that shell tab.
+      bottomNavigationBar: CpBottomNav(
+        currentIndex: -1,
+        onTap: (i) {
+          ref.read(cpNavigationIndexProvider.notifier).state = i;
+          if (context.canPop()) context.pop();
+        },
+      ),
       body: SafeArea(
         child: Column(
           children: [
             _buildHeader(isDark, textPrimary, muted, border),
             Expanded(
               child: _loading
-                  ? Center(child: CircularProgressIndicator(color: textPrimary, strokeWidth: 2))
+                  ? Center(
+                      child: CircularProgressIndicator(
+                        color: textPrimary,
+                        strokeWidth: 2,
+                      ),
+                    )
                   : _error != null
-                      ? _buildError(textPrimary, muted)
-                      : RefreshIndicator(
-                          onRefresh: _load,
-                          color: textPrimary,
-                          child: ListView(
-                            padding: const EdgeInsets.fromLTRB(20, 4, 20, 100),
-                            children: [
-                              _buildSearchBar(isDark, textPrimary, muted, border),
-                              const SizedBox(height: 20),
-                              if (_filtered.isEmpty)
-                                _buildEmptyState(muted, border)
-                              else
-                                ..._filtered.map((e) => _buildEmployeeCard(e, isDark, textPrimary, muted, border)),
-                            ],
-                          ),
-                        ),
+                  ? _buildError(textPrimary, muted)
+                  : RefreshIndicator(
+                      onRefresh: _load,
+                      color: textPrimary,
+                      child: ListView(
+                        padding: const EdgeInsets.fromLTRB(20, 4, 20, 100),
+                        children: [
+                          _buildSearchBar(isDark, textPrimary, muted, border),
+                          const SizedBox(height: 20),
+                          if (_filtered.isEmpty)
+                            _buildEmptyState(muted, border)
+                          else
+                            ..._filtered.map(
+                              (e) => _buildEmployeeCard(
+                                e,
+                                isDark,
+                                textPrimary,
+                                muted,
+                                border,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
             ),
           ],
         ),
@@ -188,7 +243,12 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
     );
   }
 
-  Widget _buildHeader(bool isDark, Color textPrimary, Color muted, Color border) {
+  Widget _buildHeader(
+    bool isDark,
+    Color textPrimary,
+    Color muted,
+    Color border,
+  ) {
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
@@ -196,7 +256,8 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           IconButton(
-            onPressed: () => context.canPop() ? context.pop() : context.go('/cp/dashboard'),
+            onPressed: () =>
+                context.canPop() ? context.pop() : context.go('/cp/dashboard'),
             icon: Icon(LucideIcons.chevronLeft, size: 18, color: textPrimary),
             style: IconButton.styleFrom(
               backgroundColor: card,
@@ -211,29 +272,46 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(width: 4, height: 4, decoration: const BoxDecoration(color: _gold, shape: BoxShape.circle)),
+                  Container(
+                    width: 5,
+                    height: 5,
+                    decoration: const BoxDecoration(
+                      color: _purple,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     'TEAM MANAGEMENT',
-                    style: GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w900, color: textPrimary, letterSpacing: 1.2),
+                    style: GoogleFonts.montserrat(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w900,
+                      color: textPrimary,
+                      letterSpacing: 1.2,
+                    ),
                   ),
                 ],
               ),
               const SizedBox(height: 2),
               Text(
                 'MANAGE YOUR PORTAL EMPLOYEES',
-                style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: muted, letterSpacing: 1.5),
+                style: GoogleFonts.montserrat(
+                  fontSize: 8,
+                  fontWeight: FontWeight.w900,
+                  color: muted,
+                  letterSpacing: 1.5,
+                ),
               ),
             ],
           ),
           IconButton(
             onPressed: () => _openEmployeeDialog(),
-            icon: const Icon(LucideIcons.plusCircle, size: 18, color: _gold),
+            icon: Icon(LucideIcons.plusCircle, size: 18, color: textPrimary),
             style: IconButton.styleFrom(
-              backgroundColor: _gold.withValues(alpha: 0.1),
+              backgroundColor: card,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
-                side: BorderSide(color: _gold.withValues(alpha: 0.2)),
+                side: BorderSide(color: border),
               ),
             ),
           ),
@@ -242,7 +320,12 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
     );
   }
 
-  Widget _buildSearchBar(bool isDark, Color textPrimary, Color muted, Color border) {
+  Widget _buildSearchBar(
+    bool isDark,
+    Color textPrimary,
+    Color muted,
+    Color border,
+  ) {
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     return Container(
       height: 50,
@@ -259,11 +342,20 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
           Expanded(
             child: TextField(
               onChanged: (v) => setState(() => _search = v),
-              style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w700, color: textPrimary),
+              style: GoogleFonts.montserrat(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: textPrimary,
+              ),
               decoration: InputDecoration(
                 isCollapsed: true,
                 hintText: 'SEARCH BY NAME OR PHONE...',
-                hintStyle: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: muted.withValues(alpha: 0.6), letterSpacing: 1.2),
+                hintStyle: GoogleFonts.montserrat(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w900,
+                  color: muted.withValues(alpha: 0.6),
+                  letterSpacing: 1.2,
+                ),
                 border: InputBorder.none,
               ),
             ),
@@ -273,7 +365,13 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
     );
   }
 
-  Widget _buildEmployeeCard(dynamic emp, bool isDark, Color textPrimary, Color muted, Color border) {
+  Widget _buildEmployeeCard(
+    dynamic emp,
+    bool isDark,
+    Color textPrimary,
+    Color muted,
+    Color border,
+  ) {
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     final id = emp['_id']?.toString() ?? '';
     final name = (emp['name'] ?? '').toString();
@@ -295,11 +393,15 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              color: _gold.withValues(alpha: 0.1),
+              color: textPrimary.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: _gold.withValues(alpha: 0.2)),
+              border: Border.all(color: border),
             ),
-            child: const Icon(LucideIcons.userCheck, size: 20, color: _gold),
+            child: Icon(
+              LucideIcons.userCheck,
+              size: 20,
+              color: textPrimary.withValues(alpha: 0.7),
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -312,7 +414,12 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                       child: Text(
                         name.toUpperCase(),
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: textPrimary, letterSpacing: 0.3),
+                        style: GoogleFonts.montserrat(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w900,
+                          color: textPrimary,
+                          letterSpacing: 0.3,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -326,7 +433,12 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                     const SizedBox(width: 6),
                     Text(
                       phone,
-                      style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w800, color: muted, letterSpacing: 0.3),
+                      style: GoogleFonts.montserrat(
+                        fontSize: 9,
+                        fontWeight: FontWeight.w800,
+                        color: muted,
+                        letterSpacing: 0.3,
+                      ),
                     ),
                   ],
                 ),
@@ -340,7 +452,11 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                         child: Text(
                           email,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w600, color: muted),
+                          style: GoogleFonts.montserrat(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w600,
+                            color: muted,
+                          ),
                         ),
                       ),
                     ],
@@ -350,15 +466,33 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
             ),
           ),
           const SizedBox(width: 8),
-          _actionButton(LucideIcons.edit, _gold, border, card, () => _openEmployeeDialog(existing: emp)),
+          _actionButton(
+            LucideIcons.edit,
+            textPrimary.withValues(alpha: 0.7),
+            border,
+            card,
+            () => _openEmployeeDialog(existing: emp),
+          ),
           const SizedBox(width: 8),
-          _actionButton(LucideIcons.trash2, Colors.red, border, card, () => _confirmDelete(id, name, textPrimary, muted)),
+          _actionButton(
+            LucideIcons.trash2,
+            Colors.red,
+            border,
+            card,
+            () => _confirmDelete(id, name, textPrimary, muted),
+          ),
         ],
       ),
     );
   }
 
-  Widget _actionButton(IconData icon, Color color, Color border, Color card, VoidCallback onTap) {
+  Widget _actionButton(
+    IconData icon,
+    Color color,
+    Color border,
+    Color card,
+    VoidCallback onTap,
+  ) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -385,7 +519,12 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
       ),
       child: Text(
         isActive ? 'ACTIVE' : 'INACTIVE',
-        style: GoogleFonts.montserrat(fontSize: 7, fontWeight: FontWeight.w900, color: color, letterSpacing: 0.5),
+        style: GoogleFonts.montserrat(
+          fontSize: 7,
+          fontWeight: FontWeight.w900,
+          color: color,
+          letterSpacing: 0.5,
+        ),
       ),
     );
   }
@@ -400,12 +539,21 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
       ),
       child: Column(
         children: [
-          Icon(LucideIcons.userPlus, size: 30, color: muted.withValues(alpha: 0.4)),
+          Icon(
+            LucideIcons.userPlus,
+            size: 30,
+            color: muted.withValues(alpha: 0.4),
+          ),
           const SizedBox(height: 16),
           Text(
             'NO MATCHING TEAM MEMBERS',
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: muted, letterSpacing: 1.5),
+            style: GoogleFonts.montserrat(
+              fontSize: 10,
+              fontWeight: FontWeight.w900,
+              color: muted,
+              letterSpacing: 1.5,
+            ),
           ),
         ],
       ),
@@ -424,12 +572,22 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
             Text(
               _error ?? 'Something went wrong',
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w600, color: textPrimary),
+              style: GoogleFonts.montserrat(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: textPrimary,
+              ),
             ),
             const SizedBox(height: 16),
             FilledButton(
               onPressed: _load,
-              child: Text('RETRY', style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900)),
+              child: Text(
+                'RETRY',
+                style: GoogleFonts.montserrat(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
             ),
           ],
         ),
@@ -448,16 +606,32 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Text(
           'DELETE EMPLOYEE',
-          style: GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w900, color: textPrimary, letterSpacing: 0.5),
+          style: GoogleFonts.montserrat(
+            fontSize: 13,
+            fontWeight: FontWeight.w900,
+            color: textPrimary,
+            letterSpacing: 0.5,
+          ),
         ),
         content: Text(
           'Are you sure you want to delete ${name.isEmpty ? 'this employee' : name}?',
-          style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w500, color: muted),
+          style: GoogleFonts.montserrat(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: muted,
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: Text('CANCEL', style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: muted)),
+            child: Text(
+              'CANCEL',
+              style: GoogleFonts.montserrat(
+                fontSize: 11,
+                fontWeight: FontWeight.w900,
+                color: muted,
+              ),
+            ),
           ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
@@ -465,7 +639,13 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
               Navigator.of(ctx).pop();
               _deleteEmployee(id);
             },
-            child: Text('DELETE', style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900)),
+            child: Text(
+              'DELETE',
+              style: GoogleFonts.montserrat(
+                fontSize: 11,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
           ),
         ],
       ),
@@ -477,14 +657,24 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final dialogBg = isDark ? const Color(0xFF111111) : Colors.white;
     final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
-    final border = isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06);
+    final muted = (isDark ? Colors.white : Colors.black).withValues(
+      alpha: 0.62,
+    );
+    final border = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.black.withValues(alpha: 0.06);
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
 
     final isEdit = existing != null;
-    final nameCtrl = TextEditingController(text: isEdit ? (existing['name'] ?? '').toString() : '');
-    final phoneCtrl = TextEditingController(text: isEdit ? (existing['phone'] ?? '').toString() : '');
-    final emailCtrl = TextEditingController(text: isEdit ? (existing['email'] ?? '').toString() : '');
+    final nameCtrl = TextEditingController(
+      text: isEdit ? (existing['name'] ?? '').toString() : '',
+    );
+    final phoneCtrl = TextEditingController(
+      text: isEdit ? (existing['phone'] ?? '').toString() : '',
+    );
+    final emailCtrl = TextEditingController(
+      text: isEdit ? (existing['email'] ?? '').toString() : '',
+    );
     final id = isEdit ? (existing['_id']?.toString() ?? '') : '';
 
     showDialog<void>(
@@ -493,7 +683,12 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
         bool saving = false;
         return StatefulBuilder(
           builder: (ctx, setLocal) {
-            Widget field(String label, TextEditingController c, String hint, {bool phone = false}) {
+            Widget field(
+              String label,
+              TextEditingController c,
+              String hint, {
+              bool phone = false,
+            }) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -501,29 +696,50 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                     padding: const EdgeInsets.only(left: 4, bottom: 6),
                     child: Text(
                       label,
-                      style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: muted, letterSpacing: 0.5),
+                      style: GoogleFonts.montserrat(
+                        fontSize: 8,
+                        fontWeight: FontWeight.w900,
+                        color: muted,
+                        letterSpacing: 0.5,
+                      ),
                     ),
                   ),
                   TextField(
                     controller: c,
-                    keyboardType: phone ? TextInputType.phone : TextInputType.text,
+                    keyboardType: phone
+                        ? TextInputType.phone
+                        : TextInputType.text,
                     inputFormatters: phone
-                        ? [FilteringTextInputFormatter.digitsOnly, LengthLimitingTextInputFormatter(10)]
+                        ? [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(10),
+                          ]
                         : null,
-                    style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w700, color: textPrimary),
+                    style: GoogleFonts.montserrat(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: textPrimary,
+                    ),
                     decoration: InputDecoration(
                       hintText: hint,
-                      hintStyle: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w500, color: muted.withValues(alpha: 0.7)),
+                      hintStyle: GoogleFonts.montserrat(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: muted.withValues(alpha: 0.7),
+                      ),
                       filled: true,
                       fillColor: card,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 14,
+                      ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide(color: border),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(color: _gold),
+                        borderSide: const BorderSide(color: _purple),
                       ),
                     ),
                   ),
@@ -533,11 +749,18 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
 
             return AlertDialog(
               backgroundColor: dialogBg,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(28),
+              ),
               titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
               title: Text(
                 isEdit ? 'EDIT TEAM MEMBER' : 'ADD NEW EMPLOYEE',
-                style: GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w900, color: textPrimary, letterSpacing: 1.0),
+                style: GoogleFonts.montserrat(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w900,
+                  color: textPrimary,
+                  letterSpacing: 1.0,
+                ),
               ),
               content: SingleChildScrollView(
                 child: Column(
@@ -545,7 +768,12 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                   children: [
                     field('FULL NAME', nameCtrl, 'John Doe'),
                     const SizedBox(height: 14),
-                    field('PHONE NUMBER (10 DIGITS)', phoneCtrl, '9876543210', phone: true),
+                    field(
+                      'PHONE NUMBER (10 DIGITS)',
+                      phoneCtrl,
+                      '9876543210',
+                      phone: true,
+                    ),
                     const SizedBox(height: 14),
                     field('EMAIL ADDRESS', emailCtrl, 'john@example.com'),
                   ],
@@ -555,10 +783,20 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
               actions: [
                 TextButton(
                   onPressed: saving ? null : () => Navigator.of(ctx).pop(),
-                  child: Text('CANCEL', style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: muted)),
+                  child: Text(
+                    'CANCEL',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w900,
+                      color: muted,
+                    ),
+                  ),
                 ),
                 FilledButton(
-                  style: FilledButton.styleFrom(backgroundColor: _gold, foregroundColor: Colors.black),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: _purple,
+                    foregroundColor: Colors.white,
+                  ),
                   onPressed: saving
                       ? null
                       : () async {
@@ -583,8 +821,13 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                           if (ctx.mounted) Navigator.of(ctx).pop();
                         },
                   child: Text(
-                    saving ? 'SAVING...' : (isEdit ? 'SAVE CHANGES' : 'ADD EMPLOYEE'),
-                    style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900),
+                    saving
+                        ? 'SAVING...'
+                        : (isEdit ? 'SAVE CHANGES' : 'ADD EMPLOYEE'),
+                    style: GoogleFonts.montserrat(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w900,
+                    ),
                   ),
                 ),
               ],
