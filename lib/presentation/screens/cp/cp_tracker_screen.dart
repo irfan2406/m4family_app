@@ -415,19 +415,27 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
     final status = (t['status'] ?? 'PENDING').toString().toUpperCase();
     final isCompleted = status == 'COMPLETED';
 
+    final isDark = scheme.brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
         color: scheme.surface,
         borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.3)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 30,
-            offset: const Offset(0, 15),
-          ),
-        ],
+        // Web parity: subtle border + a prominent shadow-2xl so every card
+        // has a clear, consistent outline that lifts off the background.
+        border: Border.all(
+          color: scheme.outlineVariant.withValues(alpha: 0.45),
+          width: 1,
+        ),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.08),
+                  blurRadius: 40,
+                  offset: const Offset(0, 20),
+                ),
+              ],
       ),
       child: Column(
         children: [
@@ -503,10 +511,16 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
+                        // Web parity: Pending = bg-muted with a subtle border.
                         color: isCompleted
                             ? Colors.green.withValues(alpha: 0.1)
                             : scheme.onSurface.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: isCompleted
+                              ? Colors.green.withValues(alpha: 0.25)
+                              : scheme.outlineVariant.withValues(alpha: 0.5),
+                        ),
                       ),
                       child: Text(
                         status,
@@ -515,7 +529,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                           fontWeight: FontWeight.w900,
                           color: isCompleted
                               ? Colors.green[700]
-                              : scheme.onSurface.withValues(alpha: 0.4),
+                              : scheme.onSurface.withValues(alpha: 0.5),
                           letterSpacing: 0.5,
                         ),
                       ),
