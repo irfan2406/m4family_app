@@ -92,6 +92,7 @@ dev_dependencies:
 
   flutter_lints: ^3.0.0
   flutter_launcher_icons: ^0.14.1
+  flutter_native_splash: ^2.4.4
 
 # App launcher icon — generated from the M4 family logo asset.
 flutter_launcher_icons:
@@ -102,6 +103,14 @@ flutter_launcher_icons:
   background_color_ios: "#FFFFFF"
   adaptive_icon_background: "#FFFFFF"
   adaptive_icon_foreground: "assets/m4_family_logo.png"
+
+# Native boot splash — M4 logo on white (replaces the default Flutter splash).
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: assets/m4_family_logo.png
+  android_12:
+    color: "#FFFFFF"
+    image: assets/m4_family_logo.png
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

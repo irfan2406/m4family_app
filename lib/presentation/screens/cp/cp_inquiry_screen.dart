@@ -17,6 +17,7 @@ class CpInquiryScreen extends ConsumerStatefulWidget {
 }
 
 class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
+  final _formKey = GlobalKey<FormState>();
   final _name = TextEditingController();
   final _email = TextEditingController();
   final _phone = TextEditingController();
@@ -39,33 +40,40 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
     );
   }
 
+  // Inline field validators (shown as red text under each field).
+  String? _validateName(String? v) {
+    final s = (v ?? '').trim();
+    if (s.isEmpty) return 'Full name is required';
+    if (s.length < 2) return 'Please enter a valid name';
+    return null;
+  }
+
+  String? _validateEmail(String? v) {
+    final s = (v ?? '').trim();
+    if (s.isEmpty) return 'Email is required';
+    if (!RegExp(r'^[\w.+-]+@[\w-]+\.[\w.-]+$').hasMatch(s)) {
+      return 'Enter a valid email address';
+    }
+    return null;
+  }
+
+  String? _validatePhone(String? v) {
+    final s = (v ?? '').trim();
+    if (s.isEmpty) return 'Phone number is required';
+    if (s.replaceAll(RegExp(r'\D'), '').length < 10) {
+      return 'Enter a valid 10-digit phone number';
+    }
+    return null;
+  }
+
   Future<void> _submit() async {
     final name = _name.text.trim();
     final email = _email.text.trim();
     final phone = _phone.text.trim();
 
-    if (name.isEmpty) {
-      _validationToast('Please enter your full name');
-      return;
-    }
-    if (name.length < 2) {
-      _validationToast('Please enter a valid name');
-      return;
-    }
-    if (email.isEmpty) {
-      _validationToast('Please enter your email address');
-      return;
-    }
-    if (!RegExp(r'^[\w.+-]+@[\w-]+\.[\w.-]+$').hasMatch(email)) {
-      _validationToast('Please enter a valid email address');
-      return;
-    }
-    if (phone.isEmpty) {
-      _validationToast('Please enter your phone number');
-      return;
-    }
-    if (phone.replaceAll(RegExp(r'\D'), '').length < 10) {
-      _validationToast('Please enter a valid 10-digit phone number');
+    // Run all field validators (shows inline red errors).
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      _validationToast('Please fix the highlighted fields');
       return;
     }
     if (!_agreedToTerms) {
@@ -163,21 +171,36 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                 ),
               ),
               const SizedBox(height: 40),
-              _luxuryInput('Full Name *', _name),
-              const SizedBox(height: 16),
-              _luxuryInput(
-                'Email *',
-                _email,
-                keyboardType: TextInputType.emailAddress,
+              Form(
+                key: _formKey,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _luxuryInput(
+                      'Full Name *',
+                      _name,
+                      validator: _validateName,
+                    ),
+                    const SizedBox(height: 16),
+                    _luxuryInput(
+                      'Email *',
+                      _email,
+                      keyboardType: TextInputType.emailAddress,
+                      validator: _validateEmail,
+                    ),
+                    const SizedBox(height: 16),
+                    _luxuryInput(
+                      '+91 98653 21250 *',
+                      _phone,
+                      keyboardType: TextInputType.phone,
+                      validator: _validatePhone,
+                    ),
+                    const SizedBox(height: 16),
+                    _luxuryInput('Message', _message, isLong: true),
+                  ],
+                ),
               ),
-              const SizedBox(height: 16),
-              _luxuryInput(
-                '+91 98653 21250 *',
-                _phone,
-                keyboardType: TextInputType.phone,
-              ),
-              const SizedBox(height: 16),
-              _luxuryInput('Message', _message, isLong: true),
               const SizedBox(height: 24),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -269,6 +292,7 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
     TextEditingController controller, {
     bool isLong = false,
     TextInputType? keyboardType,
+    String? Function(String?)? validator,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
@@ -288,16 +312,22 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                 ),
               ],
       ),
-      child: TextField(
+      child: TextFormField(
         controller: controller,
         keyboardType: keyboardType,
         maxLines: isLong ? 5 : 1,
+        validator: validator,
         style: TextStyle(color: isDark ? Colors.white : Colors.black),
         decoration: InputDecoration(
           hintText: label,
           hintStyle: GoogleFonts.montserrat(
             color: isDark ? Colors.white54 : Colors.black45,
             fontSize: 13,
+          ),
+          errorStyle: GoogleFonts.montserrat(
+            color: Colors.redAccent,
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
           ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 24,
