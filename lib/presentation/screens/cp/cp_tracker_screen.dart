@@ -541,10 +541,12 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                             'PROPERTY INFO',
                             const Color(0xFF9333EA),
                             [
-                              ('UNIT', '${t['unit'] ?? 'TBD'}'),
+                              // Web `||` treats '' as falsy, so blank values
+                              // must fall back to TBD / N/A too.
+                              ('UNIT', _val(t['unit'], 'TBD')),
                               (
                                 'TYPE',
-                                '${t['config'] ?? t['configuration'] ?? 'N/A'}',
+                                _val(t['config'] ?? t['configuration'], 'N/A'),
                               ),
                             ],
                             scheme,
@@ -559,7 +561,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                           child: _infoCol(
                             'FINANCIAL PULSE',
                             const Color(0xFF10B981),
-                            [('VISITS', '${t['visits'] ?? 0}')],
+                            [('VISITS', _val(t['visits'], '0'))],
                             scheme,
                           ),
                         ),
@@ -631,6 +633,13 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
         ],
       ),
     );
+  }
+
+  // Returns [value] unless it's null or blank, in which case [fallback]
+  // (web parity: `value || fallback` treats '' as falsy).
+  String _val(dynamic value, String fallback) {
+    final s = (value ?? '').toString().trim();
+    return s.isEmpty ? fallback : s;
   }
 
   // Web parity: a section with a colored label + key/value rows
