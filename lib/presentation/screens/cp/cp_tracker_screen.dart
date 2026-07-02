@@ -448,8 +448,8 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                         ),
                       ),
                       child: const Icon(
-                        LucideIcons.user,
-                        size: 24,
+                        LucideIcons.userCircle2,
+                        size: 26,
                         color: Color(0xFF9333EA),
                       ),
                     ),
