@@ -137,9 +137,12 @@ class _GuestCustomViewsScreenState
                   Text(
                         'DESIGN\nYOUR\nDESTINY',
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.dmSerifDisplay(
+                        // Web parity: font-light serif (elegant, thin
+                        // high-contrast), not a heavy slab display face.
+                        style: GoogleFonts.playfairDisplay(
                           color: isDark ? Colors.white : Colors.black,
                           fontSize: 52,
+                          fontWeight: FontWeight.w400,
                           height: 1.1,
                           letterSpacing: -1,
                         ),

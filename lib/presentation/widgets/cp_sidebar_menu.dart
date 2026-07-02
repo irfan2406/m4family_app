@@ -195,17 +195,9 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                         icon: LucideIcons.mail,
                         label: 'Enquiry',
                         isActive: false,
-                        // Web parity: Enquiry scrolls to the CP home "Register
-                        // Interest" form (/cp/home#interest-form), not a
-                        // separate inquiry screen.
-                        onTap: () {
-                          ref.read(cpNavigationIndexProvider.notifier).state =
-                              0;
-                          ref
-                              .read(cpInquiryScrollTriggerProvider.notifier)
-                              .state++;
-                          _close();
-                        },
+                        // Opens the "Register Interest" form (same fields and
+                        // design as the web home #interest-form section).
+                        onTap: () => _go('/cp/booking/inquiry'),
                       ),
                       _SidebarItem(
                         icon: LucideIcons.phone,

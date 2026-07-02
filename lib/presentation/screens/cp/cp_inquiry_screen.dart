@@ -4,9 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
-import 'package:m4_mobile/presentation/providers/project_provider.dart';
 
-/// Web `/cp/booking/inquiry` — quick lead via `POST /api/leads`.
+/// Web parity: the "Register Interest" form (web `/cp/home#interest-form`).
+/// Full Name, Email, Phone, Message, a privacy-policy checkbox, and a black
+/// "Submit Interest" button — white rounded card inputs like the web home
+/// form. Submits a lead via `POST /api/leads`.
 class CpInquiryScreen extends ConsumerStatefulWidget {
   const CpInquiryScreen({super.key});
 
@@ -16,47 +18,72 @@ class CpInquiryScreen extends ConsumerStatefulWidget {
 
 class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
   final _name = TextEditingController();
+  final _email = TextEditingController();
   final _phone = TextEditingController();
   final _message = TextEditingController();
-  String? _projectId;
+  bool _agreedToTerms = false;
   bool _submitting = false;
 
   @override
   void dispose() {
     _name.dispose();
+    _email.dispose();
     _phone.dispose();
     _message.dispose();
     super.dispose();
   }
 
   Future<void> _submit() async {
-    if (_name.text.trim().isEmpty || _phone.text.trim().isEmpty || _projectId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Fill required fields')));
+    if (_name.text.trim().isEmpty ||
+        _email.text.trim().isEmpty ||
+        _phone.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill in all required fields')),
+      );
       return;
     }
-    final user = ref.read(authProvider).user;
-    final display = user?['firstName']?.toString() ?? user?['companyName']?.toString() ?? 'Partner';
+    if (!_agreedToTerms) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please agree to the Privacy Policy')),
+      );
+      return;
+    }
     setState(() => _submitting = true);
     try {
       final res = await ref.read(apiClientProvider).submitLead({
         'name': _name.text.trim(),
+        'email': _email.text.trim(),
         'phone': _phone.text.trim(),
+        'interest': 'Channel Partner Interest',
         'source': 'cp inquiry',
-        'projectId': _projectId,
-        'userId': display,
-        'notes': _message.text.trim().isEmpty ? 'CP booking inquiry' : _message.text.trim(),
+        'notes': _message.text.trim(),
       });
       if (!mounted) return;
-      if ((res.statusCode == 200 || res.statusCode == 201) && res.data['status'] == true) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Inquiry sent')));
+      final ok =
+          (res.statusCode == 200 || res.statusCode == 201) &&
+          res.data is Map &&
+          res.data['status'] == true;
+      if (ok) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Interest registered successfully!')),
+        );
         context.pop();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(res.data['message']?.toString() ?? 'Failed')),
+          SnackBar(
+            content: Text(
+              (res.data is Map ? res.data['message']?.toString() : null) ??
+                  'Failed to submit',
+            ),
+          ),
         );
       }
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('$e')));
+      }
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
@@ -64,55 +91,196 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final projectsAsync = ref.watch(projectsProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(icon: const Icon(LucideIcons.arrowLeft), onPressed: () => context.pop()),
-        title: Text('Send inquiry', style: GoogleFonts.montserrat(fontWeight: FontWeight.w800)),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          projectsAsync.when(
-            loading: () => const Center(child: CircularProgressIndicator()),
-            error: (_, __) => const Text('Projects unavailable'),
-            data: (projects) {
-              return InputDecorator(
-                decoration: const InputDecoration(labelText: 'Project', border: OutlineInputBorder()),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    isExpanded: true,
-                    value: _projectId,
-                    hint: const Text('Select project'),
-                    items: [
-                      for (final p in projects)
-                        if ((p['_id']?.toString() ?? p['id']?.toString() ?? '').isNotEmpty)
-                          DropdownMenuItem(
-                            value: p['_id']?.toString() ?? p['id']!.toString(),
-                            child: Text((p['title'] ?? '').toString()),
-                          ),
-                    ],
-                    onChanged: (v) => setState(() => _projectId = v),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(24, 12, 24, 48),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Back button
+              GestureDetector(
+                onTap: () => context.pop(),
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: (isDark ? Colors.white : Colors.black).withValues(
+                      alpha: 0.05,
+                    ),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: (isDark ? Colors.white : Colors.black).withValues(
+                        alpha: 0.1,
+                      ),
+                    ),
+                  ),
+                  child: Icon(
+                    LucideIcons.arrowLeft,
+                    size: 18,
+                    color: isDark ? Colors.white : Colors.black,
                   ),
                 ),
-              );
-            },
+              ),
+              const SizedBox(height: 24),
+              // Web parity: "REGISTER INTEREST" serif heading.
+              Text(
+                'REGISTER\nINTEREST',
+                style: GoogleFonts.dmSerifDisplay(
+                  color: isDark ? Colors.white : Colors.black,
+                  fontSize: 34,
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: -0.5,
+                  height: 1.1,
+                ),
+              ),
+              const SizedBox(height: 40),
+              _luxuryInput('Full Name *', _name),
+              const SizedBox(height: 16),
+              _luxuryInput(
+                'Email *',
+                _email,
+                keyboardType: TextInputType.emailAddress,
+              ),
+              const SizedBox(height: 16),
+              _luxuryInput(
+                '+91 98653 21250 *',
+                _phone,
+                keyboardType: TextInputType.phone,
+              ),
+              const SizedBox(height: 16),
+              _luxuryInput('Message', _message, isLong: true),
+              const SizedBox(height: 24),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Checkbox(
+                    value: _agreedToTerms,
+                    onChanged: (val) =>
+                        setState(() => _agreedToTerms = val ?? false),
+                    activeColor: isDark ? Colors.white : Colors.black,
+                    checkColor: isDark ? Colors.black : Colors.white,
+                    side: BorderSide(
+                      color: isDark ? Colors.white24 : Colors.black26,
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 12),
+                      child: RichText(
+                        text: TextSpan(
+                          style: GoogleFonts.montserrat(
+                            color: isDark ? Colors.white54 : Colors.black54,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.8,
+                          ),
+                          children: [
+                            const TextSpan(text: "I'VE READ AND AGREE TO THE "),
+                            TextSpan(
+                              text: 'PRIVACY POLICY',
+                              style: GoogleFonts.montserrat(
+                                color: isDark ? Colors.white : Colors.black,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 0.8,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                            const TextSpan(text: '.'),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 28),
+              SizedBox(
+                width: double.infinity,
+                height: 64,
+                child: ElevatedButton(
+                  onPressed: _submitting ? null : _submit,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isDark ? Colors.white : Colors.black,
+                    foregroundColor: isDark ? Colors.black : Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  child: _submitting
+                      ? SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: isDark ? Colors.black : Colors.white,
+                          ),
+                        )
+                      : Text(
+                          'SUBMIT INTEREST',
+                          style: GoogleFonts.montserrat(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 13,
+                            letterSpacing: 2,
+                          ),
+                        ),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 12),
-          TextField(controller: _name, decoration: const InputDecoration(labelText: 'Client name')),
-          const SizedBox(height: 12),
-          TextField(controller: _phone, keyboardType: TextInputType.phone, decoration: const InputDecoration(labelText: 'Phone')),
-          const SizedBox(height: 12),
-          TextField(controller: _message, maxLines: 3, decoration: const InputDecoration(labelText: 'Message (optional)')),
-          const SizedBox(height: 24),
-          FilledButton(
-            onPressed: _submitting ? null : _submit,
-            child: _submitting
-                ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                : const Text('SUBMIT'),
+        ),
+      ),
+    );
+  }
+
+  // Web parity: white rounded card input with soft shadow, label as hint.
+  Widget _luxuryInput(
+    String label,
+    TextEditingController controller, {
+    bool isLong = false,
+    TextInputType? keyboardType,
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      decoration: BoxDecoration(
+        color: isDark ? Colors.black : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.12),
+        ),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+      ),
+      child: TextField(
+        controller: controller,
+        keyboardType: keyboardType,
+        maxLines: isLong ? 5 : 1,
+        style: TextStyle(color: isDark ? Colors.white : Colors.black),
+        decoration: InputDecoration(
+          hintText: label,
+          hintStyle: GoogleFonts.montserrat(
+            color: isDark ? Colors.white54 : Colors.black45,
+            fontSize: 13,
           ),
-        ],
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 24,
+            vertical: 20,
+          ),
+          border: InputBorder.none,
+        ),
       ),
     );
   }
