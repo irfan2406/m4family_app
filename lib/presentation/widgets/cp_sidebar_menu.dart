@@ -59,7 +59,11 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                   padding: const EdgeInsets.fromLTRB(24, 20, 24, 12),
                   child: Row(
                     children: [
-                      const Icon(LucideIcons.sparkles, size: 16, color: Color(0xFF9333EA)),
+                      const Icon(
+                        LucideIcons.sparkles,
+                        size: 16,
+                        color: Color(0xFF9333EA),
+                      ),
                       const SizedBox(width: 10),
                       Text(
                         'PARTNER MENU',
@@ -79,6 +83,9 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                   child: ListView(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     children: [
+                      // Web parity (CPSidebar.tsx menuItems order): Dashboard,
+                      // Profile, Notifications, Properties, Custom Views,
+                      // Content Hub, Communities, Bookings, Support Hub.
                       _SidebarItem(
                         icon: LucideIcons.home,
                         label: 'Dashboard',
@@ -86,26 +93,34 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                         onTap: () => _setTab(0),
                       ),
                       _SidebarItem(
-                        icon: LucideIcons.crown,
-                        label: 'Partner Hub',
-                        isActive: false,
-                        onTap: () => _go('/cp/hub'),
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.user,
+                        icon: LucideIcons.users,
                         label: 'Profile',
                         isActive: idx == 5,
                         onTap: () => _setTab(5),
                       ),
                       _SidebarItem(
+                        icon: LucideIcons.bell,
+                        label: 'Notifications',
+                        isActive: false,
+                        onTap: () => _go('/notifications'),
+                      ),
+                      _SidebarItem(
                         icon: LucideIcons.layoutGrid,
-                        label: 'Property Catalog',
+                        label: 'Properties',
                         isActive: idx == 3,
                         onTap: () => _setTab(3),
                       ),
-                      
+                      _SidebarItem(
+                        icon: LucideIcons.sparkles,
+                        label: 'Custom Views',
+                        isActive: false,
+                        onTap: () => _go('/cp/custom-views'),
+                      ),
+
                       Theme(
-                        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                        data: Theme.of(
+                          context,
+                        ).copyWith(dividerColor: Colors.transparent),
                         child: ExpansionTile(
                           iconColor: const Color(0xFF9333EA),
                           collapsedIconColor: const Color(0xFF9333EA),
@@ -117,22 +132,46 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                             isActive: false,
                           ),
                           children: [
-                            _SubItem(label: 'Media', onTap: () {
-                              ref.read(contentHubTypeProvider.notifier).state = 'media';
-                              _setTab(9);
-                            }),
-                            _SubItem(label: 'Highlights', onTap: () {
-                              ref.read(contentHubTypeProvider.notifier).state = 'highlights';
-                              _setTab(9);
-                            }),
-                            _SubItem(label: 'Events', onTap: () {
-                              ref.read(contentHubTypeProvider.notifier).state = 'events';
-                              _setTab(9);
-                            }),
-                            _SubItem(label: 'Blog', onTap: () {
-                              ref.read(contentHubTypeProvider.notifier).state = 'blog';
-                              _setTab(9);
-                            }),
+                            _SubItem(
+                              label: 'Media',
+                              onTap: () {
+                                ref
+                                        .read(contentHubTypeProvider.notifier)
+                                        .state =
+                                    'media';
+                                _setTab(9);
+                              },
+                            ),
+                            _SubItem(
+                              label: 'Highlights',
+                              onTap: () {
+                                ref
+                                        .read(contentHubTypeProvider.notifier)
+                                        .state =
+                                    'highlights';
+                                _setTab(9);
+                              },
+                            ),
+                            _SubItem(
+                              label: 'Events',
+                              onTap: () {
+                                ref
+                                        .read(contentHubTypeProvider.notifier)
+                                        .state =
+                                    'events';
+                                _setTab(9);
+                              },
+                            ),
+                            _SubItem(
+                              label: 'Blog',
+                              onTap: () {
+                                ref
+                                        .read(contentHubTypeProvider.notifier)
+                                        .state =
+                                    'blog';
+                                _setTab(9);
+                              },
+                            ),
                           ],
                         ),
                       ),
@@ -151,20 +190,17 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                       ),
                       _SidebarItem(
                         icon: LucideIcons.headphones,
-                        label: 'Support Tickets',
+                        label: 'Support Hub',
                         isActive: idx == 4,
                         onTap: () => _setTab(4),
-                      ),
-                      _SidebarItem(
-                        icon: LucideIcons.bell,
-                        label: 'Notifications',
-                        isActive: false,
-                        onTap: () => _go('/notifications'),
                       ),
 
                       const SizedBox(height: 24),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 8,
+                        ),
                         child: Text(
                           'QUICK ACTIONS',
                           style: GoogleFonts.montserrat(
@@ -200,19 +236,16 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                           SupportHandlers.launchWhatsApp();
                         },
                       ),
-                      _SidebarItem(
-                        icon: LucideIcons.users,
-                        label: 'Referral',
-                        isActive: false,
-                        onTap: () => _go('/cp/referral'),
-                      ),
                     ],
                   ),
                 ),
 
                 // Theme Mode Toggle
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 8,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -227,14 +260,22 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          ref.read(themeProvider.notifier).setTheme(isDark ? ThemeMode.light : ThemeMode.dark);
+                          ref
+                              .read(themeProvider.notifier)
+                              .setTheme(
+                                isDark ? ThemeMode.light : ThemeMode.dark,
+                              );
                         },
                         child: Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
+                            color: (isDark ? Colors.white : Colors.black)
+                                .withOpacity(0.08),
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
+                            border: Border.all(
+                              color: (isDark ? Colors.white : Colors.black)
+                                  .withOpacity(0.1),
+                            ),
                           ),
                           child: Icon(
                             isDark ? LucideIcons.sparkles : LucideIcons.moon,
@@ -264,13 +305,21 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                         color: Colors.white.withOpacity(0.9),
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
-                          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4)),
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
                         ],
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(LucideIcons.logOut, size: 18, color: Colors.red),
+                          const Icon(
+                            LucideIcons.logOut,
+                            size: 18,
+                            color: Colors.red,
+                          ),
                           const SizedBox(width: 10),
                           Text(
                             'LOGOUT',
@@ -300,55 +349,59 @@ class _SidebarItem extends StatelessWidget {
   final String label;
   final bool isActive;
   final VoidCallback? onTap;
-  final Widget? trailing;
 
   const _SidebarItem({
     required this.icon,
     required this.label,
     required this.isActive,
     this.onTap,
-    this.trailing,
   });
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final purple = const Color(0xFF9333EA);
+    const purple = Color(0xFF9333EA); // purple-600
+    // Web parity: active → purple icon tile; inactive → slate tile + slate-400
+    // icon.
+    final iconBg = isActive
+        ? (isDark
+              ? purple.withOpacity(0.25)
+              : const Color(0xFFF3E8FF)) // purple-100
+        : (isDark
+              ? const Color(0xFF1E293B)
+              : const Color(0xFFF8FAFC)); // slate-800 / slate-50
+    final iconColor = isActive ? purple : const Color(0xFF94A3B8); // slate-400
 
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.symmetric(vertical: 7),
         child: Row(
           children: [
             Container(
-              width: 44,
-              height: 44,
+              width: 40,
+              height: 40,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                color: iconBg,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Center(
-                child: Icon(
-                  icon,
-                  size: 18,
-                  color: isActive ? purple : (isDark ? Colors.white70 : Colors.black54),
-                ),
-              ),
+              child: Center(child: Icon(icon, size: 18, color: iconColor)),
             ),
             const SizedBox(width: 16),
             Expanded(
               child: Text(
                 label,
                 style: GoogleFonts.montserrat(
-                  fontSize: 13,
+                  fontSize: 14,
                   fontWeight: FontWeight.w700,
-                  color: isActive ? purple : (isDark ? Colors.white : const Color(0xFF1E293B)),
+                  letterSpacing: -0.2,
+                  color: isActive
+                      ? purple
+                      : (isDark ? Colors.white70 : const Color(0xFF1E293B)),
                 ),
               ),
             ),
-            if (trailing != null) trailing!,
           ],
         ),
       ),
@@ -365,7 +418,7 @@ class _SubItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return InkWell(
       onTap: onTap,
       child: Padding(
