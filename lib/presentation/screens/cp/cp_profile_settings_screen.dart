@@ -74,8 +74,8 @@ class _CpProfileSettingsScreenState
       }
       u ??= ref.read(authProvider).user;
       if (u != null) {
-        _first.text = u['firstName']?.toString() ?? '';
-        _last.text = u['lastName']?.toString() ?? '';
+        _first.text = (u['firstName']?.toString() ?? '').toUpperCase();
+        _last.text = (u['lastName']?.toString() ?? '').toUpperCase();
         _email.text = u['email']?.toString() ?? '';
         _phone.text = u['phone']?.toString() ?? '';
         _company.text = u['companyName']?.toString() ?? '';
@@ -96,8 +96,8 @@ class _CpProfileSettingsScreenState
       debugPrint('CP settings load: $e');
       final u = ref.read(authProvider).user;
       if (u != null) {
-        _first.text = u['firstName']?.toString() ?? '';
-        _last.text = u['lastName']?.toString() ?? '';
+        _first.text = (u['firstName']?.toString() ?? '').toUpperCase();
+        _last.text = (u['lastName']?.toString() ?? '').toUpperCase();
         _email.text = u['email']?.toString() ?? '';
         _phone.text = u['phone']?.toString() ?? '';
         _company.text = u['companyName']?.toString() ?? '';
@@ -856,7 +856,7 @@ class _CpProfileSettingsScreenState
             fontSize: 10,
             fontWeight: FontWeight.w900,
             letterSpacing: 2.5,
-            color: scheme.onSurface.withValues(alpha: 0.68),
+            color: scheme.onSurface.withValues(alpha: 0.9),
           ),
         ),
       ],
@@ -871,7 +871,10 @@ class _CpProfileSettingsScreenState
         border: Border.all(
           color: scheme.outlineVariant.withValues(alpha: 0.45),
         ),
-        color: scheme.surfaceContainerHighest.withValues(alpha: 0.35),
+        // Web parity: white card in light mode (translucent in dark).
+        color: Theme.of(context).brightness == Brightness.dark
+            ? scheme.surfaceContainerHighest.withValues(alpha: 0.35)
+            : Colors.white,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(
@@ -1284,7 +1287,7 @@ class _CpProfileSettingsScreenState
               fontSize: 9,
               fontWeight: FontWeight.w900,
               letterSpacing: 2,
-              color: scheme.onSurface.withValues(alpha: 0.62),
+              color: scheme.onSurface.withValues(alpha: 0.85),
             ),
           ),
         ),
