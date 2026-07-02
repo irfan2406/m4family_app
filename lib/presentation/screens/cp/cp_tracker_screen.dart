@@ -29,7 +29,13 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
   DateTime _month = DateTime.now();
   DateTime? _selectedDay;
 
-  static const _statuses = ['All', 'Pending', 'In Progress', 'Completed', 'Cancelled'];
+  static const _statuses = [
+    'All',
+    'Pending',
+    'In Progress',
+    'Completed',
+    'Cancelled',
+  ];
 
   @override
   void initState() {
@@ -57,7 +63,9 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
           if (list is List) {
             _meetings = list.where((l) {
               final st = (l['status'] ?? '').toString().toLowerCase();
-              return st.contains('site') || st.contains('visit') || l['visitDate'] != null;
+              return st.contains('site') ||
+                  st.contains('visit') ||
+                  l['visitDate'] != null;
             }).toList();
           }
         }
@@ -87,7 +95,11 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final fmt = NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0);
+    final fmt = NumberFormat.currency(
+      locale: 'en_IN',
+      symbol: '₹',
+      decimalDigits: 0,
+    );
 
     return Scaffold(
       backgroundColor: scheme.surface,
@@ -98,7 +110,12 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
             _buildCustomHeader(scheme),
             Expanded(
               child: _loading
-                  ? const Center(child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2))
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.black,
+                        strokeWidth: 2,
+                      ),
+                    )
                   : RefreshIndicator(
                       onRefresh: _load,
                       color: Colors.black,
@@ -110,7 +127,9 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                           const SizedBox(height: 24),
                           _buildSearchAndFilter(scheme),
                           const SizedBox(height: 24),
-                          ..._filtered.map((t) => _buildPipelineCard(t, scheme, fmt)),
+                          ..._filtered.map(
+                            (t) => _buildPipelineCard(t, scheme, fmt),
+                          ),
                           const SizedBox(height: 32),
                           _buildPulseCalendar(scheme),
                           const SizedBox(height: 40),
@@ -138,7 +157,9 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                   icon: const Icon(LucideIcons.menu, size: 18),
                   style: IconButton.styleFrom(
                     backgroundColor: scheme.onSurface.withValues(alpha: 0.05),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 ),
               ),
@@ -148,7 +169,9 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                 icon: const Icon(LucideIcons.arrowLeft, size: 18),
                 style: IconButton.styleFrom(
                   backgroundColor: scheme.onSurface.withValues(alpha: 0.05),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               ),
             ],
@@ -157,18 +180,35 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
             children: [
               Row(
                 children: [
-                  Container(width: 4, height: 4, decoration: const BoxDecoration(color: Colors.purple, shape: BoxShape.circle)),
+                  Container(
+                    width: 4,
+                    height: 4,
+                    decoration: const BoxDecoration(
+                      color: Colors.purple,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
                   const SizedBox(width: 6),
                   Text(
                     'SUCCESS PIPELINE',
-                    style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w900, color: scheme.onSurface, letterSpacing: 1.5),
+                    style: GoogleFonts.montserrat(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w900,
+                      color: scheme.onSurface,
+                      letterSpacing: 1.5,
+                    ),
                   ),
                 ],
               ),
               const SizedBox(height: 2),
               Text(
                 'STATEMENT & PULSE',
-                style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: scheme.onSurface.withValues(alpha: 0.5), letterSpacing: 2),
+                style: GoogleFonts.montserrat(
+                  fontSize: 8,
+                  fontWeight: FontWeight.w900,
+                  color: scheme.onSurface.withValues(alpha: 0.5),
+                  letterSpacing: 2,
+                ),
               ),
             ],
           ),
@@ -177,7 +217,9 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
             icon: const Icon(LucideIcons.settings, size: 18),
             style: IconButton.styleFrom(
               backgroundColor: scheme.onSurface.withValues(alpha: 0.05),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
           ),
         ],
@@ -191,19 +233,51 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
-          _statBox(LucideIcons.package, 'BOOKINGS', '${s['totalTrackers'] ?? 0}', Colors.blue, scheme),
+          // Web parity: Briefcase/Award/Wallet/Calendar with blue / purple /
+          // emerald / amber tints.
+          _statBox(
+            LucideIcons.briefcase,
+            'BOOKINGS',
+            '${s['totalTrackers'] ?? 0}',
+            const Color(0xFF3B82F6),
+            scheme,
+          ),
           const SizedBox(width: 10),
-          _statBox(LucideIcons.wallet, 'COMMISSION', fmt.format((s['totalCommission'] ?? 0) as num), Colors.grey, scheme),
+          _statBox(
+            LucideIcons.award,
+            'COMMISSION',
+            fmt.format((s['totalCommission'] ?? 0) as num),
+            const Color(0xFF9333EA),
+            scheme,
+          ),
           const SizedBox(width: 10),
-          _statBox(LucideIcons.checkCircle, 'SETTLED', fmt.format(1000), Colors.teal, scheme),
+          _statBox(
+            LucideIcons.wallet,
+            'SETTLED',
+            fmt.format(1000),
+            const Color(0xFF10B981),
+            scheme,
+          ),
           const SizedBox(width: 10),
-          _statBox(LucideIcons.navigation, 'VISITS', '${_meetings.length}', Colors.orange, scheme),
+          _statBox(
+            LucideIcons.calendar,
+            'VISITS',
+            '${_meetings.length}',
+            const Color(0xFFF59E0B),
+            scheme,
+          ),
         ],
       ),
     );
   }
 
-  Widget _statBox(IconData icon, String label, String value, Color iconColor, ColorScheme scheme) {
+  Widget _statBox(
+    IconData icon,
+    String label,
+    String value,
+    Color iconColor,
+    ColorScheme scheme,
+  ) {
     return Container(
       width: 100,
       padding: const EdgeInsets.symmetric(vertical: 14),
@@ -214,11 +288,35 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
       ),
       child: Column(
         children: [
-          Icon(icon, color: iconColor.withValues(alpha: 0.6), size: 16),
+          // Web parity: colored icon in a tinted rounded tile.
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: iconColor.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Center(child: Icon(icon, color: iconColor, size: 16)),
+          ),
           const SizedBox(height: 8),
-          Text(label, style: GoogleFonts.montserrat(fontSize: 7, fontWeight: FontWeight.w900, color: scheme.onSurface.withValues(alpha: 0.4), letterSpacing: 1)),
+          Text(
+            label,
+            style: GoogleFonts.montserrat(
+              fontSize: 7,
+              fontWeight: FontWeight.w900,
+              color: scheme.onSurface.withValues(alpha: 0.55),
+              letterSpacing: 1,
+            ),
+          ),
           const SizedBox(height: 4),
-          Text(value, style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: scheme.onSurface)),
+          Text(
+            value,
+            style: GoogleFonts.montserrat(
+              fontSize: 11,
+              fontWeight: FontWeight.w900,
+              color: scheme.onSurface,
+            ),
+          ),
         ],
       ),
     );
@@ -233,20 +331,34 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
             decoration: BoxDecoration(
               color: scheme.surface,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.3)),
+              border: Border.all(
+                color: scheme.outlineVariant.withValues(alpha: 0.3),
+              ),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
-                Icon(LucideIcons.search, size: 18, color: scheme.onSurface.withValues(alpha: 0.3)),
+                Icon(
+                  LucideIcons.search,
+                  size: 18,
+                  color: scheme.onSurface.withValues(alpha: 0.3),
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: TextField(
                     onChanged: (v) => setState(() => _search = v),
-                    style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w700),
+                    style: GoogleFonts.montserrat(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                    ),
                     decoration: InputDecoration(
                       hintText: 'SEARCH PROSPECT...',
-                      hintStyle: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: scheme.onSurface.withValues(alpha: 0.3), letterSpacing: 1.5),
+                      hintStyle: GoogleFonts.montserrat(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                        color: scheme.onSurface.withValues(alpha: 0.3),
+                        letterSpacing: 1.5,
+                      ),
                       border: InputBorder.none,
                     ),
                   ),
@@ -262,14 +374,31 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
           decoration: BoxDecoration(
             color: scheme.surface,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.3)),
+            border: Border.all(
+              color: scheme.outlineVariant.withValues(alpha: 0.3),
+            ),
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               value: _statusFilter,
-              icon: const Padding(padding: EdgeInsets.only(left: 8), child: Icon(LucideIcons.chevronDown, size: 14)),
-              style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: scheme.onSurface, letterSpacing: 1),
-              items: _statuses.map((s) => DropdownMenuItem(value: s, child: Text(s.toUpperCase()))).toList(),
+              icon: const Padding(
+                padding: EdgeInsets.only(left: 8),
+                child: Icon(LucideIcons.chevronDown, size: 14),
+              ),
+              style: GoogleFonts.montserrat(
+                fontSize: 10,
+                fontWeight: FontWeight.w900,
+                color: scheme.onSurface,
+                letterSpacing: 1,
+              ),
+              items: _statuses
+                  .map(
+                    (s) => DropdownMenuItem(
+                      value: s,
+                      child: Text(s.toUpperCase()),
+                    ),
+                  )
+                  .toList(),
               onChanged: (v) {
                 setState(() => _statusFilter = v ?? 'All');
                 _load();
@@ -292,7 +421,11 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
         borderRadius: BorderRadius.circular(32),
         border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.3)),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 30, offset: const Offset(0, 15)),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 30,
+            offset: const Offset(0, 15),
+          ),
         ],
       ),
       child: Column(
@@ -309,9 +442,15 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                       decoration: BoxDecoration(
                         color: scheme.onSurface.withValues(alpha: 0.05),
                         shape: BoxShape.circle,
-                        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.3)),
+                        border: Border.all(
+                          color: scheme.outlineVariant.withValues(alpha: 0.3),
+                        ),
                       ),
-                      child: Icon(LucideIcons.user, size: 18, color: scheme.onSurface.withValues(alpha: 0.7)),
+                      child: Icon(
+                        LucideIcons.user,
+                        size: 18,
+                        color: scheme.onSurface.withValues(alpha: 0.7),
+                      ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -319,16 +458,36 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            (t['customerName'] ?? 'UNKNOWN').toString().toUpperCase(),
-                            style: GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w900, color: scheme.onSurface, letterSpacing: 0.5),
+                            (t['customerName'] ?? 'UNKNOWN')
+                                .toString()
+                                .toUpperCase(),
+                            style: GoogleFonts.montserrat(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w900,
+                              color: scheme.onSurface,
+                              letterSpacing: 0.5,
+                            ),
                           ),
                           Row(
                             children: [
-                              Icon(LucideIcons.home, size: 12, color: scheme.onSurface.withValues(alpha: 0.3)),
+                              Icon(
+                                LucideIcons.home,
+                                size: 12,
+                                color: scheme.onSurface.withValues(alpha: 0.3),
+                              ),
                               const SizedBox(width: 4),
                               Text(
-                                (t['project'] ?? 'PROJECT').toString().toUpperCase(),
-                                style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: scheme.onSurface.withValues(alpha: 0.4), letterSpacing: 1),
+                                (t['project'] ?? 'PROJECT')
+                                    .toString()
+                                    .toUpperCase(),
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.w900,
+                                  color: scheme.onSurface.withValues(
+                                    alpha: 0.4,
+                                  ),
+                                  letterSpacing: 1,
+                                ),
                               ),
                             ],
                           ),
@@ -336,14 +495,26 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
-                        color: isCompleted ? Colors.green.withValues(alpha: 0.1) : scheme.onSurface.withValues(alpha: 0.05),
+                        color: isCompleted
+                            ? Colors.green.withValues(alpha: 0.1)
+                            : scheme.onSurface.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
                         status,
-                        style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isCompleted ? Colors.green[700] : scheme.onSurface.withValues(alpha: 0.4), letterSpacing: 0.5),
+                        style: GoogleFonts.montserrat(
+                          fontSize: 8,
+                          fontWeight: FontWeight.w900,
+                          color: isCompleted
+                              ? Colors.green[700]
+                              : scheme.onSurface.withValues(alpha: 0.4),
+                          letterSpacing: 0.5,
+                        ),
                       ),
                     ),
                   ],
@@ -352,8 +523,18 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _traceInfo('PROPERTY TRACE', 'UNIT: ${t['unit'] ?? '501'}', 'CONFIG: ${t['config'] ?? '2BHK'}', scheme),
-                    _traceInfo('FINANCIAL TRACE', 'PAYOUT: ${fmt.format((t['commissionEarned'] ?? 0) as num)}', 'VISITS: ${t['visits'] ?? '1'}', scheme),
+                    _traceInfo(
+                      'PROPERTY TRACE',
+                      'UNIT: ${t['unit'] ?? '501'}',
+                      'CONFIG: ${t['config'] ?? '2BHK'}',
+                      scheme,
+                    ),
+                    _traceInfo(
+                      'FINANCIAL TRACE',
+                      'PAYOUT: ${fmt.format((t['commissionEarned'] ?? 0) as num)}',
+                      'VISITS: ${t['visits'] ?? '1'}',
+                      scheme,
+                    ),
                   ],
                 ),
               ],
@@ -363,19 +544,32 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             decoration: BoxDecoration(
               color: scheme.onSurface.withValues(alpha: 0.02),
-              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
-              border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.1)),
+              borderRadius: const BorderRadius.vertical(
+                bottom: Radius.circular(32),
+              ),
+              border: Border.all(
+                color: scheme.outlineVariant.withValues(alpha: 0.1),
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   children: [
-                    Icon(LucideIcons.layout, size: 14, color: scheme.onSurface.withValues(alpha: 0.2)),
+                    Icon(
+                      LucideIcons.layout,
+                      size: 14,
+                      color: scheme.onSurface.withValues(alpha: 0.2),
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       'VERIFICATION TRACE',
-                      style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: scheme.onSurface.withValues(alpha: 0.2), letterSpacing: 1.5),
+                      style: GoogleFonts.montserrat(
+                        fontSize: 8,
+                        fontWeight: FontWeight.w900,
+                        color: scheme.onSurface.withValues(alpha: 0.2),
+                        letterSpacing: 1.5,
+                      ),
                     ),
                   ],
                 ),
@@ -396,15 +590,43 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
     );
   }
 
-  Widget _traceInfo(String title, String line1, String line2, ColorScheme scheme) {
+  Widget _traceInfo(
+    String title,
+    String line1,
+    String line2,
+    ColorScheme scheme,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: scheme.onSurface.withValues(alpha: 0.3), letterSpacing: 1.5)),
+        Text(
+          title,
+          style: GoogleFonts.montserrat(
+            fontSize: 8,
+            fontWeight: FontWeight.w900,
+            color: scheme.onSurface.withValues(alpha: 0.5),
+            letterSpacing: 1.5,
+          ),
+        ),
         const SizedBox(height: 10),
-        Text(line1, style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: scheme.onSurface.withValues(alpha: 0.7))),
+        // Web parity: inner detail values are bold + dark (not faded).
+        Text(
+          line1,
+          style: GoogleFonts.montserrat(
+            fontSize: 10,
+            fontWeight: FontWeight.w900,
+            color: scheme.onSurface.withValues(alpha: 0.92),
+          ),
+        ),
         const SizedBox(height: 4),
-        Text(line2, style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: scheme.onSurface.withValues(alpha: 0.7))),
+        Text(
+          line2,
+          style: GoogleFonts.montserrat(
+            fontSize: 10,
+            fontWeight: FontWeight.w900,
+            color: scheme.onSurface.withValues(alpha: 0.92),
+          ),
+        ),
       ],
     );
   }
@@ -412,13 +634,25 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
   Widget _stepIndicator(String label, bool active, ColorScheme scheme) {
     return Column(
       children: [
-        Text(label, style: GoogleFonts.montserrat(fontSize: 7, fontWeight: FontWeight.w900, color: active ? scheme.onSurface.withValues(alpha: 0.6) : scheme.onSurface.withValues(alpha: 0.2), letterSpacing: 1)),
+        Text(
+          label,
+          style: GoogleFonts.montserrat(
+            fontSize: 7,
+            fontWeight: FontWeight.w900,
+            color: active
+                ? scheme.onSurface.withValues(alpha: 0.6)
+                : scheme.onSurface.withValues(alpha: 0.2),
+            letterSpacing: 1,
+          ),
+        ),
         const SizedBox(height: 8),
         Container(
           width: 80,
           height: 3,
           decoration: BoxDecoration(
-            color: active ? Colors.purple : scheme.onSurface.withValues(alpha: 0.05),
+            color: active
+                ? Colors.purple
+                : scheme.onSurface.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(2),
           ),
         ),
@@ -434,7 +668,11 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
         borderRadius: BorderRadius.circular(32),
         border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.3)),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 30, offset: const Offset(0, 15)),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 30,
+            offset: const Offset(0, 15),
+          ),
         ],
       ),
       child: Column(
@@ -445,11 +683,28 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
               Icon(LucideIcons.activity, size: 20, color: scheme.onSurface),
               Row(
                 children: [
-                  IconButton(onPressed: () => setState(() => _month = DateTime(_month.year, _month.month - 1)), icon: const Icon(LucideIcons.chevronLeft, size: 18)),
+                  IconButton(
+                    onPressed: () => setState(
+                      () => _month = DateTime(_month.year, _month.month - 1),
+                    ),
+                    icon: const Icon(LucideIcons.chevronLeft, size: 18),
+                  ),
                   const SizedBox(width: 12),
-                  Text(DateFormat('MMM yyyy').format(_month).toUpperCase(), style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 2)),
+                  Text(
+                    DateFormat('MMM yyyy').format(_month).toUpperCase(),
+                    style: GoogleFonts.montserrat(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 2,
+                    ),
+                  ),
                   const SizedBox(width: 12),
-                  IconButton(onPressed: () => setState(() => _month = DateTime(_month.year, _month.month + 1)), icon: const Icon(LucideIcons.chevronRight, size: 18)),
+                  IconButton(
+                    onPressed: () => setState(
+                      () => _month = DateTime(_month.year, _month.month + 1),
+                    ),
+                    icon: const Icon(LucideIcons.chevronRight, size: 18),
+                  ),
                 ],
               ),
             ],
@@ -465,33 +720,56 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
     final first = DateTime(_month.year, _month.month, 1);
     final daysInMonth = DateTime(_month.year, _month.month + 1, 0).day;
     final startWeekday = (first.weekday % 7);
-    
+
     final days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-    
+
     return Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: days.map((d) => Text(d, style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: scheme.onSurface.withValues(alpha: 0.2)))).toList(),
+          children: days
+              .map(
+                (d) => Text(
+                  d,
+                  style: GoogleFonts.montserrat(
+                    fontSize: 8,
+                    fontWeight: FontWeight.w900,
+                    color: scheme.onSurface.withValues(alpha: 0.2),
+                  ),
+                ),
+              )
+              .toList(),
         ),
         const SizedBox(height: 16),
         GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7, childAspectRatio: 1.2),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 7,
+            childAspectRatio: 1.2,
+          ),
           itemCount: startWeekday + daysInMonth,
           itemBuilder: (context, i) {
             if (i < startWeekday) return const SizedBox.shrink();
             final dayNo = i - startWeekday + 1;
             final day = DateTime(_month.year, _month.month, dayNo);
-            final sel = _selectedDay != null && _selectedDay!.day == day.day && _selectedDay!.month == day.month;
+            final sel =
+                _selectedDay != null &&
+                _selectedDay!.day == day.day &&
+                _selectedDay!.month == day.month;
 
             return Center(
               child: GestureDetector(
                 onTap: () => setState(() => _selectedDay = sel ? null : day),
                 child: Text(
                   '$dayNo',
-                  style: GoogleFonts.montserrat(fontSize: 10, fontWeight: sel ? FontWeight.w900 : FontWeight.w700, color: sel ? Colors.purple : scheme.onSurface.withValues(alpha: 0.8)),
+                  style: GoogleFonts.montserrat(
+                    fontSize: 10,
+                    fontWeight: sel ? FontWeight.w900 : FontWeight.w700,
+                    color: sel
+                        ? Colors.purple
+                        : scheme.onSurface.withValues(alpha: 0.8),
+                  ),
                 ),
               ),
             );
@@ -501,4 +779,3 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
     );
   }
 }
-
