@@ -436,20 +436,21 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
               children: [
                 Row(
                   children: [
+                    // Web parity: purple-tinted rounded avatar.
                     Container(
-                      width: 44,
-                      height: 44,
+                      width: 48,
+                      height: 48,
                       decoration: BoxDecoration(
-                        color: scheme.onSurface.withValues(alpha: 0.05),
-                        shape: BoxShape.circle,
+                        color: const Color(0xFF9333EA).withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: scheme.outlineVariant.withValues(alpha: 0.3),
+                          color: const Color(0xFF9333EA).withValues(alpha: 0.2),
                         ),
                       ),
-                      child: Icon(
+                      child: const Icon(
                         LucideIcons.user,
-                        size: 18,
-                        color: scheme.onSurface.withValues(alpha: 0.7),
+                        size: 24,
+                        color: Color(0xFF9333EA),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -519,23 +520,52 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _traceInfo(
-                      'PROPERTY TRACE',
-                      'UNIT: ${t['unit'] ?? '501'}',
-                      'CONFIG: ${t['config'] ?? '2BHK'}',
-                      scheme,
+                const SizedBox(height: 20),
+                // Web parity: bordered box, two columns divided by a rule,
+                // colored section labels + key(left)/value(right) rows.
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: scheme.onSurface.withValues(alpha: 0.02),
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(
+                      color: scheme.outlineVariant.withValues(alpha: 0.2),
                     ),
-                    _traceInfo(
-                      'FINANCIAL TRACE',
-                      'PAYOUT: ${fmt.format((t['commissionEarned'] ?? 0) as num)}',
-                      'VISITS: ${t['visits'] ?? '1'}',
-                      scheme,
+                  ),
+                  child: IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: _infoCol(
+                            'PROPERTY INFO',
+                            const Color(0xFF9333EA),
+                            [
+                              ('UNIT', '${t['unit'] ?? 'TBD'}'),
+                              (
+                                'TYPE',
+                                '${t['config'] ?? t['configuration'] ?? 'N/A'}',
+                              ),
+                            ],
+                            scheme,
+                          ),
+                        ),
+                        Container(
+                          width: 1,
+                          margin: const EdgeInsets.symmetric(horizontal: 14),
+                          color: scheme.outlineVariant.withValues(alpha: 0.25),
+                        ),
+                        Expanded(
+                          child: _infoCol(
+                            'FINANCIAL PULSE',
+                            const Color(0xFF10B981),
+                            [('VISITS', '${t['visits'] ?? 0}')],
+                            scheme,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
               ],
             ),
@@ -557,29 +587,42 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                 Row(
                   children: [
                     Icon(
-                      LucideIcons.layout,
+                      LucideIcons.creditCard,
                       size: 14,
-                      color: scheme.onSurface.withValues(alpha: 0.2),
+                      color: scheme.onSurface.withValues(alpha: 0.3),
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'VERIFICATION TRACE',
+                      'VERIFICATION LIFECYCLE',
                       style: GoogleFonts.montserrat(
                         fontSize: 8,
                         fontWeight: FontWeight.w900,
-                        color: scheme.onSurface.withValues(alpha: 0.2),
+                        color: scheme.onSurface.withValues(alpha: 0.4),
                         letterSpacing: 1.5,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 14),
+                // Web parity: 3 chips (Settled / Initiated / Cleared).
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _stepIndicator('SETTLED', isCompleted, scheme),
-                    _stepIndicator('INITIATED', isCompleted, scheme),
-                    _stepIndicator('CLEARED', false, scheme),
+                    Expanded(
+                      child: _verifyChip('SETTLED', isCompleted, false, scheme),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _verifyChip(
+                        'INITIATED',
+                        isCompleted,
+                        false,
+                        scheme,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: _verifyChip('CLEARED', false, true, scheme),
+                    ),
                   ],
                 ),
               ],
@@ -590,10 +633,12 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
     );
   }
 
-  Widget _traceInfo(
+  // Web parity: a section with a colored label + key/value rows
+  // (key faded left, value bold-dark right).
+  Widget _infoCol(
     String title,
-    String line1,
-    String line2,
+    Color titleColor,
+    List<(String, String)> rows,
     ColorScheme scheme,
   ) {
     return Column(
@@ -602,61 +647,89 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
         Text(
           title,
           style: GoogleFonts.montserrat(
-            fontSize: 8,
+            fontSize: 7,
             fontWeight: FontWeight.w900,
-            color: scheme.onSurface.withValues(alpha: 0.5),
-            letterSpacing: 1.5,
+            color: titleColor.withValues(alpha: 0.6),
+            letterSpacing: 1.2,
           ),
         ),
         const SizedBox(height: 10),
-        // Web parity: inner detail values are bold + dark (not faded).
-        Text(
-          line1,
-          style: GoogleFonts.montserrat(
-            fontSize: 10,
-            fontWeight: FontWeight.w900,
-            color: scheme.onSurface.withValues(alpha: 0.92),
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          line2,
-          style: GoogleFonts.montserrat(
-            fontSize: 10,
-            fontWeight: FontWeight.w900,
-            color: scheme.onSurface.withValues(alpha: 0.92),
+        ...rows.map(
+          (r) => Padding(
+            padding: const EdgeInsets.only(bottom: 5),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  r.$1,
+                  style: GoogleFonts.montserrat(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w800,
+                    color: scheme.onSurface.withValues(alpha: 0.4),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  r.$2.toUpperCase(),
+                  style: GoogleFonts.montserrat(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w900,
+                    color: scheme.onSurface.withValues(alpha: 0.92),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],
     );
   }
 
-  Widget _stepIndicator(String label, bool active, ColorScheme scheme) {
-    return Column(
-      children: [
-        Text(
-          label,
-          style: GoogleFonts.montserrat(
-            fontSize: 7,
-            fontWeight: FontWeight.w900,
-            color: active
-                ? scheme.onSurface.withValues(alpha: 0.6)
-                : scheme.onSurface.withValues(alpha: 0.2),
-            letterSpacing: 1,
-          ),
+  // Web parity: verification-lifecycle chip (rounded box; active tinted,
+  // "cleared" highlighted green, inactive faded).
+  Widget _verifyChip(
+    String label,
+    bool active,
+    bool highlight,
+    ColorScheme scheme,
+  ) {
+    const purple = Color(0xFF9333EA);
+    const green = Color(0xFF10B981);
+    Color bg;
+    Color border;
+    Color fg;
+    if (active) {
+      if (highlight) {
+        bg = green;
+        border = green;
+        fg = Colors.white;
+      } else {
+        bg = purple.withValues(alpha: 0.15);
+        border = purple.withValues(alpha: 0.3);
+        fg = purple;
+      }
+    } else {
+      bg = scheme.onSurface.withValues(alpha: 0.03);
+      border = scheme.outlineVariant.withValues(alpha: 0.2);
+      fg = scheme.onSurface.withValues(alpha: 0.3);
+    }
+    return Container(
+      height: 32,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: border),
+      ),
+      child: Text(
+        label,
+        style: GoogleFonts.montserrat(
+          fontSize: 7,
+          fontWeight: FontWeight.w900,
+          color: fg,
+          letterSpacing: 1.2,
         ),
-        const SizedBox(height: 8),
-        Container(
-          width: 80,
-          height: 3,
-          decoration: BoxDecoration(
-            color: active
-                ? Colors.purple
-                : scheme.onSurface.withValues(alpha: 0.05),
-            borderRadius: BorderRadius.circular(2),
-          ),
-        ),
-      ],
+      ),
     );
   }
 
