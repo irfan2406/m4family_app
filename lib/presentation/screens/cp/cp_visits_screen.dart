@@ -616,13 +616,6 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
           // 2x2 detail grid
           Container(
             padding: const EdgeInsets.symmetric(vertical: 14),
-            decoration: BoxDecoration(
-              border: Border.symmetric(
-                horizontal: BorderSide(
-                  color: scheme.outlineVariant.withValues(alpha: 0.25),
-                ),
-              ),
-            ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

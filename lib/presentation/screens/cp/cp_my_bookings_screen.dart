@@ -23,6 +23,50 @@ class CpMyBookingsScreen extends ConsumerStatefulWidget {
 class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
   List<dynamic> _list = [];
   bool _loading = true;
+  final _searchController = TextEditingController();
+  String _searchQuery = '';
+  String _selectedProject = 'All Projects';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  String _projectNameOf(dynamic raw) {
+    final b = _m(raw) ?? const <String, dynamic>{};
+    return _s(_m(b['project'])?['title'], 'M4 Project');
+  }
+
+  // Web parity: ["All Projects", ...unique project names].
+  List<String> _projectNames() {
+    final names = <String>{};
+    for (final raw in _list) {
+      names.add(_projectNameOf(raw));
+    }
+    return ['All Projects', ...names];
+  }
+
+  // Web parity: client-side search (client name / project / unit / id) + filter.
+  List<dynamic> _filteredBookings() {
+    final q = _searchQuery.toLowerCase().trim();
+    return _list.where((raw) {
+      final b = _m(raw) ?? const <String, dynamic>{};
+      final projectName = _projectNameOf(raw);
+      final clientName = _s(b['name']);
+      final unitNo = _s(b['unitNumber'], _s(b['unitNo']));
+      final id = _s(b['bookingId'], _s(b['_id'], _s(b['id'])));
+      final matchesSearch =
+          q.isEmpty ||
+          clientName.toLowerCase().contains(q) ||
+          projectName.toLowerCase().contains(q) ||
+          unitNo.toLowerCase().contains(q) ||
+          id.toLowerCase().contains(q);
+      final matchesProject =
+          _selectedProject == 'All Projects' || projectName == _selectedProject;
+      return matchesSearch && matchesProject;
+    }).toList();
+  }
 
   static String _s(dynamic v, [String fallback = '']) {
     if (v == null) return fallback;
@@ -43,7 +87,8 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
     return DateTime.tryParse(v.toString());
   }
 
-  static Map<String, dynamic>? _m(dynamic v) => v is Map ? v.cast<String, dynamic>() : null;
+  static Map<String, dynamic>? _m(dynamic v) =>
+      v is Map ? v.cast<String, dynamic>() : null;
 
   @override
   void initState() {
@@ -72,15 +117,26 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
     await launchUrl(u, mode: LaunchMode.externalApplication);
   }
 
-  ({Color bg, Color border, Color fg}) _statusColors(ColorScheme scheme, String status) {
+  ({Color bg, Color border, Color fg}) _statusColors(
+    ColorScheme scheme,
+    String status,
+  ) {
     final s = status.toLowerCase();
     if (s.contains('confirmed') || s.contains('allotted')) {
       const fg = Color(0xFF10B981);
-      return (bg: fg.withValues(alpha: 0.10), border: fg.withValues(alpha: 0.20), fg: fg);
+      return (
+        bg: fg.withValues(alpha: 0.10),
+        border: fg.withValues(alpha: 0.20),
+        fg: fg,
+      );
     }
     if (s.contains('pending')) {
       const fg = Color(0xFF9333EA);
-      return (bg: fg.withValues(alpha: 0.10), border: fg.withValues(alpha: 0.20), fg: fg);
+      return (
+        bg: fg.withValues(alpha: 0.10),
+        border: fg.withValues(alpha: 0.20),
+        fg: fg,
+      );
     }
     return (
       bg: scheme.surfaceContainerHighest.withValues(alpha: 0.35),
@@ -94,7 +150,9 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
     required bool isDark,
     EdgeInsets padding = const EdgeInsets.all(22),
   }) {
-    final border = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08);
+    final border = (isDark ? Colors.white : Colors.black).withValues(
+      alpha: 0.08,
+    );
     return ClipRRect(
       borderRadius: BorderRadius.circular(40),
       child: BackdropFilter(
@@ -102,7 +160,9 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
         child: Container(
           padding: padding,
           decoration: BoxDecoration(
-            color: (isDark ? Colors.white : Colors.black).withValues(alpha: isDark ? 0.06 : 0.03),
+            color: (isDark ? Colors.white : Colors.black).withValues(
+              alpha: isDark ? 0.06 : 0.03,
+            ),
             borderRadius: BorderRadius.circular(40),
             border: Border.all(color: border),
             boxShadow: [
@@ -124,8 +184,11 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
     required VoidCallback? onTap,
     required ColorScheme scheme,
     required bool isDark,
+    Color? iconColor,
   }) {
-    final border = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08);
+    final border = (isDark ? Colors.white : Colors.black).withValues(
+      alpha: 0.08,
+    );
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(14),
@@ -137,7 +200,11 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
           borderRadius: BorderRadius.circular(14),
           border: Border.all(color: border),
         ),
-        child: Icon(icon, size: 18, color: scheme.primary.withValues(alpha: 0.7)),
+        child: Icon(
+          icon,
+          size: 18,
+          color: (iconColor ?? scheme.primary).withValues(alpha: 0.7),
+        ),
       ),
     );
   }
@@ -152,11 +219,20 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
     final id = _s(b['bookingId'], _s(b['_id'], _s(b['id'], '')));
     final projectName = _s(proj['title'], 'M4 Project');
     final location = _s(loc?['name'], _s(proj['location'], 'Mumbai'));
+    // Web: projectType = project.category.name || project.type || "Residential".
+    final projectType = _s(
+      _m(proj['category'])?['name'],
+      _s(proj['type'], 'Residential'),
+    );
     final unitNo = _s(b['unitNumber'], _s(b['unitNo'], 'N/A'));
     final configuration = _s(b['configuration'], 'Standard');
 
-    final created = _dt(b['createdAt']) ?? _dt(b['bookingDate']) ?? _dt(b['scheduledDate']);
-    final bookingDate = created != null ? DateFormat.yMMMd().format(created.toLocal()) : 'N/A';
+    final created =
+        _dt(b['createdAt']) ?? _dt(b['bookingDate']) ?? _dt(b['scheduledDate']);
+    // Web: toLocaleDateString() → M/d/yyyy (e.g. 6/19/2026).
+    final bookingDate = created != null
+        ? DateFormat('M/d/yyyy').format(created.toLocal())
+        : 'N/A';
 
     final status = _s(b['status'], 'Pending');
     final paymentProgress = _i(b['paymentProgress'], 0).clamp(0, 100);
@@ -185,9 +261,15 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                 decoration: BoxDecoration(
                   color: scheme.primary.withValues(alpha: 0.10),
                   borderRadius: BorderRadius.circular(18),
-                  border: Border.all(color: scheme.primary.withValues(alpha: 0.20)),
+                  border: Border.all(
+                    color: scheme.primary.withValues(alpha: 0.20),
+                  ),
                 ),
-                child: Icon(LucideIcons.building2, size: 22, color: scheme.primary),
+                child: Icon(
+                  LucideIcons.building2,
+                  size: 22,
+                  color: scheme.primary,
+                ),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -208,9 +290,13 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                     const SizedBox(height: 4),
                     Row(
                       children: [
-                        Icon(LucideIcons.mapPin, size: 14, color: scheme.primary.withValues(alpha: 0.55)),
+                        Icon(
+                          LucideIcons.mapPin,
+                          size: 14,
+                          color: scheme.primary.withValues(alpha: 0.55),
+                        ),
                         const SizedBox(width: 6),
-                        Expanded(
+                        Flexible(
                           child: Text(
                             location,
                             maxLines: 1,
@@ -223,6 +309,27 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                             ),
                           ),
                         ),
+                        const SizedBox(width: 8),
+                        Container(
+                          width: 3,
+                          height: 3,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: scheme.onSurface.withValues(alpha: 0.25),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          projectType.toUpperCase(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.montserrat(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 1.2,
+                            color: scheme.primary.withValues(alpha: 0.8),
+                          ),
+                        ),
                       ],
                     ),
                   ],
@@ -230,7 +337,10 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
               ),
               const SizedBox(width: 12),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: st.bg,
                   borderRadius: BorderRadius.circular(999),
@@ -248,16 +358,14 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 18),
-          Container(height: 1, color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06)),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           Row(
             children: [
               Expanded(
                 child: _kv(
-                  label: 'LEAD IDENTITY',
-                  value: clientName.toUpperCase(),
-                  icon: LucideIcons.user,
+                  label: 'EMPLOYEE NAME',
+                  value: employeeName.toUpperCase(),
+                  icon: LucideIcons.userCheck,
                   scheme: scheme,
                 ),
               ),
@@ -294,9 +402,9 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: _kv(
-                    label: 'RELATIONSHIP MGR',
-                    value: employeeName.toUpperCase(),
-                    icon: LucideIcons.userCheck,
+                    label: 'CLIENT NAME',
+                    value: clientName.toUpperCase(),
+                    icon: LucideIcons.user,
                     scheme: scheme,
                     rightAlign: true,
                     iconAfter: true,
@@ -306,15 +414,17 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 18),
-          Container(height: 1, color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06)),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               color: onSurf.withValues(alpha: isDark ? 0.06 : 0.035),
               borderRadius: BorderRadius.circular(22),
-              border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06)),
+              border: Border.all(
+                color: (isDark ? Colors.white : Colors.black).withValues(
+                  alpha: 0.06,
+                ),
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -324,7 +434,10 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                     Container(
                       width: 8,
                       height: 8,
-                      decoration: BoxDecoration(shape: BoxShape.circle, color: scheme.primary),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: scheme.primary,
+                      ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
@@ -357,7 +470,11 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                   borderRadius: BorderRadius.circular(999),
                   child: Container(
                     height: 10,
-                    decoration: BoxDecoration(color: Colors.black.withValues(alpha: isDark ? 0.25 : 0.10)),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(
+                        alpha: isDark ? 0.25 : 0.10,
+                      ),
+                    ),
                     child: TweenAnimationBuilder<double>(
                       tween: Tween(begin: 0, end: paymentProgress / 100.0),
                       duration: const Duration(milliseconds: 900),
@@ -392,6 +509,22 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                 icon: LucideIcons.phone,
                 onTap: (clientPhone.isNotEmpty && clientPhone != 'N/A')
                     ? () => _openExternal('tel:$clientPhone')
+                    : null,
+                scheme: scheme,
+                isDark: isDark,
+              ),
+              const SizedBox(width: 10),
+              // Web parity: WhatsApp (green MessageCircle) — wa.me with the
+              // client's digits, prefixed 91 when it's a 10-digit number.
+              _pillButton(
+                icon: LucideIcons.messageCircle,
+                iconColor: const Color(0xFF10B981),
+                onTap: (clientPhone.isNotEmpty && clientPhone != 'N/A')
+                    ? () {
+                        final clean = clientPhone.replaceAll(RegExp(r'\D'), '');
+                        final num = clean.length == 10 ? '91$clean' : clean;
+                        _openExternal('https://wa.me/$num');
+                      }
                     : null,
                 scheme: scheme,
                 isDark: isDark,
@@ -464,14 +597,20 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
 
     final iconW = icon == null
         ? const SizedBox.shrink()
-        : Icon(icon, size: 16, color: scheme.primary.withValues(alpha: iconAlpha));
+        : Icon(
+            icon,
+            size: 16,
+            color: scheme.primary.withValues(alpha: iconAlpha),
+          );
 
     Widget row;
     if (icon == null) {
       row = valueW;
     } else if (iconAfter) {
       row = Row(
-        mainAxisAlignment: rightAlign ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: rightAlign
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         children: [
           Flexible(child: valueW),
           const SizedBox(width: 8),
@@ -480,7 +619,9 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
       );
     } else {
       row = Row(
-        mainAxisAlignment: rightAlign ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: rightAlign
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         children: [
           iconW,
           const SizedBox(width: 8),
@@ -490,11 +631,117 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
     }
 
     return Column(
-      crossAxisAlignment: rightAlign ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      crossAxisAlignment: rightAlign
+          ? CrossAxisAlignment.end
+          : CrossAxisAlignment.start,
+      children: [labelW, const SizedBox(height: 6), row],
+    );
+  }
+
+  // Web parity: a real-time search field + project filter dropdown, sitting
+  // as a second row under the header.
+  Widget _buildSearchAndFilter(ColorScheme scheme, bool isDark) {
+    final border = (isDark ? Colors.white : Colors.black).withValues(
+      alpha: 0.08,
+    );
+    final fill = scheme.surface.withValues(alpha: isDark ? 0.06 : 0.5);
+    final projects = _projectNames();
+    final value = projects.contains(_selectedProject)
+        ? _selectedProject
+        : 'All Projects';
+    return Row(
       children: [
-        labelW,
-        const SizedBox(height: 6),
-        row,
+        Expanded(
+          child: Container(
+            height: 44,
+            decoration: BoxDecoration(
+              color: fill,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: border),
+            ),
+            child: TextField(
+              controller: _searchController,
+              onChanged: (v) => setState(() => _searchQuery = v),
+              style: GoogleFonts.montserrat(
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 1,
+              ),
+              decoration: InputDecoration(
+                hintText: 'SEARCH CLIENT, ID...',
+                hintStyle: GoogleFonts.montserrat(
+                  fontSize: 9,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1,
+                  color: scheme.onSurface.withValues(alpha: 0.35),
+                ),
+                prefixIcon: Icon(
+                  LucideIcons.search,
+                  size: 16,
+                  color: scheme.onSurface.withValues(alpha: 0.4),
+                ),
+                suffixIcon: _searchQuery.isNotEmpty
+                    ? IconButton(
+                        icon: Icon(
+                          LucideIcons.x,
+                          size: 14,
+                          color: scheme.onSurface.withValues(alpha: 0.4),
+                        ),
+                        onPressed: () {
+                          _searchController.clear();
+                          setState(() => _searchQuery = '');
+                        },
+                      )
+                    : null,
+                border: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        Container(
+          width: 132,
+          height: 44,
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          decoration: BoxDecoration(
+            color: fill,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: border),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: value,
+              isExpanded: true,
+              isDense: true,
+              icon: Icon(
+                LucideIcons.chevronDown,
+                size: 16,
+                color: scheme.onSurfaceVariant,
+              ),
+              style: GoogleFonts.montserrat(
+                fontSize: 9,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 0.8,
+                color: scheme.onSurface,
+              ),
+              items: projects
+                  .map(
+                    (n) => DropdownMenuItem(
+                      value: n,
+                      child: Text(
+                        n.toUpperCase(),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  )
+                  .toList(),
+              onChanged: (v) =>
+                  setState(() => _selectedProject = v ?? 'All Projects'),
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -504,6 +751,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
     final scheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final cpIdx = ref.watch(cpNavigationIndexProvider);
+    final filtered = _filteredBookings();
 
     return Scaffold(
       extendBody: true,
@@ -529,52 +777,64 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
               children: [
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
-                  child: Row(
+                  child: Column(
                     children: [
-                      InkWell(
-                        onTap: () => context.pop(),
-                        borderRadius: BorderRadius.circular(16),
-                        child: Container(
-                          width: 44,
-                          height: 44,
-                          decoration: BoxDecoration(
-                            color: scheme.surface,
+                      Row(
+                        children: [
+                          InkWell(
+                            onTap: () => context.pop(),
                             borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.10),
+                            child: Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                color: scheme.surface,
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: (isDark ? Colors.white : Colors.black)
+                                      .withValues(alpha: 0.10),
+                                ),
+                              ),
+                              child: Icon(
+                                LucideIcons.chevronLeft,
+                                color: scheme.onSurface.withValues(alpha: 0.65),
+                              ),
                             ),
                           ),
-                          child: Icon(LucideIcons.chevronLeft, color: scheme.onSurface.withValues(alpha: 0.65)),
-                        ),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'CLIENT BOOKINGS',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: -0.2,
-                                color: scheme.onSurface,
-                              ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'CLIENT BOOKINGS',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: -0.2,
+                                    color: scheme.onSurface,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'STATUS: ACTIVE TRACKING',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: 2.8,
+                                    fontStyle: FontStyle.italic,
+                                    color: scheme.onSurface.withValues(
+                                      alpha: 0.35,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'STATUS: ACTIVE TRACKING',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 9,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: 2.8,
-                                fontStyle: FontStyle.italic,
-                                color: scheme.onSurface.withValues(alpha: 0.35),
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
+                      const SizedBox(height: 14),
+                      _buildSearchAndFilter(scheme, isDark),
                     ],
                   ),
                 ),
@@ -584,20 +844,34 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                           child: SizedBox(
                             width: 40,
                             height: 40,
-                            child: CircularProgressIndicator(color: scheme.primary, strokeWidth: 3.5),
+                            child: CircularProgressIndicator(
+                              color: scheme.primary,
+                              strokeWidth: 3.5,
+                            ),
                           ),
                         )
                       : RefreshIndicator(
                           onRefresh: _load,
-                          child: _list.isEmpty
+                          child: filtered.isEmpty
                               ? ListView(
-                                  padding: const EdgeInsets.fromLTRB(16, 18, 16, 120),
+                                  padding: const EdgeInsets.fromLTRB(
+                                    16,
+                                    18,
+                                    16,
+                                    120,
+                                  ),
                                   children: [
                                     _glassCard(
                                       isDark: isDark,
                                       child: Column(
                                         children: [
-                                          Icon(LucideIcons.clock, size: 34, color: scheme.onSurface.withValues(alpha: 0.18)),
+                                          Icon(
+                                            LucideIcons.clock,
+                                            size: 34,
+                                            color: scheme.onSurface.withValues(
+                                              alpha: 0.18,
+                                            ),
+                                          ),
                                           const SizedBox(height: 14),
                                           Text(
                                             'NO ACTIVE BOOKINGS DISCOVERED YET',
@@ -606,12 +880,14 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                                               fontSize: 10,
                                               fontWeight: FontWeight.w900,
                                               letterSpacing: 2.8,
-                                              color: scheme.onSurface.withValues(alpha: 0.55),
+                                              color: scheme.onSurface
+                                                  .withValues(alpha: 0.55),
                                             ),
                                           ),
                                           const SizedBox(height: 10),
                                           TextButton(
-                                            onPressed: () => context.push('/cp/visits'),
+                                            onPressed: () =>
+                                                context.push('/cp/visits'),
                                             child: Text(
                                               'CHECK SCHEDULED VISITS',
                                               style: GoogleFonts.montserrat(
@@ -628,13 +904,21 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                                   ],
                                 )
                               : ListView.builder(
-                                  padding: const EdgeInsets.fromLTRB(16, 10, 16, 120),
-                                  itemCount: _list.length,
+                                  padding: const EdgeInsets.fromLTRB(
+                                    16,
+                                    10,
+                                    16,
+                                    120,
+                                  ),
+                                  itemCount: filtered.length,
                                   itemBuilder: (_, i) {
-                                    final raw = _list[i];
-                                    final b = _m(raw) ?? const <String, dynamic>{};
+                                    final raw = filtered[i];
+                                    final b =
+                                        _m(raw) ?? const <String, dynamic>{};
                                     return Padding(
-                                      padding: const EdgeInsets.only(bottom: 16),
+                                      padding: const EdgeInsets.only(
+                                        bottom: 16,
+                                      ),
                                       child: _bookingCard(b),
                                     );
                                   },
