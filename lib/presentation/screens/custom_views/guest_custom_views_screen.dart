@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:ui';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
-import 'package:m4_mobile/presentation/providers/auth_provider.dart';
-import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
 
@@ -15,44 +12,54 @@ class GuestCustomViewsScreen extends ConsumerStatefulWidget {
   const GuestCustomViewsScreen({super.key});
 
   @override
-  ConsumerState<GuestCustomViewsScreen> createState() => _GuestCustomViewsScreenState();
+  ConsumerState<GuestCustomViewsScreen> createState() =>
+      _GuestCustomViewsScreenState();
 }
 
-class _GuestCustomViewsScreenState extends ConsumerState<GuestCustomViewsScreen> {
+class _GuestCustomViewsScreenState
+    extends ConsumerState<GuestCustomViewsScreen> {
   final ScrollController _scrollController = ScrollController();
 
   final List<Map<String, String>> _categories = [
     {
       'title': 'EXPANSIVE LIVING',
-      'image': 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80',
+      'image':
+          'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80',
     },
     {
       'title': 'MASTER SUITES',
-      'image': 'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&q=80',
+      'image':
+          'https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&q=80',
     },
     {
       'title': 'PRIVATE TERRACES',
-      'image': 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
+      'image':
+          'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
     },
     {
       'title': 'ELITE SPA BATHROOMS',
-      'image': 'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?auto=format&fit=crop&q=80',
+      'image':
+          'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?auto=format&fit=crop&q=80',
     },
     {
       'title': 'GOURMET KITCHENS',
-      'image': 'https://images.unsplash.com/photo-1556912172-45b7abe8b7e1?auto=format&fit=crop&q=80',
+      'image':
+          'https://images.unsplash.com/photo-1556912172-45b7abe8b7e1?auto=format&fit=crop&q=80',
     },
     {
       'title': 'CINEMATIC LOUNGES',
-      'image': 'https://images.unsplash.com/photo-1593914621423-47c992d99991?auto=format&fit=crop&q=80',
+      'image':
+          'https://images.unsplash.com/photo-1593914621423-47c992d99991?auto=format&fit=crop&q=80',
     },
     {
       'title': 'PERSONAL GALLERIES',
-      'image': 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80',
+      'image':
+          'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80',
     },
     {
       'title': 'OFFICE SUITES',
-      'image': 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80',
+      'image':
+          'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80',
     },
   ];
 
@@ -66,61 +73,80 @@ class _GuestCustomViewsScreenState extends ConsumerState<GuestCustomViewsScreen>
       body: CustomScrollView(
         controller: _scrollController,
         slivers: [
-        // 🔝 Premium Header
-        SliverAppBar(
-          pinned: true,
-          backgroundColor: (isDark ? Colors.black : Colors.white).withOpacity(0.8),
-          elevation: 0,
-          leadingWidth: 72,
-          toolbarHeight: 80,
-          flexibleSpace: ClipRRect(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: Container(color: Colors.transparent),
+          // 🔝 Premium Header
+          SliverAppBar(
+            pinned: true,
+            backgroundColor: (isDark ? Colors.black : Colors.white).withOpacity(
+              0.8,
             ),
-          ),
-          leading: Center(
-            child: _HeaderCircleAction(
-              icon: LucideIcons.arrowLeft, 
-              onTap: () => context.go('/home'),
-            ),
-          ),
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('INTERACTIVE LIVING', 
-                  style: GoogleFonts.montserrat(
-                    color: isDark ? Colors.white : Colors.black, 
-                    fontWeight: FontWeight.w900, 
-                    fontSize: 14, 
-                    letterSpacing: 0.5
-                  )),
-              Text('M4 CUSTOM SHOWCASE', 
-                  style: GoogleFonts.montserrat(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(0.5), 
-                    fontWeight: FontWeight.w900, 
-                    fontSize: 7, 
-                    letterSpacing: 1.5
-                  )),
-            ],
-          ),
-          actions: [
-            Builder(
-              builder: (context) => GestureDetector(
-                onTap: () => Scaffold.of(context).openDrawer(),
-                child: Container(
-                  margin: const EdgeInsets.only(right: 16, top: 20, bottom: 20),
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
-                  decoration: BoxDecoration(
-                    color: isDark ? Colors.white : Colors.black,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Icon(LucideIcons.moreHorizontal, color: isDark ? Colors.black : Colors.white, size: 18),
-                ),
+            elevation: 0,
+            leadingWidth: 72,
+            toolbarHeight: 80,
+            flexibleSpace: ClipRRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(color: Colors.transparent),
               ),
             ),
-          ],
-        ),
+            leading: Center(
+              child: _HeaderCircleAction(
+                icon: LucideIcons.arrowLeft,
+                // Pop back to wherever we came from (CP/user/guest all push this
+                // screen); fall back to home only if there's nothing to pop.
+                onTap: () =>
+                    context.canPop() ? context.pop() : context.go('/home'),
+              ),
+            ),
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'INTERACTIVE LIVING',
+                  style: GoogleFonts.montserrat(
+                    color: isDark ? Colors.white : Colors.black,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 14,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                Text(
+                  'M4 CUSTOM SHOWCASE',
+                  style: GoogleFonts.montserrat(
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      0.5,
+                    ),
+                    fontWeight: FontWeight.w900,
+                    fontSize: 7,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+              ],
+            ),
+            actions: [
+              Builder(
+                builder: (context) => GestureDetector(
+                  onTap: () => Scaffold.of(context).openDrawer(),
+                  child: Container(
+                    margin: const EdgeInsets.only(
+                      right: 16,
+                      top: 20,
+                      bottom: 20,
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white : Colors.black,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Icon(
+                      LucideIcons.moreHorizontal,
+                      color: isDark ? Colors.black : Colors.white,
+                      size: 18,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
 
           // 🎭 Hero Section
           SliverPadding(
@@ -129,27 +155,34 @@ class _GuestCustomViewsScreenState extends ConsumerState<GuestCustomViewsScreen>
               child: Column(
                 children: [
                   Text(
-                    'DESIGN\nYOUR\nDESTINY',
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.dmSerifDisplay(
-                      color: isDark ? Colors.white : Colors.black,
-                      fontSize: 52,
-                      height: 1.1,
-                      letterSpacing: -1,
-                    ),
-                  ).animate().fadeIn(duration: 800.ms).slideY(begin: 0.2, end: 0),
+                        'DESIGN\nYOUR\nDESTINY',
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.dmSerifDisplay(
+                          color: isDark ? Colors.white : Colors.black,
+                          fontSize: 52,
+                          height: 1.1,
+                          letterSpacing: -1,
+                        ),
+                      )
+                      .animate()
+                      .fadeIn(duration: 800.ms)
+                      .slideY(begin: 0.2, end: 0),
                   const SizedBox(height: 32),
                   Container(
                     width: 50,
                     height: 1.5,
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(0.2),
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      0.2,
+                    ),
                   ),
                   const SizedBox(height: 48),
                   Text(
                     'Experience the future of home personalisation. Our proprietary Custom Views suite allows you to visualise and craft your dream space before it\'s even built. Every M4 residence is a bespoke masterpiece, where your vision dictates the architecture of luxury. Beyond standard configurations, we offer a multi-sensory design experience—from haptic material selection to precision spatial planning. Our suite ensures that your digital blueprint translates into a tangible sanctuary of unparalleled refinement.',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.montserrat(
-                      color: (isDark ? Colors.white : Colors.black).withOpacity(0.7),
+                      color: (isDark ? Colors.white : Colors.black).withOpacity(
+                        0.7,
+                      ),
                       fontSize: 14,
                       height: 1.8,
                       fontWeight: FontWeight.w500,
@@ -171,70 +204,74 @@ class _GuestCustomViewsScreenState extends ConsumerState<GuestCustomViewsScreen>
                 crossAxisSpacing: 25,
                 childAspectRatio: 0.7,
               ),
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final cat = _categories[index];
-                  return Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
-                      boxShadow: [
-                        BoxShadow(
-                          color: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
-                          blurRadius: 25,
-                          offset: const Offset(0, 10),
-                        )
-                      ],
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(100),
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          CachedNetworkImage(
-                            imageUrl: cat['image']!,
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) => Container(color: Colors.black12),
-                            errorWidget: (context, url, error) => Container(color: Colors.black12),
-                          ),
-                          Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.bottomCenter,
-                                end: Alignment.center,
-                                colors: [
-                                  Colors.black.withOpacity(0.7),
-                                  Colors.transparent,
-                                ],
-                              ),
-                            ),
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-                            alignment: Alignment.center,
-                            child: Text(
-                              cat['title']!,
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.montserrat(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w900,
-                                color: Colors.white,
-                                letterSpacing: 1.5,
-                                height: 1.2,
-                              ),
-                            ),
+              delegate: SliverChildBuilderDelegate((context, index) {
+                final cat = _categories[index];
+                return Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        boxShadow: [
+                          BoxShadow(
+                            color: (isDark ? Colors.white : Colors.black)
+                                .withOpacity(0.08),
+                            blurRadius: 25,
+                            offset: const Offset(0, 10),
                           ),
                         ],
                       ),
-                    ),
-                  ).animate().fadeIn(delay: (150 * index).ms).scale(begin: const Offset(0.9, 0.9));
-                },
-                childCount: _categories.length,
-              ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(100),
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            CachedNetworkImage(
+                              imageUrl: cat['image']!,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) =>
+                                  Container(color: Colors.black12),
+                              errorWidget: (context, url, error) =>
+                                  Container(color: Colors.black12),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.bottomCenter,
+                                  end: Alignment.center,
+                                  colors: [
+                                    Colors.black.withOpacity(0.7),
+                                    Colors.transparent,
+                                  ],
+                                ),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 24,
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                cat['title']!,
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w900,
+                                  color: Colors.white,
+                                  letterSpacing: 1.5,
+                                  height: 1.2,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                    .animate()
+                    .fadeIn(delay: (150 * index).ms)
+                    .scale(begin: const Offset(0.9, 0.9));
+              }, childCount: _categories.length),
             ),
           ),
 
           // Final Space
-          const SliverToBoxAdapter(
-            child: SizedBox(height: 100),
-          ),
+          const SliverToBoxAdapter(child: SizedBox(height: 100)),
         ],
       ),
     );
@@ -258,16 +295,22 @@ class _HeaderCircleAction extends StatelessWidget {
         decoration: BoxDecoration(
           color: isDark ? Colors.white.withOpacity(0.1) : Colors.white,
           shape: BoxShape.circle,
-          border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+          border: Border.all(
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
-            )
+            ),
           ],
         ),
-        child: Icon(icon, color: isDark ? Colors.white : Colors.black, size: 18),
+        child: Icon(
+          icon,
+          color: isDark ? Colors.white : Colors.black,
+          size: 18,
+        ),
       ),
     );
   }

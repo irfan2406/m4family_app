@@ -130,10 +130,10 @@ void main() async {
   debugPaintPointersEnabled = false;
   debugPaintLayerBordersEnabled = false;
   debugRepaintRainbowEnabled = false;
-  
+
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-  
+
   const storage = FlutterSecureStorage();
   final themeStr = await storage.read(key: 'app_theme');
   final initialTheme = themeStr == 'light' ? ThemeMode.light : ThemeMode.dark;
@@ -141,7 +141,7 @@ void main() async {
   runApp(
     ProviderScope(
       overrides: [
-        themeProvider.overrideWith((ref) => ThemeNotifier(ref, initialTheme))
+        themeProvider.overrideWith((ref) => ThemeNotifier(ref, initialTheme)),
       ],
       child: const M4FamilyApp(),
     ),
@@ -154,7 +154,7 @@ class M4FamilyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeProvider);
-    
+
     return MaterialApp.router(
       title: 'M4 Family',
       debugShowCheckedModeBanner: false,
@@ -165,7 +165,6 @@ class M4FamilyApp extends ConsumerWidget {
     );
   }
 }
-
 
 // Basic router configuration
 final GoRouter _router = GoRouter(
@@ -178,7 +177,8 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/login',
       builder: (context, state) {
-        final step = int.tryParse(state.uri.queryParameters['step'] ?? '0') ?? 0;
+        final step =
+            int.tryParse(state.uri.queryParameters['step'] ?? '0') ?? 0;
         final role = state.uri.queryParameters['role'] ?? 'CUSTOMER';
         return LoginScreen(initialStep: step, initialRole: role);
       },
@@ -195,10 +195,7 @@ final GoRouter _router = GoRouter(
       path: '/auth/cp/forgot-password',
       builder: (context, state) => const CpForgotPasswordScreen(),
     ),
-    GoRoute(
-      path: '/',
-      builder: (context, state) => const SplashScreen(),
-    ),
+    GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
     GoRoute(
       path: '/home',
       builder: (context, state) => const ConditionalHomeShell(),
@@ -337,9 +334,8 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/cp/communities/:slug/projects',
-      builder: (context, state) => CommunityProjectsListScreen(
-        slug: state.pathParameters['slug']!,
-      ),
+      builder: (context, state) =>
+          CommunityProjectsListScreen(slug: state.pathParameters['slug']!),
     ),
     GoRoute(
       path: '/cp/events',
@@ -415,8 +411,11 @@ final GoRouter _router = GoRouter(
       builder: (context, state) => MyCustomViewsScreen(),
     ),
     GoRoute(
+      // Web parity: CP custom-views renders the "Interactive Living /
+      // Design Your Destiny" showcase (CustomViewsContent treats portal="cp"
+      // as isGuest), not the personalisation-suite portfolio.
       path: '/cp/custom-views',
-      builder: (context, state) => MyCustomViewsScreen(),
+      builder: (context, state) => const GuestCustomViewsScreen(),
     ),
     GoRoute(
       path: '/cp/search',
@@ -432,7 +431,8 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/cp/privacy-policy',
-      builder: (context, state) => const PageDetailScreen(slug: 'privacy-policy'),
+      builder: (context, state) =>
+          const PageDetailScreen(slug: 'privacy-policy'),
     ),
     GoRoute(
       path: '/cp/projects/premium-upsell',
@@ -490,7 +490,9 @@ final GoRouter _router = GoRouter(
       path: '/investor/home',
       builder: (context, state) {
         WidgetsBinding.instance.addPostFrameCallback(
-          (_) => ProviderScope.containerOf(context).read(investorNavigationIndexProvider.notifier).state = 0,
+          (_) => ProviderScope.containerOf(
+            context,
+          ).read(investorNavigationIndexProvider.notifier).state = 0,
         );
         return const InvestorMainShell();
       },
@@ -499,7 +501,9 @@ final GoRouter _router = GoRouter(
       path: '/investor/projects',
       builder: (context, state) {
         WidgetsBinding.instance.addPostFrameCallback(
-          (_) => ProviderScope.containerOf(context).read(investorNavigationIndexProvider.notifier).state = 1,
+          (_) => ProviderScope.containerOf(
+            context,
+          ).read(investorNavigationIndexProvider.notifier).state = 1,
         );
         return const InvestorMainShell();
       },
@@ -508,7 +512,9 @@ final GoRouter _router = GoRouter(
       path: '/investor/support',
       builder: (context, state) {
         WidgetsBinding.instance.addPostFrameCallback(
-          (_) => ProviderScope.containerOf(context).read(investorNavigationIndexProvider.notifier).state = 2,
+          (_) => ProviderScope.containerOf(
+            context,
+          ).read(investorNavigationIndexProvider.notifier).state = 2,
         );
         return const InvestorMainShell();
       },
@@ -517,15 +523,26 @@ final GoRouter _router = GoRouter(
       path: '/investor/profile',
       builder: (context, state) {
         WidgetsBinding.instance.addPostFrameCallback(
-          (_) => ProviderScope.containerOf(context).read(investorNavigationIndexProvider.notifier).state = 3,
+          (_) => ProviderScope.containerOf(
+            context,
+          ).read(investorNavigationIndexProvider.notifier).state = 3,
         );
         return const InvestorMainShell();
       },
     ),
     // Investor money / portfolio (new investor-specific screens)
-    GoRoute(path: '/investor/portfolio', builder: (context, state) => const InvestorPortfolioScreen()),
-    GoRoute(path: '/investor/profile/portfolio', builder: (context, state) => const InvestorPortfolioScreen()),
-    GoRoute(path: '/investor/payments', builder: (context, state) => const InvestorPaymentsScreen()),
+    GoRoute(
+      path: '/investor/portfolio',
+      builder: (context, state) => const InvestorPortfolioScreen(),
+    ),
+    GoRoute(
+      path: '/investor/profile/portfolio',
+      builder: (context, state) => const InvestorPortfolioScreen(),
+    ),
+    GoRoute(
+      path: '/investor/payments',
+      builder: (context, state) => const InvestorPaymentsScreen(),
+    ),
     GoRoute(
       path: '/investor/payments/:id',
       builder: (context, state) => InvestorPaymentDetailScreen(
@@ -533,8 +550,14 @@ final GoRouter _router = GoRouter(
         initialData: state.extra as Map<String, dynamic>?,
       ),
     ),
-    GoRoute(path: '/investor/installments', builder: (context, state) => const InvestorInstallmentsScreen()),
-    GoRoute(path: '/investor/tax-reports', builder: (context, state) => const InvestorTaxReportsScreen()),
+    GoRoute(
+      path: '/investor/installments',
+      builder: (context, state) => const InvestorInstallmentsScreen(),
+    ),
+    GoRoute(
+      path: '/investor/tax-reports',
+      builder: (context, state) => const InvestorTaxReportsScreen(),
+    ),
     GoRoute(
       path: '/investor/tax-reports/:id',
       builder: (context, state) => InvestorTaxReportDetailScreen(
@@ -542,63 +565,166 @@ final GoRouter _router = GoRouter(
         initialData: state.extra as Map<String, dynamic>?,
       ),
     ),
-    GoRoute(path: '/investor/documents', builder: (context, state) => const InvestorDocumentsScreen()),
+    GoRoute(
+      path: '/investor/documents',
+      builder: (context, state) => const InvestorDocumentsScreen(),
+    ),
     GoRoute(
       path: '/investor/documents/:id',
-      builder: (context, state) => InvestorDocumentDetailScreen(documentId: state.pathParameters['id']!),
+      builder: (context, state) =>
+          InvestorDocumentDetailScreen(documentId: state.pathParameters['id']!),
     ),
     // Investor projects — premium-upsell BEFORE :id so it isn't captured as a param
-    GoRoute(path: '/investor/projects/premium-upsell', builder: (context, state) => const PremiumUpsellScreen()),
-    GoRoute(path: '/investor/projects/premium-upsell/checkout', builder: (context, state) => const PremiumCheckoutScreen()),
+    GoRoute(
+      path: '/investor/projects/premium-upsell',
+      builder: (context, state) => const PremiumUpsellScreen(),
+    ),
+    GoRoute(
+      path: '/investor/projects/premium-upsell/checkout',
+      builder: (context, state) => const PremiumCheckoutScreen(),
+    ),
     GoRoute(
       path: '/investor/projects/:id',
-      builder: (context, state) => InvestorProjectDetailScreen(projectId: state.pathParameters['id']!),
+      builder: (context, state) =>
+          InvestorProjectDetailScreen(projectId: state.pathParameters['id']!),
     ),
     GoRoute(
       path: '/investor/projects/:id/3d-view',
-      builder: (context, state) => InvestorProjectDetailScreen(projectId: state.pathParameters['id']!),
+      builder: (context, state) =>
+          InvestorProjectDetailScreen(projectId: state.pathParameters['id']!),
     ),
     // Investor elite
-    GoRoute(path: '/investor/elite', builder: (context, state) => const InvestorEliteScreen()),
-    GoRoute(path: '/investor/elite/cp-connect', builder: (context, state) => const InvestorEliteCpConnectScreen()),
-    GoRoute(path: '/investor/elite/investor-connect', builder: (context, state) => const InvestorEliteInvestorConnectScreen()),
-    GoRoute(path: '/investor/elite/residential-connect', builder: (context, state) => const CpResidentialConnectScreen()),
+    GoRoute(
+      path: '/investor/elite',
+      builder: (context, state) => const InvestorEliteScreen(),
+    ),
+    GoRoute(
+      path: '/investor/elite/cp-connect',
+      builder: (context, state) => const InvestorEliteCpConnectScreen(),
+    ),
+    GoRoute(
+      path: '/investor/elite/investor-connect',
+      builder: (context, state) => const InvestorEliteInvestorConnectScreen(),
+    ),
+    GoRoute(
+      path: '/investor/elite/residential-connect',
+      builder: (context, state) => const CpResidentialConnectScreen(),
+    ),
     // Investor referral
-    GoRoute(path: '/investor/referral', builder: (context, state) => const InvestorReferralScreen()),
-    GoRoute(path: '/investor/referral/active', builder: (context, state) => const InvestorReferralActiveScreen()),
-    GoRoute(path: '/investor/referral/closed', builder: (context, state) => const InvestorReferralClosedScreen()),
+    GoRoute(
+      path: '/investor/referral',
+      builder: (context, state) => const InvestorReferralScreen(),
+    ),
+    GoRoute(
+      path: '/investor/referral/active',
+      builder: (context, state) => const InvestorReferralActiveScreen(),
+    ),
+    GoRoute(
+      path: '/investor/referral/closed',
+      builder: (context, state) => const InvestorReferralClosedScreen(),
+    ),
     // Investor settings / security / profile subroutes
-    GoRoute(path: '/investor/cp', builder: (context, state) => const InvestorCpScreen()),
-    GoRoute(path: '/investor/settings', builder: (context, state) => const InvestorSettingsScreen()),
-    GoRoute(path: '/investor/security', builder: (context, state) => const InvestorSecurityScreen()),
-    GoRoute(path: '/investor/change-password', builder: (context, state) => const InvestorChangePasswordScreen()),
-    GoRoute(path: '/investor/profile/details', builder: (context, state) => const InvestorProfileDetailsScreen()),
-    GoRoute(path: '/investor/profile/change-password', builder: (context, state) => const InvestorProfileChangePasswordScreen()),
-    GoRoute(path: '/investor/profile/delete-account', builder: (context, state) => const InvestorDeleteAccountScreen()),
-    GoRoute(path: '/investor/profile/purge-cache', builder: (context, state) => const InvestorPurgeCacheScreen()),
-    GoRoute(path: '/investor/profile/family', builder: (context, state) => const FamilyMembersScreen()),
-    GoRoute(path: '/investor/profile/app-settings', builder: (context, state) => const AppSettingsScreen()),
-    GoRoute(path: '/investor/profile/ticket-logs', builder: (context, state) => const SupportLogsScreen()),
-    GoRoute(path: '/investor/profile/ticket-logs/new', builder: (context, state) => const CreateTicketScreen()),
+    GoRoute(
+      path: '/investor/cp',
+      builder: (context, state) => const InvestorCpScreen(),
+    ),
+    GoRoute(
+      path: '/investor/settings',
+      builder: (context, state) => const InvestorSettingsScreen(),
+    ),
+    GoRoute(
+      path: '/investor/security',
+      builder: (context, state) => const InvestorSecurityScreen(),
+    ),
+    GoRoute(
+      path: '/investor/change-password',
+      builder: (context, state) => const InvestorChangePasswordScreen(),
+    ),
+    GoRoute(
+      path: '/investor/profile/details',
+      builder: (context, state) => const InvestorProfileDetailsScreen(),
+    ),
+    GoRoute(
+      path: '/investor/profile/change-password',
+      builder: (context, state) => const InvestorProfileChangePasswordScreen(),
+    ),
+    GoRoute(
+      path: '/investor/profile/delete-account',
+      builder: (context, state) => const InvestorDeleteAccountScreen(),
+    ),
+    GoRoute(
+      path: '/investor/profile/purge-cache',
+      builder: (context, state) => const InvestorPurgeCacheScreen(),
+    ),
+    GoRoute(
+      path: '/investor/profile/family',
+      builder: (context, state) => const FamilyMembersScreen(),
+    ),
+    GoRoute(
+      path: '/investor/profile/app-settings',
+      builder: (context, state) => const AppSettingsScreen(),
+    ),
+    GoRoute(
+      path: '/investor/profile/ticket-logs',
+      builder: (context, state) => const SupportLogsScreen(),
+    ),
+    GoRoute(
+      path: '/investor/profile/ticket-logs/new',
+      builder: (context, state) => const CreateTicketScreen(),
+    ),
     // Investor reuse routes (existing screens)
-    GoRoute(path: '/investor/communities', builder: (context, state) => const CommunityListScreen()),
+    GoRoute(
+      path: '/investor/communities',
+      builder: (context, state) => const CommunityListScreen(),
+    ),
     GoRoute(
       path: '/investor/communities/:slug',
-      builder: (context, state) => CommunityDetailScreen(community: state.extra ?? {'_id': state.pathParameters['slug']!}),
+      builder: (context, state) => CommunityDetailScreen(
+        community: state.extra ?? {'_id': state.pathParameters['slug']!},
+      ),
     ),
     GoRoute(
       path: '/investor/communities/:slug/projects',
-      builder: (context, state) => CommunityProjectsListScreen(slug: state.pathParameters['slug']!),
+      builder: (context, state) =>
+          CommunityProjectsListScreen(slug: state.pathParameters['slug']!),
     ),
-    GoRoute(path: '/investor/notifications', builder: (context, state) => NotificationListScreen()),
-    GoRoute(path: '/investor/search', builder: (context, state) => const SearchScreen()),
-    GoRoute(path: '/investor/custom-views', builder: (context, state) => MyCustomViewsScreen()),
-    GoRoute(path: '/investor/my-custom-views', builder: (context, state) => MyCustomViewsScreen()),
-    GoRoute(path: '/investor/about', builder: (context, state) => const AboutScreen()),
-    GoRoute(path: '/investor/careers', builder: (context, state) => const CareersScreen()),
-    GoRoute(path: '/investor/contact', builder: (context, state) => const ContactScreen()),
-    GoRoute(path: '/investor/privacy-policy', builder: (context, state) => const PageDetailScreen(slug: 'privacy-policy')),
-    GoRoute(path: '/investor/help', builder: (context, state) => const HelpCenterScreen()),
+    GoRoute(
+      path: '/investor/notifications',
+      builder: (context, state) => NotificationListScreen(),
+    ),
+    GoRoute(
+      path: '/investor/search',
+      builder: (context, state) => const SearchScreen(),
+    ),
+    GoRoute(
+      path: '/investor/custom-views',
+      builder: (context, state) => MyCustomViewsScreen(),
+    ),
+    GoRoute(
+      path: '/investor/my-custom-views',
+      builder: (context, state) => MyCustomViewsScreen(),
+    ),
+    GoRoute(
+      path: '/investor/about',
+      builder: (context, state) => const AboutScreen(),
+    ),
+    GoRoute(
+      path: '/investor/careers',
+      builder: (context, state) => const CareersScreen(),
+    ),
+    GoRoute(
+      path: '/investor/contact',
+      builder: (context, state) => const ContactScreen(),
+    ),
+    GoRoute(
+      path: '/investor/privacy-policy',
+      builder: (context, state) =>
+          const PageDetailScreen(slug: 'privacy-policy'),
+    ),
+    GoRoute(
+      path: '/investor/help',
+      builder: (context, state) => const HelpCenterScreen(),
+    ),
     GoRoute(
       path: '/investor/events',
       builder: (context, state) => const GuestContentHubScreen(
@@ -639,10 +765,22 @@ final GoRouter _router = GoRouter(
         contentType: 'blog',
       ),
     ),
-    GoRoute(path: '/investor/support/help-center', builder: (context, state) => const HelpCenterScreen()),
-    GoRoute(path: '/investor/support/logs', builder: (context, state) => const SupportLogsScreen()),
-    GoRoute(path: '/investor/support/new-ticket', builder: (context, state) => const CreateTicketScreen()),
-    GoRoute(path: '/investor/support/tickets', builder: (context, state) => const SupportTicketsScreen()),
+    GoRoute(
+      path: '/investor/support/help-center',
+      builder: (context, state) => const HelpCenterScreen(),
+    ),
+    GoRoute(
+      path: '/investor/support/logs',
+      builder: (context, state) => const SupportLogsScreen(),
+    ),
+    GoRoute(
+      path: '/investor/support/new-ticket',
+      builder: (context, state) => const CreateTicketScreen(),
+    ),
+    GoRoute(
+      path: '/investor/support/tickets',
+      builder: (context, state) => const SupportTicketsScreen(),
+    ),
     GoRoute(
       path: '/investor/support/tickets/:id',
       builder: (context, state) => TicketDetailScreen(
@@ -703,10 +841,7 @@ final GoRouter _router = GoRouter(
       path: '/cp/tax-reports',
       builder: (context, state) => const CpTaxReportsScreen(),
     ),
-    GoRoute(
-      path: '/cp/hub',
-      builder: (context, state) => const CpHubScreen(),
-    ),
+    GoRoute(path: '/cp/hub', builder: (context, state) => const CpHubScreen()),
     GoRoute(
       path: '/cp/updates',
       builder: (context, state) => const CpUpdatesScreen(),
@@ -765,10 +900,7 @@ final GoRouter _router = GoRouter(
         initialTicket: state.extra as Map<String, dynamic>?,
       ),
     ),
-    GoRoute(
-      path: '/search',
-      builder: (context, state) => const SearchScreen(),
-    ),
+    GoRoute(path: '/search', builder: (context, state) => const SearchScreen()),
     GoRoute(
       path: '/projects/premium-upsell',
       builder: (context, state) => const PremiumUpsellScreen(),
@@ -813,10 +945,7 @@ final GoRouter _router = GoRouter(
       path: '/profile/deactivate',
       builder: (context, state) => DeactivateAccountScreen(),
     ),
-    GoRoute(
-      path: '/support',
-      builder: (context, state) => SupportScreen(),
-    ),
+    GoRoute(path: '/support', builder: (context, state) => SupportScreen()),
     GoRoute(
       path: '/support/contact',
       builder: (context, state) => const ContactScreen(),
@@ -865,10 +994,7 @@ final GoRouter _router = GoRouter(
         contentType: 'blog',
       ),
     ),
-    GoRoute(
-      path: '/about',
-      builder: (context, state) => const AboutScreen(),
-    ),
+    GoRoute(path: '/about', builder: (context, state) => const AboutScreen()),
     GoRoute(
       path: '/communities',
       builder: (context, state) => const CommunityListScreen(),
@@ -893,13 +1019,13 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/communities/:slug/projects',
-      builder: (context, state) => CommunityProjectsListScreen(
-        slug: state.pathParameters['slug']!,
-      ),
+      builder: (context, state) =>
+          CommunityProjectsListScreen(slug: state.pathParameters['slug']!),
     ),
     GoRoute(
       path: '/guest/privacy-policy',
-      builder: (context, state) => const PageDetailScreen(slug: 'privacy-policy'),
+      builder: (context, state) =>
+          const PageDetailScreen(slug: 'privacy-policy'),
     ),
     GoRoute(
       path: '/projects/:id',
@@ -945,7 +1071,10 @@ class SplashScreen extends StatelessWidget {
             const SizedBox(
               width: 22,
               height: 22,
-              child: CircularProgressIndicator(color: Colors.white24, strokeWidth: 2),
+              child: CircularProgressIndicator(
+                color: Colors.white24,
+                strokeWidth: 2,
+              ),
             ),
           ],
         ),
