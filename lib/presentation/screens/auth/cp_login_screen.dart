@@ -26,7 +26,8 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final fromGuest = GoRouterState.of(context).uri.queryParameters['from'] == 'guest';
+    final fromGuest =
+        GoRouterState.of(context).uri.queryParameters['from'] == 'guest';
 
     ref.listen<AuthState>(authProvider, (prev, next) {
       if (next.status == AuthStatus.authenticated) {
@@ -39,22 +40,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Positioned.fill(
-            child: Image.asset('assets/login-bg.png', fit: BoxFit.cover),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.black.withValues(alpha: 0.55),
-                  Colors.black.withValues(alpha: 0.75),
-                  Colors.black,
-                ],
-              ),
-            ),
-          ),
+          const Positioned.fill(child: ColoredBox(color: Colors.black)),
           SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -72,9 +58,15 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.05),
                             borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.white.withOpacity(0.1)),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.1),
+                            ),
                           ),
-                          child: const Icon(LucideIcons.chevronLeft, color: Colors.white70, size: 18),
+                          child: const Icon(
+                            LucideIcons.chevronLeft,
+                            color: Colors.white70,
+                            size: 18,
+                          ),
                         ),
                       ),
                       Container(
@@ -82,9 +74,12 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                         decoration: BoxDecoration(
                           color: Colors.purple.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.purple.withValues(alpha: 0.35)),
                         ),
-                        child: const Icon(LucideIcons.sparkles, color: Colors.purpleAccent, size: 22),
+                        child: const Icon(
+                          LucideIcons.sparkles,
+                          color: Colors.purpleAccent,
+                          size: 22,
+                        ),
                       ),
                     ],
                   ),
@@ -95,16 +90,25 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                       child: GestureDetector(
                         onTap: () => context.go('/home'),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 14,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.05),
                             borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: Colors.white.withOpacity(0.15)),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.15),
+                            ),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(LucideIcons.chevronLeft, color: Colors.white, size: 16),
+                              const Icon(
+                                LucideIcons.chevronLeft,
+                                color: Colors.white,
+                                size: 16,
+                              ),
                               const SizedBox(width: 12),
                               Text(
                                 'BACK TO GUEST PORTAL',
@@ -194,7 +198,11 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                   const SizedBox(height: 32),
                   Consumer(
                     builder: (context, ref, _) {
-                      final loading = ref.watch(authProvider.select((s) => s.status == AuthStatus.loading));
+                      final loading = ref.watch(
+                        authProvider.select(
+                          (s) => s.status == AuthStatus.loading,
+                        ),
+                      );
                       return SizedBox(
                         height: 64,
                         child: FilledButton(
@@ -205,33 +213,51 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                                   final pw = _passwordController.text;
                                   if (id.isEmpty || pw.isEmpty) {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Please enter both CP ID and password')),
+                                      const SnackBar(
+                                        content: Text(
+                                          'Please enter both CP ID and password',
+                                        ),
+                                      ),
                                     );
                                     return;
                                   }
-                                  final err = await ref.read(authProvider.notifier).loginCpWithPassword(id, pw);
+                                  final err = await ref
+                                      .read(authProvider.notifier)
+                                      .loginCpWithPassword(id, pw);
                                   if (!context.mounted) return;
                                   if (err != null) {
-                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err)));
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(err)),
+                                    );
                                   }
                                 },
                           style: FilledButton.styleFrom(
                             backgroundColor: Colors.purple.shade600,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(32),
+                            ),
                             padding: const EdgeInsets.symmetric(horizontal: 24),
                           ),
                           child: loading
                               ? const SizedBox(
                                   width: 22,
                                   height: 22,
-                                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
                                 )
                               : Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
                                       'AUTHORIZE ACCESS',
-                                      style: GoogleFonts.montserrat(fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 1.5),
+                                      style: GoogleFonts.montserrat(
+                                        fontWeight: FontWeight.w900,
+                                        fontSize: 13,
+                                        letterSpacing: 1.5,
+                                      ),
                                     ),
                                     Container(
                                       padding: const EdgeInsets.all(6),
@@ -239,7 +265,10 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                                         color: Colors.white.withOpacity(0.2),
                                         shape: BoxShape.circle,
                                       ),
-                                      child: const Icon(LucideIcons.arrowRight, size: 18),
+                                      child: const Icon(
+                                        LucideIcons.arrowRight,
+                                        size: 18,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -247,7 +276,28 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                       );
                     },
                   ),
-                  const SizedBox(height: 48),
+                  const SizedBox(height: 20),
+                  // Return to the guest (public) portal.
+                  Center(
+                    child: TextButton.icon(
+                      onPressed: () => context.go('/home'),
+                      icon: const Icon(
+                        LucideIcons.chevronLeft,
+                        color: Colors.white70,
+                        size: 16,
+                      ),
+                      label: Text(
+                        'BACK TO GUEST',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white70,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 28),
                   Text(
                     'M4 FAMILY PARTNER NETWORK\nSECURE • VERIFIED • TRUSTED',
                     textAlign: TextAlign.center,
@@ -303,7 +353,13 @@ class _Field extends StatelessWidget {
         TextField(
           controller: controller,
           obscureText: obscure,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+          // White cursor so it's visible on the dark field (default cursor is
+          // the theme primary, which is near-black here = invisible).
+          cursorColor: Colors.white,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.35)),
@@ -312,11 +368,21 @@ class _Field extends StatelessWidget {
             fillColor: Colors.black.withValues(alpha: 0.4),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.12)),
+              borderSide: BorderSide(
+                color: Colors.white.withValues(alpha: 0.12),
+              ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.12)),
+              borderSide: BorderSide(
+                color: Colors.white.withValues(alpha: 0.12),
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(
+                color: Colors.purpleAccent.withValues(alpha: 0.6),
+              ),
             ),
           ),
         ),
