@@ -41,26 +41,6 @@ class _GuestCustomViewsScreenState
       'image':
           'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?auto=format&fit=crop&q=80',
     },
-    {
-      'title': 'GOURMET KITCHENS',
-      'image':
-          'https://images.unsplash.com/photo-1556912172-45b7abe8b7e1?auto=format&fit=crop&q=80',
-    },
-    {
-      'title': 'CINEMATIC LOUNGES',
-      'image':
-          'https://images.unsplash.com/photo-1593914621423-47c992d99991?auto=format&fit=crop&q=80',
-    },
-    {
-      'title': 'PERSONAL GALLERIES',
-      'image':
-          'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80',
-    },
-    {
-      'title': 'OFFICE SUITES',
-      'image':
-          'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80',
-    },
   ];
 
   @override
@@ -198,17 +178,19 @@ class _GuestCustomViewsScreenState
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 25),
             sliver: SliverGrid(
+              // Web parity: aspect-[1/1.1] rounded-[3rem] cards (rounded
+              // rectangles, not tall ovals).
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
                 mainAxisSpacing: 25,
                 crossAxisSpacing: 25,
-                childAspectRatio: 0.7,
+                childAspectRatio: 0.9,
               ),
               delegate: SliverChildBuilderDelegate((context, index) {
                 final cat = _categories[index];
                 return Container(
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
+                        borderRadius: BorderRadius.circular(44),
                         boxShadow: [
                           BoxShadow(
                             color: (isDark ? Colors.white : Colors.black)
@@ -219,7 +201,7 @@ class _GuestCustomViewsScreenState
                         ],
                       ),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(100),
+                        borderRadius: BorderRadius.circular(44),
                         child: Stack(
                           fit: StackFit.expand,
                           children: [
@@ -242,20 +224,22 @@ class _GuestCustomViewsScreenState
                                   ],
                                 ),
                               ),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 24,
+                              // Web parity: title bottom-left, wide tracking.
+                              padding: const EdgeInsets.fromLTRB(
+                                24,
+                                24,
+                                16,
+                                28,
                               ),
-                              alignment: Alignment.center,
+                              alignment: Alignment.bottomLeft,
                               child: Text(
                                 cat['title']!,
-                                textAlign: TextAlign.center,
                                 style: GoogleFonts.montserrat(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w900,
                                   color: Colors.white,
-                                  letterSpacing: 1.5,
-                                  height: 1.2,
+                                  letterSpacing: 2.5,
+                                  height: 1.3,
                                 ),
                               ),
                             ),
