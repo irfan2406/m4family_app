@@ -355,8 +355,9 @@ class _SidebarItem extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
       child: Padding(
-        // Web parity: px-6 py-3.5 (generous vertical rhythm, not cramped).
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 13),
+        // Web parity: px-6 py-3.5 (24px horizontal via the ListView pad + 8;
+        // 14px vertical rhythm).
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
         child: Row(
           children: [
             Container(
