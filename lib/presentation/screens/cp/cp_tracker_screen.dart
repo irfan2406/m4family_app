@@ -247,7 +247,8 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
             LucideIcons.award,
             'COMMISSION',
             fmt.format((s['totalCommission'] ?? 0) as num),
-            const Color(0xFF9333EA),
+            // Web parity: Commission uses text-primary (dark), not purple.
+            scheme.onSurface,
             scheme,
           ),
           const SizedBox(width: 10),
@@ -436,21 +437,22 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
               children: [
                 Row(
                   children: [
-                    // Web parity: purple-tinted rounded avatar.
+                    // Web parity: text-primary (dark) UserCircle on a dark-tint
+                    // rounded tile — the CP primary is near-black, not purple.
                     Container(
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF9333EA).withValues(alpha: 0.1),
+                        color: scheme.onSurface.withValues(alpha: 0.07),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: const Color(0xFF9333EA).withValues(alpha: 0.2),
+                          color: scheme.onSurface.withValues(alpha: 0.12),
                         ),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         LucideIcons.userCircle2,
                         size: 26,
-                        color: Color(0xFF9333EA),
+                        color: scheme.onSurface,
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -539,7 +541,8 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                         Expanded(
                           child: _infoCol(
                             'PROPERTY INFO',
-                            const Color(0xFF9333EA),
+                            // Web parity: text-primary/40 (dark), not purple.
+                            scheme.onSurface,
                             [
                               // Web `||` treats '' as falsy, so blank values
                               // must fall back to TBD / N/A too.
@@ -702,8 +705,9 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
     bool highlight,
     ColorScheme scheme,
   ) {
-    const purple = Color(0xFF9333EA);
     const green = Color(0xFF10B981);
+    // Web parity: active (non-highlight) uses text-primary (dark), not purple.
+    final dark = scheme.onSurface;
     Color bg;
     Color border;
     Color fg;
@@ -713,9 +717,9 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
         border = green;
         fg = Colors.white;
       } else {
-        bg = purple.withValues(alpha: 0.15);
-        border = purple.withValues(alpha: 0.3);
-        fg = purple;
+        bg = dark.withValues(alpha: 0.12);
+        border = dark.withValues(alpha: 0.25);
+        fg = dark;
       }
     } else {
       bg = scheme.onSurface.withValues(alpha: 0.03);

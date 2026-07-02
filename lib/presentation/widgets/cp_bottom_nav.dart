@@ -60,10 +60,10 @@ class CpBottomNav extends StatelessWidget {
                 children: List.generate(_icons.length, (i) {
                   final active = currentIndex == i;
                   final onSurf = Theme.of(context).colorScheme.onSurface;
-                  // Web parity (CPBottomNav.tsx): active tab is purple with a
-                  // purple-tinted highlight; inactive icons are muted but
-                  // clearly visible (not washed out).
-                  const purple = Color(0xFF9333EA);
+                  // Web parity: CPBottomNav uses text-primary, and the CP
+                  // --primary is near-black navy (222 47% 6%), NOT purple — so
+                  // the active tab is DARK (onSurface), inactive is muted.
+                  final purple = onSurf;
                   return InkWell(
                     onTap: () => onTap(i),
                     borderRadius: BorderRadius.circular(14),
