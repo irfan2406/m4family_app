@@ -4,21 +4,19 @@ import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'dart:convert';
 import 'dart:ui';
-import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/presentation/providers/communities_provider.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/screens/communities/community_detail_screen.dart';
-import 'package:go_router/go_router.dart';
-import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
-import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
 
 class CommunityListScreen extends ConsumerStatefulWidget {
   const CommunityListScreen({super.key});
 
   @override
-  ConsumerState<CommunityListScreen> createState() => _CommunityListScreenState();
+  ConsumerState<CommunityListScreen> createState() =>
+      _CommunityListScreenState();
 }
 
 class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
@@ -27,66 +25,75 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => ref.read(communitiesProvider.notifier).fetchCommunities());
+    Future.microtask(
+      () => ref.read(communitiesProvider.notifier).fetchCommunities(),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(communitiesProvider);
-    final user = ref.watch(authProvider).user;
-    final role = user?['role']?.toString().toLowerCase();
-    final isCp = role == 'cp';
-    final cpIdx = ref.watch(cpNavigationIndexProvider);
-
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Material(
-      color: isDark ? Colors.black : Colors.white,
-      child: CustomScrollView(
+    return Scaffold(
+      backgroundColor: isDark ? Colors.black : Colors.white,
+      drawer: const ConditionalDrawer(),
+      body: CustomScrollView(
         slivers: [
-          // 🔝 Header (Logo, Back & Menu)
+          // 🔝 Header — web parity: back button + "M4 FAMILY / DEVELOPMENTS"
+          // on the LEFT, dark "..." pill on the RIGHT.
           SliverToBoxAdapter(
             child: Container(
-              padding: const EdgeInsets.fromLTRB(25, 60, 15, 20),
+              padding: const EdgeInsets.fromLTRB(25, 60, 20, 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                   GestureDetector(
-                    onTap: () {
-                       if (Navigator.canPop(context)) {
-                        Navigator.pop(context);
-                      } else {
-                        ref.read(navigationProvider.notifier).state = 0;
-                      }
-                    },
-                    child: Container(
-                      width: 45,
-                      height: 45,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
-                        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
-                      ),
-                      child: Icon(LucideIcons.chevronLeft, color: isDark ? Colors.white : Colors.black, size: 20),
-                    ),
-                  ),
                   Row(
                     children: [
+                      GestureDetector(
+                        onTap: () {
+                          if (Navigator.canPop(context)) {
+                            Navigator.pop(context);
+                          } else {
+                            ref.read(navigationProvider.notifier).state = 0;
+                          }
+                        },
+                        child: Container(
+                          width: 45,
+                          height: 45,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: (isDark ? Colors.white : Colors.black)
+                                .withOpacity(0.05),
+                            border: Border.all(
+                              color: (isDark ? Colors.white : Colors.black)
+                                  .withOpacity(0.1),
+                            ),
+                          ),
+                          child: Icon(
+                            LucideIcons.chevronLeft,
+                            color: isDark ? Colors.white : Colors.black,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
                       Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             'M4 FAMILY',
                             style: GoogleFonts.inter(
                               color: isDark ? Colors.white : Colors.black,
                               fontSize: 18,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w900,
                               letterSpacing: -1,
                             ),
                           ),
                           Text(
                             'DEVELOPMENTS',
                             style: GoogleFonts.inter(
-                              color: (isDark ? Colors.white : Colors.black).withOpacity(0.75),
+                              color: (isDark ? Colors.white : Colors.black)
+                                  .withOpacity(0.6),
                               fontSize: 8,
                               fontWeight: FontWeight.w700,
                               letterSpacing: 3,
@@ -94,14 +101,26 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(width: 8),
-                      Builder(
-                        builder: (context) => IconButton(
-                          icon: Icon(LucideIcons.moreHorizontal, color: isDark ? Colors.white : Colors.black, size: 28),
-                          onPressed: () => Scaffold.of(context).openDrawer(),
+                    ],
+                  ),
+                  Builder(
+                    builder: (context) => GestureDetector(
+                      onTap: () => Scaffold.of(context).openDrawer(),
+                      child: Container(
+                        width: 52,
+                        height: 36,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: isDark ? Colors.white : Colors.black,
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Icon(
+                          LucideIcons.moreHorizontal,
+                          color: isDark ? Colors.black : Colors.white,
+                          size: 18,
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ],
               ),
@@ -120,7 +139,9 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                     style: GoogleFonts.lora(
                       fontSize: 32,
                       fontWeight: FontWeight.w300,
-                      color: (isDark ? Colors.white : Colors.black).withOpacity(0.85),
+                      color: (isDark ? Colors.white : Colors.black).withOpacity(
+                        0.85,
+                      ),
                       height: 1,
                     ),
                   ),
@@ -136,11 +157,14 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                   const SizedBox(height: 30),
                   AnimatedCrossFade(
                     duration: const Duration(milliseconds: 300),
-                    crossFadeState: _isExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
+                    crossFadeState: _isExpanded
+                        ? CrossFadeState.showSecond
+                        : CrossFadeState.showFirst,
                     firstChild: Text(
                       'At M4 Family Developments, we are dedicated to delivering a luxury experience that goes beyond the ordinary. Our commitment to exquisite living, unparalleled quality, and iconic design is evident in ...',
                       style: GoogleFonts.lora(
-                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.75),
+                        color: (isDark ? Colors.white : Colors.black)
+                            .withOpacity(0.75),
                         fontSize: 14,
                         height: 1.8,
                         fontWeight: FontWeight.w500,
@@ -149,7 +173,8 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                     secondChild: Text(
                       'At M4 Family Developments, we are dedicated to delivering a luxury experience that goes beyond the ordinary. Our commitment to exquisite living, unparalleled quality, and iconic design is evident in every community we curate. We believe in creating spaces that faster connection, inspiration, and a sense of belonging for every resident. Our developments are strategically located to offer the best of urban living with a touch of serenity.',
                       style: GoogleFonts.lora(
-                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.75),
+                        color: (isDark ? Colors.white : Colors.black)
+                            .withOpacity(0.75),
                         fontSize: 14,
                         height: 1.8,
                         fontWeight: FontWeight.w500,
@@ -162,7 +187,13 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                     child: Container(
                       padding: const EdgeInsets.only(bottom: 2),
                       decoration: BoxDecoration(
-                        border: Border(bottom: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.3), width: 1)),
+                        border: Border(
+                          bottom: BorderSide(
+                            color: (isDark ? Colors.white : Colors.black)
+                                .withOpacity(0.3),
+                            width: 1,
+                          ),
+                        ),
                       ),
                       child: Text(
                         _isExpanded ? 'Read less' : 'Read more',
@@ -185,7 +216,9 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
               child: Center(
                 child: Padding(
                   padding: EdgeInsets.all(100.0),
-                  child: CircularProgressIndicator(color: isDark ? Colors.white : Colors.black),
+                  child: CircularProgressIndicator(
+                    color: isDark ? Colors.white : Colors.black,
+                  ),
                 ),
               ),
             )
@@ -194,7 +227,12 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
               child: Center(
                 child: Padding(
                   padding: const EdgeInsets.all(40.0),
-                  child: Text(state.error!, style: TextStyle(color: isDark ? Colors.white38 : Colors.black38)),
+                  child: Text(
+                    state.error!,
+                    style: TextStyle(
+                      color: isDark ? Colors.white38 : Colors.black38,
+                    ),
+                  ),
                 ),
               ),
             )
@@ -202,19 +240,51 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(25, 20, 25, 100),
               sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final community = state.communities[index];
-                    return _CommunityCard(community: community);
-                  },
-                  childCount: state.communities.length,
-                ),
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  final community = state.communities[index];
+                  return _CommunityCard(community: community);
+                }, childCount: state.communities.length),
               ),
             ),
         ],
       ),
     );
   }
+}
+
+Widget _communityImagePlaceholder() => Container(
+  color: const Color(0xFF1A1A1A),
+  child: const Center(
+    child: Icon(LucideIcons.building2, color: Colors.white24, size: 40),
+  ),
+);
+
+/// Renders a community image. Backend images can be base64 `data:` URIs,
+/// which CachedNetworkImage cannot decode (it only fetches over http) — those
+/// must go through Image.memory, or the card falls back to a black
+/// building-icon placeholder (the bug this fixes).
+Widget _communityImage(String url) {
+  if (url.startsWith('data:')) {
+    try {
+      final base64Str = url.substring(url.indexOf(',') + 1);
+      return Image.memory(
+        base64Decode(base64Str),
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+        errorBuilder: (_, __, ___) => _communityImagePlaceholder(),
+      );
+    } catch (_) {
+      return _communityImagePlaceholder();
+    }
+  }
+  if (url.isEmpty) return _communityImagePlaceholder();
+  return CachedNetworkImage(
+    imageUrl: url,
+    fit: BoxFit.cover,
+    placeholder: (context, u) => Container(color: Colors.black12),
+    errorWidget: (context, u, e) => _communityImagePlaceholder(),
+  );
 }
 
 class _CommunityCard extends ConsumerWidget {
@@ -225,7 +295,9 @@ class _CommunityCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final apiClient = ref.watch(apiClientProvider);
-    final imageUrl = apiClient.resolveUrl(community['image'] ?? community['imageUrl']);
+    final imageUrl = apiClient.resolveUrl(
+      community['image'] ?? community['imageUrl'],
+    );
 
     return GestureDetector(
       onTap: () => Navigator.push(
@@ -250,17 +322,7 @@ class _CommunityCard extends ConsumerWidget {
         clipBehavior: Clip.antiAlias,
         child: Stack(
           children: [
-            Positioned.fill(
-              child: CachedNetworkImage(
-                imageUrl: imageUrl,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => Container(color: Colors.black12),
-                errorWidget: (context, url, error) => Container(
-                  color: const Color(0xFF1A1A1A),
-                  child: const Center(child: Icon(LucideIcons.building2, color: Colors.white24, size: 40)),
-                ),
-              ),
-            ),
+            Positioned.fill(child: _communityImage(imageUrl)),
             // Gradient
             Positioned.fill(
               child: Container(
@@ -300,7 +362,9 @@ class _CommunityCard extends ConsumerWidget {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          community['subtitle'] ?? community['description'] ?? '',
+                          community['subtitle'] ??
+                              community['description'] ??
+                              '',
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.inter(
@@ -327,7 +391,11 @@ class _CommunityCard extends ConsumerWidget {
                         ),
                       ],
                     ),
-                    child: Icon(LucideIcons.arrowRight, color: isDark ? Colors.black : Colors.white, size: 24),
+                    child: Icon(
+                      LucideIcons.arrowRight,
+                      color: isDark ? Colors.black : Colors.white,
+                      size: 24,
+                    ),
                   ),
                 ],
               ),

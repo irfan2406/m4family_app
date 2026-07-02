@@ -160,16 +160,16 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
         child: Container(
           padding: padding,
           decoration: BoxDecoration(
-            color: (isDark ? Colors.white : Colors.black).withValues(
-              alpha: isDark ? 0.06 : 0.03,
-            ),
+            // Web parity: glass-card is a bright WHITE card in light mode (it
+            // pops off the background via the shadow), not a grey tint.
+            color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
             borderRadius: BorderRadius.circular(40),
             border: Border.all(color: border),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.12),
-                blurRadius: 40,
-                offset: const Offset(0, 18),
+                color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.15),
+                blurRadius: 50,
+                offset: const Offset(0, 20),
               ),
             ],
           ),
