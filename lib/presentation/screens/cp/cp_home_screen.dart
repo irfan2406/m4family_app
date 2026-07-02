@@ -124,19 +124,48 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
     }
   }
 
+  void _validationToast(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(msg), backgroundColor: Colors.red.shade700),
+    );
+  }
+
   Future<void> _submitInterest() async {
-    if (_nameController.text.isEmpty ||
-        _emailController.text.isEmpty ||
-        _phoneController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all required fields (*)')),
-      );
+    final name = _nameController.text.trim();
+    final email = _emailController.text.trim();
+    final phone = _phoneController.text.trim();
+
+    // Full Name: required, at least 2 chars.
+    if (name.isEmpty) {
+      _validationToast('Please enter your full name');
+      return;
+    }
+    if (name.length < 2) {
+      _validationToast('Please enter a valid name');
+      return;
+    }
+    // Email: required + valid format.
+    if (email.isEmpty) {
+      _validationToast('Please enter your email address');
+      return;
+    }
+    final emailValid = RegExp(r'^[\w.+-]+@[\w-]+\.[\w.-]+$').hasMatch(email);
+    if (!emailValid) {
+      _validationToast('Please enter a valid email address');
+      return;
+    }
+    // Phone: required + at least 10 digits (ignores +91 / spaces / dashes).
+    if (phone.isEmpty) {
+      _validationToast('Please enter your phone number');
+      return;
+    }
+    final phoneDigits = phone.replaceAll(RegExp(r'\D'), '');
+    if (phoneDigits.length < 10) {
+      _validationToast('Please enter a valid 10-digit phone number');
       return;
     }
     if (!_agreedToTerms) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please agree to the Privacy Policy')),
-      );
+      _validationToast('Please agree to the Privacy Policy');
       return;
     }
 
@@ -150,10 +179,10 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
           user?['phone']?.toString() ??
           'Partner';
       await apiClient.submitLead({
-        'name': _nameController.text,
-        'email': _emailController.text,
-        'phone': _phoneController.text,
-        'message': _messageController.text,
+        'name': name,
+        'email': email,
+        'phone': phone,
+        'message': _messageController.text.trim(),
         'interest': 'Channel Partner Interest',
         'source': 'cp app',
         'userId': partner,

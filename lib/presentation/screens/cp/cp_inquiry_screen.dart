@@ -33,27 +33,51 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
     super.dispose();
   }
 
+  void _validationToast(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(msg), backgroundColor: Colors.red.shade700),
+    );
+  }
+
   Future<void> _submit() async {
-    if (_name.text.trim().isEmpty ||
-        _email.text.trim().isEmpty ||
-        _phone.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all required fields')),
-      );
+    final name = _name.text.trim();
+    final email = _email.text.trim();
+    final phone = _phone.text.trim();
+
+    if (name.isEmpty) {
+      _validationToast('Please enter your full name');
+      return;
+    }
+    if (name.length < 2) {
+      _validationToast('Please enter a valid name');
+      return;
+    }
+    if (email.isEmpty) {
+      _validationToast('Please enter your email address');
+      return;
+    }
+    if (!RegExp(r'^[\w.+-]+@[\w-]+\.[\w.-]+$').hasMatch(email)) {
+      _validationToast('Please enter a valid email address');
+      return;
+    }
+    if (phone.isEmpty) {
+      _validationToast('Please enter your phone number');
+      return;
+    }
+    if (phone.replaceAll(RegExp(r'\D'), '').length < 10) {
+      _validationToast('Please enter a valid 10-digit phone number');
       return;
     }
     if (!_agreedToTerms) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please agree to the Privacy Policy')),
-      );
+      _validationToast('Please agree to the Privacy Policy');
       return;
     }
     setState(() => _submitting = true);
     try {
       final res = await ref.read(apiClientProvider).submitLead({
-        'name': _name.text.trim(),
-        'email': _email.text.trim(),
-        'phone': _phone.text.trim(),
+        'name': name,
+        'email': email,
+        'phone': phone,
         'interest': 'Channel Partner Interest',
         'source': 'cp inquiry',
         'notes': _message.text.trim(),
