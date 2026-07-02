@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
 
 /// Shared notifications screen — web parity with `(cp)/cp/notifications`,
 /// `(user)/notifications`, `investor/notifications`. Card design is identical
@@ -46,9 +47,21 @@ class NotificationListScreen extends ConsumerWidget {
     final isCp = role == 'cp';
     const purple = Color(0xFF9333EA);
 
-    return Material(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      child: SafeArea(
+    return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      extendBody: true,
+      // Web parity: persistent bottom nav. Shown for CP (the page is pushed
+      // over the shell, so a tab tap pops back and selects that shell tab).
+      bottomNavigationBar: isCp
+          ? CpBottomNav(
+              currentIndex: -1,
+              onTap: (i) {
+                ref.read(cpNavigationIndexProvider.notifier).state = i;
+                if (Navigator.canPop(context)) Navigator.pop(context);
+              },
+            )
+          : null,
+      body: SafeArea(
         child: Column(
           children: [
             // Header

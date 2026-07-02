@@ -28,7 +28,9 @@ class CpBottomNav extends StatelessWidget {
     final surface = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.white.withValues(alpha: 0.95);
-    final border = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08);
+    final border = (isDark ? Colors.white : Colors.black).withValues(
+      alpha: 0.08,
+    );
 
     return SafeArea(
       top: false,
@@ -58,11 +60,18 @@ class CpBottomNav extends StatelessWidget {
                 children: List.generate(_icons.length, (i) {
                   final active = currentIndex == i;
                   final onSurf = Theme.of(context).colorScheme.onSurface;
+                  // Web parity (CPBottomNav.tsx): active tab is purple with a
+                  // purple-tinted highlight; inactive icons are muted but
+                  // clearly visible (not washed out).
+                  const purple = Color(0xFF9333EA);
                   return InkWell(
                     onTap: () => onTap(i),
                     borderRadius: BorderRadius.circular(14),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 2,
+                        vertical: 10,
+                      ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
@@ -72,16 +81,20 @@ class CpBottomNav extends StatelessWidget {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(14),
                               color: active
-                                  ? onSurf.withValues(alpha: isDark ? 0.12 : 0.08)
+                                  ? purple.withValues(alpha: 0.12)
                                   : null,
                               border: active
-                                  ? Border.all(color: onSurf.withValues(alpha: 0.12))
+                                  ? Border.all(
+                                      color: purple.withValues(alpha: 0.25),
+                                    )
                                   : null,
                             ),
                             child: Icon(
                               _icons[i],
                               size: 22,
-                              color: active ? onSurf : onSurf.withValues(alpha: 0.38),
+                              color: active
+                                  ? purple
+                                  : onSurf.withValues(alpha: 0.5),
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -90,7 +103,7 @@ class CpBottomNav extends StatelessWidget {
                             height: 4,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: active ? onSurf : Colors.transparent,
+                              color: active ? purple : Colors.transparent,
                             ),
                           ),
                         ],
