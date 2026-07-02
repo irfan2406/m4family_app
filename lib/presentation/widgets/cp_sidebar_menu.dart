@@ -6,7 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
-import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 import 'package:m4_mobile/core/providers/theme_provider.dart';
 
@@ -95,8 +94,8 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                       _SidebarItem(
                         icon: LucideIcons.users,
                         label: 'Profile',
-                        isActive: idx == 5,
-                        onTap: () => _setTab(5),
+                        isActive: idx == 4,
+                        onTap: () => _setTab(4),
                       ),
                       _SidebarItem(
                         icon: LucideIcons.bell,
@@ -107,8 +106,8 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                       _SidebarItem(
                         icon: LucideIcons.layoutGrid,
                         label: 'Properties',
-                        isActive: idx == 3,
-                        onTap: () => _setTab(3),
+                        isActive: idx == 2,
+                        onTap: () => _setTab(2),
                       ),
                       _SidebarItem(
                         icon: LucideIcons.sparkles,
@@ -131,46 +130,26 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                             label: 'Content Hub',
                             isActive: false,
                           ),
+                          // Web parity: sub-items navigate to their own routes
+                          // (/cp/media, /cp/highlights, /cp/events, /cp/blog) —
+                          // there is no Content Hub tab in the CP shell, so the
+                          // old setTab(9) crashed (index out of range).
                           children: [
                             _SubItem(
                               label: 'Media',
-                              onTap: () {
-                                ref
-                                        .read(contentHubTypeProvider.notifier)
-                                        .state =
-                                    'media';
-                                _setTab(9);
-                              },
+                              onTap: () => _go('/cp/media'),
                             ),
                             _SubItem(
                               label: 'Highlights',
-                              onTap: () {
-                                ref
-                                        .read(contentHubTypeProvider.notifier)
-                                        .state =
-                                    'highlights';
-                                _setTab(9);
-                              },
+                              onTap: () => _go('/cp/highlights'),
                             ),
                             _SubItem(
                               label: 'Events',
-                              onTap: () {
-                                ref
-                                        .read(contentHubTypeProvider.notifier)
-                                        .state =
-                                    'events';
-                                _setTab(9);
-                              },
+                              onTap: () => _go('/cp/events'),
                             ),
                             _SubItem(
                               label: 'Blog',
-                              onTap: () {
-                                ref
-                                        .read(contentHubTypeProvider.notifier)
-                                        .state =
-                                    'blog';
-                                _setTab(9);
-                              },
+                              onTap: () => _go('/cp/blog'),
                             ),
                           ],
                         ),
@@ -191,8 +170,8 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                       _SidebarItem(
                         icon: LucideIcons.headphones,
                         label: 'Support Hub',
-                        isActive: idx == 4,
-                        onTap: () => _setTab(4),
+                        isActive: idx == 3,
+                        onTap: () => _setTab(3),
                       ),
 
                       const SizedBox(height: 24),
@@ -277,8 +256,10 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                                   .withOpacity(0.1),
                             ),
                           ),
+                          // Web parity: light mode → Sparkles, dark → Moon
+                          // (resolvedTheme === "dark" ? Moon : Sparkles).
                           child: Icon(
-                            isDark ? LucideIcons.sparkles : LucideIcons.moon,
+                            isDark ? LucideIcons.moon : LucideIcons.sparkles,
                             color: isDark ? Colors.white : Colors.black,
                             size: 18,
                           ),
@@ -302,15 +283,11 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                       height: 56,
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.9),
+                        // Web parity: bg-red-50 (light) / red-900/10 (dark).
+                        color: isDark
+                            ? Colors.red.withOpacity(0.1)
+                            : const Color(0xFFFEF2F2),
                         borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -376,7 +353,8 @@ class _SidebarItem extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 7),
+        // Web parity: px-6 py-3.5 (generous vertical rhythm, not cramped).
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 13),
         child: Row(
           children: [
             Container(
@@ -386,7 +364,7 @@ class _SidebarItem extends StatelessWidget {
                 color: iconBg,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Center(child: Icon(icon, size: 18, color: iconColor)),
+              child: Center(child: Icon(icon, size: 16, color: iconColor)),
             ),
             const SizedBox(width: 16),
             Expanded(
