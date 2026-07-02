@@ -391,43 +391,8 @@ class ProjectListScreen extends ConsumerWidget {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // View toggle pill (grid | list) — web parity
-                      Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: (isDark ? Colors.white : Colors.black)
-                              .withOpacity(0.05),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: (isDark ? Colors.white : Colors.black)
-                                .withOpacity(0.08),
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            _ViewToggleBtn(
-                              icon: LucideIcons.layoutGrid,
-                              active: isGridView,
-                              onTap: () =>
-                                  ref
-                                          .read(projectLayoutProvider.notifier)
-                                          .state =
-                                      true,
-                            ),
-                            const SizedBox(width: 4),
-                            _ViewToggleBtn(
-                              icon: LucideIcons.list,
-                              active: !isGridView,
-                              onTap: () =>
-                                  ref
-                                          .read(projectLayoutProvider.notifier)
-                                          .state =
-                                      false,
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 6),
+                      // Web parity: header has only the filter icon (no
+                      // grid/list toggle). The "..." opens the Partner Menu.
                       // Filter button (sliders icon)
                       GestureDetector(
                         onTap: () => _showFilterBottomSheet(context, ref),
@@ -716,16 +681,30 @@ class _ProjectGridItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Location (above) + Title — web order
+                // Web order: title ABOVE location.
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Text(
+                        (project['title'] ?? 'M4 PROJECT')
+                            .toString()
+                            .toUpperCase(),
+                        style: GoogleFonts.montserrat(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.white,
+                          letterSpacing: -0.5,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 6),
                       Row(
                         children: [
                           const Icon(
                             LucideIcons.mapPin,
-                            size: 13,
+                            size: 12,
                             color: Colors.white70,
                           ),
                           const SizedBox(width: 4),
@@ -733,7 +712,7 @@ class _ProjectGridItem extends StatelessWidget {
                             child: Text(
                               locationLabel.toUpperCase(),
                               style: GoogleFonts.montserrat(
-                                fontSize: 10,
+                                fontSize: 9,
                                 color: Colors.white70,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 1.5,
@@ -743,20 +722,6 @@ class _ProjectGridItem extends StatelessWidget {
                             ),
                           ),
                         ],
-                      ),
-                      const SizedBox(height: 6),
-                      Text(
-                        (project['title'] ?? 'M4 PROJECT')
-                            .toString()
-                            .toUpperCase(),
-                        style: GoogleFonts.montserrat(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w800,
-                          color: Colors.white,
-                          letterSpacing: -0.5,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
@@ -896,43 +861,6 @@ class _ProjectListRowItem extends StatelessWidget {
         ],
       ),
     ).animate().fadeIn().slideX(begin: 0.1, end: 0);
-  }
-}
-
-class _ViewToggleBtn extends StatelessWidget {
-  final IconData icon;
-  final bool active;
-  final VoidCallback onTap;
-  const _ViewToggleBtn({
-    required this.icon,
-    required this.active,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 32,
-        height: 32,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: active
-              ? (isDark ? Colors.white : Colors.black)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Icon(
-          icon,
-          size: 16,
-          color: active
-              ? (isDark ? Colors.black : Colors.white)
-              : Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
-        ),
-      ),
-    );
   }
 }
 
