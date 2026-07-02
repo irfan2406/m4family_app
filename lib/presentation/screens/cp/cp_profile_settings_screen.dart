@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -711,36 +712,6 @@ class _CpProfileSettingsScreenState
                         _sessionsButton(scheme),
                         const SizedBox(height: 16),
                         _deleteAccountTextButton(scheme),
-                        const SizedBox(height: 40),
-                        Center(
-                          child: Column(
-                            children: [
-                              Text(
-                                'M4 FAMILY PRIVATE OFFICE',
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 8,
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: 4,
-                                  color: scheme.onSurface.withValues(
-                                    alpha: 0.2,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'VERSION 2.4.0 • SECURE BUILD 882',
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 7,
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: 2,
-                                  color: scheme.onSurface.withValues(
-                                    alpha: 0.12,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
                       ],
                     ),
                   ),
@@ -1033,10 +1004,14 @@ class _CpProfileSettingsScreenState
                   'FIRST NAME',
                   TextField(
                     controller: _first,
+                    // Names type + display in uppercase (matches how the
+                    // profile renders them); bold and slightly larger.
+                    textCapitalization: TextCapitalization.characters,
+                    inputFormatters: [_UpperCaseTextFormatter()],
                     style: GoogleFonts.montserrat(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
-                      color: scheme.onSurface.withValues(alpha: 0.92),
+                      fontWeight: FontWeight.w800,
+                      fontSize: 16,
+                      color: scheme.onSurface,
                     ),
                     decoration: _inputDec(
                       scheme,
@@ -1056,10 +1031,12 @@ class _CpProfileSettingsScreenState
                   'LAST NAME',
                   TextField(
                     controller: _last,
+                    textCapitalization: TextCapitalization.characters,
+                    inputFormatters: [_UpperCaseTextFormatter()],
                     style: GoogleFonts.montserrat(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 14,
-                      color: scheme.onSurface.withValues(alpha: 0.92),
+                      fontWeight: FontWeight.w800,
+                      fontSize: 16,
+                      color: scheme.onSurface,
                     ),
                     decoration: _inputDec(scheme),
                   ),
@@ -1415,5 +1392,16 @@ class _CpProfileSettingsScreenState
               ),
             ),
     );
+  }
+}
+
+/// Forces field text to uppercase as the user types (name fields).
+class _UpperCaseTextFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    return newValue.copyWith(text: newValue.text.toUpperCase());
   }
 }
