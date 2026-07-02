@@ -3,20 +3,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/support_provider.dart';
-import 'package:m4_mobile/presentation/screens/support/create_ticket_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'package:m4_mobile/presentation/screens/support/schedule_visit_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/help_center_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/support_tickets_screen.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
-
+import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import 'dart:ui';
-
 
 class SupportScreen extends ConsumerStatefulWidget {
   const SupportScreen({super.key});
@@ -37,6 +35,14 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(supportProvider);
+    // Web parity: only the User and Investor Support Hub pages have an
+    // "Operational Logs" section — the CP page (`(cp)/cp/support/page.tsx`)
+    // has none at all.
+    final authState = ref.watch(authProvider);
+    final role = (authState.user?['role'] ?? authState.role ?? '')
+        .toString()
+        .toLowerCase();
+    final showOperationalLogs = role != 'cp';
 
     return Material(
       color: Theme.of(context).scaffoldBackgroundColor,
@@ -52,7 +58,8 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
 
               Expanded(
                 child: RefreshIndicator(
-                  onRefresh: () => ref.read(supportProvider.notifier).fetchTickets(),
+                  onRefresh: () =>
+                      ref.read(supportProvider.notifier).fetchTickets(),
                   color: Theme.of(context).colorScheme.onSurface,
                   backgroundColor: Theme.of(context).colorScheme.surface,
                   child: ListView(
@@ -60,20 +67,28 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
                     children: [
                       const SizedBox(height: 20),
                       _buildSupportMatrix(),
-                      const SizedBox(height: 40),
-                      _buildOperationalLogsHeader(),
-                      const SizedBox(height: 20),
-                      if (state.isLoading && state.tickets.isEmpty)
-                        const Center(child: Padding(
-                          padding: EdgeInsets.all(40.0),
-                          child: CircularProgressIndicator(color: Colors.white24),
-                        ))
-                      else if (state.tickets.isEmpty)
-                        _buildEmptyState()
-                      else
-                        ...state.tickets.take(3).map((t) => _TicketPreviewItem(ticket: t)).toList(),
+                      if (showOperationalLogs) ...[
+                        const SizedBox(height: 40),
+                        _buildOperationalLogsHeader(),
+                        const SizedBox(height: 20),
+                        if (state.isLoading && state.tickets.isEmpty)
+                          const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(40.0),
+                              child: CircularProgressIndicator(
+                                color: Colors.white24,
+                              ),
+                            ),
+                          )
+                        else if (state.tickets.isEmpty)
+                          _buildEmptyState()
+                        else
+                          ...state.tickets
+                              .take(3)
+                              .map((t) => _TicketPreviewItem(ticket: t))
+                              .toList(),
+                      ],
                       const SizedBox(height: 120), // Bottom padding
-
                     ],
                   ),
                 ),
@@ -108,36 +123,32 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: scheme.surfaceContainerHighest.withValues(alpha: isLight ? 0.65 : 0.25),
+                    color: scheme.surfaceContainerHighest.withValues(
+                      alpha: isLight ? 0.65 : 0.25,
+                    ),
                     shape: BoxShape.circle,
-                    border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.5)),
+                    border: Border.all(
+                      color: scheme.outlineVariant.withValues(alpha: 0.5),
+                    ),
                   ),
-                  child: Icon(LucideIcons.arrowLeft, color: scheme.onSurface, size: 16),
+                  child: Icon(
+                    LucideIcons.arrowLeft,
+                    color: scheme.onSurface,
+                    size: 16,
+                  ),
                 ),
               ),
               const SizedBox(width: 16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'M4 FAMILY',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 8,
-                      fontWeight: FontWeight.w800,
-                      color: scheme.onSurface.withOpacity(0.4),
-                      letterSpacing: 2,
-                    ),
-                  ),
-                  Text(
-                    'SUPPORT HUB',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w900,
-                      color: scheme.onSurface,
-                      letterSpacing: -0.5,
-                    ),
-                  ),
-                ],
+              // Web parity: no "M4 FAMILY" kicker on any portal's Support Hub
+              // header — just the title.
+              Text(
+                'SUPPORT HUB',
+                style: GoogleFonts.montserrat(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: scheme.onSurface,
+                  letterSpacing: 0.5,
+                ),
               ),
             ],
           ),
@@ -184,7 +195,9 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const ScheduleVisitScreen()),
+                  MaterialPageRoute(
+                    builder: (context) => const ScheduleVisitScreen(),
+                  ),
                 );
               },
             ),
@@ -203,7 +216,9 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const HelpCenterScreen()),
+                  MaterialPageRoute(
+                    builder: (context) => const HelpCenterScreen(),
+                  ),
                 );
               },
             ),
@@ -232,18 +247,16 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
               ),
             ),
             const SizedBox(height: 4),
-            Container(
-              width: 32,
-              height: 2,
-              color: scheme.onSurface,
-            ),
+            Container(width: 32, height: 2, color: scheme.onSurface),
           ],
         ),
         GestureDetector(
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const SupportTicketsScreen()),
+              MaterialPageRoute(
+                builder: (context) => const SupportTicketsScreen(),
+              ),
             );
           },
           child: Text(
@@ -283,7 +296,6 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
       ),
     ).animate().fadeIn();
   }
-
 }
 
 class _MatrixItem extends StatelessWidget {
@@ -312,7 +324,9 @@ class _MatrixItem extends StatelessWidget {
         decoration: BoxDecoration(
           color: scheme.onSurface.withValues(alpha: 0.02),
           borderRadius: BorderRadius.circular(32),
-          border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.3)),
+          border: Border.all(
+            color: scheme.outlineVariant.withValues(alpha: 0.3),
+          ),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -322,7 +336,9 @@ class _MatrixItem extends StatelessWidget {
               height: 44,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.4)),
+                border: Border.all(
+                  color: scheme.outlineVariant.withValues(alpha: 0.4),
+                ),
                 color: scheme.surface,
               ),
               child: Icon(icon, color: color, size: 20),
@@ -356,7 +372,6 @@ class _MatrixItem extends StatelessWidget {
   }
 }
 
-
 class _TicketPreviewItem extends StatelessWidget {
   final dynamic ticket;
 
@@ -368,8 +383,11 @@ class _TicketPreviewItem extends StatelessWidget {
     final id = (ticket.id ?? '').toString();
     final title = (ticket.subject ?? 'Support Query').toString();
     final status = (ticket.status ?? 'Open').toString();
-    final isOpen = status.toLowerCase() == 'open' || status.toLowerCase() == 'in progress';
-    final badgeBg = isOpen ? Colors.blueAccent.withOpacity(0.1) : Colors.greenAccent.withOpacity(0.12);
+    final isOpen =
+        status.toLowerCase() == 'open' || status.toLowerCase() == 'in progress';
+    final badgeBg = isOpen
+        ? Colors.blueAccent.withOpacity(0.1)
+        : Colors.greenAccent.withOpacity(0.12);
     final badgeFg = isOpen ? Colors.blueAccent : Colors.greenAccent;
     return ClipRRect(
       borderRadius: BorderRadius.circular(24),
@@ -379,9 +397,15 @@ class _TicketPreviewItem extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 12),
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF18181B).withOpacity(0.8) : Colors.white.withOpacity(0.6),
+            color: isDark
+                ? const Color(0xFF18181B).withOpacity(0.8)
+                : Colors.white.withOpacity(0.6),
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.white.withOpacity(0.6)),
+            border: Border.all(
+              color: isDark
+                  ? Colors.white.withOpacity(0.05)
+                  : Colors.white.withOpacity(0.6),
+            ),
           ),
           child: Row(
             children: [
@@ -392,13 +416,18 @@ class _TicketPreviewItem extends StatelessWidget {
                     Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.blueAccent.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
-                            id.isEmpty ? '—' : id.substring(0, id.length.clamp(0, 8)),
+                            id.isEmpty
+                                ? '—'
+                                : id.substring(0, id.length.clamp(0, 8)),
                             style: GoogleFonts.montserrat(
                               color: Colors.blueAccent,
                               fontSize: 8,
@@ -425,12 +454,22 @@ class _TicketPreviewItem extends StatelessWidget {
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        Icon(LucideIcons.clock, size: 12, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2)),
+                        Icon(
+                          LucideIcons.clock,
+                          size: 12,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withOpacity(0.2),
+                        ),
                         const SizedBox(width: 6),
                         Text(
-                          DateFormat('MMM d').format(ticket.createdAt).toUpperCase(),
+                          DateFormat(
+                            'MMM d',
+                          ).format(ticket.createdAt).toUpperCase(),
                           style: GoogleFonts.montserrat(
-                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withOpacity(0.2),
                             fontSize: 9,
                             fontWeight: FontWeight.w900,
                           ),
@@ -441,11 +480,21 @@ class _TicketPreviewItem extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                decoration: BoxDecoration(color: badgeBg, borderRadius: BorderRadius.circular(8)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: badgeBg,
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 child: Text(
                   status.toUpperCase(),
-                  style: GoogleFonts.montserrat(color: badgeFg, fontSize: 8, fontWeight: FontWeight.w900),
+                  style: GoogleFonts.montserrat(
+                    color: badgeFg,
+                    fontSize: 8,
+                    fontWeight: FontWeight.w900,
+                  ),
                 ),
               ),
             ],
@@ -455,4 +504,3 @@ class _TicketPreviewItem extends StatelessWidget {
     );
   }
 }
-

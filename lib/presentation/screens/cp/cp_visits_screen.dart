@@ -1221,6 +1221,8 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                       child: CircularProgressIndicator(
                         value: progress / 100.0,
                         strokeWidth: 4,
+                        strokeCap:
+                            StrokeCap.round, // web: strokeLinecap="round"
                         color: accent,
                         backgroundColor: scheme.onSurface.withValues(
                           alpha: 0.08,
