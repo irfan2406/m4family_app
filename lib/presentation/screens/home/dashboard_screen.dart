@@ -6,6 +6,7 @@ import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:go_router/go_router.dart';
 import 'dart:ui';
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
@@ -19,7 +20,6 @@ import 'package:m4_mobile/presentation/screens/communities/community_detail_scre
 import 'package:m4_mobile/presentation/screens/communities/community_list_screen.dart';
 import 'dart:async';
 
-
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
 
@@ -32,8 +32,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   final ScrollController _scrollController = ScrollController();
   final GlobalKey _inquiryKey = GlobalKey();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  
+
   int _currentHeroIndex = 0;
+  int _heroSlide =
+      0; // top hero cycles the featured project's heroImages (web parity)
   String _searchQuery = '';
   String _selectedCategory = 'ALL';
   List<dynamic> _projects = [];
@@ -44,7 +46,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   List<dynamic> _communities = [];
   bool _communitiesLoading = true;
   String _topTabCategory = 'COMMUNITIES';
-  
+
   Timer? _heroTimer;
   Timer? _scrollTimer;
   final ScrollController _recommendedScrollController = ScrollController();
@@ -87,24 +89,124 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     _heroTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
       if (_projects.isNotEmpty) {
         setState(() {
-          _currentHeroIndex = (_currentHeroIndex + 1) % (_projects.length > 5 ? 5 : _projects.length);
+          // Cycle the 3 hero slides (featured project's heroImages) — web parity.
+          _heroSlide = (_heroSlide + 1) % 3;
         });
       }
     });
 
     _scrollTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
       if (_recommendedScrollController.hasClients) {
-        double maxScroll = _recommendedScrollController.position.maxScrollExtent;
+        double maxScroll =
+            _recommendedScrollController.position.maxScrollExtent;
         double currentScroll = _recommendedScrollController.offset;
         double nextScroll = currentScroll + 260; // card width + margin
 
         if (nextScroll >= maxScroll) {
-          _recommendedScrollController.animateTo(0, duration: 800.ms, curve: Curves.easeInOut);
+          _recommendedScrollController.animateTo(
+            0,
+            duration: 800.ms,
+            curve: Curves.easeInOut,
+          );
         } else {
-          _recommendedScrollController.animateTo(nextScroll, duration: 800.ms, curve: Curves.easeInOut);
+          _recommendedScrollController.animateTo(
+            nextScroll,
+            duration: 800.ms,
+            curve: Curves.easeInOut,
+          );
         }
       }
     });
+  }
+
+  /// Web parity (SharedHomePage.getImg): prefer heroImages[idx], then the
+  /// singular heroImage (idx 0), then images[0], then a stock fallback. The web
+  /// hero/cards read heroImages first — the app previously read heroImage /
+  /// images[0], which surfaced concept/palette graphics instead of the real
+  /// interior renders.
+  String _projImg(dynamic p, int idx) {
+    if (p is Map) {
+      final hero = p['heroImages'];
+      if (hero is List && idx < hero.length) {
+        final v = hero[idx]?.toString();
+        if (v != null && v.isNotEmpty) return v;
+      }
+      if (idx == 0) {
+        final single = p['heroImage']?.toString();
+        if (single != null && single.isNotEmpty) return single;
+        final imgs = p['images'];
+        if (imgs is List && imgs.isNotEmpty) {
+          final v = imgs[0]?.toString();
+          if (v != null && v.isNotEmpty) return v;
+        }
+      }
+    }
+    return 'https://images.unsplash.com/photo-1613545325278-f24b0cae1224?auto=format&fit=crop&q=80';
+  }
+
+  /// Web parity: MEDIA tab = a gallery built from every project's heroImages.
+  Widget _buildMediaRow(BuildContext context) {
+    final media = <Map<String, dynamic>>[];
+    for (final p in _projects) {
+      if (p is! Map) continue;
+      final hero = p['heroImages'];
+      final list = hero is List
+          ? hero
+          : (p['heroImage'] != null ? [p['heroImage']] : const []);
+      for (final img in list) {
+        final url = img?.toString() ?? '';
+        if (url.isEmpty) continue;
+        media.add({
+          'image': url,
+          'title': p['title']?.toString() ?? '',
+          'project': p,
+        });
+      }
+    }
+    if (media.isEmpty) {
+      return Center(
+        child: Text(
+          'NO MEDIA FOUND',
+          style: GoogleFonts.montserrat(
+            color: Colors.white10,
+            fontSize: 10,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+      );
+    }
+    return ListView.builder(
+      scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      itemCount: media.length > 12 ? 12 : media.length,
+      itemBuilder: (context, index) {
+        final m = media[index];
+        final project = m['project'];
+        return _MediaCard(
+          imageUrl: m['image'] as String,
+          title: m['title'] as String,
+          onTap: () {
+            final projectId = project is Map
+                ? (project['_id']?.toString() ??
+                      project['id']?.toString() ??
+                      '')
+                : '';
+            if (projectId.isNotEmpty) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProjectDetailScreen(
+                    projectId: projectId,
+                    projectData: project,
+                  ),
+                ),
+              );
+            }
+          },
+        );
+      },
+    );
   }
 
   Future<void> _fetchUpdates() async {
@@ -137,14 +239,20 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         setState(() => _projectsLoading = false);
         final msg = response.data['message'] ?? 'Unknown error';
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('API Error: $msg'), backgroundColor: Colors.orangeAccent),
+          SnackBar(
+            content: Text('API Error: $msg'),
+            backgroundColor: Colors.orangeAccent,
+          ),
         );
       }
     } catch (e) {
       if (mounted) {
         setState(() => _projectsLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to load projects: $e'), backgroundColor: Colors.redAccent),
+          SnackBar(
+            content: Text('Failed to load projects: $e'),
+            backgroundColor: Colors.redAccent,
+          ),
         );
       }
     }
@@ -177,15 +285,21 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   Future<void> _submitInquiry() async {
     final apiClient = ref.read(apiClientProvider);
-    if (_nameController.text.isEmpty || _emailController.text.isEmpty || _phoneController.text.isEmpty || _selectedProject == null) {
+    if (_nameController.text.isEmpty ||
+        _emailController.text.isEmpty ||
+        _phoneController.text.isEmpty ||
+        _selectedProject == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all required fields (*)'), backgroundColor: Colors.redAccent),
+        const SnackBar(
+          content: Text('Please fill all required fields (*)'),
+          backgroundColor: Colors.redAccent,
+        ),
       );
       return;
     }
 
     setState(() => _isSubmitting = true);
-    
+
     try {
       final response = await apiClient.submitLead({
         'name': _nameController.text,
@@ -203,14 +317,20 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         _phoneController.clear();
         _messageController.clear();
         setState(() => _selectedProject = null);
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Inquiry submitted successfully!'), backgroundColor: Colors.green),
+          const SnackBar(
+            content: Text('Inquiry submitted successfully!'),
+            backgroundColor: Colors.green,
+          ),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Submission failed: $e'), backgroundColor: Colors.redAccent),
+        SnackBar(
+          content: Text('Submission failed: $e'),
+          backgroundColor: Colors.redAccent,
+        ),
       );
     } finally {
       setState(() => _isSubmitting = false);
@@ -259,7 +379,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           SliverAppBar(
             pinned: true,
             toolbarHeight: 120,
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9),
+            backgroundColor: Theme.of(
+              context,
+            ).scaffoldBackgroundColor.withOpacity(0.9),
             automaticallyImplyLeading: false,
             elevation: 0,
             titleSpacing: 0,
@@ -288,7 +410,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     ),
                     child: Image.asset(
                       'assets/m4_family_logo.png',
-                      height: 85, // 👈 Reduced for a more elegant, minimalist footprint
+                      height:
+                          85, // 👈 Reduced for a more elegant, minimalist footprint
                       fit: BoxFit.contain,
                     ),
                   ),
@@ -300,18 +423,18 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         height: 36,
                         decoration: BoxDecoration(
                           // Toggle button background: White in Dark Mode, Black in Light Mode
-                          color: Theme.of(context).brightness == Brightness.dark 
-                              ? Colors.white 
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
                               : Colors.black,
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Icon(
-                          LucideIcons.moreHorizontal, 
+                          LucideIcons.moreHorizontal,
                           // Toggle icon color: Black in Dark Mode, White in Light Mode
-                          color: Theme.of(context).brightness == Brightness.dark 
-                              ? Colors.black 
-                              : Colors.white, 
-                          size: 24
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.black
+                              : Colors.white,
+                          size: 24,
                         ),
                       ),
                     ),
@@ -324,13 +447,21 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           // ⭐️ TAGLINE & HERO SECTION
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0), // 👈 Zero bottom padding
+              padding: const EdgeInsets.fromLTRB(
+                0,
+                0,
+                0,
+                0,
+              ), // 👈 Zero bottom padding
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   // ⭐️ Tagline (Living the M4 Life)
                   Transform.translate(
-                    offset: const Offset(0, -20), // 👈 Reduced from -60 to avoid overlap
+                    offset: const Offset(
+                      0,
+                      -20,
+                    ), // 👈 Reduced from -60 to avoid overlap
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 0),
                       child: ColorFiltered(
@@ -363,113 +494,142 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
                   // Hero Image Container (Pulled UP)
                   Transform.translate(
-                    offset: const Offset(0, -40), // 👈 Pull even higher due to taller tagline box
+                    offset: const Offset(
+                      0,
+                      -40,
+                    ), // 👈 Pull even higher due to taller tagline box
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24),
                       child: Builder(
-                    builder: (context) {
-                      final featured = (_projects.isNotEmpty)
-                          ? _projects[_currentHeroIndex % _projects.length]
-                          : null;
-                      
-                      final mainImage = (featured != null)
-                          ? (featured['heroImage'] != null
-                              ? featured['heroImage'].toString()
-                              : (featured['images'] is List && (featured['images'] as List).isNotEmpty
-                                  ? featured['images'][0].toString()
-                                  : 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80'))
-                          : 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80';
+                        builder: (context) {
+                          // Web parity: the top hero cycles the FIRST (featured)
+                          // project's heroImages[0..2], matching SharedHomePage.
+                          final featured = _projects.isNotEmpty
+                              ? _projects[0]
+                              : null;
+                          final mainImage = _projImg(featured, _heroSlide % 3);
 
-                      return Stack(
-                        children: [
-                          AspectRatio(
-                            aspectRatio: 4 / 3,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(32),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.15),
-                                    blurRadius: 30,
-                                    offset: const Offset(0, 15),
+                          return Stack(
+                            children: [
+                              AspectRatio(
+                                aspectRatio: 4 / 3,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(32),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.15),
+                                        blurRadius: 30,
+                                        offset: const Offset(0, 15),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(32),
-                                child: AnimatedSwitcher(
-                                  duration: const Duration(milliseconds: 800),
-                                  transitionBuilder: (Widget child, Animation<double> animation) {
-                                    return FadeTransition(opacity: animation, child: child);
-                                  },
-                                  child: M4Image(
-                                    key: ValueKey<int>(_currentHeroIndex),
-                                    imageUrl: mainImage,
-                                    fit: BoxFit.cover,
-                                    width: double.infinity,
-                                    height: double.infinity,
-                                    placeholder: Container(color: Colors.black12),
-                                    errorWidget: Container(
-                                      color: Colors.white10,
-                                      child: const Center(child: Icon(LucideIcons.image, color: Colors.white24, size: 50)),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(32),
+                                    child: AnimatedSwitcher(
+                                      duration: const Duration(
+                                        milliseconds: 800,
+                                      ),
+                                      transitionBuilder:
+                                          (
+                                            Widget child,
+                                            Animation<double> animation,
+                                          ) {
+                                            return FadeTransition(
+                                              opacity: animation,
+                                              child: child,
+                                            );
+                                          },
+                                      child: M4Image(
+                                        key: ValueKey<int>(_heroSlide),
+                                        imageUrl: mainImage,
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                        placeholder: Container(
+                                          color: Colors.black12,
+                                        ),
+                                        errorWidget: Container(
+                                          color: Colors.white10,
+                                          child: const Center(
+                                            child: Icon(
+                                              LucideIcons.image,
+                                              color: Colors.white24,
+                                              size: 50,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ),
-                          
-                          // Artistic Impression Badge
-                          Positioned(
-                            top: 16,
-                            right: 16,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.6),
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: Colors.white.withOpacity(0.1)),
-                              ),
-                              child: Text(
-                                'ARTISTIC IMPRESSION',
-                                style: GoogleFonts.montserrat(
-                                  color: Colors.white,
-                                  fontSize: 7,
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: 1.5,
+
+                              // Artistic Impression Badge
+                              Positioned(
+                                top: 16,
+                                right: 16,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.6),
+                                    borderRadius: BorderRadius.circular(4),
+                                    border: Border.all(
+                                      color: Colors.white.withOpacity(0.1),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'ARTISTIC IMPRESSION',
+                                    style: GoogleFonts.montserrat(
+                                      color: Colors.white,
+                                      fontSize: 7,
+                                      fontWeight: FontWeight.w900,
+                                      letterSpacing: 1.5,
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
 
-                          // Carousel Indicators
-                          Positioned(
-                            bottom: 24,
-                            left: 0,
-                            right: 0,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: List.generate(3, (index) {
-                                final isSelected = (_currentHeroIndex % 3) == index;
-                                return AnimatedContainer(
-                                  duration: const Duration(milliseconds: 300),
-                                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                                  width: isSelected ? 32 : 24,
-                                  height: 4,
-                                  decoration: BoxDecoration(
-                                    color: isSelected ? Colors.black : Colors.white.withValues(alpha: 0.5),
-                                    borderRadius: BorderRadius.circular(2),
-                                  ),
-                                );
-                              }),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ),
-              ), // 👈 Closing Transform.translate for Hero
+                              // Carousel Indicators
+                              Positioned(
+                                bottom: 24,
+                                left: 0,
+                                right: 0,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: List.generate(3, (index) {
+                                    final isSelected =
+                                        (_heroSlide % 3) == index;
+                                    return AnimatedContainer(
+                                      duration: const Duration(
+                                        milliseconds: 300,
+                                      ),
+                                      margin: const EdgeInsets.symmetric(
+                                        horizontal: 4,
+                                      ),
+                                      width: isSelected ? 32 : 24,
+                                      height: 4,
+                                      decoration: BoxDecoration(
+                                        color: isSelected
+                                            ? Colors.black
+                                            : Colors.white.withValues(
+                                                alpha: 0.5,
+                                              ),
+                                        borderRadius: BorderRadius.circular(2),
+                                      ),
+                                    );
+                                  }),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                  ), // 👈 Closing Transform.translate for Hero
                 ],
               ),
             ),
@@ -484,33 +644,46 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 children: [
                   Container(
                     decoration: BoxDecoration(
-                      border: Border(bottom: BorderSide(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1))),
+                      border: Border(
+                        bottom: BorderSide(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withOpacity(0.1),
+                        ),
+                      ),
                     ),
                     child: Row(
                       children: [
                         _WebTab(
                           label: 'COMMUNITIES',
                           isActive: _topTabCategory == 'COMMUNITIES',
-                          onTap: () => setState(() => _topTabCategory = 'COMMUNITIES'),
+                          onTap: () =>
+                              setState(() => _topTabCategory = 'COMMUNITIES'),
                         ),
                         const SizedBox(width: 32),
                         _WebTab(
                           label: 'PROPERTIES',
                           isActive: _topTabCategory == 'PROPERTIES',
-                          onTap: () => setState(() => _topTabCategory = 'PROPERTIES'),
+                          onTap: () =>
+                              setState(() => _topTabCategory = 'PROPERTIES'),
                         ),
                         const SizedBox(width: 32),
                         _WebTab(
                           label: 'MEDIA',
                           isActive: _topTabCategory == 'MEDIA',
-                          onTap: () => setState(() => _topTabCategory = 'MEDIA'),
+                          onTap: () =>
+                              setState(() => _topTabCategory = 'MEDIA'),
                         ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 32),
                   Text(
-                    _topTabCategory == 'COMMUNITIES' ? 'M4 COMMUNITIES' : 'M4 PROPERTIES',
+                    _topTabCategory == 'COMMUNITIES'
+                        ? 'M4 COMMUNITIES'
+                        : _topTabCategory == 'MEDIA'
+                        ? 'M4 MEDIA'
+                        : 'M4 PROPERTIES',
                     style: GoogleFonts.dmSerifDisplay(
                       fontSize: 32,
                       fontWeight: FontWeight.w400,
@@ -526,81 +699,117 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           SliverToBoxAdapter(
             child: SizedBox(
               height: 380,
-              child: (_topTabCategory == 'COMMUNITIES' ? _communitiesLoading : _projectsLoading)
-                ? const Center(child: CircularProgressIndicator(color: Colors.white10))
-                : Builder(
-                    builder: (context) {
-                      final items = _topTabCategory == 'COMMUNITIES' 
-                          ? _communities 
-                          : _projects.where((p) {
-                              if (_selectedCategory == 'ALL') return true;
-                              return p['status']?.toString().toUpperCase() == _selectedCategory;
-                            }).toList();
+              child:
+                  (_topTabCategory == 'COMMUNITIES'
+                      ? _communitiesLoading
+                      : _projectsLoading)
+                  ? const Center(
+                      child: CircularProgressIndicator(color: Colors.white10),
+                    )
+                  : Builder(
+                      builder: (context) {
+                        // Web parity: MEDIA tab shows a gallery of every project's
+                        // heroImages (image tiles), not the project cards.
+                        if (_topTabCategory == 'MEDIA') {
+                          return _buildMediaRow(context);
+                        }
+                        final items = _topTabCategory == 'COMMUNITIES'
+                            ? _communities
+                            : _projects.where((p) {
+                                if (_selectedCategory == 'ALL') return true;
+                                return p['status']?.toString().toUpperCase() ==
+                                    _selectedCategory;
+                              }).toList();
 
-                      if (items.isEmpty) {
-                        return Center(child: Text('NO ITEMS FOUND', style: GoogleFonts.montserrat(color: Colors.white10, fontSize: 10, fontWeight: FontWeight.w900)));
-                      }
+                        if (items.isEmpty) {
+                          return Center(
+                            child: Text(
+                              'NO ITEMS FOUND',
+                              style: GoogleFonts.montserrat(
+                                color: Colors.white10,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                          );
+                        }
 
-                      return ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        physics: const BouncingScrollPhysics(),
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                        itemCount: items.length > 8 ? 8 : items.length,
-                        itemBuilder: (context, index) {
-                          final item = items[index];
-                          if (_topTabCategory == 'COMMUNITIES') {
-                            return _CommunityCard(
-                              title: item['title'] ?? 'UNTITLED',
-                              description: item['overview'] ?? item['description'] ?? 'Explore this master-planned community',
-                              imageUrl: item['image'] ?? (item['heroImages'] is List ? item['heroImages'][0] : null),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => CommunityDetailScreen(community: item),
-                                  ),
-                                );
-                              },
-                            );
-                          } else {
-                            final locData = item['location'];
-                            final locationName = (locData is Map) ? locData['name']?.toString() ?? '' : '';
-                            final imageUrl = item['heroImage'] != null
-                                ? item['heroImage'].toString()
-                                : (item['images'] is List && (item['images'] as List).isNotEmpty
-                                    ? item['images'][0].toString()
-                                    : '');
-
-                            return _ProjectCard(
-                              title: item['title']?.toString() ?? 'Untitled',
-                              location: locationName,
-                              status: item['status']?.toString() ?? '',
-                              imageUrl: imageUrl,
-                              startingPrice: item['startingPrice']?.toString() ?? '',
-                              onTap: () {
-                                final projectId = item['_id']?.toString() ?? item['id']?.toString() ?? '';
-                                if (projectId.isNotEmpty) {
+                        return ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          physics: const BouncingScrollPhysics(),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 20,
+                          ),
+                          itemCount: items.length > 8 ? 8 : items.length,
+                          itemBuilder: (context, index) {
+                            final item = items[index];
+                            if (_topTabCategory == 'COMMUNITIES') {
+                              return _CommunityCard(
+                                title: item['title'] ?? 'UNTITLED',
+                                description:
+                                    item['overview'] ??
+                                    item['description'] ??
+                                    'Explore this master-planned community',
+                                imageUrl:
+                                    (item['image']?.toString().isNotEmpty ??
+                                        false)
+                                    ? item['image'].toString()
+                                    : (item['heroImages'] is List &&
+                                          (item['heroImages'] as List)
+                                              .isNotEmpty)
+                                    ? item['heroImages'][0].toString()
+                                    : 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80',
+                                onTap: () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => ProjectDetailScreen(
-                                        projectId: projectId,
-                                        projectData: item,
-                                      ),
+                                      builder: (context) =>
+                                          CommunityDetailScreen(
+                                            community: item,
+                                          ),
                                     ),
                                   );
-                                }
-                              },
-                            );
-                          }
-                        },
-                      );
-                    }
-                  ),
+                                },
+                              );
+                            } else {
+                              final locData = item['location'];
+                              final locationName = (locData is Map)
+                                  ? locData['name']?.toString() ?? ''
+                                  : '';
+                              final imageUrl = _projImg(item, 0);
+
+                              return _ProjectCard(
+                                title: item['title']?.toString() ?? 'Untitled',
+                                location: locationName,
+                                status: item['status']?.toString() ?? '',
+                                imageUrl: imageUrl,
+                                onTap: () {
+                                  final projectId =
+                                      item['_id']?.toString() ??
+                                      item['id']?.toString() ??
+                                      '';
+                                  if (projectId.isNotEmpty) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            ProjectDetailScreen(
+                                              projectId: projectId,
+                                              projectData: item,
+                                            ),
+                                      ),
+                                    );
+                                  }
+                                },
+                              );
+                            }
+                          },
+                        );
+                      },
+                    ),
             ),
           ),
-
-
 
           // 5. 📜 Stage 5: Our Philosophy
           SliverToBoxAdapter(
@@ -612,8 +821,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   Text(
                     'OUR PHILOSOPHY',
                     style: GoogleFonts.dmSerifDisplay(
-                      fontSize: 32, 
-                      fontWeight: FontWeight.w400, 
+                      fontSize: 32,
+                      fontWeight: FontWeight.w400,
                       color: Theme.of(context).colorScheme.onSurface,
                       letterSpacing: -0.5,
                     ),
@@ -623,8 +832,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     'To redefine modern luxury living by crafting homes with cutting edge design, enduring quality and thoughtful amenities delivered with trust, transparency, timeliness, and a human touch that creates lasting value for every homeowner.',
                     textAlign: TextAlign.justify,
                     style: GoogleFonts.montserrat(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6), 
-                      fontSize: 14, 
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.6),
+                      fontSize: 14,
                       height: 1.8,
                     ),
                   ),
@@ -654,28 +865,39 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               child: SizedBox(
                 height: 480, // Increased height for overlay content
                 child: _projectsLoading
-                    ? const Center(child: CircularProgressIndicator(color: Colors.white24))
+                    ? const Center(
+                        child: CircularProgressIndicator(color: Colors.white24),
+                      )
                     : _projects.isEmpty
-                        ? const Center(child: Text('No featured properties', style: TextStyle(color: Colors.white24)))
-                        : PageView.builder(
+                    ? const Center(
+                        child: Text(
+                          'No featured properties',
+                          style: TextStyle(color: Colors.white24),
+                        ),
+                      )
+                    : PageView.builder(
                         controller: _featuredController,
                         itemCount: _projects.length > 5 ? 5 : _projects.length,
-                        onPageChanged: (index) => setState(() => _currentHeroIndex = index),
+                        onPageChanged: (index) =>
+                            setState(() => _currentHeroIndex = index),
                         itemBuilder: (context, index) {
                           final project = _projects[index];
-                          final title = project['title']?.toString() ?? 'UNTITLED';
-                          final tagline = project['tagline'] ?? 'LUXURY LIVING REDEFINED';
-                          final imageUrl = project['heroImage'] != null
-                              ? project['heroImage'].toString()
-                              : (project['images'] is List && (project['images'] as List).isNotEmpty
-                                  ? project['images'][0].toString()
-                                  : '');
+                          final title =
+                              project['title']?.toString() ?? 'UNTITLED';
+                          // Web parity: SharedHomePage shows this fixed blurb
+                          // under the featured title.
+                          const tagline =
+                              'Live smart at Aura Heights—space-efficient 1 & 2 BHK homes with curated amenities and rare parking solutions.';
+                          final imageUrl = _projImg(project, 0);
 
                           return Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 10),
                             child: GestureDetector(
                               onTap: () {
-                                final projectId = project['_id']?.toString() ?? project['id']?.toString() ?? '';
+                                final projectId =
+                                    project['_id']?.toString() ??
+                                    project['id']?.toString() ??
+                                    '';
                                 if (projectId.isNotEmpty) {
                                   Navigator.push(
                                     context,
@@ -694,22 +916,37 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                     borderRadius: BorderRadius.circular(40),
                                     child: imageUrl.isNotEmpty
                                         ? M4Image(
-                                            imageUrl: imageUrl, 
+                                            imageUrl: imageUrl,
                                             fit: BoxFit.cover,
                                             height: 480,
                                             width: double.infinity,
-                                            placeholder: Container(height: 480, color: Colors.black12),
+                                            placeholder: Container(
+                                              height: 480,
+                                              color: Colors.black12,
+                                            ),
                                             errorWidget: Container(
                                               height: 480,
                                               width: double.infinity,
-                                              color: Colors.white.withOpacity(0.05),
-                                              child: const Center(child: Icon(LucideIcons.image, color: Colors.white10)),
+                                              color: Colors.white.withOpacity(
+                                                0.05,
+                                              ),
+                                              child: const Center(
+                                                child: Icon(
+                                                  LucideIcons.image,
+                                                  color: Colors.white10,
+                                                ),
+                                              ),
                                             ),
                                           )
-                                      : Container(
-                                          color: Colors.white10,
-                                          child: const Center(child: Icon(LucideIcons.image, color: Colors.white24)),
-                                        ),
+                                        : Container(
+                                            color: Colors.white10,
+                                            child: const Center(
+                                              child: Icon(
+                                                LucideIcons.image,
+                                                color: Colors.white24,
+                                              ),
+                                            ),
+                                          ),
                                   ),
                                   // Gradient Overlay
                                   Container(
@@ -720,9 +957,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                         begin: Alignment.topCenter,
                                         end: Alignment.bottomCenter,
                                         colors: [
-                                          Colors.transparent, 
+                                          Colors.transparent,
                                           Colors.black.withOpacity(0.1),
-                                          Colors.black.withOpacity(0.8)
+                                          Colors.black.withOpacity(0.8),
                                         ],
                                         stops: const [0.4, 0.6, 1.0],
                                       ),
@@ -734,7 +971,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                     left: 30,
                                     right: 30,
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           'FEATURED PROPERTY',
@@ -747,10 +985,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                         ),
                                         const SizedBox(height: 8),
                                         Text(
-                                          title.toUpperCase(),
+                                          title,
                                           style: GoogleFonts.dmSerifDisplay(
                                             color: Colors.white,
-                                            fontSize: 32,
+                                            fontSize: 34,
                                             height: 1,
                                             letterSpacing: -1,
                                           ),
@@ -761,11 +999,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                           style: GoogleFonts.montserrat(
-                                            color: Colors.white.withOpacity(0.7),
-                                            fontSize: 9,
-                                            fontWeight: FontWeight.w700,
-                                            height: 1.6,
-                                            letterSpacing: 0.5,
+                                            color: Colors.white.withOpacity(
+                                              0.8,
+                                            ),
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w600,
+                                            height: 1.5,
+                                            letterSpacing: 1,
                                           ),
                                         ),
                                       ],
@@ -776,11 +1016,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                     top: 25,
                                     right: 25,
                                     child: Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 14,
+                                        vertical: 8,
+                                      ),
                                       decoration: BoxDecoration(
                                         color: Colors.black.withOpacity(0.4),
                                         borderRadius: BorderRadius.circular(10),
-                                        border: Border.all(color: Colors.white.withOpacity(0.1)),
+                                        border: Border.all(
+                                          color: Colors.white.withOpacity(0.1),
+                                        ),
                                       ),
                                       child: Text(
                                         'ARTISTIC IMPRESSION',
@@ -799,9 +1044,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                           );
                         },
                       ),
-                    ),
-                  ),
-                ),
+              ),
+            ),
+          ),
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 30),
@@ -813,9 +1058,21 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        _buildWebUSP(context, LucideIcons.building2, 'FULLY\nFURNISHED'),
-                        _buildWebUSP(context, LucideIcons.mapPin, 'PRIME\nLOCATION'),
-                        _buildWebUSP(context, LucideIcons.smartphone, '20 MIN FROM\nSHEIKH ZAYED RD'),
+                        _buildWebUSP(
+                          context,
+                          LucideIcons.building2,
+                          'FULLY\nFURNISHED',
+                        ),
+                        _buildWebUSP(
+                          context,
+                          LucideIcons.mapPin,
+                          'PRIME\nLOCATION',
+                        ),
+                        _buildWebUSP(
+                          context,
+                          LucideIcons.smartphone,
+                          '20 MIN FROM\nSHEIKH ZAYED RD',
+                        ),
                       ],
                     ),
                   ),
@@ -824,15 +1081,24 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       _SliderNavButton(
-                        icon: LucideIcons.arrowLeft, 
+                        icon: LucideIcons.arrowLeft,
                         onTap: () {
                           if (_featuredController.hasClients) {
-                             final maxItems = _projects.length > 5 ? 5 : _projects.length;
-                             if (_currentHeroIndex > 0) {
-                                _featuredController.previousPage(duration: 500.ms, curve: Curves.easeInOut);
-                             } else {
-                                _featuredController.animateToPage(maxItems - 1, duration: 800.ms, curve: Curves.easeInOut);
-                             }
+                            final maxItems = _projects.length > 5
+                                ? 5
+                                : _projects.length;
+                            if (_currentHeroIndex > 0) {
+                              _featuredController.previousPage(
+                                duration: 500.ms,
+                                curve: Curves.easeInOut,
+                              );
+                            } else {
+                              _featuredController.animateToPage(
+                                maxItems - 1,
+                                duration: 800.ms,
+                                curve: Curves.easeInOut,
+                              );
+                            }
                           }
                         },
                       ),
@@ -840,10 +1106,15 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       GestureDetector(
                         onTap: () {
                           if (_projects.isNotEmpty) {
-                            final maxItems = _projects.length > 5 ? 5 : _projects.length;
+                            final maxItems = _projects.length > 5
+                                ? 5
+                                : _projects.length;
                             final currentIndex = _currentHeroIndex % maxItems;
                             final currentProject = _projects[currentIndex];
-                            final projectId = currentProject['_id']?.toString() ?? currentProject['id']?.toString() ?? '';
+                            final projectId =
+                                currentProject['_id']?.toString() ??
+                                currentProject['id']?.toString() ??
+                                '';
                             if (projectId.isNotEmpty) {
                               Navigator.push(
                                 context,
@@ -858,15 +1129,25 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                           }
                         },
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 45, vertical: 15),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 45,
+                            vertical: 15,
+                          ),
                           decoration: BoxDecoration(
-                            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white
+                                : Colors.black,
                             borderRadius: BorderRadius.circular(35),
                           ),
                           child: Text(
                             'READ MORE',
                             style: GoogleFonts.montserrat(
-                              color: Theme.of(context).brightness == Brightness.dark ? Colors.black : Colors.white,
+                              color:
+                                  Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? Colors.black
+                                  : Colors.white,
                               fontWeight: FontWeight.w900,
                               fontSize: 11,
                               letterSpacing: 1.5,
@@ -876,15 +1157,24 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       ),
                       const SizedBox(width: 25),
                       _SliderNavButton(
-                        icon: LucideIcons.arrowRight, 
+                        icon: LucideIcons.arrowRight,
                         onTap: () {
                           if (_featuredController.hasClients) {
-                             final maxItems = _projects.length > 5 ? 5 : _projects.length;
-                             if (_currentHeroIndex < (maxItems - 1)) {
-                                _featuredController.nextPage(duration: 500.ms, curve: Curves.easeInOut);
-                             } else {
-                                _featuredController.animateToPage(0, duration: 800.ms, curve: Curves.easeInOut);
-                             }
+                            final maxItems = _projects.length > 5
+                                ? 5
+                                : _projects.length;
+                            if (_currentHeroIndex < (maxItems - 1)) {
+                              _featuredController.nextPage(
+                                duration: 500.ms,
+                                curve: Curves.easeInOut,
+                              );
+                            } else {
+                              _featuredController.animateToPage(
+                                0,
+                                duration: 800.ms,
+                                curve: Curves.easeInOut,
+                              );
+                            }
                           }
                         },
                       ),
@@ -895,55 +1185,94 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             ),
           ),
 
-          // 7. 🔲 Stage 7: Quick Action Grid (2x2)
+          // 7. Explore, Connect and Engage With Us (web parity)
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(25, 0, 25, 60),
+              padding: const EdgeInsets.fromLTRB(25, 10, 25, 60),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: _LargeActionCard(
-                          icon: LucideIcons.layoutGrid, 
-                          title: 'EXPLORE', 
-                          subtitle: 'VIEW ALL PROPERTIES',
-                          onTap: () => ref.read(navigationProvider.notifier).state = 1,
-                        ),
-                      ),
-                      const SizedBox(width: 15),
-                      Expanded(
-                        child: _LargeActionCard(
-                          icon: LucideIcons.mapPin, 
-                          title: 'VISIT', 
-                          subtitle: 'BOOK A SITE TOUR',
-                          onTap: _scrollToInquiry,
-                        ),
-                      ),
-
-                    ],
+                  Text(
+                    'EXPLORE,\nCONNECT AND ENGAGE\nWITH US',
+                    style: GoogleFonts.dmSerifDisplay(
+                      fontSize: 30,
+                      fontWeight: FontWeight.w400,
+                      height: 1.15,
+                      color: Theme.of(context).colorScheme.onSurface,
+                      letterSpacing: -0.5,
+                    ),
                   ),
-                  const SizedBox(height: 15),
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: _LargeActionCard(
-                          icon: LucideIcons.playCircle, 
-                          title: 'VIDEO', 
-                          subtitle: 'WATCH WALKTHROUGHS',
-                          onTap: () {},
-                        ),
+                  const SizedBox(height: 28),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.surface,
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withOpacity(0.1),
                       ),
-                      const SizedBox(width: 15),
-                      Expanded(
-                        child: _LargeActionCard(
-                          icon: LucideIcons.userPlus, 
-                          title: 'REGISTER', 
-                          subtitle: 'PRIORITY ACCESS',
-                          onTap: _scrollToInquiry,
-                        ),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(24),
+                      child: Column(
+                        children: <Widget>[
+                          IntrinsicHeight(
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: _EngageCell(
+                                    icon: LucideIcons.building2,
+                                    title: 'EXPLORE PROJECTS',
+                                    desc: 'Browse our portfolio of properties',
+                                    onTap: () =>
+                                        ref
+                                                .read(
+                                                  navigationProvider.notifier,
+                                                )
+                                                .state =
+                                            1,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: _EngageCell(
+                                    icon: LucideIcons.layoutGrid,
+                                    title: 'BOOK A VIEWING',
+                                    desc:
+                                        'Schedule a visit to our show apartment',
+                                    onTap: _scrollToInquiry,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          IntrinsicHeight(
+                            child: Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: _EngageCell(
+                                    icon: LucideIcons.image,
+                                    title: 'MEDIA GALLERY',
+                                    desc:
+                                        'Watch films and view property renders',
+                                    onTap: () => context.push('/media'),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: _EngageCell(
+                                    icon: LucideIcons.user,
+                                    title: 'REGISTER INTEREST',
+                                    desc:
+                                        'Register your interest in our properties',
+                                    onTap: _scrollToInquiry,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ],
               ),
@@ -956,9 +1285,18 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             child: Container(
               padding: const EdgeInsets.fromLTRB(30, 80, 30, 60),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.02),
-                borderRadius: const BorderRadius.only(topLeft: Radius.circular(50), topRight: Radius.circular(50)),
-                border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.04)),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withOpacity(0.02),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(50),
+                  topRight: Radius.circular(50),
+                ),
+                border: Border.all(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.04),
+                ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -966,47 +1304,84 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   Text(
                     'REGISTER YOUR\nINTEREST',
                     style: GoogleFonts.dmSerifDisplay(
-                      fontSize: 32, 
-                      fontWeight: FontWeight.w400, 
-                      color: Theme.of(context).colorScheme.onSurface, 
+                      fontSize: 32,
+                      fontWeight: FontWeight.w400,
+                      color: Theme.of(context).colorScheme.onSurface,
                       height: 1.1,
                       letterSpacing: -1,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text('OFFICIAL INQUIRY FORM', style: TextStyle(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 2)),
-                  const SizedBox(height: 48),
-                  _PremiumInputField(label: 'Full Name *', controller: _nameController),
-                  _PremiumInputField(label: 'Email Address *', controller: _emailController, keyboardType: TextInputType.emailAddress),
-                  _PremiumInputField(label: 'Phone Number *', controller: _phoneController, keyboardType: TextInputType.phone),
-                  _PremiumDropdownField(
-                    label: 'Select Property *', 
-                    value: _selectedProject,
-                    options: _projects.map((p) => p['title'].toString()).toList(),
-                    onChanged: (val) => setState(() => _selectedProject = val),
+                  Text(
+                    'OFFICIAL INQUIRY FORM',
+                    style: TextStyle(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.5),
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2,
+                    ),
                   ),
-                  _PremiumInputField(label: 'Message', controller: _messageController, maxLines: 3),
+                  const SizedBox(height: 48),
+                  _PremiumInputField(
+                    label: 'Full Name *',
+                    controller: _nameController,
+                  ),
+                  _PremiumInputField(
+                    label: 'Email Address *',
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                  _PremiumInputField(
+                    label: 'Phone Number *',
+                    controller: _phoneController,
+                    keyboardType: TextInputType.phone,
+                  ),
+                  _PremiumInputField(
+                    label: 'Message',
+                    controller: _messageController,
+                    maxLines: 3,
+                  ),
                   const SizedBox(height: 32),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: _isSubmitting ? null : _submitInquiry,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).colorScheme.onSurface,
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.onSurface,
                         foregroundColor: Theme.of(context).colorScheme.surface,
                         padding: const EdgeInsets.symmetric(vertical: 22),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
                       ),
-                      child: _isSubmitting 
-                        ? SizedBox(height: 15, width: 15, child: CircularProgressIndicator(strokeWidth: 2, color: Theme.of(context).colorScheme.surface))
-                        : Text('SUBMIT INTEREST', style: GoogleFonts.montserrat(fontWeight: FontWeight.bold, letterSpacing: 3, fontSize: 12)),
+                      child: _isSubmitting
+                          ? SizedBox(
+                              height: 15,
+                              width: 15,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Theme.of(context).colorScheme.surface,
+                              ),
+                            )
+                          : Text(
+                              'SUBMIT INTEREST',
+                              style: GoogleFonts.montserrat(
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 3,
+                                fontSize: 12,
+                              ),
+                            ),
                     ),
                   ),
                 ],
               ),
             ),
           ),
-          
+
           SliverToBoxAdapter(child: SizedBox(height: 120)),
         ],
       ),
@@ -1028,17 +1403,21 @@ class _CategoryChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
         decoration: BoxDecoration(
-          color: isActive 
-              ? (isDark ? Colors.white : Colors.black) 
-              : (isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
+          color: isActive
+              ? (isDark ? Colors.white : Colors.black)
+              : (isDark
+                    ? Colors.white.withOpacity(0.05)
+                    : Colors.black.withOpacity(0.05)),
           borderRadius: BorderRadius.circular(30),
-          border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
+          border: Border.all(
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+          ),
         ),
         child: Text(
           label,
           style: GoogleFonts.montserrat(
-            color: isActive 
-                ? (isDark ? Colors.black : Colors.white) 
+            color: isActive
+                ? (isDark ? Colors.black : Colors.white)
                 : (isDark ? Colors.white38 : Colors.black38),
             fontSize: 10,
             fontWeight: FontWeight.bold,
@@ -1055,131 +1434,211 @@ class _ProjectCard extends StatelessWidget {
   final String location;
   final String status;
   final String imageUrl;
-  final String startingPrice;
   final VoidCallback onTap;
   const _ProjectCard({
     required this.title,
     required this.location,
     required this.status,
     required this.imageUrl,
-    required this.startingPrice,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final hasImage = imageUrl.isNotEmpty;
-    final displayPrice = (startingPrice.isNotEmpty && !startingPrice.contains('YOY')) 
-        ? '₹ $startingPrice' 
-        : '';
-    final displayLocation = location.isNotEmpty ? location.toUpperCase() : 'MUMBAI';
+    final displayLocation = location.isNotEmpty
+        ? location.toUpperCase()
+        : 'MUMBAI';
     final displayStatus = status.isNotEmpty ? status.toUpperCase() : 'UPCOMING';
 
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 280,
-        margin: const EdgeInsets.only(right: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Stack(
-                children: <Widget>[
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: hasImage
+        width: 288,
+        margin: const EdgeInsets.only(right: 16),
+        decoration: BoxDecoration(
+          color: scheme.surface,
+          borderRadius: BorderRadius.circular(28),
+          border: Border.all(color: scheme.onSurface.withOpacity(0.08)),
+          boxShadow: isDark
+              ? null
+              : [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.10),
+                    blurRadius: 30,
+                    offset: const Offset(0, 16),
+                  ),
+                ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(28),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Image with status pill + Artistic Impression (web parity)
+              SizedBox(
+                height: 180,
+                width: double.infinity,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: <Widget>[
+                    hasImage
                         ? M4Image(
                             imageUrl: imageUrl,
-                            width: double.infinity,
                             fit: BoxFit.cover,
                             placeholder: Container(color: Colors.black12),
                             errorWidget: Container(
-                              color: Colors.white.withOpacity(0.05),
-                              child: const Center(child: Icon(LucideIcons.building, color: Colors.white24, size: 40)),
+                              color: scheme.onSurface.withOpacity(0.05),
+                              child: Icon(
+                                LucideIcons.building,
+                                color: scheme.onSurface.withOpacity(0.2),
+                                size: 40,
+                              ),
                             ),
                           )
                         : Container(
-                            color: Colors.white.withOpacity(0.05),
-                            child: const Center(child: Icon(LucideIcons.building, color: Colors.white24, size: 40)),
+                            color: scheme.onSurface.withOpacity(0.05),
+                            child: Icon(
+                              LucideIcons.building,
+                              color: scheme.onSurface.withOpacity(0.2),
+                              size: 40,
+                            ),
                           ),
-                  ),
-                  Positioned(
-                    top: 15,
-                    left: 15,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(10),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.4), 
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.white.withOpacity(0.4)),
+                    // Status pill (top-right)
+                    Positioned(
+                      top: 14,
+                      right: 14,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.1),
                           ),
-                          child: Text(displayStatus, style: const TextStyle(color: Colors.black, fontSize: 8, fontWeight: FontWeight.bold)),
+                        ),
+                        child: Text(
+                          displayStatus,
+                          style: GoogleFonts.montserrat(
+                            color: Colors.white,
+                            fontSize: 8,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1.5,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              title.toUpperCase(),
-              style: GoogleFonts.montserrat(
-                fontSize: 16, 
-                fontWeight: FontWeight.bold, 
-                color: Theme.of(context).colorScheme.onSurface
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            Row(
-              children: [
-                Icon(LucideIcons.mapPin, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), size: 10),
-                const SizedBox(width: 4),
-                Expanded(
-                  child: Text(displayLocation, 
-                    style: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), fontSize: 10),
-                    maxLines: 1, overflow: TextOverflow.ellipsis),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.12), 
-                    borderRadius: BorderRadius.circular(15),
-                    border: Border.all(color: Colors.white.withOpacity(0.15)),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      if (displayPrice.isNotEmpty)
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text('STARTING FROM', style: GoogleFonts.montserrat(color: Colors.white.withOpacity(0.5), fontSize: 7, fontWeight: FontWeight.w700, letterSpacing: 0.5)),
-                            Text(displayPrice, style: GoogleFonts.montserrat(fontSize: 15, fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: -0.5)),
-                          ],
-                        )
-                      else
-                        Text('EXPLORE NOW', style: GoogleFonts.montserrat(color: Colors.white.withOpacity(0.8), fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 1)),
-                      const Icon(LucideIcons.arrowRight, color: Colors.white, size: 18),
-                    ],
-                  ),
+                    // Artistic Impression (bottom-right)
+                    Positioned(
+                      bottom: 8,
+                      right: 8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.1),
+                          ),
+                        ),
+                        child: Text(
+                          'ARTISTIC IMPRESSION',
+                          style: GoogleFonts.montserrat(
+                            color: Colors.white,
+                            fontSize: 6,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-          ],
+              // Content
+              Padding(
+                padding: const EdgeInsets.all(18),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.dmSerifDisplay(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w400,
+                        color: scheme.onSurface,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(
+                          LucideIcons.mapPin,
+                          color: scheme.onSurface.withOpacity(0.5),
+                          size: 12,
+                        ),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            displayLocation,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.montserrat(
+                              color: scheme.onSurface.withOpacity(0.5),
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    // READ MORE button (bg-primary / text-primary-foreground)
+                    Container(
+                      width: double.infinity,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: scheme.onSurface,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'READ MORE',
+                            style: GoogleFonts.montserrat(
+                              color: scheme.surface,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 2,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          Icon(
+                            LucideIcons.chevronRight,
+                            color: scheme.surface,
+                            size: 14,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -1191,7 +1650,11 @@ class _QuickAction extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
 
-  const _QuickAction({required this.icon, required this.label, required this.onTap});
+  const _QuickAction({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1208,11 +1671,21 @@ class _QuickAction extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    0.05,
+                  ),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.08)),
+                  border: Border.all(
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      0.08,
+                    ),
+                  ),
                 ),
-                child: Icon(icon, color: Theme.of(context).colorScheme.onSurface, size: 24),
+                child: Icon(
+                  icon,
+                  color: Theme.of(context).colorScheme.onSurface,
+                  size: 24,
+                ),
               ),
             ),
           ),
@@ -1232,64 +1705,63 @@ class _QuickAction extends StatelessWidget {
   }
 }
 
-class _LargeActionCard extends StatelessWidget {
+class _EngageCell extends StatelessWidget {
   final IconData icon;
   final String title;
-  final String subtitle;
+  final String desc;
   final VoidCallback? onTap;
 
-  const _LargeActionCard({required this.icon, required this.title, required this.subtitle, this.onTap});
+  const _EngageCell({
+    required this.icon,
+    required this.title,
+    required this.desc,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return GestureDetector(
+    final scheme = Theme.of(context).colorScheme;
+    return InkWell(
       onTap: onTap,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(35),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-          child: Container(
-            height: 140,
-            decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.03), 
-              borderRadius: BorderRadius.circular(35),
-              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.08)),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 26),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Icon in a bordered circle (web: w-10 h-10 rounded-full border)
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: scheme.onSurface.withOpacity(0.12)),
+              ),
+              child: Icon(icon, color: scheme.onSurface, size: 20),
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
-                  ),
-                  child: Icon(icon, color: Theme.of(context).colorScheme.onSurface, size: 24),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  title, 
-                  style: GoogleFonts.montserrat(
-                    fontSize: 13, 
-                    fontWeight: FontWeight.w800, 
-                    color: Theme.of(context).colorScheme.onSurface, 
-                    letterSpacing: 1.5,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  subtitle, 
-                  style: GoogleFonts.montserrat(
-                    fontSize: 8, 
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4), 
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ],
+            const SizedBox(height: 14),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.montserrat(
+                fontSize: 12,
+                fontWeight: FontWeight.w900,
+                color: scheme.onSurface,
+                letterSpacing: 1,
+                height: 1.2,
+              ),
             ),
-          ),
+            const SizedBox(height: 6),
+            Text(
+              desc,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.montserrat(
+                fontSize: 10.5,
+                fontWeight: FontWeight.w500,
+                color: scheme.onSurface.withOpacity(0.65),
+                height: 1.35,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -1303,7 +1775,10 @@ class _QuickFilterSheet extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF070708) : Colors.white,
-        borderRadius: const BorderRadius.only(topLeft: Radius.circular(35), topRight: Radius.circular(35)),
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(35),
+          topRight: Radius.circular(35),
+        ),
       ),
       padding: const EdgeInsets.fromLTRB(25, 15, 25, 40),
       child: Column(
@@ -1314,7 +1789,10 @@ class _QuickFilterSheet extends StatelessWidget {
             child: Container(
               width: 40,
               height: 4,
-              decoration: BoxDecoration(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2), borderRadius: BorderRadius.circular(2)),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(2),
+              ),
             ),
           ),
           const SizedBox(height: 25),
@@ -1324,8 +1802,8 @@ class _QuickFilterSheet extends StatelessWidget {
               Text(
                 'QUICK FILTERS',
                 style: GoogleFonts.montserrat(
-                  fontSize: 18, 
-                  fontWeight: FontWeight.w800, 
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
                   color: Theme.of(context).colorScheme.onSurface,
                   letterSpacing: 1,
                 ),
@@ -1334,16 +1812,31 @@ class _QuickFilterSheet extends StatelessWidget {
                 onTap: () => Navigator.pop(context),
                 child: Container(
                   padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(shape: BoxShape.circle, color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
-                  child: Icon(LucideIcons.x, color: Theme.of(context).colorScheme.onSurface, size: 18),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      0.1,
+                    ),
+                  ),
+                  child: Icon(
+                    LucideIcons.x,
+                    color: Theme.of(context).colorScheme.onSurface,
+                    size: 18,
+                  ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 35),
-          _FilterSection(title: 'LOCATION', options: const ['SOUTH MUMBAI', 'WORLI', 'BANDRA', 'JUHU', 'POWAI']),
+          _FilterSection(
+            title: 'LOCATION',
+            options: const ['SOUTH MUMBAI', 'WORLI', 'BANDRA', 'JUHU', 'POWAI'],
+          ),
           const SizedBox(height: 30),
-          _FilterSection(title: 'PROPERTY TYPE', options: const ['RESIDENTIAL', 'COMMERCIAL']),
+          _FilterSection(
+            title: 'PROPERTY TYPE',
+            options: const ['RESIDENTIAL', 'COMMERCIAL'],
+          ),
           const SizedBox(height: 50),
           GestureDetector(
             onTap: () => Navigator.pop(context),
@@ -1398,23 +1891,36 @@ class _FilterSection extends StatelessWidget {
         Wrap(
           spacing: 10,
           runSpacing: 12,
-          children: options.map((opt) => Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
-            ),
-            child: Text(
-              opt,
-              style: GoogleFonts.montserrat(
-                color: Theme.of(context).colorScheme.onSurface,
-                fontSize: 9,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 1,
-              ),
-            ),
-          )).toList(),
+          children: options
+              .map(
+                (opt) => Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      0.05,
+                    ),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: (isDark ? Colors.white : Colors.black).withOpacity(
+                        0.05,
+                      ),
+                    ),
+                  ),
+                  child: Text(
+                    opt,
+                    style: GoogleFonts.montserrat(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      fontSize: 9,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                ),
+              )
+              .toList(),
         ),
       ],
     );
@@ -1430,7 +1936,7 @@ class _SliderNavButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final foreground = isDark ? Colors.white : Colors.black;
-    
+
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
@@ -1454,8 +1960,8 @@ class _PremiumInputField extends StatelessWidget {
   final int maxLines;
 
   const _PremiumInputField({
-    required this.label, 
-    required this.controller, 
+    required this.label,
+    required this.controller,
     this.keyboardType = TextInputType.text,
     this.maxLines = 1,
   });
@@ -1470,22 +1976,37 @@ class _PremiumInputField extends StatelessWidget {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
-              borderRadius: BorderRadius.circular(15),
-              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+              color: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
+              ),
             ),
             child: TextFormField(
               controller: controller,
               keyboardType: keyboardType,
               maxLines: maxLines,
-              style: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface, fontSize: 13),
+              cursorColor: Theme.of(context).colorScheme.onSurface,
+              style: GoogleFonts.montserrat(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+              ),
+              // Web parity: a placeholder that disappears on typing (not a
+              // floating label that sits above the typed text).
               decoration: InputDecoration(
-                labelText: label,
-                labelStyle: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3), fontSize: 13),
+                isCollapsed: true,
+                hintText: label,
+                hintStyle: GoogleFonts.montserrat(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.4),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
                 border: InputBorder.none,
-                floatingLabelBehavior: FloatingLabelBehavior.auto,
               ),
             ),
           ),
@@ -1502,10 +2023,10 @@ class _PremiumDropdownField extends StatelessWidget {
   final Function(String?) onChanged;
 
   const _PremiumDropdownField({
-    required this.label, 
-    this.value, 
-    required this.options, 
-    required this.onChanged
+    required this.label,
+    this.value,
+    required this.options,
+    required this.onChanged,
   });
 
   @override
@@ -1522,24 +2043,42 @@ class _PremiumDropdownField extends StatelessWidget {
             decoration: BoxDecoration(
               color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
               borderRadius: BorderRadius.circular(15),
-              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+              border: Border.all(
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+              ),
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButtonFormField<String>(
                 value: value,
                 dropdownColor: isDark ? const Color(0xFF0F0F11) : Colors.white,
-                style: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface, fontSize: 13),
-                icon: Icon(LucideIcons.chevronDown, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3), size: 16),
+                style: GoogleFonts.montserrat(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontSize: 13,
+                ),
+                icon: Icon(
+                  LucideIcons.chevronDown,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.3),
+                  size: 16,
+                ),
                 decoration: InputDecoration(
                   labelText: label,
-                  labelStyle: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3), fontSize: 13),
+                  labelStyle: GoogleFonts.montserrat(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withOpacity(0.3),
+                    fontSize: 13,
+                  ),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.zero,
                 ),
-                items: options.toSet().map((opt) => DropdownMenuItem(
-                  value: opt,
-                  child: Text(opt),
-                )).toList(),
+                items: options
+                    .toSet()
+                    .map(
+                      (opt) => DropdownMenuItem(value: opt, child: Text(opt)),
+                    )
+                    .toList(),
                 onChanged: onChanged,
               ),
             ),
@@ -1570,13 +2109,31 @@ class _PremiumFormField extends StatelessWidget {
             decoration: BoxDecoration(
               color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
               borderRadius: BorderRadius.circular(15),
-              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+              border: Border.all(
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+              ),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(label, style: GoogleFonts.montserrat(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3), fontSize: 13, fontWeight: FontWeight.w500)),
-                if (hasDropdown) Icon(LucideIcons.chevronDown, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3), size: 16),
+                Text(
+                  label,
+                  style: GoogleFonts.montserrat(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withOpacity(0.3),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                if (hasDropdown)
+                  Icon(
+                    LucideIcons.chevronDown,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withOpacity(0.3),
+                    size: 16,
+                  ),
               ],
             ),
           ),
@@ -1585,6 +2142,7 @@ class _PremiumFormField extends StatelessWidget {
     );
   }
 }
+
 class _GlassSearchField extends StatelessWidget {
   final Function(String) onChanged;
   const _GlassSearchField({required this.onChanged});
@@ -1610,10 +2168,16 @@ class _GlassSearchField extends StatelessWidget {
               Expanded(
                 child: TextField(
                   onChanged: onChanged,
-                  style: GoogleFonts.montserrat(color: Colors.black, fontSize: 14),
+                  style: GoogleFonts.montserrat(
+                    color: Colors.black,
+                    fontSize: 14,
+                  ),
                   decoration: InputDecoration(
                     hintText: 'Search residences...',
-                    hintStyle: GoogleFonts.montserrat(color: Colors.black45, fontSize: 13),
+                    hintStyle: GoogleFonts.montserrat(
+                      color: Colors.black45,
+                      fontSize: 13,
+                    ),
                     border: InputBorder.none,
                   ),
                 ),
@@ -1630,7 +2194,11 @@ class _GlassIconButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
   final double size;
-  const _GlassIconButton({required this.icon, required this.onTap, this.size = 60});
+  const _GlassIconButton({
+    required this.icon,
+    required this.onTap,
+    this.size = 60,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1661,7 +2229,11 @@ class _WebTab extends StatelessWidget {
   final bool isActive;
   final VoidCallback onTap;
 
-  const _WebTab({required this.label, this.isActive = false, required this.onTap});
+  const _WebTab({
+    required this.label,
+    this.isActive = false,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1671,8 +2243,8 @@ class _WebTab extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
-          border: isActive 
-              ? Border(bottom: BorderSide(color: onSurface, width: 2.5)) 
+          border: isActive
+              ? Border(bottom: BorderSide(color: onSurface, width: 2.5))
               : null,
         ),
         child: Text(
@@ -1717,7 +2289,9 @@ class _UpdateCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
           borderRadius: BorderRadius.circular(35),
-          border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+          border: Border.all(
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+          ),
         ),
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -1730,7 +2304,8 @@ class _UpdateCard extends StatelessWidget {
                 height: 120,
                 width: double.infinity,
                 fit: BoxFit.cover,
-                placeholder: (context, url) => Container(height: 120, color: Colors.black12),
+                placeholder: (context, url) =>
+                    Container(height: 120, color: Colors.black12),
                 errorWidget: (_, __, ___) => Container(color: Colors.white10),
               ),
             ),
@@ -1739,31 +2314,164 @@ class _UpdateCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Text(type, style: GoogleFonts.montserrat(fontSize: 7, fontWeight: FontWeight.w900, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5))),
+                  child: Text(
+                    type,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 7,
+                      fontWeight: FontWeight.w900,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.5),
+                    ),
+                  ),
                 ),
-                Text(date, style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3))),
+                Text(
+                  date,
+                  style: GoogleFonts.montserrat(
+                    fontSize: 8,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withOpacity(0.3),
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 12),
             Text(
               title,
-              style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, color: Theme.of(context).colorScheme.onSurface, letterSpacing: -0.5),
+              style: GoogleFonts.montserrat(
+                fontSize: 12,
+                fontWeight: FontWeight.w900,
+                color: Theme.of(context).colorScheme.onSurface,
+                letterSpacing: -0.5,
+              ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 6),
             Text(
               snippet,
-              style: GoogleFonts.montserrat(fontSize: 9, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5), height: 1.4),
+              style: GoogleFonts.montserrat(
+                fontSize: 9,
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                height: 1.4,
+              ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _MediaCard extends StatelessWidget {
+  final String imageUrl;
+  final String title;
+  final VoidCallback onTap;
+
+  const _MediaCard({
+    required this.imageUrl,
+    required this.title,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 280,
+        margin: const EdgeInsets.only(right: 20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(35),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(35),
+          child: Stack(
+            children: [
+              M4Image(
+                imageUrl: imageUrl,
+                height: double.infinity,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                placeholder: Container(color: Colors.black12),
+                errorWidget: Container(color: Colors.white10),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withOpacity(0.75),
+                    ],
+                    stops: const [0.5, 1.0],
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 16,
+                left: 16,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.6),
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(color: Colors.white.withOpacity(0.15)),
+                  ),
+                  child: Text(
+                    'ARTISTIC IMPRESSION',
+                    style: GoogleFonts.montserrat(
+                      color: Colors.white,
+                      fontSize: 7,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1.5,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 22,
+                left: 22,
+                right: 22,
+                child: Text(
+                  title.toUpperCase(),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.dmSerifDisplay(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w400,
+                    letterSpacing: -0.5,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -1869,7 +2577,11 @@ class _CommunityCard extends StatelessWidget {
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(15),
                           ),
-                          child: const Icon(LucideIcons.arrowRight, color: Colors.black, size: 18),
+                          child: const Icon(
+                            LucideIcons.arrowRight,
+                            color: Colors.black,
+                            size: 18,
+                          ),
                         ),
                       ],
                     ),

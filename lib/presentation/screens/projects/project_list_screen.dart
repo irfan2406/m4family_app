@@ -517,20 +517,18 @@ class ProjectListScreen extends ConsumerWidget {
                   itemBuilder: (context, index) {
                     final project = filteredProjects[index];
                     final projectId = project['_id']?.toString() ?? '';
-                    final images = project['images'] as List?;
                     final heroImages = project['heroImages'] as List?;
-                    // Web parity: heroImages[0] || heroImage, else the same villa
-                    // fallback the web project list uses.
+                    // Web parity (projects/page.tsx): the card image is ONLY
+                    // heroImages[0], else the same stock fallback. The web list
+                    // does NOT fall back to the singular `heroImage`, which is
+                    // often a brand/palette graphic (why DING DONG showed the
+                    // green M4 render instead of a real photo).
                     final rawHero =
-                        ((heroImages != null && heroImages.isNotEmpty)
-                            ? heroImages[0].toString()
-                            : null) ??
-                        project['heroImage']?.toString() ??
-                        ((images != null && images.isNotEmpty)
-                            ? images[0].toString()
-                            : null);
+                        (heroImages != null && heroImages.isNotEmpty)
+                        ? heroImages[0].toString()
+                        : null;
                     final imageUrl = (rawHero == null || rawHero.isEmpty)
-                        ? 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&q=80'
+                        ? 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80'
                         : apiClient.resolveUrl(rawHero);
                     return GestureDetector(
                       onTap: () {
@@ -729,17 +727,18 @@ class _ProjectGridItem extends StatelessWidget {
 
                 const SizedBox(width: 16),
 
-                // Action Arrow Button
+                // Action Arrow Button (web parity: light glass-icon, dark arrow)
                 Container(
-                  padding: const EdgeInsets.all(16),
+                  width: 48,
+                  height: 48,
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.5),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.white.withOpacity(0.1)),
+                    color: Colors.white.withOpacity(0.9),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Colors.white.withOpacity(0.4)),
                   ),
                   child: const Icon(
                     LucideIcons.arrowUpRight,
-                    color: Colors.white,
+                    color: Colors.black,
                     size: 20,
                   ),
                 ),

@@ -130,6 +130,7 @@ flutter:
     - assets/m4_family_logo.png
     - assets/living_m4_life.png
     - assets/login-bg.png
+    - assets/360-vr.png
     - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see

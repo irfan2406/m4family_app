@@ -4,7 +4,11 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final apiClientProvider = Provider((ref) => ApiClient(baseUrl: dotenv.get('API_URL', fallback: 'http://10.0.2.2:5009')));
+final apiClientProvider = Provider(
+  (ref) => ApiClient(
+    baseUrl: dotenv.get('API_URL', fallback: 'http://10.0.2.2:5009'),
+  ),
+);
 
 enum AuthStatus { initial, loading, otpSent, authenticated, error }
 
@@ -85,7 +89,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       final response = await _apiClient.sendOtp(identifier, role);
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final devOtp = response.data['data'] != null ? response.data['data']['devOtp']?.toString() : null;
+        final devOtp = response.data['data'] != null
+            ? response.data['data']['devOtp']?.toString()
+            : null;
         state = state.copyWith(
           status: AuthStatus.otpSent,
           identifier: identifier,
@@ -93,7 +99,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
           role: role,
         );
       } else {
-        state = state.copyWith(status: AuthStatus.error, error: 'Failed to send OTP');
+        state = state.copyWith(
+          status: AuthStatus.error,
+          error: 'Failed to send OTP',
+        );
       }
     } catch (e) {
       state = state.copyWith(status: AuthStatus.error, error: e.toString());
@@ -101,10 +110,16 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   /// Web `/auth/cp/login`: password + CP ID; rejects non-CP roles like the web client.
-  Future<String?> loginCpWithPassword(String identifier, String password) async {
+  Future<String?> loginCpWithPassword(
+    String identifier,
+    String password,
+  ) async {
     state = state.copyWith(status: AuthStatus.loading, error: null);
     try {
-      final response = await _apiClient.loginWithPassword(identifier.trim(), password);
+      final response = await _apiClient.loginWithPassword(
+        identifier.trim(),
+        password,
+      );
       final ok = response.statusCode == 200 && response.data['status'] == true;
       if (!ok) {
         final msg = response.data['message']?.toString() ?? 'Login failed';
@@ -141,10 +156,16 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   /// Web `/investor/login`: identifier (investorId / email / phone) + password; rejects non-investor roles.
-  Future<String?> loginInvestorWithPassword(String identifier, String password) async {
+  Future<String?> loginInvestorWithPassword(
+    String identifier,
+    String password,
+  ) async {
     state = state.copyWith(status: AuthStatus.loading, error: null);
     try {
-      final response = await _apiClient.investorLogin(identifier.trim(), password);
+      final response = await _apiClient.investorLogin(
+        identifier.trim(),
+        password,
+      );
       final ok = response.statusCode == 200 && response.data['status'] == true;
       if (!ok) {
         final msg = response.data['message']?.toString() ?? 'Login failed';
@@ -189,15 +210,19 @@ class AuthNotifier extends StateNotifier<AuthState> {
     if (state.identifier == null) return;
     state = state.copyWith(status: AuthStatus.loading);
     try {
-      final response = await _apiClient.verifyOtp(state.identifier!, code, state.role ?? 'CUSTOMER');
+      final response = await _apiClient.verifyOtp(
+        state.identifier!,
+        code,
+        state.role ?? 'CUSTOMER',
+      );
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final token = response.data['data']['accessToken']; 
+        final token = response.data['data']['accessToken'];
         await _storage.write(key: 'jwt_token', value: token);
-        
+
         // Fetch user data FIRST
         final userResponse = await _apiClient.getCurrentUser();
         final userData = userResponse.data['data'] ?? userResponse.data;
-        
+
         // THEN update state with BOTH status and user
         state = state.copyWith(
           status: AuthStatus.authenticated,
@@ -213,7 +238,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<void> logout() async {
     await _storage.delete(key: 'jwt_token');
-    state = AuthState(status: AuthStatus.initial);
+    // Keep bootstrapped=true so `/home` resolves straight to the guest shell.
+    // A fresh AuthState() defaults bootstrapped=false, which would trap
+    // post-logout navigation on the cold-start SplashScreen.
+    state = AuthState(status: AuthStatus.initial, bootstrapped: true);
   }
 
   void reset() {

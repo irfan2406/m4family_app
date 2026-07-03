@@ -8,19 +8,10 @@ import 'package:go_router/go_router.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/presentation/screens/about/about_screen.dart';
-import 'package:m4_mobile/presentation/screens/support/contact_support_screen.dart';
 import 'package:m4_mobile/presentation/screens/support/contact_screen.dart';
 import 'package:m4_mobile/presentation/screens/careers/careers_screen.dart';
-import 'package:m4_mobile/presentation/screens/investor/investor_relations_screen.dart';
-import 'package:m4_mobile/presentation/screens/pages/pages_list_screen.dart';
-import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
-import 'package:m4_mobile/presentation/screens/content/content_hub_screen.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/core/providers/theme_provider.dart';
-
-
-
-
 
 class SidebarMenu extends ConsumerStatefulWidget {
   const SidebarMenu({super.key});
@@ -42,7 +33,12 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
     final user = authState.user;
     final role = user?['role']?.toString().toLowerCase();
     final isInvestor = role == 'investor';
-    final accentColor = isInvestor ? const Color(0xFFC5A358) : Colors.white;
+    // Web parity: the user accent is `primary` (near-black in light mode),
+    // not white — a hardcoded white active state is invisible on the light
+    // glass sidebar.
+    final accentColor = isInvestor
+        ? const Color(0xFFC5A358)
+        : Theme.of(context).colorScheme.onSurface;
 
     void navigateTo(int index) {
       final currentIndex = ref.read(navigationProvider);
@@ -50,10 +46,10 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
         ref.read(previousNavigationProvider.notifier).state = currentIndex;
       }
       ref.read(navigationProvider.notifier).state = index;
-      
+
       // Close drawer first
-      Navigator.pop(context); 
-      
+      Navigator.pop(context);
+
       // Then pop back to the main shell (index 0 of the root navigator usually)
       // to ensure the tab switch is visible.
       while (Navigator.of(context).canPop()) {
@@ -73,19 +69,23 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
             filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
             child: Container(
               decoration: BoxDecoration(
-                color: Theme.of(context).brightness == Brightness.dark 
-                    ? Colors.black.withOpacity(0.4) 
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.black.withOpacity(0.4)
                     : Colors.white.withOpacity(0.4),
                 border: Border(
                   right: BorderSide(
-                    color: (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.white).withOpacity(0.1),
+                    color:
+                        (Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white
+                                : Colors.white)
+                            .withOpacity(0.1),
                     width: 1,
                   ),
                 ),
               ),
             ),
           ),
-          
+
           SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,9 +100,15 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                         decoration: BoxDecoration(
                           color: accentColor.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: accentColor.withOpacity(0.2)),
+                          border: Border.all(
+                            color: accentColor.withOpacity(0.2),
+                          ),
                         ),
-                        child: Icon(isInvestor ? LucideIcons.crown : LucideIcons.sparkles, color: accentColor, size: 20),
+                        child: Icon(
+                          isInvestor ? LucideIcons.crown : LucideIcons.sparkles,
+                          color: accentColor,
+                          size: 20,
+                        ),
                       ),
                       const SizedBox(width: 16),
                       Text(
@@ -150,13 +156,15 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                         icon: LucideIcons.bell,
                         label: 'Content Hub',
                         isOpen: _isContentOpen,
-                        onToggle: () => setState(() => _isContentOpen = !_isContentOpen),
+                        onToggle: () =>
+                            setState(() => _isContentOpen = !_isContentOpen),
                         subItems: [
                           _SidebarSubItem(
                             label: 'Media',
                             icon: LucideIcons.playCircle,
                             onTap: () {
-                              ref.read(contentHubTypeProvider.notifier).state = 'media';
+                              ref.read(contentHubTypeProvider.notifier).state =
+                                  'media';
                               navigateTo(9);
                             },
                           ),
@@ -164,7 +172,8 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                             label: 'Highlights',
                             icon: LucideIcons.zap,
                             onTap: () {
-                              ref.read(contentHubTypeProvider.notifier).state = 'highlight';
+                              ref.read(contentHubTypeProvider.notifier).state =
+                                  'highlight';
                               navigateTo(9);
                             },
                           ),
@@ -172,7 +181,8 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                             label: 'Events',
                             icon: LucideIcons.calendar,
                             onTap: () {
-                              ref.read(contentHubTypeProvider.notifier).state = 'event';
+                              ref.read(contentHubTypeProvider.notifier).state =
+                                  'event';
                               navigateTo(9);
                             },
                           ),
@@ -180,7 +190,8 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                             label: 'Blog',
                             icon: LucideIcons.fileText,
                             onTap: () {
-                              ref.read(contentHubTypeProvider.notifier).state = 'blog';
+                              ref.read(contentHubTypeProvider.notifier).state =
+                                  'blog';
                               navigateTo(9);
                             },
                           ),
@@ -192,7 +203,9 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                         icon: LucideIcons.sparkles,
                         label: 'Custom Views',
                         isOpen: _isCustomViewsOpen,
-                        onToggle: () => setState(() => _isCustomViewsOpen = !_isCustomViewsOpen),
+                        onToggle: () => setState(
+                          () => _isCustomViewsOpen = !_isCustomViewsOpen,
+                        ),
                         subItems: [
                           _SidebarSubItem(
                             label: 'My Custom Views',
@@ -206,92 +219,78 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                           ),
                         ],
                       ),
-                      
+
                       _SidebarItem(
-                        icon: LucideIcons.bell, 
+                        icon: LucideIcons.bell,
                         label: 'Notifications',
                         isActive: currentIndex == 5,
                         activeColor: accentColor,
                         onTap: () => navigateTo(5),
                       ),
-                      
+
                       _SidebarItem(
-                        icon: LucideIcons.info, 
+                        icon: LucideIcons.info,
                         label: 'Who we are',
                         isActive: currentRouteName == 'about',
                         onTap: () {
                           Navigator.pop(context);
                           if (currentRouteName == 'about') return;
-                          Navigator.push(context, MaterialPageRoute(
-                            settings: const RouteSettings(name: 'about'),
-                            builder: (context) => const AboutScreen()
-                          ));
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              settings: const RouteSettings(name: 'about'),
+                              builder: (context) => const AboutScreen(),
+                            ),
+                          );
                         },
                       ),
 
                       _SidebarItem(
-                        icon: LucideIcons.headphones, 
+                        icon: LucideIcons.headphones,
                         label: 'Contact Us',
                         isActive: currentRouteName == 'contact',
                         onTap: () {
                           Navigator.pop(context);
                           if (currentRouteName == 'contact') return;
-                          Navigator.push(context, MaterialPageRoute(
-                            settings: const RouteSettings(name: 'contact'),
-                            builder: (context) => const ContactScreen()
-                          ));
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              settings: const RouteSettings(name: 'contact'),
+                              builder: (context) => const ContactScreen(),
+                            ),
+                          );
                         },
                       ),
 
                       _SidebarItem(
-                        icon: LucideIcons.briefcase, 
+                        icon: LucideIcons.briefcase,
                         label: 'Careers',
                         isActive: currentRouteName == 'careers',
                         onTap: () {
                           Navigator.pop(context);
                           if (currentRouteName == 'careers') return;
-                          Navigator.push(context, MaterialPageRoute(
-                            settings: const RouteSettings(name: 'careers'),
-                            builder: (context) => const CareersScreen()
-                          ));
-                        },
-                      ),
-
-                      _SidebarItem(
-                        icon: LucideIcons.trendingUp, 
-                        label: 'Investor Relations',
-                        isActive: currentRouteName == 'investor-relations',
-                        onTap: () {
-                          Navigator.pop(context);
-                          if (currentRouteName == 'investor-relations') return;
-                          Navigator.push(context, MaterialPageRoute(
-                            settings: const RouteSettings(name: 'investor-relations'),
-                            builder: (context) => const InvestorRelationsScreen()
-                          ));
-                        },
-                      ),
-
-                      _SidebarItem(
-                        icon: LucideIcons.fileText, 
-                        label: 'Pages',
-                        isActive: currentRouteName == 'pages-list',
-                        onTap: () {
-                          Navigator.pop(context);
-                          if (currentRouteName == 'pages-list') return;
-                          Navigator.push(context, MaterialPageRoute(
-                            settings: const RouteSettings(name: 'pages-list'),
-                            builder: (context) => const PagesListScreen()
-                          ));
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              settings: const RouteSettings(name: 'careers'),
+                              builder: (context) => const CareersScreen(),
+                            ),
+                          );
                         },
                       ),
 
                       const SizedBox(height: 32),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 8,
+                        ),
                         child: Text(
                           'QUICK ACTIONS',
                           style: GoogleFonts.montserrat(
-                            color: Colors.white.withOpacity(0.3),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withOpacity(0.4),
                             fontSize: 10,
                             fontWeight: FontWeight.w900, // 👈 Match web bold
                             letterSpacing: 4,
@@ -299,30 +298,37 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                         ),
                       ),
                       _SidebarItem(
-                        icon: LucideIcons.mail, 
+                        icon: LucideIcons.mail,
                         label: 'Enquiry',
                         onTap: () {
                           ref.read(navigationProvider.notifier).state = 0;
-                          ref.read(inquiryScrollTriggerProvider.notifier).state++;
+                          ref
+                              .read(inquiryScrollTriggerProvider.notifier)
+                              .state++;
                           Navigator.pop(context);
                         },
                       ),
                       _SidebarItem(
-                        icon: LucideIcons.phone, 
+                        icon: LucideIcons.phone,
                         label: 'Call',
                         onTap: SupportHandlers.launchCall,
                       ),
                       _SidebarItem(
-                        icon: LucideIcons.messageSquare, 
+                        icon: LucideIcons.messageSquare,
                         label: 'Whatsapp',
                         onTap: SupportHandlers.launchWhatsApp,
                       ),
                       _SidebarItem(
-                        icon: LucideIcons.info, 
+                        icon: LucideIcons.info,
                         label: 'About',
                         onTap: () {
                           Navigator.pop(context);
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const AboutScreen()));
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const AboutScreen(),
+                            ),
+                          );
                         },
                       ),
 
@@ -330,10 +336,13 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                     ],
                   ),
                 ),
-                
+
                 // Theme Mode Toggle
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 8,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -348,17 +357,25 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          ref.read(themeProvider.notifier).setTheme(isDark ? ThemeMode.light : ThemeMode.dark);
+                          ref
+                              .read(themeProvider.notifier)
+                              .setTheme(
+                                isDark ? ThemeMode.light : ThemeMode.dark,
+                              );
                         },
                         child: Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
+                            color: (isDark ? Colors.white : Colors.black)
+                                .withOpacity(0.08),
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
+                            border: Border.all(
+                              color: (isDark ? Colors.white : Colors.black)
+                                  .withOpacity(0.1),
+                            ),
                           ),
                           child: Icon(
-                            isDark ? LucideIcons.sparkles : LucideIcons.moon,
+                            isDark ? LucideIcons.moon : LucideIcons.sparkles,
                             color: isDark ? Colors.white : Colors.black,
                             size: 18,
                           ),
@@ -406,7 +423,9 @@ class _SidebarExitButton extends ConsumerWidget {
           context: context,
           builder: (context) => AlertDialog(
             backgroundColor: const Color(0xFF18181B),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
             title: Text(
               'Logout',
               style: GoogleFonts.montserrat(
@@ -425,15 +444,24 @@ class _SidebarExitButton extends ConsumerWidget {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text('CANCEL', style: GoogleFonts.montserrat(color: Colors.blueAccent)),
+                child: Text(
+                  'CANCEL',
+                  style: GoogleFonts.montserrat(color: Colors.blueAccent),
+                ),
               ),
               TextButton(
                 onPressed: () {
                   ref.read(authProvider.notifier).logout();
                   Navigator.pop(context);
                   context.go('/login');
-                }, 
-                child: Text('LOGOUT', style: GoogleFonts.montserrat(color: Colors.redAccent, fontWeight: FontWeight.bold)),
+                },
+                child: Text(
+                  'LOGOUT',
+                  style: GoogleFonts.montserrat(
+                    color: Colors.redAccent,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ],
           ),
@@ -451,18 +479,18 @@ class _SidebarExitButton extends ConsumerWidget {
               color: Colors.red.withOpacity(0.05),
               blurRadius: 20,
               offset: const Offset(0, 10),
-            )
+            ),
           ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(LucideIcons.logOut, color: Colors.redAccent, size: 16),
+            const Icon(LucideIcons.logOut, color: Color(0xFFEF4444), size: 16),
             const SizedBox(width: 12),
             Text(
               'LOG OUT',
               style: GoogleFonts.montserrat(
-                color: Colors.redAccent,
+                color: const Color(0xFFEF4444),
                 fontSize: 11,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 4,
@@ -494,8 +522,9 @@ class _SidebarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final onSurface = Theme.of(context).colorScheme.onSurface;
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 2),
+      margin: const EdgeInsets.symmetric(vertical: 5),
       child: Stack(
         children: [
           // Active Indicator
@@ -515,42 +544,53 @@ class _SidebarItem extends StatelessWidget {
                 ),
               ),
             ),
-          
+
           ListTile(
             leading: Container(
-              width: 36,
-              height: 36,
+              width: 40,
+              height: 40,
               decoration: BoxDecoration(
-                color: isActive ? activeColor.withOpacity(0.1) : Colors.white.withOpacity(0.05),
+                // Web: bg-black/5 (light) / white/5 (dark) → theme-aware.
+                color: isActive
+                    ? activeColor.withOpacity(0.1)
+                    : onSurface.withOpacity(0.05),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: isActive ? activeColor.withOpacity(0.3) : Colors.transparent,
+                  color: isActive
+                      ? activeColor.withOpacity(0.3)
+                      : Colors.transparent,
                 ),
-                boxShadow: isActive ? [
-                  BoxShadow(color: activeColor.withOpacity(0.15), blurRadius: 20, spreadRadius: 0)
-                ] : null,
+                boxShadow: isActive
+                    ? [
+                        BoxShadow(
+                          color: activeColor.withOpacity(0.15),
+                          blurRadius: 20,
+                          spreadRadius: 0,
+                        ),
+                      ]
+                    : null,
               ),
               child: Icon(
-                icon, 
-                color: isActive ? activeColor : Colors.white.withOpacity(0.4), 
-                size: 16
+                icon,
+                color: isActive ? activeColor : onSurface.withOpacity(0.4),
+                size: 18,
               ),
             ),
             title: Text(
               label,
               style: GoogleFonts.montserrat(
-                color: isActive 
-                    ? activeColor
-                    : (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black).withOpacity(0.6),
-                fontSize: 13,
+                color: isActive ? activeColor : onSurface.withOpacity(0.65),
+                fontSize: 14,
                 fontWeight: isActive ? FontWeight.w900 : FontWeight.w700,
                 letterSpacing: -0.2,
               ),
             ),
             trailing: trailing,
             onTap: onTap,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-            visualDensity: VisualDensity.compact,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 4,
+            ),
           ),
         ],
       ),
@@ -584,16 +624,14 @@ class _SidebarDropdown extends StatelessWidget {
           onTap: onToggle,
           trailing: Icon(
             isOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown,
-            color: Colors.white.withOpacity(0.3),
-            size: 14,
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+            size: 16,
           ),
         ),
         if (isOpen)
           Padding(
             padding: const EdgeInsets.only(left: 60, right: 12),
-            child: Column(
-              children: subItems,
-            ),
+            child: Column(children: subItems),
           ),
       ],
     );
@@ -605,10 +643,15 @@ class _SidebarSubItem extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
 
-  const _SidebarSubItem({required this.label, required this.icon, required this.onTap});
+  const _SidebarSubItem({
+    required this.label,
+    required this.icon,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final onSurface = Theme.of(context).colorScheme.onSurface;
     return ListTile(
       onTap: onTap,
       contentPadding: EdgeInsets.zero,
@@ -617,16 +660,16 @@ class _SidebarSubItem extends StatelessWidget {
         width: 32,
         height: 32,
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.05),
+          color: onSurface.withOpacity(0.06),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Icon(icon, color: Colors.white30, size: 14),
+        child: Icon(icon, color: onSurface.withOpacity(0.6), size: 15),
       ),
       title: Text(
         label,
         style: GoogleFonts.montserrat(
-          color: Colors.white.withOpacity(0.6),
-          fontSize: 12,
+          color: onSurface.withOpacity(0.85),
+          fontSize: 12.5,
           fontWeight: FontWeight.w700,
         ),
       ),

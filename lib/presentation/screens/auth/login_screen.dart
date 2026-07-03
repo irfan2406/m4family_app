@@ -22,9 +22,12 @@ class LoginScreen extends ConsumerStatefulWidget {
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
   final TextEditingController _phoneController = TextEditingController();
-  final List<TextEditingController> _otpControllers = List.generate(6, (index) => TextEditingController());
+  final List<TextEditingController> _otpControllers = List.generate(
+    6,
+    (index) => TextEditingController(),
+  );
   final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
-  
+
   late int _step;
   late String _selectedRole;
 
@@ -64,12 +67,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (next.status == AuthStatus.authenticated) {
         context.go('/home');
       } else if (next.status == AuthStatus.error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(next.error ?? 'Error occurred'),
-            backgroundColor: Colors.redAccent,
-          ),
-        );
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              content: Text(next.error ?? 'Error occurred'),
+              backgroundColor: Colors.redAccent,
+              duration: const Duration(milliseconds: 1500),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
       } else if (next.status == AuthStatus.otpSent) {
         setState(() => _step = 2);
       }
@@ -80,32 +87,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // Background Image with Overlay
-          Positioned.fill(
-            child: Image.asset(
-              'assets/login-bg.png',
-              fit: BoxFit.cover,
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.black.withOpacity(0.4),
-                  Colors.black.withOpacity(0.1),
-                  Colors.black,
-                ],
-                stops: const [0, 0.4, 1],
-              ),
-            ),
-          ),
-          Positioned.fill(
-            child: Container(
-              color: Colors.black.withOpacity(0.4),
-            ),
-          ),
+          // Solid black background (no photo).
+          const Positioned.fill(child: ColoredBox(color: Colors.black)),
 
           // Main Content
           SafeArea(
@@ -113,13 +96,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 32.0),
               child: Column(
                 children: [
-                   const SizedBox(height: 48),
-                   _buildHeader(),
-                   const SizedBox(height: 48),
-                   _buildStepContent(authState),
-                   const SizedBox(height: 48),
-                   _buildFooter(),
-                   const SizedBox(height: 32),
+                  const SizedBox(height: 48),
+                  _buildHeader(),
+                  const SizedBox(height: 48),
+                  _buildStepContent(authState),
+                  const SizedBox(height: 48),
+                  _buildFooter(),
+                  const SizedBox(height: 32),
                 ],
               ),
             ),
@@ -145,10 +128,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget _buildStepContent(AuthState authState) {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 300),
-      child: _step == 0 
-        ? _buildOptions() 
-        : _step == 1 
-          ? _buildPhoneInput(authState) 
+      child: _step == 0
+          ? _buildOptions()
+          : _step == 1
+          ? _buildPhoneInput(authState)
           : _buildOtpInput(authState),
     );
   }
@@ -211,7 +194,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(LucideIcons.chevronLeft, color: Colors.white, size: 18),
+                  const Icon(
+                    LucideIcons.chevronLeft,
+                    color: Colors.white,
+                    size: 18,
+                  ),
                   const SizedBox(width: 16),
                   Text(
                     'BACK TO GUEST PORTAL',
@@ -275,25 +262,40 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           child: ElevatedButton(
             onPressed: authState.status == AuthStatus.loading
                 ? null
-                : () => ref.read(authProvider.notifier).sendOtp(_phoneController.text, _selectedRole),
+                : () => ref
+                      .read(authProvider.notifier)
+                      .sendOtp(_phoneController.text, _selectedRole),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
               foregroundColor: Colors.black,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(32),
+              ),
               padding: const EdgeInsets.symmetric(horizontal: 24),
             ),
             child: authState.status == AuthStatus.loading
-              ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.black, strokeWidth: 2))
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'REQUEST TOKEN',
-                      style: GoogleFonts.montserrat(fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 1),
+                ? const SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(
+                      color: Colors.black,
+                      strokeWidth: 2,
                     ),
-                    const Icon(LucideIcons.arrowRight, size: 20),
-                  ],
-                ),
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'REQUEST TOKEN',
+                        style: GoogleFonts.montserrat(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 13,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                      const Icon(LucideIcons.arrowRight, size: 20),
+                    ],
+                  ),
           ),
         ),
       ],
@@ -318,7 +320,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(LucideIcons.chevronLeft, color: Colors.white70, size: 14),
+                  const Icon(
+                    LucideIcons.chevronLeft,
+                    color: Colors.white70,
+                    size: 14,
+                  ),
                   const SizedBox(width: 8),
                   Text(
                     'BACK',
@@ -360,7 +366,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           ],
         ),
         const SizedBox(height: 32),
-        
+
         if (authState.devOtp != null) ...[
           Container(
             padding: const EdgeInsets.all(16),
@@ -377,7 +383,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     children: [
                       const Text(
                         '⚡ DEV MODE — SIMULATED OTP',
-                        style: TextStyle(color: Colors.amber, fontSize: 8, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          color: Colors.amber,
+                          fontSize: 8,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 4),
                       Text(
@@ -403,7 +413,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.amber.withOpacity(0.2),
                   ),
-                  child: const Text('AUTO-FILL', style: TextStyle(color: Colors.amber, fontSize: 10, fontWeight: FontWeight.bold)),
+                  child: const Text(
+                    'AUTO-FILL',
+                    style: TextStyle(
+                      color: Colors.amber,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -423,12 +440,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 textAlign: TextAlign.center,
                 keyboardType: TextInputType.number,
                 maxLength: 1,
-                style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+                cursorColor: Colors.white,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
                 decoration: InputDecoration(
                   counterText: "",
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+                    borderSide: BorderSide(
+                      color: Colors.white.withOpacity(0.1),
+                    ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -458,19 +482,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
               foregroundColor: Colors.black,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
             ),
             child: authState.status == AuthStatus.loading
-              ? const CircularProgressIndicator(color: Colors.black)
-              : Text(
-                  'AUTHENTICATE TOKEN',
-                  style: GoogleFonts.montserrat(fontWeight: FontWeight.bold, letterSpacing: 2),
-                ),
+                ? const CircularProgressIndicator(color: Colors.black)
+                : Text(
+                    'AUTHENTICATE TOKEN',
+                    style: GoogleFonts.montserrat(
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2,
+                    ),
+                  ),
           ),
         ),
         const SizedBox(height: 32),
         TextButton(
-          onPressed: () => ref.read(authProvider.notifier).sendOtp(_phoneController.text, _selectedRole),
+          onPressed: () => ref
+              .read(authProvider.notifier)
+              .sendOtp(_phoneController.text, _selectedRole),
           child: Text(
             'RESEND CODE',
             style: GoogleFonts.montserrat(
@@ -605,13 +636,21 @@ class _LuxuryInputField extends StatelessWidget {
           child: TextField(
             controller: controller,
             keyboardType: keyboardType,
-            style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+            cursorColor: Colors.white,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
             decoration: InputDecoration(
               hintText: hint,
               hintStyle: TextStyle(color: Colors.white.withOpacity(0.2)),
               prefixIcon: Icon(icon, color: Colors.white54, size: 20),
               border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 16,
+              ),
             ),
           ),
         ),

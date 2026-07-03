@@ -37,11 +37,14 @@ class NavigationPill extends StatelessWidget {
             height: 70,
             padding: const EdgeInsets.symmetric(horizontal: 25),
             decoration: BoxDecoration(
-              color: isDark 
-                  ? const Color(0xFF000000) 
-                  : Colors.white.withOpacity(0.4), 
+              color: isDark
+                  ? const Color(0xFF000000)
+                  : Colors.white.withOpacity(0.4),
               borderRadius: BorderRadius.circular(35),
-              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05), width: 1),
+              border: Border.all(
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                width: 1,
+              ),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -71,7 +74,12 @@ class NavigationPill extends StatelessWidget {
           ),
         ),
       ),
-    ).animate().slideY(begin: 1.0, end: 0, duration: 600.ms, curve: Curves.easeOutBack);
+    ).animate().slideY(
+      begin: 1.0,
+      end: 0,
+      duration: 600.ms,
+      curve: Curves.easeOutBack,
+    );
   }
 }
 
@@ -88,17 +96,30 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final onSurface = Theme.of(context).colorScheme.onSurface;
     return GestureDetector(
       onTap: onTap,
+      behavior: HitTestBehavior.opaque,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            color: isActive 
-                ? Theme.of(context).colorScheme.onSurface 
-                : Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
-            size: 24,
+          // Web parity: active icon sits in a highlighted rounded box
+          // (bg-primary/10 + border-primary/20).
+          Container(
+            padding: const EdgeInsets.all(9),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: isActive ? onSurface.withOpacity(0.1) : Colors.transparent,
+              border: isActive
+                  ? Border.all(color: onSurface.withOpacity(0.2))
+                  : null,
+            ),
+            child: Icon(
+              icon,
+              color: isActive ? onSurface : onSurface.withOpacity(0.5),
+              size: 22,
+            ),
           ),
           if (isActive)
             Container(
@@ -106,7 +127,7 @@ class _NavItem extends StatelessWidget {
               width: 5,
               height: 5,
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.onSurface,
+                color: onSurface,
                 shape: BoxShape.circle,
               ),
             ).animate().scale(duration: 200.ms),

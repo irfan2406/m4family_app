@@ -167,7 +167,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                     'COMMUNITIES',
                     style: GoogleFonts.lora(
                       fontSize: 32,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w300,
                       color: isDark ? Colors.white : Colors.black,
                       height: 1,
                     ),
@@ -270,10 +270,22 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
   }
 }
 
+// Web parity: an empty/broken community image shows a light neutral area
+// (like the web card), not a solid black block.
 Widget _communityImagePlaceholder() => Container(
-  color: const Color(0xFF1A1A1A),
-  child: const Center(
-    child: Icon(LucideIcons.building2, color: Colors.white24, size: 40),
+  decoration: const BoxDecoration(
+    gradient: LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [Color(0xFFEDEEF1), Color(0xFFD7D9DE)],
+    ),
+  ),
+  child: Center(
+    child: Icon(
+      LucideIcons.building2,
+      color: Colors.black.withOpacity(0.15),
+      size: 40,
+    ),
   ),
 );
 
@@ -386,8 +398,8 @@ class _CommunityCard extends ConsumerWidget {
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.inter(
-                            fontSize: 12,
-                            color: Colors.white.withOpacity(0.6),
+                            fontSize: 13,
+                            color: Colors.white.withOpacity(0.8),
                             height: 1.5,
                             fontWeight: FontWeight.w500,
                           ),

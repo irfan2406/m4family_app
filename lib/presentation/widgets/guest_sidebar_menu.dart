@@ -24,7 +24,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
   Widget build(BuildContext context) {
     final themeMode = ref.watch(themeProvider);
     final isDark = themeMode == ThemeMode.dark;
-    
+
     return Drawer(
       backgroundColor: Colors.transparent,
       width: MediaQuery.of(context).size.width * 0.85,
@@ -34,8 +34,16 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
             filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
             child: Container(
               decoration: BoxDecoration(
-                color: isDark ? Colors.black.withOpacity(0.8) : Colors.white.withOpacity(0.8),
-                border: Border(right: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05))),
+                color: isDark
+                    ? Colors.black.withOpacity(0.8)
+                    : Colors.white.withOpacity(0.8),
+                border: Border(
+                  right: BorderSide(
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      0.05,
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
@@ -45,103 +53,236 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
               children: [
                 Padding(
                   padding: const EdgeInsets.fromLTRB(24, 20, 24, 10),
-                  child: Text('MENU', style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.5), fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 4)),
+                  child: Text(
+                    'MENU',
+                    style: GoogleFonts.montserrat(
+                      color: (isDark ? Colors.white : Colors.black).withOpacity(
+                        0.5,
+                      ),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 4,
+                    ),
+                  ),
                 ),
                 Expanded(
                   child: ListView(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
                     children: [
-                      _MenuItem(label: 'Home', icon: LucideIcons.home, isActive: GoRouterState.of(context).uri.path == '/home', onTap: () => context.go('/home')),
-                      _MenuItem(label: 'Community', icon: LucideIcons.building2, isActive: GoRouterState.of(context).uri.path == '/communities', onTap: () => context.push('/communities')),
-                      _MenuItem(label: 'Properties', icon: LucideIcons.layoutGrid, isActive: GoRouterState.of(context).uri.path == '/projects', onTap: () => context.push('/projects')),
-                      
+                      _MenuItem(
+                        label: 'Home',
+                        icon: LucideIcons.home,
+                        isActive: GoRouterState.of(context).uri.path == '/home',
+                        onTap: () => context.go('/home'),
+                      ),
+                      _MenuItem(
+                        label: 'Community',
+                        icon: LucideIcons.building2,
+                        isActive:
+                            GoRouterState.of(context).uri.path ==
+                            '/communities',
+                        onTap: () => context.push('/communities'),
+                      ),
+                      _MenuItem(
+                        label: 'Properties',
+                        icon: LucideIcons.layoutGrid,
+                        isActive:
+                            GoRouterState.of(context).uri.path == '/projects',
+                        onTap: () => context.push('/projects'),
+                      ),
+
                       _DropdownMenuItem(
                         label: 'Content Hub',
                         icon: LucideIcons.bell,
                         isOpen: _isContentOpen,
-                        onToggle: () => setState(() => _isContentOpen = !_isContentOpen),
+                        onToggle: () =>
+                            setState(() => _isContentOpen = !_isContentOpen),
                         subItems: [
-                          _SubItem(label: 'Media', icon: LucideIcons.playCircle, onTap: () {
-                            context.push('/media');
-                            Navigator.pop(context);
-                          }),
-                          _SubItem(label: 'Highlights', icon: LucideIcons.zap, onTap: () {
-                            context.push('/highlights');
-                            Navigator.pop(context);
-                          }),
-                          _SubItem(label: 'Events', icon: LucideIcons.calendar, onTap: () {
-                            context.push('/events');
-                            Navigator.pop(context);
-                          }),
-                          _SubItem(label: 'Blog', icon: LucideIcons.fileText, onTap: () {
-                            context.push('/blog');
-                            Navigator.pop(context);
-                          }),
+                          _SubItem(
+                            label: 'Media',
+                            icon: LucideIcons.playCircle,
+                            onTap: () {
+                              context.push('/media');
+                              Navigator.pop(context);
+                            },
+                          ),
+                          _SubItem(
+                            label: 'Highlights',
+                            icon: LucideIcons.zap,
+                            onTap: () {
+                              context.push('/highlights');
+                              Navigator.pop(context);
+                            },
+                          ),
+                          _SubItem(
+                            label: 'Events',
+                            icon: LucideIcons.calendar,
+                            onTap: () {
+                              context.push('/events');
+                              Navigator.pop(context);
+                            },
+                          ),
+                          _SubItem(
+                            label: 'Blog',
+                            icon: LucideIcons.fileText,
+                            onTap: () {
+                              context.push('/blog');
+                              Navigator.pop(context);
+                            },
+                          ),
                         ],
                       ),
-                      
-                      _MenuItem(label: 'Custom Views', icon: LucideIcons.sparkles, isActive: GoRouterState.of(context).uri.path == '/custom-views', onTap: () => context.push('/custom-views')),
-                      _MenuItem(label: 'Who We Are', icon: LucideIcons.info, isActive: GoRouterState.of(context).uri.path == '/about', onTap: () => context.push('/about')),
-                      
+
+                      _MenuItem(
+                        label: 'Custom Views',
+                        icon: LucideIcons.sparkles,
+                        isActive:
+                            GoRouterState.of(context).uri.path ==
+                            '/custom-views',
+                        onTap: () => context.push('/custom-views'),
+                      ),
+                      _MenuItem(
+                        label: 'Who We Are',
+                        icon: LucideIcons.info,
+                        isActive:
+                            GoRouterState.of(context).uri.path == '/about',
+                        onTap: () => context.push('/about'),
+                      ),
+
                       _DropdownMenuItem(
                         label: 'Connect',
                         icon: LucideIcons.share2,
                         isOpen: _isConnectOpen,
-                        onToggle: () => setState(() => _isConnectOpen = !_isConnectOpen),
+                        onToggle: () =>
+                            setState(() => _isConnectOpen = !_isConnectOpen),
                         subItems: [
-                          _SubItem(label: 'CP Login', icon: LucideIcons.logIn, onTap: () {
-                            context.push('/auth/cp/login?from=guest');
-                            Navigator.pop(context);
-                          }),
-                          _SubItem(label: 'Investor Login', icon: LucideIcons.logIn, onTap: () {
-                            context.push('/investor/login');
-                            Navigator.pop(context);
-                          }),
-                          _SubItem(label: 'Customer Login', icon: LucideIcons.logIn, onTap: () {
-                            context.push('/login?step=1');
-                            Navigator.pop(context);
-                          }),
+                          _SubItem(
+                            label: 'CP Login',
+                            icon: LucideIcons.logIn,
+                            onTap: () {
+                              context.push('/auth/cp/login?from=guest');
+                              Navigator.pop(context);
+                            },
+                          ),
+                          _SubItem(
+                            label: 'Investor Login',
+                            icon: LucideIcons.logIn,
+                            onTap: () {
+                              context.push('/investor/login');
+                              Navigator.pop(context);
+                            },
+                          ),
+                          _SubItem(
+                            label: 'Customer Login',
+                            icon: LucideIcons.logIn,
+                            onTap: () {
+                              context.push('/login?step=1');
+                              Navigator.pop(context);
+                            },
+                          ),
                         ],
                       ),
-                      
-                      _MenuItem(label: 'Careers', icon: LucideIcons.briefcase, isActive: GoRouterState.of(context).uri.path == '/careers', onTap: () => context.push('/careers')),
-                      _MenuItem(label: 'Contact', icon: LucideIcons.phone, isActive: GoRouterState.of(context).uri.path == '/contact', onTap: () => context.push('/contact')),
-                    
+
+                      _MenuItem(
+                        label: 'Careers',
+                        icon: LucideIcons.briefcase,
+                        isActive:
+                            GoRouterState.of(context).uri.path == '/careers',
+                        onTap: () => context.push('/careers'),
+                      ),
+                      _MenuItem(
+                        label: 'Contact',
+                        icon: LucideIcons.phone,
+                        isActive:
+                            GoRouterState.of(context).uri.path == '/contact',
+                        onTap: () => context.push('/contact'),
+                      ),
+
                       const SizedBox(height: 32),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 14),
-                        child: Text('QUICK ACTIONS', style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.6), fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 3)),
+                        child: Text(
+                          'QUICK ACTIONS',
+                          style: GoogleFonts.montserrat(
+                            color: (isDark ? Colors.white : Colors.black)
+                                .withOpacity(0.6),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 3,
+                          ),
+                        ),
                       ),
                       const SizedBox(height: 12),
-                      _QuickActionItem(label: 'Enquiry', icon: LucideIcons.mail, onTap: () => context.push('/contact')),
-                      _QuickActionItem(label: 'Call', icon: LucideIcons.phone, onTap: () => launchUrl(Uri.parse('tel:+912246018844'))),
-                      _QuickActionItem(label: 'WhatsApp', icon: LucideIcons.messageSquare, onTap: () => launchUrl(Uri.parse('https://wa.me/912246018844'))),
-                      _QuickActionItem(label: 'Location', icon: LucideIcons.mapPin, onTap: () => launchUrl(Uri.parse('https://maps.google.com'))),
+                      _QuickActionItem(
+                        label: 'Enquiry',
+                        icon: LucideIcons.mail,
+                        onTap: () => context.push('/contact'),
+                      ),
+                      _QuickActionItem(
+                        label: 'Call',
+                        icon: LucideIcons.phone,
+                        onTap: () => launchUrl(Uri.parse('tel:+912246018844')),
+                      ),
+                      _QuickActionItem(
+                        label: 'WhatsApp',
+                        icon: LucideIcons.messageSquare,
+                        onTap: () =>
+                            launchUrl(Uri.parse('https://wa.me/912246018844')),
+                      ),
+                      _QuickActionItem(
+                        label: 'Location',
+                        icon: LucideIcons.mapPin,
+                        onTap: () =>
+                            launchUrl(Uri.parse('https://maps.google.com')),
+                      ),
                     ],
                   ),
                 ),
-                
+
                 // Bottom section
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 8,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('THEME MODE', style: GoogleFonts.montserrat(color: isDark ? Colors.white70 : Colors.black87, fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                      Text(
+                        'THEME MODE',
+                        style: GoogleFonts.montserrat(
+                          color: isDark ? Colors.white70 : Colors.black87,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1,
+                        ),
+                      ),
                       GestureDetector(
                         onTap: () {
-                          ref.read(themeProvider.notifier).setTheme(isDark ? ThemeMode.light : ThemeMode.dark);
+                          ref
+                              .read(themeProvider.notifier)
+                              .setTheme(
+                                isDark ? ThemeMode.light : ThemeMode.dark,
+                              );
                         },
                         child: Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
+                            color: (isDark ? Colors.white : Colors.black)
+                                .withOpacity(0.08),
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
+                            border: Border.all(
+                              color: (isDark ? Colors.white : Colors.black)
+                                  .withOpacity(0.1),
+                            ),
                           ),
-                          child: Icon(isDark ? LucideIcons.sparkles : LucideIcons.moon, color: isDark ? Colors.white : Colors.black, size: 18),
+                          child: Icon(
+                            isDark ? LucideIcons.sparkles : LucideIcons.moon,
+                            color: isDark ? Colors.white : Colors.black,
+                            size: 18,
+                          ),
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -161,16 +302,20 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(LucideIcons.logOut, color: Colors.red, size: 20),
+                          const Icon(
+                            LucideIcons.logOut,
+                            color: Colors.red,
+                            size: 20,
+                          ),
                           const SizedBox(width: 12),
                           Text(
-                            'EXIT APP', 
+                            'EXIT APP',
                             style: GoogleFonts.montserrat(
-                              color: Colors.red, 
-                              fontWeight: FontWeight.w900, 
-                              fontSize: 13, 
-                              letterSpacing: 1
-                            )
+                              color: Colors.red,
+                              fontWeight: FontWeight.w900,
+                              fontSize: 13,
+                              letterSpacing: 1,
+                            ),
                           ),
                         ],
                       ),
@@ -191,7 +336,12 @@ class _MenuItem extends StatelessWidget {
   final IconData icon;
   final bool isActive;
   final VoidCallback onTap;
-  const _MenuItem({required this.label, required this.icon, required this.onTap, this.isActive = false});
+  const _MenuItem({
+    required this.label,
+    required this.icon,
+    required this.onTap,
+    this.isActive = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -200,21 +350,36 @@ class _MenuItem extends StatelessWidget {
       onTap: onTap,
       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
       leading: Container(
-        width: 44, height: 44,
+        width: 44,
+        height: 44,
         decoration: BoxDecoration(
-          color: isActive ? (isDark ? Colors.white : Colors.black).withOpacity(0.15) : (isDark ? Colors.white : Colors.black).withOpacity(0.08), 
+          color: isActive
+              ? (isDark ? Colors.white : Colors.black).withOpacity(0.15)
+              : (isDark ? Colors.white : Colors.black).withOpacity(0.08),
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Icon(icon, color: isActive ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white.withOpacity(0.4) : Colors.black.withOpacity(0.5)), size: 20),
+        child: Icon(
+          icon,
+          color: isActive
+              ? (isDark ? Colors.white : Colors.black)
+              : (isDark
+                    ? Colors.white.withOpacity(0.4)
+                    : Colors.black.withOpacity(0.5)),
+          size: 20,
+        ),
       ),
       title: Text(
-        label, 
+        label,
         style: GoogleFonts.montserrat(
-          color: isActive ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white.withOpacity(0.7) : Colors.black.withOpacity(0.8)), 
-          fontSize: 15, 
+          color: isActive
+              ? (isDark ? Colors.white : Colors.black)
+              : (isDark
+                    ? Colors.white.withOpacity(0.7)
+                    : Colors.black.withOpacity(0.8)),
+          fontSize: 15,
           fontWeight: isActive ? FontWeight.w800 : FontWeight.w700,
-          letterSpacing: -0.2
-        )
+          letterSpacing: -0.2,
+        ),
       ),
     );
   }
@@ -226,7 +391,13 @@ class _DropdownMenuItem extends StatelessWidget {
   final bool isOpen;
   final VoidCallback onToggle;
   final List<Widget> subItems;
-  const _DropdownMenuItem({required this.label, required this.icon, required this.isOpen, required this.onToggle, required this.subItems});
+  const _DropdownMenuItem({
+    required this.label,
+    required this.icon,
+    required this.isOpen,
+    required this.onToggle,
+    required this.subItems,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -235,25 +406,45 @@ class _DropdownMenuItem extends StatelessWidget {
       children: [
         ListTile(
           onTap: onToggle,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 14,
+            vertical: 2,
+          ),
           leading: Container(
-            width: 44, height: 44,
+            width: 44,
+            height: 44,
             decoration: BoxDecoration(
-              color: isOpen ? (isDark ? Colors.white : Colors.black).withOpacity(0.15) : (isDark ? Colors.white : Colors.black).withOpacity(0.08), 
+              color: isOpen
+                  ? (isDark ? Colors.white : Colors.black).withOpacity(0.15)
+                  : (isDark ? Colors.white : Colors.black).withOpacity(0.08),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: isOpen ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white.withOpacity(0.4) : Colors.black.withOpacity(0.5)), size: 20),
+            child: Icon(
+              icon,
+              color: isOpen
+                  ? (isDark ? Colors.white : Colors.black)
+                  : (isDark
+                        ? Colors.white.withOpacity(0.4)
+                        : Colors.black.withOpacity(0.5)),
+              size: 20,
+            ),
           ),
           title: Text(
-            label, 
+            label,
             style: GoogleFonts.montserrat(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(isOpen ? 1.0 : 0.8), 
-              fontSize: 15, 
+              color: (isDark ? Colors.white : Colors.black).withOpacity(
+                isOpen ? 1.0 : 0.8,
+              ),
+              fontSize: 15,
               fontWeight: FontWeight.w700,
-              letterSpacing: -0.2
-            )
+              letterSpacing: -0.2,
+            ),
           ),
-          trailing: Icon(isOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown, color: isDark ? Colors.white30 : Colors.black26, size: 18),
+          trailing: Icon(
+            isOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown,
+            color: isDark ? Colors.white30 : Colors.black26,
+            size: 18,
+          ),
         ),
         if (isOpen) ...subItems,
       ],
@@ -266,7 +457,12 @@ class _SubItem extends StatelessWidget {
   final IconData icon;
   final Color? color;
   final VoidCallback onTap;
-  const _SubItem({required this.label, required this.icon, this.color, required this.onTap});
+  const _SubItem({
+    required this.label,
+    required this.icon,
+    this.color,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -276,14 +472,19 @@ class _SubItem extends StatelessWidget {
       child: ListTile(
         onTap: onTap,
         dense: true,
-        leading: Icon(icon, size: 16, color: color ?? (isDark ? Colors.white : Colors.black).withOpacity(0.3)),
+        leading: Icon(
+          icon,
+          size: 16,
+          color:
+              color ?? (isDark ? Colors.white : Colors.black).withOpacity(0.6),
+        ),
         title: Text(
-          label, 
+          label,
           style: GoogleFonts.montserrat(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.5), 
-            fontSize: 13, 
-            fontWeight: FontWeight.w600
-          )
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.85),
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+          ),
         ),
       ),
     );
@@ -294,7 +495,11 @@ class _QuickActionItem extends StatelessWidget {
   final String label;
   final IconData icon;
   final VoidCallback onTap;
-  const _QuickActionItem({required this.label, required this.icon, required this.onTap});
+  const _QuickActionItem({
+    required this.label,
+    required this.icon,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -303,18 +508,26 @@ class _QuickActionItem extends StatelessWidget {
       onTap: onTap,
       contentPadding: const EdgeInsets.symmetric(horizontal: 14),
       leading: Container(
-        width: 44, height: 44,
-        decoration: BoxDecoration(color: (isDark ? Colors.white : Colors.black).withOpacity(0.08), borderRadius: BorderRadius.circular(12)),
-        child: Icon(icon, color: (isDark ? Colors.white : Colors.black).withOpacity(0.5), size: 18),
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Icon(
+          icon,
+          color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+          size: 18,
+        ),
       ),
       title: Text(
-        label, 
+        label,
         style: GoogleFonts.montserrat(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.8), 
-          fontSize: 15, 
+          color: (isDark ? Colors.white : Colors.black).withOpacity(0.8),
+          fontSize: 15,
           fontWeight: FontWeight.w700,
-          letterSpacing: -0.2
-        )
+          letterSpacing: -0.2,
+        ),
       ),
     );
   }

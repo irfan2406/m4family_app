@@ -5,7 +5,7 @@ final projectsProvider = FutureProvider<List<dynamic>>((ref) async {
   final apiClient = ref.watch(apiClientProvider);
   final response = await apiClient.getProjects();
   if (response.statusCode == 200 || response.statusCode == 201) {
-    return response.data['data'] ?? []; 
+    return response.data['data'] ?? [];
   } else {
     throw Exception('Failed to load projects');
   }
@@ -56,21 +56,33 @@ final filteredProjectsProvider = Provider<List<dynamic>>((ref) {
 
   return projectsAsync.when(
     data: (projects) {
-      return projects.where((p) {
+      final filtered = projects.where((p) {
         // 1. Status Filter (Ongoing/Upcoming/Completed)
         final status = p['status']?.toString().toLowerCase() ?? '';
-        final matchesStatus = statusFilter == 'All' || status == statusFilter.toLowerCase();
-        
+        final matchesStatus =
+            statusFilter == 'All' || status == statusFilter.toLowerCase();
+
         // 2. Location Filter (Case-insensitive)
-        final projectLoc = p['location']?['name']?.toString().toUpperCase() ?? '';
-        final matchesLoc = selectedLocs.isEmpty || selectedLocs.any((loc) => projectLoc == loc.toUpperCase() || projectLoc.contains(loc.toUpperCase()));
-        
+        final projectLoc =
+            p['location']?['name']?.toString().toUpperCase() ?? '';
+        final matchesLoc =
+            selectedLocs.isEmpty ||
+            selectedLocs.any(
+              (loc) =>
+                  projectLoc == loc.toUpperCase() ||
+                  projectLoc.contains(loc.toUpperCase()),
+            );
+
         // 3. Configuration Filter (e.g. "2 BHK") - searches in title, description and config fields if any
         bool matchesConfig = selectedConfigs.isEmpty;
         if (!matchesConfig) {
           final title = p['title']?.toString().toUpperCase() ?? '';
           final desc = p['description']?.toString().toUpperCase() ?? '';
-          matchesConfig = selectedConfigs.any((c) => title.contains(c.toUpperCase()) || desc.contains(c.toUpperCase()));
+          matchesConfig = selectedConfigs.any(
+            (c) =>
+                title.contains(c.toUpperCase()) ||
+                desc.contains(c.toUpperCase()),
+          );
         }
 
         // 4. Area Filter (e.g. "< 1000") - searches in description
@@ -85,15 +97,39 @@ final filteredProjectsProvider = Provider<List<dynamic>>((ref) {
         }
 
         // 5. Legacy Filters (Budget/Type)
-        final matchesType = selectedTypes.isEmpty || selectedTypes.any((t) => p['category']?['name']?.toString().toUpperCase() == t.toUpperCase());
+        final matchesType =
+            selectedTypes.isEmpty ||
+            selectedTypes.any(
+              (t) =>
+                  p['category']?['name']?.toString().toUpperCase() ==
+                  t.toUpperCase(),
+            );
         bool matchesBudget = selectedBudgets.isEmpty;
         if (!matchesBudget) {
           final price = p['startingPrice']?.toString().toUpperCase() ?? '';
-          matchesBudget = selectedBudgets.any((b) => price.contains(b.split(' ')[0].toUpperCase()));
+          matchesBudget = selectedBudgets.any(
+            (b) => price.contains(b.split(' ')[0].toUpperCase()),
+          );
         }
 
-        return matchesStatus && matchesLoc && matchesType && matchesBudget && matchesConfig && matchesArea;
+        return matchesStatus &&
+            matchesLoc &&
+            matchesType &&
+            matchesBudget &&
+            matchesConfig &&
+            matchesArea;
       }).toList();
+
+      // Web parity: render in creation order (oldest → newest). The web list
+      // shows CLÉDOR → CLEDOR ELITE → DING DONG; the raw API order the app got
+      // was newest-first. Sort by createdAt (fallback Mongo _id, which encodes
+      // creation time) ascending to match the web's serial order.
+      filtered.sort((a, b) {
+        final ka = (a['createdAt'] ?? a['_id'] ?? '').toString();
+        final kb = (b['createdAt'] ?? b['_id'] ?? '').toString();
+        return ka.compareTo(kb);
+      });
+      return filtered;
     },
     loading: () => [],
     error: (e, s) => [],
