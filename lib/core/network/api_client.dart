@@ -11,8 +11,11 @@ class ApiClient {
     : dio = Dio(
         BaseOptions(
           baseUrl: baseUrl,
-          connectTimeout: const Duration(seconds: 30),
-          receiveTimeout: const Duration(seconds: 30),
+          // Backend can cold-start / respond slowly; 30s was too aggressive and
+          // caused "receive timeout" on the projects list. Give it more room.
+          connectTimeout: const Duration(seconds: 60),
+          receiveTimeout: const Duration(seconds: 90),
+          sendTimeout: const Duration(seconds: 60),
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',

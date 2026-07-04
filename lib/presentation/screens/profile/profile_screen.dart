@@ -3,15 +3,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import 'package:m4_mobile/core/providers/theme_provider.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
-import 'package:m4_mobile/presentation/screens/profile/profile_settings_screen.dart';
-import 'package:m4_mobile/presentation/screens/profile/referral_screen.dart';
-import 'package:m4_mobile/presentation/screens/support/schedule_visit_screen.dart';
-import 'package:m4_mobile/presentation/screens/support/support_logs_screen.dart';
-import 'package:m4_mobile/presentation/screens/support/support_screen.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:go_router/go_router.dart';
 
@@ -23,8 +17,6 @@ class ProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
-
-
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
@@ -33,9 +25,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final isDark = themeMode == ThemeMode.dark;
 
     if (user == null) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     return Material(
@@ -56,19 +46,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         const SizedBox(height: 12),
                         _buildProfileCard(user, isDark),
                         const SizedBox(height: 32),
-                        _SectionTitle(title: 'OWNER DETAILS', isDark: isDark),
-                        const SizedBox(height: 12),
-                        _buildOwnerDetails(user, isDark),
-                        const SizedBox(height: 32),
                         _SectionTitle(title: 'FAMILY', isDark: isDark),
                         const SizedBox(height: 12),
                         _buildFamilySection(user, isDark),
                         const SizedBox(height: 32),
-                        _SectionTitle(title: 'PROPERTY SERVICES', isDark: isDark),
+                        _SectionTitle(
+                          title: 'PROPERTY SERVICES',
+                          isDark: isDark,
+                        ),
                         const SizedBox(height: 16),
                         _buildPropertyServices(context, isDark),
                         const SizedBox(height: 32),
-                        _SectionTitle(title: 'MANAGEMENT & SUPPORT', isDark: isDark),
+                        _SectionTitle(
+                          title: 'MANAGEMENT & SUPPORT',
+                          isDark: isDark,
+                        ),
                         const SizedBox(height: 16),
                         _buildManagementSupport(context, isDark),
                         const SizedBox(height: 32),
@@ -112,11 +104,23 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Widget _buildProfileCard(dynamic user, bool isDark) {
-    final String fullName = user['fullName'] ?? '${user['firstName'] ?? ''} ${user['lastName'] ?? ''}'.trim();
+    final String fullName =
+        user['fullName'] ??
+        '${user['firstName'] ?? ''} ${user['lastName'] ?? ''}'.trim();
     final String? avatarUrl = user['avatarUrl'];
     final String email = user['email'] ?? 'No email provided';
     final String phone = user['phone'] ?? 'No phone provided';
-    final int points = user['loyaltyPoints'] ?? 500;
+    // Web parity: rewardWalletBalance preferred, comma-grouped.
+    final num pointsVal =
+        user['rewardWalletBalance'] ?? user['loyaltyPoints'] ?? 0;
+    final String points = NumberFormat.decimalPattern(
+      'en_IN',
+    ).format(pointsVal);
+    final String address = (user['address'] ?? 'No address provided')
+        .toString();
+    final String born = user['dob'] != null
+        ? _formatDate(user['dob'].toString())
+        : 'Not provided';
 
     return Container(
       decoration: BoxDecoration(
@@ -127,7 +131,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
             blurRadius: 30,
             offset: const Offset(0, 15),
-          )
+          ),
         ],
       ),
       child: Column(
@@ -142,16 +146,26 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   width: 84,
                   height: 84,
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05),
+                    color: isDark
+                        ? Colors.white10
+                        : Colors.black.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(24),
                     image: avatarUrl != null
                         ? DecorationImage(
-                            image: CachedNetworkImageProvider(ref.read(apiClientProvider).resolveUrl(avatarUrl)),
+                            image: CachedNetworkImageProvider(
+                              ref.read(apiClientProvider).resolveUrl(avatarUrl),
+                            ),
                             fit: BoxFit.cover,
                           )
                         : null,
                   ),
-                  child: avatarUrl == null ? Icon(LucideIcons.user, color: isDark ? Colors.white38 : Colors.black38, size: 32) : null,
+                  child: avatarUrl == null
+                      ? Icon(
+                          LucideIcons.user,
+                          color: isDark ? Colors.white38 : Colors.black38,
+                          size: 32,
+                        )
+                      : null,
                 ),
                 const SizedBox(width: 20),
                 Expanded(
@@ -187,23 +201,39 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       const SizedBox(height: 12),
                       // Location Pill
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
-                          color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.04),
+                          color: isDark
+                              ? Colors.white.withOpacity(0.05)
+                              : Colors.black.withOpacity(0.04),
                           borderRadius: BorderRadius.circular(100),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(LucideIcons.mapPin, size: 12, color: isDark ? Colors.white54 : Colors.black54),
+                            Icon(
+                              LucideIcons.mapPin,
+                              size: 12,
+                              color: isDark ? Colors.white54 : Colors.black54,
+                            ),
                             const SizedBox(width: 6),
-                            Text(
-                              'SAKINAKA',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 9,
-                                fontWeight: FontWeight.w800,
-                                color: isDark ? Colors.white70 : Colors.black87,
-                                letterSpacing: 1,
+                            ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 150),
+                              child: Text(
+                                address.toUpperCase(),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w800,
+                                  color: isDark
+                                      ? Colors.white70
+                                      : Colors.black87,
+                                  letterSpacing: 1,
+                                ),
                               ),
                             ),
                           ],
@@ -213,10 +243,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       // Born Row
                       Row(
                         children: [
-                          Icon(LucideIcons.calendar, size: 12, color: isDark ? Colors.white38 : Colors.black38),
+                          Icon(
+                            LucideIcons.calendar,
+                            size: 12,
+                            color: isDark ? Colors.white38 : Colors.black38,
+                          ),
                           const SizedBox(width: 6),
                           Text(
-                            'BORN: 5 JUL 2003',
+                            'BORN: ${born.toUpperCase()}',
                             style: GoogleFonts.montserrat(
                               fontSize: 9,
                               fontWeight: FontWeight.w700,
@@ -236,7 +270,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
             decoration: BoxDecoration(
-              border: Border(top: BorderSide(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05))),
+              border: Border(
+                top: BorderSide(
+                  color: isDark
+                      ? Colors.white.withOpacity(0.05)
+                      : Colors.black.withOpacity(0.05),
+                ),
+              ),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -251,7 +291,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ),
                 ),
                 Text(
-                  points.toString(),
+                  points,
                   style: GoogleFonts.montserrat(
                     fontSize: 22,
                     fontWeight: FontWeight.w900,
@@ -266,102 +306,29 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  Widget _buildOwnerDetails(dynamic user, bool isDark) {
-    final rawOwnerDetails = user['ownerDetails'];
-    String pan = "IJKLM0000J";
-    String aadhar = "111122223333";
-    
-    if (rawOwnerDetails is Map) {
-      pan = (rawOwnerDetails['PAN'] ?? rawOwnerDetails['pan'] ?? pan).toString();
-      aadhar = (rawOwnerDetails['AADHAR'] ?? rawOwnerDetails['aadhaar'] ?? rawOwnerDetails['aadhar'] ?? aadhar).toString();
-    }
-
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF18181B) : Colors.white,
-        borderRadius: BorderRadius.circular(32),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          )
-        ],
-      ),
-      child: Column(
-        children: [
-          _InfoRow(label: 'PAN', value: pan, icon: LucideIcons.user, isDark: isDark),
-          const SizedBox(height: 20),
-          Container(height: 1, color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03)),
-          const SizedBox(height: 20),
-          _InfoRow(label: 'AADHAR', value: aadhar, icon: LucideIcons.user, isDark: isDark),
-        ],
-      ),
-    );
-  }
-
+  // Web parity: single "My Family" card with a subtitle.
   Widget _buildFamilySection(dynamic user, bool isDark) {
-    return GestureDetector(
+    return _SupportTile(
+      label: 'MY FAMILY',
+      subtitle: 'MANAGE YOUR FAMILY DETAILS',
+      icon: LucideIcons.users,
+      isDark: isDark,
       onTap: () => context.push('/profile/family'),
-      child: Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF18181B) : Colors.white,
-        borderRadius: BorderRadius.circular(32),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          )
-        ],
-      ),
-      child: Row(
-        children: [
-          _IconBox(icon: LucideIcons.users, isDark: isDark, color: Colors.blueAccent),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Text(
-              'MY FAMILY',
-              style: GoogleFonts.montserrat(
-                fontSize: 13,
-                fontWeight: FontWeight.w800,
-                color: isDark ? Colors.white : Colors.black,
-              ),
-            ),
-          ),
-          Icon(LucideIcons.chevronRight, size: 16, color: isDark ? Colors.white24 : Colors.black26),
-        ],
-      ),
-      ),
     );
   }
 
+  // Web parity: a single full-width "My Properties" card (no "Visits").
   Widget _buildPropertyServices(BuildContext context, bool isDark) {
-    return Row(
-      children: [
-        Expanded(
-          child: _ServiceCard(
-            label: 'MY PROPERTIES',
-            icon: LucideIcons.building,
-            isDark: isDark,
-            onTap: () => context.push('/profile/my-property'),
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: _ServiceCard(
-            label: 'VISITS',
-            icon: LucideIcons.calendar,
-            isDark: isDark,
-            onTap: () => context.push('/support/schedule-visit'),
-          ),
-        ),
-      ],
+    return _SupportTile(
+      label: 'MY PROPERTIES',
+      subtitle: 'VIEW YOUR PURCHASED UNITS & DOCUMENTS',
+      icon: LucideIcons.building,
+      isDark: isDark,
+      onTap: () => context.push('/profile/my-property'),
     );
   }
 
+  // Web parity: only My Custom Views + M4 Referral Program.
   Widget _buildManagementSupport(BuildContext context, bool isDark) {
     return Column(
       children: [
@@ -380,22 +347,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           isDark: isDark,
           onTap: () => context.push('/profile/referral'),
         ),
-        const SizedBox(height: 12),
-        _SupportTile(
-          label: 'CONCIERGE TICKET LOGS',
-          subtitle: 'SERVICE & SUPPORT HISTORY',
-          icon: LucideIcons.fileText,
-          isDark: isDark,
-          onTap: () => context.push('/support/logs'),
-        ),
-        const SizedBox(height: 12),
-        _SupportTile(
-          label: 'SUPPORT & CONTACT',
-          subtitle: '24/7 CONCIERGE SERVICE',
-          icon: LucideIcons.phone,
-          isDark: isDark,
-          onTap: () => context.push('/support/contact'),
-        ),
       ],
     );
   }
@@ -411,7 +362,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         },
         style: OutlinedButton.styleFrom(
           side: BorderSide(color: Colors.red.withOpacity(0.1)),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(100),
+          ),
           backgroundColor: Colors.white,
         ),
         child: Row(
@@ -434,8 +387,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-
-
   String _formatDate(String dateStr) {
     try {
       final date = DateTime.parse(dateStr);
@@ -445,7 +396,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
   }
 }
-
 
 class _SectionTitle extends StatelessWidget {
   final String title;
@@ -461,96 +411,10 @@ class _SectionTitle extends StatelessWidget {
         style: GoogleFonts.montserrat(
           fontSize: 11,
           fontWeight: FontWeight.w900,
-          color: isDark ? Colors.white.withOpacity(0.25) : Colors.black.withOpacity(0.4),
+          color: isDark
+              ? Colors.white.withOpacity(0.25)
+              : Colors.black.withOpacity(0.4),
           letterSpacing: 2,
-        ),
-      ),
-    );
-  }
-}
-
-class _InfoRow extends StatelessWidget {
-  final String label;
-  final String value;
-  final IconData icon;
-  final bool isDark;
-  const _InfoRow({required this.label, required this.value, required this.icon, required this.isDark});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        _IconBox(icon: icon, isDark: isDark),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: GoogleFonts.montserrat(
-                  fontSize: 8,
-                  fontWeight: FontWeight.w800,
-                  color: isDark ? Colors.white24 : Colors.black38,
-                  letterSpacing: 1,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                value,
-                style: GoogleFonts.montserrat(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w800,
-                  color: isDark ? Colors.white : Colors.black,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _ServiceCard extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final bool isDark;
-  final VoidCallback onTap;
-  const _ServiceCard({required this.label, required this.icon, required this.isDark, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(32),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 32),
-        decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF18181B) : Colors.white,
-          borderRadius: BorderRadius.circular(32),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(isDark ? 0.2 : 0.04),
-              blurRadius: 24,
-              offset: const Offset(0, 8),
-            )
-          ],
-        ),
-        child: Column(
-          children: [
-            Icon(icon, size: 28, color: isDark ? Colors.white38 : Colors.black45),
-            const SizedBox(height: 12),
-            Text(
-              label,
-              style: GoogleFonts.montserrat(
-                fontSize: 10,
-                fontWeight: FontWeight.w800,
-                color: isDark ? Colors.white54 : Colors.black54,
-                letterSpacing: 1,
-              ),
-            ),
-          ],
         ),
       ),
     );
@@ -563,7 +427,13 @@ class _SupportTile extends StatelessWidget {
   final IconData icon;
   final bool isDark;
   final VoidCallback onTap;
-  const _SupportTile({required this.label, required this.subtitle, required this.icon, required this.isDark, required this.onTap});
+  const _SupportTile({
+    required this.label,
+    required this.subtitle,
+    required this.icon,
+    required this.isDark,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -580,7 +450,7 @@ class _SupportTile extends StatelessWidget {
               color: Colors.black.withOpacity(isDark ? 0.2 : 0.04),
               blurRadius: 24,
               offset: const Offset(0, 8),
-            )
+            ),
           ],
         ),
         child: Row(
@@ -589,10 +459,16 @@ class _SupportTile extends StatelessWidget {
               width: 56,
               height: 56,
               decoration: BoxDecoration(
-                color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.04),
+                color: isDark
+                    ? Colors.white.withOpacity(0.05)
+                    : Colors.black.withOpacity(0.04),
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: Icon(icon, size: 20, color: isDark ? Colors.white38 : Colors.black45),
+              child: Icon(
+                icon,
+                size: 20,
+                color: isDark ? Colors.white38 : Colors.black45,
+              ),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -620,7 +496,11 @@ class _SupportTile extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(LucideIcons.chevronRight, size: 16, color: isDark ? Colors.white24 : Colors.black26),
+            Icon(
+              LucideIcons.chevronRight,
+              size: 16,
+              color: isDark ? Colors.white24 : Colors.black26,
+            ),
             const SizedBox(width: 8),
           ],
         ),
@@ -633,7 +513,11 @@ class _IconButton extends StatelessWidget {
   final IconData icon;
   final bool isDark;
   final VoidCallback onTap;
-  const _IconButton({required this.icon, required this.isDark, required this.onTap});
+  const _IconButton({
+    required this.icon,
+    required this.isDark,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -645,31 +529,26 @@ class _IconButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
-          boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10)],
+          border: Border.all(
+            color: isDark
+                ? Colors.white.withOpacity(0.05)
+                : Colors.black.withOpacity(0.05),
+          ),
+          boxShadow: isDark
+              ? []
+              : [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.03),
+                    blurRadius: 10,
+                  ),
+                ],
         ),
-        child: Icon(icon, size: 20, color: isDark ? Colors.white : Colors.black),
+        child: Icon(
+          icon,
+          size: 20,
+          color: isDark ? Colors.white : Colors.black,
+        ),
       ),
-    );
-  }
-}
-
-class _IconBox extends StatelessWidget {
-  final IconData icon;
-  final bool isDark;
-  final Color? color;
-  const _IconBox({required this.icon, required this.isDark, this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 48,
-      height: 48,
-      decoration: BoxDecoration(
-        color: (color ?? (isDark ? Colors.white : Colors.black)).withOpacity(0.05),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Icon(icon, size: 20, color: color ?? (isDark ? Colors.white38 : Colors.black54)),
     );
   }
 }

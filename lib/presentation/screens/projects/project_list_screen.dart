@@ -578,8 +578,78 @@ class ProjectListScreen extends ConsumerWidget {
                 loading: () => Center(
                   child: CircularProgressIndicator(color: M4Theme.premiumBlue),
                 ),
-                error: (e, s) =>
-                    Center(child: Text('Error: $e\n\nNo projects found.')),
+                error: (e, s) {
+                  final isDark =
+                      Theme.of(context).brightness == Brightness.dark;
+                  final onSurface = isDark ? Colors.white : Colors.black;
+                  final msg = e.toString().toLowerCase();
+                  final isTimeout =
+                      msg.contains('timeout') || msg.contains('connection');
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(32),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            LucideIcons.wifiOff,
+                            size: 38,
+                            color: onSurface.withOpacity(0.3),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            isTimeout
+                                ? 'TAKING LONGER THAN USUAL'
+                                : "COULDN'T LOAD PROPERTIES",
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.montserrat(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w900,
+                              color: onSurface,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            isTimeout
+                                ? 'The server may be waking up. Please try again.'
+                                : 'Please check your connection and try again.',
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.montserrat(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w500,
+                              color: onSurface.withOpacity(0.5),
+                              height: 1.5,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          GestureDetector(
+                            onTap: () => ref.invalidate(projectsProvider),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 28,
+                                vertical: 12,
+                              ),
+                              decoration: BoxDecoration(
+                                color: onSurface,
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: Text(
+                                'RETRY',
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w900,
+                                  color: isDark ? Colors.black : Colors.white,
+                                  letterSpacing: 1.5,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
           ],

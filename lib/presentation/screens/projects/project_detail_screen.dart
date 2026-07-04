@@ -10,6 +10,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
+import 'package:m4_mobile/presentation/screens/support/raise_ticket_screen.dart';
 import 'dart:ui';
 import 'dart:math' as math;
 import 'package:m4_mobile/core/utils/support_handlers.dart';
@@ -1410,10 +1411,21 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                     ),
                     const SizedBox(width: 12),
                     _CircleAction(
-                      icon: LucideIcons.heart,
-                      onTap: () => setState(() => _isFavorited = !_isFavorited),
-                      color: _isFavorited ? Colors.red : null,
-                    ),
+                          // Filled heart when wishlisted; outline otherwise.
+                          icon: _isFavorited
+                              ? Icons.favorite
+                              : LucideIcons.heart,
+                          onTap: () =>
+                              setState(() => _isFavorited = !_isFavorited),
+                          color: _isFavorited ? Colors.red : null,
+                        )
+                        .animate(key: ValueKey(_isFavorited))
+                        .scaleXY(
+                          begin: 0.6,
+                          end: 1.0,
+                          duration: 320.ms,
+                          curve: Curves.elasticOut,
+                        ),
                   ],
                 ),
               ],
@@ -1531,9 +1543,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               .toUpperCase(),
           style: GoogleFonts.montserrat(
             fontSize: 11,
-            color: isDark ? Colors.white.withOpacity(0.9) : Colors.black,
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
             height: 1.8,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w600,
             letterSpacing: 0.2,
           ),
         ),
@@ -2253,11 +2265,17 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                       ),
                       const SizedBox(width: 8),
                       _ContactIconBtn(
+                        // Web parity: chat opens the Raise Ticket screen with the
+                        // subject prefilled (INQUIRY: <project>).
                         icon: LucideIcons.messageCircle,
-                        onTap: () => SupportHandlers.launchWhatsApp(
-                          project?['whatsapp'] ??
-                              project?['phone'] ??
-                              project?['contactPhone'],
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RaiseTicketScreen(
+                              initialSubject:
+                                  'INQUIRY: ${(project?['title'] ?? 'PROJECT').toString().toUpperCase()}',
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -3567,7 +3585,9 @@ class _DottedRingPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = (size.width - strokeWidth) / 2;
     final anglePer = 2 * math.pi / dashCount;
-    final dashAngle = anglePer * 0.55; // ~half dash, half gap
+    // Web parity ("1.5 1.5" dasharray): equal dash/gap with BUTT caps so each
+    // dash stays a distinct tick (round caps overlap into a solid ring).
+    final dashAngle = anglePer * 0.5;
     final active = (percent.clamp(0, 100) / 100 * dashCount).round();
     final rect = Rect.fromCircle(center: center, radius: radius);
     for (int i = 0; i < dashCount; i++) {
@@ -3575,7 +3595,7 @@ class _DottedRingPainter extends CustomPainter {
       final paint = Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = strokeWidth
-        ..strokeCap = StrokeCap.round
+        ..strokeCap = StrokeCap.butt
         ..color = i < active ? activeColor : trackColor;
       canvas.drawArc(rect, start, dashAngle, false, paint);
     }
@@ -3992,9 +4012,9 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   // reads as a full dense dark dotted circle, not a 15% arc.
                   _DottedProgressRing(
                     percent: 100,
-                    size: 100,
-                    strokeWidth: 2.5,
-                    dashCount: 100,
+                    size: 112,
+                    strokeWidth: 4,
+                    dashCount: 76,
                     activeColor: isDark ? Colors.white : Colors.black,
                     trackColor: isDark ? Colors.white : Colors.black,
                   ),
@@ -4199,21 +4219,30 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                 Stack(
                                   alignment: Alignment.center,
                                   children: [
-                                    _DottedProgressRing(
-                                      percent:
-                                          (phase['progressPercent'] ??
-                                                  phase['progress'] ??
-                                                  0)
-                                              .toDouble(),
-                                      size: 40,
-                                      strokeWidth: 3,
-                                      dashCount: 34,
-                                      activeColor: isDark
-                                          ? Colors.white
-                                          : Colors.black,
-                                      trackColor:
-                                          (isDark ? Colors.white : Colors.black)
-                                              .withOpacity(0.12),
+                                    // Simple solid arc progress ring.
+                                    SizedBox(
+                                      width: 40,
+                                      height: 40,
+                                      child: CircularProgressIndicator(
+                                        value:
+                                            (phase['progressPercent'] ??
+                                                    phase['progress'] ??
+                                                    0)
+                                                .toDouble() /
+                                            100,
+                                        strokeWidth: 3,
+                                        backgroundColor:
+                                            (isDark
+                                                    ? Colors.white
+                                                    : Colors.black)
+                                                .withOpacity(0.12),
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              isDark
+                                                  ? Colors.white
+                                                  : Colors.black,
+                                            ),
+                                      ),
                                     ),
                                     Text(
                                       '${phase['progressPercent'] ?? phase['progress'] ?? 0}%',

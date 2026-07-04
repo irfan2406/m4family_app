@@ -1,14 +1,31 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 
 final projectsProvider = FutureProvider<List<dynamic>>((ref) async {
   final apiClient = ref.watch(apiClientProvider);
-  final response = await apiClient.getProjects();
-  if (response.statusCode == 200 || response.statusCode == 201) {
-    return response.data['data'] ?? [];
-  } else {
-    throw Exception('Failed to load projects');
+  // The backend can be slow to cold-start; retry timeouts with backoff so the
+  // first (waking) request doesn't surface a hard error to the user.
+  Object? lastError;
+  for (var attempt = 0; attempt < 3; attempt++) {
+    try {
+      final response = await apiClient.getProjects();
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response.data['data'] ?? [];
+      }
+      throw Exception('Failed to load projects (${response.statusCode})');
+    } on DioException catch (e) {
+      lastError = e;
+      final retryable =
+          e.type == DioExceptionType.receiveTimeout ||
+          e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.sendTimeout ||
+          e.type == DioExceptionType.connectionError;
+      if (!retryable || attempt == 2) rethrow;
+      await Future.delayed(Duration(seconds: 2 * (attempt + 1)));
+    }
   }
+  throw lastError ?? Exception('Failed to load projects');
 });
 
 // Helper Providers for unique filter values

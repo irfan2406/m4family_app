@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:m4_mobile/presentation/screens/support/contact_screen.dart';
+import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
+import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 
 /// Web `/cp/support/help-center` (`app/(cp)/cp/support/help-center/page.tsx`) —
 /// "Support Index / FAQ & Governance": circular back button + title, search,
 /// FAQ categories where each category's questions live in ONE white card with
 /// dividers (not separate cards), and a "Still need help?" card.
-class HelpCenterScreen extends StatefulWidget {
+class HelpCenterScreen extends ConsumerStatefulWidget {
   const HelpCenterScreen({super.key});
 
   @override
-  State<HelpCenterScreen> createState() => _HelpCenterScreenState();
+  ConsumerState<HelpCenterScreen> createState() => _HelpCenterScreenState();
 }
 
-class _HelpCenterScreenState extends State<HelpCenterScreen> {
+class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
@@ -74,9 +77,18 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      extendBody: true,
+      bottomNavigationBar: NavigationPill(
+        currentIndex: -1,
+        onTap: (i) {
+          ref.read(navigationProvider.notifier).state = i;
+          Navigator.of(context).popUntil((r) => r.isFirst);
+        },
+      ),
       body: SafeArea(
+        bottom: false,
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 8, 24, 40),
+          padding: const EdgeInsets.fromLTRB(24, 8, 24, 120),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -159,8 +171,10 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
         color: isDark
             ? scheme.surfaceContainerHighest.withValues(alpha: 0.3)
             : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.4)),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: scheme.outlineVariant.withValues(alpha: 0.22),
+        ),
         boxShadow: isDark
             ? null
             : [
@@ -264,7 +278,9 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
             ? scheme.surfaceContainerHighest.withValues(alpha: 0.3)
             : Colors.white,
         borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.4)),
+        border: Border.all(
+          color: scheme.outlineVariant.withValues(alpha: 0.22),
+        ),
         boxShadow: isDark
             ? null
             : [
@@ -393,17 +409,23 @@ class _FaqCategory extends StatelessWidget {
             color: isDark
                 ? scheme.surfaceContainerHighest.withValues(alpha: 0.3)
                 : Colors.white,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(24),
             border: Border.all(
-              color: scheme.outlineVariant.withValues(alpha: 0.4),
+              color: scheme.outlineVariant.withValues(alpha: 0.22),
             ),
+            // Web parity: shadow-lg — a more pronounced, raised card shadow.
             boxShadow: isDark
                 ? null
                 : [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
+                      color: Colors.black.withValues(alpha: 0.1),
+                      blurRadius: 24,
+                      offset: const Offset(0, 12),
+                    ),
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.06),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
                     ),
                   ],
           ),
@@ -451,7 +473,7 @@ class _FaqRowState extends State<_FaqRow> {
       child: InkWell(
         onTap: () => setState(() => _expanded = !_expanded),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -461,11 +483,13 @@ class _FaqRowState extends State<_FaqRow> {
                   Expanded(
                     child: Text(
                       widget.question.toUpperCase(),
+                      // Web parity: text-xs (12px) font-bold text-foreground —
+                      // full-strength dark, heavier than the previous 11px/700.
                       style: GoogleFonts.montserrat(
                         color: scheme.onSurface,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 11,
-                        letterSpacing: 0.3,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 12,
+                        letterSpacing: 0.2,
                         height: 1.3,
                       ),
                     ),
@@ -486,8 +510,8 @@ class _FaqRowState extends State<_FaqRow> {
                     widget.answer,
                     style: GoogleFonts.montserrat(
                       color: scheme.onSurfaceVariant,
-                      fontSize: 10.5,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
                       height: 1.6,
                     ),
                   ),

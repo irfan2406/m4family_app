@@ -285,12 +285,12 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
       ),
       child: Center(
         child: Text(
-          'NO ACTIVE TICKETS.',
+          'No active tickets.',
           style: GoogleFonts.montserrat(
-            fontSize: 12,
-            fontWeight: FontWeight.w900,
-            color: scheme.onSurface,
-            letterSpacing: 3,
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: scheme.onSurface.withValues(alpha: 0.5),
+            letterSpacing: 0,
           ),
         ),
       ),
@@ -320,20 +320,32 @@ class _MatrixItem extends StatelessWidget {
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: scheme.onSurface.withValues(alpha: 0.02),
-          borderRadius: BorderRadius.circular(32),
+          // Web parity: white card with a soft shadow.
+          color: scheme.surface,
+          borderRadius: BorderRadius.circular(28),
           border: Border.all(
             color: scheme.outlineVariant.withValues(alpha: 0.3),
           ),
+          boxShadow: Theme.of(context).brightness == Brightness.dark
+              ? null
+              : [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.04),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
         ),
+        // Web parity: left-aligned — icon top-left, title-case title below.
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               width: 44,
               height: 44,
+              alignment: Alignment.center,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
@@ -345,19 +357,17 @@ class _MatrixItem extends StatelessWidget {
             ),
             const Spacer(),
             Text(
-              title.toUpperCase(),
-              textAlign: TextAlign.center,
+              title,
               style: GoogleFonts.montserrat(
                 color: scheme.onSurface,
-                fontWeight: FontWeight.w900,
-                fontSize: 11,
-                letterSpacing: 0.5,
+                fontWeight: FontWeight.w800,
+                fontSize: 14,
+                letterSpacing: -0.2,
               ),
             ),
             const SizedBox(height: 6),
             Text(
               subtitle.toUpperCase(),
-              textAlign: TextAlign.center,
               style: GoogleFonts.montserrat(
                 color: scheme.onSurface.withValues(alpha: 0.5),
                 fontSize: 8,

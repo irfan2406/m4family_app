@@ -37,12 +37,10 @@ class NavigationPill extends StatelessWidget {
             height: 70,
             padding: const EdgeInsets.symmetric(horizontal: 25),
             decoration: BoxDecoration(
-              color: isDark
-                  ? const Color(0xFF000000)
-                  : Colors.white.withOpacity(0.4),
+              color: isDark ? const Color(0xFF000000) : const Color(0xFFEDEDF0),
               borderRadius: BorderRadius.circular(35),
               border: Border.all(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.12),
                 width: 1,
               ),
             ),
@@ -117,7 +115,7 @@ class _NavItem extends StatelessWidget {
             ),
             child: Icon(
               icon,
-              color: isActive ? onSurface : onSurface.withOpacity(0.5),
+              color: isActive ? onSurface : onSurface.withOpacity(0.65),
               size: 22,
             ),
           ),

@@ -10,8 +10,11 @@ import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_detail_screen.dart';
 import 'package:m4_mobile/presentation/screens/booking/booking_confirmation_screen.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
+import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 
 class TokenPaymentScreen extends ConsumerStatefulWidget {
   final dynamic project;
@@ -60,10 +63,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
       final apiClient = ref.read(apiClientProvider);
       final res = await apiClient.get(
         '/api/inventory',
-        queryParameters: {
-          'projectId': widget.projectId,
-          'status': 'AVAILABLE',
-        },
+        queryParameters: {'projectId': widget.projectId, 'status': 'AVAILABLE'},
       );
 
       if (res.data['status'] == true) {
@@ -87,29 +87,48 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
 
   void _showToast(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> _pickDocument() async {
     if (_isUploading) return;
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['jpg', 'pdf', 'png'],
-    );
+    FilePickerResult? result;
+    try {
+      result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['jpg', 'jpeg', 'png', 'pdf'],
+        // Load bytes too: some providers return a content:// URI with no path.
+        withData: true,
+      );
+    } catch (e) {
+      _showToast('Could not open the file picker.');
+      return;
+    }
 
-    if (result == null) return;
+    if (result == null || result.files.isEmpty) return;
     final picked = result.files.single;
-    if (picked.path == null) return;
     final fileName = picked.name;
 
     setState(() => _isUploading = true);
     try {
       final apiClient = ref.read(apiClientProvider);
-      final formData = FormData.fromMap({
-        'file': await MultipartFile.fromFile(picked.path!, filename: fileName),
-      });
+      // Prefer the file path; fall back to in-memory bytes (content:// URIs).
+      MultipartFile multipart;
+      if (picked.path != null) {
+        multipart = await MultipartFile.fromFile(
+          picked.path!,
+          filename: fileName,
+        );
+      } else if (picked.bytes != null) {
+        multipart = MultipartFile.fromBytes(picked.bytes!, filename: fileName);
+      } else {
+        _showToast('Could not read the selected file.');
+        setState(() => _isUploading = false);
+        return;
+      }
+      final formData = FormData.fromMap({'file': multipart});
       final res = await apiClient.post('/api/upload', formData);
 
       final fileUrl = res.data['data']?['fileUrl'] ?? res.data['fileUrl'];
@@ -119,7 +138,9 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
         });
         _showToast('$fileName uploaded successfully');
       } else {
-        _showToast(res.data['message']?.toString() ?? 'Failed to upload document');
+        _showToast(
+          res.data['message']?.toString() ?? 'Failed to upload document',
+        );
       }
     } catch (e) {
       _showToast('An error occurred during document upload');
@@ -133,6 +154,10 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
   }
 
   Future<void> _submitBooking() async {
+    if (!_agreed) {
+      _showToast('Please agree to the booking terms to continue.');
+      return;
+    }
     if (_selectedUnitId.isEmpty) {
       _showToast('Please select a unit to reserve.');
       return;
@@ -162,7 +187,8 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
             builder: (_) => BookingConfirmationScreen(
               projectId: widget.projectId,
               project: widget.project,
-              bookingId: (res.data['data']?['_id'] ?? res.data['data']?['id'])?.toString(),
+              bookingId: (res.data['data']?['_id'] ?? res.data['data']?['id'])
+                  ?.toString(),
               amount: (widget.project?['tokenAmount'] ?? '1,00,000').toString(),
             ),
           ),
@@ -184,7 +210,9 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
     final tower = unit['tower'] ?? 'N/A';
     final floor = unit['floor'] != null ? unit['floor'].toString() : 'N/A';
     final config = unit['configuration'] ?? unit['config'] ?? '';
-    final rawPrice = (unit['basePrice'] ?? unit['price'] ?? '0').toString().replaceAll(',', '');
+    final rawPrice = (unit['basePrice'] ?? unit['price'] ?? '0')
+        .toString()
+        .replaceAll(',', '');
     final price = double.tryParse(rawPrice)?.toStringAsFixed(0) ?? rawPrice;
     return '$unitNumber - Tower $tower - Floor $floor ($config) - $price AED';
   }
@@ -192,24 +220,82 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
   Widget _buildPaymentMethod(String name, IconData icon, bool isDark) {
     final id = name.split(' ')[0].toLowerCase();
     final isActive = _selectedMethod == id;
+    final onSurface = isDark ? Colors.white : Colors.black;
+    final surface = isDark ? Colors.black : Colors.white;
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: GestureDetector(
         onTap: () => setState(() => _selectedMethod = id),
         child: Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(22),
           decoration: BoxDecoration(
-            color: isActive ? M4Theme.premiumBlue.withOpacity(0.1) : (isDark ? Colors.white.withOpacity(0.02) : Colors.black.withOpacity(0.02)),
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: isActive ? M4Theme.premiumBlue : (isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.1))),
+            color: isDark ? Colors.white.withOpacity(0.02) : Colors.white,
+            borderRadius: BorderRadius.circular(26),
+            border: Border.all(
+              // Web parity: selected = dark border (not gold).
+              color: isActive ? onSurface : onSurface.withOpacity(0.08),
+              width: isActive ? 1.5 : 1,
+            ),
+            boxShadow: isDark
+                ? []
+                : [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.03),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
           ),
           child: Row(
             children: [
-              Icon(icon, color: isActive ? M4Theme.premiumBlue : (isDark ? Colors.white54 : Colors.black54)),
-              const SizedBox(width: 16),
-              Text(name, style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black)),
+              // Icon in a box: selected = dark box/white icon, else light.
+              Container(
+                width: 54,
+                height: 54,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: isActive ? onSurface : onSurface.withOpacity(0.06),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Icon(
+                  icon,
+                  color: isActive ? surface : onSurface.withOpacity(0.5),
+                  size: 22,
+                ),
+              ),
+              const SizedBox(width: 18),
+              Text(
+                name,
+                style: GoogleFonts.montserrat(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w900,
+                  color: onSurface,
+                ),
+              ),
               const Spacer(),
-              if (isActive) const Icon(LucideIcons.checkCircle2, color: M4Theme.premiumBlue, size: 20),
+              // Radio: selected = filled dark check, else empty ring.
+              isActive
+                  ? Container(
+                      width: 22,
+                      height: 22,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: onSurface,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(LucideIcons.check, color: surface, size: 13),
+                    )
+                  : Container(
+                      width: 22,
+                      height: 22,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: onSurface.withOpacity(0.15),
+                          width: 1.5,
+                        ),
+                      ),
+                    ),
             ],
           ),
         ),
@@ -220,6 +306,13 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    // Web parity: format the token amount with Indian grouping (₹1,00,000).
+    final _amountDigits = (widget.project?['tokenAmount'] ?? '100000')
+        .toString()
+        .replaceAll(RegExp(r'[^0-9]'), '');
+    final formattedAmount = NumberFormat.decimalPattern(
+      'en_IN',
+    ).format(int.tryParse(_amountDigits) ?? 100000);
 
     if (_isSuccess) {
       return Scaffold(
@@ -230,21 +323,38 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(LucideIcons.checkCircle2, size: 80, color: M4Theme.premiumBlue),
+                const Icon(
+                  LucideIcons.checkCircle2,
+                  size: 80,
+                  color: M4Theme.premiumBlue,
+                ),
                 const SizedBox(height: 24),
                 Text(
                   'BOOKING SUCCESSFUL',
-                  style: GoogleFonts.montserrat(fontSize: 24, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black),
+                  style: GoogleFonts.montserrat(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w900,
+                    color: isDark ? Colors.white : Colors.black,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Text(
                   'Your token payment has been received. Our team will verify the documents and contact you for the next steps.',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.montserrat(fontSize: 10, color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.w900, letterSpacing: 1.5, height: 1.8),
+                  style: GoogleFonts.montserrat(
+                    fontSize: 10,
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      0.6,
+                    ),
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.5,
+                    height: 1.8,
+                  ),
                 ),
                 const SizedBox(height: 48),
                 GestureDetector(
-                  onTap: () => Navigator.of(context).popUntil((route) => route.isFirst),
+                  onTap: () =>
+                      Navigator.of(context).popUntil((route) => route.isFirst),
                   child: Container(
                     width: double.infinity,
                     height: 64,
@@ -255,7 +365,12 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                     child: Center(
                       child: Text(
                         'BACK TO HOME',
-                        style: GoogleFonts.montserrat(color: isDark ? Colors.black : Colors.white, fontWeight: FontWeight.w900, fontSize: 10, letterSpacing: 2),
+                        style: GoogleFonts.montserrat(
+                          color: isDark ? Colors.black : Colors.white,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 10,
+                          letterSpacing: 2,
+                        ),
                       ),
                     ),
                   ),
@@ -268,12 +383,35 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
     }
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F1115) : const Color(0xFFF9FAFB),
+      backgroundColor: isDark
+          ? const Color(0xFF0F1115)
+          : const Color(0xFFF9FAFB),
+      extendBody: true,
+      bottomNavigationBar: NavigationPill(
+        currentIndex: -1,
+        onTap: (i) {
+          ref.read(navigationProvider.notifier).state = i;
+          Navigator.of(context).popUntil((r) => r.isFirst);
+        },
+      ),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(icon: Icon(LucideIcons.chevronLeft, color: isDark ? Colors.white : Colors.black), onPressed: () => Navigator.pop(context)),
-        title: Text('SECURE PAYMENT', style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black)),
+        leading: IconButton(
+          icon: Icon(
+            LucideIcons.chevronLeft,
+            color: isDark ? Colors.white : Colors.black,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          'SECURE PAYMENT',
+          style: GoogleFonts.montserrat(
+            fontSize: 14,
+            fontWeight: FontWeight.w900,
+            color: isDark ? Colors.white : Colors.black,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
@@ -283,19 +421,49 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
             // Token Amount Card
             Container(
               width: double.infinity,
-              height: 200,
+              height: 220,
               decoration: BoxDecoration(
                 color: Colors.black,
                 borderRadius: BorderRadius.circular(40),
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 40, offset: const Offset(0, 20))],
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.3),
+                    blurRadius: 40,
+                    offset: const Offset(0, 20),
+                  ),
+                ],
               ),
               clipBehavior: Clip.antiAlias,
               child: Stack(
                 children: [
+                  // Web parity: subtle bottom-left → top-right gradient.
+                  Positioned.fill(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.bottomLeft,
+                          end: Alignment.topRight,
+                          colors: [
+                            const Color(0xFF1B2233).withOpacity(0.7),
+                            Colors.transparent,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Large shield watermark, vertically centered on the right
+                  // (web: big ShieldCheck offset to the right edge).
                   Positioned(
-                    right: -20,
-                    bottom: -20,
-                    child: Icon(LucideIcons.shieldCheck, color: Colors.white.withOpacity(0.05), size: 180),
+                    top: 0,
+                    bottom: 0,
+                    right: -30,
+                    child: Center(
+                      child: Icon(
+                        LucideIcons.shieldCheck,
+                        color: Colors.white.withOpacity(0.1),
+                        size: 190,
+                      ),
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(40),
@@ -305,12 +473,74 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                       children: [
                         Text(
                           'TOKEN AMOUNT',
-                          style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.white38, letterSpacing: 2),
+                          style: GoogleFonts.montserrat(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white38,
+                            letterSpacing: 2,
+                          ),
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          '₹${(widget.project?['tokenAmount'] ?? '1,00,000')}',
-                          style: GoogleFonts.montserrat(fontSize: 36, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: -1),
+                          '₹$formattedAmount',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 36,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                            letterSpacing: -1,
+                          ),
+                        ),
+                        const SizedBox(height: 18),
+                        // Web parity: 100% REFUNDABLE pill · divider · INSTANT RECEIPT.
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 14,
+                                vertical: 7,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.12),
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    LucideIcons.shieldCheck,
+                                    color: Colors.white,
+                                    size: 12,
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    '100% REFUNDABLE',
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: 8,
+                                      fontWeight: FontWeight.w900,
+                                      color: Colors.white,
+                                      letterSpacing: 1,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Container(
+                              width: 1,
+                              height: 14,
+                              color: Colors.white.withOpacity(0.2),
+                            ),
+                            const SizedBox(width: 12),
+                            Text(
+                              'INSTANT RECEIPT',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 8,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.white.withOpacity(0.5),
+                                letterSpacing: 1,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -326,17 +556,32 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
               children: [
                 Text(
                   'SELECT UNIT',
-                  style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1.5),
+                  style: GoogleFonts.montserrat(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      0.6,
+                    ),
+                    letterSpacing: 1.5,
+                  ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 5,
+                  ),
                   decoration: BoxDecoration(
-                    color: M4Theme.premiumBlue.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(8),
+                    color: isDark ? Colors.white : Colors.black,
+                    borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
                     'REQUIRED',
-                    style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 1),
+                    style: GoogleFonts.montserrat(
+                      fontSize: 8,
+                      fontWeight: FontWeight.w900,
+                      color: isDark ? Colors.black : Colors.white,
+                      letterSpacing: 1,
+                    ),
                   ),
                 ),
               ],
@@ -346,23 +591,48 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
               width: double.infinity,
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: isDark ? Colors.white.withValues(alpha: 0.02) : Colors.white,
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.02)
+                    : Colors.white,
                 borderRadius: BorderRadius.circular(40),
-                border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
-                boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 40, offset: const Offset(0, 20))],
+                border: Border.all(
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : Colors.black.withValues(alpha: 0.05),
+                ),
+                boxShadow: isDark
+                    ? []
+                    : [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.06),
+                          blurRadius: 40,
+                          offset: const Offset(0, 20),
+                        ),
+                      ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'AVAILABLE UNITS',
-                    style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1.5),
+                    style: GoogleFonts.montserrat(
+                      fontSize: 9,
+                      fontWeight: FontWeight.w900,
+                      color: (isDark ? Colors.white : Colors.black).withOpacity(
+                        0.6,
+                      ),
+                      letterSpacing: 1.5,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   if (_isLoadingUnits)
                     const SizedBox(
                       height: 56,
-                      child: Center(child: CircularProgressIndicator(color: M4Theme.premiumBlue)),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: M4Theme.premiumBlue,
+                        ),
+                      ),
                     )
                   else if (_unitsError != null)
                     Container(
@@ -370,12 +640,19 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                       decoration: BoxDecoration(
                         color: Colors.red.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.red.withValues(alpha: 0.1)),
+                        border: Border.all(
+                          color: Colors.red.withValues(alpha: 0.1),
+                        ),
                       ),
                       child: Center(
                         child: Text(
                           _unitsError!.toUpperCase(),
-                          style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: Colors.red, letterSpacing: 1),
+                          style: GoogleFonts.montserrat(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.red,
+                            letterSpacing: 1,
+                          ),
                         ),
                       ),
                     )
@@ -385,12 +662,19 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                       decoration: BoxDecoration(
                         color: Colors.red.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.red.withValues(alpha: 0.1)),
+                        border: Border.all(
+                          color: Colors.red.withValues(alpha: 0.1),
+                        ),
                       ),
                       child: Center(
                         child: Text(
                           'NO AVAILABLE UNITS FOUND FOR THIS PROJECT.',
-                          style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: Colors.red, letterSpacing: 1),
+                          style: GoogleFonts.montserrat(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.red,
+                            letterSpacing: 1,
+                          ),
                         ),
                       ),
                     )
@@ -399,39 +683,78 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                       height: 56,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(
-                        color: isDark ? Colors.white.withValues(alpha: 0.04) : Colors.black.withValues(alpha: 0.03),
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.04)
+                            : Colors.black.withValues(alpha: 0.03),
                         borderRadius: BorderRadius.circular(32),
-                        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
+                        border: Border.all(
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.05)
+                              : Colors.black.withValues(alpha: 0.05),
+                        ),
                       ),
                       child: DropdownButtonHideUnderline(
                         child: DropdownButton<String>(
                           isExpanded: true,
-                          value: _selectedUnitId.isEmpty ? null : _selectedUnitId,
+                          value: _selectedUnitId.isEmpty
+                              ? null
+                              : _selectedUnitId,
                           hint: Text(
                             '-- Select a Unit / Apartment --',
-                            style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w700, color: isDark ? Colors.white38 : Colors.black38),
+                            style: GoogleFonts.montserrat(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: (isDark ? Colors.white : Colors.black)
+                                  .withOpacity(0.6),
+                            ),
                           ),
-                          icon: Icon(LucideIcons.chevronDown, color: isDark ? Colors.white38 : Colors.black38, size: 18),
-                          dropdownColor: isDark ? const Color(0xFF1A1C20) : Colors.white,
-                          style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w700, color: isDark ? Colors.white : Colors.black),
-                          items: _availableUnits.map<DropdownMenuItem<String>>((unit) {
+                          icon: Icon(
+                            LucideIcons.chevronDown,
+                            color: (isDark ? Colors.white : Colors.black)
+                                .withOpacity(0.6),
+                            size: 18,
+                          ),
+                          dropdownColor: isDark
+                              ? const Color(0xFF1A1C20)
+                              : Colors.white,
+                          style: GoogleFonts.montserrat(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                            color: isDark ? Colors.white : Colors.black,
+                          ),
+                          items: _availableUnits.map<DropdownMenuItem<String>>((
+                            unit,
+                          ) {
                             return DropdownMenuItem<String>(
                               value: unit['_id']?.toString() ?? '',
                               child: Text(
                                 _unitLabel(unit),
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w700, color: isDark ? Colors.white : Colors.black),
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  color: isDark ? Colors.white : Colors.black,
+                                ),
                               ),
                             );
                           }).toList(),
-                          onChanged: (value) => setState(() => _selectedUnitId = value ?? ''),
+                          onChanged: (value) =>
+                              setState(() => _selectedUnitId = value ?? ''),
                         ),
                       ),
                     ),
                   const SizedBox(height: 16),
                   Text(
                     'A UNIT IS LOCKED EXCLUSIVELY TO YOUR PROFILE ONCE THE TOKEN RESERVATION PAYMENT IS PROCESSED.',
-                    style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1, height: 1.6),
+                    style: GoogleFonts.montserrat(
+                      fontSize: 8,
+                      fontWeight: FontWeight.w900,
+                      color: (isDark ? Colors.white : Colors.black).withOpacity(
+                        0.6,
+                      ),
+                      letterSpacing: 1,
+                      height: 1.6,
+                    ),
                   ),
                 ],
               ),
@@ -443,17 +766,36 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
               children: [
                 Text(
                   'COMPLIANCE DOCUMENTS',
-                  style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1.5),
+                  style: GoogleFonts.montserrat(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      0.6,
+                    ),
+                    letterSpacing: 1.5,
+                  ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05),
+                    color: isDark
+                        ? Colors.white.withOpacity(0.05)
+                        : Colors.black.withOpacity(0.05),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     'OPTIONAL',
-                    style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1),
+                    style: GoogleFonts.montserrat(
+                      fontSize: 8,
+                      fontWeight: FontWeight.w900,
+                      color: (isDark ? Colors.white : Colors.black).withOpacity(
+                        0.6,
+                      ),
+                      letterSpacing: 1,
+                    ),
                   ),
                 ),
               ],
@@ -469,9 +811,15 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.black.withValues(alpha: 0.03),
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.03)
+                        : Colors.black.withValues(alpha: 0.03),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
+                    border: Border.all(
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.05)
+                          : Colors.black.withValues(alpha: 0.05),
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -482,7 +830,11 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                           color: M4Theme.premiumBlue.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const Icon(LucideIcons.fileText, color: M4Theme.premiumBlue, size: 18),
+                        child: const Icon(
+                          LucideIcons.fileText,
+                          color: M4Theme.premiumBlue,
+                          size: 18,
+                        ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
@@ -490,7 +842,12 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                           doc['name']!.toUpperCase(),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 0.5),
+                          style: GoogleFonts.montserrat(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w900,
+                            color: isDark ? Colors.white : Colors.black,
+                            letterSpacing: 0.5,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -503,7 +860,11 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                             color: Colors.red.withValues(alpha: 0.08),
                             borderRadius: BorderRadius.circular(16),
                           ),
-                          child: const Icon(LucideIcons.x, color: Colors.red, size: 16),
+                          child: const Icon(
+                            LucideIcons.x,
+                            color: Colors.red,
+                            size: 16,
+                          ),
                         ),
                       ),
                     ],
@@ -512,113 +873,239 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
               );
             }),
 
-            // Upload Area
-            GestureDetector(
-              onTap: _pickDocument,
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(2),
-                child: DottedBorder(
-                  borderType: BorderType.RRect,
-                  radius: const Radius.circular(32),
-                  dashPattern: const [6, 6],
-                  color: _isUploading ? M4Theme.premiumBlue.withValues(alpha: 0.5) : (isDark ? Colors.white12 : Colors.black12),
-                  strokeWidth: 1,
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(vertical: 48),
-                    decoration: BoxDecoration(
-                      color: _isUploading
-                          ? M4Theme.premiumBlue.withValues(alpha: 0.04)
-                          : (isDark ? Colors.white.withValues(alpha: 0.02) : Colors.white),
-                      borderRadius: BorderRadius.circular(32),
-                    ),
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          if (_isUploading)
-                            const SizedBox(
-                              width: 32,
-                              height: 32,
-                              child: CircularProgressIndicator(color: M4Theme.premiumBlue, strokeWidth: 3),
-                            )
-                          else
-                            Icon(LucideIcons.upload, color: isDark ? Colors.white24 : Colors.black26, size: 32),
-                          const SizedBox(height: 20),
-                          Text(
-                            _isUploading ? 'UPLOADING SECURITY VAULT...' : 'QUICK UPLOAD DOCUMENTS',
-                            style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            _isUploading ? 'ESTABLISHING ENCRYPTED CONNECTION' : 'TAP TO UPLOAD AADHAAR, PAN OR IDENTITY PROOF',
-                            style: GoogleFonts.montserrat(fontSize: 8, color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ),
+            // Web parity: upload zone + note wrapped in one white card.
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: isDark ? Colors.white.withOpacity(0.02) : Colors.white,
+                borderRadius: BorderRadius.circular(34),
+                border: Border.all(
+                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    0.06,
                   ),
                 ),
+                boxShadow: isDark
+                    ? []
+                    : [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.03),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
               ),
-            ).animate().fadeIn(delay: 200.ms),
-            
-            const SizedBox(height: 20),
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: isDark ? Colors.orange.withOpacity(0.05) : const Color(0xFFFFF7ED),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: isDark ? Colors.orange.withOpacity(0.2) : const Color(0xFFFED7AA)),
-              ),
-              child: Row(
+              child: Column(
                 children: [
-                  const Icon(LucideIcons.alertCircle, color: Color(0xFFF97316), size: 18),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Text(
-                      'DOCUMENTS ENSURE FASTER BOOKING VERIFICATION BY OUR TEAM.',
-                      style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.orange.withOpacity(0.8) : const Color(0xFF9A3412), height: 1.4),
+                  // Upload Area
+                  GestureDetector(
+                    onTap: _pickDocument,
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(2),
+                      child: DottedBorder(
+                        borderType: BorderType.RRect,
+                        radius: const Radius.circular(32),
+                        dashPattern: const [6, 6],
+                        color: _isUploading
+                            ? M4Theme.premiumBlue.withValues(alpha: 0.5)
+                            : (isDark ? Colors.white : Colors.black)
+                                  .withOpacity(0.35),
+                        strokeWidth: 1.5,
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(vertical: 48),
+                          decoration: BoxDecoration(
+                            color: _isUploading
+                                ? M4Theme.premiumBlue.withValues(alpha: 0.04)
+                                : (isDark
+                                      ? Colors.white.withValues(alpha: 0.02)
+                                      : Colors.white),
+                            borderRadius: BorderRadius.circular(32),
+                          ),
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                if (_isUploading)
+                                  const SizedBox(
+                                    width: 32,
+                                    height: 32,
+                                    child: CircularProgressIndicator(
+                                      color: M4Theme.premiumBlue,
+                                      strokeWidth: 3,
+                                    ),
+                                  )
+                                else
+                                  Container(
+                                    width: 56,
+                                    height: 56,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      color:
+                                          (isDark ? Colors.white : Colors.black)
+                                              .withOpacity(0.05),
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    child: Icon(
+                                      LucideIcons.upload,
+                                      color:
+                                          (isDark ? Colors.white : Colors.black)
+                                              .withOpacity(0.5),
+                                      size: 24,
+                                    ),
+                                  ),
+                                const SizedBox(height: 20),
+                                Text(
+                                  _isUploading
+                                      ? 'UPLOADING SECURITY VAULT...'
+                                      : 'QUICK UPLOAD DOCUMENTS',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w900,
+                                    color: isDark ? Colors.white : Colors.black,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  _isUploading
+                                      ? 'ESTABLISHING ENCRYPTED CONNECTION'
+                                      : 'TAP TO UPLOAD AADHAAR, PAN OR IDENTITY PROOF',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 8,
+                                    color: isDark
+                                        ? Colors.white38
+                                        : Colors.black38,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                  ).animate().fadeIn(delay: 200.ms),
+
+                  const SizedBox(height: 20),
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? Colors.orange.withOpacity(0.05)
+                          : const Color(0xFFFFF7ED),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: isDark
+                            ? Colors.orange.withOpacity(0.2)
+                            : const Color(0xFFFED7AA),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          LucideIcons.alertCircle,
+                          color: Color(0xFFF97316),
+                          size: 18,
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Text(
+                            'DOCUMENTS ENSURE FASTER BOOKING VERIFICATION BY OUR TEAM.',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 8,
+                              fontWeight: FontWeight.w900,
+                              color: isDark
+                                  ? Colors.orange.withOpacity(0.8)
+                                  : const Color(0xFF9A3412),
+                              height: 1.4,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ).animate().fadeIn(delay: 300.ms),
                 ],
               ),
-            ).animate().fadeIn(delay: 300.ms),
+            ),
 
             const SizedBox(height: 48),
             Text(
               'PAYMENT METHOD',
-              style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1.5),
+              style: GoogleFonts.montserrat(
+                fontSize: 10,
+                fontWeight: FontWeight.w900,
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
+                letterSpacing: 1.5,
+              ),
             ),
             const SizedBox(height: 24),
-            _buildPaymentMethod('UPI (PHONEPE/GPAY)', LucideIcons.smartphone, isDark),
-            _buildPaymentMethod('CREDIT / DEBIT CARD', LucideIcons.creditCard, isDark),
+            _buildPaymentMethod(
+              'UPI (PHONEPE/GPAY)',
+              LucideIcons.smartphone,
+              isDark,
+            ),
+            _buildPaymentMethod(
+              'CREDIT / DEBIT CARD',
+              LucideIcons.creditCard,
+              isDark,
+            ),
             _buildPaymentMethod('NET BANKING', LucideIcons.wallet, isDark),
 
             const SizedBox(height: 40),
             GestureDetector(
               onTap: () => setState(() => _agreed = !_agreed),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: 24,
-                    height: 24,
-                    decoration: BoxDecoration(
-                      color: _agreed ? (isDark ? Colors.white : Colors.black) : Colors.transparent,
-                      borderRadius: BorderRadius.circular(6),
-                      border: Border.all(color: isDark ? Colors.white : Colors.black, width: 2),
-                    ),
-                    child: _agreed ? Icon(LucideIcons.check, color: isDark ? Colors.black : Colors.white, size: 14) : null,
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Text(
-                      'I AGREE TO THE BOOKING TERMS AND UNDERSTAND THAT THIS TOKEN AMOUNT IS FULLY REFUNDABLE WITHIN 7 DAYS OF PAYMENT.',
-                      style: GoogleFonts.montserrat(fontSize: 8, color: isDark ? Colors.white54 : Colors.black54, fontWeight: FontWeight.w900, height: 1.6),
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? Colors.white.withOpacity(0.02)
+                      : Colors.black.withOpacity(0.03),
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      0.06,
                     ),
                   ),
-                ],
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 24,
+                      height: 24,
+                      decoration: BoxDecoration(
+                        color: _agreed
+                            ? (isDark ? Colors.white : Colors.black)
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(
+                          color: isDark ? Colors.white : Colors.black,
+                          width: 2,
+                        ),
+                      ),
+                      child: _agreed
+                          ? Icon(
+                              LucideIcons.check,
+                              color: isDark ? Colors.black : Colors.white,
+                              size: 14,
+                            )
+                          : null,
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        'I AGREE TO THE BOOKING TERMS AND UNDERSTAND THAT THIS TOKEN AMOUNT IS FULLY REFUNDABLE WITHIN 7 DAYS OF PAYMENT.',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 9,
+                          color: (isDark ? Colors.white : Colors.black)
+                              .withOpacity(0.6),
+                          fontWeight: FontWeight.w900,
+                          height: 1.6,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
 
@@ -626,45 +1113,61 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: _agreed && !_isLoading && _selectedUnitId.isNotEmpty ? _submitBooking : null,
+                // Web parity: the PAY button is always solid black; unit/terms
+                // are validated on tap (toast) instead of being greyed out.
+                onPressed: _isLoading ? null : _submitBooking,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: isDark ? Colors.white : Colors.black,
                   foregroundColor: isDark ? Colors.black : Colors.white,
+                  disabledBackgroundColor:
+                      (isDark ? Colors.white : Colors.black).withOpacity(0.7),
                   padding: const EdgeInsets.symmetric(vertical: 24),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(40),
+                  ),
                   elevation: 0,
-                ).copyWith(
-                  backgroundColor: WidgetStateProperty.resolveWith((states) {
-                    if (states.contains(WidgetState.disabled)) return (isDark ? Colors.white : Colors.black).withOpacity(0.1);
-                    return isDark ? Colors.white : Colors.black;
-                  }),
                 ),
-                child: _isLoading 
-                  ? CupertinoActivityIndicator(color: isDark ? Colors.black : Colors.white)
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'PAY ₹${(widget.project?['tokenAmount'] ?? '1,00,000')}',
-                          style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w900, letterSpacing: 1),
-                        ),
-                        const SizedBox(width: 12),
-                        const Icon(LucideIcons.wallet, size: 18),
-                      ],
-                    ),
+                child: _isLoading
+                    ? CupertinoActivityIndicator(
+                        color: isDark ? Colors.black : Colors.white,
+                      )
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'PAY ₹$formattedAmount',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          const Icon(LucideIcons.wallet, size: 18),
+                        ],
+                      ),
               ),
             ),
-            
+
             const SizedBox(height: 32),
             Center(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(LucideIcons.shieldCheck, color: isDark ? Colors.white24 : Colors.black26, size: 14),
+                  Icon(
+                    LucideIcons.shieldCheck,
+                    color: isDark ? Colors.white24 : Colors.black26,
+                    size: 14,
+                  ),
                   const SizedBox(width: 10),
                   Text(
                     'PCI-DSS COMPLIANT • 256-BIT SSL ENCRYPTION',
-                    style: GoogleFonts.montserrat(fontSize: 7, fontWeight: FontWeight.w900, color: isDark ? Colors.white24 : Colors.black26, letterSpacing: 1),
+                    style: GoogleFonts.montserrat(
+                      fontSize: 7,
+                      fontWeight: FontWeight.w900,
+                      color: isDark ? Colors.white24 : Colors.black26,
+                      letterSpacing: 1,
+                    ),
                   ),
                 ],
               ),

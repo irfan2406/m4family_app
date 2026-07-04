@@ -9,6 +9,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
+import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
+import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 
 class ScheduleVisitScreen extends ConsumerStatefulWidget {
   const ScheduleVisitScreen({super.key});
@@ -19,43 +21,15 @@ class ScheduleVisitScreen extends ConsumerStatefulWidget {
 }
 
 class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
-  final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _phoneController = TextEditingController();
   final _notesController = TextEditingController();
 
   String? _selectedProjectId;
-  String? _employeeId;
-  List<Map<String, dynamic>> _employees = [];
   DateTime? _scheduledAt;
   bool _isProjectDropdownOpen = false;
-  bool _isEmployeeDropdownOpen = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchEmployees();
-  }
-
-  Future<void> _fetchEmployees() async {
-    try {
-      final res = await ref.read(apiClientProvider).getCpEmployees();
-      final body = res.data;
-      if (body is Map && body['status'] == true && body['data'] is List) {
-        if (!mounted) return;
-        setState(() {
-          _employees = (body['data'] as List)
-              .map((e) => Map<String, dynamic>.from(e as Map))
-              .toList();
-        });
-      }
-    } catch (_) {}
-  }
+  bool _isSubmitting = false;
 
   @override
   void dispose() {
-    _nameController.dispose();
-    _phoneController.dispose();
     _notesController.dispose();
     super.dispose();
   }
@@ -173,28 +147,31 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
   }
 
   Future<void> _submit() async {
-    if (!_formKey.currentState!.validate() ||
-        _selectedProjectId == null ||
-        _employeeId == null ||
-        _scheduledAt == null) {
+    // Web parity: only Property + Schedule are required; client details come
+    // from the logged-in account (web pre-fills these from the stored user).
+    if (_selectedProjectId == null || _scheduledAt == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please complete all fields')),
+        const SnackBar(content: Text('Please fill in all required fields')),
       );
       return;
     }
 
+    setState(() => _isSubmitting = true);
     try {
       final apiClient = ref.read(apiClientProvider);
+      final authUser = ref.read(authProvider).user;
 
       final String visitDetails =
           "Date: ${DateFormat('yyyy-MM-dd').format(_scheduledAt!)}, Time: ${DateFormat('hh:mm a').format(_scheduledAt!)}. Notes: ${_notesController.text}";
 
       final response = await apiClient.submitLead({
-        'name': _nameController.text,
-        'phone': _phoneController.text,
+        'name':
+            authUser?['fullName']?.toString() ??
+            authUser?['username']?.toString() ??
+            'App User',
+        'phone': authUser?['phone']?.toString() ?? '',
         'interest': 'Site Visit',
         'projectId': _selectedProjectId,
-        'employeeId': _employeeId,
         'message': visitDetails,
         'source': 'Mobile App',
       });
@@ -224,6 +201,8 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Error: $e')));
+    } finally {
+      if (mounted) setState(() => _isSubmitting = false);
     }
   }
 
@@ -233,6 +212,14 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      extendBody: true,
+      bottomNavigationBar: NavigationPill(
+        currentIndex: -1,
+        onTap: (i) {
+          ref.read(navigationProvider.notifier).state = i;
+          Navigator.of(context).popUntil((r) => r.isFirst);
+        },
+      ),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -267,7 +254,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
         title: Column(
           children: [
             Text(
-              'SITE VISIT',
+              'SCHEDULE VISIT',
               style: GoogleFonts.montserrat(
                 fontSize: 16,
                 fontWeight: FontWeight.w900,
@@ -276,7 +263,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
               ),
             ),
             Text(
-              'PROTOCOL VERIFICATION',
+              'PREMIUM PROTOCOL',
               style: GoogleFonts.montserrat(
                 fontSize: 8,
                 fontWeight: FontWeight.w700,
@@ -287,122 +274,125 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
           ],
         ),
       ),
-      body: Container(
-        color: Colors.transparent,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Top Note
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? const Color(0xFF111111)
-                        : Colors.black,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.white.withOpacity(0.08)),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(24, 24, 24, 120),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Top Note — web parity: light tinted card (bg-primary/5) with a
+            // soft shadow, a dark rounded icon box, and dark body text.
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withOpacity(0.04),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.08),
+                ),
+                boxShadow: Theme.of(context).brightness == Brightness.dark
+                    ? null
+                    : [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 16,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      LucideIcons.info,
+                      color: Theme.of(context).colorScheme.surface,
+                      size: 18,
+                    ),
                   ),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          LucideIcons.info,
-                          color: Colors.white,
-                          size: 18,
-                        ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Text(
+                      'NOTE: OUR RELATIONSHIP MANAGER WILL CONTACT YOU WITHIN 2 HOURS TO CONFIRM YOUR SCHEDULE.',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withOpacity(0.7),
+                        letterSpacing: 0.2,
+                        height: 1.5,
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Text(
-                          'NOTE: OUR MANAGER WILL CONTACT YOU WITHIN 2 HOURS TO CONFIRM YOUR SCHEDULE.',
-                          style: GoogleFonts.montserrat(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.white,
-                            letterSpacing: 0.2,
-                            height: 1.5,
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
-                ).animate().fadeIn().slideY(begin: -0.1),
-                const SizedBox(height: 32),
+                ],
+              ),
+            ).animate().fadeIn().slideY(begin: -0.1),
+            const SizedBox(height: 32),
 
-                _buildLabel('FULL NAME *'),
-                const SizedBox(height: 12),
-                _buildTextField(
-                  controller: _nameController,
-                  hint: 'ENTER NAME',
-                  icon: LucideIcons.user,
-                  validator: (v) => v!.isEmpty ? 'Name is required' : null,
-                ),
-                const SizedBox(height: 24),
-
-                _buildLabel('PHONE NUMBER *'),
-                const SizedBox(height: 12),
-                _buildTextField(
-                  controller: _phoneController,
-                  hint: '+91 XXXXX XXXXX',
-                  icon: LucideIcons.phone,
-                  keyboardType: TextInputType.phone,
-                  validator: (v) =>
-                      v!.isEmpty ? 'Phone number is required' : null,
-                ),
-                const SizedBox(height: 24),
-
-                _buildLabel('SELECT PROJECT *'),
-                const SizedBox(height: 12),
-                projectsAsync.when(
-                  data: (projects) => _buildDropdown(projects),
-                  loading: () => const Center(
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
-                  error: (e, s) => Text(
-                    'Error loading projects',
-                    style: TextStyle(color: Colors.red[400]),
-                  ),
-                ),
-                const SizedBox(height: 24),
-
-                _buildLabel('HANDLED BY (EMPLOYEE) *'),
-                const SizedBox(height: 12),
-                _buildEmployeeDropdown(),
-                const SizedBox(height: 24),
-
-                _buildLabel('SCHEDULE *'),
-                const SizedBox(height: 12),
-                _buildPickerButton(
-                  text: _scheduledAt == null
-                      ? 'SELECT DATE & TIME'
-                      : '${DateFormat('dd MMM yyyy').format(_scheduledAt!)}, ${DateFormat('hh:mm a').format(_scheduledAt!)}',
-                  icon: LucideIcons.calendar,
-                  onTap: _pickScheduleDateTime,
-                ),
-                const SizedBox(height: 24),
-
-                _buildLabel('ADDITIONAL NOTES'),
-                const SizedBox(height: 12),
-                _buildTextField(
-                  controller: _notesController,
-                  hint: 'Specific requirements...',
-                  maxLines: 4,
-                ),
-                const SizedBox(height: 48),
-
-                _buildSubmitButton(),
-              ],
+            // Web parity: no Name / Phone / Employee fields — the form starts
+            // at Select Property, then Schedule, then Additional Notes.
+            _buildLabel('SELECT PROPERTY'),
+            const SizedBox(height: 12),
+            projectsAsync.when(
+              data: (projects) => _buildDropdown(projects),
+              loading: () => const Center(
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+              error: (e, s) => Text(
+                'Error loading projects',
+                style: TextStyle(color: Colors.red[400]),
+              ),
             ),
-          ),
+            const SizedBox(height: 24),
+
+            _buildLabel('SCHEDULE'),
+            const SizedBox(height: 12),
+            _buildPickerButton(
+              text: _scheduledAt == null
+                  ? 'SELECT DATE & TIME'
+                  : '${DateFormat('dd MMM yyyy').format(_scheduledAt!)}, ${DateFormat('hh:mm a').format(_scheduledAt!)}',
+              icon: LucideIcons.calendar,
+              onTap: _pickScheduleDateTime,
+            ),
+            const SizedBox(height: 24),
+
+            _buildLabel('ADDITIONAL NOTES'),
+            const SizedBox(height: 12),
+            _buildTextField(
+              controller: _notesController,
+              hint: 'SPECIFIC REQUIREMENTS, PICKUP DETAILS, ETC...',
+              maxLines: 4,
+            ),
+            const SizedBox(height: 48),
+
+            _buildSubmitButton(),
+            const SizedBox(height: 24),
+            // Web parity: fine-print line below the SECURE BOOKING button.
+            Center(
+              child: Text(
+                '* PICK-UP AND DROP FACILITY INCLUDED FOR PREMIUM TIER MEMBERS.',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.montserrat(
+                  fontSize: 8,
+                  fontWeight: FontWeight.w900,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withOpacity(0.5),
+                  letterSpacing: 2,
+                  height: 1.6,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -426,7 +416,6 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
     IconData? icon,
     int maxLines = 1,
     TextInputType keyboardType = TextInputType.text,
-    String? Function(String?)? validator,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     // Web parity: a bright "enabled-looking" card (bg-card + shadow-xl)
@@ -453,7 +442,6 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
         controller: controller,
         maxLines: maxLines,
         keyboardType: keyboardType,
-        validator: validator,
         style: GoogleFonts.montserrat(
           color: isDark ? Colors.white : Colors.black,
           fontSize: 13,
@@ -475,15 +463,9 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                   size: 18,
                 )
               : null,
-          errorStyle: GoogleFonts.montserrat(
-            color: Colors.redAccent,
-            fontSize: 10,
-          ),
           border: InputBorder.none,
           enabledBorder: InputBorder.none,
           focusedBorder: InputBorder.none,
-          errorBorder: InputBorder.none,
-          focusedErrorBorder: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
             vertical: 16,
             horizontal: 20,
@@ -491,6 +473,14 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
         ),
       ),
     ).animate().fadeIn(delay: 100.ms);
+  }
+
+  // Web parity: SelectItem renders `{proj.title} - {proj.location.name}`.
+  String _projectLabel(dynamic p) {
+    final title = (p['title'] ?? '').toString();
+    final loc = p['location'];
+    final locName = loc is Map ? (loc['name']?.toString() ?? '') : '';
+    return (locName.isNotEmpty ? '$title - $locName' : title).toUpperCase();
   }
 
   Widget _buildDropdown(List<dynamic> projects) {
@@ -530,8 +520,8 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
               children: [
                 Text(
                   selectedProject != null
-                      ? selectedProject['title'].toString().toUpperCase()
-                      : 'CHOOSE PROJECT',
+                      ? _projectLabel(selectedProject)
+                      : 'CHOOSE PROPERTY',
                   style: GoogleFonts.montserrat(
                     color: selectedProject != null
                         ? (isDark ? Colors.white : Colors.black)
@@ -601,139 +591,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Text(
-                      (project['title'] ?? '').toString().toUpperCase(),
-                      style: GoogleFonts.montserrat(
-                        color: isSelected
-                            ? (isDark ? Colors.white : Colors.black)
-                            : (isDark ? Colors.white70 : Colors.black87),
-                        fontSize: 11,
-                        fontWeight: isSelected
-                            ? FontWeight.w900
-                            : FontWeight.w600,
-                        letterSpacing: 1,
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ).animate().fadeIn(duration: 200.ms).slideY(begin: -0.05, end: 0),
-      ],
-    );
-  }
-
-  Widget _buildEmployeeDropdown() {
-    final selectedEmployee = _employees.firstWhere(
-      (e) => e['_id'] == _employeeId,
-      orElse: () => {},
-    );
-
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Column(
-      children: [
-        GestureDetector(
-          onTap: () => setState(
-            () => _isEmployeeDropdownOpen = !_isEmployeeDropdownOpen,
-          ),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF15171C) : Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: _isEmployeeDropdownOpen
-                    ? (isDark ? Colors.white : Colors.black).withOpacity(0.2)
-                    : (isDark ? Colors.white : Colors.black).withOpacity(0.06),
-              ),
-              boxShadow: isDark
-                  ? null
-                  : [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.06),
-                        blurRadius: 24,
-                        offset: const Offset(0, 10),
-                      ),
-                    ],
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  selectedEmployee.isNotEmpty
-                      ? (selectedEmployee['name'] ?? '')
-                            .toString()
-                            .toUpperCase()
-                      : 'SELECT EMPLOYEE',
-                  style: GoogleFonts.montserrat(
-                    color: selectedEmployee.isNotEmpty
-                        ? (isDark ? Colors.white : Colors.black)
-                        : (isDark ? Colors.white : Colors.black).withOpacity(
-                            0.5,
-                          ),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1,
-                  ),
-                ),
-                Icon(
-                  _isEmployeeDropdownOpen
-                      ? LucideIcons.chevronUp
-                      : LucideIcons.chevronDown,
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(
-                    0.6,
-                  ),
-                  size: 18,
-                ),
-              ],
-            ),
-          ),
-        ),
-        if (_isEmployeeDropdownOpen)
-          Container(
-            margin: const EdgeInsets.only(top: 8),
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF111111) : Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: isDark
-                  ? null
-                  : [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
-                      ),
-                    ],
-              border: Border.all(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
-              ),
-            ),
-            child: Column(
-              children: _employees.map((emp) {
-                final isSelected = _employeeId == emp['_id'];
-                return InkWell(
-                  onTap: () {
-                    setState(() {
-                      _employeeId = emp['_id']?.toString();
-                      _isEmployeeDropdownOpen = false;
-                    });
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 14,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? (isDark ? Colors.white : Colors.black).withOpacity(
-                              0.05,
-                            )
-                          : Colors.transparent,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      '${(emp['name'] ?? '').toString().toUpperCase()}${emp['phone'] != null ? ' (${emp['phone']})' : ''}',
+                      _projectLabel(project),
                       style: GoogleFonts.montserrat(
                         color: isSelected
                             ? (isDark ? Colors.white : Colors.black)
@@ -814,44 +672,50 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
   }
 
   Widget _buildSubmitButton() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return SizedBox(
       width: double.infinity,
       height: 56,
       child: ElevatedButton(
-        onPressed: _submit,
+        onPressed: _isSubmitting ? null : _submit,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).brightness == Brightness.dark
-              ? Colors.white
-              : Colors.black,
-          foregroundColor: Theme.of(context).brightness == Brightness.dark
-              ? Colors.black
-              : Colors.white,
+          backgroundColor: isDark ? Colors.white : Colors.black,
+          foregroundColor: isDark ? Colors.black : Colors.white,
+          disabledBackgroundColor: (isDark ? Colors.white : Colors.black)
+              .withOpacity(0.7),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
           elevation: 0,
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'SECURE BOOKING',
-              style: GoogleFonts.montserrat(
-                fontWeight: FontWeight.w900,
-                fontSize: 13,
-                letterSpacing: 2,
+        child: _isSubmitting
+            ? SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: isDark ? Colors.black : Colors.white,
+                ),
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'SECURE BOOKING',
+                    style: GoogleFonts.montserrat(
+                      fontWeight: FontWeight.w900,
+                      fontSize: 13,
+                      letterSpacing: 2,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Icon(
+                    LucideIcons.send,
+                    color: isDark ? Colors.black : Colors.white,
+                    size: 16,
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(width: 12),
-            Icon(
-              LucideIcons.shieldCheck,
-              color: Theme.of(context).brightness == Brightness.dark
-                  ? Colors.black
-                  : Colors.white,
-              size: 16,
-            ),
-          ],
-        ),
       ),
     ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.2);
   }

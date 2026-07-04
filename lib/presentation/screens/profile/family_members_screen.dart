@@ -13,7 +13,8 @@ class FamilyMembersScreen extends ConsumerStatefulWidget {
   const FamilyMembersScreen({super.key});
 
   @override
-  ConsumerState<FamilyMembersScreen> createState() => _FamilyMembersScreenState();
+  ConsumerState<FamilyMembersScreen> createState() =>
+      _FamilyMembersScreenState();
 }
 
 class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
@@ -32,7 +33,9 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
 
   void _loadFromAuth() {
     final user = ref.read(authProvider).user;
-    final raw = (user?['familyMembers'] is List && (user!['familyMembers'] as List).isNotEmpty)
+    final raw =
+        (user?['familyMembers'] is List &&
+            (user!['familyMembers'] as List).isNotEmpty)
         ? user['familyMembers']
         : (user?['familyDetails'] ?? user?['familyMembers'] ?? []);
     _familyMembers = (raw as List)
@@ -63,7 +66,10 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
         }
         return true;
       } else {
-        _showToast(res.data['message']?.toString() ?? 'Failed to update family details', isError: true);
+        _showToast(
+          res.data['message']?.toString() ?? 'Failed to update family details',
+          isError: true,
+        );
         return false;
       }
     } catch (e) {
@@ -91,7 +97,9 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
           style: GoogleFonts.montserrat(
             fontSize: 11,
             fontWeight: FontWeight.w800,
-            color: isError ? Colors.white : (isDark ? Colors.black : Colors.white),
+            color: isError
+                ? Colors.white
+                : (isDark ? Colors.black : Colors.white),
             letterSpacing: 0.5,
           ),
         ),
@@ -111,9 +119,17 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
           decoration: BoxDecoration(
             color: isDark ? const Color(0xFF09090B) : Colors.white,
             borderRadius: BorderRadius.circular(40),
-            border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08)),
+            border: Border.all(
+              color: (isDark ? Colors.white : Colors.black).withValues(
+                alpha: 0.08,
+              ),
+            ),
             boxShadow: [
-              BoxShadow(color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.1), blurRadius: 30, offset: const Offset(0, 15)),
+              BoxShadow(
+                color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.1),
+                blurRadius: 30,
+                offset: const Offset(0, 15),
+              ),
             ],
           ),
           child: Column(
@@ -135,7 +151,9 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                 style: GoogleFonts.montserrat(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.55),
+                  color: (isDark ? Colors.white : Colors.black).withValues(
+                    alpha: 0.55,
+                  ),
                   height: 1.4,
                 ),
               ),
@@ -169,7 +187,8 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
     );
 
     if (confirmed == true) {
-      final updated = List<Map<String, dynamic>>.from(_familyMembers)..removeAt(index);
+      final updated = List<Map<String, dynamic>>.from(_familyMembers)
+        ..removeAt(index);
       await _updateFamily(updated);
     }
   }
@@ -179,7 +198,11 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
   }
 
   void _openEditDialog(int index) {
-    _showMemberDialog(isEdit: true, index: index, existing: _familyMembers[index]);
+    _showMemberDialog(
+      isEdit: true,
+      index: index,
+      existing: _familyMembers[index],
+    );
   }
 
   Future<void> _showMemberDialog({
@@ -188,7 +211,9 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
     Map<String, dynamic>? existing,
   }) async {
     final isDark = ref.read(themeProvider) == ThemeMode.dark;
-    final nameController = TextEditingController(text: existing?['name']?.toString() ?? '');
+    final nameController = TextEditingController(
+      text: existing?['name']?.toString() ?? '',
+    );
     String relation = existing?['relation']?.toString() ?? '';
     String dob = existing?['dob']?.toString() ?? '';
 
@@ -198,12 +223,15 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
         return StatefulBuilder(
           builder: (ctx, setDialogState) {
             const predefined = ['Spouse', 'Son', 'Daughter', 'Parent'];
-            final isCustom = relation.isNotEmpty && !predefined.contains(relation);
+            final isCustom =
+                relation.isNotEmpty && !predefined.contains(relation);
 
             String dobDisplay = '';
             if (dob.isNotEmpty) {
               try {
-                dobDisplay = DateFormat('d MMM yyyy').format(DateTime.parse(dob)).toUpperCase();
+                dobDisplay = DateFormat(
+                  'd MMM yyyy',
+                ).format(DateTime.parse(dob)).toUpperCase();
               } catch (_) {
                 dobDisplay = dob;
               }
@@ -223,8 +251,14 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                   height: 350,
                   decoration: BoxDecoration(
                     color: isDark ? const Color(0xFF09090B) : Colors.white,
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-                    border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05)),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(30),
+                    ),
+                    border: Border.all(
+                      color: (isDark ? Colors.white : Colors.black).withValues(
+                        alpha: 0.05,
+                      ),
+                    ),
                   ),
                   child: Column(
                     children: [
@@ -233,17 +267,36 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('SELECT DATE OF BIRTH',
-                                style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 1, color: isDark ? Colors.white : Colors.black)),
+                            Text(
+                              'SELECT DATE OF BIRTH',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 1,
+                                color: isDark ? Colors.white : Colors.black,
+                              ),
+                            ),
                             GestureDetector(
                               onTap: () => Navigator.pop(sheetCtx),
                               child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
                                 decoration: BoxDecoration(
-                                  color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05),
+                                  color: isDark
+                                      ? Colors.white.withValues(alpha: 0.05)
+                                      : Colors.black.withValues(alpha: 0.05),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: Text('DONE', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.blue)),
+                                child: Text(
+                                  'DONE',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w900,
+                                    color: Colors.blue,
+                                  ),
+                                ),
                               ),
                             ),
                           ],
@@ -253,7 +306,9 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                       Expanded(
                         child: CupertinoTheme(
                           data: CupertinoThemeData(
-                            brightness: isDark ? Brightness.dark : Brightness.light,
+                            brightness: isDark
+                                ? Brightness.dark
+                                : Brightness.light,
                             textTheme: CupertinoTextThemeData(
                               dateTimePickerTextStyle: GoogleFonts.montserrat(
                                 color: isDark ? Colors.white : Colors.black,
@@ -267,7 +322,11 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                             initialDateTime: initial,
                             maximumDate: DateTime.now(),
                             onDateTimeChanged: (picked) {
-                              setDialogState(() => dob = DateFormat('yyyy-MM-dd').format(picked));
+                              setDialogState(
+                                () => dob = DateFormat(
+                                  'yyyy-MM-dd',
+                                ).format(picked),
+                              );
                             },
                           ),
                         ),
@@ -287,9 +346,19 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                   decoration: BoxDecoration(
                     color: isDark ? const Color(0xFF09090B) : Colors.white,
                     borderRadius: BorderRadius.circular(40),
-                    border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08)),
+                    border: Border.all(
+                      color: (isDark ? Colors.white : Colors.black).withValues(
+                        alpha: 0.08,
+                      ),
+                    ),
                     boxShadow: [
-                      BoxShadow(color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.1), blurRadius: 30, offset: const Offset(0, 15)),
+                      BoxShadow(
+                        color: Colors.black.withValues(
+                          alpha: isDark ? 0.4 : 0.1,
+                        ),
+                        blurRadius: 30,
+                        offset: const Offset(0, 15),
+                      ),
                     ],
                   ),
                   child: Column(
@@ -321,7 +390,8 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                       _RelationDropdown(
                         isDark: isDark,
                         value: relation,
-                        onChanged: (val) => setDialogState(() => relation = val),
+                        onChanged: (val) =>
+                            setDialogState(() => relation = val),
                       ),
                       if (isCustom) ...[
                         const SizedBox(height: 12),
@@ -329,7 +399,9 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                         const SizedBox(height: 8),
                         _DialogInput(
                           controller: TextEditingController(text: relation)
-                            ..selection = TextSelection.collapsed(offset: relation.length),
+                            ..selection = TextSelection.collapsed(
+                              offset: relation.length,
+                            ),
                           hint: 'Type relation...',
                           isDark: isDark,
                           onChanged: (val) => relation = val,
@@ -343,27 +415,45 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                         onTap: pickDob,
                         child: Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 16,
+                          ),
                           decoration: BoxDecoration(
-                            color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.03)
+                                : Colors.white,
                             borderRadius: BorderRadius.circular(16),
-                            border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08)),
+                            border: Border.all(
+                              color: (isDark ? Colors.white : Colors.black)
+                                  .withValues(alpha: 0.08),
+                            ),
                           ),
                           child: Row(
                             children: [
                               Expanded(
                                 child: Text(
-                                  dobDisplay.isEmpty ? 'SELECT DATE' : dobDisplay,
+                                  dobDisplay.isEmpty
+                                      ? 'SELECT DATE'
+                                      : dobDisplay,
                                   style: GoogleFonts.montserrat(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w800,
                                     color: dobDisplay.isEmpty
-                                        ? (isDark ? Colors.white : Colors.black).withValues(alpha: 0.35)
-                                        : (isDark ? Colors.white : Colors.black),
+                                        ? (isDark ? Colors.white : Colors.black)
+                                              .withValues(alpha: 0.35)
+                                        : (isDark
+                                              ? Colors.white
+                                              : Colors.black),
                                   ),
                                 ),
                               ),
-                              Icon(LucideIcons.calendar, size: 16, color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.4)),
+                              Icon(
+                                LucideIcons.calendar,
+                                size: 16,
+                                color: (isDark ? Colors.white : Colors.black)
+                                    .withValues(alpha: 0.4),
+                              ),
                             ],
                           ),
                         ),
@@ -377,7 +467,9 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                               label: 'CANCEL',
                               isDark: isDark,
                               filled: false,
-                              onTap: _isLoading ? null : () => Navigator.pop(ctx),
+                              onTap: _isLoading
+                                  ? null
+                                  : () => Navigator.pop(ctx),
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -392,8 +484,12 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                                   ? null
                                   : () async {
                                       final name = nameController.text.trim();
-                                      if (name.isEmpty || relation.trim().isEmpty) {
-                                        _showToast('Name and Relation are required', isError: true);
+                                      if (name.isEmpty ||
+                                          relation.trim().isEmpty) {
+                                        _showToast(
+                                          'Name and Relation are required',
+                                          isError: true,
+                                        );
                                         return;
                                       }
                                       FocusScope.of(ctx).unfocus();
@@ -404,10 +500,16 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                                       };
                                       List<Map<String, dynamic>> updated;
                                       if (isEdit && index != null) {
-                                        updated = List<Map<String, dynamic>>.from(_familyMembers);
+                                        updated =
+                                            List<Map<String, dynamic>>.from(
+                                              _familyMembers,
+                                            );
                                         updated[index] = member;
                                       } else {
-                                        updated = List<Map<String, dynamic>>.from(_familyMembers)..add(member);
+                                        updated =
+                                            List<Map<String, dynamic>>.from(
+                                              _familyMembers,
+                                            )..add(member);
                                       }
                                       final ok = await _updateFamily(updated);
                                       if (ok && ctx.mounted) Navigator.pop(ctx);
@@ -466,7 +568,13 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                           child: _buildMemberCard(member, realIndex, isDark)
                               .animate()
                               .fadeIn(duration: 300.ms, delay: (i * 60).ms)
-                              .slideY(begin: -0.15, end: 0, duration: 300.ms, delay: (i * 60).ms, curve: Curves.easeOut),
+                              .slideY(
+                                begin: -0.15,
+                                end: 0,
+                                duration: 300.ms,
+                                delay: (i * 60).ms,
+                                curve: Curves.easeOut,
+                              ),
                         );
                       }),
                   ],
@@ -484,7 +592,11 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06)),
+          bottom: BorderSide(
+            color: (isDark ? Colors.white : Colors.black).withValues(
+              alpha: 0.06,
+            ),
+          ),
         ),
       ),
       child: Row(
@@ -515,7 +627,6 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
           _HeaderIconButton(
             icon: LucideIcons.plus,
             isDark: isDark,
-            accent: true,
             onTap: _openAddDialog,
           ),
         ],
@@ -528,16 +639,30 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08)),
+        border: Border.all(
+          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08),
+        ),
         boxShadow: isDark
             ? []
-            : [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 12, offset: const Offset(0, 4))],
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
       ),
       child: Row(
         children: [
           Padding(
             padding: const EdgeInsets.only(left: 16, right: 10),
-            child: Icon(LucideIcons.search, size: 16, color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.4)),
+            child: Icon(
+              LucideIcons.search,
+              size: 16,
+              color: (isDark ? Colors.white : Colors.black).withValues(
+                alpha: 0.4,
+              ),
+            ),
           ),
           Expanded(
             child: TextField(
@@ -557,7 +682,9 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                 hintStyle: GoogleFonts.montserrat(
                   fontSize: 11,
                   fontWeight: FontWeight.w900,
-                  color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.3),
+                  color: (isDark ? Colors.white : Colors.black).withValues(
+                    alpha: 0.3,
+                  ),
                   letterSpacing: 1.5,
                 ),
               ),
@@ -575,7 +702,9 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 56, horizontal: 24),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.02) : Colors.black.withValues(alpha: 0.01),
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.02)
+            : Colors.black.withValues(alpha: 0.01),
         borderRadius: BorderRadius.circular(40),
         border: Border.all(
           color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
@@ -584,7 +713,11 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
       ),
       child: Column(
         children: [
-          Icon(LucideIcons.users, size: 40, color: muted.withValues(alpha: 0.4)),
+          Icon(
+            LucideIcons.users,
+            size: 40,
+            color: muted.withValues(alpha: 0.4),
+          ),
           const SizedBox(height: 16),
           Text(
             'NO FAMILY MEMBERS FOUND',
@@ -603,7 +736,6 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
 
   Widget _buildMemberCard(Map<String, dynamic> member, int index, bool isDark) {
     final textColor = isDark ? Colors.white : Colors.black;
-    const accent = Color(0xFFFFD700);
     final String name = (member['name'] ?? '').toString();
     final String relation = (member['relation'] ?? '').toString();
     final String dob = (member['dob'] ?? '').toString();
@@ -622,10 +754,18 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
         borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08)),
+        border: Border.all(
+          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08),
+        ),
         boxShadow: isDark
             ? []
-            : [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 20, offset: const Offset(0, 10))],
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.03),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
       ),
       child: Row(
         children: [
@@ -634,10 +774,18 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: Colors.blueAccent.withValues(alpha: 0.08),
+              color: (isDark ? Colors.white : Colors.black).withValues(
+                alpha: 0.05,
+              ),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: Icon(LucideIcons.users, size: 20, color: Colors.blueAccent.withValues(alpha: 0.7)),
+            child: Icon(
+              LucideIcons.users,
+              size: 20,
+              color: (isDark ? Colors.white : Colors.black).withValues(
+                alpha: 0.55,
+              ),
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -661,18 +809,27 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                     if (relation.isNotEmpty) ...[
                       const SizedBox(width: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
                         decoration: BoxDecoration(
-                          color: accent.withValues(alpha: 0.12),
+                          // Web parity: neutral grey badge (not gold).
+                          color: (isDark ? Colors.white : Colors.black)
+                              .withValues(alpha: 0.06),
                           borderRadius: BorderRadius.circular(100),
-                          border: Border.all(color: accent.withValues(alpha: 0.3)),
+                          border: Border.all(
+                            color: (isDark ? Colors.white : Colors.black)
+                                .withValues(alpha: 0.12),
+                          ),
                         ),
                         child: Text(
                           relation.toUpperCase(),
                           style: GoogleFonts.montserrat(
                             fontSize: 7,
                             fontWeight: FontWeight.w900,
-                            color: isDark ? accent : const Color(0xFF8A6D00),
+                            color: (isDark ? Colors.white : Colors.black)
+                                .withValues(alpha: 0.6),
                             letterSpacing: 0.5,
                           ),
                         ),
@@ -684,14 +841,20 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                   const SizedBox(height: 6),
                   Row(
                     children: [
-                      Icon(LucideIcons.calendar, size: 11, color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.45)),
+                      Icon(
+                        LucideIcons.calendar,
+                        size: 11,
+                        color: (isDark ? Colors.white : Colors.black)
+                            .withValues(alpha: 0.45),
+                      ),
                       const SizedBox(width: 6),
                       Text(
                         dobDisplay.toUpperCase(),
                         style: GoogleFonts.montserrat(
                           fontSize: 9,
                           fontWeight: FontWeight.w700,
-                          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+                          color: (isDark ? Colors.white : Colors.black)
+                              .withValues(alpha: 0.5),
                           letterSpacing: 1,
                         ),
                       ),
@@ -711,7 +874,6 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
           _CardActionButton(
             icon: LucideIcons.trash2,
             isDark: isDark,
-            destructive: true,
             onTap: () => _handleDelete(index),
           ),
         ],
@@ -725,7 +887,11 @@ class _ScaleTap extends StatefulWidget {
   final Widget child;
   final VoidCallback? onTap;
   final BorderRadius? borderRadius;
-  const _ScaleTap({required this.child, required this.onTap, this.borderRadius});
+  const _ScaleTap({
+    required this.child,
+    required this.onTap,
+    this.borderRadius,
+  });
 
   @override
   State<_ScaleTap> createState() => _ScaleTapState();
@@ -738,9 +904,15 @@ class _ScaleTapState extends State<_ScaleTap> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: widget.onTap,
-      onTapDown: widget.onTap == null ? null : (_) => setState(() => _pressed = true),
-      onTapUp: widget.onTap == null ? null : (_) => setState(() => _pressed = false),
-      onTapCancel: widget.onTap == null ? null : () => setState(() => _pressed = false),
+      onTapDown: widget.onTap == null
+          ? null
+          : (_) => setState(() => _pressed = true),
+      onTapUp: widget.onTap == null
+          ? null
+          : (_) => setState(() => _pressed = false),
+      onTapCancel: widget.onTap == null
+          ? null
+          : () => setState(() => _pressed = false),
       child: AnimatedScale(
         scale: _pressed ? 0.93 : 1.0,
         duration: const Duration(milliseconds: 120),
@@ -753,34 +925,41 @@ class _ScaleTapState extends State<_ScaleTap> {
 class _HeaderIconButton extends StatelessWidget {
   final IconData icon;
   final bool isDark;
-  final bool accent;
   final VoidCallback onTap;
-  const _HeaderIconButton({required this.icon, required this.isDark, required this.onTap, this.accent = false});
+  const _HeaderIconButton({
+    required this.icon,
+    required this.isDark,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    const accentColor = Color(0xFFFFD700);
     return _ScaleTap(
       onTap: onTap,
       borderRadius: BorderRadius.circular(14),
       child: Container(
         padding: const EdgeInsets.all(11),
         decoration: BoxDecoration(
-          color: accent
-              ? accentColor.withValues(alpha: 0.12)
-              : (isDark ? const Color(0xFF18181B) : Colors.white),
+          color: isDark ? const Color(0xFF18181B) : Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: accent
-                ? accentColor.withValues(alpha: 0.3)
-                : (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08),
+            color: (isDark ? Colors.white : Colors.black).withValues(
+              alpha: 0.08,
+            ),
           ),
-          boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 10)],
+          boxShadow: isDark
+              ? []
+              : [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.03),
+                    blurRadius: 10,
+                  ),
+                ],
         ),
         child: Icon(
           icon,
           size: 20,
-          color: accent ? (isDark ? accentColor : const Color(0xFF8A6D00)) : (isDark ? Colors.white : Colors.black),
+          color: isDark ? Colors.white : Colors.black,
         ),
       ),
     );
@@ -790,9 +969,12 @@ class _HeaderIconButton extends StatelessWidget {
 class _CardActionButton extends StatelessWidget {
   final IconData icon;
   final bool isDark;
-  final bool destructive;
   final VoidCallback onTap;
-  const _CardActionButton({required this.icon, required this.isDark, required this.onTap, this.destructive = false});
+  const _CardActionButton({
+    required this.icon,
+    required this.isDark,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -803,16 +985,20 @@ class _CardActionButton extends StatelessWidget {
         width: 36,
         height: 36,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.04) : Colors.black.withValues(alpha: 0.03),
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.04)
+              : Colors.black.withValues(alpha: 0.03),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06)),
+          border: Border.all(
+            color: (isDark ? Colors.white : Colors.black).withValues(
+              alpha: 0.06,
+            ),
+          ),
         ),
         child: Icon(
           icon,
           size: 16,
-          color: destructive
-              ? const Color(0xFFEF4444)
-              : (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
+          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
         ),
       ),
     );
@@ -846,7 +1032,12 @@ class _DialogInput extends StatelessWidget {
   final String hint;
   final bool isDark;
   final ValueChanged<String>? onChanged;
-  const _DialogInput({required this.controller, required this.hint, required this.isDark, this.onChanged});
+  const _DialogInput({
+    required this.controller,
+    required this.hint,
+    required this.isDark,
+    this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -854,7 +1045,9 @@ class _DialogInput extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08)),
+        border: Border.all(
+          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08),
+        ),
       ),
       child: TextField(
         controller: controller,
@@ -866,13 +1059,18 @@ class _DialogInput extends StatelessWidget {
         ),
         decoration: InputDecoration(
           isCollapsed: true,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 16,
+          ),
           border: InputBorder.none,
           hintText: hint,
           hintStyle: GoogleFonts.montserrat(
             fontSize: 12,
             fontWeight: FontWeight.w600,
-            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.3),
+            color: (isDark ? Colors.white : Colors.black).withValues(
+              alpha: 0.3,
+            ),
           ),
         ),
       ),
@@ -884,13 +1082,19 @@ class _RelationDropdown extends StatelessWidget {
   final bool isDark;
   final String value;
   final ValueChanged<String> onChanged;
-  const _RelationDropdown({required this.isDark, required this.value, required this.onChanged});
+  const _RelationDropdown({
+    required this.isDark,
+    required this.value,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
     const predefined = ['Spouse', 'Son', 'Daughter', 'Parent'];
     final isCustom = value.isNotEmpty && !predefined.contains(value);
-    final selected = predefined.contains(value) ? value : (isCustom ? 'Other' : null);
+    final selected = predefined.contains(value)
+        ? value
+        : (isCustom ? 'Other' : null);
 
     return Container(
       height: 50,
@@ -898,7 +1102,9 @@ class _RelationDropdown extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08)),
+        border: Border.all(
+          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08),
+        ),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
@@ -909,10 +1115,18 @@ class _RelationDropdown extends StatelessWidget {
             style: GoogleFonts.montserrat(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.3),
+              color: (isDark ? Colors.white : Colors.black).withValues(
+                alpha: 0.3,
+              ),
             ),
           ),
-          icon: Icon(LucideIcons.chevronDown, size: 16, color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.4)),
+          icon: Icon(
+            LucideIcons.chevronDown,
+            size: 16,
+            color: (isDark ? Colors.white : Colors.black).withValues(
+              alpha: 0.4,
+            ),
+          ),
           dropdownColor: isDark ? const Color(0xFF18181B) : Colors.white,
           borderRadius: BorderRadius.circular(16),
           style: GoogleFonts.montserrat(
@@ -921,8 +1135,13 @@ class _RelationDropdown extends StatelessWidget {
             color: isDark ? Colors.white : Colors.black,
           ),
           items: [
-            ...predefined.map((p) => DropdownMenuItem(value: p, child: Text(p))),
-            const DropdownMenuItem(value: 'Other', child: Text('Other / Custom')),
+            ...predefined.map(
+              (p) => DropdownMenuItem(value: p, child: Text(p)),
+            ),
+            const DropdownMenuItem(
+              value: 'Other',
+              child: Text('Other / Custom'),
+            ),
           ],
           onChanged: (val) {
             if (val == null) return;
@@ -958,7 +1177,9 @@ class _DialogButton extends StatelessWidget {
     final Color bg;
     final Color fg;
     if (filled) {
-      bg = destructive ? const Color(0xFFEF4444) : (isDark ? Colors.white : Colors.black);
+      bg = destructive
+          ? const Color(0xFFEF4444)
+          : (isDark ? Colors.white : Colors.black);
       fg = destructive ? Colors.white : (isDark ? Colors.black : Colors.white);
     } else {
       bg = Colors.transparent;
@@ -978,7 +1199,11 @@ class _DialogButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             border: filled
                 ? null
-                : Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.12)),
+                : Border.all(
+                    color: (isDark ? Colors.white : Colors.black).withValues(
+                      alpha: 0.12,
+                    ),
+                  ),
           ),
           child: Text(
             label,
