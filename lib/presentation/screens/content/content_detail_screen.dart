@@ -369,15 +369,27 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                                 vertical: 6,
                               ),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF60A5FA).withOpacity(0.1),
+                                // Black text on a white pill with a darker,
+                                // more prominent drop shadow.
+                                color: scheme.surface,
                                 borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: scheme.onSurface.withOpacity(0.1),
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.16),
+                                    blurRadius: 14,
+                                    offset: const Offset(0, 5),
+                                  ),
+                                ],
                               ),
                               child: Text(
                                 widget.content['type'].toString().toUpperCase(),
                                 style: GoogleFonts.montserrat(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w900,
-                                  color: const Color(0xFF60A5FA),
+                                  color: scheme.onSurface,
                                   letterSpacing: 1.5,
                                 ),
                               ),

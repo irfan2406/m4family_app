@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
-import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/presentation/screens/content/content_detail_screen.dart';
@@ -44,24 +43,26 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
     try {
       final apiClient = ref.read(apiClientProvider);
       final authState = ref.read(authProvider);
-      
+
       // Extract role from auth state
       String userRole = 'guest';
       if (authState.user != null) {
-        final rawRole = (authState.user!['role'] ?? 'guest').toString().toLowerCase();
+        final rawRole = (authState.user!['role'] ?? 'guest')
+            .toString()
+            .toLowerCase();
         // Web portal and backend content logic expects 'user' for customers
         userRole = rawRole == 'customer' ? 'user' : rawRole;
       }
 
       // Determine type for API
       String apiType = widget.type;
-      
+
       print('DEBUG: Fetching content type: $apiType for role: $userRole');
 
       final response = await apiClient.getContent(apiType, role: userRole);
-      
+
       print('DEBUG: Content API Response status: ${response.data['status']}');
-      
+
       if (response.data['status'] == true && response.data['data'] is List) {
         setState(() {
           _items = response.data['data'] as List;
@@ -89,30 +90,46 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
 
   String _getTitle() {
     switch (widget.type.toLowerCase()) {
-      case 'media': return 'MEDIA GALLERY';
+      case 'media':
+        return 'MEDIA GALLERY';
       case 'highlight':
-      case 'highlights': return 'PROJECT HIGHLIGHTS';
+      case 'highlights':
+        return 'PROJECT HIGHLIGHTS';
       case 'event':
-      case 'events': return 'M4 EVENTS';
-      case 'blog': return 'M4 BLOG';
-      default: return 'CONTENT HUB';
+      case 'events':
+        return 'M4 EVENTS';
+      case 'blog':
+        return 'M4 BLOG';
+      default:
+        return 'CONTENT HUB';
     }
   }
 
   String _getSubtitle() {
     final type = widget.type.toLowerCase();
-    return 'Stay updated with our latest ${type == 'media' ? 'multimedia releases' : (type == 'highlight' || type == 'highlights') ? 'achievements and milestones' : (type == 'event' || type == 'events') ? 'upcoming events' : 'insights and news'}.';
+    return 'Stay updated with our latest ${type == 'media'
+        ? 'multimedia releases'
+        : (type == 'highlight' || type == 'highlights')
+        ? 'achievements and milestones'
+        : (type == 'event' || type == 'events')
+        ? 'upcoming events'
+        : 'insights and news'}.';
   }
 
   IconData _getIcon() {
     switch (widget.type.toLowerCase()) {
-      case 'media': return LucideIcons.playCircle;
+      case 'media':
+        return LucideIcons.playCircle;
       case 'highlight':
-      case 'highlights': return LucideIcons.zap;
-      case 'blog': return LucideIcons.fileText;
+      case 'highlights':
+        return LucideIcons.zap;
+      case 'blog':
+        return LucideIcons.fileText;
       case 'event':
-      case 'events': return LucideIcons.calendar;
-      default: return LucideIcons.layout;
+      case 'events':
+        return LucideIcons.calendar;
+      default:
+        return LucideIcons.layout;
     }
   }
 
@@ -128,9 +145,9 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
           gradient: RadialGradient(
             center: Alignment.topLeft,
             radius: 1.5,
-            colors: isDark 
-              ? [const Color(0xFF1A1A1A), const Color(0xFF0A0A0A)]
-              : [scheme.surface, scheme.surfaceContainerLowest],
+            colors: isDark
+                ? [const Color(0xFF1A1A1A), const Color(0xFF0A0A0A)]
+                : [scheme.surface, scheme.surfaceContainerLowest],
           ),
         ),
         child: SafeArea(
@@ -138,7 +155,10 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
             children: [
               // 🏷️ STANDARDIZED HEADER (Web Parity)
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 15,
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -184,12 +204,27 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                     Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(10),
+                          padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF60A5FA).withOpacity(0.1),
-                            shape: BoxShape.circle,
+                            // Darker box + soft shadow for a stronger presence.
+                            color: scheme.onSurface.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: scheme.onSurface.withOpacity(0.12),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 12,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
-                          child: Icon(_getIcon(), color: const Color(0xFF60A5FA), size: 18),
+                          child: Icon(
+                            _getIcon(),
+                            color: scheme.onSurface,
+                            size: 24,
+                          ),
                         ),
                         const SizedBox(width: 15),
                         Text(
@@ -198,7 +233,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 3,
-                            color: const Color(0xFF60A5FA),
+                            color: scheme.onSurface,
                           ),
                         ),
                       ],
@@ -230,14 +265,19 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
 
               Expanded(
                 child: _isLoading
-                    ? const Center(child: CircularProgressIndicator(color: Color(0xFF60A5FA)))
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          color: scheme.onSurface,
+                        ),
+                      )
                     : _items.isEmpty
-                        ? _buildEmptyState()
-                        : ListView.builder(
-                            padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
-                            itemCount: _items.length,
-                            itemBuilder: (context, index) => _buildContentCard(_items[index], index),
-                          ),
+                    ? _buildEmptyState()
+                    : ListView.builder(
+                        padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
+                        itemCount: _items.length,
+                        itemBuilder: (context, index) =>
+                            _buildContentCard(_items[index], index),
+                      ),
               ),
             ],
           ),
@@ -246,7 +286,10 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
     );
   }
 
-  Widget _buildCircleButton({required IconData icon, required VoidCallback onTap}) {
+  Widget _buildCircleButton({
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
     final scheme = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: onTap,
@@ -290,7 +333,11 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
             ),
           ],
         ),
-        child: Icon(LucideIcons.moreHorizontal, size: 24, color: scheme.surface),
+        child: Icon(
+          LucideIcons.moreHorizontal,
+          size: 24,
+          color: scheme.surface,
+        ),
       ),
     );
   }
@@ -304,10 +351,10 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
           Container(
             padding: const EdgeInsets.all(30),
             decoration: BoxDecoration(
-              color: const Color(0xFF60A5FA).withOpacity(0.1),
+              color: scheme.onSurface.withOpacity(0.06),
               borderRadius: BorderRadius.circular(30),
             ),
-            child: Icon(_getIcon(), size: 40, color: const Color(0xFF60A5FA)),
+            child: Icon(_getIcon(), size: 40, color: scheme.onSurface),
           ),
           const SizedBox(height: 25),
           Text(
@@ -338,11 +385,12 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
 
   Widget _buildContentCard(dynamic item, int index) {
     final apiClient = ref.read(apiClientProvider);
-    final String? rawImage = (item['image'] != null && item['image'].toString().isNotEmpty) 
-        ? item['image'] 
+    final String? rawImage =
+        (item['image'] != null && item['image'].toString().isNotEmpty)
+        ? item['image']
         : (item['thumbnail'] != null && item['thumbnail'].toString().isNotEmpty)
-            ? item['thumbnail']
-            : item['coverImage'];
+        ? item['thumbnail']
+        : item['coverImage'];
     final imageUrl = apiClient.resolveUrl(rawImage);
     final date = DateTime.tryParse(item['createdAt'] ?? '') ?? DateTime.now();
     final formattedDate = DateFormat('MM/dd/yyyy').format(date);
@@ -366,14 +414,14 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
         ),
         child: Row(
           children: [
-            // 🖼️ COMPACT IMAGE
+            // 🖼️ Cover image — web parity: w/h-32 (~128) with margin.
             Container(
-              width: 100,
-              height: 100,
-              margin: const EdgeInsets.all(10),
+              width: 120,
+              height: 120,
+              margin: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: scheme.onSurface.withOpacity(0.05),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(16),
                 image: imageUrl.isNotEmpty
                     ? DecorationImage(
                         image: NetworkImage(imageUrl),
@@ -403,9 +451,13 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF60A5FA).withOpacity(0.1),
+                            // Web parity: bg-primary/10 + text-primary (dark).
+                            color: scheme.onSurface.withOpacity(0.06),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
@@ -413,7 +465,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                             style: GoogleFonts.montserrat(
                               fontSize: 7,
                               fontWeight: FontWeight.w900,
-                              color: const Color(0xFF60A5FA),
+                              color: scheme.onSurface.withOpacity(0.6),
                               letterSpacing: 1,
                             ),
                           ),
@@ -460,11 +512,15 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                           style: GoogleFonts.montserrat(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
-                            color: const Color(0xFF60A5FA),
+                            color: scheme.onSurface,
                             letterSpacing: 1,
                           ),
                         ),
-                        const Icon(LucideIcons.arrowRight, size: 14, color: Color(0xFF60A5FA)),
+                        Icon(
+                          LucideIcons.arrowRight,
+                          size: 14,
+                          color: scheme.onSurface,
+                        ),
                       ],
                     ),
                   ],

@@ -391,8 +391,8 @@ class ProjectListScreen extends ConsumerWidget {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Web parity: header has only the filter icon (no
-                      // grid/list toggle). The "..." opens the Partner Menu.
+                      // Web parity: filter (sliders) button + a grid/list
+                      // view toggle (projects/page.tsx has all three).
                       // Filter button (sliders icon)
                       GestureDetector(
                         onTap: () => _showFilterBottomSheet(context, ref),
@@ -417,24 +417,44 @@ class ProjectListScreen extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(width: 6),
-                      // "..." menu -> sidebar drawer (web parity)
-                      Builder(
-                        builder: (ctx) => GestureDetector(
-                          onTap: () => Scaffold.of(ctx).openDrawer(),
-                          child: Container(
-                            width: 40,
-                            height: 36,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: isDark ? Colors.white : Colors.black,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Icon(
-                              LucideIcons.moreHorizontal,
-                              size: 18,
-                              color: isDark ? Colors.black : Colors.white,
-                            ),
+                      // Web parity: grid / list view segmented toggle
+                      // (active button filled black, matching projects/page.tsx).
+                      Container(
+                        padding: const EdgeInsets.all(3),
+                        decoration: BoxDecoration(
+                          color: (isDark ? Colors.white : Colors.black)
+                              .withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: (isDark ? Colors.white : Colors.black)
+                                .withOpacity(0.08),
                           ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _ViewToggleButton(
+                              icon: LucideIcons.layoutGrid,
+                              active: isGridView,
+                              isDark: isDark,
+                              onTap: () =>
+                                  ref
+                                          .read(projectLayoutProvider.notifier)
+                                          .state =
+                                      true,
+                            ),
+                            const SizedBox(width: 3),
+                            _ViewToggleButton(
+                              icon: LucideIcons.list,
+                              active: !isGridView,
+                              isDark: isDark,
+                              onTap: () =>
+                                  ref
+                                          .read(projectLayoutProvider.notifier)
+                                          .state =
+                                      false,
+                            ),
+                          ],
                         ),
                       ),
                     ],
@@ -1045,6 +1065,45 @@ class _FilterSection extends StatelessWidget {
           }).toList(),
         ),
       ],
+    );
+  }
+}
+
+// Web parity: a single grid/list toggle button (active = filled).
+class _ViewToggleButton extends StatelessWidget {
+  final IconData icon;
+  final bool active;
+  final bool isDark;
+  final VoidCallback onTap;
+  const _ViewToggleButton({
+    required this.icon,
+    required this.active,
+    required this.isDark,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 32,
+        height: 28,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: active
+              ? (isDark ? Colors.white : Colors.black)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(9),
+        ),
+        child: Icon(
+          icon,
+          size: 15,
+          color: active
+              ? (isDark ? Colors.black : Colors.white)
+              : (isDark ? Colors.white : Colors.black).withOpacity(0.4),
+        ),
+      ),
     );
   }
 }

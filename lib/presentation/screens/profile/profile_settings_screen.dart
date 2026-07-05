@@ -9,6 +9,8 @@ import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/core/providers/theme_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:go_router/go_router.dart';
+import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
+import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 
 class ProfileSettingsScreen extends ConsumerStatefulWidget {
   const ProfileSettingsScreen({super.key});
@@ -291,14 +293,29 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       backgroundColor: isDark
           ? const Color(0xFF09090B)
           : const Color(0xFFF8FAFC),
+      extendBody: true,
+      bottomNavigationBar: NavigationPill(
+        currentIndex: -1,
+        onTap: (i) {
+          ref.read(navigationProvider.notifier).state = i;
+          Navigator.of(context).popUntil((r) => r.isFirst);
+        },
+      ),
       body: SafeArea(
+        bottom: false,
         child: Column(
           children: [
             _buildHeader(isDark),
+            if (_isSaving)
+              LinearProgressIndicator(
+                minHeight: 2,
+                backgroundColor: Colors.transparent,
+                color: isDark ? Colors.white24 : Colors.black26,
+              ),
             Expanded(
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.fromLTRB(24, 24, 24, 120),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -316,49 +333,78 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                         ),
                       ),
                     ),
-                    _buildField(
-                      "FULL NAME",
-                      _nameController,
-                      isDark,
-                      enabled: _isEditing,
-                    ),
-                    const SizedBox(height: 24),
-                    _buildField(
-                      "EMAIL ADDRESS",
-                      _emailController,
-                      isDark,
-                      enabled: _isEditing,
-                    ),
-                    const SizedBox(height: 24),
-                    _buildField(
-                      "PHONE NUMBER",
-                      _phoneController,
-                      isDark,
-                      enabled: _isEditing,
-                    ),
-                    const SizedBox(height: 24),
-                    _buildDateField("DATE OF BIRTH", _dobController, isDark),
-                    const SizedBox(height: 24),
-                    _buildField(
-                      "CURRENT ADDRESS",
-                      _addressController,
-                      isDark,
-                      enabled: _isEditing,
-                    ),
-                    const SizedBox(height: 24),
-                    _buildField(
-                      "PAN",
-                      _panController,
-                      isDark,
-                      enabled: _isEditing,
-                      capitalization: TextCapitalization.characters,
-                    ),
-                    const SizedBox(height: 24),
-                    _buildField(
-                      "AADHAAR",
-                      _aadharController,
-                      isDark,
-                      enabled: _isEditing,
+                    // Web parity: ALL fields inside ONE card with a single shadow.
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: isDark ? const Color(0xFF18181B) : Colors.white,
+                        borderRadius: BorderRadius.circular(32),
+                        border: Border.all(
+                          color: (isDark ? Colors.white : Colors.black)
+                              .withOpacity(0.05),
+                        ),
+                        boxShadow: isDark
+                            ? []
+                            : [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.06),
+                                  blurRadius: 30,
+                                  offset: const Offset(0, 15),
+                                ),
+                              ],
+                      ),
+                      child: Column(
+                        children: [
+                          _buildField(
+                            "FULL NAME",
+                            _nameController,
+                            isDark,
+                            enabled: _isEditing,
+                          ),
+                          const SizedBox(height: 20),
+                          _buildField(
+                            "EMAIL ADDRESS",
+                            _emailController,
+                            isDark,
+                            enabled: _isEditing,
+                          ),
+                          const SizedBox(height: 20),
+                          _buildField(
+                            "PHONE NUMBER",
+                            _phoneController,
+                            isDark,
+                            enabled: _isEditing,
+                          ),
+                          const SizedBox(height: 20),
+                          _buildDateField(
+                            "DATE OF BIRTH",
+                            _dobController,
+                            isDark,
+                          ),
+                          const SizedBox(height: 20),
+                          _buildField(
+                            "CURRENT ADDRESS",
+                            _addressController,
+                            isDark,
+                            enabled: _isEditing,
+                          ),
+                          const SizedBox(height: 20),
+                          _buildField(
+                            "PAN",
+                            _panController,
+                            isDark,
+                            enabled: _isEditing,
+                            capitalization: TextCapitalization.characters,
+                          ),
+                          const SizedBox(height: 20),
+                          _buildField(
+                            "AADHAAR",
+                            _aadharController,
+                            isDark,
+                            enabled: _isEditing,
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 40),
                     _buildNotificationPreferences(isDark),
@@ -372,13 +418,6 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: _isSaving
-          ? LinearProgressIndicator(
-              minHeight: 2,
-              backgroundColor: Colors.transparent,
-              color: isDark ? Colors.white24 : Colors.black26,
-            )
-          : null,
     );
   }
 
@@ -566,20 +605,26 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
               onTap: () => setState(() => _isEditing = true),
             )
           else
-            TextButton(
+            // Web parity: black pill with a save (disk) icon + "SAVE".
+            TextButton.icon(
               onPressed: _handleSave,
+              icon: Icon(
+                LucideIcons.save,
+                size: 14,
+                color: isDark ? Colors.black : Colors.white,
+              ),
               style: TextButton.styleFrom(
                 backgroundColor: isDark ? Colors.white : Colors.black,
                 foregroundColor: isDark ? Colors.black : Colors.white,
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
+                  horizontal: 18,
+                  vertical: 10,
                 ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: Text(
+              label: Text(
                 'SAVE',
                 style: GoogleFonts.montserrat(
                   fontSize: 10,
@@ -618,20 +663,14 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
         ),
         Container(
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF18181B) : Colors.white,
-            borderRadius: BorderRadius.circular(16),
+            // Flat inset input — the single shadow lives on the outer card.
+            color: isDark
+                ? Colors.white.withOpacity(0.03)
+                : const Color(0xFFF8FAFC),
+            borderRadius: BorderRadius.circular(14),
             border: Border.all(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+              color: (isDark ? Colors.white : Colors.black).withOpacity(0.06),
             ),
-            boxShadow: isDark
-                ? []
-                : [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.07),
-                      blurRadius: 18,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
           ),
           child: TextField(
             controller: controller,
@@ -684,20 +723,14 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           onTap: _selectDate,
           child: Container(
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF18181B) : Colors.white,
-              borderRadius: BorderRadius.circular(16),
+              // Flat inset input — the single shadow lives on the outer card.
+              color: isDark
+                  ? Colors.white.withOpacity(0.03)
+                  : const Color(0xFFF8FAFC),
+              borderRadius: BorderRadius.circular(14),
               border: Border.all(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.06),
               ),
-              boxShadow: isDark
-                  ? []
-                  : [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
             ),
             child: Row(
               children: [
@@ -751,28 +784,50 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           ),
         ),
         const SizedBox(height: 16),
-        _buildToggleTile(
-          "PUSH NOTIFICATIONS",
-          "RECEIVE ALERTS ON YOUR DEVICE",
-          _pushNotifications,
-          isDark,
-          (val) => setState(() => _pushNotifications = val),
-        ),
-        const SizedBox(height: 12),
-        _buildToggleTile(
-          "EMAIL UPDATES",
-          "PROPERTY NEWS AND OFFERS",
-          _emailUpdates,
-          isDark,
-          (val) => setState(() => _emailUpdates = val),
-        ),
-        const SizedBox(height: 12),
-        _buildToggleTile(
-          "SMS ALERTS",
-          "PAYMENT AND BOOKING UPDATES",
-          _smsAlerts,
-          isDark,
-          (val) => setState(() => _smsAlerts = val),
+        // Web parity: all three toggles inside ONE card.
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF18181B) : Colors.white,
+            borderRadius: BorderRadius.circular(32),
+            border: Border.all(
+              color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+            ),
+            boxShadow: isDark
+                ? []
+                : [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.06),
+                      blurRadius: 30,
+                      offset: const Offset(0, 15),
+                    ),
+                  ],
+          ),
+          child: Column(
+            children: [
+              _buildToggleTile(
+                "PUSH NOTIFICATIONS",
+                "RECEIVE ALERTS ON YOUR DEVICE",
+                _pushNotifications,
+                isDark,
+                (val) => setState(() => _pushNotifications = val),
+              ),
+              _buildToggleTile(
+                "EMAIL UPDATES",
+                "PROPERTY NEWS AND OFFERS",
+                _emailUpdates,
+                isDark,
+                (val) => setState(() => _emailUpdates = val),
+              ),
+              _buildToggleTile(
+                "SMS ALERTS",
+                "PAYMENT AND BOOKING UPDATES",
+                _smsAlerts,
+                isDark,
+                (val) => setState(() => _smsAlerts = val),
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -785,15 +840,8 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
     bool isDark,
     Function(bool) onChanged,
   ) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF18181B) : Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
-        ),
-      ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12),
       child: Row(
         children: [
           Expanded(
@@ -830,67 +878,28 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
     );
   }
 
+  // Web parity: a plain red ghost "Deactivate Account" text button — no
+  // "Security & Access" label, no border, no icon.
   Widget _buildAccountManagement(bool isDark) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "SECURITY & ACCESS",
-          style: GoogleFonts.montserrat(
-            textStyle: const TextStyle(inherit: true),
-            fontSize: 9,
-            fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white38 : Colors.black38,
-            letterSpacing: 1.5,
-          ),
-        ),
-        const SizedBox(height: 16),
-        _buildActionButton(
-          "DEACTIVATE ACCOUNT",
-          LucideIcons.userX,
-          isDark,
-          () => GoRouter.of(context).push('/profile/deactivate'),
-          isDestructive: true,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildActionButton(
-    String label,
-    IconData icon,
-    bool isDark,
-    VoidCallback onTap, {
-    bool isDestructive = false,
-  }) {
     return SizedBox(
       width: double.infinity,
-      child: OutlinedButton.icon(
-        onPressed: onTap,
-        icon: Icon(icon, size: 16),
-        label: Text(
-          label,
+      child: TextButton(
+        onPressed: () => GoRouter.of(context).push('/profile/deactivate'),
+        style: TextButton.styleFrom(
+          foregroundColor: const Color(0xFFEF4444).withOpacity(0.75),
+          padding: const EdgeInsets.symmetric(vertical: 18),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
+        child: Text(
+          'DEACTIVATE ACCOUNT',
           style: GoogleFonts.montserrat(
             textStyle: const TextStyle(inherit: true),
             fontSize: 9,
             fontWeight: FontWeight.w900,
             letterSpacing: 1.5,
           ),
-        ),
-        style: OutlinedButton.styleFrom(
-          foregroundColor: isDestructive
-              ? const Color(0xFFEF4444)
-              : (isDark ? Colors.white70 : Colors.black87),
-          side: BorderSide(
-            color: isDestructive
-                ? const Color(0xFFEF4444).withOpacity(0.2)
-                : (isDark ? Colors.white : Colors.black).withOpacity(0.1),
-          ),
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          backgroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
         ),
       ),
     );

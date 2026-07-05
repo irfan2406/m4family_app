@@ -180,21 +180,25 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                         : CrossFadeState.showFirst,
                     firstChild: Text(
                       'At M4 Family Developments, we are dedicated to delivering a luxury experience that goes beyond the ordinary. Our commitment to exquisite living, unparalleled quality, and iconic design is evident in ...',
-                      style: GoogleFonts.lora(
+                      // Web parity: description is sans-serif (font-sans),
+                      // muted, text-[13px] font-medium (not serif).
+                      style: GoogleFonts.inter(
                         color: (isDark ? Colors.white : Colors.black)
-                            .withOpacity(0.75),
-                        fontSize: 14,
-                        height: 1.8,
+                            .withOpacity(0.6),
+                        fontSize: 13,
+                        height: 1.6,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                     secondChild: Text(
                       'At M4 Family Developments, we are dedicated to delivering a luxury experience that goes beyond the ordinary. Our commitment to exquisite living, unparalleled quality, and iconic design is evident in every community we curate. We believe in creating spaces that faster connection, inspiration, and a sense of belonging for every resident. Our developments are strategically located to offer the best of urban living with a touch of serenity.',
-                      style: GoogleFonts.lora(
+                      // Web parity: description is sans-serif (font-sans),
+                      // muted, text-[13px] font-medium (not serif).
+                      style: GoogleFonts.inter(
                         color: (isDark ? Colors.white : Colors.black)
-                            .withOpacity(0.75),
-                        fontSize: 14,
-                        height: 1.8,
+                            .withOpacity(0.6),
+                        fontSize: 13,
+                        height: 1.6,
                         fontWeight: FontWeight.w500,
                       ),
                     ),

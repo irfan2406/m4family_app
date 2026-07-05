@@ -19,6 +19,15 @@ subprojects {
     project.evaluationDependsOn(":app")
 }
 
+// Silence the "source/target value 8 is obsolete" javac warnings emitted by
+// plugin modules that still compile against Java 8 (the app module itself is on
+// Java 17). This is the suppression javac recommends: -Xlint:-options.
+subprojects {
+    tasks.withType<JavaCompile>().configureEach {
+        options.compilerArgs.add("-Xlint:-options")
+    }
+}
+
 tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
