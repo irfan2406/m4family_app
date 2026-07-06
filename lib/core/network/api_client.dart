@@ -298,6 +298,14 @@ class ApiClient {
     return dio.post('/api/custom-views', data: data);
   }
 
+  // Web parity: fetch the project/unit-specific config (spaces + options).
+  Future<Response> getCustomViewsConfig(String projectId, String config) async {
+    return dio.get(
+      '/api/custom-views/config',
+      queryParameters: {'projectId': projectId, 'config': config},
+    );
+  }
+
   Future<Response> getMyCustomViews() async {
     return dio.get('/api/custom-views/my');
   }

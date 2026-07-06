@@ -26,10 +26,8 @@ import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
     case 'promotion':
       return (icon: LucideIcons.percent, fg: const Color(0xFF9333EA));
     default:
-      return (
-        icon: LucideIcons.info,
-        fg: const Color(0xFF4F46E5),
-      ); // indigo-600
+      // Web parity: default type shows a Bell in blue-600 / blue-50 bg.
+      return (icon: LucideIcons.bell, fg: const Color(0xFF2563EB)); // blue-600
   }
 }
 
@@ -149,8 +147,8 @@ class NotificationListScreen extends ConsumerWidget {
                       ],
                     ).animate().fadeIn(duration: 600.ms).slideX(begin: -0.2),
                   ),
-                  // "Mark all" pill (web: purple for CP, neutral otherwise).
-                  if (state.notifications.isNotEmpty)
+                  // "Mark all" pill — web parity: only when unread exist.
+                  if (state.notifications.any((n) => n.read != true))
                     GestureDetector(
                       onTap: () => ref
                           .read(notificationProvider.notifier)
@@ -288,9 +286,9 @@ class _NotificationItem extends StatelessWidget {
     const purple = Color(0xFF9333EA);
     final accent = isCp ? purple : scheme.primary;
 
-    // Web: "Mar 14, 2026, 11:19 AM" uppercased.
+    // Web parity: date only — "Mar 14, 2026" uppercased (no time).
     final timeStr = DateFormat(
-      'MMM d, y, h:mm a',
+      'MMM d, y',
     ).format(notification.createdAt).toUpperCase();
     final bool isRead = notification.read == true;
     final ic = _iconFor(notification.type);
@@ -305,20 +303,19 @@ class _NotificationItem extends StatelessWidget {
                   alpha: isRead ? 0.12 : 0.3,
                 )
               : Colors.white,
-          borderRadius: BorderRadius.circular(30),
-          border: Border.all(
-            color: isRead
-                ? scheme.outlineVariant.withValues(alpha: 0.4)
-                : accent.withValues(alpha: 0.3),
-            width: isRead ? 1 : 1.5,
-          ),
+          // Web parity: rounded-[2.5rem] (40px).
+          borderRadius: BorderRadius.circular(40),
+          // Web parity (image 1): borderless white card — soft shadow only.
+          border: isDark
+              ? Border.all(color: Colors.white.withValues(alpha: 0.06))
+              : null,
           boxShadow: isDark
               ? null
               : [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: isRead ? 0.03 : 0.07),
-                    blurRadius: 24,
-                    offset: const Offset(0, 12),
+                    color: Colors.black.withValues(alpha: 0.06),
+                    blurRadius: 30,
+                    offset: const Offset(0, 14),
                   ),
                 ],
         ),
@@ -469,7 +466,8 @@ class _NotificationItem extends StatelessWidget {
                   height: 80,
                   decoration: BoxDecoration(
                     color: ic.fg.withValues(alpha: isDark ? 0.2 : 0.1),
-                    borderRadius: BorderRadius.circular(28),
+                    // Web parity: rounded-[2.5rem] on 80px = circular.
+                    shape: BoxShape.circle,
                   ),
                   child: Icon(ic.icon, size: 36, color: ic.fg),
                 ),

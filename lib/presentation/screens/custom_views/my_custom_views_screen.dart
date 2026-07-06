@@ -11,11 +11,13 @@ class MyCustomViewsScreen extends ConsumerStatefulWidget {
   const MyCustomViewsScreen({super.key});
 
   @override
-  ConsumerState<MyCustomViewsScreen> createState() => _MyCustomViewsScreenState();
+  ConsumerState<MyCustomViewsScreen> createState() =>
+      _MyCustomViewsScreenState();
 }
 
 class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
   int _activeTab = 0; // 0 for Selection, 1 for History
+  String _historyQuery = ''; // Web parity: history search-by-project-or-id
 
   @override
   void initState() {
@@ -37,7 +39,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
           SliverToBoxAdapter(child: _buildHero(context)),
           SliverToBoxAdapter(child: _buildOverview(context)),
           SliverToBoxAdapter(child: _buildTabSwitcher(context, isDark)),
-          
+
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(24, 24, 24, 120),
             sliver: _activeTab == 0
@@ -54,31 +56,64 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
       floating: true,
       pinned: true,
       elevation: 0,
-      centerTitle: true,
+      // Web parity: header is left-aligned (title right after the back button).
+      centerTitle: false,
+      titleSpacing: 8,
       backgroundColor: Theme.of(context).colorScheme.surface.withOpacity(0.8),
       surfaceTintColor: Colors.transparent,
-      leading: IconButton(
-        icon: const Icon(LucideIcons.arrowLeft, size: 20),
-        onPressed: () => ref.read(navigationProvider.notifier).state = 3, // Back to Profile
+      leadingWidth: 60,
+      leading: Center(
+        child: GestureDetector(
+          onTap: () => ref.read(navigationProvider.notifier).state =
+              3, // Back to Profile
+          // Web parity: back button in a rounded bordered card box.
+          child: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
+              ),
+            ),
+            child: const Icon(LucideIcons.arrowLeft, size: 20),
+          ),
+        ),
       ),
       title: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Web parity: "Personalisation Suite" title + "Portfolio Dashboard"
+          // subtitle with a paint-bucket icon.
           Text(
-            'M4 CUSTOM VIEWS',
+            'PERSONALISATION SUITE',
             style: GoogleFonts.montserrat(
               fontSize: 14,
               fontWeight: FontWeight.w900,
               letterSpacing: -0.5,
             ),
           ),
-          Text(
-            'PERSONALISATION SUITE',
-            style: GoogleFonts.montserrat(
-              fontSize: 8,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 2,
-              color: Theme.of(context).colorScheme.primary,
-            ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                LucideIcons.paintBucket,
+                size: 10,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+              const SizedBox(width: 5),
+              Text(
+                'PORTFOLIO DASHBOARD',
+                style: GoogleFonts.montserrat(
+                  fontSize: 8,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 2,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -92,21 +127,26 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
       margin: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(40),
+        // Web parity: same hero image web uses (/assets/custom_view_1.png).
         image: const DecorationImage(
-          image: NetworkImage('https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=2000&auto=format&fit=crop'),
+          image: AssetImage('assets/custom_view_1.png'),
           fit: BoxFit.cover,
         ),
       ),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(40),
+          // Web parity: light overlay — transparent (top) -> white (bottom)
+          // matches `bg-gradient-to-t from-background via-background/20 to-transparent`.
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Colors.black.withOpacity(0.1),
-              Colors.black.withOpacity(0.6),
+              Colors.transparent,
+              Colors.white.withOpacity(0.15),
+              Colors.white.withOpacity(0.88),
             ],
+            stops: const [0.0, 0.5, 1.0],
           ),
         ),
         padding: const EdgeInsets.all(32),
@@ -114,19 +154,37 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'MY PORTFOLIO',
-              style: GoogleFonts.montserrat(
-                color: Colors.white,
-                fontSize: 28,
-                fontWeight: FontWeight.w900,
-                letterSpacing: -1,
+            // Web parity: serif "MY" (light) + "PORTFOLIO" (bold).
+            RichText(
+              text: TextSpan(
+                children: [
+                  // Web parity: dark `text-foreground`; MY (light) + PORTFOLIO (bold).
+                  TextSpan(
+                    text: 'MY ',
+                    style: GoogleFonts.lora(
+                      color: Colors.black,
+                      fontSize: 30,
+                      fontWeight: FontWeight.w300,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                  TextSpan(
+                    text: 'PORTFOLIO',
+                    style: GoogleFonts.lora(
+                      color: Colors.black,
+                      fontSize: 30,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                ],
               ),
             ).animate().fadeIn(duration: 800.ms).slideY(begin: 0.2, end: 0),
             Text(
-              'Personalisation Suite',
+              'PERSONALISATION SUITE',
               style: GoogleFonts.montserrat(
-                color: Theme.of(context).colorScheme.primary,
+                // Web parity: dark `text-primary`, readable on the light fade.
+                color: Colors.black,
                 fontSize: 10,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 3,
@@ -147,7 +205,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
           _SectionTitle(title: 'OVERVIEW'),
           const SizedBox(height: 12),
           Text(
-            'Your purchased units from the M4 portfolio. Select a unit to start or manage your bespoke interior customizations.',
+            'Automatic reflection of your purchased units from the M4 Admin Panel. Select a unit below to start or manage your bespoke interior customizations.',
             style: GoogleFonts.montserrat(
               fontSize: 13,
               height: 1.6,
@@ -167,7 +225,9 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
         height: 60,
         padding: const EdgeInsets.all(6),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03),
+          color: isDark
+              ? Colors.white.withOpacity(0.05)
+              : Colors.black.withOpacity(0.03),
           borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
@@ -177,7 +237,9 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                 onTap: () => setState(() => _activeTab = 0),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: _activeTab == 0 ? Theme.of(context).colorScheme.onSurface : Colors.transparent,
+                    color: _activeTab == 0
+                        ? Theme.of(context).colorScheme.onSurface
+                        : Colors.transparent,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   alignment: Alignment.center,
@@ -187,7 +249,11 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1,
-                      color: _activeTab == 0 ? Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                      color: _activeTab == 0
+                          ? Theme.of(context).colorScheme.surface
+                          : Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withOpacity(0.4),
                     ),
                   ),
                 ),
@@ -198,7 +264,9 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                 onTap: () => setState(() => _activeTab = 1),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: _activeTab == 1 ? Theme.of(context).colorScheme.onSurface : Colors.transparent,
+                    color: _activeTab == 1
+                        ? Theme.of(context).colorScheme.onSurface
+                        : Colors.transparent,
                     borderRadius: BorderRadius.circular(16),
                   ),
                   alignment: Alignment.center,
@@ -208,7 +276,11 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1,
-                      color: _activeTab == 1 ? Theme.of(context).colorScheme.surface : Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                      color: _activeTab == 1
+                          ? Theme.of(context).colorScheme.surface
+                          : Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withOpacity(0.4),
                     ),
                   ),
                 ),
@@ -222,51 +294,187 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
 
   Widget _buildUnitsList(MyCustomViewsState state, bool isDark) {
     if (state.isLoadingUnits) {
-      return const SliverFillRemaining(child: Center(child: CircularProgressIndicator()));
+      return const SliverFillRemaining(
+        child: Center(child: CircularProgressIndicator()),
+      );
     }
     if (state.units.isEmpty) {
       return SliverFillRemaining(
         child: Center(
           child: Text(
             'NO UNITS FOUND',
-            style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.grey),
+            style: GoogleFonts.montserrat(
+              fontSize: 10,
+              fontWeight: FontWeight.w800,
+              color: Colors.grey,
+            ),
           ),
         ),
       );
     }
 
     return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (context, index) => _UnitCard(unit: state.units[index], isDark: isDark),
-        childCount: state.units.length,
-      ),
+      delegate: SliverChildBuilderDelegate((context, index) {
+        // Web parity: "Select Unit to Customize" header above the cards.
+        if (index == 0) {
+          return Padding(
+            padding: const EdgeInsets.only(top: 4, bottom: 20),
+            child: Row(
+              children: [
+                Icon(
+                  LucideIcons.building2,
+                  size: 16,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'SELECT UNIT TO CUSTOMIZE',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 2,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withOpacity(0.6),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+        return _UnitCard(unit: state.units[index - 1], isDark: isDark);
+      }, childCount: state.units.length + 1),
     );
   }
 
   Widget _buildHistoryList(MyCustomViewsState state, bool isDark) {
     if (state.isLoadingHistory) {
-      return const SliverFillRemaining(child: Center(child: CircularProgressIndicator()));
-    }
-    if (state.history.isEmpty) {
-      return SliverFillRemaining(
-        child: Center(
-          child: Text(
-            'NO HISTORY LOGS',
-            style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.grey),
-          ),
-        ),
+      return const SliverFillRemaining(
+        child: Center(child: CircularProgressIndicator()),
       );
     }
 
+    final foreground = isDark ? Colors.white : Colors.black;
+    final q = _historyQuery.trim().toLowerCase();
+    // Web parity: filter by project title or log id.
+    final filtered = state.history.where((req) {
+      if (q.isEmpty) return true;
+      final title = (req['project']?['title'] ?? '').toString().toLowerCase();
+      final id = (req['_id'] ?? '').toString().toLowerCase();
+      return title.contains(q) || id.contains(q);
+    }).toList();
+
     return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (context, index) => _HistoryCard(
-          req: state.history[index], 
-          isDark: isDark, 
-          onTap: () => _DetailDialog.show(context, ref, state.history[index], state.units),
+      delegate: SliverChildBuilderDelegate((context, index) {
+        if (index == 0) {
+          return _buildHistoryHeader(filtered.length, foreground, isDark);
+        }
+        if (filtered.isEmpty) {
+          // Web parity: dashed "No history found" box.
+          return Container(
+            padding: const EdgeInsets.symmetric(vertical: 60),
+            decoration: BoxDecoration(
+              color: foreground.withOpacity(0.02),
+              borderRadius: BorderRadius.circular(36),
+              border: Border.all(
+                color: foreground.withOpacity(0.12),
+                style: BorderStyle.solid,
+              ),
+            ),
+            child: Center(
+              child: Text(
+                'NO HISTORY FOUND',
+                style: GoogleFonts.montserrat(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 2,
+                  color: foreground.withOpacity(0.4),
+                ),
+              ),
+            ),
+          );
+        }
+        final req = filtered[index - 1];
+        return _HistoryCard(
+          req: req,
+          isDark: isDark,
+          onTap: () => _DetailDialog.show(context, ref, req, state.units),
+        );
+      }, childCount: filtered.isEmpty ? 2 : filtered.length + 1),
+    );
+  }
+
+  // Web parity: "SELECTION HISTORY" header + LOGS count + search bar.
+  Widget _buildHistoryHeader(int count, Color fg, bool isDark) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Icon(LucideIcons.clock, size: 16, color: fg),
+                const SizedBox(width: 12),
+                Text(
+                  'SELECTION HISTORY',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 2,
+                    color: fg.withOpacity(0.6),
+                  ),
+                ),
+              ],
+            ),
+            Text(
+              '$count LOGS',
+              style: GoogleFonts.montserrat(
+                fontSize: 8,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.5,
+                color: fg.withOpacity(0.5),
+              ),
+            ),
+          ],
         ),
-        childCount: state.history.length,
-      ),
+        const SizedBox(height: 24),
+        Container(
+          height: 52,
+          decoration: BoxDecoration(
+            color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: fg.withOpacity(0.08)),
+          ),
+          child: TextField(
+            onChanged: (v) => setState(() => _historyQuery = v),
+            style: GoogleFonts.montserrat(
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.5,
+              color: fg,
+            ),
+            decoration: InputDecoration(
+              isCollapsed: true,
+              contentPadding: const EdgeInsets.symmetric(vertical: 18),
+              border: InputBorder.none,
+              prefixIcon: Icon(
+                LucideIcons.search,
+                size: 16,
+                color: fg.withOpacity(0.4),
+              ),
+              hintText: 'SEARCH BY PROJECT OR ID...',
+              hintStyle: GoogleFonts.montserrat(
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.5,
+                color: fg.withOpacity(0.4),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 24),
+      ],
     );
   }
 }
@@ -286,9 +494,17 @@ class _UnitCard extends ConsumerWidget {
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF18181B) : Colors.white,
         borderRadius: BorderRadius.circular(32),
-        border: Border.all(color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05)),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withOpacity(0.1)
+              : Colors.black.withOpacity(0.05),
+        ),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20, offset: const Offset(0, 10)),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
         ],
       ),
       child: Column(
@@ -305,7 +521,13 @@ class _UnitCard extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        unit['bookingId']?.toString().substring(unit['bookingId'].toString().length - 8).toUpperCase() ?? 'UNIT',
+                        unit['bookingId']
+                                ?.toString()
+                                .substring(
+                                  unit['bookingId'].toString().length - 8,
+                                )
+                                .toUpperCase() ??
+                            'UNIT',
                         style: GoogleFonts.montserrat(
                           fontSize: 7,
                           fontWeight: FontWeight.w900,
@@ -314,7 +536,8 @@ class _UnitCard extends ConsumerWidget {
                         ),
                       ),
                       Text(
-                        unit['projectName']?.toString().toUpperCase() ?? 'M4 PROJECT',
+                        unit['projectName']?.toString().toUpperCase() ??
+                            'M4 PROJECT',
                         style: GoogleFonts.montserrat(
                           fontSize: 13,
                           fontWeight: FontWeight.w900,
@@ -328,18 +551,37 @@ class _UnitCard extends ConsumerWidget {
               ],
             ),
           ),
-          
-          Divider(height: 1, color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
-          
+
+          Divider(
+            height: 1,
+            color: isDark
+                ? Colors.white.withOpacity(0.05)
+                : Colors.black.withOpacity(0.05),
+          ),
+
           // Details Grid
           Padding(
             padding: const EdgeInsets.all(24),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _DetailItem(label: 'UNIT NO', value: unit['unitNumber']?.toString() ?? 'N/A', isDark: isDark),
-                _DetailItem(label: 'CONFIG', value: unit['config']?.toString() ?? 'N/A', isDark: isDark),
-                _DetailItem(label: 'STATUS', value: status.replaceAll('_', ' '), isDark: isDark, isPrimary: true),
+                // Web parity: Project / Unit No. / Config (status is in the badge).
+                _DetailItem(
+                  label: 'PROJECT',
+                  value: unit['projectName']?.toString() ?? 'N/A',
+                  isDark: isDark,
+                ),
+                _DetailItem(
+                  label: 'UNIT NO.',
+                  value: unit['unitNumber']?.toString() ?? 'N/A',
+                  isDark: isDark,
+                ),
+                _DetailItem(
+                  label: 'CONFIG',
+                  value: unit['config']?.toString() ?? 'N/A',
+                  isDark: isDark,
+                  isPrimary: true,
+                ),
               ],
             ),
           ),
@@ -353,45 +595,69 @@ class _UnitCard extends ConsumerWidget {
                 final unitNo = unit['unitNumber'];
                 final config = unit['config'];
                 final bookingId = unit['bookingId'];
-                final currentStatus = unit['customizationStatus'] ?? 'NOT_STARTED';
-                
+                final currentStatus =
+                    unit['customizationStatus'] ?? 'NOT_STARTED';
+
                 const int modificationLimit = 2;
                 const int daysLimit = 30;
                 final int modCount = unit['modificationCount'] ?? 0;
                 final String? allotmentDate = unit['allotmentDate'];
-                
+
                 bool isBreachedCount = modCount >= modificationLimit;
                 bool isBreachedTime = false;
                 if (allotmentDate != null) {
                   final allotment = DateTime.tryParse(allotmentDate);
                   if (allotment != null) {
-                    final daysPassed = DateTime.now().difference(allotment).inDays;
+                    final daysPassed = DateTime.now()
+                        .difference(allotment)
+                        .inDays;
                     if (daysPassed > daysLimit) isBreachedTime = true;
                   }
                 }
 
-                if (['SUBMITTED', 'APPROVED', 'COMPLETED'].contains(currentStatus)) {
+                if ([
+                  'SUBMITTED',
+                  'APPROVED',
+                  'COMPLETED',
+                ].contains(currentStatus)) {
                   if (isBreachedCount) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Maximum modification limit reached (2 revisions).'), backgroundColor: Colors.redAccent),
+                      const SnackBar(
+                        content: Text(
+                          'Maximum modification limit reached (2 revisions).',
+                        ),
+                        backgroundColor: Colors.redAccent,
+                      ),
                     );
                     return;
                   }
                   if (isBreachedTime) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('The 30-day modification window has expired.'), backgroundColor: Colors.redAccent),
+                      const SnackBar(
+                        content: Text(
+                          'The 30-day modification window has expired.',
+                        ),
+                        backgroundColor: Colors.redAccent,
+                      ),
                     );
                     return;
                   }
                 }
 
-                ref.read(customViewsBookingIdProvider.notifier).state = bookingId;
+                ref.read(customViewsBookingIdProvider.notifier).state =
+                    bookingId;
                 ref.read(customViewsProjectProvider.notifier).state = project;
-                ref.read(customViewsUnitNumberProvider.notifier).state = unitNo?.toString();
-                ref.read(customViewsUnitProvider.notifier).state = config ?? '3 BHK';
-                ref.read(customViewsEditModeProvider.notifier).state = ['SUBMITTED', 'APPROVED', 'COMPLETED'].contains(currentStatus);
+                ref.read(customViewsUnitNumberProvider.notifier).state = unitNo
+                    ?.toString();
+                ref.read(customViewsUnitProvider.notifier).state =
+                    config ?? '3 BHK';
+                ref.read(customViewsEditModeProvider.notifier).state = [
+                  'SUBMITTED',
+                  'APPROVED',
+                  'COMPLETED',
+                ].contains(currentStatus);
                 ref.read(customViewsSelectionsProvider.notifier).state = {};
-                
+
                 ref.read(customViewsStepProvider.notifier).state = 0;
                 ref.read(previousNavigationProvider.notifier).state = 7;
                 ref.read(navigationProvider.notifier).state = 6;
@@ -408,7 +674,9 @@ class _UnitCard extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        status == 'NOT_STARTED' ? 'START PERSONALISATION' : 'MANAGE SELECTION',
+                        status == 'NOT_STARTED'
+                            ? 'START PERSONALISATION'
+                            : 'MANAGE SELECTION',
                         style: GoogleFonts.montserrat(
                           color: isDark ? Colors.black : Colors.white,
                           fontSize: 11,
@@ -417,7 +685,11 @@ class _UnitCard extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(width: 10),
-                      Icon(LucideIcons.chevronRight, size: 16, color: isDark ? Colors.black : Colors.white),
+                      Icon(
+                        LucideIcons.chevronRight,
+                        size: 16,
+                        color: isDark ? Colors.black : Colors.white,
+                      ),
                     ],
                   ),
                 ),
@@ -434,13 +706,34 @@ class _HistoryCard extends StatelessWidget {
   final dynamic req;
   final bool isDark;
   final VoidCallback onTap;
-  const _HistoryCard({required this.req, required this.isDark, required this.onTap});
+  const _HistoryCard({
+    required this.req,
+    required this.isDark,
+    required this.onTap,
+  });
+
+  String _fmtDate(dynamic raw) {
+    if (raw == null) return 'N/A';
+    try {
+      final d = DateTime.parse(raw.toString()).toLocal();
+      return '${d.month}/${d.day}/${d.year}';
+    } catch (_) {
+      return 'N/A';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final foreground = isDark ? Colors.white : Colors.black;
-    final id = req['_id']?.toString().substring(req['_id'].toString().length - 6).toUpperCase() ?? 'UNK';
+    final id =
+        req['_id']
+            ?.toString()
+            .substring(req['_id'].toString().length - 6)
+            .toUpperCase() ??
+        'UNK';
     final status = req['status'] ?? 'Submitted';
+    final space = req['space']?.toString().toUpperCase() ?? 'N/A';
+    final date = _fmtDate(req['createdAt']);
 
     return GestureDetector(
       onTap: onTap,
@@ -448,50 +741,101 @@ class _HistoryCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 16),
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF18181B).withOpacity(0.5) : Colors.white,
+          color: isDark
+              ? const Color(0xFF18181B).withOpacity(0.4)
+              : Colors.white,
           borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05)),
+          border: Border.all(
+            color: isDark
+                ? Colors.white.withOpacity(0.1)
+                : Colors.black.withOpacity(0.05),
+          ),
+          boxShadow: isDark
+              ? null
+              : [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
         ),
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _StatusBadge(status: status, isDark: isDark),
-                      const SizedBox(width: 8),
+                      // Web parity: #ID badge first, then status badge.
+                      Row(
+                        children: [
+                          _StatusBadge(
+                            status: '#$id',
+                            isDark: isDark,
+                            customColor: Colors.grey,
+                          ),
+                          const SizedBox(width: 8),
+                          _StatusBadge(status: status, isDark: isDark),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
                       Text(
-                        '#$id',
+                        req['project']?['title']?.toString().toUpperCase() ??
+                            'STANDARD UNIT',
                         style: GoogleFonts.montserrat(
-                          fontSize: 9,
-                          fontWeight: FontWeight.w800,
-                          color: foreground.withOpacity(0.3),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w900,
+                          color: foreground,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  Text(
-                    req['project']?['title']?.toString().toUpperCase() ?? 'STANDARD UNIT',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w900,
-                      color: foreground,
-                    ),
+                ),
+                const SizedBox(width: 12),
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? Colors.white.withOpacity(0.05)
+                        : Colors.black.withOpacity(0.03),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: foreground.withOpacity(0.06)),
                   ),
-                ],
-              ),
+                  child: Icon(
+                    LucideIcons.chevronRight,
+                    size: 18,
+                    color: foreground.withOpacity(0.4),
+                  ),
+                ),
+              ],
             ),
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(LucideIcons.chevronRight, size: 18, color: foreground.withOpacity(0.3)),
+            const SizedBox(height: 20),
+            Divider(height: 1, color: foreground.withOpacity(0.08)),
+            const SizedBox(height: 16),
+            // Web parity: CONFIGURATION (left) / LOGGED ON (right).
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: _HistoryMeta(
+                    label: 'CONFIGURATION',
+                    value: space,
+                    foreground: foreground,
+                    alignEnd: false,
+                  ),
+                ),
+                _HistoryMeta(
+                  label: 'LOGGED ON',
+                  value: date,
+                  foreground: foreground,
+                  alignEnd: true,
+                ),
+              ],
             ),
           ],
         ),
@@ -500,18 +844,68 @@ class _HistoryCard extends StatelessWidget {
   }
 }
 
+class _HistoryMeta extends StatelessWidget {
+  final String label;
+  final String value;
+  final Color foreground;
+  final bool alignEnd;
+  const _HistoryMeta({
+    required this.label,
+    required this.value,
+    required this.foreground,
+    required this.alignEnd,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: alignEnd
+          ? CrossAxisAlignment.end
+          : CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: GoogleFonts.montserrat(
+            fontSize: 8,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.5,
+            color: foreground.withOpacity(0.4),
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          value,
+          textAlign: alignEnd ? TextAlign.right : TextAlign.left,
+          style: GoogleFonts.montserrat(
+            fontSize: 10,
+            fontWeight: FontWeight.w700,
+            color: foreground,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _DetailDialog {
-  static void show(BuildContext context, WidgetRef ref, dynamic req, List<dynamic> units) {
+  static void show(
+    BuildContext context,
+    WidgetRef ref,
+    dynamic req,
+    List<dynamic> units,
+  ) {
     showDialog(
       context: context,
       builder: (context) {
         String? errorMessage;
-        
+
         return StatefulBuilder(
           builder: (context, setState) {
             return Dialog(
               backgroundColor: Theme.of(context).colorScheme.surface,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(32),
+              ),
               child: Container(
                 constraints: const BoxConstraints(maxWidth: 400),
                 child: SingleChildScrollView(
@@ -524,13 +918,20 @@ class _DetailDialog {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             _StatusBadge(
-                              status: 'LOG ID: ${req['_id'].toString().substring(req['_id'].toString().length - 8).toUpperCase()}', 
-                              isDark: Theme.of(context).brightness == Brightness.dark,
+                              status:
+                                  'LOG ID: ${req['_id'].toString().substring(req['_id'].toString().length - 8).toUpperCase()}',
+                              isDark:
+                                  Theme.of(context).brightness ==
+                                  Brightness.dark,
                               customColor: Colors.grey,
                             ),
                             _StatusBadge(
-                              status: req['status']?.toString().toUpperCase() ?? 'PENDING',
-                              isDark: Theme.of(context).brightness == Brightness.dark,
+                              status:
+                                  req['status']?.toString().toUpperCase() ??
+                                  'PENDING',
+                              isDark:
+                                  Theme.of(context).brightness ==
+                                  Brightness.dark,
                             ),
                           ],
                         ),
@@ -551,15 +952,24 @@ class _DetailDialog {
                             const SizedBox(height: 8),
                             Row(
                               children: [
-                                Icon(LucideIcons.mapPin, size: 12, color: Theme.of(context).colorScheme.primary.withOpacity(0.6)),
+                                Icon(
+                                  LucideIcons.mapPin,
+                                  size: 12,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.primary.withOpacity(0.6),
+                                ),
                                 const SizedBox(width: 6),
                                 Text(
-                                  req['space']?.toString().toUpperCase() ?? 'FULL UNIT',
+                                  req['space']?.toString().toUpperCase() ??
+                                      'FULL UNIT',
                                   style: GoogleFonts.montserrat(
                                     fontSize: 9,
                                     fontWeight: FontWeight.w800,
                                     letterSpacing: 1.2,
-                                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface.withOpacity(0.5),
                                   ),
                                 ),
                               ],
@@ -574,19 +984,29 @@ class _DetailDialog {
                           children: [
                             _SectionTitle(title: 'CHOSEN SPECIFICATIONS'),
                             const SizedBox(height: 16),
-                            ...(req['selections'] as Map? ?? {}).entries.map((e) {
+                            ...(req['selections'] as Map? ?? {}).entries.map((
+                              e,
+                            ) {
                               final key = e.key.toString();
                               final val = e.value;
-                              final name = (val is Map) ? val['name'] : val.toString();
+                              final name = (val is Map)
+                                  ? val['name']
+                                  : val.toString();
                               final id = (val is Map) ? val['_id'] : null;
 
                               return Container(
                                 margin: const EdgeInsets.only(bottom: 12),
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.03),
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface.withOpacity(0.03),
                                   borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05)),
+                                  border: Border.all(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface.withOpacity(0.05),
+                                  ),
                                 ),
                                 child: Row(
                                   children: [
@@ -597,12 +1017,17 @@ class _DetailDialog {
                                         color: Colors.grey[200],
                                         borderRadius: BorderRadius.circular(14),
                                       ),
-                                      child: const Icon(LucideIcons.box, size: 20, color: Colors.black54),
+                                      child: const Icon(
+                                        LucideIcons.box,
+                                        size: 20,
+                                        color: Colors.black54,
+                                      ),
                                     ),
                                     const SizedBox(width: 16),
                                     Expanded(
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           if (id != null)
                                             Text(
@@ -611,7 +1036,10 @@ class _DetailDialog {
                                                 fontSize: 6,
                                                 fontWeight: FontWeight.w800,
                                                 letterSpacing: 1.0,
-                                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onSurface
+                                                    .withOpacity(0.3),
                                               ),
                                             ),
                                           const SizedBox(height: 2),
@@ -643,9 +1071,15 @@ class _DetailDialog {
                             Container(
                               padding: const EdgeInsets.all(20),
                               decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.03),
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withOpacity(0.03),
                                 borderRadius: BorderRadius.circular(24),
-                                border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05)),
+                                border: Border.all(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface.withOpacity(0.05),
+                                ),
                               ),
                               child: Text(
                                 'Your selection is currently under review by our interior consultants. We will contact you shortly.',
@@ -654,7 +1088,9 @@ class _DetailDialog {
                                   fontWeight: FontWeight.w500,
                                   fontStyle: FontStyle.italic,
                                   height: 1.5,
-                                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface.withOpacity(0.6),
                                 ),
                               ),
                             ),
@@ -664,14 +1100,19 @@ class _DetailDialog {
                       const SizedBox(height: 32),
                       if (errorMessage != null)
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 8,
+                          ),
                           child: Container(
                             width: double.infinity,
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
                               color: Colors.red.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.red.withOpacity(0.2)),
+                              border: Border.all(
+                                color: Colors.red.withOpacity(0.2),
+                              ),
                             ),
                             child: Text(
                               errorMessage!.toUpperCase(),
@@ -689,55 +1130,124 @@ class _DetailDialog {
                         padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
                         child: Row(
                           children: [
-                            if (!(['Approved', 'Completed', 'Rejected', 'Closed'].contains(req['status'])))
+                            if (!([
+                              'Approved',
+                              'Completed',
+                              'Rejected',
+                              'Closed',
+                            ].contains(req['status'])))
                               Expanded(
                                 child: GestureDetector(
                                   onTap: () {
                                     const int modificationLimit = 2;
                                     const int daysLimit = 30;
-                                    final int modCount = req['modificationCount'] ?? 0;
-                                    final String? allotmentDate = req['allotmentDate'];
-                                    
-                                    bool isBreachedCount = modCount >= modificationLimit;
+                                    final int modCount =
+                                        req['modificationCount'] ?? 0;
+                                    final String? allotmentDate =
+                                        req['allotmentDate'];
+
+                                    bool isBreachedCount =
+                                        modCount >= modificationLimit;
                                     bool isBreachedTime = false;
                                     if (allotmentDate != null) {
-                                      final allotment = DateTime.tryParse(allotmentDate);
+                                      final allotment = DateTime.tryParse(
+                                        allotmentDate,
+                                      );
                                       if (allotment != null) {
-                                        final daysPassed = DateTime.now().difference(allotment).inDays;
-                                        if (daysPassed > daysLimit) isBreachedTime = true;
+                                        final daysPassed = DateTime.now()
+                                            .difference(allotment)
+                                            .inDays;
+                                        if (daysPassed > daysLimit)
+                                          isBreachedTime = true;
                                       }
                                     }
 
                                     if (isBreachedCount) {
                                       setState(() {
-                                        errorMessage = 'LIMIT REACHED: YOU HAVE ALREADY USED YOUR 2 REVISION ATTEMPTS.';
+                                        errorMessage =
+                                            'LIMIT REACHED: YOU HAVE ALREADY USED YOUR 2 REVISION ATTEMPTS.';
                                       });
                                       return;
                                     }
                                     if (isBreachedTime) {
                                       setState(() {
-                                        errorMessage = 'THE 30-DAY MODIFICATION WINDOW FOR YOUR UNIT HAS EXPIRED.';
+                                        errorMessage =
+                                            'THE 30-DAY MODIFICATION WINDOW FOR YOUR UNIT HAS EXPIRED.';
                                       });
                                       return;
                                     }
 
                                     final booking = req['bookingId'];
-                                    final bId = (booking is Map) ? booking['_id'] : booking;
-                                    final unitNo = (booking is Map) ? booking['unitNumber'] : null;
+                                    final bId = (booking is Map)
+                                        ? booking['_id']
+                                        : booking;
+                                    final unitNo = (booking is Map)
+                                        ? booking['unitNumber']
+                                        : null;
                                     final config = req['unitType'];
                                     final project = req['project']?['_id'];
 
-                                    ref.read(customViewsBookingIdProvider.notifier).state = bId;
-                                    ref.read(customViewsProjectProvider.notifier).state = project;
-                                    ref.read(customViewsUnitNumberProvider.notifier).state = unitNo?.toString();
-                                    ref.read(customViewsUnitProvider.notifier).state = config ?? '3 BHK';
-                                    ref.read(customViewsEditModeProvider.notifier).state = true;
-                                    ref.read(customViewsSelectionsProvider.notifier).state = Map<String, dynamic>.from(req['selections'] as Map? ?? {});
-                                    
-                                    ref.read(customViewsStepProvider.notifier).state = 0;
-                                    ref.read(previousNavigationProvider.notifier).state = 7;
-                                    ref.read(navigationProvider.notifier).state = 6;
-                                    
+                                    ref
+                                            .read(
+                                              customViewsBookingIdProvider
+                                                  .notifier,
+                                            )
+                                            .state =
+                                        bId;
+                                    ref
+                                            .read(
+                                              customViewsProjectProvider
+                                                  .notifier,
+                                            )
+                                            .state =
+                                        project;
+                                    ref
+                                        .read(
+                                          customViewsUnitNumberProvider
+                                              .notifier,
+                                        )
+                                        .state = unitNo
+                                        ?.toString();
+                                    ref
+                                            .read(
+                                              customViewsUnitProvider.notifier,
+                                            )
+                                            .state =
+                                        config ?? '3 BHK';
+                                    ref
+                                            .read(
+                                              customViewsEditModeProvider
+                                                  .notifier,
+                                            )
+                                            .state =
+                                        true;
+                                    ref
+                                        .read(
+                                          customViewsSelectionsProvider
+                                              .notifier,
+                                        )
+                                        .state = Map<String, dynamic>.from(
+                                      req['selections'] as Map? ?? {},
+                                    );
+
+                                    ref
+                                            .read(
+                                              customViewsStepProvider.notifier,
+                                            )
+                                            .state =
+                                        0;
+                                    ref
+                                            .read(
+                                              previousNavigationProvider
+                                                  .notifier,
+                                            )
+                                            .state =
+                                        7;
+                                    ref
+                                            .read(navigationProvider.notifier)
+                                            .state =
+                                        6;
+
                                     Navigator.pop(context);
                                   },
                                   child: Container(
@@ -759,7 +1269,12 @@ class _DetailDialog {
                                   ),
                                 ),
                               ),
-                            if (!(['Approved', 'Completed', 'Rejected', 'Closed'].contains(req['status'])))
+                            if (!([
+                              'Approved',
+                              'Completed',
+                              'Rejected',
+                              'Closed',
+                            ].contains(req['status'])))
                               const SizedBox(width: 12),
                             Expanded(
                               child: GestureDetector(
@@ -769,13 +1284,19 @@ class _DetailDialog {
                                   decoration: BoxDecoration(
                                     color: Colors.transparent,
                                     borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1)),
+                                    border: Border.all(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface.withOpacity(0.1),
+                                    ),
                                   ),
                                   alignment: Alignment.center,
                                   child: Text(
                                     'CLOSE VIEW',
                                     style: GoogleFonts.montserrat(
-                                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface.withOpacity(0.5),
                                       fontSize: 9,
                                       fontWeight: FontWeight.w800,
                                       letterSpacing: 1,
@@ -822,7 +1343,11 @@ class _StatusBadge extends StatelessWidget {
   final String status;
   final bool isDark;
   final Color? customColor;
-  const _StatusBadge({required this.status, required this.isDark, this.customColor});
+  const _StatusBadge({
+    required this.status,
+    required this.isDark,
+    this.customColor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -835,7 +1360,8 @@ class _StatusBadge extends StatelessWidget {
         border: Border.all(color: color.withOpacity(0.2)),
       ),
       child: Text(
-        status.toUpperCase(),
+        // Web parity: "NOT STARTED" (space, not underscore).
+        status.replaceAll('_', ' ').toUpperCase(),
         style: GoogleFonts.montserrat(
           color: color,
           fontSize: 8,
@@ -845,14 +1371,26 @@ class _StatusBadge extends StatelessWidget {
     );
   }
 
+  // Web parity: getStatusStyles() — requested/pending/submitted = amber,
+  // approved/closed = green, completed/reviewed/contacted = blue,
+  // rejected = red, everything else (draft, not_started) = grey.
   Color _getStatusColor(String status) {
     switch (status.toLowerCase()) {
       case 'approved':
-      case 'completed': return Colors.green;
+      case 'closed':
+        return const Color(0xFF22C55E); // green-500
+      case 'completed':
+      case 'reviewed':
+      case 'contacted':
+        return const Color(0xFF3B82F6); // blue-500
+      case 'rejected':
+        return const Color(0xFFEF4444); // red-500
+      case 'requested':
+      case 'pending':
       case 'submitted':
-      case 'requested': return const Color(0xFF1E40AF); // Deep Professional Blue
-      case 'draft': return Colors.amber;
-      default: return Colors.grey;
+        return const Color(0xFFF59E0B); // amber-500
+      default:
+        return Colors.grey;
     }
   }
 }
@@ -869,10 +1407,18 @@ class _IconBox extends StatelessWidget {
       width: 44,
       height: 44,
       decoration: BoxDecoration(
-        color: color?.withOpacity(0.1) ?? (isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.03)),
+        color:
+            color?.withOpacity(0.1) ??
+            (isDark
+                ? Colors.white.withOpacity(0.05)
+                : Colors.black.withOpacity(0.03)),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Icon(icon, size: 20, color: color ?? (isDark ? Colors.white : Colors.black)),
+      child: Icon(
+        icon,
+        size: 20,
+        color: color ?? (isDark ? Colors.white : Colors.black),
+      ),
     );
   }
 }
@@ -882,7 +1428,12 @@ class _DetailItem extends StatelessWidget {
   final String value;
   final bool isDark;
   final bool isPrimary;
-  const _DetailItem({required this.label, required this.value, required this.isDark, this.isPrimary = false});
+  const _DetailItem({
+    required this.label,
+    required this.value,
+    required this.isDark,
+    this.isPrimary = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -905,7 +1456,9 @@ class _DetailItem extends StatelessWidget {
           style: GoogleFonts.montserrat(
             fontSize: 11,
             fontWeight: FontWeight.w900,
-            color: isPrimary ? Theme.of(context).colorScheme.primary : foreground,
+            color: isPrimary
+                ? Theme.of(context).colorScheme.primary
+                : foreground,
           ),
         ),
       ],

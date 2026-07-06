@@ -1978,11 +1978,21 @@ class _PremiumInputField extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
+              // Web parity: white field with a soft shadow.
+              color: isDark ? Colors.white.withOpacity(0.04) : Colors.white,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
               ),
+              boxShadow: isDark
+                  ? null
+                  : [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 18,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
             ),
             child: TextFormField(
               controller: controller,

@@ -27,8 +27,15 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
   Map<String, dynamic>? _cmsData;
   bool _isLoading = true;
   String _activeCategory = 'ALL';
-  final List<String> _categories = ["ALL", "SALES", "HR", "MARKETING", "PROJECT MANAGEMENT", "OPERATIONS"];
-  
+  final List<String> _categories = [
+    "ALL",
+    "SALES",
+    "HR",
+    "MARKETING",
+    "PROJECT MANAGEMENT",
+    "OPERATIONS",
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -38,21 +45,23 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
   Future<void> _fetchData() async {
     try {
       final apiClient = ref.read(apiClientProvider);
-      
+
       debugPrint("--- START FETCHING CAREERS ---");
-      
+
       // 1. Jobs
       final jRes = await apiClient.getJobs();
       debugPrint("JOBS STATUS CODE: ${jRes.statusCode}");
       debugPrint("JOBS DATA TYPE: ${jRes.data.runtimeType}");
-      
+
       if (jRes.data is Map) {
         final Map<String, dynamic> data = Map<String, dynamic>.from(jRes.data);
         if (data['status'] == true || data['status'] == 'true') {
           _jobs = data['data'] ?? [];
           debugPrint("SUCCESS: FETCHED ${_jobs.length} JOBS");
         } else {
-          debugPrint("FAILED: JOBS API RETURNED STATUS FALSE: ${data['message']}");
+          debugPrint(
+            "FAILED: JOBS API RETURNED STATUS FALSE: ${data['message']}",
+          );
         }
       }
 
@@ -67,7 +76,6 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
       }
 
       debugPrint("--- END FETCHING CAREERS ---");
-      
     } catch (e) {
       debugPrint("CAREERS FETCH ERROR: $e");
     }
@@ -85,23 +93,29 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text('CAREERS', 
-                style: GoogleFonts.montserrat(
-                  color: isDark ? Colors.white : Colors.black, 
-                  fontWeight: FontWeight.bold, 
-                  fontSize: 14, 
-                  letterSpacing: 2
-                )),
-            Text('JOIN OUR ARCHITECTURAL LEGACY', 
-                style: GoogleFonts.montserrat(
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.5), 
-                  fontWeight: FontWeight.w400, 
-                  fontSize: 8, 
-                  letterSpacing: 2
-                )),
+            Text(
+              'CAREERS',
+              style: GoogleFonts.montserrat(
+                color: isDark ? Colors.white : Colors.black,
+                fontWeight: FontWeight.w900,
+                fontSize: 17,
+                letterSpacing: 1.5,
+              ),
+            ),
+            Text(
+              'JOIN OUR ARCHITECTURAL LEGACY',
+              style: GoogleFonts.montserrat(
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+                fontWeight: FontWeight.w400,
+                fontSize: 8,
+                letterSpacing: 2,
+              ),
+            ),
           ],
         ),
-        backgroundColor: (isDark ? Colors.black : Colors.white).withOpacity(0.8),
+        backgroundColor: (isDark ? Colors.black : Colors.white).withOpacity(
+          0.8,
+        ),
         flexibleSpace: ClipRRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
@@ -115,8 +129,13 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
             padding: const EdgeInsets.only(left: 12),
             child: InkWell(
               onTap: () {
-                ref.read(guestNavigationProvider.notifier).state = 0;
-                context.go('/home');
+                // Working back: pop if pushed, else go home.
+                if (Navigator.of(context).canPop()) {
+                  Navigator.pop(context);
+                } else {
+                  ref.read(guestNavigationProvider.notifier).state = 0;
+                  context.go('/home');
+                }
               },
               borderRadius: BorderRadius.circular(12),
               child: Container(
@@ -124,11 +143,21 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                 height: 36,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    0.05,
+                  ),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.08)),
+                  border: Border.all(
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      0.08,
+                    ),
+                  ),
                 ),
-                child: Icon(LucideIcons.arrowLeft, color: isDark ? Colors.white : Colors.black, size: 16),
+                child: Icon(
+                  LucideIcons.arrowLeft,
+                  color: isDark ? Colors.white : Colors.black,
+                  size: 16,
+                ),
               ),
             ),
           ),
@@ -149,7 +178,11 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                       color: isDark ? Colors.white : Colors.black,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(LucideIcons.moreHorizontal, size: 18, color: isDark ? Colors.black : Colors.white),
+                    child: Icon(
+                      LucideIcons.moreHorizontal,
+                      size: 18,
+                      color: isDark ? Colors.black : Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -161,19 +194,26 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
       body: Container(
         decoration: BoxDecoration(
           color: isDark ? Colors.black : Colors.white,
-          gradient: isDark 
-            ? const RadialGradient(
-                center: Alignment.topCenter,
-                radius: 2.5,
-                colors: [Color(0xFF0F1115), Colors.black],
-              )
-            : null,
+          gradient: isDark
+              ? const RadialGradient(
+                  center: Alignment.topCenter,
+                  radius: 2.5,
+                  colors: [Color(0xFF0F1115), Colors.black],
+                )
+              : null,
         ),
         child: SafeArea(
           child: _isLoading
-              ? Center(child: CircularProgressIndicator(color: isDark ? Colors.white24 : Colors.black12))
+              ? Center(
+                  child: CircularProgressIndicator(
+                    color: isDark ? Colors.white24 : Colors.black12,
+                  ),
+                )
               : SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 24,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -194,7 +234,9 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
   Widget _buildHero() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final title = _cmsData?['title'] ?? 'BUILD YOUR\nLEGACY';
-    final content = _cmsData?['content'] ?? 'Explore opportunities to join M4 Family. We create spaces that redefine living.';
+    final content =
+        _cmsData?['content'] ??
+        'Explore opportunities to join M4 Family. We create spaces that redefine living.';
 
     // Clean title: Ensure it says "CAREERS AT M4" to match web
     String displayTitle = title.toString().toUpperCase();
@@ -207,7 +249,10 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
     if (displayContent.contains('</h1>')) {
       displayContent = displayContent.split('</h1>').last;
     }
-    displayContent = displayContent.replaceAll(RegExp(r'<[^>]*>'), ' ').replaceAll(RegExp(r'\s+'), ' ').trim();
+    displayContent = displayContent
+        .replaceAll(RegExp(r'<[^>]*>'), ' ')
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .trim();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -252,15 +297,23 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               decoration: BoxDecoration(
-                color: isActive ? (isDark ? Colors.white : Colors.black) : Colors.transparent,
+                color: isActive
+                    ? (isDark ? Colors.white : Colors.black)
+                    : Colors.transparent,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: isActive ? Colors.transparent : (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
+                border: Border.all(
+                  color: isActive
+                      ? Colors.transparent
+                      : (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+                ),
               ),
               alignment: Alignment.center,
               child: Text(
                 cat,
                 style: GoogleFonts.montserrat(
-                  color: isActive ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white60 : Colors.black54),
+                  color: isActive
+                      ? (isDark ? Colors.black : Colors.white)
+                      : (isDark ? Colors.white60 : Colors.black54),
                   fontSize: 9,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 1.5,
@@ -275,7 +328,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
 
   Widget _buildJobList() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     debugPrint("TOTAL JOBS IN LIST: ${_jobs.length}");
     debugPrint("ACTIVE CATEGORY: $_activeCategory");
 
@@ -293,7 +346,10 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
         decoration: BoxDecoration(
           color: (isDark ? Colors.white : Colors.black).withOpacity(0.02),
           borderRadius: BorderRadius.circular(48),
-          border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1), style: BorderStyle.solid),
+          border: Border.all(
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+            style: BorderStyle.solid,
+          ),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -304,13 +360,22 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
                 shape: BoxShape.circle,
               ),
-              child: Icon(LucideIcons.briefcase, color: (isDark ? Colors.white : Colors.black).withOpacity(0.1), size: 40),
+              child: Icon(
+                LucideIcons.briefcase,
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+                size: 40,
+              ),
             ),
             const SizedBox(height: 24),
             Text(
               'NO ACTIVE VACANCIES CURRENTLY AVAILABLE',
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.3), fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2),
+              style: GoogleFonts.montserrat(
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.3),
+                fontSize: 10,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 2,
+              ),
             ),
           ],
         ),
@@ -327,14 +392,29 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: InkWell(
-        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => JobDetailScreen(job: job))),
-        borderRadius: BorderRadius.circular(32),
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => JobDetailScreen(job: job)),
+        ),
+        borderRadius: BorderRadius.circular(40),
         child: Container(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(30),
           decoration: BoxDecoration(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
-            borderRadius: BorderRadius.circular(32),
-            border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+            // Web parity: bigger white card (p-8, rounded-[2.5rem]) + shadow.
+            color: isDark ? Colors.white.withOpacity(0.04) : Colors.white,
+            borderRadius: BorderRadius.circular(40),
+            border: Border.all(
+              color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+            ),
+            boxShadow: isDark
+                ? null
+                : [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 20,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
           ),
           child: Row(
             children: [
@@ -344,39 +424,101 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                   children: [
                     Text(
                       (job['title'] ?? '').toString().toUpperCase(),
-                      style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: -0.5),
+                      style: GoogleFonts.montserrat(
+                        color: isDark ? Colors.white : Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -0.5,
+                        height: 1.15,
+                      ),
                     ),
-                    const SizedBox(height: 12),
-                    Row(
+                    const SizedBox(height: 16),
+                    // Web parity: department • location-pill.
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 8,
+                      crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
                         Text(
                           (job['department'] ?? '').toString().toUpperCase(),
-                          style: GoogleFonts.montserrat(color: isDark ? Colors.white54 : Colors.black54, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.5),
+                          style: GoogleFonts.montserrat(
+                            color: isDark ? Colors.white70 : Colors.black87,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 1.5,
+                          ),
                         ),
-                        const SizedBox(width: 12),
-                        Icon(LucideIcons.mapPin, color: (isDark ? Colors.white : Colors.black).withOpacity(0.3), size: 12),
-                        const SizedBox(width: 4),
-                        Text(
-                          (job['location'] ?? 'MUMBAI').toString().toUpperCase(),
-                          style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.3), fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1),
+                        Container(
+                          width: 4,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: (isDark ? Colors.white : Colors.black)
+                                .withOpacity(0.2),
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: (isDark ? Colors.white : Colors.black)
+                                .withOpacity(0.03),
+                            borderRadius: BorderRadius.circular(30),
+                            border: Border.all(
+                              color: (isDark ? Colors.white : Colors.black)
+                                  .withOpacity(0.1),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                LucideIcons.mapPin,
+                                color: (isDark ? Colors.white : Colors.black)
+                                    .withOpacity(0.4),
+                                size: 12,
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                (job['location'] ?? 'MUMBAI')
+                                    .toString()
+                                    .toUpperCase(),
+                                style: GoogleFonts.montserrat(
+                                  color: (isDark ? Colors.white : Colors.black)
+                                      .withOpacity(0.55),
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 1,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
                   ],
                 ),
               ),
+              const SizedBox(width: 16),
               Container(
-                width: 36,
-                height: 36,
+                width: 48,
+                height: 48,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.white : Colors.black,
+                  // Web parity: light circle (w-12) with a dark chevron (w-6).
+                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    0.05,
+                  ),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  LucideIcons.chevronRight, 
-                  color: isDark ? Colors.black : Colors.white, 
-                  size: 16
+                  LucideIcons.chevronRight,
+                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    0.7,
+                  ),
+                  size: 24,
                 ),
               ),
             ],
@@ -404,16 +546,22 @@ class _HeaderCircleAction extends StatelessWidget {
         decoration: BoxDecoration(
           color: isDark ? Colors.white.withOpacity(0.1) : Colors.white,
           shape: BoxShape.circle,
-          border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+          border: Border.all(
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
               blurRadius: 10,
               offset: const Offset(0, 4),
-            )
+            ),
           ],
         ),
-        child: Icon(icon, color: isDark ? Colors.white : Colors.black, size: 18),
+        child: Icon(
+          icon,
+          color: isDark ? Colors.white : Colors.black,
+          size: 18,
+        ),
       ),
     );
   }

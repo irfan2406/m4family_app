@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -92,8 +93,12 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           ),
           autoInitialize: true,
           allowFullScreen: true,
-          showOptions:
-              false, // Disable default dots to use our custom top-right one
+          // Web parity: custom controls so play/time + volume, fullscreen and
+          // the 3-dot all sit together in the bottom bar (right side).
+          showOptions: false,
+          customControls: _M4VideoControls(
+            onShare: () => _shareContent(apiClient),
+          ),
           deviceOrientationsOnEnterFullScreen:
               _videoPlayerController!.value.aspectRatio < 1
               ? [DeviceOrientation.portraitUp]
@@ -168,50 +173,6 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     );
   }
 
-  // Options menu for the video (the "..." button) — currently a Share action.
-  void _showVideoMenu(ApiClient apiClient) {
-    final scheme = Theme.of(context).colorScheme;
-    showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: scheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: 8),
-            Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: scheme.onSurface.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(99),
-              ),
-            ),
-            const SizedBox(height: 8),
-            ListTile(
-              leading: Icon(LucideIcons.share2, color: scheme.onSurface),
-              title: Text(
-                'Share',
-                style: GoogleFonts.montserrat(
-                  fontWeight: FontWeight.w700,
-                  color: scheme.onSurface,
-                ),
-              ),
-              onTap: () {
-                Navigator.pop(ctx);
-                _shareContent(apiClient);
-              },
-            ),
-            const SizedBox(height: 8),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
@@ -274,6 +235,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           _buildCircleButton(
                             icon: LucideIcons.share2,
                             onTap: () => _shareContent(apiClient),
+                            isBlack: true,
                           ),
                         ],
                       ),
@@ -328,31 +290,6 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                                       )),
                         ),
                       ),
-
-                      // 🔘 THREE-DOT MENU ICON (Upper Right Side)
-                      if (hasVideo)
-                        Positioned(
-                          top: 15,
-                          right: 15,
-                          child: GestureDetector(
-                            onTap: () => _showVideoMenu(apiClient),
-                            child: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.3),
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.white.withOpacity(0.1),
-                                ),
-                              ),
-                              child: const Icon(
-                                LucideIcons.moreVertical,
-                                color: Colors.white,
-                                size: 20,
-                              ),
-                            ),
-                          ),
-                        ),
                     ],
                   ),
 
@@ -369,18 +306,18 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                                 vertical: 6,
                               ),
                               decoration: BoxDecoration(
-                                // Black text on a white pill with a darker,
-                                // more prominent drop shadow.
-                                color: scheme.surface,
+                                // Web parity: black text on a light-grey pill
+                                // (bg-primary/10) with a soft drop shadow.
+                                color: scheme.onSurface.withOpacity(0.08),
                                 borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
                                   color: scheme.onSurface.withOpacity(0.1),
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.16),
-                                    blurRadius: 14,
-                                    offset: const Offset(0, 5),
+                                    color: Colors.black.withOpacity(0.28),
+                                    blurRadius: 18,
+                                    offset: const Offset(0, 7),
                                   ),
                                 ],
                               ),
@@ -1012,5 +949,175 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
       default:
         return LucideIcons.image;
     }
+  }
+}
+
+/// Web-parity video controls: play/time on the left, and sound + fullscreen +
+/// 3-dot grouped together on the right — all in the bottom bar.
+class _M4VideoControls extends StatefulWidget {
+  final VoidCallback onShare;
+  const _M4VideoControls({required this.onShare});
+
+  @override
+  State<_M4VideoControls> createState() => _M4VideoControlsState();
+}
+
+class _M4VideoControlsState extends State<_M4VideoControls> {
+  ChewieController? _chewie;
+  bool _visible = true;
+  bool _muted = false;
+  Timer? _hideTimer;
+
+  VideoPlayerController get _vpc => _chewie!.videoPlayerController;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _chewie = ChewieController.of(context);
+    _startHideTimer();
+  }
+
+  @override
+  void dispose() {
+    _hideTimer?.cancel();
+    super.dispose();
+  }
+
+  void _startHideTimer() {
+    _hideTimer?.cancel();
+    _hideTimer = Timer(const Duration(seconds: 3), () {
+      if (mounted && _vpc.value.isPlaying) setState(() => _visible = false);
+    });
+  }
+
+  void _togglePlay() {
+    setState(() {
+      if (_vpc.value.isPlaying) {
+        _vpc.pause();
+      } else {
+        _vpc.play();
+        _startHideTimer();
+      }
+    });
+  }
+
+  void _toggleMute() {
+    setState(() {
+      _muted = !_muted;
+      _vpc.setVolume(_muted ? 0 : 1);
+    });
+    _startHideTimer();
+  }
+
+  String _fmt(Duration d) {
+    final m = d.inMinutes.remainder(60).toString().padLeft(2, '0');
+    final s = d.inSeconds.remainder(60).toString().padLeft(2, '0');
+    return '$m:$s';
+  }
+
+  Widget _ctrlIcon(IconData icon, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Icon(icon, color: Colors.white, size: 18),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        setState(() => _visible = !_visible);
+        if (_visible) _startHideTimer();
+      },
+      child: AnimatedOpacity(
+        opacity: _visible ? 1 : 0,
+        duration: const Duration(milliseconds: 200),
+        child: Stack(
+          children: [
+            Container(color: Colors.black.withOpacity(0.25)),
+            Center(
+              child: GestureDetector(
+                onTap: _togglePlay,
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.35),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    _vpc.value.isPlaying ? LucideIcons.pause : LucideIcons.play,
+                    color: Colors.white,
+                    size: 30,
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              left: 12,
+              right: 12,
+              bottom: 8,
+              child: ValueListenableBuilder<VideoPlayerValue>(
+                valueListenable: _vpc,
+                builder: (context, value, _) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        children: [
+                          GestureDetector(
+                            onTap: _togglePlay,
+                            child: Icon(
+                              value.isPlaying
+                                  ? LucideIcons.pause
+                                  : LucideIcons.play,
+                              color: Colors.white,
+                              size: 18,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            '${_fmt(value.position)} / ${_fmt(value.duration)}',
+                            style: GoogleFonts.montserrat(
+                              color: Colors.white,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const Spacer(),
+                          // Right group: sound + fullscreen + 3-dot together.
+                          _ctrlIcon(
+                            _muted ? LucideIcons.volumeX : LucideIcons.volume2,
+                            _toggleMute,
+                          ),
+                          const SizedBox(width: 16),
+                          _ctrlIcon(
+                            LucideIcons.maximize,
+                            () => _chewie!.toggleFullScreen(),
+                          ),
+                          const SizedBox(width: 16),
+                          _ctrlIcon(LucideIcons.moreVertical, widget.onShare),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      VideoProgressIndicator(
+                        _vpc,
+                        allowScrubbing: true,
+                        padding: EdgeInsets.zero,
+                        colors: VideoProgressColors(
+                          playedColor: Colors.white,
+                          bufferedColor: Colors.white.withOpacity(0.4),
+                          backgroundColor: Colors.white.withOpacity(0.2),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

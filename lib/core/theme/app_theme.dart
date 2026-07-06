@@ -2,52 +2,95 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class M4Theme {
-  // Web-matched "Ultra Deep Slate" dark palette (globals.css .dark tokens).
-  static const Color background = Color(0xFF04060B); // hsl(222 47% 3%) deep slate
-  static const Color surface = Color(0xFF0B111E);    // hsl(222 47% 8%) card
-  static const Color institutionalBlack = Color(0xFF0B111E);
-  // Accent used for section labels/highlights. Was near-black (invisible on dark);
-  // now the M4 gold so it reads on both light and dark surfaces.
-  static const Color premiumBlue = Color(0xFFC5A358); // M4 gold accent
+  // ===== Web palette — 1:1 with Flutter Web (app/globals.css tokens) =====
+  // LIGHT (:root)
+  static const Color lightBackground = Color(
+    0xFFF9FAFB,
+  ); // --background 210 20% 98%
+  static const Color lightForeground = Color(
+    0xFF080C16,
+  ); // --foreground 222 47% 6%
+  static const Color lightCard = Color(0xFFFFFFFF); // --card 0 0% 100%
+  static const Color lightPrimary = Color(0xFF080C16); // --primary
+  static const Color lightPrimaryFg = Color(0xFFF8FAFC); // --primary-foreground
+  static const Color lightSecondary = Color(
+    0xFFEAF0F6,
+  ); // --secondary 210 40% 94%
+  static const Color lightMuted = Color(0xFFEAF0F6); // --muted
+  static const Color lightMutedFg = Color(
+    0xFF435670,
+  ); // --muted-foreground 215 25% 35%
+  static const Color lightAccent = Color(0xFFE2EBF3); // --accent 210 40% 92%
+  static const Color lightDestructive = Color(0xFFEF4444); // --destructive
+  static const Color lightBorder = Color(0xFFD7DFEA); // --border / --input
 
-  static const Color textPrimary = Color(0xFFF8FAFC);
-  static const Color textSecondary = Color(0xFFCFD7E2); // hsl(215 25% 85%) bright muted (web)
-  static const Color border = Color(0xFF10192D);        // hsl(222 47% 12%)
+  // DARK (.dark)
+  static const Color darkBackground = Color(
+    0xFF04060B,
+  ); // --background 222 47% 3%
+  static const Color darkForeground = Color(0xFFF8FAFC); // --foreground
+  static const Color darkCard = Color(0xFF0B111E); // --card 222 47% 8%
+  static const Color darkPrimary = Color(0xFFF8FAFC); // --primary
+  static const Color darkPrimaryFg = Color(0xFF0F172A); // --primary-foreground
+  static const Color darkSecondary = Color(0xFF0E1525); // --secondary
+  static const Color darkMuted = Color(0xFF0E1525); // --muted
+  static const Color darkMutedFg = Color(
+    0xFFCFD7E2,
+  ); // --muted-foreground 215 25% 85%
+  static const Color darkAccent = Color(0xFF10192D); // --accent
+  static const Color darkDestructive = Color(0xFF7F1D1D); // --destructive
+  static const Color darkBorder = Color(0xFF10192D); // --border / --input
 
-  static ThemeData lightTheme = ThemeData(
+  // Legacy aliases used across the app — mapped to the exact web palette.
+  static const Color background = darkBackground;
+  static const Color surface = darkCard;
+  static const Color institutionalBlack = darkCard;
+  static const Color premiumBlue = Color(0xFFC5A358); // legacy gold accent
+  static const Color textPrimary = darkForeground;
+  static const Color textSecondary = darkMutedFg;
+  static const Color border = darkBorder;
+
+  static final ThemeData lightTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
-    scaffoldBackgroundColor: Colors.white,
-    colorScheme: const ColorScheme.light(
-      primary: Color(0xFF09090B),    // Institutional Black
-      secondary: Color(0xFF18181B),  // Zinc-900
-      surface: Colors.white,
-      background: Colors.white,      // Pure Neutral
-      onPrimary: Colors.white,
-      onSurface: Color(0xFF09090B),
-      outline: Color(0xFFE4E4E7),    // Zinc-200
-      surfaceTint: Colors.transparent,
-    ),
+    scaffoldBackgroundColor: lightBackground,
+    colorScheme:
+        const ColorScheme.light(
+          primary: lightPrimary,
+          onPrimary: lightPrimaryFg,
+          secondary: lightSecondary,
+          onSecondary: lightForeground,
+          tertiary: lightAccent,
+          onTertiary: lightForeground,
+          error: lightDestructive,
+          onError: lightPrimaryFg,
+          surface: lightCard,
+          onSurface: lightForeground,
+          // ignore: deprecated_member_use
+          background: lightBackground,
+          // ignore: deprecated_member_use
+          onBackground: lightForeground,
+          outline: lightBorder,
+          surfaceTint: Colors.transparent,
+        ).copyWith(
+          outlineVariant: lightBorder,
+          surfaceContainerHighest: lightMuted,
+          onSurfaceVariant: lightMutedFg,
+        ),
     textTheme: GoogleFonts.montserratTextTheme().copyWith(
       displayLarge: GoogleFonts.montserrat(
         fontSize: 32,
         fontWeight: FontWeight.bold,
-        color: const Color(0xFF09090B),
+        color: lightForeground,
         letterSpacing: -0.5,
       ),
       headlineMedium: GoogleFonts.montserrat(
         fontSize: 24,
         fontWeight: FontWeight.w600,
-        color: const Color(0xFF09090B),
+        color: lightForeground,
       ),
-      bodyLarge: GoogleFonts.montserrat(
-        fontSize: 16,
-        color: const Color(0xFF09090B),
-      ),
-      bodyMedium: GoogleFonts.montserrat(
-        fontSize: 14,
-        color: const Color(0xFF71717A), // Zinc-500
-      ),
+      bodyLarge: GoogleFonts.montserrat(fontSize: 16, color: lightForeground),
+      bodyMedium: GoogleFonts.montserrat(fontSize: 14, color: lightMutedFg),
     ),
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.transparent,
@@ -56,46 +99,54 @@ class M4Theme {
       titleTextStyle: TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.bold,
-        color: Color(0xFF09090B),
+        color: lightForeground,
         letterSpacing: 1.2,
       ),
-      iconTheme: IconThemeData(color: Color(0xFF09090B)),
+      iconTheme: IconThemeData(color: lightForeground),
     ),
   );
 
-  static ThemeData darkTheme = ThemeData(
+  static final ThemeData darkTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
-    scaffoldBackgroundColor: background,
-    colorScheme: const ColorScheme.dark(
-      primary: Color(0xFFF8FAFC),   // High contrast white for dark mode
-      secondary: Color(0xFFF8FAFC),
-      surface: surface,
-      background: background,
-      onPrimary: background,
-      onSurface: textPrimary,
-      surfaceTint: Colors.transparent, // no M3 elevation tint (kills the muddy cast)
-    ),
+    scaffoldBackgroundColor: darkBackground,
+    colorScheme:
+        const ColorScheme.dark(
+          primary: darkPrimary,
+          onPrimary: darkPrimaryFg,
+          secondary: darkSecondary,
+          onSecondary: darkForeground,
+          tertiary: darkAccent,
+          onTertiary: darkForeground,
+          error: darkDestructive,
+          onError: darkForeground,
+          surface: darkCard,
+          onSurface: darkForeground,
+          // ignore: deprecated_member_use
+          background: darkBackground,
+          // ignore: deprecated_member_use
+          onBackground: darkForeground,
+          outline: darkBorder,
+          surfaceTint: Colors.transparent,
+        ).copyWith(
+          outlineVariant: darkBorder,
+          surfaceContainerHighest: darkMuted,
+          onSurfaceVariant: darkMutedFg,
+        ),
     textTheme: GoogleFonts.montserratTextTheme().copyWith(
       displayLarge: GoogleFonts.montserrat(
         fontSize: 32,
         fontWeight: FontWeight.bold,
-        color: textPrimary,
+        color: darkForeground,
         letterSpacing: -0.5,
       ),
       headlineMedium: GoogleFonts.montserrat(
         fontSize: 24,
         fontWeight: FontWeight.w600,
-        color: textPrimary,
+        color: darkForeground,
       ),
-      bodyLarge: GoogleFonts.montserrat(
-        fontSize: 16,
-        color: textPrimary,
-      ),
-      bodyMedium: GoogleFonts.montserrat(
-        fontSize: 14,
-        color: textSecondary,
-      ),
+      bodyLarge: GoogleFonts.montserrat(fontSize: 16, color: darkForeground),
+      bodyMedium: GoogleFonts.montserrat(fontSize: 14, color: darkMutedFg),
     ),
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.transparent,
@@ -104,17 +155,17 @@ class M4Theme {
       titleTextStyle: TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.bold,
+        color: darkForeground,
         letterSpacing: 1.2,
       ),
+      iconTheme: IconThemeData(color: darkForeground),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: textPrimary,
-        foregroundColor: background,
+        backgroundColor: darkForeground,
+        foregroundColor: darkBackground,
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         textStyle: const TextStyle(
           fontWeight: FontWeight.bold,
           letterSpacing: 1.1,
@@ -132,11 +183,8 @@ class GlassDecoration extends BoxDecoration {
     double blur = 10.0,
     BorderRadius? borderRadius,
   }) : super(
-          color: color.withOpacity(opacity),
-          borderRadius: borderRadius ?? BorderRadius.circular(24),
-          border: Border.all(
-            color: color.withOpacity(0.1),
-            width: 1,
-          ),
-        );
+         color: color.withOpacity(opacity),
+         borderRadius: borderRadius ?? BorderRadius.circular(24),
+         border: Border.all(color: color.withOpacity(0.1), width: 1),
+       );
 }
