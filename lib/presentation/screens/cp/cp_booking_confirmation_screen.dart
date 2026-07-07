@@ -128,7 +128,7 @@ class _CpBookingConfirmationScreenState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.4);
+    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.68);
 
     if (_loading) {
       return Scaffold(

@@ -245,7 +245,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
 
     final st = _statusColors(scheme, status);
     final onSurf = scheme.onSurface;
-    final muted = onSurf.withValues(alpha: isDark ? 0.55 : 0.6);
+    final muted = onSurf.withValues(alpha: isDark ? 0.68 : 0.6);
 
     return _glassCard(
       isDark: isDark,
@@ -586,7 +586,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final onSurf = scheme.onSurface;
-    final muted = onSurf.withValues(alpha: isDark ? 0.55 : 0.55);
+    final muted = onSurf.withValues(alpha: isDark ? 0.68 : 0.68);
 
     final labelW = Text(
       label,
@@ -594,7 +594,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
         fontSize: 9,
         fontWeight: FontWeight.w900,
         letterSpacing: 2.4,
-        color: muted.withValues(alpha: 0.55),
+        color: muted.withValues(alpha: 0.68),
       ),
     );
 
@@ -690,7 +690,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                   fontSize: 9,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 1,
-                  color: scheme.onSurface.withValues(alpha: 0.35),
+                  color: scheme.onSurface.withValues(alpha: 0.68),
                 ),
                 prefixIcon: Icon(
                   LucideIcons.search,
@@ -841,7 +841,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                                     letterSpacing: 2.8,
                                     fontStyle: FontStyle.italic,
                                     color: scheme.onSurface.withValues(
-                                      alpha: 0.35,
+                                      alpha: 0.68,
                                     ),
                                   ),
                                 ),
@@ -898,7 +898,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                                               fontWeight: FontWeight.w900,
                                               letterSpacing: 2.8,
                                               color: scheme.onSurface
-                                                  .withValues(alpha: 0.55),
+                                                  .withValues(alpha: 0.68),
                                             ),
                                           ),
                                           const SizedBox(height: 10),

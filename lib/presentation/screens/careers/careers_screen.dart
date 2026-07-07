@@ -105,7 +105,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
             Text(
               'JOIN OUR ARCHITECTURAL LEGACY',
               style: GoogleFonts.montserrat(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
                 fontWeight: FontWeight.w400,
                 fontSize: 8,
                 letterSpacing: 2,
@@ -487,7 +487,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                                     .toUpperCase(),
                                 style: GoogleFonts.montserrat(
                                   color: (isDark ? Colors.white : Colors.black)
-                                      .withOpacity(0.55),
+                                      .withOpacity(0.68),
                                   fontSize: 10,
                                   fontWeight: FontWeight.w700,
                                   letterSpacing: 1,

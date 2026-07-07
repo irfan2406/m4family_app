@@ -186,7 +186,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                             fontSize: 8,
                             fontWeight: FontWeight.w700,
                             letterSpacing: 3.5,
-                            color: scheme.onSurface.withOpacity(0.4),
+                            color: scheme.onSurface.withOpacity(0.68),
                           ),
                         ),
                       ],
@@ -244,7 +244,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                       _getSubtitle(),
                       style: GoogleFonts.inter(
                         fontSize: 14,
-                        color: scheme.onSurface.withOpacity(0.5),
+                        color: scheme.onSurface.withOpacity(0.68),
                         fontWeight: FontWeight.w500,
                         height: 1.5,
                       ),
@@ -361,7 +361,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
               textAlign: TextAlign.center,
               style: GoogleFonts.inter(
                 fontSize: 13,
-                color: scheme.onSurface.withOpacity(0.5),
+                color: scheme.onSurface.withOpacity(0.68),
                 height: 1.5,
               ),
             ),
@@ -464,7 +464,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                           style: GoogleFonts.inter(
                             fontSize: 9,
                             fontWeight: FontWeight.bold,
-                            color: scheme.onSurface.withOpacity(0.2),
+                            color: scheme.onSurface.withOpacity(0.62),
                           ),
                         ),
                       ],
@@ -488,7 +488,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.inter(
                         fontSize: 10,
-                        color: scheme.onSurface.withOpacity(0.5),
+                        color: scheme.onSurface.withOpacity(0.68),
                         fontWeight: FontWeight.w500,
                       ),
                     ),

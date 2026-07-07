@@ -536,7 +536,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                               style: GoogleFonts.montserrat(
                                 fontSize: 8,
                                 fontWeight: FontWeight.w800,
-                                color: Colors.white.withOpacity(0.5),
+                                color: Colors.white.withOpacity(0.68),
                                 letterSpacing: 1,
                               ),
                             ),

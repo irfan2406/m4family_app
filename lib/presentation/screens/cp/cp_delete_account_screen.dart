@@ -159,7 +159,8 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
         await ref.read(authProvider.notifier).logout();
         if (!mounted) return;
         _snack('Your account has been permanently deleted');
-        context.go('/auth/cp/login');
+        // After session ends, go to guest mode, not the login page.
+        context.go('/home');
       } else {
         final msg = res.data is Map ? (res.data as Map)['message']?.toString() : null;
         _snack(msg ?? 'Failed to delete account', error: true);
@@ -460,7 +461,7 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
                 fontSize: 16,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 3,
-                color: muted.withValues(alpha: 0.4),
+                color: muted.withValues(alpha: 0.68),
               ),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
@@ -515,7 +516,7 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
               hintStyle: GoogleFonts.montserrat(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
-                color: muted.withValues(alpha: 0.4),
+                color: muted.withValues(alpha: 0.68),
               ),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),

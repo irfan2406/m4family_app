@@ -358,7 +358,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       child: OutlinedButton(
         onPressed: () {
           ref.read(authProvider.notifier).logout();
-          context.go('/login');
+          // Web parity: after logout, drop into guest mode (browse-as-guest
+          // home), not the login/onboarding selection screen.
+          context.go('/home');
         },
         style: OutlinedButton.styleFrom(
           side: BorderSide(color: Colors.red.withOpacity(0.1)),

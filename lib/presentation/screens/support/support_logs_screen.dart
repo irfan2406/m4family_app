@@ -41,19 +41,27 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final state = ref.watch(supportProvider);
     final filteredTickets = state.tickets.where((ticket) {
-      final matchesSearch = ticket.displayId.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+      final matchesSearch =
+          ticket.displayId.toLowerCase().contains(_searchQuery.toLowerCase()) ||
           ticket.subject.toLowerCase().contains(_searchQuery.toLowerCase());
-      
-      final isPending = ticket.status.toLowerCase() != 'completed' && ticket.status.toLowerCase() != 'resolved' && ticket.status.toLowerCase() != 'closed';
+
+      final isPending =
+          ticket.status.toLowerCase() != 'completed' &&
+          ticket.status.toLowerCase() != 'resolved' &&
+          ticket.status.toLowerCase() != 'closed';
       final matchesPending = !_showOnlyPending || isPending;
-      
-      final matchesCategory = _selectedCategory == null || ticket.category.toLowerCase() == _selectedCategory!.toLowerCase();
+
+      final matchesCategory =
+          _selectedCategory == null ||
+          ticket.category.toLowerCase() == _selectedCategory!.toLowerCase();
 
       return matchesSearch && matchesPending && matchesCategory;
     }).toList();
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF09090B) : const Color(0xFFF8FAFC),
+      backgroundColor: isDark
+          ? const Color(0xFF09090B)
+          : const Color(0xFFF8FAFC),
       body: SafeArea(
         child: Stack(
           children: [
@@ -64,19 +72,31 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
                 _buildAuditHeader(filteredTickets.length, isDark),
                 Expanded(
                   child: state.isLoading && state.tickets.isEmpty
-                      ? Center(child: CircularProgressIndicator(color: isDark ? Colors.white : Colors.black, strokeWidth: 2))
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            color: isDark ? Colors.white : Colors.black,
+                            strokeWidth: 2,
+                          ),
+                        )
                       : filteredTickets.isEmpty
-                          ? _buildEmptyState(isDark)
-                          : ListView.builder(
-                              physics: const BouncingScrollPhysics(),
-                              padding: const EdgeInsets.only(left: 24, right: 24, bottom: 100),
-                              itemCount: filteredTickets.length,
-                              itemBuilder: (context, index) => _TicketCard(
-                                ticket: filteredTickets[index],
-                                isDark: isDark,
-                                onTap: () => _showTicketDetails(filteredTickets[index], isDark),
-                              ),
+                      ? _buildEmptyState(isDark)
+                      : ListView.builder(
+                          physics: const BouncingScrollPhysics(),
+                          padding: const EdgeInsets.only(
+                            left: 24,
+                            right: 24,
+                            bottom: 100,
+                          ),
+                          itemCount: filteredTickets.length,
+                          itemBuilder: (context, index) => _TicketCard(
+                            ticket: filteredTickets[index],
+                            isDark: isDark,
+                            onTap: () => _showTicketDetails(
+                              filteredTickets[index],
+                              isDark,
                             ),
+                          ),
+                        ),
                 ),
               ],
             ),
@@ -104,9 +124,17 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
               decoration: BoxDecoration(
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
                 shape: BoxShape.circle,
-                border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
+                border: Border.all(
+                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    0.1,
+                  ),
+                ),
               ),
-              child: Icon(LucideIcons.chevronLeft, color: isDark ? Colors.white : Colors.black, size: 16),
+              child: Icon(
+                LucideIcons.chevronLeft,
+                color: isDark ? Colors.white : Colors.black,
+                size: 16,
+              ),
             ),
           ),
           Expanded(
@@ -151,22 +179,42 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
               decoration: BoxDecoration(
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+                border: Border.all(
+                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    0.05,
+                  ),
+                ),
               ),
               child: Row(
                 children: [
-                  Icon(LucideIcons.search, color: isDark ? Colors.white24 : Colors.black26, size: 18),
+                  Icon(
+                    LucideIcons.search,
+                    color: isDark ? Colors.white24 : Colors.black26,
+                    size: 18,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: TextField(
                       controller: _searchController,
-                      onChanged: (value) => setState(() => _searchQuery = value),
-                      style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 13, fontWeight: FontWeight.w700),
+                      onChanged: (value) =>
+                          setState(() => _searchQuery = value),
+                      style: GoogleFonts.montserrat(
+                        color: isDark ? Colors.white : Colors.black,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                      ),
                       decoration: InputDecoration(
                         hintText: 'SEARCH BY ID OR SUBJECT...',
-                        hintStyle: GoogleFonts.montserrat(color: isDark ? Colors.white12 : Colors.black12, fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 0.5),
+                        hintStyle: GoogleFonts.montserrat(
+                          color: isDark ? Colors.white12 : Colors.black12,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.5,
+                        ),
                         border: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                        contentPadding: const EdgeInsets.symmetric(
+                          vertical: 12,
+                        ),
                       ),
                     ),
                   ),
@@ -186,7 +234,11 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
                 color: isDark ? Colors.white : Colors.black,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(LucideIcons.sliders, color: isDark ? Colors.black : Colors.white, size: 18),
+              child: Icon(
+                LucideIcons.sliders,
+                color: isDark ? Colors.black : Colors.white,
+                size: 18,
+              ),
             ),
           ),
           const SizedBox(width: 12),
@@ -198,7 +250,13 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
               decoration: BoxDecoration(
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: _showOnlyPending ? (isDark ? Colors.white : Colors.black).withOpacity(0.2) : (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+                border: Border.all(
+                  color: _showOnlyPending
+                      ? (isDark ? Colors.white : Colors.black).withOpacity(0.2)
+                      : (isDark ? Colors.white : Colors.black).withOpacity(
+                          0.05,
+                        ),
+                ),
               ),
               child: Center(
                 child: Text(
@@ -222,7 +280,9 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
     showModalBottomSheet(
       context: context,
       backgroundColor: isDark ? const Color(0xFF111111) : Colors.white,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
       builder: (context) => Container(
         padding: const EdgeInsets.all(24),
         child: Column(
@@ -231,7 +291,12 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
           children: [
             Text(
               'FILTER BY CATEGORY',
-              style: GoogleFonts.montserrat(color: isDark ? Colors.white38 : Colors.black38, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1),
+              style: GoogleFonts.montserrat(
+                color: isDark ? Colors.white38 : Colors.black38,
+                fontSize: 10,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 1,
+              ),
             ),
             const SizedBox(height: 24),
             Wrap(
@@ -261,16 +326,16 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected 
-              ? (isDark ? Colors.white : Colors.black) 
+          color: isSelected
+              ? (isDark ? Colors.white : Colors.black)
               : (isDark ? Colors.white : Colors.black).withOpacity(0.05),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Text(
           label,
           style: GoogleFonts.montserrat(
-            color: isSelected 
-                ? (isDark ? Colors.black : Colors.white) 
+            color: isSelected
+                ? (isDark ? Colors.black : Colors.white)
                 : (isDark ? Colors.white : Colors.black),
             fontSize: 10,
             fontWeight: FontWeight.w800,
@@ -335,7 +400,10 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CreateTicketScreen())),
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const CreateTicketScreen()),
+          ),
           borderRadius: BorderRadius.circular(16),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -350,7 +418,11 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
                 ),
               ),
               const SizedBox(width: 12),
-              Icon(LucideIcons.messageSquare, color: isDark ? Colors.black : Colors.white, size: 16),
+              Icon(
+                LucideIcons.messageSquare,
+                color: isDark ? Colors.black : Colors.white,
+                size: 16,
+              ),
             ],
           ),
         ),
@@ -363,7 +435,7 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
       child: Text(
         'NO LOGS FOUND',
         style: GoogleFonts.montserrat(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+          color: (isDark ? Colors.white : Colors.black).withOpacity(0.62),
           fontSize: 10,
           fontWeight: FontWeight.w900,
           letterSpacing: 2,
@@ -377,21 +449,26 @@ class _TicketCard extends StatelessWidget {
   final TicketModel ticket;
   final VoidCallback onTap;
   final bool isDark;
-  const _TicketCard({required this.ticket, required this.onTap, required this.isDark});
+  const _TicketCard({
+    required this.ticket,
+    required this.onTap,
+    required this.isDark,
+  });
 
   @override
   Widget build(BuildContext context) {
     final status = ticket.status.toLowerCase();
-    final isResolved = status == 'resolved' || status == 'completed' || status == 'closed';
+    final isResolved =
+        status == 'resolved' || status == 'completed' || status == 'closed';
     final isPending = status == 'pending' || status == 'open';
     final isProgress = status == 'in progress';
     final isHighPriority = ticket.priority.toLowerCase() == 'high';
 
-    final statusColor = isResolved 
-        ? const Color(0xFF22C55E) 
-        : isPending 
-            ? const Color(0xFFF59E0B) 
-            : const Color(0xFF3B82F6);
+    final statusColor = isResolved
+        ? const Color(0xFF22C55E)
+        : isPending
+        ? const Color(0xFFF59E0B)
+        : const Color(0xFF3B82F6);
 
     return GestureDetector(
       onTap: onTap,
@@ -401,7 +478,9 @@ class _TicketCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.04)),
+          border: Border.all(
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
+          ),
         ),
         child: Stack(
           children: [
@@ -411,9 +490,13 @@ class _TicketCard extends StatelessWidget {
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
-                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                        color: (isDark ? Colors.white : Colors.black)
+                            .withOpacity(0.05),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
@@ -427,7 +510,10 @@ class _TicketCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: statusColor.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(6),
@@ -438,7 +524,11 @@ class _TicketCard extends StatelessWidget {
                           const SizedBox(width: 4),
                           Text(
                             ticket.status.toUpperCase(),
-                            style: GoogleFonts.montserrat(color: statusColor, fontSize: 8, fontWeight: FontWeight.w900),
+                            style: GoogleFonts.montserrat(
+                              color: statusColor,
+                              fontSize: 8,
+                              fontWeight: FontWeight.w900,
+                            ),
                           ),
                         ],
                       ),
@@ -448,7 +538,11 @@ class _TicketCard extends StatelessWidget {
                 const SizedBox(height: 16),
                 Text(
                   ticket.subject.toUpperCase(),
-                  style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 16, fontWeight: FontWeight.w900),
+                  style: GoogleFonts.montserrat(
+                    color: isDark ? Colors.white : Colors.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w900,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -473,7 +567,11 @@ class _TicketCard extends StatelessWidget {
             Positioned(
               right: 0,
               top: 60,
-              child: Icon(LucideIcons.chevronRight, color: (isDark ? Colors.white : Colors.black).withOpacity(0.1), size: 20),
+              child: Icon(
+                LucideIcons.chevronRight,
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+                size: 20,
+              ),
             ),
           ],
         ),
@@ -489,7 +587,10 @@ class _TicketDetailSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isResolved = ticket.status.toLowerCase() == 'resolved' || ticket.status.toLowerCase() == 'completed' || ticket.status.toLowerCase() == 'closed';
+    final isResolved =
+        ticket.status.toLowerCase() == 'resolved' ||
+        ticket.status.toLowerCase() == 'completed' ||
+        ticket.status.toLowerCase() == 'closed';
 
     return Container(
       decoration: BoxDecoration(
@@ -516,25 +617,43 @@ class _TicketDetailSheet extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    0.05,
+                  ),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   ticket.displayId,
-                  style: GoogleFonts.montserrat(color: isDark ? Colors.white38 : Colors.black38, fontSize: 10, fontWeight: FontWeight.w900),
+                  style: GoogleFonts.montserrat(
+                    color: isDark ? Colors.white38 : Colors.black38,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                  ),
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
-                  color: (isResolved ? Colors.green : Colors.blue).withOpacity(0.1),
+                  color: (isResolved ? Colors.green : Colors.blue).withOpacity(
+                    0.1,
+                  ),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   ticket.status.toUpperCase(),
-                  style: GoogleFonts.montserrat(color: isResolved ? Colors.green : Colors.blue, fontSize: 10, fontWeight: FontWeight.w900),
+                  style: GoogleFonts.montserrat(
+                    color: isResolved ? Colors.green : Colors.blue,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                  ),
                 ),
               ),
             ],
@@ -542,23 +661,49 @@ class _TicketDetailSheet extends StatelessWidget {
           const SizedBox(height: 24),
           Text(
             ticket.subject.toUpperCase(),
-            style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 20, fontWeight: FontWeight.w900),
+            style: GoogleFonts.montserrat(
+              color: isDark ? Colors.white : Colors.black,
+              fontSize: 20,
+              fontWeight: FontWeight.w900,
+            ),
           ),
           const SizedBox(height: 32),
           _buildInfoRow('CATEGORY', ticket.category.toUpperCase(), isDark),
           const SizedBox(height: 16),
-          _buildInfoRow('AUDIT DATE', DateFormat('dd MMMM yyyy, hh:mm a').format(ticket.createdAt).toUpperCase(), isDark),
+          _buildInfoRow(
+            'AUDIT DATE',
+            DateFormat(
+              'dd MMMM yyyy, hh:mm a',
+            ).format(ticket.createdAt).toUpperCase(),
+            isDark,
+          ),
           const SizedBox(height: 16),
-          _buildInfoRow('PRIORITY', ticket.priority.toUpperCase(), isDark, valueColor: ticket.priority.toLowerCase() == 'high' ? Colors.red : null),
+          _buildInfoRow(
+            'PRIORITY',
+            ticket.priority.toUpperCase(),
+            isDark,
+            valueColor: ticket.priority.toLowerCase() == 'high'
+                ? Colors.red
+                : null,
+          ),
           const SizedBox(height: 32),
           Text(
             'DESCRIPTION',
-            style: GoogleFonts.montserrat(color: isDark ? Colors.white24 : Colors.black26, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1),
+            style: GoogleFonts.montserrat(
+              color: isDark ? Colors.white24 : Colors.black26,
+              fontSize: 10,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 1,
+            ),
           ),
           const SizedBox(height: 12),
           Text(
             ticket.message ?? 'No description provided.',
-            style: GoogleFonts.montserrat(color: isDark ? Colors.white70 : Colors.black87, fontSize: 13, height: 1.6),
+            style: GoogleFonts.montserrat(
+              color: isDark ? Colors.white70 : Colors.black87,
+              fontSize: 13,
+              height: 1.6,
+            ),
           ),
           const SizedBox(height: 40),
           SizedBox(
@@ -569,11 +714,16 @@ class _TicketDetailSheet extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: isDark ? Colors.white : Colors.black,
                 foregroundColor: isDark ? Colors.black : Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
               ),
               child: Text(
                 'DISMISS AUDIT',
-                style: GoogleFonts.montserrat(fontWeight: FontWeight.w900, fontSize: 12),
+                style: GoogleFonts.montserrat(
+                  fontWeight: FontWeight.w900,
+                  fontSize: 12,
+                ),
               ),
             ),
           ),
@@ -583,17 +733,31 @@ class _TicketDetailSheet extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow(String label, String value, bool isDark, {Color? valueColor}) {
+  Widget _buildInfoRow(
+    String label,
+    String value,
+    bool isDark, {
+    Color? valueColor,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           label,
-          style: GoogleFonts.montserrat(color: isDark ? Colors.white24 : Colors.black26, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 0.5),
+          style: GoogleFonts.montserrat(
+            color: isDark ? Colors.white24 : Colors.black26,
+            fontSize: 10,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 0.5,
+          ),
         ),
         Text(
           value,
-          style: GoogleFonts.montserrat(color: valueColor ?? (isDark ? Colors.white : Colors.black), fontSize: 10, fontWeight: FontWeight.w900),
+          style: GoogleFonts.montserrat(
+            color: valueColor ?? (isDark ? Colors.white : Colors.black),
+            fontSize: 10,
+            fontWeight: FontWeight.w900,
+          ),
         ),
       ],
     );
@@ -606,7 +770,12 @@ class _DetailItem extends StatelessWidget {
   final bool isDark;
   final Color? valueColor;
 
-  const _DetailItem({required this.label, required this.value, required this.isDark, this.valueColor});
+  const _DetailItem({
+    required this.label,
+    required this.value,
+    required this.isDark,
+    this.valueColor,
+  });
 
   @override
   Widget build(BuildContext context) {

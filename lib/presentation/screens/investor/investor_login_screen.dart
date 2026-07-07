@@ -11,7 +11,8 @@ class InvestorLoginScreen extends ConsumerStatefulWidget {
   const InvestorLoginScreen({super.key});
 
   @override
-  ConsumerState<InvestorLoginScreen> createState() => _InvestorLoginScreenState();
+  ConsumerState<InvestorLoginScreen> createState() =>
+      _InvestorLoginScreenState();
 }
 
 class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
@@ -39,7 +40,9 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
       );
       return;
     }
-    final err = await ref.read(authProvider.notifier).loginInvestorWithPassword(email, pw);
+    final err = await ref
+        .read(authProvider.notifier)
+        .loginInvestorWithPassword(email, pw);
     if (!mounted) return;
     if (err != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err)));
@@ -54,7 +57,9 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
       }
     });
 
-    final loading = ref.watch(authProvider.select((s) => s.status == AuthStatus.loading));
+    final loading = ref.watch(
+      authProvider.select((s) => s.status == AuthStatus.loading),
+    );
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -80,9 +85,15 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.1),
+                      ),
                     ),
-                    child: const Icon(LucideIcons.chevronLeft, color: Colors.white70, size: 20),
+                    child: const Icon(
+                      LucideIcons.chevronLeft,
+                      color: Colors.white70,
+                      size: 20,
+                    ),
                   ),
                 ),
               ),
@@ -108,7 +119,10 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(24),
             gradient: LinearGradient(
-              colors: [_amber.withValues(alpha: 0.3), _amber.withValues(alpha: 0.08)],
+              colors: [
+                _amber.withValues(alpha: 0.3),
+                _amber.withValues(alpha: 0.08),
+              ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -170,14 +184,20 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
             style: FilledButton.styleFrom(
               backgroundColor: _amber,
               foregroundColor: Colors.black,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   'ACCESS INVESTOR HUB',
-                  style: GoogleFonts.montserrat(fontWeight: FontWeight.w900, fontSize: 12, letterSpacing: 1.5),
+                  style: GoogleFonts.montserrat(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 12,
+                    letterSpacing: 1.5,
+                  ),
                 ),
                 Container(
                   padding: const EdgeInsets.all(6),
@@ -195,7 +215,11 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(LucideIcons.shield, size: 14, color: _amber.withValues(alpha: 0.6)),
+            Icon(
+              LucideIcons.shield,
+              size: 14,
+              color: _amber.withValues(alpha: 0.6),
+            ),
             const SizedBox(width: 8),
             Text(
               'INSTITUTIONAL GRADE SECURITY',
@@ -224,7 +248,10 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
                 gradient: LinearGradient(
-                  colors: [_amber.withValues(alpha: 0.3), _amber.withValues(alpha: 0.08)],
+                  colors: [
+                    _amber.withValues(alpha: 0.3),
+                    _amber.withValues(alpha: 0.08),
+                  ],
                 ),
                 border: Border.all(color: _amber.withValues(alpha: 0.3)),
               ),
@@ -300,20 +327,43 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
             style: FilledButton.styleFrom(
               backgroundColor: _amber,
               foregroundColor: Colors.black,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
             ),
             child: loading
-                ? const SizedBox(
-                    width: 22,
-                    height: 22,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.black,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        'AUTHENTICATING',
+                        style: GoogleFonts.montserrat(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 12,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                    ],
                   )
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         'LOGIN',
-                        style: GoogleFonts.montserrat(fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 1.5),
+                        style: GoogleFonts.montserrat(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 13,
+                          letterSpacing: 1.5,
+                        ),
                       ),
                       Container(
                         padding: const EdgeInsets.all(6),
@@ -419,7 +469,15 @@ class _Field extends StatelessWidget {
           controller: controller,
           obscureText: obscure,
           keyboardType: keyboardType,
-          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+          // Field sits on a black background — force a visible amber cursor
+          // (default cursor inherits the light-theme primary and is invisible).
+          cursorColor: const Color(0xFFF59E0B),
+          cursorWidth: 2,
+          cursorRadius: const Radius.circular(2),
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.35)),
@@ -429,15 +487,22 @@ class _Field extends StatelessWidget {
             fillColor: Colors.black.withValues(alpha: 0.4),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.12)),
+              borderSide: BorderSide(
+                color: Colors.white.withValues(alpha: 0.12),
+              ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.12)),
+              borderSide: BorderSide(
+                color: Colors.white.withValues(alpha: 0.12),
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: const BorderSide(color: Color(0xFFF59E0B), width: 1.2),
+              borderSide: const BorderSide(
+                color: Color(0xFFF59E0B),
+                width: 1.2,
+              ),
             ),
           ),
         ),

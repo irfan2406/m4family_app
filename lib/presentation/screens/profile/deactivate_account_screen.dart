@@ -48,7 +48,8 @@ class _DeactivateAccountScreenState extends ConsumerState<DeactivateAccountScree
       if (response.data['status'] == true) {
         // Clear auth state and logout
         await ref.read(authProvider.notifier).logout();
-        if (mounted) context.go('/login');
+        // After session ends, go to guest mode, not the login page.
+        if (mounted) context.go('/home');
       } else {
         setState(() => _error = response.data['message'] ?? "COULD NOT DEACTIVATE ACCOUNT");
       }

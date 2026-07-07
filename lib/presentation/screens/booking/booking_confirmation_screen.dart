@@ -49,7 +49,9 @@ class _BookingConfirmationScreenState
     setState(() => _loading = true);
     try {
       final apiClient = ref.read(apiClientProvider);
-      final res = await apiClient.get('/api/catalog/projects/${widget.projectId}');
+      final res = await apiClient.get(
+        '/api/catalog/projects/${widget.projectId}',
+      );
       if (res.data['status'] == true) {
         if (mounted) setState(() => _project = res.data['data']);
       }
@@ -68,11 +70,13 @@ class _BookingConfirmationScreenState
     return 'M4 Project';
   }
 
-  String get _receiptId =>
-      widget.bookingId?.trim().isNotEmpty == true ? widget.bookingId! : widget.projectId;
+  String get _receiptId => widget.bookingId?.trim().isNotEmpty == true
+      ? widget.bookingId!
+      : widget.projectId;
 
-  String get _amount =>
-      widget.amount?.trim().isNotEmpty == true ? widget.amount! : _fallbackAmount;
+  String get _amount => widget.amount?.trim().isNotEmpty == true
+      ? widget.amount!
+      : _fallbackAmount;
 
   String _formattedDate() {
     final now = DateTime.now();
@@ -128,7 +132,9 @@ class _BookingConfirmationScreenState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.4);
+    final muted = (isDark ? Colors.white : Colors.black).withValues(
+      alpha: 0.68,
+    );
 
     if (_loading) {
       return Scaffold(
@@ -184,7 +190,9 @@ class _BookingConfirmationScreenState
                         width: 56,
                         height: 56,
                         decoration: BoxDecoration(
-                          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.white,
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.05)
+                              : Colors.white,
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
                             color: isDark
@@ -198,10 +206,14 @@ class _BookingConfirmationScreenState
                                     color: Colors.black.withValues(alpha: 0.05),
                                     blurRadius: 20,
                                     offset: const Offset(0, 10),
-                                  )
+                                  ),
                                 ],
                         ),
-                        child: Icon(LucideIcons.arrowLeft, color: textPrimary, size: 24),
+                        child: Icon(
+                          LucideIcons.arrowLeft,
+                          color: textPrimary,
+                          size: 24,
+                        ),
                       ),
                     ),
                   ),
@@ -210,27 +222,34 @@ class _BookingConfirmationScreenState
 
                   // Success icon
                   Container(
-                    width: 96,
-                    height: 96,
-                    decoration: BoxDecoration(
-                      color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.white,
-                      borderRadius: BorderRadius.circular(32),
-                      border: Border.all(
-                        color: isDark
-                            ? Colors.white.withValues(alpha: 0.1)
-                            : Colors.black.withValues(alpha: 0.05),
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: M4Theme.premiumBlue.withValues(alpha: 0.15),
-                          blurRadius: 40,
-                          offset: const Offset(0, 20),
+                        width: 96,
+                        height: 96,
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.05)
+                              : Colors.white,
+                          borderRadius: BorderRadius.circular(32),
+                          border: Border.all(
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.1)
+                                : Colors.black.withValues(alpha: 0.05),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: M4Theme.premiumBlue.withValues(
+                                alpha: 0.15,
+                              ),
+                              blurRadius: 40,
+                              offset: const Offset(0, 20),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    child: const Icon(LucideIcons.checkCircle2,
-                        color: M4Theme.premiumBlue, size: 48),
-                  )
+                        child: const Icon(
+                          LucideIcons.checkCircle2,
+                          color: M4Theme.premiumBlue,
+                          size: 48,
+                        ),
+                      )
                       .animate()
                       .fadeIn(duration: 400.ms)
                       .scale(
@@ -270,7 +289,9 @@ class _BookingConfirmationScreenState
                       ),
                       children: [
                         const TextSpan(
-                            text: "CONGRATULATIONS! YOU'VE SUCCESSFULLY LOCKED YOUR UNIT IN "),
+                          text:
+                              "CONGRATULATIONS! YOU'VE SUCCESSFULLY LOCKED YOUR UNIT IN ",
+                        ),
                         TextSpan(
                           text: _projectTitle.toUpperCase(),
                           style: GoogleFonts.montserrat(
@@ -290,10 +311,11 @@ class _BookingConfirmationScreenState
                   const SizedBox(height: 40),
 
                   // Receipt card
-                  _buildReceiptCard(isDark, textPrimary, muted)
-                      .animate()
-                      .fadeIn(delay: 600.ms)
-                      .moveY(begin: 20, end: 0),
+                  _buildReceiptCard(
+                    isDark,
+                    textPrimary,
+                    muted,
+                  ).animate().fadeIn(delay: 600.ms).moveY(begin: 20, end: 0),
 
                   const SizedBox(height: 32),
 
@@ -328,7 +350,9 @@ class _BookingConfirmationScreenState
                       try {
                         context.go('/home');
                       } catch (_) {
-                        Navigator.of(context).popUntil((route) => route.isFirst);
+                        Navigator.of(
+                          context,
+                        ).popUntil((route) => route.isFirst);
                       }
                     },
                     child: Container(
@@ -341,8 +365,11 @@ class _BookingConfirmationScreenState
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(LucideIcons.home,
-                              color: isDark ? Colors.black : Colors.white, size: 18),
+                          Icon(
+                            LucideIcons.home,
+                            color: isDark ? Colors.black : Colors.white,
+                            size: 18,
+                          ),
                           const SizedBox(width: 14),
                           Text(
                             'BACK TO DASHBOARD',
@@ -413,7 +440,7 @@ class _BookingConfirmationScreenState
                   color: Colors.black.withValues(alpha: 0.08),
                   blurRadius: 40,
                   offset: const Offset(0, 20),
-                )
+                ),
               ],
       ),
       child: Column(
@@ -451,15 +478,19 @@ class _BookingConfirmationScreenState
           const SizedBox(height: 24),
 
           // Project
-          _DetailRow(label: 'PROJECT', muted: muted, child: Text(
-            _projectTitle.toUpperCase(),
-            style: GoogleFonts.montserrat(
-              fontSize: 14,
-              fontWeight: FontWeight.w900,
-              color: textPrimary,
-              letterSpacing: -0.5,
+          _DetailRow(
+            label: 'PROJECT',
+            muted: muted,
+            child: Text(
+              _projectTitle.toUpperCase(),
+              style: GoogleFonts.montserrat(
+                fontSize: 14,
+                fontWeight: FontWeight.w900,
+                color: textPrimary,
+                letterSpacing: -0.5,
+              ),
             ),
-          )),
+          ),
 
           const SizedBox(height: 20),
 
@@ -498,7 +529,10 @@ class _BookingConfirmationScreenState
                     ),
                     const SizedBox(height: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 8,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFF10B981).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(999),
@@ -506,8 +540,11 @@ class _BookingConfirmationScreenState
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(LucideIcons.checkCircle2,
-                              color: Color(0xFF10B981), size: 12),
+                          const Icon(
+                            LucideIcons.checkCircle2,
+                            color: Color(0xFF10B981),
+                            size: 12,
+                          ),
                           const SizedBox(width: 6),
                           Text(
                             'VERIFIED',
@@ -537,7 +574,11 @@ class _DetailRow extends StatelessWidget {
   final Color muted;
   final Widget child;
 
-  const _DetailRow({required this.label, required this.muted, required this.child});
+  const _DetailRow({
+    required this.label,
+    required this.muted,
+    required this.child,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -594,7 +635,7 @@ class _ActionButton extends StatelessWidget {
                     color: Colors.black.withValues(alpha: 0.04),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
-                  )
+                  ),
                 ],
         ),
         child: Row(

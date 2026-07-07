@@ -17,10 +17,12 @@ class CommunityProjectsListScreen extends ConsumerStatefulWidget {
   const CommunityProjectsListScreen({super.key, required this.slug});
 
   @override
-  ConsumerState<CommunityProjectsListScreen> createState() => _CommunityProjectsListScreenState();
+  ConsumerState<CommunityProjectsListScreen> createState() =>
+      _CommunityProjectsListScreenState();
 }
 
-class _CommunityProjectsListScreenState extends ConsumerState<CommunityProjectsListScreen> {
+class _CommunityProjectsListScreenState
+    extends ConsumerState<CommunityProjectsListScreen> {
   Map<String, dynamic>? _community;
   List<dynamic> _projects = [];
   bool _loading = true;
@@ -43,7 +45,9 @@ class _CommunityProjectsListScreenState extends ConsumerState<CommunityProjectsL
       // 1. Fetch community by slug → extract ID.
       final commRes = await apiClient.getCommunityBySlug(widget.slug);
       if (commRes.data['status'] == true && commRes.data['data'] != null) {
-        final community = Map<String, dynamic>.from(commRes.data['data'] as Map);
+        final community = Map<String, dynamic>.from(
+          commRes.data['data'] as Map,
+        );
         final communityId = (community['_id'] ?? community['id'])?.toString();
 
         List<dynamic> projects = [];
@@ -99,102 +103,113 @@ class _CommunityProjectsListScreenState extends ConsumerState<CommunityProjectsL
     return Scaffold(
       backgroundColor: bg,
       body: _loading
-          ? const Center(child: CircularProgressIndicator(color: M4Theme.premiumBlue))
+          ? const Center(
+              child: CircularProgressIndicator(color: M4Theme.premiumBlue),
+            )
           : _error != null
-              ? _ErrorState(message: _error!, isDark: isDark, onBack: _goBack)
-              : SafeArea(
-                  bottom: false,
-                  child: CustomScrollView(
-                    slivers: [
-                      // 🔝 Sticky Glass Header
-                      SliverPersistentHeader(
-                        pinned: true,
-                        delegate: _GlassHeaderDelegate(
-                          isDark: isDark,
-                          textPrimary: textPrimary,
-                          muted: muted,
-                          onBack: _goBack,
-                        ),
-                      ),
+          ? _ErrorState(message: _error!, isDark: isDark, onBack: _goBack)
+          : SafeArea(
+              bottom: false,
+              child: CustomScrollView(
+                slivers: [
+                  // 🔝 Sticky Glass Header
+                  SliverPersistentHeader(
+                    pinned: true,
+                    delegate: _GlassHeaderDelegate(
+                      isDark: isDark,
+                      textPrimary: textPrimary,
+                      muted: muted,
+                      onBack: _goBack,
+                    ),
+                  ),
 
-                      // 🏷️ Community Intro (left-bordered title block)
-                      SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(28, 32, 28, 28),
-                          child: Container(
-                            padding: const EdgeInsets.only(left: 16),
-                            decoration: BoxDecoration(
-                              border: Border(
-                                left: BorderSide(
-                                  color: (isDark ? Colors.white : Colors.black)
-                                      .withValues(alpha: isDark ? 0.3 : 0.2),
-                                  width: 4,
-                                ),
+                  // 🏷️ Community Intro (left-bordered title block)
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(28, 32, 28, 28),
+                      child: Container(
+                        padding: const EdgeInsets.only(left: 16),
+                        decoration: BoxDecoration(
+                          border: Border(
+                            left: BorderSide(
+                              color: (isDark ? Colors.white : Colors.black)
+                                  .withValues(alpha: isDark ? 0.3 : 0.2),
+                              width: 4,
+                            ),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              (_community?['title'] ?? '')
+                                  .toString()
+                                  .toUpperCase(),
+                              style: GoogleFonts.montserrat(
+                                fontSize: 30,
+                                fontWeight: FontWeight.w900,
+                                color: textPrimary,
+                                letterSpacing: -1,
+                                height: 1.0,
                               ),
                             ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  (_community?['title'] ?? '').toString().toUpperCase(),
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 30,
-                                    fontWeight: FontWeight.w900,
-                                    color: textPrimary,
-                                    letterSpacing: -1,
-                                    height: 1.0,
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  'DISCOVER ALL PROJECTS IN THIS COMMUNITY',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w700,
-                                    color: muted,
-                                    letterSpacing: 3,
-                                  ),
-                                ),
-                              ],
+                            const SizedBox(height: 10),
+                            Text(
+                              'DISCOVER ALL PROJECTS IN THIS COMMUNITY',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                                color: muted,
+                                letterSpacing: 3,
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                       ),
-
-                      // 🏙️ Projects feed (single column) or empty state
-                      if (_projects.isEmpty)
-                        SliverFillRemaining(
-                          hasScrollBody: false,
-                          child: _EmptyState(isDark: isDark, muted: muted, onReturn: _goBack),
-                        )
-                      else
-                        SliverPadding(
-                          padding: const EdgeInsets.fromLTRB(28, 0, 28, 60),
-                          sliver: SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                              (context, index) {
-                                final project = _projects[index];
-                                return _ProjectCard(
-                                  project: project,
-                                  apiClient: apiClient,
-                                  index: index,
-                                  onTap: () {
-                                    final projectId = (project['_id'] ?? project['id'])?.toString() ?? '';
-                                    if (projectId.isEmpty) return;
-                                    final map = project is Map<String, dynamic>
-                                        ? project
-                                        : Map<String, dynamic>.from(project as Map);
-                                    context.push('/guest/projects/$projectId', extra: map);
-                                  },
-                                );
-                              },
-                              childCount: _projects.length,
-                            ),
-                          ),
-                        ),
-                    ],
+                    ),
                   ),
-                ),
+
+                  // 🏙️ Projects feed (single column) or empty state
+                  if (_projects.isEmpty)
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: _EmptyState(
+                        isDark: isDark,
+                        muted: muted,
+                        onReturn: _goBack,
+                      ),
+                    )
+                  else
+                    SliverPadding(
+                      padding: const EdgeInsets.fromLTRB(28, 0, 28, 60),
+                      sliver: SliverList(
+                        delegate: SliverChildBuilderDelegate((context, index) {
+                          final project = _projects[index];
+                          return _ProjectCard(
+                            project: project,
+                            apiClient: apiClient,
+                            index: index,
+                            onTap: () {
+                              final projectId =
+                                  (project['_id'] ?? project['id'])
+                                      ?.toString() ??
+                                  '';
+                              if (projectId.isEmpty) return;
+                              final map = project is Map<String, dynamic>
+                                  ? project
+                                  : Map<String, dynamic>.from(project as Map);
+                              context.push(
+                                '/guest/projects/$projectId',
+                                extra: map,
+                              );
+                            },
+                          );
+                        }, childCount: _projects.length),
+                      ),
+                    ),
+                ],
+              ),
+            ),
     );
   }
 }
@@ -221,7 +236,11 @@ class _GlassHeaderDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => 76;
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
     final bg = isDark ? Colors.black : Colors.white;
     return ClipRect(
       child: BackdropFilter(
@@ -232,7 +251,9 @@ class _GlassHeaderDelegate extends SliverPersistentHeaderDelegate {
             color: bg.withValues(alpha: 0.8),
             border: Border(
               bottom: BorderSide(
-                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08),
+                color: (isDark ? Colors.white : Colors.black).withValues(
+                  alpha: 0.08,
+                ),
               ),
             ),
           ),
@@ -329,9 +350,11 @@ class _ProjectCard extends StatelessWidget {
     final status = project['status']?.toString() ?? '';
     final isCompleted = status.toLowerCase() == 'completed';
     final startingPrice = project['startingPrice']?.toString();
-    final rawHero = project['heroImage']?.toString() ?? project['image']?.toString();
+    final rawHero =
+        project['heroImage']?.toString() ?? project['image']?.toString();
     final imageUrl = apiClient.resolveUrl(rawHero);
-    final location = (project['location']?['name'] ?? project['location'] ?? '').toString();
+    final location = (project['location']?['name'] ?? project['location'] ?? '')
+        .toString();
 
     return _ScaleButton(
       onTap: onTap,
@@ -358,8 +381,10 @@ class _ProjectCard extends StatelessWidget {
               fit: BoxFit.cover,
               fadeInDuration: const Duration(milliseconds: 400),
               placeholder: (context, url) => Container(color: Colors.black12),
-              errorWidget: (context, url, error) =>
-                  Container(color: Colors.black26, child: const Icon(Icons.error, color: Colors.white24)),
+              errorWidget: (context, url, error) => Container(
+                color: Colors.black26,
+                child: const Icon(Icons.error, color: Colors.white24),
+              ),
             ),
 
             // Top dark gradient (black/0.6 → transparent)
@@ -397,11 +422,16 @@ class _ProjectCard extends StatelessWidget {
                 top: 24,
                 right: 24,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(30),
-                    border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.1),
+                    ),
                   ),
                   child: Text(
                     status.toUpperCase(),
@@ -438,7 +468,11 @@ class _ProjectCard extends StatelessWidget {
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      Icon(LucideIcons.mapPin, size: 12, color: Colors.white.withValues(alpha: 0.6)),
+                      Icon(
+                        LucideIcons.mapPin,
+                        size: 12,
+                        color: Colors.white.withValues(alpha: 0.6),
+                      ),
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
@@ -469,7 +503,7 @@ class _ProjectCard extends StatelessWidget {
                       style: GoogleFonts.montserrat(
                         fontSize: 7,
                         fontWeight: FontWeight.w900,
-                        color: Colors.white.withValues(alpha: 0.4),
+                        color: Colors.white.withValues(alpha: 0.68),
                         letterSpacing: 2,
                       ),
                     ),
@@ -522,7 +556,11 @@ class _ProjectCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: const Icon(LucideIcons.arrowRight, color: Colors.black, size: 20),
+                child: const Icon(
+                  LucideIcons.arrowRight,
+                  color: Colors.black,
+                  size: 20,
+                ),
               ),
             ),
           ],
@@ -539,7 +577,11 @@ class _EmptyState extends StatelessWidget {
   final bool isDark;
   final Color muted;
   final VoidCallback onReturn;
-  const _EmptyState({required this.isDark, required this.muted, required this.onReturn});
+  const _EmptyState({
+    required this.isDark,
+    required this.muted,
+    required this.onReturn,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -548,7 +590,11 @@ class _EmptyState extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(LucideIcons.layoutGrid, size: 48, color: muted.withValues(alpha: 0.4)),
+          Icon(
+            LucideIcons.layoutGrid,
+            size: 48,
+            color: muted.withValues(alpha: 0.4),
+          ),
           const SizedBox(height: 20),
           Text(
             'NO PROJECTS FOUND IN THIS COMMUNITY',
@@ -565,8 +611,14 @@ class _EmptyState extends StatelessWidget {
             onPressed: onReturn,
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 18),
-              side: BorderSide(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.2)),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              side: BorderSide(
+                color: (isDark ? Colors.white : Colors.black).withValues(
+                  alpha: 0.2,
+                ),
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
             ),
             child: Text(
               'RETURN',
@@ -591,7 +643,11 @@ class _ErrorState extends StatelessWidget {
   final String message;
   final bool isDark;
   final VoidCallback onBack;
-  const _ErrorState({required this.message, required this.isDark, required this.onBack});
+  const _ErrorState({
+    required this.message,
+    required this.isDark,
+    required this.onBack,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -602,7 +658,11 @@ class _ErrorState extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(LucideIcons.alertTriangle, size: 44, color: muted.withValues(alpha: 0.5)),
+            Icon(
+              LucideIcons.alertTriangle,
+              size: 44,
+              color: muted.withValues(alpha: 0.5),
+            ),
             const SizedBox(height: 18),
             Text(
               'UNABLE TO LOAD PROJECTS',
@@ -620,15 +680,28 @@ class _ErrorState extends StatelessWidget {
               textAlign: TextAlign.center,
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.montserrat(fontSize: 10, color: muted, fontWeight: FontWeight.w500),
+              style: GoogleFonts.montserrat(
+                fontSize: 10,
+                color: muted,
+                fontWeight: FontWeight.w500,
+              ),
             ),
             const SizedBox(height: 28),
             OutlinedButton(
               onPressed: onBack,
               style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 18),
-                side: BorderSide(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.2)),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 40,
+                  vertical: 18,
+                ),
+                side: BorderSide(
+                  color: (isDark ? Colors.white : Colors.black).withValues(
+                    alpha: 0.2,
+                  ),
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
               ),
               child: Text(
                 'GO BACK',

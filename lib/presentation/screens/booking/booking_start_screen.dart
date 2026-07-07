@@ -362,7 +362,7 @@ class _BookingOptionCard extends StatelessWidget {
                     style: GoogleFonts.montserrat(
                       fontSize: 9,
                       color: (isDark ? Colors.white : Colors.black).withOpacity(
-                        0.55,
+                        0.68,
                       ),
                       fontWeight: FontWeight.bold,
                       height: 1.4,

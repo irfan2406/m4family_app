@@ -206,7 +206,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                 style: GoogleFonts.montserrat(
                   fontSize: 8,
                   fontWeight: FontWeight.w900,
-                  color: scheme.onSurface.withValues(alpha: 0.5),
+                  color: scheme.onSurface.withValues(alpha: 0.68),
                   letterSpacing: 2,
                 ),
               ),
@@ -305,7 +305,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
             style: GoogleFonts.montserrat(
               fontSize: 7,
               fontWeight: FontWeight.w900,
-              color: scheme.onSurface.withValues(alpha: 0.55),
+              color: scheme.onSurface.withValues(alpha: 0.68),
               letterSpacing: 1,
             ),
           ),
@@ -357,7 +357,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                       hintStyle: GoogleFonts.montserrat(
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
-                        color: scheme.onSurface.withValues(alpha: 0.3),
+                        color: scheme.onSurface.withValues(alpha: 0.62),
                         letterSpacing: 1.5,
                       ),
                       border: InputBorder.none,
@@ -495,7 +495,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                                   fontSize: 8,
                                   fontWeight: FontWeight.w900,
                                   color: scheme.onSurface.withValues(
-                                    alpha: 0.4,
+                                    alpha: 0.62,
                                   ),
                                   letterSpacing: 1,
                                 ),
@@ -529,7 +529,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                           fontWeight: FontWeight.w900,
                           color: isCompleted
                               ? Colors.green[700]
-                              : scheme.onSurface.withValues(alpha: 0.5),
+                              : scheme.onSurface.withValues(alpha: 0.68),
                           letterSpacing: 0.5,
                         ),
                       ),
@@ -616,7 +616,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                       style: GoogleFonts.montserrat(
                         fontSize: 8,
                         fontWeight: FontWeight.w900,
-                        color: scheme.onSurface.withValues(alpha: 0.4),
+                        color: scheme.onSurface.withValues(alpha: 0.62),
                         letterSpacing: 1.5,
                       ),
                     ),
@@ -691,7 +691,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                   style: GoogleFonts.montserrat(
                     fontSize: 9,
                     fontWeight: FontWeight.w800,
-                    color: scheme.onSurface.withValues(alpha: 0.4),
+                    color: scheme.onSurface.withValues(alpha: 0.62),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -738,7 +738,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
     } else {
       bg = scheme.onSurface.withValues(alpha: 0.03);
       border = scheme.outlineVariant.withValues(alpha: 0.2);
-      fg = scheme.onSurface.withValues(alpha: 0.3);
+      fg = scheme.onSurface.withValues(alpha: 0.68);
     }
     return Container(
       height: 32,
@@ -834,7 +834,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                   style: GoogleFonts.montserrat(
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
-                    color: scheme.onSurface.withValues(alpha: 0.2),
+                    color: scheme.onSurface.withValues(alpha: 0.62),
                   ),
                 ),
               )

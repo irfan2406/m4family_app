@@ -706,7 +706,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                     textAlign: TextAlign.center,
                     style: GoogleFonts.inter(
                       color: (isDark ? Colors.white : Colors.black).withOpacity(
-                        0.5,
+                        0.68,
                       ),
                       fontSize: 9,
                       fontWeight: FontWeight.w600,
@@ -977,6 +977,28 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     );
   }
 
+  // Web parity: IconMap[section.icon] || Users (matches AboutContent.tsx).
+  IconData _sectionIcon(String? name) {
+    switch (name) {
+      case 'Users':
+        return LucideIcons.users;
+      case 'Target':
+        return LucideIcons.target;
+      case 'Trophy':
+        return LucideIcons.trophy;
+      case 'Award':
+        return LucideIcons.award;
+      case 'ShieldCheck':
+        return LucideIcons.shieldCheck;
+      case 'Compass':
+        return LucideIcons.compass;
+      case 'Sparkles':
+        return LucideIcons.sparkles;
+      default:
+        return LucideIcons.users; // web default fallback
+    }
+  }
+
   Widget _buildPhilosophyCard(Map<String, dynamic> section) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
@@ -987,17 +1009,30 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           Row(
             children: [
               Container(
-                width: 44,
-                height: 44,
+                width: 48,
+                height: 48,
                 decoration: BoxDecoration(
-                  color: colorScheme.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(14),
+                  // Web: glass white tile, rounded-2xl, subtle border + shadow.
+                  color: isDark ? Colors.white.withOpacity(0.06) : Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: colorScheme.primary.withOpacity(0.1),
+                  ),
+                  boxShadow: isDark
+                      ? null
+                      : [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.06),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                 ),
                 child: Center(
                   child: Icon(
-                    LucideIcons.target,
+                    _sectionIcon(section['icon']?.toString()),
                     color: colorScheme.primary,
-                    size: 20,
+                    size: 22,
                   ),
                 ),
               ),
@@ -1137,7 +1172,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   Text(
                     'PERSONALISE EVERY DETAIL',
                     style: GoogleFonts.inter(
-                      color: Colors.white.withOpacity(0.5),
+                      color: Colors.white.withOpacity(0.68),
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 2,

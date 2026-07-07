@@ -6,6 +6,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:ui';
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:m4_mobile/presentation/widgets/guest_sidebar_menu.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
@@ -18,18 +19,39 @@ import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
+/// Decoded base64 image bytes, keyed by the raw `data:` URI, so each image is
+/// decoded once (not on every rebuild/hero-cycle) — keeps the UI responsive.
+final Map<String, Uint8List> _base64Cache = {};
+
+/// Caches the last-loaded guest home payload so the dashboard renders
+/// instantly on repeat mounts (e.g. right after logout) instead of blocking
+/// on a fresh network fetch. It still refreshes in the background each mount.
+class GuestHomeData {
+  final List<dynamic> projects;
+  final List<dynamic> communities;
+  final List<dynamic> media;
+  const GuestHomeData({
+    required this.projects,
+    required this.communities,
+    required this.media,
+  });
+}
+
+final guestHomeCacheProvider = StateProvider<GuestHomeData?>((ref) => null);
+
 class GuestDashboardScreen extends ConsumerStatefulWidget {
   const GuestDashboardScreen({super.key});
 
   @override
-  ConsumerState<GuestDashboardScreen> createState() => _GuestDashboardScreenState();
+  ConsumerState<GuestDashboardScreen> createState() =>
+      _GuestDashboardScreenState();
 }
 
 class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
   final ScrollController _scrollController = ScrollController();
   final GlobalKey _interestFormKey = GlobalKey();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  
+
   int _heroIndex = 0;
   List<dynamic> _projects = [];
   List<dynamic> _communities = [];
@@ -51,10 +73,22 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
   @override
   void initState() {
     super.initState();
+    // Show cached content instantly if we've loaded before (e.g. after
+    // logout), then refresh in the background — no blocking spinner.
+    final cached = ref.read(guestHomeCacheProvider);
+    if (cached != null) {
+      _projects = cached.projects;
+      _communities = cached.communities;
+      _media = cached.media;
+      _loading = false;
+    }
     _fetchData();
     _heroTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
       if (mounted && _projects.isNotEmpty) {
-        setState(() => _heroIndex = (_heroIndex + 1) % (_projects.length > 5 ? 5 : _projects.length));
+        setState(
+          () => _heroIndex =
+              (_heroIndex + 1) % (_projects.length > 5 ? 5 : _projects.length),
+        );
       }
     });
   }
@@ -84,35 +118,46 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           _projects = results[0].data['data'] ?? [];
           _communities = results[1].data['data'] ?? [];
           _media = results[2].data['data'] ?? [];
-          
+
           // 💡 Add dummy content if media is empty to fill blank space
           if (_media.isEmpty) {
             _media = [
               {
                 '_id': 'dummy1',
                 'title': 'CLÉDOR LUXURY LIVING',
-                'thumbnail': 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80',
-                'description': 'Discover the epitome of refinement in our latest architectural masterpiece.',
-                'slug': 'cledor-luxury-living'
+                'thumbnail':
+                    'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80',
+                'description':
+                    'Discover the epitome of refinement in our latest architectural masterpiece.',
+                'slug': 'cledor-luxury-living',
               },
               {
                 '_id': 'dummy2',
                 'title': 'OCEAN VIEW RESIDENCES',
-                'thumbnail': 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
-                'description': 'Where horizon meets home. Experience coastal elegance like never before.',
-                'slug': 'ocean-view-residences'
+                'thumbnail':
+                    'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
+                'description':
+                    'Where horizon meets home. Experience coastal elegance like never before.',
+                'slug': 'ocean-view-residences',
               },
               {
                 '_id': 'dummy3',
                 'title': 'URBAN SANCTUARY',
-                'thumbnail': 'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80',
+                'thumbnail':
+                    'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80',
                 'description': 'A peaceful retreat in the heart of the city.',
-                'slug': 'urban-sanctuary'
-              }
+                'slug': 'urban-sanctuary',
+              },
             ];
           }
           _loading = false;
         });
+        // Cache the fresh payload so the next guest-home mount is instant.
+        ref.read(guestHomeCacheProvider.notifier).state = GuestHomeData(
+          projects: _projects,
+          communities: _communities,
+          media: _media,
+        );
       }
     } catch (e) {
       if (mounted) setState(() => _loading = false);
@@ -122,17 +167,27 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
   void _scrollToInterestForm() {
     final context = _interestFormKey.currentContext;
     if (context != null) {
-      Scrollable.ensureVisible(context, duration: const Duration(seconds: 1), curve: Curves.easeInOut);
+      Scrollable.ensureVisible(
+        context,
+        duration: const Duration(seconds: 1),
+        curve: Curves.easeInOut,
+      );
     }
   }
 
   Future<void> _submitInterest() async {
-    if (_nameController.text.isEmpty || _emailController.text.isEmpty || _phoneController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please fill all required fields (*)')));
+    if (_nameController.text.isEmpty ||
+        _emailController.text.isEmpty ||
+        _phoneController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill all required fields (*)')),
+      );
       return;
     }
     if (!_agreedToTerms) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please agree to the Privacy Policy')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please agree to the Privacy Policy')),
+      );
       return;
     }
 
@@ -147,9 +202,14 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         'interest': 'Guest Interest',
         'source': 'Mobile Guest Portal',
       });
-      
+
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Interest registered successfully!'), backgroundColor: Colors.green));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Interest registered successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
         _nameController.clear();
         _emailController.clear();
         _phoneController.clear();
@@ -157,7 +217,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         setState(() => _agreedToTerms = false);
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Submission failed: $e')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Submission failed: $e')));
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
@@ -165,7 +227,37 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return Material(color: Theme.of(context).scaffoldBackgroundColor, child: Center(child: CircularProgressIndicator(color: M4Theme.premiumBlue)));
+    if (_loading)
+      return Material(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: 34,
+                height: 34,
+                child: CircularProgressIndicator(
+                  color: M4Theme.premiumBlue,
+                  strokeWidth: 2.5,
+                ),
+              ),
+              const SizedBox(height: 18),
+              Text(
+                'M4 FAMILY',
+                style: GoogleFonts.montserrat(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 5,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.55),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
 
     return Material(
       color: Theme.of(context).scaffoldBackgroundColor,
@@ -176,7 +268,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           SliverAppBar(
             pinned: true,
             toolbarHeight: 120,
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9),
+            backgroundColor: Theme.of(
+              context,
+            ).scaffoldBackgroundColor.withOpacity(0.9),
             automaticallyImplyLeading: false,
             elevation: 0,
             titleSpacing: 0,
@@ -216,17 +310,17 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                         width: 56,
                         height: 36,
                         decoration: BoxDecoration(
-                          color: Theme.of(context).brightness == Brightness.dark 
-                              ? Colors.white 
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
                               : Colors.black,
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Icon(
-                          LucideIcons.moreHorizontal, 
-                          color: Theme.of(context).brightness == Brightness.dark 
-                              ? Colors.black 
-                              : Colors.white, 
-                          size: 24
+                          LucideIcons.moreHorizontal,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.black
+                              : Colors.white,
+                          size: 24,
                         ),
                       ),
                     ),
@@ -278,105 +372,135 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
 
                   // Hero Image Container
                   Transform.translate(
-                    offset: const Offset(0, -110), // 👈 Adjusted from -140 to fix overlap
+                    offset: const Offset(
+                      0,
+                      -110,
+                    ), // 👈 Adjusted from -140 to fix overlap
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24),
                       child: Builder(
-                    builder: (context) {
-                      final mainImage = _projects.isNotEmpty 
-                          ? (_projects[_heroIndex % _projects.length]['heroImage'] ?? _projects[_heroIndex % _projects.length]['image'] ?? 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80')
-                          : [
-                              'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80',
-                              'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
-                              'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80'
-                            ][_heroIndex % 3];
-                      
-                      return Stack(
-                        children: [
-                          AspectRatio(
-                            aspectRatio: 4 / 3,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(32),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.15),
-                                    blurRadius: 30,
-                                    offset: const Offset(0, 15),
+                        builder: (context) {
+                          final mainImage = _projects.isNotEmpty
+                              ? (_projects[_heroIndex %
+                                        _projects.length]['heroImage'] ??
+                                    _projects[_heroIndex %
+                                        _projects.length]['image'] ??
+                                    'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80')
+                              : [
+                                  'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80',
+                                  'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
+                                  'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80',
+                                ][_heroIndex % 3];
+
+                          return Stack(
+                            children: [
+                              AspectRatio(
+                                aspectRatio: 4 / 3,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(32),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.15),
+                                        blurRadius: 30,
+                                        offset: const Offset(0, 15),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(32),
-                        child: AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 800),
-                          transitionBuilder: (Widget child, Animation<double> animation) {
-                            return FadeTransition(opacity: animation, child: child);
-                          },
-                          child: _buildProjectImage(
-                            mainImage.toString(),
-                            key: ValueKey<int>(_heroIndex),
-                            width: double.infinity,
-                            height: double.infinity,
-                            errorIcon: LucideIcons.image,
-                            errorIconSize: 50,
-                          ),
-                        ),
-                              ),
-                            ),
-                          ),
-                          
-                          // Artistic Impression Badge
-                          Positioned(
-                            top: 16,
-                            right: 16,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.4),
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: Colors.white.withOpacity(0.1)),
-                              ),
-                              child: Text(
-                                'ARTISTIC IMPRESSION',
-                                style: GoogleFonts.montserrat(
-                                  color: Colors.white,
-                                  fontSize: 7,
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: 1.5,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(32),
+                                    child: AnimatedSwitcher(
+                                      duration: const Duration(
+                                        milliseconds: 800,
+                                      ),
+                                      transitionBuilder:
+                                          (
+                                            Widget child,
+                                            Animation<double> animation,
+                                          ) {
+                                            return FadeTransition(
+                                              opacity: animation,
+                                              child: child,
+                                            );
+                                          },
+                                      child: _buildProjectImage(
+                                        mainImage.toString(),
+                                        key: ValueKey<int>(_heroIndex),
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                        errorIcon: LucideIcons.image,
+                                        errorIconSize: 50,
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
 
-                          // Pagination Dots
-                          Positioned(
-                            bottom: 24,
-                            left: 0,
-                            right: 0,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: List.generate(3, (index) {
-                                final isSelected = (_heroIndex % 3) == index;
-                                return AnimatedContainer(
-                                  duration: const Duration(milliseconds: 300),
-                                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                                  width: isSelected ? 32 : 24,
-                                  height: 4,
-                                  decoration: BoxDecoration(
-                                    color: isSelected ? Colors.black : Colors.white.withValues(alpha: 0.5),
-                                    borderRadius: BorderRadius.circular(2),
+                              // Artistic Impression Badge
+                              Positioned(
+                                top: 16,
+                                right: 16,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
                                   ),
-                                );
-                              }),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.4),
+                                    borderRadius: BorderRadius.circular(4),
+                                    border: Border.all(
+                                      color: Colors.white.withOpacity(0.1),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'ARTISTIC IMPRESSION',
+                                    style: GoogleFonts.montserrat(
+                                      color: Colors.white,
+                                      fontSize: 7,
+                                      fontWeight: FontWeight.w900,
+                                      letterSpacing: 1.5,
+                                    ),
+                                  ),
+                                ),
+                              ),
+
+                              // Pagination Dots
+                              Positioned(
+                                bottom: 24,
+                                left: 0,
+                                right: 0,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: List.generate(3, (index) {
+                                    final isSelected =
+                                        (_heroIndex % 3) == index;
+                                    return AnimatedContainer(
+                                      duration: const Duration(
+                                        milliseconds: 300,
+                                      ),
+                                      margin: const EdgeInsets.symmetric(
+                                        horizontal: 4,
+                                      ),
+                                      width: isSelected ? 32 : 24,
+                                      height: 4,
+                                      decoration: BoxDecoration(
+                                        color: isSelected
+                                            ? Colors.black
+                                            : Colors.white.withValues(
+                                                alpha: 0.5,
+                                              ),
+                                        borderRadius: BorderRadius.circular(2),
+                                      ),
+                                    );
+                                  }),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
                   ),
-                ),
-              ),
                 ],
               ),
             ),
@@ -385,11 +509,21 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             padding: const EdgeInsets.only(bottom: 32),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
+                // Pull the tabs up under the hero, but keep them tappable: the
+                // internal SizedBox keeps the tab bar inside the sliver item's
+                // layout bounds so hit-testing lands correctly (a bare
+                // Transform on a sliver child shifts paint but not hit-tests).
                 Transform.translate(
                   offset: const Offset(0, -60),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: _buildTabsSection(),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const SizedBox(height: 60),
+                        _buildTabsSection(),
+                      ],
+                    ),
                   ),
                 ),
                 Padding(
@@ -417,7 +551,6 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     );
   }
 
-
   Widget _buildPhilosophy() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
@@ -441,11 +574,21 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               height: 1.8,
             ),
             children: [
-              const TextSpan(text: 'To redefine modern luxury living by crafting homes with cutting edge design, enduring quality and thoughtful amenities delivered with trust, transparency, timeliness, and a human touch that creates lasting value for every homeowner. '),
+              const TextSpan(
+                text:
+                    'To redefine modern luxury living by crafting homes with cutting edge design, enduring quality and thoughtful amenities delivered with trust, transparency, timeliness, and a human touch that creates lasting value for every homeowner. ',
+              ),
               WidgetSpan(
                 child: GestureDetector(
                   onTap: () => context.push('/about'),
-                  child: Text('Who We Are', style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.bold, decoration: TextDecoration.underline)),
+                  child: Text(
+                    'Who We Are',
+                    style: GoogleFonts.montserrat(
+                      color: isDark ? Colors.white : Colors.black,
+                      fontWeight: FontWeight.bold,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -472,28 +615,35 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                   children: ['communities', 'properties', 'media'].map((tab) {
                     final isSelected = _activeTab.toLowerCase() == tab;
                     return GestureDetector(
-                      onTap: () => setState(() => _activeTab = tab[0].toUpperCase() + tab.substring(1)),
+                      // Make the whole tab (incl. padding) tappable, not just
+                      // the exact text pixels — fixes hard-to-tap tabs.
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () => setState(
+                        () => _activeTab =
+                            tab[0].toUpperCase() + tab.substring(1),
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.only(right: 24),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              tab.toUpperCase(), 
+                              tab.toUpperCase(),
                               style: GoogleFonts.montserrat(
-                                color: isSelected 
-                                    ? (isDark ? Colors.white : Colors.black) 
-                                    : (isDark ? Colors.white : Colors.black).withValues(alpha: 0.4), 
-                                fontSize: 12, 
-                                fontWeight: FontWeight.w900, 
+                                color: isSelected
+                                    ? (isDark ? Colors.white : Colors.black)
+                                    : (isDark ? Colors.white : Colors.black)
+                                          .withValues(alpha: 0.68),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w900,
                                 letterSpacing: 2,
-                              )
+                              ),
                             ),
                             const SizedBox(height: 10),
-                            if (isSelected) 
+                            if (isSelected)
                               Container(
-                                width: 24, 
-                                height: 2, 
+                                width: 24,
+                                height: 2,
                                 decoration: BoxDecoration(
                                   color: isDark ? Colors.white : Colors.black,
                                   borderRadius: BorderRadius.circular(1),
@@ -515,12 +665,12 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
-            itemCount: _activeTab == 'Communities' 
-                ? _communities.length 
+            itemCount: _activeTab == 'Communities'
+                ? _communities.length
                 : (_activeTab == 'Media' ? _media.length : _projects.length),
             itemBuilder: (context, index) {
-              final item = _activeTab == 'Communities' 
-                  ? _communities[index] 
+              final item = _activeTab == 'Communities'
+                  ? _communities[index]
                   : (_activeTab == 'Media' ? _media[index] : _projects[index]);
               return _buildTabCard(item);
             },
@@ -533,11 +683,17 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
   Widget _buildTabCard(dynamic item) {
     final isCommunity = _activeTab.toLowerCase() == 'communities';
     final isMedia = _activeTab.toLowerCase() == 'media';
-    final rawImage = (isCommunity
-        ? (item['image'] ?? 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80')
-        : (isMedia
-            ? (item['thumbnail'] ?? item['image'] ?? 'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80')
-            : (item['heroImage'] ?? 'https://images.unsplash.com/photo-1613545325278-f24b0cae1224?auto=format&fit=crop&q=80'))).toString();
+    final rawImage =
+        (isCommunity
+                ? (item['image'] ??
+                      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80')
+                : (isMedia
+                      ? (item['thumbnail'] ??
+                            item['image'] ??
+                            'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80')
+                      : (item['heroImage'] ??
+                            'https://images.unsplash.com/photo-1613545325278-f24b0cae1224?auto=format&fit=crop&q=80')))
+            .toString();
 
     return _ScaleButton(
       onTap: () {
@@ -559,7 +715,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               color: Colors.black.withValues(alpha: 0.15),
               blurRadius: 20,
               offset: const Offset(0, 10),
-            )
+            ),
           ],
         ),
         child: ClipRRect(
@@ -569,7 +725,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             children: [
               // 🖼️ High Resolution Image
               _buildProjectImage(rawImage, errorIconSize: 40),
-              
+
               // 🌫️ High-End Gradient Overlay
               Container(
                 decoration: BoxDecoration(
@@ -588,18 +744,30 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               // 🎬 Play Icon for Media
               if (isMedia)
                 Center(
-                  child: Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.4), width: 2),
-                    ),
-                    child: const Center(
-                      child: Icon(LucideIcons.play, color: Colors.white, size: 30),
-                    ),
-                  ).animate().scale(begin: const Offset(0.8, 0.8), curve: Curves.elasticOut, duration: 800.ms),
+                  child:
+                      Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.2),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.4),
+                            width: 2,
+                          ),
+                        ),
+                        child: const Center(
+                          child: Icon(
+                            LucideIcons.play,
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                        ),
+                      ).animate().scale(
+                        begin: const Offset(0.8, 0.8),
+                        curve: Curves.elasticOut,
+                        duration: 800.ms,
+                      ),
                 ),
 
               // 🏷️ Badge (for Properties/Media)
@@ -608,17 +776,28 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                   top: 24,
                   right: 24,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.black.withValues(alpha: 0.6),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.1),
+                      ),
                     ),
                     child: Text(
-                      isMedia 
-                          ? 'MEDIA' 
-                          : (item['status']?.toString() ?? 'ONGOING').toUpperCase(), 
-                      style: GoogleFonts.montserrat(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w400, letterSpacing: 1)
+                      isMedia
+                          ? 'MEDIA'
+                          : (item['status']?.toString() ?? 'ONGOING')
+                                .toUpperCase(),
+                      style: GoogleFonts.montserrat(
+                        color: Colors.white,
+                        fontSize: 8,
+                        fontWeight: FontWeight.w400,
+                        letterSpacing: 1,
+                      ),
                     ),
                   ),
                 ),
@@ -633,25 +812,31 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      (item['title'] ?? item['name'] ?? '').toString().toUpperCase(), 
+                      (item['title'] ?? item['name'] ?? '')
+                          .toString()
+                          .toUpperCase(),
                       style: GoogleFonts.dmSerifDisplay(
-                        color: Colors.white, 
-                        fontSize: 22, 
+                        color: Colors.white,
+                        fontSize: 22,
                         fontWeight: FontWeight.w400,
                         letterSpacing: -0.5,
-                      )
+                      ),
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      (isCommunity 
-                        ? (item['overview'] ?? item['description'] ?? '') 
-                        : (item['location'] is Map ? item['location']['name'] : item['location'] ?? 'MAZGAON')).toString().toUpperCase(),
+                      (isCommunity
+                              ? (item['overview'] ?? item['description'] ?? '')
+                              : (item['location'] is Map
+                                    ? item['location']['name']
+                                    : item['location'] ?? 'MAZGAON'))
+                          .toString()
+                          .toUpperCase(),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: GoogleFonts.montserrat(
-                        color: Colors.white.withValues(alpha: 0.7), 
-                        fontSize: 10, 
-                        fontWeight: FontWeight.w800, 
+                        color: Colors.white.withValues(alpha: 0.7),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
                         letterSpacing: 0.5,
                         height: 1.4,
                       ),
@@ -661,7 +846,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          isCommunity ? 'EXPLORE COMMUNITY' : (isMedia ? 'READ ARTICLE' : 'VIEW PROPERTY'),
+                          isCommunity
+                              ? 'EXPLORE COMMUNITY'
+                              : (isMedia ? 'READ ARTICLE' : 'VIEW PROPERTY'),
                           style: GoogleFonts.montserrat(
                             color: Colors.white,
                             fontSize: 10,
@@ -680,10 +867,14 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                                 color: Colors.black.withValues(alpha: 0.2),
                                 blurRadius: 10,
                                 offset: const Offset(0, 4),
-                              )
+                              ),
                             ],
                           ),
-                          child: const Icon(LucideIcons.arrowRight, color: Colors.black, size: 18),
+                          child: const Icon(
+                            LucideIcons.arrowRight,
+                            color: Colors.black,
+                            size: 18,
+                          ),
                         ),
                       ],
                     ),
@@ -711,9 +902,11 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     double errorIconSize = 64,
   }) {
     Widget errorBox() => Container(
-          color: const Color(0xFF1A1A1A),
-          child: Center(child: Icon(errorIcon, color: Colors.white24, size: errorIconSize)),
-        );
+      color: const Color(0xFF1A1A1A),
+      child: Center(
+        child: Icon(errorIcon, color: Colors.white24, size: errorIconSize),
+      ),
+    );
 
     final src = raw.trim().isEmpty
         ? 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80'
@@ -721,14 +914,23 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
 
     if (src.startsWith('data:')) {
       try {
-        final base64Str = src.substring(src.indexOf(',') + 1).replaceAll(RegExp(r'\s'), '');
-        final bytes = base64Decode(base64Str);
+        // Decode each base64 image ONCE (cached) instead of on every rebuild —
+        // otherwise the hero's cycling stalls the UI thread and drops taps.
+        final bytes = _base64Cache.putIfAbsent(
+          src,
+          () => base64Decode(
+            src.substring(src.indexOf(',') + 1).replaceAll(RegExp(r'\s'), ''),
+          ),
+        );
         return Image.memory(
           bytes,
           key: key,
           width: width,
           height: height,
           fit: fit,
+          gaplessPlayback: true,
+          // Downsample large images to keep decode cost + memory in check.
+          cacheWidth: 1080,
           errorBuilder: (_, __, ___) => errorBox(),
         );
       } catch (_) {
@@ -736,7 +938,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       }
     }
 
-    final url = src.startsWith('http') ? src : ref.read(apiClientProvider).resolveUrl(src);
+    final url = src.startsWith('http')
+        ? src
+        : ref.read(apiClientProvider).resolveUrl(src);
     return CachedNetworkImage(
       key: key,
       imageUrl: url,
@@ -781,7 +985,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                 color: Colors.black.withOpacity(0.2),
                 blurRadius: 40,
                 offset: const Offset(0, 20),
-              )
+              ),
             ],
           ),
           child: ClipRRect(
@@ -791,10 +995,17 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                 _buildProjectImage(
                   () {
                     final hero = project['heroImages'];
-                    if (hero is List && hero.isNotEmpty && hero.first != null && hero.first.toString().trim().isNotEmpty) {
+                    if (hero is List &&
+                        hero.isNotEmpty &&
+                        hero.first != null &&
+                        hero.first.toString().trim().isNotEmpty) {
                       return hero.first.toString();
                     }
-                    return (project['heroImage'] ?? project['image'] ?? project['coverImage'] ?? '').toString();
+                    return (project['heroImage'] ??
+                            project['image'] ??
+                            project['coverImage'] ??
+                            '')
+                        .toString();
                   }(),
                   height: 520,
                   width: double.infinity,
@@ -817,41 +1028,70 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                 ),
                 // Artistic Impression Badge
                 Positioned(
-                  top: 24, right: 24,
+                  top: 24,
+                  right: 24,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.6), 
+                      color: Colors.black.withOpacity(0.6),
                       borderRadius: BorderRadius.circular(4),
                       border: Border.all(color: Colors.white.withOpacity(0.2)),
                     ),
                     child: Text(
-                      'ARTISTIC IMPRESSION', 
-                      style: GoogleFonts.montserrat(color: Colors.white, fontSize: 7, fontWeight: FontWeight.w900, letterSpacing: 1.5)
+                      'ARTISTIC IMPRESSION',
+                      style: GoogleFonts.montserrat(
+                        color: Colors.white,
+                        fontSize: 7,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1.5,
+                      ),
                     ),
                   ),
                 ),
                 // Content Overlay
                 Positioned(
-                  bottom: 40, left: 32, right: 32,
+                  bottom: 40,
+                  left: 32,
+                  right: 32,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'FEATURED PROPERTY', 
-                        style: GoogleFonts.montserrat(color: const Color(0xFFC5A358), fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2.5)
+                        'FEATURED PROPERTY',
+                        style: GoogleFonts.montserrat(
+                          color: const Color(0xFFC5A358),
+                          fontSize: 9,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 2.5,
+                        ),
                       ),
                       const SizedBox(height: 12),
                       Text(
-                        (project['title'] ?? '').toString(), 
-                        style: GoogleFonts.lora(color: Colors.white, fontSize: 44, fontWeight: FontWeight.w400, height: 1, letterSpacing: -1)
+                        (project['title'] ?? '').toString(),
+                        style: GoogleFonts.lora(
+                          color: Colors.white,
+                          fontSize: 44,
+                          fontWeight: FontWeight.w400,
+                          height: 1,
+                          letterSpacing: -1,
+                        ),
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'Live smart at Aura Heights—space-efficient 1 & 2 BHK homes with curated amenities and rare parking solutions.'.toUpperCase(),
+                        'Live smart at Aura Heights—space-efficient 1 & 2 BHK homes with curated amenities and rare parking solutions.'
+                            .toUpperCase(),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.montserrat(color: Colors.white.withOpacity(0.8), fontSize: 9, height: 1.6, fontWeight: FontWeight.w900, letterSpacing: 1.2),
+                        style: GoogleFonts.montserrat(
+                          color: Colors.white.withOpacity(0.8),
+                          fontSize: 9,
+                          height: 1.6,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.2,
+                        ),
                       ),
                     ],
                   ),
@@ -871,7 +1111,10 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             children: [
               _buildFeatureIcon(LucideIcons.building2, 'FULLY\nFURNISHED'),
               _buildFeatureIcon(LucideIcons.mapPin, 'PRIME\nLOCATION'),
-              _buildFeatureIcon(LucideIcons.smartphone, '20 MIN FROM\nSHEIKH ZAYED RD'),
+              _buildFeatureIcon(
+                LucideIcons.smartphone,
+                '20 MIN FROM\nSHEIKH ZAYED RD',
+              ),
             ],
           ),
         ),
@@ -885,35 +1128,59 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _ScaleButton(
-                onTap: () => setState(() => _featuredIndex = (_featuredIndex - 1 + _projects.length) % _projects.length),
+                onTap: () => setState(
+                  () => _featuredIndex =
+                      (_featuredIndex - 1 + _projects.length) %
+                      _projects.length,
+                ),
                 child: Container(
                   width: 56,
                   height: 56,
                   decoration: BoxDecoration(
                     color: Colors.transparent,
                     shape: BoxShape.circle,
-                    border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
+                    border: Border.all(
+                      color: (isDark ? Colors.white : Colors.black).withOpacity(
+                        0.1,
+                      ),
+                    ),
                   ),
-                  child: Icon(LucideIcons.arrowLeft, color: isDark ? Colors.white : Colors.black, size: 20),
+                  child: Icon(
+                    LucideIcons.arrowLeft,
+                    color: isDark ? Colors.white : Colors.black,
+                    size: 20,
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: _ScaleButton(
-                  onTap: () => context.push('/projects/${project['_id']}', extra: project),
+                  onTap: () => context.push(
+                    '/projects/${project['_id']}',
+                    extra: project,
+                  ),
                   child: Container(
                     height: 56,
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Colors.black, 
+                      color: isDark ? Colors.white : Colors.black,
                       borderRadius: BorderRadius.circular(14),
                       boxShadow: [
-                        BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 20, offset: const Offset(0, 10))
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
+                        ),
                       ],
                     ),
                     child: Center(
                       child: Text(
-                        'READ MORE', 
-                        style: GoogleFonts.montserrat(color: isDark ? Colors.black : Colors.white, fontWeight: FontWeight.w900, fontSize: 12, letterSpacing: 3)
+                        'READ MORE',
+                        style: GoogleFonts.montserrat(
+                          color: isDark ? Colors.black : Colors.white,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 12,
+                          letterSpacing: 3,
+                        ),
                       ),
                     ),
                   ),
@@ -921,16 +1188,27 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               ),
               const SizedBox(width: 12),
               _ScaleButton(
-                onTap: () => setState(() => _featuredIndex = (_featuredIndex + 1) % _projects.length),
+                onTap: () => setState(
+                  () =>
+                      _featuredIndex = (_featuredIndex + 1) % _projects.length,
+                ),
                 child: Container(
                   width: 56,
                   height: 56,
                   decoration: BoxDecoration(
                     color: Colors.transparent,
                     shape: BoxShape.circle,
-                    border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
+                    border: Border.all(
+                      color: (isDark ? Colors.white : Colors.black).withOpacity(
+                        0.1,
+                      ),
+                    ),
                   ),
-                  child: Icon(LucideIcons.arrowRight, color: isDark ? Colors.white : Colors.black, size: 20),
+                  child: Icon(
+                    LucideIcons.arrowRight,
+                    color: isDark ? Colors.white : Colors.black,
+                    size: 20,
+                  ),
                 ),
               ),
             ],
@@ -946,7 +1224,16 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       children: [
         Icon(icon, color: isDark ? Colors.white : Colors.black, size: 24),
         const SizedBox(height: 8),
-        Text(label, textAlign: TextAlign.center, style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 1.5)),
+        Text(
+          label,
+          textAlign: TextAlign.center,
+          style: GoogleFonts.montserrat(
+            color: isDark ? Colors.white : Colors.black,
+            fontSize: 9,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 1.5,
+          ),
+        ),
       ],
     );
   }
@@ -958,8 +1245,18 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       child: Container(
         width: 56,
         height: 56,
-        decoration: BoxDecoration(color: isDark ? Colors.black : Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05))),
-        child: Icon(icon, color: isDark ? Colors.white70 : Colors.black87, size: 20),
+        decoration: BoxDecoration(
+          color: isDark ? Colors.black : Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+          ),
+        ),
+        child: Icon(
+          icon,
+          color: isDark ? Colors.white70 : Colors.black87,
+          size: 20,
+        ),
       ),
     );
   }
@@ -985,15 +1282,19 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         // ⭐️ Unified Grid Card
         Container(
           decoration: BoxDecoration(
-            color: isDark ? Colors.white.withOpacity(0.03) : Colors.black.withOpacity(0.02),
+            color: isDark
+                ? Colors.white.withOpacity(0.03)
+                : Colors.black.withOpacity(0.02),
             borderRadius: BorderRadius.circular(32),
-            border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.08)),
+            border: Border.all(
+              color: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
+            ),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.03),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
-              )
+              ),
             ],
           ),
           child: ClipRRect(
@@ -1006,10 +1307,35 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               crossAxisSpacing: 1,
               childAspectRatio: 0.95,
               children: [
-                _buildConnectItem(LucideIcons.building2, 'EXPLORE PROJECTS', 'Browse our portfolio of properties', () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ProjectListScreen()))),
-                _buildConnectItem(LucideIcons.calendarDays, 'BOOK A VIEWING', 'Schedule a visit to our show apartment', _scrollToInterestForm),
-                _buildConnectItem(LucideIcons.image, 'MEDIA GALLERY', 'Watch films and view property renders', () => context.push('/media')),
-                _buildConnectItem(LucideIcons.user, 'REGISTER INTEREST', 'Register your interest in our properties', _scrollToInterestForm),
+                _buildConnectItem(
+                  LucideIcons.building2,
+                  'EXPLORE PROJECTS',
+                  'Browse our portfolio of properties',
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ProjectListScreen(),
+                    ),
+                  ),
+                ),
+                _buildConnectItem(
+                  LucideIcons.calendarDays,
+                  'BOOK A VIEWING',
+                  'Schedule a visit to our show apartment',
+                  _scrollToInterestForm,
+                ),
+                _buildConnectItem(
+                  LucideIcons.image,
+                  'MEDIA GALLERY',
+                  'Watch films and view property renders',
+                  () => context.push('/media'),
+                ),
+                _buildConnectItem(
+                  LucideIcons.user,
+                  'REGISTER INTEREST',
+                  'Register your interest in our properties',
+                  _scrollToInterestForm,
+                ),
               ],
             ),
           ),
@@ -1018,7 +1344,12 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     );
   }
 
-  Widget _buildConnectItem(IconData icon, String title, String desc, VoidCallback onTap) {
+  Widget _buildConnectItem(
+    IconData icon,
+    String title,
+    String desc,
+    VoidCallback onTap,
+  ) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return InkWell(
       onTap: onTap,
@@ -1033,9 +1364,17 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               decoration: BoxDecoration(
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
                 shape: BoxShape.circle,
-                border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
+                border: Border.all(
+                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    0.1,
+                  ),
+                ),
               ),
-              child: Icon(icon, color: isDark ? Colors.white : Colors.black, size: 20),
+              child: Icon(
+                icon,
+                color: isDark ? Colors.white : Colors.black,
+                size: 20,
+              ),
             ),
             const SizedBox(height: 16),
             Text(
@@ -1053,7 +1392,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               desc,
               textAlign: TextAlign.center,
               style: GoogleFonts.montserrat(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
                 fontSize: 8,
                 fontWeight: FontWeight.w500,
                 height: 1.4,
@@ -1072,14 +1411,14 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'REGISTER YOUR\nINTEREST', 
+          'REGISTER YOUR\nINTEREST',
           style: GoogleFonts.dmSerifDisplay(
-            color: isDark ? Colors.white : Colors.black, 
-            fontSize: 32, 
-            fontWeight: FontWeight.w400, 
+            color: isDark ? Colors.white : Colors.black,
+            fontSize: 32,
+            fontWeight: FontWeight.w400,
             letterSpacing: -1,
             height: 1.1,
-          )
+          ),
         ),
         const SizedBox(height: 48),
         _buildLuxuryInput('Full Name *', _nameController),
@@ -1100,7 +1439,14 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               side: BorderSide(color: isDark ? Colors.white24 : Colors.black26),
             ),
             Expanded(
-              child: Text("I've read and agree to the Privacy Policy", style: GoogleFonts.montserrat(color: isDark ? Colors.white54 : Colors.black54, fontSize: 11, letterSpacing: 1)),
+              child: Text(
+                "I've read and agree to the Privacy Policy",
+                style: GoogleFonts.montserrat(
+                  color: isDark ? Colors.white54 : Colors.black54,
+                  fontSize: 11,
+                  letterSpacing: 1,
+                ),
+              ),
             ),
           ],
         ),
@@ -1111,11 +1457,23 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           child: _ScaleButton(
             onTap: _submitting ? () {} : _submitInterest,
             child: Container(
-              decoration: BoxDecoration(color: isDark ? Colors.white : Colors.black, borderRadius: BorderRadius.circular(16)),
+              decoration: BoxDecoration(
+                color: isDark ? Colors.white : Colors.black,
+                borderRadius: BorderRadius.circular(16),
+              ),
               child: Center(
-                child: _submitting 
-                    ? CircularProgressIndicator(color: isDark ? Colors.black : Colors.white)
-                    : Text('SUBMIT INTEREST', style: GoogleFonts.montserrat(color: isDark ? Colors.black : Colors.white, fontWeight: FontWeight.w400, letterSpacing: 2)),
+                child: _submitting
+                    ? CircularProgressIndicator(
+                        color: isDark ? Colors.black : Colors.white,
+                      )
+                    : Text(
+                        'SUBMIT INTEREST',
+                        style: GoogleFonts.montserrat(
+                          color: isDark ? Colors.black : Colors.white,
+                          fontWeight: FontWeight.w400,
+                          letterSpacing: 2,
+                        ),
+                      ),
               ),
             ),
           ),
@@ -1124,16 +1482,28 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     );
   }
 
-  Widget _buildLuxuryInput(String hint, TextEditingController controller, {bool isLong = false}) {
+  Widget _buildLuxuryInput(
+    String hint,
+    TextEditingController controller, {
+    bool isLong = false,
+  }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? Colors.black : Colors.white, 
-        borderRadius: BorderRadius.circular(16), 
-        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.12)),
-        boxShadow: isDark ? [] : [
-          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20, offset: const Offset(0, 10))
-        ]
+        color: isDark ? Colors.black : Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: (isDark ? Colors.white : Colors.black).withOpacity(0.12),
+        ),
+        boxShadow: isDark
+            ? []
+            : [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
       ),
       child: TextField(
         controller: controller,
@@ -1141,8 +1511,14 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         maxLines: isLong ? 5 : 1,
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: GoogleFonts.montserrat(color: isDark ? Colors.white54 : Colors.black45, fontSize: 13),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          hintStyle: GoogleFonts.montserrat(
+            color: isDark ? Colors.white54 : Colors.black45,
+            fontSize: 13,
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 24,
+            vertical: 20,
+          ),
           border: InputBorder.none,
         ),
       ),
@@ -1159,15 +1535,22 @@ class _ScaleButton extends StatefulWidget {
   State<_ScaleButton> createState() => _ScaleButtonState();
 }
 
-class _ScaleButtonState extends State<_ScaleButton> with SingleTickerProviderStateMixin {
+class _ScaleButtonState extends State<_ScaleButton>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scale;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 100));
-    _scale = Tween<double>(begin: 1.0, end: 0.95).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 100),
+    );
+    _scale = Tween<double>(
+      begin: 1.0,
+      end: 0.95,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override

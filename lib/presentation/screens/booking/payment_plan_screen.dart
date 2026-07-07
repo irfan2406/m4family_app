@@ -106,7 +106,7 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
               'SELECT YOUR PREFERRED SCHEDULE',
               style: GoogleFonts.montserrat(
                 fontSize: 8,
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.55),
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1,
               ),
@@ -210,7 +210,7 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
                                 style: GoogleFonts.montserrat(
                                   fontSize: 8,
                                   color: (isDark ? Colors.white : Colors.black)
-                                      .withOpacity(0.55),
+                                      .withOpacity(0.68),
                                   fontWeight: FontWeight.bold,
                                   height: 1.4,
                                 ),

@@ -279,7 +279,8 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                       _close();
                       await ref.read(authProvider.notifier).logout();
                       if (!context.mounted) return;
-                      context.go('/auth/cp/login');
+                      // After logout, go to guest mode, not the login screen.
+                      context.go('/home');
                     },
                     child: Container(
                       height: 56,

@@ -212,7 +212,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2,
-                  color: Colors.white.withValues(alpha: 0.4),
+                  color: Colors.white.withValues(alpha: 0.68),
                 ),
               ),
               const SizedBox(height: 16),
@@ -336,7 +336,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                 style: GoogleFonts.montserrat(
                   fontSize: 8,
                   fontWeight: FontWeight.w900,
-                  color: scheme.onSurface.withValues(alpha: 0.5),
+                  color: scheme.onSurface.withValues(alpha: 0.68),
                   letterSpacing: 2,
                 ),
               ),
@@ -382,7 +382,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                   hintStyle: GoogleFonts.montserrat(
                     fontSize: 12,
                     fontWeight: FontWeight.w800,
-                    color: scheme.onSurface.withValues(alpha: 0.35),
+                    color: scheme.onSurface.withValues(alpha: 0.68),
                     letterSpacing: 0.3,
                   ),
                   prefixIcon: Icon(
@@ -524,7 +524,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
               style: GoogleFonts.montserrat(
                 fontSize: 9,
                 fontWeight: FontWeight.w900,
-                color: scheme.onSurface.withValues(alpha: 0.4),
+                color: scheme.onSurface.withValues(alpha: 0.68),
                 letterSpacing: 1,
               ),
             ),
@@ -622,7 +622,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                           style: GoogleFonts.montserrat(
                             fontSize: 8,
                             fontWeight: FontWeight.w800,
-                            color: scheme.onSurface.withValues(alpha: 0.5),
+                            color: scheme.onSurface.withValues(alpha: 0.68),
                             letterSpacing: 1,
                           ),
                         ),
@@ -644,7 +644,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                           style: GoogleFonts.montserrat(
                             fontSize: 8,
                             fontWeight: FontWeight.w800,
-                            color: scheme.onSurface.withValues(alpha: 0.5),
+                            color: scheme.onSurface.withValues(alpha: 0.68),
                             letterSpacing: 1,
                           ),
                         ),
@@ -692,7 +692,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
               style: GoogleFonts.montserrat(
                 fontSize: 10,
                 fontWeight: FontWeight.w700,
-                color: scheme.onSurface.withValues(alpha: 0.4),
+                color: scheme.onSurface.withValues(alpha: 0.68),
                 letterSpacing: 0.2,
                 height: 1.4,
               ),
@@ -722,7 +722,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                       style: GoogleFonts.montserrat(
                         fontSize: 9,
                         fontWeight: FontWeight.w900,
-                        color: scheme.onSurface.withValues(alpha: 0.4),
+                        color: scheme.onSurface.withValues(alpha: 0.68),
                         letterSpacing: 1,
                       ),
                     ),
@@ -735,7 +735,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                       style: GoogleFonts.montserrat(
                         fontSize: 8,
                         fontWeight: FontWeight.w900,
-                        color: scheme.onSurface.withValues(alpha: 0.5),
+                        color: scheme.onSurface.withValues(alpha: 0.68),
                         letterSpacing: 1,
                       ),
                     ),
@@ -897,7 +897,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                                           fontSize: 10,
                                           fontWeight: FontWeight.w800,
                                           color: Colors.black.withValues(
-                                            alpha: 0.4,
+                                            alpha: 0.68,
                                           ),
                                           letterSpacing: 1,
                                         ),

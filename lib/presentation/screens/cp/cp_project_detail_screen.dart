@@ -1313,7 +1313,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     final isLight = scheme.brightness == Brightness.light;
     final accent = isLight ? Colors.black : scheme.primary;
     final titleColor = scheme.onSurface.withValues(alpha: isLight ? 0.92 : 1);
-    final subColor = scheme.onSurface.withValues(alpha: isLight ? 0.55 : 0.6);
+    final subColor = scheme.onSurface.withValues(alpha: isLight ? 0.68 : 0.6);
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -2682,7 +2682,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         fontSize: 10,
         fontWeight: FontWeight.w900,
         letterSpacing: 1.8,
-        color: scheme.onSurface.withValues(alpha: isLight ? 0.55 : 0.45),
+        color: scheme.onSurface.withValues(alpha: isLight ? 0.68 : 0.68),
       ),
       filled: true,
       fillColor: scheme.surfaceContainerHighest.withValues(

@@ -351,7 +351,7 @@ class _WheelDateTimePickerState extends State<WheelDateTimePicker> {
                     fontSize: 16,
                     fontWeight: FontWeight.w800,
                     color: (isDark ? Colors.white : Colors.black).withValues(
-                      alpha: 0.3,
+                      alpha: 0.68,
                     ),
                   ),
                 ),

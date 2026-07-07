@@ -235,7 +235,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
           const SizedBox(height: 4),
           Text(
             readTime.isEmpty ? 'READ' : readTime.toUpperCase(),
-            style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 1.4, color: scheme.onSurface.withValues(alpha: 0.55)),
+            style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 1.4, color: scheme.onSurface.withValues(alpha: 0.68)),
           ),
         ],
       ),

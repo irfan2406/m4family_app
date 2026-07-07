@@ -386,7 +386,8 @@ class _CpProfileSettingsScreenState
       if (ok) {
         await ref.read(authProvider.notifier).logout();
         if (!mounted) return;
-        context.go('/auth/cp/login');
+        // After logout, go to guest mode, not the login page.
+        context.go('/home');
       } else {
         final msg = res.data is Map
             ? (res.data as Map)['message']?.toString()
@@ -441,7 +442,8 @@ class _CpProfileSettingsScreenState
       if (ok) {
         await ref.read(authProvider.notifier).logout();
         if (!mounted) return;
-        context.go('/auth/cp/login');
+        // After logout, go to guest mode, not the login page.
+        context.go('/home');
       } else {
         final msg = res.data is Map
             ? (res.data as Map)['message']?.toString()
@@ -676,7 +678,7 @@ class _CpProfileSettingsScreenState
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 3,
-                      color: scheme.onSurface.withValues(alpha: 0.4),
+                      color: scheme.onSurface.withValues(alpha: 0.68),
                     ),
                   ),
                 ],
@@ -990,7 +992,7 @@ class _CpProfileSettingsScreenState
                   style: GoogleFonts.montserrat(
                     fontSize: 8,
                     fontWeight: FontWeight.w600,
-                    color: scheme.onSurface.withValues(alpha: 0.38),
+                    color: scheme.onSurface.withValues(alpha: 0.68),
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -1221,7 +1223,7 @@ class _CpProfileSettingsScreenState
                             fontSize: 14,
                             color: scheme.onSurface.withValues(
                               alpha: _dobIso == null || _dobIso!.isEmpty
-                                  ? 0.5
+                                  ? 0.68
                                   : 0.92,
                             ),
                           ),
@@ -1391,7 +1393,7 @@ class _CpProfileSettingsScreenState
                 fontSize: 8,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 2.5,
-                color: scheme.onSurface.withValues(alpha: 0.4),
+                color: scheme.onSurface.withValues(alpha: 0.68),
               ),
             ),
     );

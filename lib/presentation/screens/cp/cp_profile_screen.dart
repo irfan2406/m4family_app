@@ -306,7 +306,8 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                         if (go == true && context.mounted) {
                           await ref.read(authProvider.notifier).logout();
                           if (!context.mounted) return;
-                          context.go('/auth/cp/login');
+                          // After logout, go to guest mode, not the login page.
+                          context.go('/home');
                         }
                       },
                       borderRadius: BorderRadius.circular(28),

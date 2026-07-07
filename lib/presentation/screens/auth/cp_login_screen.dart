@@ -373,7 +373,7 @@ class _Field extends StatelessWidget {
           ),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.35)),
+            hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.68)),
             prefixIcon: Icon(icon, color: Colors.white54),
             filled: true,
             fillColor: Colors.black.withValues(alpha: 0.4),

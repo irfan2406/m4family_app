@@ -154,7 +154,7 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                             fontWeight: FontWeight.w900,
                             color: Theme.of(
                               context,
-                            ).colorScheme.onSurface.withValues(alpha: 0.4),
+                            ).colorScheme.onSurface.withValues(alpha: 0.68),
                             letterSpacing: 5.5,
                           ),
                         ),
@@ -428,17 +428,17 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                                       child: Text(
                                         'BACK',
                                         style: GoogleFonts.montserrat(
-                                          fontSize: 9,
+                                          fontSize: 10,
                                           fontWeight: FontWeight.w900,
                                           color: activeStep > 0
                                               ? Theme.of(context)
                                                     .colorScheme
                                                     .onSurface
-                                                    .withValues(alpha: 0.5)
+                                                    .withValues(alpha: 0.75)
                                               : Theme.of(context)
                                                     .colorScheme
                                                     .onSurface
-                                                    .withValues(alpha: 0.2),
+                                                    .withValues(alpha: 0.68),
                                           letterSpacing: 2,
                                         ),
                                       ),
@@ -667,7 +667,7 @@ class _StepIconIndicator extends ConsumerWidget {
                 fontSize: 9,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 0.8,
-                color: isFilled ? foreground : foreground.withOpacity(0.45),
+                color: isFilled ? foreground : foreground.withOpacity(0.68),
               ),
             ),
           ],
@@ -705,7 +705,7 @@ class _ProjectSelectionStep extends ConsumerWidget {
           'Select your project and unit\nconfiguration',
           style: GoogleFonts.montserrat(
             fontSize: 12,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.68),
             height: 1.5,
           ),
         ),
@@ -741,7 +741,7 @@ class _ProjectSelectionStep extends ConsumerWidget {
                         'Your project and unit configuration are locked for this booking.',
                         style: GoogleFonts.montserrat(
                           fontSize: 11,
-                          color: scheme.onSurface.withOpacity(0.5),
+                          color: scheme.onSurface.withOpacity(0.68),
                         ),
                       ),
                     ],
@@ -1016,18 +1016,28 @@ class _UnitDetailFieldState extends ConsumerState<_UnitDetailField> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 4, bottom: 8),
-          child: Text(
-            widget.label,
-            style: GoogleFonts.montserrat(
-              fontSize: 9,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1.2,
-              color: scheme.onSurface.withValues(alpha: 0.4),
+        // Fixed-height single-line label so all three inputs align on one row.
+        SizedBox(
+          height: 16,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 4),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Text(
+                widget.label,
+                maxLines: 1,
+                style: GoogleFonts.montserrat(
+                  fontSize: 9,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.2,
+                  color: scheme.onSurface.withValues(alpha: 0.65),
+                ),
+              ),
             ),
           ),
         ),
+        const SizedBox(height: 8),
         Container(
           height: 44,
           decoration: BoxDecoration(
@@ -1054,7 +1064,7 @@ class _UnitDetailFieldState extends ConsumerState<_UnitDetailField> {
               hintStyle: GoogleFonts.montserrat(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
-                color: scheme.onSurface.withValues(alpha: 0.35),
+                color: scheme.onSurface.withValues(alpha: 0.68),
               ),
             ),
           ),
@@ -1084,35 +1094,36 @@ class _SpaceSelectionStep extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selections = ref.watch(customViewsSelectionsProvider);
-    final config = ref.watch(customViewsConfigProvider).valueOrNull;
     final scheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    // Web parity: config spaces (single-select) or fallback 4 (multi-select).
-    final configSpaces = configSpaceNames(config);
-    final isConfigMode = configSpaces.isNotEmpty;
-    final spaces = isConfigMode
-        ? configSpaces
-        : const [
-            'Master Bedroom',
-            'Living Hall',
-            'Kitchen Space',
-            'Guest Suite',
-          ];
-    final activeSpace =
-        ref.watch(customViewsActiveSpaceProvider) ??
-        (isConfigMode ? configSpaces.first : null);
+    // Web reference: always present the 4 standard rooms as a 2x2 grid,
+    // multi-select with a checkmark badge on each selected card.
+    const spaces = [
+      'Master Bedroom',
+      'Living Hall',
+      'Kitchen Space',
+      'Guest Suite',
+    ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'SELECT\nSPACE',
-          style: GoogleFonts.montserrat(
-            fontSize: 28,
-            fontWeight: FontWeight.w300,
-            color: scheme.onSurface,
-            height: 1.1,
+        SizedBox(
+          width: double.infinity,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'SELECT SPACE',
+              maxLines: 1,
+              style: GoogleFonts.montserrat(
+                fontSize: 28,
+                fontWeight: FontWeight.w300,
+                color: scheme.onSurface,
+                height: 1.1,
+              ),
+            ),
           ),
         ),
         const SizedBox(height: 12),
@@ -1127,94 +1138,106 @@ class _SpaceSelectionStep extends ConsumerWidget {
         GridView.count(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
+          clipBehavior: Clip.none,
           crossAxisCount: 2,
           mainAxisSpacing: 16,
           crossAxisSpacing: 16,
-          childAspectRatio: 1.4,
+          childAspectRatio: 1.6,
           children: spaces.map((space) {
             final spacesList = selections['spaces'] is List
                 ? List<String>.from(selections['spaces'])
                 : <String>[];
-            final isSelected = isConfigMode
-                ? activeSpace == space
-                : spacesList.contains(space);
+            final isSelected = spacesList.contains(space);
             return GestureDetector(
               onTap: () {
-                if (isConfigMode) {
-                  // Config mode: single-select the active space.
-                  ref.read(customViewsActiveSpaceProvider.notifier).state =
-                      space;
+                // Multi-select toggle (web reference behaviour).
+                final next = List<String>.from(spacesList);
+                if (next.contains(space)) {
+                  next.remove(space);
                 } else {
-                  // Fallback: multi-select toggle.
-                  final next = List<String>.from(spacesList);
-                  if (next.contains(space)) {
-                    next.remove(space);
-                  } else {
-                    next.add(space);
-                  }
-                  final newSelections = Map<String, dynamic>.from(selections);
-                  newSelections['spaces'] = next;
-                  newSelections['space'] = next.join(', ');
-                  ref.read(customViewsSelectionsProvider.notifier).state =
-                      newSelections;
+                  next.add(space);
+                }
+                final newSelections = Map<String, dynamic>.from(selections);
+                newSelections['spaces'] = next;
+                newSelections['space'] = next.join(', ');
+                ref.read(customViewsSelectionsProvider.notifier).state =
+                    newSelections;
+                // Keep an active space pointer for later steps.
+                if (next.isNotEmpty) {
+                  ref.read(customViewsActiveSpaceProvider.notifier).state =
+                      next.first;
                 }
               },
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: isSelected ? scheme.onSurface : Colors.transparent,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: isSelected
-                        ? scheme.onSurface
-                        : (isDark ? Colors.white : Colors.black).withOpacity(
-                            0.1,
-                          ),
-                  ),
-                  boxShadow: isSelected
-                      ? [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.15),
-                            blurRadius: 16,
-                            offset: const Offset(0, 6),
-                          ),
-                        ]
-                      : null,
-                ),
-                child: Stack(
-                  children: [
-                    Center(
-                      child: Text(
-                        space.toUpperCase(),
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.montserrat(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 1,
-                          color: isSelected ? scheme.surface : scheme.onSurface,
-                        ),
-                      ),
+              child: AnimatedScale(
+                scale: isSelected ? 1.05 : 1.0,
+                duration: const Duration(milliseconds: 200),
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: isSelected ? scheme.onSurface : Colors.transparent,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: isSelected
+                          ? scheme.onSurface
+                          : (isDark ? Colors.white : Colors.black).withOpacity(
+                              0.1,
+                            ),
                     ),
-                    // Web parity: checkmark badge only in fallback multi-select.
-                    if (isSelected && !isConfigMode)
-                      Positioned(
-                        top: 0,
-                        right: 0,
-                        child: Container(
-                          width: 20,
-                          height: 20,
-                          decoration: BoxDecoration(
-                            color: scheme.surface,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            LucideIcons.check,
-                            size: 12,
-                            color: scheme.onSurface,
+                    boxShadow: isSelected
+                        ? [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.18),
+                              blurRadius: 20,
+                              offset: const Offset(0, 8),
+                            ),
+                          ]
+                        : null,
+                  ),
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Center(
+                        child: Text(
+                          space.toUpperCase(),
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.montserrat(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1.2,
+                            height: 1.15,
+                            color: isSelected
+                                ? scheme.surface
+                                : scheme.onSurface,
                           ),
                         ),
                       ),
-                  ],
+                      // Web parity: checkmark badge on the selected card.
+                      if (isSelected)
+                        Positioned(
+                          top: -4,
+                          right: -4,
+                          child: Container(
+                            width: 16,
+                            height: 16,
+                            decoration: BoxDecoration(
+                              color: scheme.surface,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  blurRadius: 4,
+                                ),
+                              ],
+                            ),
+                            child: Icon(
+                              LucideIcons.check,
+                              size: 10,
+                              color: scheme.onSurface,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ),
             );
@@ -1271,7 +1294,8 @@ class _MaterialsSelectionStep extends ConsumerWidget {
           result.add({'_id': catId, 'title': catTitle, 'options': options});
         }
       }
-      return result;
+      if (result.isNotEmpty) return result;
+      // No config match for this room → fall back to generic categories.
     }
     return genericCats
         .map<Map<String, dynamic>>(
@@ -1293,14 +1317,11 @@ class _MaterialsSelectionStep extends ConsumerWidget {
     final config = ref.watch(customViewsConfigProvider).valueOrNull;
     final genericCats = optionsAsync.asData?.value ?? [];
 
-    // Web parity: config spaces override the generic hardcoded ones.
-    final configSpaces = configSpaceNames(config);
-    final isConfigMode = configSpaces.isNotEmpty;
-    final spacesList = isConfigMode
-        ? configSpaces
-        : (selections['spaces'] is List
-              ? List<String>.from(selections['spaces'])
-              : <String>[]);
+    // Room tabs mirror the rooms selected on the SELECT SPACE step.
+    final isConfigMode = configSpaceNames(config).isNotEmpty;
+    final spacesList = selections['spaces'] is List
+        ? List<String>.from(selections['spaces'])
+        : <String>[];
     final activeSpace =
         ref.watch(customViewsActiveSpaceProvider) ??
         (spacesList.isNotEmpty ? spacesList.first : 'Full Unit');
@@ -1445,7 +1466,7 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                       'No materials available for this space.',
                       style: GoogleFonts.montserrat(
                         fontSize: 12,
-                        color: scheme.onSurface.withOpacity(0.5),
+                        color: scheme.onSurface.withOpacity(0.68),
                       ),
                     ),
                   ),
@@ -1500,7 +1521,7 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                                     fontSize: 8,
                                     fontWeight: FontWeight.w600,
                                     letterSpacing: 1.2,
-                                    color: scheme.onSurface.withOpacity(0.4),
+                                    color: scheme.onSurface.withOpacity(0.68),
                                   ),
                                 ),
                               ],
@@ -1667,7 +1688,7 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                                             fontWeight: FontWeight.w700,
                                             letterSpacing: 1,
                                             color: scheme.onSurface.withOpacity(
-                                              0.5,
+                                              0.68,
                                             ),
                                           ),
                                         ),
@@ -1678,7 +1699,7 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                                             fontWeight: FontWeight.w700,
                                             letterSpacing: 1,
                                             color: scheme.onSurface.withOpacity(
-                                              0.35,
+                                              0.68,
                                             ),
                                           ),
                                         ),
@@ -1707,7 +1728,7 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 3,
-                        color: scheme.onSurface.withOpacity(0.5),
+                        color: scheme.onSurface.withOpacity(0.68),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -1716,7 +1737,7 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                       style: GoogleFonts.montserrat(
                         fontSize: 11,
                         fontStyle: FontStyle.italic,
-                        color: scheme.onSurface.withOpacity(0.4),
+                        color: scheme.onSurface.withOpacity(0.68),
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -2339,7 +2360,7 @@ class _ConsultationSection extends ConsumerWidget {
         decoration: InputDecoration(
           labelText: label,
           labelStyle: GoogleFonts.montserrat(
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.38),
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.68),
             fontSize: 11,
           ),
           prefixIcon: Icon(
@@ -2374,7 +2395,7 @@ class _ConsultationSection extends ConsumerWidget {
               fontSize: 10,
               fontWeight: FontWeight.w900,
               letterSpacing: 4,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.45),
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.68),
             ),
           ),
           const SizedBox(height: 16),

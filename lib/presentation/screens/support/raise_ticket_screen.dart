@@ -261,7 +261,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                             style: GoogleFonts.montserrat(
                               fontSize: 11,
                               fontWeight: FontWeight.w800,
-                              color: onSurface.withOpacity(0.4),
+                              color: onSurface.withOpacity(0.68),
                               letterSpacing: 1,
                             ),
                           ),
@@ -344,7 +344,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                                 style: GoogleFonts.montserrat(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w800,
-                                  color: onSurface.withOpacity(0.5),
+                                  color: onSurface.withOpacity(0.68),
                                   letterSpacing: 1,
                                 ),
                               ),
@@ -409,7 +409,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
       style: GoogleFonts.montserrat(
         fontSize: 9,
         fontWeight: FontWeight.w800,
-        color: onSurface.withOpacity(0.5),
+        color: onSurface.withOpacity(0.68),
         letterSpacing: 1.5,
       ),
     ),
@@ -435,7 +435,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
         hintStyle: GoogleFonts.montserrat(
           fontSize: 12,
           fontWeight: FontWeight.w700,
-          color: onSurface.withOpacity(0.4),
+          color: onSurface.withOpacity(0.68),
         ),
         border: InputBorder.none,
         isDense: true,

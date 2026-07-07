@@ -197,7 +197,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
         decoration: InputDecoration(
           hintText: 'SEARCH FOR HELP...',
           hintStyle: GoogleFonts.montserrat(
-            color: scheme.onSurface.withValues(alpha: 0.4),
+            color: scheme.onSurface.withValues(alpha: 0.68),
             fontSize: 12,
             fontWeight: FontWeight.w800,
             letterSpacing: 0.5,

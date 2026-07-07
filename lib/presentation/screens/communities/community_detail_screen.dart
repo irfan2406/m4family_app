@@ -21,7 +21,8 @@ class CommunityDetailScreen extends ConsumerStatefulWidget {
   const CommunityDetailScreen({super.key, required this.community});
 
   @override
-  ConsumerState<CommunityDetailScreen> createState() => _CommunityDetailScreenState();
+  ConsumerState<CommunityDetailScreen> createState() =>
+      _CommunityDetailScreenState();
 }
 
 class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
@@ -66,7 +67,9 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
       final apiClient = ref.read(apiClientProvider);
       final communityId = widget.community['_id'] ?? widget.community['id'];
       if (communityId != null) {
-        final res = await apiClient.getProjectsByCommunity(communityId.toString());
+        final res = await apiClient.getProjectsByCommunity(
+          communityId.toString(),
+        );
         if (res.data['status'] == true) {
           setState(() {
             _projects = res.data['data'] as List;
@@ -84,7 +87,9 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
   }
 
   Future<void> _handleLeadSubmission() async {
-    if (_nameController.text.isEmpty || _emailController.text.isEmpty || _phoneController.text.isEmpty) {
+    if (_nameController.text.isEmpty ||
+        _emailController.text.isEmpty ||
+        _phoneController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill all required fields')),
       );
@@ -100,15 +105,21 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
         'phone': _phoneController.text,
         'location': _locationController.text,
         'interest': 'Community Interest',
-        'message': 'Expressing interest in community: ${widget.community['title']}'
+        'message':
+            'Expressing interest in community: ${widget.community['title']}'
             '${_selectedProject != 'Any' ? ' | Interested Project: $_selectedProject' : ''}',
-        'projectName': _selectedProject != 'Any' ? _selectedProject : widget.community['title'],
+        'projectName': _selectedProject != 'Any'
+            ? _selectedProject
+            : widget.community['title'],
         'source': 'Mobile Guest Portal',
       });
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Interest registered successfully!'), backgroundColor: Colors.green),
+          const SnackBar(
+            content: Text('Interest registered successfully!'),
+            backgroundColor: Colors.green,
+          ),
         );
         _nameController.clear();
         _emailController.clear();
@@ -118,9 +129,9 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Submission failed: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Submission failed: $e')));
       }
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
@@ -135,16 +146,20 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
     final isCp = role == 'cp';
     final cpIdx = ref.watch(cpNavigationIndexProvider);
     final apiClient = ref.watch(apiClientProvider);
-    final heroImageUrl = apiClient.resolveUrl(widget.community['image'] ?? widget.community['heroImage']);
+    final heroImageUrl = apiClient.resolveUrl(
+      widget.community['image'] ?? widget.community['heroImage'],
+    );
     final benefitsRaw = widget.community['benefits'] as List? ?? [];
-    final benefits = benefitsRaw.isNotEmpty ? benefitsRaw : [
-      {'icon': 'LayoutGrid', 'label': 'COMMUNITY CENTRIC DESIGN'},
-      {'icon': 'MapPin', 'label': 'PRIME LOCATION'},
-      {'icon': 'Trees', 'label': 'GREEN SPACES AND PARKS'},
-      {'icon': 'Shield', 'label': 'SAFETY AND SECURITY'},
-      {'icon': 'ShoppingBag', 'label': 'RETAIL OUTLETS'},
-      {'icon': 'Bus', 'label': 'TRANSPORTATION ACCESS'},
-    ];
+    final benefits = benefitsRaw.isNotEmpty
+        ? benefitsRaw
+        : [
+            {'icon': 'LayoutGrid', 'label': 'COMMUNITY CENTRIC DESIGN'},
+            {'icon': 'MapPin', 'label': 'PRIME LOCATION'},
+            {'icon': 'Trees', 'label': 'GREEN SPACES AND PARKS'},
+            {'icon': 'Shield', 'label': 'SAFETY AND SECURITY'},
+            {'icon': 'ShoppingBag', 'label': 'RETAIL OUTLETS'},
+            {'icon': 'Bus', 'label': 'TRANSPORTATION ACCESS'},
+          ];
 
     return Scaffold(
       backgroundColor: isDark ? Colors.black : Colors.white,
@@ -161,562 +176,699 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
       body: CustomScrollView(
         controller: _scrollController,
         slivers: [
-              // 🔝 Sticky Header
-              SliverToBoxAdapter(
-                child: Container(
-                  padding: const EdgeInsets.fromLTRB(25, 60, 15, 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                       GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: Container(
-                          width: 45,
-                          height: 45,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
-                            border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
-                          ),
-                          child: Icon(LucideIcons.chevronLeft, color: isDark ? Colors.white : Colors.black, size: 20),
+          // 🔝 Sticky Header
+          SliverToBoxAdapter(
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(25, 60, 15, 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      width: 45,
+                      height: 45,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: (isDark ? Colors.white : Colors.black)
+                            .withOpacity(0.05),
+                        border: Border.all(
+                          color: (isDark ? Colors.white : Colors.black)
+                              .withOpacity(0.1),
                         ),
                       ),
-                      Row(
+                      child: Icon(
+                        LucideIcons.chevronLeft,
+                        color: isDark ? Colors.white : Colors.black,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                'M4 FAMILY',
-                                style: GoogleFonts.inter(
-                                  color: isDark ? Colors.white : Colors.black,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: -1,
-                                ),
-                              ),
-                              Text(
-                                'DEVELOPMENTS',
-                                style: GoogleFonts.inter(
-                                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
-                                  fontSize: 8,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 3,
-                                ),
-                              ),
-                            ],
+                          Text(
+                            'M4 FAMILY',
+                            style: GoogleFonts.inter(
+                              color: isDark ? Colors.white : Colors.black,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: -1,
+                            ),
                           ),
-                          const SizedBox(width: 8),
-                          Builder(
-                            builder: (context) => IconButton(
-                              icon: Icon(LucideIcons.moreHorizontal, color: isDark ? Colors.white : Colors.black, size: 28),
-                              onPressed: () => Scaffold.of(context).openDrawer(),
+                          Text(
+                            'DEVELOPMENTS',
+                            style: GoogleFonts.inter(
+                              color: (isDark ? Colors.white : Colors.black)
+                                  .withOpacity(0.68),
+                              fontSize: 8,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 3,
                             ),
                           ),
                         ],
                       ),
+                      const SizedBox(width: 8),
+                      Builder(
+                        builder: (context) => IconButton(
+                          icon: Icon(
+                            LucideIcons.moreHorizontal,
+                            color: isDark ? Colors.white : Colors.black,
+                            size: 28,
+                          ),
+                          onPressed: () => Scaffold.of(context).openDrawer(),
+                        ),
+                      ),
                     ],
                   ),
-                ),
+                ],
               ),
+            ),
+          ),
 
-              // 🏗️ Hero Section
-              SliverToBoxAdapter(
-                child: Container(
-                  height: 400,
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(50),
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        CachedNetworkImage(
-                          imageUrl: heroImageUrl,
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => Container(color: Colors.black12),
-                          errorWidget: (context, url, error) => Container(
-                            color: const Color(0xFF1A1A1A),
-                            child: const Center(child: Icon(LucideIcons.building2, color: Colors.white24, size: 40)),
+          // 🏗️ Hero Section
+          SliverToBoxAdapter(
+            child: Container(
+              height: 400,
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(50),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    CachedNetworkImage(
+                      imageUrl: heroImageUrl,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) =>
+                          Container(color: Colors.black12),
+                      errorWidget: (context, url, error) => Container(
+                        color: const Color(0xFF1A1A1A),
+                        child: const Center(
+                          child: Icon(
+                            LucideIcons.building2,
+                            color: Colors.white24,
+                            size: 40,
                           ),
                         ),
-                        Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Colors.transparent,
-                                Colors.black.withOpacity(0.8),
-                              ],
+                      ),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black.withOpacity(0.8),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 40,
+                      left: 30,
+                      right: 30,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.community['title']?.toString() ?? '',
+                            style: GoogleFonts.lora(
+                              fontSize: 38,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.white,
+                              height: 1,
+                            ),
+                          ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.2),
+                          const SizedBox(height: 12),
+                          Text(
+                            (widget.community['subtitle'] ?? '')
+                                .toString()
+                                .toUpperCase(),
+                            style: GoogleFonts.inter(
+                              color: const Color(0xFFC6A355),
+                              fontSize: 10,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 3,
+                            ),
+                          ).animate().fadeIn(delay: 400.ms),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          // 🏗️ Main Content
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(25),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Location Card
+                  GestureDetector(
+                    onTap: () async {
+                      final query = Uri.encodeComponent(
+                        widget.community['location'] ?? 'Dubai',
+                      );
+                      final url = Uri.parse(
+                        'https://www.google.com/maps/search/?api=1&query=$query',
+                      );
+                      if (await canLaunchUrl(url)) {
+                        await launchUrl(url);
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: (isDark ? Colors.white : Colors.black)
+                            .withOpacity(0.05),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: (isDark ? Colors.white : Colors.black)
+                              .withOpacity(0.1),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: isDark ? Colors.white : Colors.black,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              LucideIcons.mapPin,
+                              color: isDark ? Colors.black : Colors.white,
+                              size: 18,
                             ),
                           ),
-                        ),
-                        Positioned(
-                          bottom: 40,
-                          left: 30,
-                          right: 30,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                widget.community['title']?.toString() ?? '',
-                                style: GoogleFonts.lora(
-                                  fontSize: 38,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.white,
-                                  height: 1,
-                                ),
-                              ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.2),
-                              const SizedBox(height: 12),
-                              Text(
-                                (widget.community['subtitle'] ?? '').toString().toUpperCase(),
-                                style: GoogleFonts.inter(
-                                  color: const Color(0xFFC6A355),
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: 3,
-                                ),
-                              ).animate().fadeIn(delay: 400.ms),
-                            ],
+                          const SizedBox(width: 15),
+                          Text(
+                            (widget.community['location'] ?? '')
+                                .toString()
+                                .toUpperCase(),
+                            style: GoogleFonts.inter(
+                              color: isDark ? Colors.white : Colors.black,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ),
 
-              // 🏗️ Main Content
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.all(25),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Location Card
-                      GestureDetector(
-                        onTap: () async {
-                          final query = Uri.encodeComponent(widget.community['location'] ?? 'Dubai');
-                          final url = Uri.parse('https://www.google.com/maps/search/?api=1&query=$query');
-                          if (await canLaunchUrl(url)) {
-                            await launchUrl(url);
-                          }
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                  color: isDark ? Colors.white : Colors.black,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(LucideIcons.mapPin, color: isDark ? Colors.black : Colors.white, size: 18),
-                              ),
-                              const SizedBox(width: 15),
-                              Text(
-                                (widget.community['location'] ?? '').toString().toUpperCase(),
-                                style: GoogleFonts.inter(
-                                  color: isDark ? Colors.white : Colors.black,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                  const SizedBox(height: 50),
+
+                  // About Section
+                  _SectionHeader(
+                    title: widget.community['title']?.toString() ?? 'Community',
+                    subtitle: 'About the community',
+                  ),
+                  const SizedBox(height: 25),
+                  Text(
+                    widget.community['overview'] ??
+                        widget.community['description'] ??
+                        '',
+                    style: GoogleFonts.lora(
+                      color: (isDark ? Colors.white : Colors.black).withOpacity(
+                        0.6,
                       ),
+                      fontSize: 14,
+                      height: 1.8,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ).animate().fadeIn(delay: 200.ms),
 
-                      const SizedBox(height: 50),
+                  const SizedBox(height: 50),
 
-                      // About Section
-                      _SectionHeader(
-                        title: widget.community['title']?.toString() ?? 'Community',
-                        subtitle: 'About the community',
-                      ),
-                      const SizedBox(height: 25),
-                      Text(
-                        widget.community['overview'] ?? widget.community['description'] ?? '',
-                        style: GoogleFonts.lora(
-                          color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
-                          fontSize: 14,
-                          height: 1.8,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ).animate().fadeIn(delay: 200.ms),
-
-                      const SizedBox(height: 50),
-
-                      // Benefits
-                      _SectionHeader(
-                          title: 'Benefits', 
-                          subtitle: '${widget.community['title']?.toString() ?? 'Community'} Lifestyle Advantages'
-                      ),
-                      const SizedBox(height: 30),
-                      GridView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  // Benefits
+                  _SectionHeader(
+                    title: 'Benefits',
+                    subtitle:
+                        '${widget.community['title']?.toString() ?? 'Community'} Lifestyle Advantages',
+                  ),
+                  const SizedBox(height: 30),
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           crossAxisSpacing: 15,
                           mainAxisSpacing: 15,
                           childAspectRatio: 1.0,
                         ),
-                        itemCount: benefits.length,
-                        itemBuilder: (context, index) {
-                          final benefit = benefits[index];
-                          return Container(
-                            decoration: BoxDecoration(
-                              color: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
-                              borderRadius: BorderRadius.circular(35),
-                              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.06)),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width: 50,
-                                  height: 50,
-                                  decoration: BoxDecoration(
-                                    color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Icon(_getIcon(benefit['icon']), color: isDark ? Colors.white : Colors.black, size: 24),
-                                ),
-                                const SizedBox(height: 15),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                                  child: Text(
-                                    benefit['label'].toString().toUpperCase(),
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.inter(
-                                      color: (isDark ? Colors.white : Colors.black).withOpacity(0.7),
-                                      fontSize: 8,
-                                      fontWeight: FontWeight.w900,
-                                      letterSpacing: 0.5,
-                                      height: 1.4,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-
-                      const SizedBox(height: 60),
-
-                      // Projects Section
-                      if (_projects.isNotEmpty) ...[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.end,
+                    itemCount: benefits.length,
+                    itemBuilder: (context, index) {
+                      final benefit = benefits[index];
+                      return Container(
+                        decoration: BoxDecoration(
+                          color: (isDark ? Colors.white : Colors.black)
+                              .withOpacity(0.04),
+                          borderRadius: BorderRadius.circular(35),
+                          border: Border.all(
+                            color: (isDark ? Colors.white : Colors.black)
+                                .withOpacity(0.06),
+                          ),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            _SectionHeader(
-                              title: 'Projects',
-                              subtitle: 'Explore ${widget.community['title']?.toString() ?? 'Community'} Masterpieces',
+                            Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: (isDark ? Colors.white : Colors.black)
+                                    .withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Icon(
+                                _getIcon(benefit['icon']),
+                                color: isDark ? Colors.white : Colors.black,
+                                size: 24,
+                              ),
                             ),
-                            TextButton(
-                              onPressed: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => CommunityProjectsScreen(
-                                    community: widget.community,
-                                    projects: _projects,
-                                  ),
-                                ),
+                            const SizedBox(height: 15),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
                               ),
                               child: Text(
-                                'VIEW ALL',
+                                benefit['label'].toString().toUpperCase(),
+                                textAlign: TextAlign.center,
                                 style: GoogleFonts.inter(
-                                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
-                                  fontSize: 10,
+                                  color: (isDark ? Colors.white : Colors.black)
+                                      .withOpacity(0.7),
+                                  fontSize: 8,
                                   fontWeight: FontWeight.w900,
-                                  letterSpacing: 2,
+                                  letterSpacing: 0.5,
+                                  height: 1.4,
                                 ),
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 30),
-                        SizedBox(
-                          height: 200,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: _projects.length,
-                            itemBuilder: (context, index) {
-                              final project = _projects[index];
-                              return GestureDetector(
-                                onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ProjectDetailScreen(
-                                      projectId: project['_id'] ?? project['id'],
-                                      projectData: project,
-                                    ),
-                                  ),
-                                ),
-                                child: Container(
-                                  width: 280,
-                                  margin: const EdgeInsets.only(right: 20),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(30),
-                                    child: Stack(
-                                      fit: StackFit.expand,
-                                      children: [
-                                        CachedNetworkImage(
-                                          imageUrl: apiClient.resolveUrl(project['heroImage'] ?? project['image']),
-                                          fit: BoxFit.cover,
-                                          placeholder: (context, url) => Container(color: Colors.black12),
-                                          errorWidget: (context, url, error) => Container(
-                            color: const Color(0xFF1A1A1A),
-                            child: const Center(child: Icon(LucideIcons.building2, color: Colors.white24, size: 40)),
+                      );
+                    },
+                  ),
+
+                  const SizedBox(height: 60),
+
+                  // Projects Section
+                  if (_projects.isNotEmpty) ...[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        _SectionHeader(
+                          title: 'Projects',
+                          subtitle:
+                              'Explore ${widget.community['title']?.toString() ?? 'Community'} Masterpieces',
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CommunityProjectsScreen(
+                                community: widget.community,
+                                projects: _projects,
+                              ),
+                            ),
                           ),
-                                        ),
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            gradient: LinearGradient(
-                                              begin: Alignment.topCenter,
-                                              end: Alignment.bottomCenter,
-                                              colors: [
-                                                Colors.transparent,
-                                                Colors.black.withOpacity(0.8),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(20),
-                                          child: Column(
-                                            mainAxisAlignment: MainAxisAlignment.end,
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                project['title']?.toString().toUpperCase() ?? '',
-                                                style: GoogleFonts.inter(
-                                                  color: Colors.white,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w900,
-                                                  letterSpacing: -0.5,
-                                                ),
-                                              ),
-                                              const SizedBox(height: 4),
-                                              if (project['startingPrice'] != null && 
-                                                  project['startingPrice'].toString().toLowerCase() != 'price on request' &&
-                                                  project['startingPrice'].toString().toLowerCase() != 'upon request')
-                                                Padding(
-                                                  padding: const EdgeInsets.only(bottom: 2),
-                                                  child: Text(
-                                                    project['startingPrice'].toString().toUpperCase(),
-                                                    style: GoogleFonts.inter(
-                                                      color: Colors.white70,
-                                                      fontSize: 10,
-                                                      fontWeight: FontWeight.w700,
-                                                      letterSpacing: 0.5,
-                                                    ),
-                                                  ),
-                                                ),
-                                              Row(
-                                                children: [
-                                                  const Icon(LucideIcons.mapPin, color: Colors.white54, size: 10),
-                                                  const SizedBox(width: 5),
-                                                  Text(
-                                                    (project['location']?['name'] ?? project['location'] ?? '').toString().toUpperCase(),
-                                                    style: GoogleFonts.inter(
-                                                      color: Colors.white54,
-                                                      fontSize: 8,
-                                                      fontWeight: FontWeight.bold,
-                                                      letterSpacing: 1,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Positioned(
-                                          bottom: 20,
-                                          right: 20,
-                                          child: Container(
-                                            width: 35,
-                                            height: 35,
-                                            decoration: const BoxDecoration(
-                                              color: Colors.white,
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: const Icon(LucideIcons.arrowRight, color: Colors.black, size: 18),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
+                          child: Text(
+                            'VIEW ALL',
+                            style: GoogleFonts.inter(
+                              color: (isDark ? Colors.white : Colors.black)
+                                  .withOpacity(0.68),
+                              fontSize: 10,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 2,
+                            ),
                           ),
                         ),
-                        const SizedBox(height: 60),
                       ],
-
-                      // Express Interest Form
-                      Column(
-                        key: _inquiryKey,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const _SectionHeader(
-                            title: 'EXPRESS\nINTEREST',
-                            subtitle: 'INITIALIZE YOUR PREMIUM EXPERIENCE',
-                          ),
-                          const SizedBox(height: 30),
-                          _buildInput('Full Name *', _nameController),
-                          const SizedBox(height: 12),
-                          Row(
-                            children: [
-                              Expanded(child: _buildInput('Email Address *', _emailController)),
-                              const SizedBox(width: 12),
-                              Expanded(child: _buildInput('Phone Number *', _phoneController)),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          _buildProjectDropdown(),
-                          const SizedBox(height: 12),
-                          _buildInput('Your Location (e.g. Dubai, UAE) *', _locationController),
-                          const SizedBox(height: 20),
-                          SizedBox(
-                            width: double.infinity,
-                            height: 70,
-                            child: ElevatedButton(
-                              onPressed: _isSubmitting ? null : _handleLeadSubmission,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: isDark ? Colors.white : Colors.black,
-                                foregroundColor: isDark ? Colors.black : Colors.white,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                              ),
-                              child: _isSubmitting 
-                                ? CircularProgressIndicator(color: isDark ? Colors.black : Colors.white)
-                                : Text(
-                                    'REGISTER INTEREST',
-                                    style: GoogleFonts.inter(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w900,
-                                      letterSpacing: 3,
-                                    ),
-                                  ),
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          Center(
-                            child: Text(
-                              'EXCLUSIVE GUEST PREVIEW - LIMITED OPPORTUNITIES',
-                              style: GoogleFonts.inter(
-                                color: (isDark ? Colors.white : Colors.black).withOpacity(0.3),
-                                fontSize: 8,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: 2,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 60),
-
-                      // Map Section
-                      const _SectionHeader(title: 'FIND US', subtitle: 'OUR STRATEGIC HEADQUARTERS'),
-                      const SizedBox(height: 15),
-                      GestureDetector(
-                        onTap: () async {
-                          const url = 'https://www.google.com/maps/search/?api=1&query=604,+6th+Floor,+M4+Aura+Heights,+Grant+Road,+Mumbai+-+400007';
-                          if (await canLaunchUrl(Uri.parse(url))) {
-                            await launchUrl(Uri.parse(url));
-                          }
-                        },
-                        child: Container(
-                          height: 300,
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(40),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(40),
-                            child: Stack(
-                              fit: StackFit.expand,
-                              children: [
-                                CachedNetworkImage(
-                                  imageUrl: 'https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&q=80',
-                                  fit: BoxFit.cover,
-                                  color: Colors.black.withOpacity(0.5),
-                                  colorBlendMode: BlendMode.darken,
-                                  placeholder: (context, url) => Container(color: Colors.black54),
-                                  errorWidget: (context, url, error) => Container(
-                            color: const Color(0xFF1A1A1A),
-                            child: const Center(child: Icon(LucideIcons.building2, color: Colors.white24, size: 40)),
-                          ),
+                    ),
+                    const SizedBox(height: 30),
+                    SizedBox(
+                      height: 200,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _projects.length,
+                        itemBuilder: (context, index) {
+                          final project = _projects[index];
+                          return GestureDetector(
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProjectDetailScreen(
+                                  projectId: project['_id'] ?? project['id'],
+                                  projectData: project,
                                 ),
-                                Positioned(
-                                  bottom: 30,
-                                  left: 30,
-                                  right: 30,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                              ),
+                            ),
+                            child: Container(
+                              width: 280,
+                              margin: const EdgeInsets.only(right: 20),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(30),
+                                child: Stack(
+                                  fit: StackFit.expand,
+                                  children: [
+                                    CachedNetworkImage(
+                                      imageUrl: apiClient.resolveUrl(
+                                        project['heroImage'] ??
+                                            project['image'],
+                                      ),
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) =>
+                                          Container(color: Colors.black12),
+                                      errorWidget: (context, url, error) =>
+                                          Container(
+                                            color: const Color(0xFF1A1A1A),
+                                            child: const Center(
+                                              child: Icon(
+                                                LucideIcons.building2,
+                                                color: Colors.white24,
+                                                size: 40,
+                                              ),
+                                            ),
+                                          ),
+                                    ),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          colors: [
+                                            Colors.transparent,
+                                            Colors.black.withOpacity(0.8),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(20),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            'M4 AURA HEIGHTS',
+                                            project['title']
+                                                    ?.toString()
+                                                    .toUpperCase() ??
+                                                '',
                                             style: GoogleFonts.inter(
                                               color: Colors.white,
                                               fontSize: 16,
                                               fontWeight: FontWeight.w900,
+                                              letterSpacing: -0.5,
                                             ),
                                           ),
-                                          const SizedBox(height: 5),
-                                          Text(
-                                            'GRANT ROAD, MUMBAI - 400007',
-                                            style: GoogleFonts.inter(
-                                              color: Colors.white.withOpacity(0.6),
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.w500,
-                                              letterSpacing: 1,
+                                          const SizedBox(height: 4),
+                                          if (project['startingPrice'] !=
+                                                  null &&
+                                              project['startingPrice']
+                                                      .toString()
+                                                      .toLowerCase() !=
+                                                  'price on request' &&
+                                              project['startingPrice']
+                                                      .toString()
+                                                      .toLowerCase() !=
+                                                  'upon request')
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                bottom: 2,
+                                              ),
+                                              child: Text(
+                                                project['startingPrice']
+                                                    .toString()
+                                                    .toUpperCase(),
+                                                style: GoogleFonts.inter(
+                                                  color: Colors.white70,
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.w700,
+                                                  letterSpacing: 0.5,
+                                                ),
+                                              ),
                                             ),
+                                          Row(
+                                            children: [
+                                              const Icon(
+                                                LucideIcons.mapPin,
+                                                color: Colors.white54,
+                                                size: 10,
+                                              ),
+                                              const SizedBox(width: 5),
+                                              Text(
+                                                (project['location']?['name'] ??
+                                                        project['location'] ??
+                                                        '')
+                                                    .toString()
+                                                    .toUpperCase(),
+                                                style: GoogleFonts.inter(
+                                                  color: Colors.white54,
+                                                  fontSize: 8,
+                                                  fontWeight: FontWeight.bold,
+                                                  letterSpacing: 1,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ],
                                       ),
-                                      Container(
-                                        width: 50,
-                                        height: 50,
-                                        decoration: BoxDecoration(
+                                    ),
+                                    Positioned(
+                                      bottom: 20,
+                                      right: 20,
+                                      child: Container(
+                                        width: 35,
+                                        height: 35,
+                                        decoration: const BoxDecoration(
                                           color: Colors.white,
-                                          borderRadius: BorderRadius.circular(20),
+                                          shape: BoxShape.circle,
                                         ),
-                                        child: const Icon(LucideIcons.mapPin, color: Colors.black, size: 24),
+                                        child: const Icon(
+                                          LucideIcons.arrowRight,
+                                          color: Colors.black,
+                                          size: 18,
+                                        ),
                                       ),
-                                    ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 60),
+                  ],
+
+                  // Express Interest Form
+                  Column(
+                    key: _inquiryKey,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const _SectionHeader(
+                        title: 'EXPRESS\nINTEREST',
+                        subtitle: 'INITIALIZE YOUR PREMIUM EXPERIENCE',
+                      ),
+                      const SizedBox(height: 30),
+                      _buildInput('Full Name *', _nameController),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildInput(
+                              'Email Address *',
+                              _emailController,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _buildInput(
+                              'Phone Number *',
+                              _phoneController,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      _buildProjectDropdown(),
+                      const SizedBox(height: 12),
+                      _buildInput(
+                        'Your Location (e.g. Dubai, UAE) *',
+                        _locationController,
+                      ),
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 70,
+                        child: ElevatedButton(
+                          onPressed: _isSubmitting
+                              ? null
+                              : _handleLeadSubmission,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: isDark
+                                ? Colors.white
+                                : Colors.black,
+                            foregroundColor: isDark
+                                ? Colors.black
+                                : Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          child: _isSubmitting
+                              ? CircularProgressIndicator(
+                                  color: isDark ? Colors.black : Colors.white,
+                                )
+                              : Text(
+                                  'REGISTER INTEREST',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: 3,
                                   ),
                                 ),
-                              ],
-                            ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Center(
+                        child: Text(
+                          'EXCLUSIVE GUEST PREVIEW - LIMITED OPPORTUNITIES',
+                          style: GoogleFonts.inter(
+                            color: (isDark ? Colors.white : Colors.black)
+                                .withOpacity(0.68),
+                            fontSize: 8,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 2,
                           ),
                         ),
                       ),
-
-                      const SizedBox(height: 100),
                     ],
                   ),
-                ),
+
+                  const SizedBox(height: 60),
+
+                  // Map Section
+                  const _SectionHeader(
+                    title: 'FIND US',
+                    subtitle: 'OUR STRATEGIC HEADQUARTERS',
+                  ),
+                  const SizedBox(height: 15),
+                  GestureDetector(
+                    onTap: () async {
+                      const url =
+                          'https://www.google.com/maps/search/?api=1&query=604,+6th+Floor,+M4+Aura+Heights,+Grant+Road,+Mumbai+-+400007';
+                      if (await canLaunchUrl(Uri.parse(url))) {
+                        await launchUrl(Uri.parse(url));
+                      }
+                    },
+                    child: Container(
+                      height: 300,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(40),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(40),
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            CachedNetworkImage(
+                              imageUrl:
+                                  'https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?auto=format&fit=crop&q=80',
+                              fit: BoxFit.cover,
+                              color: Colors.black.withOpacity(0.5),
+                              colorBlendMode: BlendMode.darken,
+                              placeholder: (context, url) =>
+                                  Container(color: Colors.black54),
+                              errorWidget: (context, url, error) => Container(
+                                color: const Color(0xFF1A1A1A),
+                                child: const Center(
+                                  child: Icon(
+                                    LucideIcons.building2,
+                                    color: Colors.white24,
+                                    size: 40,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 30,
+                              left: 30,
+                              right: 30,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'M4 AURA HEIGHTS',
+                                        style: GoogleFonts.inter(
+                                          color: Colors.white,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w900,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Text(
+                                        'GRANT ROAD, MUMBAI - 400007',
+                                        style: GoogleFonts.inter(
+                                          color: Colors.white.withOpacity(0.6),
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w500,
+                                          letterSpacing: 1,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Container(
+                                    width: 50,
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: const Icon(
+                                      LucideIcons.mapPin,
+                                      color: Colors.black,
+                                      size: 24,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 100),
+                ],
               ),
+            ),
+          ),
         ],
       ),
     );
@@ -729,16 +881,22 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
       decoration: BoxDecoration(
         color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+        border: Border.all(
+          color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+        ),
       ),
       child: TextField(
         controller: controller,
-        style: GoogleFonts.inter(color: isDark ? Colors.white : Colors.black, fontSize: 13, fontWeight: FontWeight.bold),
+        style: GoogleFonts.inter(
+          color: isDark ? Colors.white : Colors.black,
+          fontSize: 13,
+          fontWeight: FontWeight.bold,
+        ),
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: hint.toUpperCase(),
           hintStyle: GoogleFonts.inter(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.3),
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
             fontSize: 10,
             fontWeight: FontWeight.w900,
             letterSpacing: 2,
@@ -763,14 +921,22 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
         child: DropdownButton<String>(
           value: _selectedProject,
           isExpanded: true,
-          icon: Icon(LucideIcons.chevronDown, color: textColor.withValues(alpha: 0.4), size: 18),
+          icon: Icon(
+            LucideIcons.chevronDown,
+            color: textColor.withValues(alpha: 0.4),
+            size: 18,
+          ),
           dropdownColor: isDark ? const Color(0xFF111111) : Colors.white,
           borderRadius: BorderRadius.circular(20),
-          style: GoogleFonts.inter(color: textColor, fontSize: 13, fontWeight: FontWeight.bold),
+          style: GoogleFonts.inter(
+            color: textColor,
+            fontSize: 13,
+            fontWeight: FontWeight.bold,
+          ),
           hint: Text(
             'SELECT PROPERTY / PROJECT',
             style: GoogleFonts.inter(
-              color: textColor.withValues(alpha: 0.3),
+              color: textColor.withValues(alpha: 0.68),
               fontSize: 10,
               fontWeight: FontWeight.w900,
               letterSpacing: 2,
@@ -781,7 +947,9 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
               'Any',
               ..._projects.map((p) => (p['title'] ?? '').toString()),
             ].map((label) {
-              final display = label == 'Any' ? 'ANY PROJECT / PROPERTY' : label.toUpperCase();
+              final display = label == 'Any'
+                  ? 'ANY PROJECT / PROPERTY'
+                  : label.toUpperCase();
               return Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -837,13 +1005,20 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
 
   IconData _getIcon(String icon) {
     switch (icon) {
-      case 'LayoutGrid': return LucideIcons.layoutGrid;
-      case 'MapPin': return LucideIcons.mapPin;
-      case 'Trees': return LucideIcons.trees;
-      case 'Shield': return LucideIcons.shield;
-      case 'ShoppingBag': return LucideIcons.shoppingBag;
-      case 'Bus': return LucideIcons.bus;
-      default: return LucideIcons.sparkles;
+      case 'LayoutGrid':
+        return LucideIcons.layoutGrid;
+      case 'MapPin':
+        return LucideIcons.mapPin;
+      case 'Trees':
+        return LucideIcons.trees;
+      case 'Shield':
+        return LucideIcons.shield;
+      case 'ShoppingBag':
+        return LucideIcons.shoppingBag;
+      case 'Bus':
+        return LucideIcons.bus;
+      default:
+        return LucideIcons.sparkles;
     }
   }
 }
@@ -861,7 +1036,11 @@ class _SectionHeader extends StatelessWidget {
       children: [
         Row(
           children: [
-            Container(width: 4, height: 40, color: isDark ? Colors.white : Colors.black),
+            Container(
+              width: 4,
+              height: 40,
+              color: isDark ? Colors.white : Colors.black,
+            ),
             const SizedBox(width: 20),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -879,7 +1058,9 @@ class _SectionHeader extends StatelessWidget {
                 Text(
                   subtitle,
                   style: GoogleFonts.inter(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      0.68,
+                    ),
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -897,7 +1078,11 @@ class _SectionHeader extends StatelessWidget {
 class CommunityProjectsScreen extends ConsumerWidget {
   final dynamic community;
   final List<dynamic> projects;
-  const CommunityProjectsScreen({super.key, required this.community, required this.projects});
+  const CommunityProjectsScreen({
+    super.key,
+    required this.community,
+    required this.projects,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -933,12 +1118,17 @@ class CommunityProjectsScreen extends ConsumerWidget {
                     onTap: () => Navigator.pop(context),
                     child: Row(
                       children: [
-                        Icon(LucideIcons.arrowLeft, color: isDark ? Colors.white : Colors.black, size: 20),
+                        Icon(
+                          LucideIcons.arrowLeft,
+                          color: isDark ? Colors.white : Colors.black,
+                          size: 20,
+                        ),
                         const SizedBox(width: 10),
                         Text(
                           'BACK',
                           style: GoogleFonts.inter(
-                            color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+                            color: (isDark ? Colors.white : Colors.black)
+                                .withOpacity(0.68),
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 2,
@@ -962,7 +1152,8 @@ class CommunityProjectsScreen extends ConsumerWidget {
                       Text(
                         'COMMUNITY PORTFOLIO',
                         style: GoogleFonts.inter(
-                          color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+                          color: (isDark ? Colors.white : Colors.black)
+                              .withOpacity(0.68),
                           fontSize: 8,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1,
@@ -982,7 +1173,7 @@ class CommunityProjectsScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                   _SectionHeader(
+                  _SectionHeader(
                     title: community['title']?.toString().toUpperCase() ?? '',
                     subtitle: 'DISCOVER ALL PROJECTS IN THIS COMMUNITY',
                   ),
@@ -995,39 +1186,47 @@ class CommunityProjectsScreen extends ConsumerWidget {
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 25),
             sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  final project = projects[index];
-                  return GestureDetector(
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ProjectDetailScreen(
-                          projectId: project['_id'] ?? project['id'],
-                          projectData: project,
-                        ),
+              delegate: SliverChildBuilderDelegate((context, index) {
+                final project = projects[index];
+                return GestureDetector(
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProjectDetailScreen(
+                        projectId: project['_id'] ?? project['id'],
+                        projectData: project,
                       ),
                     ),
-                    child: Container(
-                      height: 250,
-                      margin: const EdgeInsets.only(bottom: 25),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(40),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(40),
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            CachedNetworkImage(
-                              imageUrl: apiClient.resolveUrl(project['heroImage'] ?? project['image']),
-                              fit: BoxFit.cover,
-                              placeholder: (context, url) => Container(color: Colors.black12),
-                              errorWidget: (context, url, error) => Container(
-                            color: const Color(0xFF1A1A1A),
-                            child: const Center(child: Icon(LucideIcons.building2, color: Colors.white24, size: 40)),
-                          ),
+                  ),
+                  child: Container(
+                    height: 250,
+                    margin: const EdgeInsets.only(bottom: 25),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(40),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(40),
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          CachedNetworkImage(
+                            imageUrl: apiClient.resolveUrl(
+                              project['heroImage'] ?? project['image'],
                             ),
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) =>
+                                Container(color: Colors.black12),
+                            errorWidget: (context, url, error) => Container(
+                              color: const Color(0xFF1A1A1A),
+                              child: const Center(
+                                child: Icon(
+                                  LucideIcons.building2,
+                                  color: Colors.white24,
+                                  size: 40,
+                                ),
+                              ),
+                            ),
+                          ),
                           Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(40),
@@ -1047,11 +1246,16 @@ class CommunityProjectsScreen extends ConsumerWidget {
                               top: 25,
                               right: 25,
                               child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
+                                ),
                                 decoration: BoxDecoration(
                                   color: Colors.white.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(color: Colors.white.withOpacity(0.2)),
+                                  border: Border.all(
+                                    color: Colors.white.withOpacity(0.2),
+                                  ),
                                 ),
                                 child: Text(
                                   project['status'].toString().toUpperCase(),
@@ -1074,10 +1278,14 @@ class CommunityProjectsScreen extends ConsumerWidget {
                               children: [
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        project['title']?.toString().toUpperCase() ?? '',
+                                        project['title']
+                                                ?.toString()
+                                                .toUpperCase() ??
+                                            '',
                                         style: GoogleFonts.inter(
                                           color: Colors.white,
                                           fontSize: 22,
@@ -1088,10 +1296,18 @@ class CommunityProjectsScreen extends ConsumerWidget {
                                       const SizedBox(height: 5),
                                       Row(
                                         children: [
-                                          const Icon(LucideIcons.mapPin, color: Colors.white54, size: 10),
+                                          const Icon(
+                                            LucideIcons.mapPin,
+                                            color: Colors.white54,
+                                            size: 10,
+                                          ),
                                           const SizedBox(width: 5),
                                           Text(
-                                            (project['location']?['name'] ?? project['location'] ?? '').toString().toUpperCase(),
+                                            (project['location']?['name'] ??
+                                                    project['location'] ??
+                                                    '')
+                                                .toString()
+                                                .toUpperCase(),
                                             style: GoogleFonts.inter(
                                               color: Colors.white54,
                                               fontSize: 9,
@@ -1101,20 +1317,30 @@ class CommunityProjectsScreen extends ConsumerWidget {
                                           ),
                                         ],
                                       ),
-                                      if (project['startingPrice'] != null && 
-                                          project['startingPrice'].toString().toLowerCase() != 'price on request' &&
-                                          project['startingPrice'].toString().toLowerCase() != 'upon request') ...[
+                                      if (project['startingPrice'] != null &&
+                                          project['startingPrice']
+                                                  .toString()
+                                                  .toLowerCase() !=
+                                              'price on request' &&
+                                          project['startingPrice']
+                                                  .toString()
+                                                  .toLowerCase() !=
+                                              'upon request') ...[
                                         Text(
                                           'STARTING FROM',
                                           style: GoogleFonts.inter(
-                                            color: Colors.white.withOpacity(0.4),
+                                            color: Colors.white.withOpacity(
+                                              0.68,
+                                            ),
                                             fontSize: 7,
                                             fontWeight: FontWeight.w900,
                                             letterSpacing: 1,
                                           ),
                                         ),
                                         Text(
-                                          project['startingPrice'].toString().toUpperCase(),
+                                          project['startingPrice']
+                                              .toString()
+                                              .toUpperCase(),
                                           style: GoogleFonts.lora(
                                             color: Colors.white,
                                             fontSize: 18,
@@ -1142,19 +1368,21 @@ class CommunityProjectsScreen extends ConsumerWidget {
                                     color: Colors.white,
                                     shape: BoxShape.circle,
                                   ),
-                                  child: const Icon(LucideIcons.arrowRight, color: Colors.black, size: 20),
+                                  child: const Icon(
+                                    LucideIcons.arrowRight,
+                                    color: Colors.black,
+                                    size: 20,
+                                  ),
                                 ),
                               ],
                             ),
                           ),
                         ],
                       ),
-                      ),
                     ),
-                  );
-                },
-                childCount: projects.length,
-              ),
+                  ),
+                );
+              }, childCount: projects.length),
             ),
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 60)),

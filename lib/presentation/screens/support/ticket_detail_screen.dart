@@ -66,7 +66,9 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
 
   Future<void> _fetchTicket() async {
     try {
-      final data = await ref.read(supportProvider.notifier).fetchTicketDetail(widget.ticketId);
+      final data = await ref
+          .read(supportProvider.notifier)
+          .fetchTicketDetail(widget.ticketId);
       if (!mounted) return;
       if (data != null) {
         setState(() {
@@ -97,7 +99,9 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     if (text.isEmpty || _sending) return;
 
     setState(() => _sending = true);
-    final updated = await ref.read(supportProvider.notifier).sendMessage(widget.ticketId, text);
+    final updated = await ref
+        .read(supportProvider.notifier)
+        .sendMessage(widget.ticketId, text);
     if (!mounted) return;
 
     if (updated != null) {
@@ -111,9 +115,9 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
       _scrollToBottom();
     } else {
       setState(() => _sending = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to send message')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Failed to send message')));
     }
   }
 
@@ -135,7 +139,8 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
   String? _extractId(dynamic value) {
     if (value == null) return null;
     if (value is String) return value;
-    if (value is Map) return value['_id']?.toString() ?? value['id']?.toString();
+    if (value is Map)
+      return value['_id']?.toString() ?? value['id']?.toString();
     return value.toString();
   }
 
@@ -144,7 +149,8 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
   bool _isUserMessage(dynamic msg) {
     if (msg is! Map) return false;
     final sender = _extractId(msg['sender']);
-    if (_ownerId == null || sender == null) return true; // default to right side
+    if (_ownerId == null || sender == null)
+      return true; // default to right side
     return sender == _ownerId;
   }
 
@@ -173,7 +179,9 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     final tid = _ticket?['ticketId'] as String?;
     if (tid != null && tid.isNotEmpty) return tid;
     final id = widget.ticketId;
-    return id.length > 8 ? id.substring(id.length - 8).toUpperCase() : id.toUpperCase();
+    return id.length > 8
+        ? id.substring(id.length - 8).toUpperCase()
+        : id.toUpperCase();
   }
 
   // ─── Build ─────────────────────────────────────────────────────────────────
@@ -183,8 +191,12 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : Colors.white;
     final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
-    final border = isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06);
+    final muted = (isDark ? Colors.white : Colors.black).withValues(
+      alpha: 0.68,
+    );
+    final border = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.black.withValues(alpha: 0.06);
 
     return Scaffold(
       backgroundColor: bg,
@@ -196,10 +208,14 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
             _buildHeader(isDark, textPrimary, muted, border),
             Expanded(
               child: _loading
-                  ? const Center(child: CircularProgressIndicator(color: M4Theme.premiumBlue))
+                  ? const Center(
+                      child: CircularProgressIndicator(
+                        color: M4Theme.premiumBlue,
+                      ),
+                    )
                   : _error != null
-                      ? _buildError(textPrimary, muted)
-                      : _buildThread(isDark, textPrimary, muted, border),
+                  ? _buildError(textPrimary, muted)
+                  : _buildThread(isDark, textPrimary, muted, border),
             ),
             _buildInputBar(isDark, textPrimary, muted, border),
           ],
@@ -208,8 +224,14 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     );
   }
 
-  Widget _buildHeader(bool isDark, Color textPrimary, Color muted, Color border) {
-    final subject = (_ticket?['subject'] as String?)?.toUpperCase() ?? 'TICKET $_displayId';
+  Widget _buildHeader(
+    bool isDark,
+    Color textPrimary,
+    Color muted,
+    Color border,
+  ) {
+    final subject =
+        (_ticket?['subject'] as String?)?.toUpperCase() ?? 'TICKET $_displayId';
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
       decoration: BoxDecoration(
@@ -230,11 +252,17 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.03)
+                    : Colors.white,
                 shape: BoxShape.circle,
                 border: Border.all(color: border),
               ),
-              child: Icon(LucideIcons.chevronLeft, size: 18, color: textPrimary),
+              child: Icon(
+                LucideIcons.chevronLeft,
+                size: 18,
+                color: textPrimary,
+              ),
             ),
           ),
           const SizedBox(width: 16),
@@ -283,7 +311,8 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: (_isOpen ? Colors.blue : const Color(0xFF22C55E)).withValues(alpha: 0.1),
+              color: (_isOpen ? Colors.blue : const Color(0xFF22C55E))
+                  .withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: border),
             ),
@@ -330,7 +359,10 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                 _fetchTicket();
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 28,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   color: textPrimary,
                   borderRadius: BorderRadius.circular(12),
@@ -340,7 +372,9 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                   style: GoogleFonts.montserrat(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
-                    color: textPrimary == Colors.white ? Colors.black : Colors.white,
+                    color: textPrimary == Colors.white
+                        ? Colors.black
+                        : Colors.white,
                     letterSpacing: 1,
                   ),
                 ),
@@ -352,7 +386,12 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     );
   }
 
-  Widget _buildThread(bool isDark, Color textPrimary, Color muted, Color border) {
+  Widget _buildThread(
+    bool isDark,
+    Color textPrimary,
+    Color muted,
+    Color border,
+  ) {
     if (_messages.isEmpty) {
       return Center(
         child: Column(
@@ -394,7 +433,9 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(
-              color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.03)
+                  : Colors.white,
               borderRadius: BorderRadius.circular(40),
               border: Border.all(color: border),
             ),
@@ -410,7 +451,9 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
           ),
         ),
         const SizedBox(height: 24),
-        ..._messages.map((m) => _buildBubble(m, isDark, textPrimary, muted, border)),
+        ..._messages.map(
+          (m) => _buildBubble(m, isDark, textPrimary, muted, border),
+        ),
         // Secure consultation footer (web parity)
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 24),
@@ -441,24 +484,40 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     );
   }
 
-  Widget _buildBubble(dynamic msg, bool isDark, Color textPrimary, Color muted, Color border) {
+  Widget _buildBubble(
+    dynamic msg,
+    bool isDark,
+    Color textPrimary,
+    Color muted,
+    Color border,
+  ) {
     final isUser = _isUserMessage(msg);
-    final text = (msg is Map) ? (msg['text']?.toString() ?? '') : msg.toString();
+    final text = (msg is Map)
+        ? (msg['text']?.toString() ?? '')
+        : msg.toString();
     final time = _formatTime(msg);
     final attachment = (msg is Map) ? msg['attachment']?.toString() : null;
     final apiClient = ref.read(apiClientProvider);
 
     // User bubble: solid (foreground/background inversion). Support: card style.
-    final bubbleColor = isUser ? textPrimary : (isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white);
-    final bubbleTextColor = isUser ? (isDark ? Colors.black : Colors.white) : textPrimary;
+    final bubbleColor = isUser
+        ? textPrimary
+        : (isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white);
+    final bubbleTextColor = isUser
+        ? (isDark ? Colors.black : Colors.white)
+        : textPrimary;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Column(
-        crossAxisAlignment: isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        crossAxisAlignment: isUser
+            ? CrossAxisAlignment.end
+            : CrossAxisAlignment.start,
         children: [
           ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.78),
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width * 0.78,
+            ),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
@@ -486,7 +545,12 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                     ),
                   if (attachment != null && attachment.isNotEmpty) ...[
                     const SizedBox(height: 8),
-                    _buildAttachment(attachment, apiClient, isUser, bubbleTextColor),
+                    _buildAttachment(
+                      attachment,
+                      apiClient,
+                      isUser,
+                      bubbleTextColor,
+                    ),
                   ],
                 ],
               ),
@@ -519,9 +583,17 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     );
   }
 
-  Widget _buildAttachment(String attachment, ApiClient apiClient, bool isUser, Color textColor) {
+  Widget _buildAttachment(
+    String attachment,
+    ApiClient apiClient,
+    bool isUser,
+    Color textColor,
+  ) {
     final url = apiClient.resolveUrl(attachment);
-    final isImage = RegExp(r'\.(jpg|jpeg|png|gif|webp)$', caseSensitive: false).hasMatch(attachment);
+    final isImage = RegExp(
+      r'\.(jpg|jpeg|png|gif|webp)$',
+      caseSensitive: false,
+    ).hasMatch(attachment);
 
     if (isImage) {
       return ClipRRect(
@@ -536,7 +608,11 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
               const SizedBox(width: 6),
               Text(
                 'VIEW ATTACHMENT',
-                style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: textColor),
+                style: GoogleFonts.montserrat(
+                  fontSize: 9,
+                  fontWeight: FontWeight.w900,
+                  color: textColor,
+                ),
               ),
             ],
           ),
@@ -569,10 +645,20 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     );
   }
 
-  Widget _buildInputBar(bool isDark, Color textPrimary, Color muted, Color border) {
+  Widget _buildInputBar(
+    bool isDark,
+    Color textPrimary,
+    Color muted,
+    Color border,
+  ) {
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     return Container(
-      padding: EdgeInsets.fromLTRB(16, 12, 16, 12 + MediaQuery.of(context).viewPadding.bottom),
+      padding: EdgeInsets.fromLTRB(
+        16,
+        12,
+        16,
+        12 + MediaQuery.of(context).viewPadding.bottom,
+      ),
       decoration: BoxDecoration(
         color: isDark ? Colors.black : Colors.white,
         border: Border(top: BorderSide(color: border)),
@@ -606,7 +692,10 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                     letterSpacing: 1,
                   ),
                   border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 14,
+                  ),
                 ),
               ),
             ),

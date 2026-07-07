@@ -329,7 +329,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
               'PREMIUM PROTOCOL',
               style: GoogleFonts.montserrat(
                 fontSize: 8,
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1,
               ),
@@ -644,7 +644,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
           hintText: hint,
           hintStyle: GoogleFonts.montserrat(
             fontSize: 12,
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.35),
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
             fontWeight: FontWeight.bold,
           ),
           icon: maxLines == 1

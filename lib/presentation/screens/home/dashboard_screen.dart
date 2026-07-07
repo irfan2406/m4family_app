@@ -1317,7 +1317,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     style: TextStyle(
                       color: Theme.of(
                         context,
-                      ).colorScheme.onSurface.withOpacity(0.5),
+                      ).colorScheme.onSurface.withOpacity(0.68),
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 2,
@@ -1595,7 +1595,7 @@ class _ProjectCard extends StatelessWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.montserrat(
-                              color: scheme.onSurface.withOpacity(0.5),
+                              color: scheme.onSurface.withOpacity(0.68),
                               fontSize: 10,
                               fontWeight: FontWeight.w700,
                               letterSpacing: 0.5,
@@ -1695,7 +1695,7 @@ class _QuickAction extends StatelessWidget {
             style: GoogleFonts.montserrat(
               fontSize: 8,
               fontWeight: FontWeight.w700,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.68),
               letterSpacing: 1,
             ),
           ),
@@ -1883,7 +1883,7 @@ class _FilterSection extends StatelessWidget {
           style: GoogleFonts.montserrat(
             fontSize: 10,
             fontWeight: FontWeight.w900,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.68),
             letterSpacing: 1.5,
           ),
         ),
@@ -2012,7 +2012,7 @@ class _PremiumInputField extends StatelessWidget {
                 hintStyle: GoogleFonts.montserrat(
                   color: Theme.of(
                     context,
-                  ).colorScheme.onSurface.withOpacity(0.4),
+                  ).colorScheme.onSurface.withOpacity(0.68),
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
@@ -2077,7 +2077,7 @@ class _PremiumDropdownField extends StatelessWidget {
                   labelStyle: GoogleFonts.montserrat(
                     color: Theme.of(
                       context,
-                    ).colorScheme.onSurface.withOpacity(0.3),
+                    ).colorScheme.onSurface.withOpacity(0.68),
                     fontSize: 13,
                   ),
                   border: InputBorder.none,
@@ -2131,7 +2131,7 @@ class _PremiumFormField extends StatelessWidget {
                   style: GoogleFonts.montserrat(
                     color: Theme.of(
                       context,
-                    ).colorScheme.onSurface.withOpacity(0.3),
+                    ).colorScheme.onSurface.withOpacity(0.68),
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                   ),
@@ -2260,7 +2260,7 @@ class _WebTab extends StatelessWidget {
         child: Text(
           label,
           style: GoogleFonts.montserrat(
-            color: isActive ? onSurface : onSurface.withOpacity(0.4),
+            color: isActive ? onSurface : onSurface.withOpacity(0.68),
             fontSize: 12, // 👈 Matched with web text-xs
             fontWeight: FontWeight.w900, // 👈 Matched with web font-black
             letterSpacing: 2,

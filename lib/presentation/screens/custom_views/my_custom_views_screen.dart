@@ -253,7 +253,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                           ? Theme.of(context).colorScheme.surface
                           : Theme.of(
                               context,
-                            ).colorScheme.onSurface.withOpacity(0.4),
+                            ).colorScheme.onSurface.withOpacity(0.68),
                     ),
                   ),
                 ),
@@ -280,7 +280,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                           ? Theme.of(context).colorScheme.surface
                           : Theme.of(
                               context,
-                            ).colorScheme.onSurface.withOpacity(0.4),
+                            ).colorScheme.onSurface.withOpacity(0.68),
                     ),
                   ),
                 ),
@@ -388,7 +388,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2,
-                  color: foreground.withOpacity(0.4),
+                  color: foreground.withOpacity(0.68),
                 ),
               ),
             ),
@@ -433,7 +433,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                 fontSize: 8,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.5,
-                color: fg.withOpacity(0.5),
+                color: fg.withOpacity(0.68),
               ),
             ),
           ],
@@ -468,7 +468,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                 fontSize: 10,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.5,
-                color: fg.withOpacity(0.4),
+                color: fg.withOpacity(0.68),
               ),
             ),
           ),
@@ -531,7 +531,7 @@ class _UnitCard extends ConsumerWidget {
                         style: GoogleFonts.montserrat(
                           fontSize: 7,
                           fontWeight: FontWeight.w900,
-                          color: foreground.withOpacity(0.3),
+                          color: foreground.withOpacity(0.68),
                           letterSpacing: 1,
                         ),
                       ),
@@ -869,7 +869,7 @@ class _HistoryMeta extends StatelessWidget {
             fontSize: 8,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
-            color: foreground.withOpacity(0.4),
+            color: foreground.withOpacity(0.68),
           ),
         ),
         const SizedBox(height: 6),
@@ -907,409 +907,478 @@ class _DetailDialog {
                 borderRadius: BorderRadius.circular(32),
               ),
               child: Container(
-                constraints: const BoxConstraints(maxWidth: 400),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(24, 32, 24, 0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            _StatusBadge(
-                              status:
-                                  'LOG ID: ${req['_id'].toString().substring(req['_id'].toString().length - 8).toUpperCase()}',
-                              isDark:
-                                  Theme.of(context).brightness ==
-                                  Brightness.dark,
-                              customColor: Colors.grey,
-                            ),
-                            _StatusBadge(
-                              status:
-                                  req['status']?.toString().toUpperCase() ??
-                                  'PENDING',
-                              isDark:
-                                  Theme.of(context).brightness ==
-                                  Brightness.dark,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              req['project']?['title'] ?? 'Standard Selection',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: -0.5,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Row(
+                // Medium-size, internally scrollable modal.
+                constraints: BoxConstraints(
+                  maxWidth: 400,
+                  maxHeight: MediaQuery.of(context).size.height * 0.72,
+                ),
+                child: Stack(
+                  children: [
+                    SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(24, 52, 24, 0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Icon(
-                                  LucideIcons.mapPin,
-                                  size: 12,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.primary.withOpacity(0.6),
+                                _StatusBadge(
+                                  status:
+                                      'LOG ID: ${req['_id'].toString().substring(req['_id'].toString().length - 8).toUpperCase()}',
+                                  isDark:
+                                      Theme.of(context).brightness ==
+                                      Brightness.dark,
+                                  customColor: Colors.grey,
                                 ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  req['space']?.toString().toUpperCase() ??
-                                      'FULL UNIT',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.w800,
-                                    letterSpacing: 1.2,
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onSurface.withOpacity(0.5),
-                                  ),
+                                _StatusBadge(
+                                  status:
+                                      req['status']?.toString().toUpperCase() ??
+                                      'PENDING',
+                                  isDark:
+                                      Theme.of(context).brightness ==
+                                      Brightness.dark,
                                 ),
                               ],
                             ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(24, 32, 24, 0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _SectionTitle(title: 'CHOSEN SPECIFICATIONS'),
-                            const SizedBox(height: 16),
-                            ...(req['selections'] as Map? ?? {}).entries.map((
-                              e,
-                            ) {
-                              final key = e.key.toString();
-                              final val = e.value;
-                              final name = (val is Map)
-                                  ? val['name']
-                                  : val.toString();
-                              final id = (val is Map) ? val['_id'] : null;
-
-                              return Container(
-                                margin: const EdgeInsets.only(bottom: 12),
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface.withOpacity(0.03),
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onSurface.withOpacity(0.05),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  req['project']?['title'] ??
+                                      'Standard Selection',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: -0.5,
                                   ),
                                 ),
-                                child: Row(
+                                const SizedBox(height: 8),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Container(
-                                      width: 44,
-                                      height: 44,
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey[200],
-                                        borderRadius: BorderRadius.circular(14),
-                                      ),
-                                      child: const Icon(
-                                        LucideIcons.box,
-                                        size: 20,
-                                        color: Colors.black54,
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 2),
+                                      child: Icon(
+                                        LucideIcons.mapPin,
+                                        size: 12,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary.withOpacity(0.6),
                                       ),
                                     ),
-                                    const SizedBox(width: 16),
+                                    const SizedBox(width: 6),
+                                    // Web parity: wraps to a second line (no overflow).
                                     Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          if (id != null)
-                                            Text(
-                                              id.toString().toUpperCase(),
-                                              style: GoogleFonts.montserrat(
-                                                fontSize: 6,
-                                                fontWeight: FontWeight.w800,
-                                                letterSpacing: 1.0,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onSurface
-                                                    .withOpacity(0.3),
-                                              ),
-                                            ),
-                                          const SizedBox(height: 2),
-                                          Text(
-                                            name.toString().toUpperCase(),
-                                            style: GoogleFonts.montserrat(
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.w900,
-                                              letterSpacing: 0.5,
-                                            ),
-                                          ),
-                                        ],
+                                      child: Text(
+                                        req['space']
+                                                ?.toString()
+                                                .toUpperCase() ??
+                                            'FULL UNIT',
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.w800,
+                                          letterSpacing: 1.2,
+                                          height: 1.4,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface
+                                              .withOpacity(0.68),
+                                        ),
                                       ),
                                     ),
                                   ],
                                 ),
-                              );
-                            }).toList(),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _SectionTitle(title: 'PROTOCOL STATUS'),
-                            const SizedBox(height: 16),
-                            Container(
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurface.withOpacity(0.03),
-                                borderRadius: BorderRadius.circular(24),
-                                border: Border.all(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface.withOpacity(0.05),
-                                ),
-                              ),
-                              child: Text(
-                                'Your selection is currently under review by our interior consultants. We will contact you shortly.',
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  fontStyle: FontStyle.italic,
-                                  height: 1.5,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface.withOpacity(0.6),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 32),
-                      if (errorMessage != null)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 8,
-                          ),
-                          child: Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.red.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: Colors.red.withOpacity(0.2),
-                              ),
-                            ),
-                            child: Text(
-                              errorMessage!.toUpperCase(),
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.montserrat(
-                                color: Colors.redAccent,
-                                fontSize: 9,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 1.0,
-                              ),
+                              ],
                             ),
                           ),
-                        ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
-                        child: Row(
-                          children: [
-                            if (!([
-                              'Approved',
-                              'Completed',
-                              'Rejected',
-                              'Closed',
-                            ].contains(req['status'])))
-                              Expanded(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    const int modificationLimit = 2;
-                                    const int daysLimit = 30;
-                                    final int modCount =
-                                        req['modificationCount'] ?? 0;
-                                    final String? allotmentDate =
-                                        req['allotmentDate'];
-
-                                    bool isBreachedCount =
-                                        modCount >= modificationLimit;
-                                    bool isBreachedTime = false;
-                                    if (allotmentDate != null) {
-                                      final allotment = DateTime.tryParse(
-                                        allotmentDate,
-                                      );
-                                      if (allotment != null) {
-                                        final daysPassed = DateTime.now()
-                                            .difference(allotment)
-                                            .inDays;
-                                        if (daysPassed > daysLimit)
-                                          isBreachedTime = true;
-                                      }
-                                    }
-
-                                    if (isBreachedCount) {
-                                      setState(() {
-                                        errorMessage =
-                                            'LIMIT REACHED: YOU HAVE ALREADY USED YOUR 2 REVISION ATTEMPTS.';
-                                      });
-                                      return;
-                                    }
-                                    if (isBreachedTime) {
-                                      setState(() {
-                                        errorMessage =
-                                            'THE 30-DAY MODIFICATION WINDOW FOR YOUR UNIT HAS EXPIRED.';
-                                      });
-                                      return;
-                                    }
-
-                                    final booking = req['bookingId'];
-                                    final bId = (booking is Map)
-                                        ? booking['_id']
-                                        : booking;
-                                    final unitNo = (booking is Map)
-                                        ? booking['unitNumber']
-                                        : null;
-                                    final config = req['unitType'];
-                                    final project = req['project']?['_id'];
-
-                                    ref
-                                            .read(
-                                              customViewsBookingIdProvider
-                                                  .notifier,
-                                            )
-                                            .state =
-                                        bId;
-                                    ref
-                                            .read(
-                                              customViewsProjectProvider
-                                                  .notifier,
-                                            )
-                                            .state =
-                                        project;
-                                    ref
-                                        .read(
-                                          customViewsUnitNumberProvider
-                                              .notifier,
-                                        )
-                                        .state = unitNo
-                                        ?.toString();
-                                    ref
-                                            .read(
-                                              customViewsUnitProvider.notifier,
-                                            )
-                                            .state =
-                                        config ?? '3 BHK';
-                                    ref
-                                            .read(
-                                              customViewsEditModeProvider
-                                                  .notifier,
-                                            )
-                                            .state =
-                                        true;
-                                    ref
-                                        .read(
-                                          customViewsSelectionsProvider
-                                              .notifier,
-                                        )
-                                        .state = Map<String, dynamic>.from(
-                                      req['selections'] as Map? ?? {},
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(24, 32, 24, 0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _SectionTitle(title: 'CHOSEN SPECIFICATIONS'),
+                                const SizedBox(height: 16),
+                                // Web parity: skip space/spaces/status; per-space
+                                // maps -> "{space} / {catId}" + material name.
+                                ...(() {
+                                  final scheme = Theme.of(context).colorScheme;
+                                  final selections =
+                                      req['selections'] as Map? ?? {};
+                                  Widget specCard(String label, String name) {
+                                    return Container(
+                                      margin: const EdgeInsets.only(bottom: 12),
+                                      padding: const EdgeInsets.all(12),
+                                      decoration: BoxDecoration(
+                                        color: scheme.onSurface.withOpacity(
+                                          0.03,
+                                        ),
+                                        borderRadius: BorderRadius.circular(20),
+                                        border: Border.all(
+                                          color: scheme.onSurface.withOpacity(
+                                            0.05,
+                                          ),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            width: 44,
+                                            height: 44,
+                                            decoration: BoxDecoration(
+                                              color: scheme.onSurface
+                                                  .withOpacity(0.06),
+                                              borderRadius:
+                                                  BorderRadius.circular(14),
+                                            ),
+                                            child: Icon(
+                                              LucideIcons.box,
+                                              size: 20,
+                                              color: scheme.onSurface
+                                                  .withOpacity(0.6),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 16),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  label.toUpperCase(),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: GoogleFonts.montserrat(
+                                                    fontSize: 7,
+                                                    fontWeight: FontWeight.w900,
+                                                    letterSpacing: 1.0,
+                                                    color: scheme.onSurface
+                                                        .withOpacity(0.68),
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 2),
+                                                Text(
+                                                  name.toUpperCase(),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: GoogleFonts.montserrat(
+                                                    fontSize: 11,
+                                                    fontWeight: FontWeight.w900,
+                                                    letterSpacing: 0.5,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     );
+                                  }
 
-                                    ref
+                                  final rows = <Widget>[];
+                                  selections.forEach((key, val) {
+                                    if (key == 'space' ||
+                                        key == 'spaces' ||
+                                        key == 'status') {
+                                      return;
+                                    }
+                                    if (val is Map &&
+                                        val['name'] == null &&
+                                        val['_id'] == null) {
+                                      // Per-space map: {catId: opt}.
+                                      val.forEach((catId, opt) {
+                                        if (opt is Map && opt['name'] != null) {
+                                          rows.add(
+                                            specCard(
+                                              '$key / $catId',
+                                              opt['name'].toString(),
+                                            ),
+                                          );
+                                        }
+                                      });
+                                    } else if (val is Map &&
+                                        val['name'] != null) {
+                                      // Flat: catId -> opt.
+                                      rows.add(
+                                        specCard(
+                                          key.toString(),
+                                          val['name'].toString(),
+                                        ),
+                                      );
+                                    }
+                                  });
+                                  return rows;
+                                })(),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 32),
+                          if (errorMessage != null)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 8,
+                              ),
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: Colors.red.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: Colors.red.withOpacity(0.2),
+                                  ),
+                                ),
+                                child: Text(
+                                  errorMessage!.toUpperCase(),
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.montserrat(
+                                    color: Colors.redAccent,
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w800,
+                                    letterSpacing: 1.0,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+                            child: Row(
+                              children: [
+                                if (!([
+                                  'Approved',
+                                  'Completed',
+                                  'Rejected',
+                                  'Closed',
+                                ].contains(req['status'])))
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        const int modificationLimit = 2;
+                                        const int daysLimit = 30;
+                                        final int modCount =
+                                            req['modificationCount'] ?? 0;
+                                        final String? allotmentDate =
+                                            req['allotmentDate'];
+
+                                        bool isBreachedCount =
+                                            modCount >= modificationLimit;
+                                        bool isBreachedTime = false;
+                                        if (allotmentDate != null) {
+                                          final allotment = DateTime.tryParse(
+                                            allotmentDate,
+                                          );
+                                          if (allotment != null) {
+                                            final daysPassed = DateTime.now()
+                                                .difference(allotment)
+                                                .inDays;
+                                            if (daysPassed > daysLimit)
+                                              isBreachedTime = true;
+                                          }
+                                        }
+
+                                        if (isBreachedCount) {
+                                          setState(() {
+                                            errorMessage =
+                                                'LIMIT REACHED: YOU HAVE ALREADY USED YOUR 2 REVISION ATTEMPTS.';
+                                          });
+                                          return;
+                                        }
+                                        if (isBreachedTime) {
+                                          setState(() {
+                                            errorMessage =
+                                                'THE 30-DAY MODIFICATION WINDOW FOR YOUR UNIT HAS EXPIRED.';
+                                          });
+                                          return;
+                                        }
+
+                                        final booking = req['bookingId'];
+                                        final bId = (booking is Map)
+                                            ? booking['_id']
+                                            : booking;
+                                        final unitNo = (booking is Map)
+                                            ? booking['unitNumber']
+                                            : null;
+                                        final config = req['unitType'];
+                                        final project = req['project']?['_id'];
+
+                                        ref
+                                                .read(
+                                                  customViewsBookingIdProvider
+                                                      .notifier,
+                                                )
+                                                .state =
+                                            bId;
+                                        ref
+                                                .read(
+                                                  customViewsProjectProvider
+                                                      .notifier,
+                                                )
+                                                .state =
+                                            project;
+                                        ref
                                             .read(
-                                              customViewsStepProvider.notifier,
-                                            )
-                                            .state =
-                                        0;
-                                    ref
-                                            .read(
-                                              previousNavigationProvider
+                                              customViewsUnitNumberProvider
                                                   .notifier,
                                             )
-                                            .state =
-                                        7;
-                                    ref
-                                            .read(navigationProvider.notifier)
-                                            .state =
-                                        6;
+                                            .state = unitNo
+                                            ?.toString();
+                                        ref
+                                                .read(
+                                                  customViewsUnitProvider
+                                                      .notifier,
+                                                )
+                                                .state =
+                                            config ?? '3 BHK';
+                                        ref
+                                                .read(
+                                                  customViewsEditModeProvider
+                                                      .notifier,
+                                                )
+                                                .state =
+                                            true;
+                                        ref
+                                            .read(
+                                              customViewsSelectionsProvider
+                                                  .notifier,
+                                            )
+                                            .state = Map<String, dynamic>.from(
+                                          req['selections'] as Map? ?? {},
+                                        );
 
-                                    Navigator.pop(context);
-                                  },
-                                  child: Container(
-                                    height: 54,
-                                    decoration: BoxDecoration(
-                                      color: Colors.black,
-                                      borderRadius: BorderRadius.circular(20),
+                                        ref
+                                                .read(
+                                                  customViewsStepProvider
+                                                      .notifier,
+                                                )
+                                                .state =
+                                            0;
+                                        ref
+                                                .read(
+                                                  previousNavigationProvider
+                                                      .notifier,
+                                                )
+                                                .state =
+                                            7;
+                                        ref
+                                                .read(
+                                                  navigationProvider.notifier,
+                                                )
+                                                .state =
+                                            6;
+
+                                        Navigator.pop(context);
+                                      },
+                                      child: Container(
+                                        height: 54,
+                                        decoration: BoxDecoration(
+                                          color: Colors.black,
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
+                                        ),
+                                        alignment: Alignment.center,
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 18,
+                                        ),
+                                        child: FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          child: Text(
+                                            'MODIFY SELECTIONS',
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.montserrat(
+                                              color: Colors.white,
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w900,
+                                              letterSpacing: 1,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                     ),
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      'MODIFY SELECTIONS',
-                                      style: GoogleFonts.montserrat(
-                                        color: Colors.white,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w900,
-                                        letterSpacing: 1,
+                                  ),
+                                if (!([
+                                  'Approved',
+                                  'Completed',
+                                  'Rejected',
+                                  'Closed',
+                                ].contains(req['status'])))
+                                  const SizedBox(width: 12),
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: () => Navigator.pop(context),
+                                    child: Container(
+                                      height: 54,
+                                      decoration: BoxDecoration(
+                                        color: Colors.transparent,
+                                        borderRadius: BorderRadius.circular(20),
+                                        border: Border.all(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurface
+                                              .withOpacity(0.1),
+                                        ),
+                                      ),
+                                      alignment: Alignment.center,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 18,
+                                      ),
+                                      child: FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        child: Text(
+                                          'CLOSE VIEW',
+                                          textAlign: TextAlign.center,
+                                          style: GoogleFonts.montserrat(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .onSurface
+                                                .withOpacity(0.68),
+                                            fontSize: 9,
+                                            fontWeight: FontWeight.w800,
+                                            letterSpacing: 1,
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            if (!([
-                              'Approved',
-                              'Completed',
-                              'Rejected',
-                              'Closed',
-                            ].contains(req['status'])))
-                              const SizedBox(width: 12),
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () => Navigator.pop(context),
-                                child: Container(
-                                  height: 54,
-                                  decoration: BoxDecoration(
-                                    color: Colors.transparent,
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onSurface.withOpacity(0.1),
-                                    ),
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: Text(
-                                    'CLOSE VIEW',
-                                    style: GoogleFonts.montserrat(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onSurface.withOpacity(0.5),
-                                      fontSize: 9,
-                                      fontWeight: FontWeight.w800,
-                                      letterSpacing: 1,
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              ],
                             ),
-                          ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Web parity: close (X) button in the top-right corner.
+                    Positioned(
+                      top: 12,
+                      right: 12,
+                      child: GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: Container(
+                          width: 32,
+                          height: 32,
+                          decoration: BoxDecoration(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withOpacity(0.06),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            LucideIcons.x,
+                            size: 16,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withOpacity(0.6),
+                          ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             );
@@ -1333,7 +1402,7 @@ class _SectionTitle extends StatelessWidget {
         fontSize: 8,
         fontWeight: FontWeight.w900,
         letterSpacing: 2,
-        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.68),
       ),
     );
   }
@@ -1446,7 +1515,7 @@ class _DetailItem extends StatelessWidget {
           style: GoogleFonts.montserrat(
             fontSize: 8,
             fontWeight: FontWeight.w900,
-            color: foreground.withOpacity(0.3),
+            color: foreground.withOpacity(0.68),
             letterSpacing: 1.2,
           ),
         ),

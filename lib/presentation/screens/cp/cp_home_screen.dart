@@ -725,7 +725,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                                 color: isSelected
                                     ? (isDark ? Colors.white : Colors.black)
                                     : (isDark ? Colors.white : Colors.black)
-                                          .withValues(alpha: 0.4),
+                                          .withValues(alpha: 0.68),
                                 fontSize: 12,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 2,
@@ -1126,7 +1126,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                               fontWeight: FontWeight.w700,
                               letterSpacing: 0.5,
                               color: (isDark ? Colors.white : Colors.black)
-                                  .withValues(alpha: 0.5),
+                                  .withValues(alpha: 0.68),
                             ),
                           ),
                         ),
@@ -1586,7 +1586,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
               textAlign: TextAlign.center,
               style: GoogleFonts.montserrat(
                 color: (isDark ? Colors.white : Colors.black).withValues(
-                  alpha: 0.5,
+                  alpha: 0.68,
                 ),
                 fontSize: 8,
                 fontWeight: FontWeight.w500,

@@ -57,7 +57,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                     'MENU',
                     style: GoogleFonts.montserrat(
                       color: (isDark ? Colors.white : Colors.black).withOpacity(
-                        0.5,
+                        0.68,
                       ),
                       fontSize: 10,
                       fontWeight: FontWeight.w900,

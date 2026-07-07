@@ -185,7 +185,8 @@ class _InvestorDeleteAccountScreenState
         await ref.read(authProvider.notifier).logout();
         if (!mounted) return;
         _snack('Account deactivated successfully');
-        context.go('/investor/login');
+        // After session ends, go to guest mode, not the login page.
+        context.go('/home');
       } else {
         final msg =
             res.data is Map ? (res.data as Map)['message']?.toString() : null;

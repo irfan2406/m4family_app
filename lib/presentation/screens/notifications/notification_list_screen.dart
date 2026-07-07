@@ -255,7 +255,7 @@ class NotificationListScreen extends ConsumerWidget {
             style: GoogleFonts.montserrat(
               fontSize: 12,
               fontWeight: FontWeight.w900,
-              color: scheme.onSurface.withValues(alpha: 0.4),
+              color: scheme.onSurface.withValues(alpha: 0.68),
               letterSpacing: 2,
             ),
           ),
@@ -264,7 +264,7 @@ class NotificationListScreen extends ConsumerWidget {
             'We\'ll notify you when something important happens.',
             style: GoogleFonts.montserrat(
               fontSize: 10,
-              color: scheme.onSurface.withValues(alpha: 0.3),
+              color: scheme.onSurface.withValues(alpha: 0.68),
             ),
           ),
         ],
@@ -507,7 +507,7 @@ class _NotificationItem extends StatelessWidget {
                           fontSize: 8,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1,
-                          color: scheme.onSurface.withValues(alpha: 0.4),
+                          color: scheme.onSurface.withValues(alpha: 0.68),
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),

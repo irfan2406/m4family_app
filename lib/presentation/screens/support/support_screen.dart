@@ -289,7 +289,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
           style: GoogleFonts.montserrat(
             fontSize: 13,
             fontWeight: FontWeight.w600,
-            color: scheme.onSurface.withValues(alpha: 0.5),
+            color: scheme.onSurface.withValues(alpha: 0.68),
             letterSpacing: 0,
           ),
         ),
@@ -369,7 +369,7 @@ class _MatrixItem extends StatelessWidget {
             Text(
               subtitle.toUpperCase(),
               style: GoogleFonts.montserrat(
-                color: scheme.onSurface.withValues(alpha: 0.5),
+                color: scheme.onSurface.withValues(alpha: 0.68),
                 fontSize: 8,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 0.8,
@@ -479,7 +479,7 @@ class _TicketPreviewItem extends StatelessWidget {
                           style: GoogleFonts.montserrat(
                             color: Theme.of(
                               context,
-                            ).colorScheme.onSurface.withOpacity(0.2),
+                            ).colorScheme.onSurface.withOpacity(0.62),
                             fontSize: 9,
                             fontWeight: FontWeight.w900,
                           ),

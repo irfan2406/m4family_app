@@ -472,7 +472,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                 hintStyle: GoogleFonts.montserrat(
                   fontSize: 9,
                   fontWeight: FontWeight.w800,
-                  color: scheme.onSurface.withValues(alpha: 0.4),
+                  color: scheme.onSurface.withValues(alpha: 0.62),
                   letterSpacing: 1.0,
                 ),
                 prefixIcon: Icon(
@@ -794,7 +794,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
             fontSize: 7,
             fontWeight: FontWeight.w900,
             letterSpacing: 1,
-            color: scheme.onSurfaceVariant.withValues(alpha: 0.5),
+            color: scheme.onSurfaceVariant.withValues(alpha: 0.68),
           ),
         ),
         const SizedBox(height: 4),
@@ -839,7 +839,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
           fontSize: 7,
           fontWeight: FontWeight.w900,
           letterSpacing: 0.8,
-          color: scheme.onSurfaceVariant.withValues(alpha: 0.5),
+          color: scheme.onSurfaceVariant.withValues(alpha: 0.68),
         ),
       );
     }
@@ -927,7 +927,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
             style: GoogleFonts.montserrat(
               fontSize: 10,
               fontWeight: FontWeight.w900,
-              color: scheme.onSurfaceVariant.withValues(alpha: 0.5),
+              color: scheme.onSurfaceVariant.withValues(alpha: 0.68),
               letterSpacing: 1,
             ),
           ),
@@ -1161,7 +1161,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                     fontSize: 9,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.2,
-                    color: scheme.onSurfaceVariant.withValues(alpha: 0.4),
+                    color: scheme.onSurfaceVariant.withValues(alpha: 0.62),
                   ),
                 ),
               ],

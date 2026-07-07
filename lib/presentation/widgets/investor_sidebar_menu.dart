@@ -196,7 +196,8 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                       _close();
                       await ref.read(authProvider.notifier).logout();
                       if (!context.mounted) return;
-                      context.go('/investor/login');
+                      // After logout, go to guest mode, not the login screen.
+                      context.go('/home');
                     },
                     child: Container(
                       height: 56,

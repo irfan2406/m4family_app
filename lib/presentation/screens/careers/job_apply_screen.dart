@@ -34,7 +34,9 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
     final authState = ref.read(authProvider);
     if (authState.user != null) {
       final user = authState.user!;
-      _fullNameController.text = user['fullName'] ?? '${user['firstName'] ?? ''} ${user['lastName'] ?? ''}'.trim();
+      _fullNameController.text =
+          user['fullName'] ??
+          '${user['firstName'] ?? ''} ${user['lastName'] ?? ''}'.trim();
       _emailController.text = user['email'] ?? '';
       _phoneController.text = user['phone'] ?? '';
     }
@@ -49,13 +51,13 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
   }
 
   Future<void> _submitApplication() async {
-    if (_fullNameController.text.trim().isEmpty || 
+    if (_fullNameController.text.trim().isEmpty ||
         _phoneController.text.trim().isEmpty ||
         _emailController.text.trim().isEmpty) {
       _showToast('Please fill in all required fields', isError: true);
       return;
     }
-    
+
     if (_resumeFile == null) {
       _showToast('Please upload your resume (PDF)', isError: true);
       return;
@@ -65,16 +67,22 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
 
     try {
       final apiClient = ref.read(apiClientProvider);
-      
+
       // 1. Upload Resume
       String resumeUrl = '';
       final fileName = _resumeFile!.path.split('/').last;
-      
-      final uploadResponse = await apiClient.uploadResume(_resumeFile!.path, fileName);
+
+      final uploadResponse = await apiClient.uploadResume(
+        _resumeFile!.path,
+        fileName,
+      );
       if (uploadResponse.data['status'] == true) {
         resumeUrl = uploadResponse.data['data']['resumeUrl'];
       } else {
-        _showToast(uploadResponse.data['message'] ?? 'Failed to upload resume', isError: true);
+        _showToast(
+          uploadResponse.data['message'] ?? 'Failed to upload resume',
+          isError: true,
+        );
         setState(() => _isSubmitting = false);
         return;
       }
@@ -91,11 +99,14 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
       if (response.data['status'] == true) {
         _showToast('Application Submitted Successfully!');
         if (mounted) {
-           Navigator.pop(context); // Close Application form
-           Navigator.pop(context); // Close Job Detail
+          Navigator.pop(context); // Close Application form
+          Navigator.pop(context); // Close Job Detail
         }
       } else {
-        _showToast(response.data['message'] ?? 'Failed to submit application', isError: true);
+        _showToast(
+          response.data['message'] ?? 'Failed to submit application',
+          isError: true,
+        );
       }
     } catch (e) {
       _showToast('An error occurred during submission', isError: true);
@@ -108,7 +119,13 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message, style: GoogleFonts.montserrat(fontWeight: FontWeight.bold, fontSize: 12)),
+        content: Text(
+          message,
+          style: GoogleFonts.montserrat(
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+          ),
+        ),
         backgroundColor: isError ? Colors.redAccent : Colors.teal,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -141,7 +158,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
             Text(
               (widget.job['department'] ?? '').toString().toUpperCase(),
               style: GoogleFonts.montserrat(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
                 fontWeight: FontWeight.w400,
                 fontSize: 8,
                 letterSpacing: 2,
@@ -149,7 +166,9 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
             ),
           ],
         ),
-        backgroundColor: (isDark ? Colors.black : Colors.white).withOpacity(0.8),
+        backgroundColor: (isDark ? Colors.black : Colors.white).withOpacity(
+          0.8,
+        ),
         flexibleSpace: ClipRRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
@@ -169,11 +188,21 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                 height: 36,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    0.05,
+                  ),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.08)),
+                  border: Border.all(
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      0.08,
+                    ),
+                  ),
                 ),
-                child: Icon(LucideIcons.arrowLeft, color: isDark ? Colors.white : Colors.black, size: 16),
+                child: Icon(
+                  LucideIcons.arrowLeft,
+                  color: isDark ? Colors.white : Colors.black,
+                  size: 16,
+                ),
               ),
             ),
           ),
@@ -194,7 +223,11 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                       color: isDark ? Colors.white : Colors.black,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(LucideIcons.moreHorizontal, size: 18, color: isDark ? Colors.black : Colors.white),
+                    child: Icon(
+                      LucideIcons.moreHorizontal,
+                      size: 18,
+                      color: isDark ? Colors.black : Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -207,11 +240,13 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
         padding: const EdgeInsets.only(top: 120),
         decoration: BoxDecoration(
           color: isDark ? Colors.black : Colors.white,
-          gradient: isDark ? const RadialGradient(
-            center: Alignment.topCenter,
-            radius: 2.5,
-            colors: [Color(0xFF111319), Colors.black],
-          ) : null,
+          gradient: isDark
+              ? const RadialGradient(
+                  center: Alignment.topCenter,
+                  radius: 2.5,
+                  colors: [Color(0xFF111319), Colors.black],
+                )
+              : null,
         ),
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -223,7 +258,10 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                 child: Column(
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.08),
                         borderRadius: BorderRadius.circular(20),
@@ -231,7 +269,8 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                       child: Text(
                         'APPLYING FOR',
                         style: GoogleFonts.montserrat(
-                          color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
+                          color: (isDark ? Colors.white : Colors.black)
+                              .withOpacity(0.6),
                           fontSize: 8,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1,
@@ -252,9 +291,12 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      (widget.job['location'] ?? 'MUMBAI').toString().toUpperCase(),
+                      (widget.job['location'] ?? 'MUMBAI')
+                          .toString()
+                          .toUpperCase(),
                       style: GoogleFonts.montserrat(
-                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.4),
+                        color: (isDark ? Colors.white : Colors.black)
+                            .withOpacity(0.68),
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 3,
@@ -273,12 +315,20 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
 
               _buildLabel('PHONE NUMBER', isDark),
               const SizedBox(height: 12),
-              _buildTextField(controller: _phoneController, hint: '', isPhone: true),
+              _buildTextField(
+                controller: _phoneController,
+                hint: '',
+                isPhone: true,
+              ),
               const SizedBox(height: 32),
 
               _buildLabel('EMAIL ADDRESS', isDark),
               const SizedBox(height: 12),
-              _buildTextField(controller: _emailController, hint: '', isEmail: true),
+              _buildTextField(
+                controller: _emailController,
+                hint: '',
+                isEmail: true,
+              ),
               const SizedBox(height: 48),
 
               // PDF Upload Area
@@ -286,21 +336,30 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
               const SizedBox(height: 16),
               GestureDetector(
                 onTap: () async {
-                  FilePickerResult? result = await FilePicker.platform.pickFiles(
-                    type: FileType.custom,
-                    allowedExtensions: ['pdf'],
-                  );
+                  FilePickerResult? result = await FilePicker.platform
+                      .pickFiles(
+                        type: FileType.custom,
+                        allowedExtensions: ['pdf'],
+                      );
                   if (result != null) {
-                    setState(() => _resumeFile = File(result.files.single.path!));
+                    setState(
+                      () => _resumeFile = File(result.files.single.path!),
+                    );
                   }
                 },
                 child: Container(
                   height: 200,
                   decoration: BoxDecoration(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      0.03,
+                    ),
                     borderRadius: BorderRadius.circular(40),
                     border: Border.all(
-                      color: _resumeFile != null ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                      color: _resumeFile != null
+                          ? (isDark ? Colors.white : Colors.black)
+                          : (isDark ? Colors.white : Colors.black).withOpacity(
+                              0.05,
+                            ),
                       width: 1.5,
                     ),
                   ),
@@ -311,21 +370,31 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                         width: 64,
                         height: 64,
                         decoration: BoxDecoration(
-                          color: _resumeFile != null ? Colors.black : (isDark ? Colors.white : Colors.black),
+                          color: _resumeFile != null
+                              ? Colors.black
+                              : (isDark ? Colors.white : Colors.black),
                           shape: BoxShape.circle,
                           boxShadow: [
-                            BoxShadow(color: Colors.black.withOpacity(0.2), blurRadius: 20, offset: const Offset(0, 10))
-                          ]
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 20,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
                         ),
                         child: Icon(
-                          _resumeFile != null ? LucideIcons.fileCheck : LucideIcons.rocket,
-                          color: _resumeFile != null ? Colors.white : (isDark ? Colors.black : Colors.white),
+                          _resumeFile != null
+                              ? LucideIcons.fileCheck
+                              : LucideIcons.rocket,
+                          color: _resumeFile != null
+                              ? Colors.white
+                              : (isDark ? Colors.black : Colors.white),
                           size: 30,
                         ),
                       ),
                       const SizedBox(height: 24),
                       Text(
-                        _resumeFile != null 
+                        _resumeFile != null
                             ? _resumeFile!.path.split('/').last.toUpperCase()
                             : 'SELECT PDF DOCUMENT',
                         style: GoogleFonts.montserrat(
@@ -350,11 +419,15 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: isDark ? Colors.white : Colors.black,
                     foregroundColor: isDark ? Colors.black : Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
                     elevation: 0,
                   ),
                   child: _isSubmitting
-                      ? CircularProgressIndicator(color: isDark ? Colors.black : Colors.white)
+                      ? CircularProgressIndicator(
+                          color: isDark ? Colors.black : Colors.white,
+                        )
                       : Text(
                           'SUBMIT APPLICATION',
                           style: GoogleFonts.montserrat(
@@ -388,29 +461,58 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
     );
   }
 
-  Widget _buildTextField({required TextEditingController controller, required String hint, bool isEmail = false, bool isPhone = false}) {
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String hint,
+    bool isEmail = false,
+    bool isPhone = false,
+  }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return TextField(
       controller: controller,
-      keyboardType: isEmail ? TextInputType.emailAddress : isPhone ? TextInputType.phone : TextInputType.text,
-      style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.bold, fontSize: 13),
+      keyboardType: isEmail
+          ? TextInputType.emailAddress
+          : isPhone
+          ? TextInputType.phone
+          : TextInputType.text,
+      style: GoogleFonts.montserrat(
+        color: isDark ? Colors.white : Colors.black,
+        fontWeight: FontWeight.bold,
+        fontSize: 13,
+      ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.3), fontWeight: FontWeight.bold, fontSize: 13),
+        hintStyle: GoogleFonts.montserrat(
+          color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
+          fontWeight: FontWeight.bold,
+          fontSize: 13,
+        ),
         filled: true,
-        fillColor: isDark ? const Color(0xFF0F1219) : const Color(0xFFF8F8F8), // Neutral grey instead of blue-grey
-        contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+        fillColor: isDark
+            ? const Color(0xFF0F1219)
+            : const Color(0xFFF8F8F8), // Neutral grey instead of blue-grey
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 24,
+          vertical: 24,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
+          borderSide: BorderSide(
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+          ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
+          borderSide: BorderSide(
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(color: isDark ? Colors.white : Colors.black, width: 1.5),
+          borderSide: BorderSide(
+            color: isDark ? Colors.white : Colors.black,
+            width: 1.5,
+          ),
         ),
       ),
     );

@@ -206,7 +206,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
               'INSTITUTIONAL PROTOCOL',
               style: GoogleFonts.montserrat(
                 fontSize: 8,
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.5,
               ),
@@ -300,7 +300,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                               style: GoogleFonts.montserrat(
                                 fontSize: 9,
                                 color: (isDark ? Colors.white : Colors.black)
-                                    .withOpacity(0.55),
+                                    .withOpacity(0.68),
                                 fontWeight: FontWeight.bold,
                                 height: 1.4,
                               ),
@@ -475,7 +475,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
           hintText: hint,
           hintStyle: GoogleFonts.montserrat(
             fontSize: 12,
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.35),
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
             fontWeight: FontWeight.w900,
           ),
           icon: maxLines == 1

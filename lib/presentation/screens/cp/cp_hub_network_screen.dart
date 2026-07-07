@@ -168,7 +168,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                               const SizedBox(height: 6),
                               Text(
                                 '${e['date']} • ${e['location']}',
-                                style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w700, color: scheme.onSurface.withValues(alpha: 0.55)),
+                                style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w700, color: scheme.onSurface.withValues(alpha: 0.68)),
                               ),
                               const SizedBox(height: 10),
                               FilledButton(
@@ -253,7 +253,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                                 industry.toUpperCase(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w800, letterSpacing: 1.2, color: scheme.onSurface.withValues(alpha: 0.5)),
+                                style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w800, letterSpacing: 1.2, color: scheme.onSurface.withValues(alpha: 0.68)),
                               ),
                             ],
                           ),
@@ -278,7 +278,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                               const SizedBox(height: 4),
                               Text(
                                 'Discuss trends with verified Partners',
-                                style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w700, color: scheme.onSurface.withValues(alpha: 0.55)),
+                                style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w700, color: scheme.onSurface.withValues(alpha: 0.68)),
                               ),
                             ],
                           ),
@@ -335,7 +335,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
               fontSize: 8,
               fontWeight: FontWeight.w900,
               letterSpacing: 1.2,
-              color: scheme.onSurface.withValues(alpha: 0.5),
+              color: scheme.onSurface.withValues(alpha: 0.68),
             ),
           ),
         ],

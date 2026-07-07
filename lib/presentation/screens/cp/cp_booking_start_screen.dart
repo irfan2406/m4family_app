@@ -128,7 +128,7 @@ class CpBookingStartScreen extends ConsumerWidget {
                     'INTERESTED IN ${projectTitle.toUpperCase()}?\nCHOOSE HOW YOU\'D LIKE TO PROCEED.',
                     style: GoogleFonts.montserrat(
                       fontSize: 10,
-                      color: textPrimary.withValues(alpha: 0.5),
+                      color: textPrimary.withValues(alpha: 0.68),
                       fontWeight: FontWeight.w900,
                       letterSpacing: 2.5,
                       height: 1.8,
@@ -190,7 +190,7 @@ class CpBookingStartScreen extends ConsumerWidget {
                                 style: GoogleFonts.montserrat(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w900,
-                                  color: textPrimary.withValues(alpha: isDark ? 0.6 : 0.55),
+                                  color: textPrimary.withValues(alpha: isDark ? 0.6 : 0.68),
                                   letterSpacing: 0.5,
                                   height: 1.6,
                                 ),
@@ -296,7 +296,7 @@ class _BookingOptionCard extends StatelessWidget {
                     opt['desc'] as String,
                     style: GoogleFonts.montserrat(
                       fontSize: 9,
-                      color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+                      color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.68),
                       fontWeight: FontWeight.bold,
                       height: 1.4,
                     ),

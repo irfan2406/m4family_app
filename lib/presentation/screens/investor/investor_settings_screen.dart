@@ -156,7 +156,8 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
     if (!mounted) return;
     await ref.read(authProvider.notifier).logout();
     if (!mounted) return;
-    context.go('/investor/login');
+    // After logout, go to guest mode, not the login page.
+    context.go('/home');
   }
 
   @override

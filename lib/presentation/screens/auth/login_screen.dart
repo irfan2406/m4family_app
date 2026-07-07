@@ -644,7 +644,7 @@ class _LuxuryInputField extends StatelessWidget {
             ),
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: TextStyle(color: Colors.white.withOpacity(0.2)),
+              hintStyle: TextStyle(color: Colors.white.withOpacity(0.62)),
               prefixIcon: Icon(icon, color: Colors.white54, size: 20),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(

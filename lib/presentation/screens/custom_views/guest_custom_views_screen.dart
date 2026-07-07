@@ -110,7 +110,7 @@ class _GuestCustomViewsScreenState
                   'M4 CUSTOM SHOWCASE',
                   style: GoogleFonts.montserrat(
                     color: (isDark ? Colors.white : Colors.black).withOpacity(
-                      0.5,
+                      0.68,
                     ),
                     fontWeight: FontWeight.w900,
                     fontSize: 7,

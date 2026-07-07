@@ -337,7 +337,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                               style: GoogleFonts.inter(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
-                                color: scheme.onSurface.withOpacity(0.3),
+                                color: scheme.onSurface.withOpacity(0.68),
                               ),
                             ),
                           ],

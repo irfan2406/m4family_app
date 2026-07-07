@@ -290,7 +290,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                           style: GoogleFonts.montserrat(
                             color: Theme.of(
                               context,
-                            ).colorScheme.onSurface.withOpacity(0.4),
+                            ).colorScheme.onSurface.withOpacity(0.68),
                             fontSize: 10,
                             fontWeight: FontWeight.w900, // 👈 Match web bold
                             letterSpacing: 4,
@@ -337,73 +337,85 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                   ),
                 ),
 
-                // Theme Mode Toggle
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 32,
-                    vertical: 8,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'THEME MODE',
-                        style: GoogleFonts.montserrat(
-                          color: isDark ? Colors.white70 : Colors.black87,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 2,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          ref
-                              .read(themeProvider.notifier)
-                              .setTheme(
-                                isDark ? ThemeMode.light : ThemeMode.dark,
-                              );
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: (isDark ? Colors.white : Colors.black)
-                                .withOpacity(0.08),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: (isDark ? Colors.white : Colors.black)
-                                  .withOpacity(0.1),
-                            ),
-                          ),
-                          child: Icon(
-                            isDark ? LucideIcons.moon : LucideIcons.sparkles,
-                            color: isDark ? Colors.white : Colors.black,
-                            size: 18,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Bottom Actions
+                // Footer — divider line ABOVE the THEME MODE row + LOG OUT
+                // (matches web: line separates QUICK ACTIONS from the footer).
                 Container(
-                  padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
                     border: Border(
                       top: BorderSide(
                         color: Colors.white.withOpacity(isDark ? 0.05 : 0.2),
                       ),
                     ),
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.transparent,
-                        (isDark ? Colors.black : Colors.white).withOpacity(0.2),
-                      ],
-                    ),
                   ),
-                  child: _SidebarExitButton(),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Theme Mode Toggle
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(32, 16, 32, 8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'THEME MODE',
+                              style: GoogleFonts.montserrat(
+                                color: isDark ? Colors.white70 : Colors.black87,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 2,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                ref
+                                    .read(themeProvider.notifier)
+                                    .setTheme(
+                                      isDark ? ThemeMode.light : ThemeMode.dark,
+                                    );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: (isDark ? Colors.white : Colors.black)
+                                      .withOpacity(0.08),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color:
+                                        (isDark ? Colors.white : Colors.black)
+                                            .withOpacity(0.1),
+                                  ),
+                                ),
+                                child: Icon(
+                                  isDark
+                                      ? LucideIcons.moon
+                                      : LucideIcons.sparkles,
+                                  color: isDark ? Colors.white : Colors.black,
+                                  size: 18,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Bottom Actions (LOG OUT)
+                      Container(
+                        padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              (isDark ? Colors.black : Colors.white)
+                                  .withOpacity(0.2),
+                            ],
+                          ),
+                        ),
+                        child: _SidebarExitButton(),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -453,7 +465,9 @@ class _SidebarExitButton extends ConsumerWidget {
                 onPressed: () {
                   ref.read(authProvider.notifier).logout();
                   Navigator.pop(context);
-                  context.go('/login');
+                  // Web parity: after logout, drop into guest mode
+                  // (browse-as-guest home), not the login/onboarding screen.
+                  context.go('/home');
                 },
                 child: Text(
                   'LOGOUT',
@@ -507,7 +521,7 @@ class _SidebarItem extends StatelessWidget {
   final IconData icon;
   final String label;
   final bool isActive;
-  final Color activeColor;
+  final Color? activeColor;
   final VoidCallback? onTap;
   final Widget? trailing;
 
@@ -515,7 +529,7 @@ class _SidebarItem extends StatelessWidget {
     required this.icon,
     required this.label,
     this.isActive = false,
-    this.activeColor = Colors.white,
+    this.activeColor,
     this.onTap,
     this.trailing,
   });
@@ -523,6 +537,9 @@ class _SidebarItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final onSurface = Theme.of(context).colorScheme.onSurface;
+    // Default active colour is the theme foreground (black in light mode,
+    // white in dark) so active items never show white on the light sidebar.
+    final activeColor = this.activeColor ?? onSurface;
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 5),
       child: Stack(
@@ -621,6 +638,9 @@ class _SidebarDropdown extends StatelessWidget {
           icon: icon,
           label: label,
           isActive: isOpen,
+          // Theme-aware active colour: black in light mode, white in dark
+          // (was hardcoded white → invisible/wrong on the light sidebar).
+          activeColor: Theme.of(context).colorScheme.onSurface,
           onTap: onToggle,
           trailing: Icon(
             isOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown,

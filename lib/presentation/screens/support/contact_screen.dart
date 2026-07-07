@@ -209,7 +209,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
               style: GoogleFonts.montserrat(
                 fontSize: 9,
                 fontWeight: FontWeight.w800,
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
                 letterSpacing: 3.5,
               ),
             ),
@@ -227,7 +227,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
         style: GoogleFonts.montserrat(
           fontSize: 9,
           fontWeight: FontWeight.w800,
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+          color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
           letterSpacing: 2,
         ),
       ),
@@ -639,7 +639,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                         fontSize: 9,
                         fontWeight: FontWeight.w800,
                         color: (isDark ? Colors.white : Colors.black)
-                            .withOpacity(0.5),
+                            .withOpacity(0.68),
                         letterSpacing: 2,
                       ),
                     ),

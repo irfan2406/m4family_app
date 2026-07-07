@@ -202,7 +202,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                   textAlign: TextAlign.center,
                   style: GoogleFonts.montserrat(
                     fontSize: 10,
-                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.68),
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.2,
                     height: 1.8,
@@ -309,7 +309,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                           style: GoogleFonts.montserrat(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
-                            color: Colors.white.withValues(alpha: 0.5),
+                            color: Colors.white.withValues(alpha: 0.68),
                             letterSpacing: 2,
                           ),
                         ),

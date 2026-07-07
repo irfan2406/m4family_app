@@ -461,7 +461,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
         decoration: InputDecoration(
           hintText: hint.toUpperCase(),
           hintStyle: GoogleFonts.montserrat(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
             fontSize: 13,
             fontWeight: FontWeight.bold,
           ),
@@ -535,7 +535,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                     color: selectedProject != null
                         ? (isDark ? Colors.white : Colors.black)
                         : (isDark ? Colors.white : Colors.black).withOpacity(
-                            0.5,
+                            0.68,
                           ),
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
@@ -667,7 +667,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                     color: selectedEmployee.isNotEmpty
                         ? (isDark ? Colors.white : Colors.black)
                         : (isDark ? Colors.white : Colors.black).withOpacity(
-                            0.5,
+                            0.68,
                           ),
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
@@ -794,7 +794,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                 text,
                 style: GoogleFonts.montserrat(
                   color: isPlaceholder
-                      ? (isDark ? Colors.white : Colors.black).withOpacity(0.5)
+                      ? (isDark ? Colors.white : Colors.black).withOpacity(0.68)
                       : (isDark ? Colors.white : Colors.black),
                   fontSize: 13,
                   fontWeight: FontWeight.bold,

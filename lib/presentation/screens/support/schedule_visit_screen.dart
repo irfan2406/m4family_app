@@ -386,7 +386,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                   fontWeight: FontWeight.w900,
                   color: Theme.of(
                     context,
-                  ).colorScheme.onSurface.withOpacity(0.5),
+                  ).colorScheme.onSurface.withOpacity(0.68),
                   letterSpacing: 2,
                   height: 1.6,
                 ),
@@ -450,7 +450,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
         decoration: InputDecoration(
           hintText: hint.toUpperCase(),
           hintStyle: GoogleFonts.montserrat(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
             fontSize: 13,
             fontWeight: FontWeight.bold,
           ),
@@ -526,7 +526,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                     color: selectedProject != null
                         ? (isDark ? Colors.white : Colors.black)
                         : (isDark ? Colors.white : Colors.black).withOpacity(
-                            0.5,
+                            0.68,
                           ),
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
@@ -653,7 +653,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                 text,
                 style: GoogleFonts.montserrat(
                   color: isPlaceholder
-                      ? (isDark ? Colors.white : Colors.black).withOpacity(0.5)
+                      ? (isDark ? Colors.white : Colors.black).withOpacity(0.68)
                       : (isDark ? Colors.white : Colors.black),
                   fontSize: 13,
                   fontWeight: FontWeight.bold,

@@ -6,7 +6,12 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 final apiClientProvider = Provider(
   (ref) => ApiClient(
-    baseUrl: dotenv.get('API_URL', fallback: 'http://10.0.2.2:5009'),
+    baseUrl: dotenv.get(
+      'API_URL',
+      // Production backend (same host the web uses). The old 10.0.2.2 fallback
+      // only works inside an emulator and breaks images/data on real devices.
+      fallback: 'https://m4familyback.projectdemo.online',
+    ),
   ),
 );
 
