@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -7,6 +8,8 @@ import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class M4Image extends ConsumerWidget {
+  static final Map<String, Uint8List> _base64Cache = {};
+
   final String? imageUrl;
   final BoxFit fit;
   final double? width;
@@ -35,8 +38,10 @@ class M4Image extends ConsumerWidget {
       try {
         final commaIndex = imageUrl!.indexOf('base64,');
         if (commaIndex != -1) {
-          final base64Str = imageUrl!.substring(commaIndex + 7).trim();
-          final bytes = base64Decode(base64Str);
+          final bytes = _base64Cache.putIfAbsent(imageUrl!, () {
+            final base64Str = imageUrl!.substring(commaIndex + 7).replaceAll(RegExp(r'\s'), '');
+            return base64Decode(base64Str);
+          });
           return Image.memory(
             bytes,
             fit: fit,

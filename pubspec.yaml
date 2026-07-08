@@ -132,6 +132,8 @@ flutter:
     - assets/login-bg.png
     - assets/360-vr.png
     - assets/custom_view_1.png
+    - assets/community_skyline.png
+    - assets/community_luxury.png
     - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see

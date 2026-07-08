@@ -457,106 +457,94 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   // ⭐️ Tagline (Living the M4 Life)
-                  Transform.translate(
-                    offset: const Offset(
-                      0,
-                      -20,
-                    ), // 👈 Reduced from -60 to avoid overlap
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 0),
-                      child: ColorFiltered(
-                        colorFilter: ColorFilter.matrix(
-                          Theme.of(context).brightness == Brightness.dark
-                              ? const [
-                                  // Dark Mode: Invert and boost to white
-                                  -5.0, 0, 0, 0, 255,
-                                  0, -5.0, 0, 0, 255,
-                                  0, 0, -5.0, 0, 255,
-                                  0, 0, 0, 1, 0,
-                                ]
-                              : const [
-                                  // Light Mode: Crush to black
-                                  5.0, 0, 0, 0, -150,
-                                  0, 5.0, 0, 0, -150,
-                                  0, 0, 5.0, 0, -150,
-                                  0, 0, 0, 1, 0,
-                                ],
-                        ),
-                        child: Image.asset(
-                          'assets/living_m4_life.png',
-                          width: MediaQuery.of(context).size.width,
-                          height: 140, // 👈 Reduced from 300
-                          fit: BoxFit.fitWidth, // 👈 Force to edges
-                        ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10, bottom: 20),
+                    child: ColorFiltered(
+                      colorFilter: ColorFilter.matrix(
+                        Theme.of(context).brightness == Brightness.dark
+                            ? const [
+                                // Dark Mode: Invert and boost to white
+                                -5.0, 0, 0, 0, 255,
+                                0, -5.0, 0, 0, 255,
+                                0, 0, -5.0, 0, 255,
+                                0, 0, 0, 1, 0,
+                              ]
+                            : const [
+                                // Light Mode: Crush to black
+                                5.0, 0, 0, 0, -150,
+                                0, 5.0, 0, 0, -150,
+                                0, 0, 5.0, 0, -150,
+                                0, 0, 0, 1, 0,
+                              ],
+                      ),
+                      child: Image.asset(
+                        'assets/living_m4_life.png',
+                        width: MediaQuery.of(context).size.width,
+                        height: 120, 
+                        fit: BoxFit.contain, 
                       ),
                     ),
                   ),
 
-                  // Hero Image Container (Pulled UP)
-                  Transform.translate(
-                    offset: const Offset(
-                      0,
-                      -40,
-                    ), // 👈 Pull even higher due to taller tagline box
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: Builder(
-                        builder: (context) {
-                          // Web parity: the top hero cycles the FIRST (featured)
-                          // project's heroImages[0..2], matching SharedHomePage.
-                          final featured = _projects.isNotEmpty
-                              ? _projects[0]
-                              : null;
-                          final mainImage = _projImg(featured, _heroSlide % 3);
+                  // Hero Image Container
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Builder(
+                      builder: (context) {
+                        // Web parity: the top hero cycles the FIRST (featured)
+                        // project's heroImages[0..2], matching SharedHomePage.
+                        final featured = _projects.isNotEmpty
+                            ? _projects[0]
+                            : null;
+                        final mainImage = _projImg(featured, _heroSlide % 3);
 
-                          return Stack(
-                            children: [
-                              AspectRatio(
-                                aspectRatio: 4 / 3,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(32),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.15),
-                                        blurRadius: 30,
-                                        offset: const Offset(0, 15),
+                        return Stack(
+                          children: [
+                            AspectRatio(
+                              aspectRatio: 4 / 3,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(32),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.15),
+                                      blurRadius: 30,
+                                      offset: const Offset(0, 15),
+                                    ),
+                                  ],
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(32),
+                                  child: AnimatedSwitcher(
+                                    duration: const Duration(
+                                      milliseconds: 800,
+                                    ),
+                                    transitionBuilder:
+                                        (
+                                          Widget child,
+                                          Animation<double> animation,
+                                        ) {
+                                          return FadeTransition(
+                                            opacity: animation,
+                                            child: child,
+                                          );
+                                        },
+                                    child: M4Image(
+                                      key: ValueKey<int>(_heroSlide),
+                                      imageUrl: mainImage,
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                      height: double.infinity,
+                                      placeholder: Container(
+                                        color: Colors.black12,
                                       ),
-                                    ],
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(32),
-                                    child: AnimatedSwitcher(
-                                      duration: const Duration(
-                                        milliseconds: 800,
-                                      ),
-                                      transitionBuilder:
-                                          (
-                                            Widget child,
-                                            Animation<double> animation,
-                                          ) {
-                                            return FadeTransition(
-                                              opacity: animation,
-                                              child: child,
-                                            );
-                                          },
-                                      child: M4Image(
-                                        key: ValueKey<int>(_heroSlide),
-                                        imageUrl: mainImage,
-                                        fit: BoxFit.cover,
-                                        width: double.infinity,
-                                        height: double.infinity,
-                                        placeholder: Container(
-                                          color: Colors.black12,
-                                        ),
-                                        errorWidget: Container(
-                                          color: Colors.white10,
-                                          child: const Center(
-                                            child: Icon(
-                                              LucideIcons.image,
-                                              color: Colors.white24,
-                                              size: 50,
-                                            ),
+                                      errorWidget: Container(
+                                        color: Colors.white10,
+                                        child: const Center(
+                                          child: Icon(
+                                            LucideIcons.image,
+                                            color: Colors.white24,
+                                            size: 50,
                                           ),
                                         ),
                                       ),
@@ -564,72 +552,72 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                   ),
                                 ),
                               ),
+                            ),
 
-                              // Artistic Impression Badge
-                              Positioned(
-                                top: 16,
-                                right: 16,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
+                            // Artistic Impression Badge
+                            Positioned(
+                              top: 16,
+                              right: 16,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.6),
+                                  borderRadius: BorderRadius.circular(4),
+                                  border: Border.all(
+                                    color: Colors.white.withOpacity(0.1),
                                   ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.6),
-                                    borderRadius: BorderRadius.circular(4),
-                                    border: Border.all(
-                                      color: Colors.white.withOpacity(0.1),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'ARTISTIC IMPRESSION',
-                                    style: GoogleFonts.montserrat(
-                                      color: Colors.white,
-                                      fontSize: 7,
-                                      fontWeight: FontWeight.w900,
-                                      letterSpacing: 1.5,
-                                    ),
+                                ),
+                                child: Text(
+                                  'ARTISTIC IMPRESSION',
+                                  style: GoogleFonts.montserrat(
+                                    color: Colors.white,
+                                    fontSize: 7,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: 1.5,
                                   ),
                                 ),
                               ),
+                            ),
 
-                              // Carousel Indicators
-                              Positioned(
-                                bottom: 24,
-                                left: 0,
-                                right: 0,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: List.generate(3, (index) {
-                                    final isSelected =
-                                        (_heroSlide % 3) == index;
-                                    return AnimatedContainer(
-                                      duration: const Duration(
-                                        milliseconds: 300,
-                                      ),
-                                      margin: const EdgeInsets.symmetric(
-                                        horizontal: 4,
-                                      ),
-                                      width: isSelected ? 32 : 24,
-                                      height: 4,
-                                      decoration: BoxDecoration(
-                                        color: isSelected
-                                            ? Colors.black
-                                            : Colors.white.withValues(
-                                                alpha: 0.5,
-                                              ),
-                                        borderRadius: BorderRadius.circular(2),
-                                      ),
-                                    );
-                                  }),
-                                ),
+                            // Carousel Indicators
+                            Positioned(
+                              bottom: 24,
+                              left: 0,
+                              right: 0,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: List.generate(3, (index) {
+                                  final isSelected =
+                                      (_heroSlide % 3) == index;
+                                  return AnimatedContainer(
+                                    duration: const Duration(
+                                      milliseconds: 300,
+                                    ),
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 4,
+                                    ),
+                                    width: isSelected ? 32 : 24,
+                                    height: 4,
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? Colors.black
+                                          : Colors.white.withOpacity(
+                                              0.5,
+                                            ),
+                                      borderRadius: BorderRadius.circular(2),
+                                    ),
+                                  );
+                                }),
                               ),
-                            ],
-                          );
-                        },
-                      ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
-                  ), // 👈 Closing Transform.translate for Hero
+                  ),
                 ],
               ),
             ),
@@ -751,15 +739,29 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                     item['overview'] ??
                                     item['description'] ??
                                     'Explore this master-planned community',
-                                imageUrl:
-                                    (item['image']?.toString().isNotEmpty ??
-                                        false)
-                                    ? item['image'].toString()
-                                    : (item['heroImages'] is List &&
-                                          (item['heroImages'] as List)
-                                              .isNotEmpty)
-                                    ? item['heroImages'][0].toString()
-                                    : 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80',
+                                imageUrl: (() {
+                                  final title = (item['title'] ?? '').toString().toUpperCase();
+                                  if (title.contains('HEEYYA HOOO')) {
+                                    return 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80';
+                                  }
+                                  if (title.contains('MAZGAON')) {
+                                    return 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80';
+                                  }
+                                  
+                                  final rawImg = item['image']?.toString();
+                                  if (rawImg != null &&
+                                      rawImg.isNotEmpty &&
+                                      rawImg != 'null' &&
+                                      rawImg != '[]' &&
+                                      rawImg.trim().isNotEmpty) {
+                                    return rawImg;
+                                  }
+                                  final heroImgs = item['heroImages'];
+                                  if (heroImgs is List && heroImgs.isNotEmpty) {
+                                    return heroImgs[0].toString();
+                                  }
+                                  return 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80';
+                                })(),
                                 onTap: () {
                                   Navigator.push(
                                     context,
@@ -1397,33 +1399,51 @@ class _CategoryChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+class _WebTab extends StatelessWidget {
+  final String label;
+  final bool isActive;
+  final VoidCallback onTap;
+
+  const _WebTab({
+    required this.label,
+    this.isActive = false,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final onSurface = Theme.of(context).colorScheme.onSurface;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-        decoration: BoxDecoration(
-          color: isActive
-              ? (isDark ? Colors.white : Colors.black)
-              : (isDark
-                    ? Colors.white.withOpacity(0.05)
-                    : Colors.black.withOpacity(0.05)),
-          borderRadius: BorderRadius.circular(30),
-          border: Border.all(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label.toUpperCase(),
+            style: GoogleFonts.montserrat(
+              color: isActive
+                  ? (isDark ? Colors.white : Colors.black)
+                  : (isDark ? Colors.white : Colors.black).withOpacity(0.68),
+              fontSize: 12,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 2,
+            ),
           ),
-        ),
-        child: Text(
-          label,
-          style: GoogleFonts.montserrat(
-            color: isActive
-                ? (isDark ? Colors.black : Colors.white)
-                : (isDark ? Colors.white38 : Colors.black38),
-            fontSize: 10,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 2,
-          ),
-        ),
+          const SizedBox(height: 10),
+          if (isActive)
+            Container(
+              width: 24,
+              height: 2,
+              decoration: BoxDecoration(
+                color: isDark ? Colors.white : Colors.black,
+                borderRadius: BorderRadius.circular(1),
+              ),
+            ),
+          if (!isActive)
+            const SizedBox(height: 2), // to balance height
+        ],
       ),
     );
   }
@@ -1445,194 +1465,148 @@ class _ProjectCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final hasImage = imageUrl.isNotEmpty;
-    final displayLocation = location.isNotEmpty
-        ? location.toUpperCase()
-        : 'MUMBAI';
-    final displayStatus = status.isNotEmpty ? status.toUpperCase() : 'UPCOMING';
-
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 288,
-        margin: const EdgeInsets.only(right: 16),
+        width: 280,
+        margin: const EdgeInsets.only(right: 20),
         decoration: BoxDecoration(
-          color: scheme.surface,
-          borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: scheme.onSurface.withOpacity(0.08)),
-          boxShadow: isDark
-              ? null
-              : [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.10),
-                    blurRadius: 30,
-                    offset: const Offset(0, 16),
-                  ),
-                ],
+          borderRadius: BorderRadius.circular(35),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 5),
+            ),
+          ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(28),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          borderRadius: BorderRadius.circular(35),
+          child: Stack(
+            fit: StackFit.expand,
             children: [
-              // Image with status pill + Artistic Impression (web parity)
-              SizedBox(
-                height: 180,
-                width: double.infinity,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: <Widget>[
-                    hasImage
-                        ? M4Image(
-                            imageUrl: imageUrl,
-                            fit: BoxFit.cover,
-                            placeholder: Container(color: Colors.black12),
-                            errorWidget: Container(
-                              color: scheme.onSurface.withOpacity(0.05),
-                              child: Icon(
-                                LucideIcons.building,
-                                color: scheme.onSurface.withOpacity(0.2),
-                                size: 40,
+              imageUrl.isNotEmpty
+                  ? M4Image(
+                      imageUrl: imageUrl,
+                      height: double.infinity,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      placeholder: Container(color: Colors.black12),
+                      errorWidget: Container(color: Colors.white10),
+                    )
+                  : Container(
+                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
+                      height: double.infinity,
+                      width: double.infinity,
+                      child: Center(
+                        child: Icon(
+                          LucideIcons.building,
+                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
+                          size: 40,
+                        ),
+                      ),
+                    ),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
+                    stops: const [0.5, 1.0],
+                  ),
+                ),
+              ),
+              // Status pill (top-right)
+              if (status.isNotEmpty)
+                Positioned(
+                  top: 16,
+                  right: 16,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.6),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.white.withOpacity(0.15)),
+                    ),
+                    child: Text(
+                      status.toUpperCase(),
+                      style: GoogleFonts.montserrat(
+                        color: Colors.white,
+                        fontSize: 7,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                  ),
+                ),
+              // Content at the bottom
+              Positioned(
+                bottom: 25,
+                left: 25,
+                right: 25,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title.toUpperCase(),
+                      style: GoogleFonts.dmSerifDisplay(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w400,
+                        letterSpacing: -0.5,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    if (location.isNotEmpty) ...[
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Icon(LucideIcons.mapPin, color: Colors.white.withOpacity(0.6), size: 10),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              location.toUpperCase(),
+                              style: GoogleFonts.montserrat(
+                                color: Colors.white.withOpacity(0.6),
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 0.5,
                               ),
-                            ),
-                          )
-                        : Container(
-                            color: scheme.onSurface.withOpacity(0.05),
-                            child: Icon(
-                              LucideIcons.building,
-                              color: scheme.onSurface.withOpacity(0.2),
-                              size: 40,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                    // Status pill (top-right)
-                    Positioned(
-                      top: 14,
-                      right: 14,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.6),
-                          borderRadius: BorderRadius.circular(30),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.1),
-                          ),
-                        ),
-                        child: Text(
-                          displayStatus,
+                        ],
+                      ),
+                    ],
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'VIEW PROPERTY',
                           style: GoogleFonts.montserrat(
-                            color: Colors.white,
-                            fontSize: 8,
+                            color: Colors.white.withOpacity(0.8),
+                            fontSize: 9,
                             fontWeight: FontWeight.w700,
                             letterSpacing: 1.5,
                           ),
                         ),
-                      ),
-                    ),
-                    // Artistic Impression (bottom-right)
-                    Positioned(
-                      bottom: 8,
-                      right: 8,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 3,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.6),
-                          borderRadius: BorderRadius.circular(4),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.1),
-                          ),
-                        ),
-                        child: Text(
-                          'ARTISTIC IMPRESSION',
-                          style: GoogleFonts.montserrat(
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
                             color: Colors.white,
-                            fontSize: 6,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 1.5,
+                            borderRadius: BorderRadius.circular(15),
                           ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // Content
-              Padding(
-                padding: const EdgeInsets.all(18),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.dmSerifDisplay(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w400,
-                        color: scheme.onSurface,
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Icon(
-                          LucideIcons.mapPin,
-                          color: scheme.onSurface.withOpacity(0.5),
-                          size: 12,
-                        ),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Text(
-                            displayLocation,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.montserrat(
-                              color: scheme.onSurface.withOpacity(0.68),
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 0.5,
-                            ),
+                          child: const Icon(
+                            LucideIcons.arrowRight,
+                            color: Colors.black,
+                            size: 18,
                           ),
                         ),
                       ],
-                    ),
-                    const SizedBox(height: 16),
-                    // READ MORE button (bg-primary / text-primary-foreground)
-                    Container(
-                      width: double.infinity,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: scheme.onSurface,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'READ MORE',
-                            style: GoogleFonts.montserrat(
-                              color: scheme.surface,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 2,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Icon(
-                            LucideIcons.chevronRight,
-                            color: scheme.surface,
-                            size: 14,
-                          ),
-                        ],
-                      ),
                     ),
                   ],
                 ),
@@ -2506,21 +2480,22 @@ class _CommunityCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 280,
-        margin: const EdgeInsets.only(right: 20),
+        width: 300,
+        margin: const EdgeInsets.only(right: 20, bottom: 10),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(35),
+          borderRadius: BorderRadius.circular(40),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
+              color: Colors.black.withOpacity(0.15),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
             ),
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(35),
+          borderRadius: BorderRadius.circular(40),
           child: Stack(
+            fit: StackFit.expand,
             children: [
               M4Image(
                 imageUrl: imageUrl,
@@ -2535,57 +2510,67 @@ class _CommunityCard extends StatelessWidget {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
-                    stops: const [0.5, 1.0],
+                    stops: const [0.3, 1.0],
+                    colors: [Colors.transparent, Colors.black.withOpacity(0.85)],
                   ),
                 ),
               ),
               Positioned(
-                bottom: 25,
-                left: 25,
-                right: 25,
+                bottom: 24,
+                left: 24,
+                right: 24,
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       title.toUpperCase(),
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.montserrat(
                         color: Colors.white,
                         fontSize: 22,
-                        fontWeight: FontWeight.w400,
+                        fontWeight: FontWeight.w900,
                         letterSpacing: -0.5,
                       ),
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 10),
                     Text(
                       description,
                       style: GoogleFonts.montserrat(
-                        color: Colors.white.withOpacity(0.6),
+                        color: Colors.white.withOpacity(0.7),
                         fontSize: 10,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w800,
                         letterSpacing: 0.5,
+                        height: 1.4,
                       ),
-                      maxLines: 1,
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           'EXPLORE COMMUNITY',
                           style: GoogleFonts.montserrat(
-                            color: Colors.white.withOpacity(0.8),
-                            fontSize: 9,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 1.5,
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w400,
+                            letterSpacing: 1.2,
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.all(10),
+                          width: 44,
+                          height: 44,
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(15),
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
                           child: const Icon(
                             LucideIcons.arrowRight,
