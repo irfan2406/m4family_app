@@ -18,12 +18,17 @@ class LuxuryAmenityIcon extends StatelessWidget {
   final double size;
   final Color color;
 
+  /// Bundled image shown when the uploaded icon fails to load (e.g. while the
+  /// backend /uploads endpoint is broken). Rendered untinted.
+  final String? fallbackAsset;
+
   const LuxuryAmenityIcon({
     super.key,
     required this.name,
     this.iconUrl,
     this.size = 44,
     this.color = kAmenityGold,
+    this.fallbackAsset,
   });
 
   @override
@@ -33,14 +38,19 @@ class LuxuryAmenityIcon extends StatelessWidget {
       return SizedBox(
         width: size,
         height: size,
-        child: ColorFiltered(
-          colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-          child: CachedNetworkImage(
-            imageUrl: iconUrl!,
-            fit: BoxFit.contain,
-            placeholder: (c, u) => const SizedBox.shrink(),
-            errorWidget: (c, u, e) => Icon(_lucideFallback(name), color: color, size: size * 0.9),
+        child: CachedNetworkImage(
+          imageUrl: iconUrl!,
+          fit: BoxFit.contain,
+          placeholder: (c, u) => const SizedBox.shrink(),
+          // Tint only successful loads — the fallback asset renders untinted
+          // (srcIn on a white-background bitmap would paint a solid square).
+          imageBuilder: (c, provider) => ColorFiltered(
+            colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+            child: Image(image: provider, fit: BoxFit.contain),
           ),
+          errorWidget: (c, u, e) => fallbackAsset != null
+              ? Image.asset(fallbackAsset!, fit: BoxFit.contain)
+              : Icon(_lucideFallback(name), color: color, size: size * 0.9),
         ),
       );
     }

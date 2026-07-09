@@ -1399,51 +1399,29 @@ class _CategoryChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-class _WebTab extends StatelessWidget {
-  final String label;
-  final bool isActive;
-  final VoidCallback onTap;
-
-  const _WebTab({
-    required this.label,
-    this.isActive = false,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final onSurface = Theme.of(context).colorScheme.onSurface;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
-      behavior: HitTestBehavior.opaque,
       onTap: onTap,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label.toUpperCase(),
-            style: GoogleFonts.montserrat(
-              color: isActive
-                  ? (isDark ? Colors.white : Colors.black)
-                  : (isDark ? Colors.white : Colors.black).withOpacity(0.68),
-              fontSize: 12,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 2,
-            ),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+        decoration: BoxDecoration(
+          color: isActive
+              ? (isDark ? Colors.white : Colors.black)
+              : (isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
+          borderRadius: BorderRadius.circular(30),
+          border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
+        ),
+        child: Text(
+          label,
+          style: GoogleFonts.montserrat(
+            color: isActive
+                ? (isDark ? Colors.black : Colors.white)
+                : (isDark ? Colors.white38 : Colors.black38),
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 2,
           ),
-          const SizedBox(height: 10),
-          if (isActive)
-            Container(
-              width: 24,
-              height: 2,
-              decoration: BoxDecoration(
-                color: isDark ? Colors.white : Colors.black,
-                borderRadius: BorderRadius.circular(1),
-              ),
-            ),
-          if (!isActive)
-            const SizedBox(height: 2), // to balance height
-        ],
+        ),
       ),
     );
   }

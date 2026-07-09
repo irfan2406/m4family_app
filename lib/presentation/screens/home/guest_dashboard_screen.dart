@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:io';
 import 'dart:ui';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:m4_mobile/presentation/widgets/guest_sidebar_menu.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:m4_mobile/presentation/screens/projects/guest_project_detail_screen.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
 import 'package:m4_mobile/presentation/screens/communities/community_detail_screen.dart';
@@ -57,6 +60,11 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
   List<dynamic> _communities = [];
   List<dynamic> _media = [];
   bool _loading = true;
+  // Per-slice freshness: set when NETWORK data lands, so the async disk-cache
+  // read never overwrites fresh data — but still fills slices whose fetch
+  // failed or is still in flight (e.g. offline cold start).
+  bool _hasFreshFast = false;
+  bool _hasFreshProjects = false;
   String _activeTab = 'Communities';
   int _featuredIndex = 0;
 
@@ -81,16 +89,123 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       _communities = cached.communities;
       _media = cached.media;
       _loading = false;
+    } else {
+      // Cold start: render the last-known payload from disk immediately
+      // (stale-while-revalidate) instead of blocking on the network.
+      _loadDiskCache();
     }
-    _fetchData();
-    _heroTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
-      if (mounted && _projects.isNotEmpty) {
-        setState(
-          () => _heroIndex =
-              (_heroIndex + 1) % (_projects.length > 5 ? 5 : _projects.length),
-        );
-      }
+    // Deferred to a microtask: _fetchData initializes/invalidates providers,
+    // which must not notify other watchers mid-build (initState runs during
+    // element inflation).
+    Future.microtask(() {
+      if (!mounted) return;
+      // Keep _projects in sync with later provider refreshes too (e.g. the
+      // Projects tab's RETRY re-fetching after an offline start).
+      ref.listenManual(projectsProvider, (previous, next) {
+        final data = next.asData?.value;
+        if (data == null || !mounted) return;
+        setState(() {
+          _projects = data;
+          _hasFreshProjects = true;
+          _loading = false;
+        });
+      });
+      _fetchData();
     });
+    _heroTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      if (!mounted) return;
+      // Cycles both the real hero set and the placeholder set (same getter).
+      final count = _heroSlides.length;
+      setState(() => _heroIndex = (_heroIndex + 1) % count);
+    });
+  }
+
+  /// Web parity: the hero cycles the first 3 catalog projects (the web shows
+  /// 3 dots and leads with the newest project — currently the Cledor tower),
+  /// keeping a reference to each project so slides with attached media get
+  /// the web's ▶ play affordance. Falls back to curated stock shots while
+  /// projects are still loading.
+  List<Map<String, dynamic>> get _heroSlides {
+    // Web parity: the hero leads with the newest live (Ongoing) project and
+    // then the completed showcases — Upcoming projects and additional
+    // Ongoing ones never appear (matches the web's slide set).
+    final slides = <Map<String, dynamic>>[];
+    var ongoingTaken = false;
+    for (final p in _projects) {
+      final status = (p['status'] ?? '').toString().toLowerCase();
+      if (status == 'upcoming') continue;
+      if (status == 'ongoing') {
+        if (ongoingTaken) continue;
+        ongoingTaken = true;
+      }
+      final img = _pickImage([p['heroImage'], p['image']], '');
+      if (img.isEmpty) continue;
+      slides.add({'image': img, 'project': p});
+      if (slides.length == 3) break;
+    }
+    if (slides.isNotEmpty) return slides;
+    return const [
+      {
+        'image':
+            'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80',
+        'project': null,
+      },
+      {
+        'image':
+            'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
+        'project': null,
+      },
+      {
+        'image':
+            'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80',
+        'project': null,
+      },
+    ];
+  }
+
+  File get _diskCacheFile =>
+      File('${Directory.systemTemp.path}/m4_guest_home_cache.json');
+
+  /// Reads the persisted guest-home payload (if any) so a cold app start
+  /// renders instantly; the network refresh in [_fetchData] replaces it.
+  Future<void> _loadDiskCache() async {
+    try {
+      final file = _diskCacheFile;
+      if (!await file.exists()) return;
+      final raw = await file.readAsString();
+      // Decode off the UI isolate — the payload can be multiple MB.
+      final map = await compute(jsonDecode, raw) as Map<String, dynamic>;
+      if (!mounted) return;
+      setState(() {
+        // Fill only the slices the network hasn't (yet) delivered — the disk
+        // copy must never overwrite fresh data, but it must still cover
+        // failed/pending fetches (e.g. offline cold start).
+        if (!_hasFreshProjects) {
+          _projects = map['projects'] as List<dynamic>? ?? [];
+        }
+        if (!_hasFreshFast) {
+          _communities = map['communities'] as List<dynamic>? ?? [];
+          _media = map['media'] as List<dynamic>? ?? [];
+        }
+        _loading = false;
+      });
+    } catch (_) {
+      // Corrupt/unreadable cache: ignore, the network fetch still runs.
+    }
+  }
+
+  /// Persists the freshly fetched payload for instant cold starts.
+  Future<void> _saveDiskCache() async {
+    try {
+      final raw = await compute(jsonEncode, <String, dynamic>{
+        'projects': _projects,
+        'communities': _communities,
+        'media': _media,
+      });
+      await _diskCacheFile.writeAsString(raw);
+    } catch (_) {
+      // Best-effort cache; failures must never surface to the UI.
+    }
   }
 
   @override
@@ -105,63 +220,98 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
   }
 
   Future<void> _fetchData() async {
-    try {
-      final apiClient = ref.read(apiClientProvider);
-      final results = await Future.wait([
-        apiClient.getProjects(),
-        apiClient.getCommunities(),
-        apiClient.getContent('media'),
-      ]);
+    final apiClient = ref.read(apiClientProvider);
 
-      if (mounted) {
-        setState(() {
-          _projects = results[0].data['data'] ?? [];
-          _communities = results[1].data['data'] ?? [];
-          _media = results[2].data['data'] ?? [];
+    // The communities + media payloads are a few KB and land in well under a
+    // second; the projects payload can be several MB (hero images). Fetch them
+    // independently and render as soon as the fast pair arrives — the hero
+    // section shows its built-in placeholders until projects stream in.
+    final fastPair = Future.wait([
+          apiClient.getCommunities(),
+          apiClient.getContent('media'),
+        ])
+        .then((results) {
+          if (!mounted) return false;
+          setState(() {
+            _communities = results[0].data['data'] ?? [];
+            _media = results[1].data['data'] ?? [];
 
-          // 💡 Add dummy content if media is empty to fill blank space
-          if (_media.isEmpty) {
-            _media = [
-              {
-                '_id': 'dummy1',
-                'title': 'CLÉDOR LUXURY LIVING',
-                'thumbnail':
-                    'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80',
-                'description':
-                    'Discover the epitome of refinement in our latest architectural masterpiece.',
-                'slug': 'cledor-luxury-living',
-              },
-              {
-                '_id': 'dummy2',
-                'title': 'OCEAN VIEW RESIDENCES',
-                'thumbnail':
-                    'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
-                'description':
-                    'Where horizon meets home. Experience coastal elegance like never before.',
-                'slug': 'ocean-view-residences',
-              },
-              {
-                '_id': 'dummy3',
-                'title': 'URBAN SANCTUARY',
-                'thumbnail':
-                    'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80',
-                'description': 'A peaceful retreat in the heart of the city.',
-                'slug': 'urban-sanctuary',
-              },
-            ];
-          }
-          _loading = false;
+            // 💡 Add dummy content if media is empty to fill blank space
+            if (_media.isEmpty) {
+              _media = [
+                {
+                  '_id': 'dummy1',
+                  'title': 'CLÉDOR LUXURY LIVING',
+                  'thumbnail':
+                      'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80',
+                  'description':
+                      'Discover the epitome of refinement in our latest architectural masterpiece.',
+                  'slug': 'cledor-luxury-living',
+                },
+                {
+                  '_id': 'dummy2',
+                  'title': 'OCEAN VIEW RESIDENCES',
+                  'thumbnail':
+                      'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
+                  'description':
+                      'Where horizon meets home. Experience coastal elegance like never before.',
+                  'slug': 'ocean-view-residences',
+                },
+                {
+                  '_id': 'dummy3',
+                  'title': 'URBAN SANCTUARY',
+                  'thumbnail':
+                      'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80',
+                  'description': 'A peaceful retreat in the heart of the city.',
+                  'slug': 'urban-sanctuary',
+                },
+              ];
+            }
+            _hasFreshFast = true;
+            _loading = false;
+          });
+          return true;
+        })
+        .catchError((_) {
+          if (mounted) setState(() => _loading = false);
+          return false;
         });
-        // Cache the fresh payload so the next guest-home mount is instant.
-        ref.read(guestHomeCacheProvider.notifier).state = GuestHomeData(
-          projects: _projects,
-          communities: _communities,
-          media: _media,
-        );
-      }
-    } catch (e) {
-      if (mounted) setState(() => _loading = false);
+
+    // Projects come through the shared [projectsProvider] so this screen and
+    // ProjectListScreen (both alive in the guest IndexedStack) reuse ONE
+    // download of the multi-MB payload instead of fetching it twice.
+    // FutureProviders cache errors: if a previous attempt failed, retry it on
+    // this mount (matches the old fetch-per-mount recovery behaviour).
+    if (ref.read(projectsProvider) is AsyncError) {
+      ref.invalidate(projectsProvider);
     }
+    final projectsFetch = ref
+        .read(projectsProvider.future)
+        .then((projects) {
+          if (!mounted) return false;
+          setState(() {
+            _projects = projects;
+            _hasFreshProjects = true;
+            _loading = false;
+          });
+          return true;
+        })
+        .catchError((_) {
+          if (mounted) setState(() => _loading = false);
+          return false;
+        });
+
+    final ok = await Future.wait([fastPair, projectsFetch]);
+    if (!mounted || ok.contains(false)) return;
+
+    // Cache the complete fresh payload so the next guest-home mount is
+    // instant (in memory for this session, on disk for the next cold start).
+    ref.read(guestHomeCacheProvider.notifier).state = GuestHomeData(
+      projects: _projects,
+      communities: _communities,
+      media: _media,
+    );
+    _saveDiskCache();
   }
 
   void _scrollToInterestForm() {
@@ -264,9 +414,10 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       child: CustomScrollView(
         controller: _scrollController,
         slivers: [
-          // ⭐️ FIXED HEADER (Web Parity)
+          // ⭐️ HEADER (web parity: scrolls away with content — pinning it
+          // made scrolled content bleed through the translucent bar)
           SliverAppBar(
-            pinned: true,
+            pinned: false,
             toolbarHeight: 120,
             backgroundColor: Theme.of(
               context,
@@ -330,67 +481,67 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             ),
           ),
 
-          // ⭐️ TAGLINE & HERO SECTION
+          // ⭐️ TAGLINE & HERO SECTION (web parity: compact left tagline, no
+          // translate hacks — natural flow keeps the hero→tabs gap tight)
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // ⭐️ Tagline (Living the M4 Life)
-                  Transform.translate(
-                    offset: const Offset(0, -50),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 0),
-                      child: ColorFiltered(
-                        colorFilter: ColorFilter.matrix(
-                          Theme.of(context).brightness == Brightness.dark
-                              ? const [
-                                  // Dark Mode: Invert and boost to white
-                                  -5.0, 0, 0, 0, 255,
-                                  0, -5.0, 0, 0, 255,
-                                  0, -5.0, 0, 0, 255,
-                                  0, 0, 0, 1, 0,
-                                ]
-                              : const [
-                                  // Light Mode: Crush to black
-                                  5.0, 0, 0, 0, -150,
-                                  0, 5.0, 0, 0, -150,
-                                  0, 0, 5.0, 0, -150,
-                                  0, 0, 0, 1, 0,
-                                ],
-                        ),
-                        child: Image.asset(
-                          'assets/living_m4_life.png',
-                          width: MediaQuery.of(context).size.width,
-                          height: 200, // 👈 Reduced from 300
-                          fit: BoxFit.fitWidth,
+                  // ⭐️ Tagline (Living the M4 Life) — small, left-aligned like web
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 4, 24, 20),
+                    child: ColorFiltered(
+                      colorFilter: ColorFilter.matrix(
+                        Theme.of(context).brightness == Brightness.dark
+                            ? const [
+                                // Dark Mode: Invert and boost to white
+                                -5.0, 0, 0, 0, 255,
+                                0, -5.0, 0, 0, 255,
+                                0, -5.0, 0, 0, 255,
+                                0, 0, 0, 1, 0,
+                              ]
+                            : const [
+                                // Light Mode: Crush to black
+                                5.0, 0, 0, 0, -150,
+                                0, 5.0, 0, 0, -150,
+                                0, 0, 5.0, 0, -150,
+                                0, 0, 0, 1, 0,
+                              ],
+                      ),
+                      // The asset is a 1024×1024 canvas whose script artwork
+                      // lives only in the middle band (y≈424–613, measured).
+                      // Crop to that band so the tagline renders compact and
+                      // left-aligned like the web.
+                      child: ClipRect(
+                        child: Align(
+                          alignment: const Alignment(0, 0.015),
+                          heightFactor: 0.21,
+                          child: Image.asset(
+                            'assets/living_m4_life.png',
+                            width: MediaQuery.of(context).size.width * 0.62,
+                            fit: BoxFit.fitWidth,
+                          ),
                         ),
                       ),
                     ),
                   ),
 
                   // Hero Image Container
-                  Transform.translate(
-                    offset: const Offset(
-                      0,
-                      -110,
-                    ), // 👈 Adjusted from -140 to fix overlap
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: Builder(
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Builder(
                         builder: (context) {
-                          final mainImage = _projects.isNotEmpty
-                              ? (_projects[_heroIndex %
-                                        _projects.length]['heroImage'] ??
-                                    _projects[_heroIndex %
-                                        _projects.length]['image'] ??
-                                    'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80')
-                              : [
-                                  'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80',
-                                  'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
-                                  'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80',
-                                ][_heroIndex % 3];
+                          final slides = _heroSlides;
+                          final slide = slides[_heroIndex % slides.length];
+                          final mainImage = slide['image'] as String;
+                          final project = slide['project'];
+                          final hasMedia =
+                              project != null &&
+                              project['media'] is List &&
+                              (project['media'] as List).isNotEmpty;
+                          final dotCount = slides.length;
 
                           return Stack(
                             children: [
@@ -398,17 +549,17 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                                 aspectRatio: 4 / 3,
                                 child: Container(
                                   decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(32),
+                                    borderRadius: BorderRadius.circular(24),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.black.withOpacity(0.15),
-                                        blurRadius: 30,
-                                        offset: const Offset(0, 15),
+                                        color: Colors.black.withOpacity(0.12),
+                                        blurRadius: 24,
+                                        offset: const Offset(0, 12),
                                       ),
                                     ],
                                   ),
                                   child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(32),
+                                    borderRadius: BorderRadius.circular(24),
                                     child: AnimatedSwitcher(
                                       duration: const Duration(
                                         milliseconds: 800,
@@ -446,8 +597,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                                     vertical: 4,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.4),
-                                    borderRadius: BorderRadius.circular(4),
+                                    color: Colors.black.withOpacity(0.45),
+                                    borderRadius: BorderRadius.circular(6),
                                     border: Border.all(
                                       color: Colors.white.withOpacity(0.1),
                                     ),
@@ -456,24 +607,61 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                                     'ARTISTIC IMPRESSION',
                                     style: GoogleFonts.montserrat(
                                       color: Colors.white,
-                                      fontSize: 7,
-                                      fontWeight: FontWeight.w900,
+                                      fontSize: 8,
+                                      fontWeight: FontWeight.w800,
                                       letterSpacing: 1.5,
                                     ),
                                   ),
                                 ),
                               ),
 
-                              // Pagination Dots
+                              // ▶ Play affordance (web parity: shown when the
+                              // project has attached media)
+                              if (hasMedia)
+                                Positioned.fill(
+                                  child: Center(
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        final id = project['_id'];
+                                        if (id != null) {
+                                          context.push(
+                                            '/projects/$id',
+                                            extra: project,
+                                          );
+                                        }
+                                      },
+                                      child: Container(
+                                        width: 64,
+                                        height: 64,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withValues(
+                                            alpha: 0.75,
+                                          ),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Center(
+                                          child: Icon(
+                                            LucideIcons.play,
+                                            color: Colors.black87,
+                                            size: 26,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+
+                              // Pagination Dots (web parity: bottom-left,
+                              // active becomes a wider dark pill; count follows
+                              // the actual carousel length)
                               Positioned(
-                                bottom: 24,
-                                left: 0,
-                                right: 0,
+                                bottom: 18,
+                                left: 20,
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: List.generate(3, (index) {
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: List.generate(dotCount, (index) {
                                     final isSelected =
-                                        (_heroIndex % 3) == index;
+                                        (_heroIndex % dotCount) == index;
                                     return AnimatedContainer(
                                       duration: const Duration(
                                         milliseconds: 300,
@@ -481,15 +669,25 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                                       margin: const EdgeInsets.symmetric(
                                         horizontal: 4,
                                       ),
-                                      width: isSelected ? 32 : 24,
-                                      height: 4,
+                                      width: isSelected ? 22 : 8,
+                                      height: 8,
                                       decoration: BoxDecoration(
                                         color: isSelected
-                                            ? Colors.black
+                                            ? Colors.black.withValues(
+                                                alpha: 0.85,
+                                              )
                                             : Colors.white.withValues(
-                                                alpha: 0.5,
+                                                alpha: 0.75,
                                               ),
-                                        borderRadius: BorderRadius.circular(2),
+                                        borderRadius: BorderRadius.circular(4),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withValues(
+                                              alpha: 0.15,
+                                            ),
+                                            blurRadius: 4,
+                                          ),
+                                        ],
                                       ),
                                     );
                                   }),
@@ -500,7 +698,6 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                         },
                       ),
                     ),
-                  ),
                 ],
               ),
             ),
@@ -509,23 +706,13 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             padding: const EdgeInsets.only(bottom: 32),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                // Pull the tabs up under the hero, but keep them tappable: the
-                // internal SizedBox keeps the tab bar inside the sliver item's
-                // layout bounds so hit-testing lands correctly (a bare
-                // Transform on a sliver child shifts paint but not hit-tests).
-                Transform.translate(
-                  offset: const Offset(0, -60),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const SizedBox(height: 60),
-                        _buildTabsSection(),
-                      ],
-                    ),
-                  ),
+                // Tabs sit in natural flow right under the hero (web parity —
+                // the old translate hack left a large ghost gap here).
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 40, 24, 0),
+                  child: _buildTabsSection(),
                 ),
+                const SizedBox(height: 48),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: _buildPhilosophy(),
@@ -623,33 +810,33 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                             tab[0].toUpperCase() + tab.substring(1),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.only(right: 24),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              tab.toUpperCase(),
-                              style: GoogleFonts.montserrat(
+                        padding: const EdgeInsets.only(right: 28),
+                        // Web parity: the active underline spans the full tab
+                        // text width (border-bottom), not a short stub.
+                        child: Container(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
                                 color: isSelected
                                     ? (isDark ? Colors.white : Colors.black)
-                                    : (isDark ? Colors.white : Colors.black)
-                                          .withValues(alpha: 0.68),
-                                fontSize: 12,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: 2,
+                                    : Colors.transparent,
+                                width: 2,
                               ),
                             ),
-                            const SizedBox(height: 10),
-                            if (isSelected)
-                              Container(
-                                width: 24,
-                                height: 2,
-                                decoration: BoxDecoration(
-                                  color: isDark ? Colors.white : Colors.black,
-                                  borderRadius: BorderRadius.circular(1),
-                                ),
-                              ),
-                          ],
+                          ),
+                          child: Text(
+                            tab.toUpperCase(),
+                            style: GoogleFonts.montserrat(
+                              color: isSelected
+                                  ? (isDark ? Colors.white : Colors.black)
+                                  : (isDark ? Colors.white : Colors.black)
+                                        .withValues(alpha: 0.55),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 2,
+                            ),
+                          ),
                         ),
                       ),
                     );
@@ -659,19 +846,25 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 32),
+        const SizedBox(height: 24),
         SizedBox(
-          height: 360,
+          // The Properties info-card (image + text + button) needs more room
+          // than the image-overlay cards used by Communities/Media. Horizontal
+          // lists stretch children to this height, so it matches the card's
+          // content height exactly (image 180 + info section + margin).
+          height: _activeTab == 'Properties' ? 336 : 320,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
+            // Web parity: the Media tab is a visual gallery of the catalog
+            // projects (hero image + title), not the CMS media articles.
             itemCount: _activeTab == 'Communities'
                 ? _communities.length
-                : (_activeTab == 'Media' ? _media.length : _projects.length),
+                : _projects.length,
             itemBuilder: (context, index) {
               final item = _activeTab == 'Communities'
                   ? _communities[index]
-                  : (_activeTab == 'Media' ? _media[index] : _projects[index]);
+                  : _projects[index];
               return _buildTabCard(item);
             },
           ),
@@ -680,20 +873,46 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     );
   }
 
+  /// Web parity: JS `||` treats empty strings as missing, Dart `??` does not.
+  /// The API returns `image: ""` for some records — those must fall back to
+  /// the same stock image the web shows, not slip through as "present".
+  static String _pickImage(List<dynamic> candidates, String fallback) {
+    for (final c in candidates) {
+      final s = (c ?? '').toString().trim();
+      if (s.isNotEmpty) return s;
+    }
+    return fallback;
+  }
+
   Widget _buildTabCard(dynamic item) {
     final isCommunity = _activeTab.toLowerCase() == 'communities';
     final isMedia = _activeTab.toLowerCase() == 'media';
-    final rawImage =
-        (isCommunity
-                ? (item['image'] ??
-                      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80')
-                : (isMedia
-                      ? (item['thumbnail'] ??
-                            item['image'] ??
-                            'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80')
-                      : (item['heroImage'] ??
-                            'https://images.unsplash.com/photo-1613545325278-f24b0cae1224?auto=format&fit=crop&q=80')))
-            .toString();
+
+    // Web parity: Media cards are a plain visual gallery — project image with
+    // only the title bottom-left (no badge/play/action row).
+    if (isMedia) return _buildMediaCard(item);
+
+    final rawImage = isCommunity
+        ? _pickImage(
+            [item['image']],
+            'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80',
+          )
+        : (isMedia
+              ? _pickImage(
+                  [item['thumbnail'], item['image']],
+                  'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80',
+                )
+              : _pickImage(
+                  [item['heroImage']],
+                  'https://images.unsplash.com/photo-1613545325278-f24b0cae1224?auto=format&fit=crop&q=80',
+                ));
+
+    // Web parity: the Properties tab uses a light "info card" layout (image
+    // on top, title/location below, READ MORE button) — unlike the
+    // image-overlay cards used by Communities and Media.
+    if (!isCommunity && !isMedia) {
+      return _buildPropertyCard(item, rawImage);
+    }
 
     return _ScaleButton(
       onTap: () {
@@ -706,36 +925,39 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         }
       },
       child: Container(
-        width: 300,
-        margin: const EdgeInsets.only(right: 20, bottom: 10),
+        // Web parity: card ≈56% of screen width so ~1.7 cards peek into view,
+        // with softer 24px corners.
+        width: MediaQuery.of(context).size.width * 0.56,
+        margin: const EdgeInsets.only(right: 16, bottom: 10),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(40),
+          borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.15),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
+              color: Colors.black.withValues(alpha: 0.12),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(40),
+          borderRadius: BorderRadius.circular(24),
           child: Stack(
             fit: StackFit.expand,
             children: [
               // 🖼️ High Resolution Image
               _buildProjectImage(rawImage, errorIconSize: 40),
 
-              // 🌫️ High-End Gradient Overlay
+              // 🌫️ Text scrim (web parity: cards stay bright, only the
+              // bottom label area gets a soft dark fade)
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    stops: const [0.3, 1.0],
+                    stops: const [0.55, 1.0],
                     colors: [
                       Colors.transparent,
-                      Colors.black.withValues(alpha: 0.85),
+                      Colors.black.withValues(alpha: 0.7),
                     ],
                   ),
                 ),
@@ -883,6 +1105,244 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  /// Web-parity media card: the web's Media tab is a visual gallery of the
+  /// catalog projects — full-bleed hero image with just the project title in
+  /// small white caps at the bottom-left.
+  Widget _buildMediaCard(dynamic item) {
+    final rawImage = _pickImage(
+      [item['heroImage'], item['image']],
+      'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80',
+    );
+    return _ScaleButton(
+      onTap: () => context.push('/projects/${item['_id']}', extra: item),
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.56,
+        margin: const EdgeInsets.only(right: 16, bottom: 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.12),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              _buildProjectImage(rawImage, errorIconSize: 40),
+              // Soft scrim so the title stays readable on bright images.
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    stops: const [0.6, 1.0],
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withValues(alpha: 0.55),
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 18,
+                bottom: 16,
+                child: Text(
+                  (item['title'] ?? item['name'] ?? '')
+                      .toString()
+                      .toUpperCase(),
+                  style: GoogleFonts.montserrat(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Web-parity property card: image on top (status pill + ARTISTIC
+  /// IMPRESSION badge), then title, pinned location and a full-width dark
+  /// READ MORE button on a light card surface.
+  Widget _buildPropertyCard(dynamic item, String rawImage) {
+    final scheme = Theme.of(context).colorScheme;
+    final title = (item['title'] ?? item['name'] ?? '').toString();
+    final location =
+        (item['location'] is Map
+                ? item['location']['name']
+                : item['location'] ?? '')
+            .toString();
+    final status = (item['status'] ?? 'Ongoing').toString();
+
+    return _ScaleButton(
+      onTap: () => context.push('/projects/${item['_id']}', extra: item),
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.68,
+        margin: const EdgeInsets.only(right: 16, bottom: 10),
+        decoration: BoxDecoration(
+          color: scheme.surface,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 🖼️ Image with badges
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(24),
+              ),
+              child: Stack(
+                children: [
+                  _buildProjectImage(
+                    rawImage,
+                    height: 180,
+                    width: double.infinity,
+                    errorIconSize: 40,
+                  ),
+                  Positioned(
+                    top: 12,
+                    right: 12,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.75),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        status.toUpperCase(),
+                        style: GoogleFonts.montserrat(
+                          color: Colors.white,
+                          fontSize: 8,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 10,
+                    right: 10,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.55),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        'ARTISTIC IMPRESSION',
+                        style: GoogleFonts.montserrat(
+                          color: Colors.white,
+                          fontSize: 6.5,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // 📄 Info section
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.montserrat(
+                      color: scheme.onSurface,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Icon(
+                        LucideIcons.mapPin,
+                        size: 12,
+                        color: scheme.onSurface.withValues(alpha: 0.55),
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          location.toUpperCase(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.montserrat(
+                            color: scheme.onSurface.withValues(alpha: 0.55),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  Container(
+                    width: double.infinity,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: scheme.onSurface,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'READ MORE',
+                          style: GoogleFonts.montserrat(
+                            color: scheme.surface,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 2,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Icon(
+                          LucideIcons.chevronRight,
+                          size: 14,
+                          color: scheme.surface,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

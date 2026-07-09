@@ -7,6 +7,8 @@ import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'dart:convert';
+import 'dart:typed_data';
 import 'dart:ui';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
@@ -17,6 +19,10 @@ import 'package:m4_mobile/presentation/widgets/luxury_amenity_icon.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+
+/// Decoded base64 image bytes keyed by data-URI, so multi-MB inline hero
+/// images (e.g. Cledor) decode once instead of on every rebuild.
+final Map<String, Uint8List> _detailB64Cache = {};
 
 class GuestProjectDetailScreen extends ConsumerStatefulWidget {
   final dynamic projectData; 
@@ -61,7 +67,34 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
   @override
   void initState() {
     super.initState();
+    // Web parity: the card data passed in already carries the gallery fields,
+    // so the EXTERIOR/INTERIOR thumbs show immediately instead of waiting for
+    // the (multi-MB) detail payload.
+    _seedGalleryImages(widget.projectData);
     _fetchProjectData();
+  }
+
+  /// Populates the EXTERIOR/INTERIOR thumb galleries from a project map —
+  /// called with the instant card data first, then the full detail payload.
+  void _seedGalleryImages(dynamic src) {
+    if (src is! Map) return;
+    final media = src['media'] as List? ?? [];
+    final ext = <String>[
+      if (src['exteriorImages'] is List)
+        ...(src['exteriorImages'] as List).map((e) => e.toString()),
+      ...media
+          .where((m) => m['category']?.toString().toUpperCase() == 'EXTERIOR')
+          .map((m) => m['url'].toString()),
+    ].where((s) => s.trim().isNotEmpty).toSet().toList();
+    final inter = <String>[
+      if (src['interiorImages'] is List)
+        ...(src['interiorImages'] as List).map((e) => e.toString()),
+      ...media
+          .where((m) => m['category']?.toString().toUpperCase() == 'INTERIOR')
+          .map((m) => m['url'].toString()),
+    ].where((s) => s.trim().isNotEmpty).toSet().toList();
+    if (ext.isNotEmpty) _exteriorImages = ext;
+    if (inter.isNotEmpty) _interiorImages = inter;
   }
 
   Future<void> _fetchProjectData() async {
@@ -79,28 +112,9 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
         setState(() {
           if (results[0].data['status'] == true) {
             _fullProject = results[0].data['data'];
-            // Extract interior and exterior images
-            final media = _fullProject?['media'] as List? ?? [];
-            
-            // Extract exterior images (matching web logic)
-            final List<String> ext = [];
-            if (_fullProject?['exteriorImages'] != null) {
-              ext.addAll((_fullProject!['exteriorImages'] as List).map((e) => e.toString()));
-            }
-            ext.addAll(media
-                .where((m) => m['category']?.toString().toUpperCase() == 'EXTERIOR')
-                .map((m) => m['url'].toString()));
-            _exteriorImages = ext.toSet().toList(); // Remove duplicates
-
-            // Extract interior images (matching web logic)
-            final List<String> int = [];
-            if (_fullProject?['interiorImages'] != null) {
-              int.addAll((_fullProject!['interiorImages'] as List).map((e) => e.toString()));
-            }
-            int.addAll(media
-                .where((m) => m['category']?.toString().toUpperCase() == 'INTERIOR')
-                .map((m) => m['url'].toString()));
-            _interiorImages = int.toSet().toList(); // Remove duplicates
+            // Refresh the galleries from the authoritative detail payload
+            // (same extraction the web uses).
+            _seedGalleryImages(_fullProject);
           }
           if (results[1].data['status'] == true) {
             _updates = results[1].data['data'] ?? [];
@@ -612,14 +626,19 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                 controller: pageController,
                 itemCount: urls.length,
                 itemBuilder: (context, index) {
+                  final raw = urls[index];
                   return Center(
                     child: InteractiveViewer(
-                      child: CachedNetworkImage(
-                        imageUrl: apiClient.resolveUrl(urls[index]),
-                        fit: BoxFit.contain,
-                        placeholder: (context, url) => const Center(child: CircularProgressIndicator(color: Colors.white24)),
-                        errorWidget: (context, url, error) => const Icon(LucideIcons.image, color: Colors.white24, size: 50),
-                      ),
+                      // `asset:` entries render bundled images (used while the
+                      // backend /uploads endpoint is broken).
+                      child: raw.startsWith('asset:')
+                          ? Image.asset(raw.substring(6), fit: BoxFit.contain)
+                          : CachedNetworkImage(
+                              imageUrl: apiClient.resolveUrl(raw),
+                              fit: BoxFit.contain,
+                              placeholder: (context, url) => const Center(child: CircularProgressIndicator(color: Colors.white24)),
+                              errorWidget: (context, url, error) => const Icon(LucideIcons.image, color: Colors.white24, size: 50),
+                            ),
                     ),
                   );
                 },
@@ -737,16 +756,23 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                             runSpacing: 12,
                             crossAxisAlignment: WrapCrossAlignment.center,
                             children: [
+                              // The /uploads endpoint is currently broken
+                              // server-side (302 self-redirect loop). Fallback
+                              // chain per thumb: live URL → bundled Cledor
+                              // photo (temporary, until the backend is fixed)
+                              // → project hero image.
                               if (hasExterior)
                                 _HeroMediaThumb(
                                   label: 'EXTERIOR',
                                   imageUrl: apiClient.resolveUrl(_exteriorImages.first),
+                                  fallback: _thumbFallback(project, 'assets/cledor_exterior.jpg'),
                                   onTap: () => _openHeroGallery(_exteriorImages),
                                 ),
                               if (hasInterior)
                                 _HeroMediaThumb(
                                   label: 'INTERIOR',
                                   imageUrl: apiClient.resolveUrl(_interiorImages.first),
+                                  fallback: _thumbFallback(project, 'assets/cledor_interior.jpg'),
                                   onTap: () => _openHeroGallery(_interiorImages),
                                 ),
                             ],
@@ -765,11 +791,13 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                     children: [
                       Text(
                         (project?['title']?.toString() ?? 'Project Name').toUpperCase(),
-                        style: GoogleFonts.dmSerifDisplay(
+                        // Web parity: heavy sans title, not serif.
+                        style: GoogleFonts.montserrat(
                           color: isDark ? Colors.white : const Color(0xFF09090B),
-                          fontSize: 28,
+                          fontSize: 24,
                           height: 1.0,
-                          letterSpacing: -0.5,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.5,
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -833,6 +861,63 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     );
   }
 
+  /// Thumb fallback while the backend's /uploads endpoint is broken: for the
+  /// Cledor project, prefer the bundled gallery photos (dropped into assets/);
+  /// for anything else — or if the asset file isn't present — use the
+  /// project's hero image.
+  Widget _thumbFallback(dynamic project, String assetPath) {
+    final hero = _heroImage(_resolveHeroUrl(project));
+    final isCledor = (project?['title'] ?? '')
+        .toString()
+        .toLowerCase()
+        .contains('cledor');
+    if (!isCledor) return hero;
+    return Image.asset(
+      assetPath,
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) => hero,
+    );
+  }
+
+  String _resolveHeroUrl(dynamic project) => ref
+      .read(apiClientProvider)
+      .resolveUrl(project?['heroImage'] ?? project?['coverImage']);
+
+  /// Hero image that also understands inline base64 `data:` URIs (e.g.
+  /// Cledor's heroImage) — CachedNetworkImage can only fetch network URLs.
+  Widget _heroImage(String src) {
+    Widget errorBox() => Container(
+      color: const Color(0xFF1A1A1A),
+      child: const Center(child: Icon(LucideIcons.building2, color: Colors.white24, size: 40)),
+    );
+    if (src.startsWith('data:')) {
+      try {
+        final bytes = _detailB64Cache.putIfAbsent(
+          src,
+          () => base64Decode(
+            src.substring(src.indexOf(',') + 1).replaceAll(RegExp(r'\s'), ''),
+          ),
+        );
+        return Image.memory(
+          bytes,
+          fit: BoxFit.cover,
+          gaplessPlayback: true,
+          // Downsample the multi-MB originals to keep decode cost in check.
+          cacheWidth: 1080,
+          errorBuilder: (_, __, ___) => errorBox(),
+        );
+      } catch (_) {
+        return errorBox();
+      }
+    }
+    return CachedNetworkImage(
+      imageUrl: src,
+      fit: BoxFit.cover,
+      placeholder: (context, url) => Container(color: Colors.black12),
+      errorWidget: (context, url, error) => errorBox(),
+    );
+  }
+
   Widget _buildHero(dynamic project, bool isDark) {
     final apiClient = ref.read(apiClientProvider);
     final heroUrl = apiClient.resolveUrl(project?['heroImage'] ?? project?['coverImage']);
@@ -842,27 +927,19 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
       child: Stack(
         fit: StackFit.expand,
         children: [
-          CachedNetworkImage(
-            imageUrl: heroUrl, 
-            fit: BoxFit.cover,
-            placeholder: (context, url) => Container(color: Colors.black12),
-            errorWidget: (context, url, error) => Container(
-              color: const Color(0xFF1A1A1A),
-              child: const Center(child: Icon(LucideIcons.building2, color: Colors.white24, size: 40)),
-            ),
-          ),
+          _heroImage(heroUrl),
           Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
+                // Web parity: crisp image with only a light scrim at the top
+                // for the header actions — no white fade at the bottom.
                 colors: [
-                  Colors.black.withValues(alpha: 0.1),
+                  Colors.black.withValues(alpha: 0.18),
                   Colors.transparent,
-                  (isDark ? M4Theme.background : Colors.white).withValues(alpha: 0.9),
-                  (isDark ? M4Theme.background : Colors.white),
                 ],
-                stops: const [0.0, 0.4, 0.85, 1.0],
+                stops: const [0.0, 0.35],
               ),
             ),
           ),
@@ -932,9 +1009,9 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
           Text(
             'EXPERIENCE THE PINNACLE OF LUXURY LIVING WITH FLOOR-TO-CEILING WINDOWS, ITALIAN MARBLE FLOORING, AND SMART HOME AUTOMATION.',
             style: GoogleFonts.montserrat(
-              fontSize: 11, 
-              color: isDark ? Colors.white.withValues(alpha: 0.8) : Colors.black.withValues(alpha: 0.8), 
-              fontWeight: FontWeight.w900,
+              fontSize: 11,
+              color: isDark ? Colors.white.withValues(alpha: 0.78) : Colors.black.withValues(alpha: 0.78),
+              fontWeight: FontWeight.w600,
               height: 1.6,
               letterSpacing: 0.5
             ),
@@ -985,7 +1062,18 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
             overallProgress: _progressPhases.isNotEmpty
                 ? (_progressPhases.fold<num>(0, (a, p) => a + ((p['progressPercent'] ?? p['progress'] ?? 0) as num)) / _progressPhases.length).round()
                 : (project?['completion'] ?? 0),
-            estimatedCompletion: (project?['estimatedCompletionDate'] ?? project?['possessionDate'] ?? 'Q1 2029').toString().toUpperCase(),
+            // Web parity: the API returns "" (empty, not null) here — fall
+            // back to the same default the web displays.
+            estimatedCompletion: () {
+              for (final v in [
+                project?['estimatedCompletionDate'],
+                project?['possessionDate'],
+              ]) {
+                final s = (v ?? '').toString().trim();
+                if (s.isNotEmpty) return s.toUpperCase();
+              }
+              return 'Q1 2029';
+            }(),
             phases: _progressPhases,
             showFullProgress: _showFullProgress,
             onToggleReadMore: () => setState(() => _showFullProgress = !_showFullProgress),
@@ -1057,6 +1145,9 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
               name: name,
               iconUrl: hasUploadedIcon ? apiClient.resolveUrl(rawIcon) : null,
               size: 42,
+              // Temporary: the backend /uploads endpoint is broken (302 loop);
+              // bundled snapshot of the web's Lobby icon keeps parity.
+              fallbackAsset: name == 'LOBBY' ? 'assets/amenity_lobby.png' : null,
             ),
             const SizedBox(height: 10),
             Padding(
@@ -1182,7 +1273,8 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('INITIALIZE YOUR PREMIUM EXPERIENCE', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 1.5)),
+                // Web parity: black heading, not gold.
+                Text('INITIALIZE YOUR PREMIUM EXPERIENCE', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 1.5)),
                 const SizedBox(height: 24),
                 _InterestInput(hint: 'FULL NAME *', controller: _nameController),
                 const SizedBox(height: 16),
@@ -1301,7 +1393,7 @@ class _InterestInput extends StatelessWidget {
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: hint,
-          hintStyle: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: isDark ? Colors.white24 : Colors.black26, letterSpacing: 1),
+          hintStyle: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black45, letterSpacing: 1),
           icon: icon != null ? Icon(icon, size: 14, color: M4Theme.premiumBlue) : null,
         ),
       ),
@@ -1355,22 +1447,22 @@ class _OverviewActionCard extends StatelessWidget {
             Column(
               children: [
                 Text(
-                  label.toUpperCase(), 
+                  label.toUpperCase(),
                   style: GoogleFonts.montserrat(
-                    color: isDark ? Colors.white38 : Colors.black38, 
-                    fontSize: 8, 
-                    fontWeight: FontWeight.w900, 
+                    color: isDark ? Colors.white38 : Colors.black38,
+                    fontSize: 8,
+                    fontWeight: FontWeight.w900,
                     letterSpacing: 1.5,
                   ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  value, 
+                  value,
                   style: GoogleFonts.montserrat(
-                    color: isDark ? Colors.white : Colors.black, 
-                    fontSize: 14, 
-                    fontWeight: FontWeight.w900, 
+                    color: isDark ? Colors.white : Colors.black,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: -0.2,
                   ),
                   textAlign: TextAlign.center,
@@ -1440,13 +1532,15 @@ class _BottomIconAction extends StatelessWidget {
 class _HeroMediaThumb extends StatelessWidget {
   final String label;
   final String? imageUrl;
+  final Widget? fallback;
   final bool isVR;
   final bool isCinematic;
   final VoidCallback onTap;
 
   const _HeroMediaThumb({
-    required this.label, 
-    this.imageUrl, 
+    required this.label,
+    this.imageUrl,
+    this.fallback,
     this.isVR = false,
     this.isCinematic = false,
     required this.onTap
@@ -1497,17 +1591,25 @@ class _HeroMediaThumb extends StatelessWidget {
                 else ...[
                   if (imageUrl != null)
                     CachedNetworkImage(
-                      imageUrl: imageUrl!, 
-                      fit: BoxFit.cover, 
-                      errorWidget: (c, e, s) => Container(color: Colors.white10),
+                      imageUrl: imageUrl!,
+                      fit: BoxFit.cover,
+                      errorWidget: (c, e, s) =>
+                          fallback ?? Container(color: Colors.white10),
                       placeholder: (c, e) => Container(color: Colors.white10),
                     ),
-                  Container(color: Colors.black.withValues(alpha: 0.3)),
-                  Center(
-                    child: Text(
-                      label,
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.montserrat(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                  // Web parity: image stays fully visible; the label sits on a
+                  // slim scrim along the bottom edge.
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 3),
+                      color: Colors.black.withValues(alpha: 0.45),
+                      child: Text(
+                        label,
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.montserrat(color: Colors.white, fontSize: 6.5, fontWeight: FontWeight.w800, letterSpacing: 0.5),
+                      ),
                     ),
                   ),
                 ],
@@ -1704,9 +1806,10 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('ESTIMATED COMPLETION DATE', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 1)),
+                    // Web parity: muted dark label + heavy black sans date.
+                    Text('ESTIMATED COMPLETION DATE', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: isDark ? Colors.white60 : Colors.black54, letterSpacing: 1)),
                     const SizedBox(height: 12),
-                    Text(estimatedCompletion, style: GoogleFonts.dmSerifDisplay(fontSize: 42, color: isDark ? Colors.white : Colors.black, height: 1)),
+                    Text(estimatedCompletion, style: GoogleFonts.montserrat(fontSize: 44, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, height: 1.02)),
                     const SizedBox(height: 24),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1727,7 +1830,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                           onTap: onToggleReadMore,
                           child: Text(
                             showFullProgress ? 'Show less' : 'Read more',
-                            style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue),
+                            style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black),
                           ),
                         ),
                       ],
@@ -1745,8 +1848,10 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     child: CustomPaint(
                       painter: _DashedCirclePainter(
                         progress: overallProgress.toDouble() / 100,
-                        color: M4Theme.premiumBlue,
+                        // Web parity: bold black dotted ring.
+                        color: isDark ? Colors.white : Colors.black,
                         backgroundColor: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1),
+                        strokeWidth: 5,
                       ),
                     ),
                   ),
@@ -1766,7 +1871,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
             // Timeline Slider
             Row(
               children: [
-                Text('2026', style: GoogleFonts.montserrat(fontSize: 18, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue)),
+                Text('2026', style: GoogleFonts.montserrat(fontSize: 18, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black)),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Stack(
@@ -1779,7 +1884,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                         decoration: BoxDecoration(
                           color: isDark ? Colors.black : Colors.white,
                           shape: BoxShape.circle,
-                          border: Border.all(color: M4Theme.premiumBlue, width: 2),
+                          border: Border.all(color: isDark ? Colors.white : Colors.black, width: 2),
                         ),
                       ),
                     ],
@@ -1813,7 +1918,16 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         _ScaleButton(
-                          onTap: () => onPhaseTap(imageUrl),
+                          // Temporary while /uploads is broken: the demolition
+                          // phase opens its bundled photo in the lightbox.
+                          onTap: () => onPhaseTap(
+                            (phase['phaseName'] ?? phase['name'] ?? '')
+                                    .toString()
+                                    .toLowerCase()
+                                    .contains('demolition')
+                                ? 'asset:assets/cledor_phase_demolition.jpg'
+                                : imageUrl,
+                          ),
                           child: Stack(
                             children: [
                               ClipRRect(
@@ -1832,15 +1946,33 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                       size: 24,
                                     ),
                                   ),
-                                  errorWidget: (c, e, s) => Container(
-                                    height: 140, 
-                                    color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
-                                    child: Icon(
-                                      LucideIcons.image,
-                                      color: isDark ? Colors.white24 : Colors.black26,
-                                      size: 24,
-                                    ),
-                                  ),
+                                  // /uploads is broken server-side: for the
+                                  // Demolition phase, fall back to the bundled
+                                  // snapshot of the web's phase photo.
+                                  errorWidget: (c, e, s) =>
+                                      (phase['phaseName'] ?? phase['name'] ?? '')
+                                              .toString()
+                                              .toLowerCase()
+                                              .contains('demolition')
+                                      ? Image.asset(
+                                          'assets/cledor_phase_demolition.jpg',
+                                          height: 140,
+                                          width: 240,
+                                          fit: BoxFit.cover,
+                                        )
+                                      : Container(
+                                          height: 140,
+                                          color: isDark
+                                              ? const Color(0xFF1E293B)
+                                              : const Color(0xFFF1F5F9),
+                                          child: Icon(
+                                            LucideIcons.image,
+                                            color: isDark
+                                                ? Colors.white24
+                                                : Colors.black26,
+                                            size: 24,
+                                          ),
+                                        ),
                                 ),
                               ),
                               Positioned(
@@ -1876,7 +2008,8 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                         child: CustomPaint(
                                           painter: _DashedCirclePainter(
                                             progress: (phase['progressPercent'] ?? phase['progress'] ?? 0).toDouble() / 100,
-                                            color: M4Theme.premiumBlue,
+                                            // Web parity: black ring.
+                                            color: isDark ? Colors.white : Colors.black,
                                             backgroundColor: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1),
                                             strokeWidth: 2.5,
                                           ),
@@ -1912,8 +2045,9 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(color: M4Theme.premiumBlue.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
-                  child: Text('${phases.length} MILESTONES', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue)),
+                  // Web parity: neutral chip, black text.
+                  decoration: BoxDecoration(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06), borderRadius: BorderRadius.circular(8)),
+                  child: Text('${phases.length} MILESTONES', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black)),
                 ),
               ],
             ),
@@ -1986,9 +2120,10 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                 child: Container(
                                   height: 6,
                                   decoration: BoxDecoration(
-                                    gradient: const LinearGradient(colors: [M4Theme.premiumBlue, Color(0xFF6366F1)]),
+                                    // Web parity: solid black progress bar.
+                                    color: isDark ? Colors.white : Colors.black,
                                     borderRadius: BorderRadius.circular(10),
-                                    boxShadow: [BoxShadow(color: M4Theme.premiumBlue.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 2))],
+                                    boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 8, offset: const Offset(0, 2))],
                                   ),
                                 ),
                               ),
@@ -2193,8 +2328,9 @@ class _DashedCirclePainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;
     final actualStrokeWidth = strokeWidth ?? 4.0;
-    const dashCount = 60;
-    const gap = 0.5;
+    // Web parity: chunky, clearly-separated dashes.
+    const dashCount = 40;
+    const gap = 0.45;
 
     final bgPaint = Paint()
       ..color = backgroundColor
@@ -2689,15 +2825,38 @@ class ImageBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     final client = ProviderScope.containerOf(context).read(apiClientProvider);
     final resolvedUrl = client.resolveUrl(imageUrl);
-    final childImage = CachedNetworkImage(
-      imageUrl: resolvedUrl,
-      fit: BoxFit.cover,
-      placeholder: (context, url) => Container(color: Colors.black26),
-      errorWidget: (context, url, error) => Image.network(
-        'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80',
+    Widget childImage;
+    if (resolvedUrl.startsWith('data:')) {
+      // Inline base64 heroes (e.g. Cledor) can appear in the gallery too.
+      try {
+        final bytes = _detailB64Cache.putIfAbsent(
+          resolvedUrl,
+          () => base64Decode(
+            resolvedUrl
+                .substring(resolvedUrl.indexOf(',') + 1)
+                .replaceAll(RegExp(r'\s'), ''),
+          ),
+        );
+        childImage = Image.memory(
+          bytes,
+          fit: BoxFit.cover,
+          gaplessPlayback: true,
+          cacheWidth: 1080,
+        );
+      } catch (_) {
+        childImage = Container(color: Colors.black26);
+      }
+    } else {
+      childImage = CachedNetworkImage(
+        imageUrl: resolvedUrl,
         fit: BoxFit.cover,
-      ),
-    );
+        placeholder: (context, url) => Container(color: Colors.black26),
+        errorWidget: (context, url, error) => Image.network(
+          'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80',
+          fit: BoxFit.cover,
+        ),
+      );
+    }
 
     if (blur == 0) return childImage;
 
