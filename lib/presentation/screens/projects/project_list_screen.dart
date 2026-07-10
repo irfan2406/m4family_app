@@ -55,6 +55,9 @@ class ProjectListScreen extends ConsumerWidget {
 
   final bool cpCatalogMode;
 
+  // Retained for future use; the header filter button was removed for web
+  // parity (screenshot has only the grid/list toggle and the "..." menu).
+  // ignore: unused_element
   void _showFilterBottomSheet(BuildContext context, WidgetRef ref) {
     final locationOptions = [
       "SOUTH MUMBAI",
@@ -309,12 +312,25 @@ class ProjectListScreen extends ConsumerWidget {
                                 0;
                           },
                           borderRadius: BorderRadius.circular(12),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
+                          // Web parity: contained back button (light rounded
+                          // square with a subtle border), not a bare icon.
+                          child: Container(
+                            width: 40,
+                            height: 40,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: (isDark ? Colors.white : Colors.black)
+                                  .withOpacity(0.05),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: (isDark ? Colors.white : Colors.black)
+                                    .withOpacity(0.08),
+                              ),
+                            ),
                             child: Icon(
                               LucideIcons.arrowLeft,
                               color: Theme.of(context).colorScheme.onSurface,
-                              size: 24,
+                              size: 18,
                             ),
                           ),
                         ),
@@ -391,32 +407,6 @@ class ProjectListScreen extends ConsumerWidget {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Web parity: filter (sliders) button + a grid/list
-                      // view toggle (projects/page.tsx has all three).
-                      // Filter button (sliders icon)
-                      GestureDetector(
-                        onTap: () => _showFilterBottomSheet(context, ref),
-                        child: Container(
-                          width: 40,
-                          height: 36,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: (isDark ? Colors.white : Colors.black)
-                                .withOpacity(0.05),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: (isDark ? Colors.white : Colors.black)
-                                  .withOpacity(0.08),
-                            ),
-                          ),
-                          child: Icon(
-                            LucideIcons.sliders,
-                            size: 16,
-                            color: Theme.of(context).colorScheme.onSurface,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 6),
                       // Web parity: grid / list view segmented toggle
                       // (active button filled black, matching projects/page.tsx).
                       Container(
@@ -455,6 +445,28 @@ class ProjectListScreen extends ConsumerWidget {
                                       false,
                             ),
                           ],
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      // Web parity: dark "..." menu button that opens the
+                      // sidebar drawer.
+                      Builder(
+                        builder: (ctx) => GestureDetector(
+                          onTap: () => Scaffold.of(ctx).openDrawer(),
+                          child: Container(
+                            width: 44,
+                            height: 36,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: isDark ? Colors.white : Colors.black,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              LucideIcons.moreHorizontal,
+                              size: 18,
+                              color: isDark ? Colors.black : Colors.white,
+                            ),
+                          ),
                         ),
                       ),
                     ],

@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:m4_mobile/presentation/screens/careers/job_apply_screen.dart';
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 
@@ -181,30 +182,38 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                     ),
                     const SizedBox(height: 32),
 
-                    // Meta Info
+                    // Meta Info — location + employment type (web parity).
+                    // Both badges are Flexible so long values ellipsize safely
+                    // instead of laying an inner Flexible out under unbounded
+                    // constraints.
                     Row(
                       children: [
-                        _buildMetaBadge(
-                          LucideIcons.mapPin,
-                          (job['location'] ?? 'Mumbai').toString(),
-                          isDark,
+                        Flexible(
+                          child: _buildMetaBadge(
+                            LucideIcons.mapPin,
+                            (job['location'] ?? 'Mumbai').toString(),
+                            isDark,
+                          ),
                         ),
                         const SizedBox(width: 12),
-                        if ((job['salary'] ?? '').toString().isNotEmpty)
-                          Flexible(
-                            child: _buildMetaBadge(
-                              LucideIcons.dollarSign,
-                              job['salary'].toString(),
-                              isDark,
-                            ),
+                        Flexible(
+                          child: _buildMetaBadge(
+                            LucideIcons.clock,
+                            (job['type'] ??
+                                    job['jobType'] ??
+                                    job['employment_type'] ??
+                                    'Full-Time')
+                                .toString(),
+                            isDark,
                           ),
+                        ),
                       ],
                     ),
-                    const SizedBox(height: 48),
+                    const SizedBox(height: 40),
 
-                    // Job Description
+                    // Job Description — inside a bordered card with gradient copy.
                     Text(
-                      'ROLE OVERVIEW',
+                      'JOB DESCRIPTION',
                       style: GoogleFonts.montserrat(
                         color: (isDark ? Colors.white : Colors.black)
                             .withOpacity(0.6),
@@ -213,18 +222,51 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                         letterSpacing: 3,
                       ),
                     ),
-                    const SizedBox(height: 24),
-                    Text(
-                      (job['description'] ?? '').toString(),
-                      style: GoogleFonts.montserrat(
-                        color: (isDark ? Colors.white : Colors.black)
-                            .withOpacity(0.85),
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        height: 1.8,
+                    const SizedBox(height: 20),
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? Colors.white.withOpacity(0.03)
+                            : Colors.white,
+                        borderRadius: BorderRadius.circular(24),
+                        border: Border.all(
+                          color: (isDark ? Colors.white : Colors.black)
+                              .withOpacity(0.08),
+                        ),
+                        boxShadow: isDark
+                            ? null
+                            : [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.03),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, 8),
+                                ),
+                              ],
+                      ),
+                      child: _gradientBody(
+                        (job['description'] ?? '').toString(),
+                        isDark,
                       ),
                     ),
-                    const SizedBox(height: 48),
+                    const SizedBox(height: 40),
+
+                    // Direct Recruitment Contact — sits directly under the
+                    // description card (web parity: reference screenshot 2).
+                    Text(
+                      'DIRECT RECRUITMENT CONTACT',
+                      style: GoogleFonts.montserrat(
+                        color: (isDark ? Colors.white : Colors.black)
+                            .withOpacity(0.6),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 3,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    _buildRecruitmentContact(isDark),
+                    const SizedBox(height: 40),
 
                     // Responsibilities
                     if (job['responsibilities'] != null &&
@@ -490,18 +532,28 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
 
   Widget _buildMetaBadge(IconData icon, String text, bool isDark) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 13),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+        // Web parity: white pill with a subtle border/shadow and dark content.
+        color: isDark ? Colors.white.withOpacity(0.05) : Colors.white,
         border: Border.all(
           color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
         ),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.04),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: isDark ? Colors.white70 : Colors.black54, size: 14),
+          Icon(icon, color: isDark ? Colors.white : Colors.black, size: 15),
           const SizedBox(width: 8),
           Flexible(
             child: Text(
@@ -509,15 +561,166 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: GoogleFonts.montserrat(
-                color: isDark ? Colors.white70 : Colors.black54,
-                fontSize: 9,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 1.5,
+                color: isDark ? Colors.white : Colors.black,
+                fontSize: 10,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 1.2,
               ),
             ),
           ),
         ],
       ),
     );
+  }
+
+  // Web parity: description copy rendered with the M4 blue→gold gradient in
+  // light mode; plain readable text in dark mode.
+  Widget _gradientBody(String text, bool isDark) {
+    final style = GoogleFonts.montserrat(
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+      height: 1.7,
+    );
+    if (text.trim().isEmpty) {
+      return Text(
+        'Details for this role will be shared during the interview process.',
+        style: style.copyWith(
+          color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
+        ),
+      );
+    }
+    if (isDark) {
+      return Text(
+        text,
+        style: style.copyWith(color: Colors.white.withOpacity(0.85)),
+      );
+    }
+    return ShaderMask(
+      shaderCallback: (bounds) => const LinearGradient(
+        colors: [Color(0xFF2F4A73), Color(0xFFB08D3E)],
+        begin: Alignment.centerLeft,
+        end: Alignment.centerRight,
+      ).createShader(bounds),
+      child: Text(text, style: style.copyWith(color: Colors.white)),
+    );
+  }
+
+  // Web parity: one card with EMAIL RECRUITMENT + CAREER HELPLINE rows.
+  Widget _buildRecruitmentContact(bool isDark) {
+    const email = 'HR@M4FAMILY.COM';
+    const helpline = '+91 99308 50993';
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
+        ),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.03),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+      ),
+      child: Column(
+        children: [
+          _recruitRow(
+            icon: LucideIcons.mail,
+            label: 'EMAIL RECRUITMENT',
+            value: email,
+            onTap: () => _launchUrl('mailto:${email.toLowerCase()}'),
+            isDark: isDark,
+          ),
+          const SizedBox(height: 18),
+          _recruitRow(
+            icon: LucideIcons.phone,
+            label: 'CAREER HELPLINE',
+            value: helpline,
+            onTap: () =>
+                _launchUrl('tel:${helpline.replaceAll(RegExp(r'[^+0-9]'), '')}'),
+            isDark: isDark,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _recruitRow({
+    required IconData icon,
+    required String label,
+    required String value,
+    required VoidCallback onTap,
+    required bool isDark,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Row(
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
+              ),
+            ),
+            child: Icon(
+              icon,
+              color: isDark ? Colors.white : Colors.black,
+              size: 18,
+            ),
+          ),
+          const SizedBox(width: 18),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: GoogleFonts.montserrat(
+                    color: isDark
+                        ? Colors.white.withOpacity(0.7)
+                        : const Color(0xFF3E5C86),
+                    fontSize: 9,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 2,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  value,
+                  style: GoogleFonts.montserrat(
+                    color: isDark ? Colors.white : Colors.black,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -0.2,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _launchUrl(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else if (mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Could not open $url')));
+    }
   }
 }

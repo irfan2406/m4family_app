@@ -1067,10 +1067,11 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           const SizedBox(height: 24),
           Text(
             section['content'].toString().toUpperCase(),
+            // Web parity: lighter, less heavy body copy inside the card.
             style: GoogleFonts.inter(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.7),
+              color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
               fontSize: 11,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
               height: 1.6,
               letterSpacing: 0.5,
             ),
@@ -1248,48 +1249,40 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
   }
 
   void _showCustomEnquiryForm(BuildContext context) {
-    showModalBottomSheet(
+    showDialog(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withOpacity(0.6),
       builder: (context) => StatefulBuilder(
         builder: (context, setModalState) {
           final isDark = Theme.of(context).brightness == Brightness.dark;
-          return Container(
-            padding: EdgeInsets.only(
-              left: 24,
-              right: 24,
-              bottom: MediaQuery.of(context).viewInsets.bottom + 40,
-              top: 40,
-            ),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF0F1115) : Colors.white,
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(40),
-              ),
-              boxShadow: isDark
-                  ? null
-                  : [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 40,
-                        spreadRadius: 10,
-                      ),
-                    ],
-            ),
-            child: Column(
+          // Web parity: a centered floating card with margins on every edge,
+          // rounded on all corners — not a full-width bottom sheet.
+          return Dialog(
+            backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
+            insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 44),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+            clipBehavior: Clip.antiAlias,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.82),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 28, 24, 28),
+                  child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'CUSTOM PERSONALISATION',
-                      style: GoogleFonts.montserrat(
-                        color: isDark ? Colors.white : Colors.black,
-                        fontWeight: FontWeight.w400,
-                        fontSize: 16,
+                    Expanded(
+                      child: Text(
+                        'CUSTOM PERSONALISATION',
+                        style: GoogleFonts.montserrat(
+                          color: isDark ? Colors.white : Colors.black,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 17,
+                          letterSpacing: -0.3,
+                        ),
                       ),
                     ),
                     IconButton(
@@ -1306,9 +1299,10 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 Text(
                   'Enter your details to receive our premium personalisation catalog and schedule a consultation.',
                   style: GoogleFonts.montserrat(
-                    color: isDark ? Colors.white : Colors.black,
-                    fontSize: 10,
-                    height: 1.6,
+                    // Web parity: muted gray subtitle, not solid black.
+                    color: isDark ? Colors.white54 : const Color(0xFF6B7280),
+                    fontSize: 12,
+                    height: 1.5,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -1414,6 +1408,9 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   ),
                 ),
               ],
+                  ),
+                ),
+              ),
             ),
           );
         },
@@ -1424,14 +1421,15 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
   Widget _buildFieldLabel(String label) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
-      padding: const EdgeInsets.only(left: 4, bottom: 8),
+      padding: const EdgeInsets.only(left: 4, bottom: 10),
       child: Text(
         label,
         style: GoogleFonts.montserrat(
-          color: isDark ? Colors.white : Colors.black,
-          fontSize: 8,
-          fontWeight: FontWeight.w400,
-          letterSpacing: 1.5,
+          // Web parity: muted slate-gray field labels.
+          color: isDark ? Colors.white54 : const Color(0xFF8A93A5),
+          fontSize: 10,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 1.2,
         ),
       ),
     );
@@ -1443,40 +1441,42 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     IconData icon,
   ) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withOpacity(0.03)
-            : Colors.black.withOpacity(0.04),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isDark
-              ? Colors.white.withOpacity(0.08)
-              : Colors.black.withOpacity(0.08),
-        ),
+    // Web parity: plain light-filled input, no leading icon, and a gold
+    // border only while focused (matches the reference popup).
+    final fill = isDark
+        ? Colors.white.withOpacity(0.04)
+        : const Color(0xFFF3F4F6);
+    final baseBorder = isDark
+        ? Colors.white.withOpacity(0.06)
+        : Colors.transparent;
+    const gold = Color(0xFFC5A358);
+    return TextField(
+      controller: controller,
+      style: GoogleFonts.montserrat(
+        color: isDark ? Colors.white : Colors.black,
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
       ),
-      child: TextField(
-        controller: controller,
-        style: GoogleFonts.montserrat(
-          color: isDark ? Colors.white : Colors.black,
-          fontSize: 13,
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: GoogleFonts.montserrat(
+          color: isDark ? Colors.white38 : const Color(0xFF9AA1AD),
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
         ),
-        decoration: InputDecoration(
-          hintText: hint,
-          hintStyle: GoogleFonts.montserrat(
-            color: isDark ? Colors.white : Colors.black,
-            fontSize: 13,
-          ),
-          prefixIcon: Icon(
-            icon,
-            color: isDark ? Colors.white : Colors.black,
-            size: 18,
-          ),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 16,
-          ),
+        filled: true,
+        fillColor: fill,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 18,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: baseBorder, width: 1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: gold, width: 1.8),
         ),
       ),
     );

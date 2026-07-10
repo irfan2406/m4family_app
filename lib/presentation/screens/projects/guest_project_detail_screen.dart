@@ -24,6 +24,251 @@ import 'package:webview_flutter/webview_flutter.dart';
 /// images (e.g. Cledor) decode once instead of on every rebuild.
 final Map<String, Uint8List> _detailB64Cache = {};
 
+/// Web parity: the booking dialog's accent (subtitle, section labels, schedule
+/// row, field placeholders) is a premium slate-blue, not gray.
+const Color _kBookingBlue = Color(0xFF2B4C7E);
+
+/// Web parity: bespoke date+time wheel picker — separate Day | Month | Year |
+/// Hour | Minute | AM/PM columns under a "SELECT DATE & TIME" header. Returns
+/// the composed [DateTime] via Navigator.pop, or null on dismiss.
+class _DateTimeWheelSheet extends StatefulWidget {
+  final DateTime initial;
+  final bool isDark;
+  const _DateTimeWheelSheet({required this.initial, required this.isDark});
+
+  @override
+  State<_DateTimeWheelSheet> createState() => _DateTimeWheelSheetState();
+}
+
+class _DateTimeWheelSheetState extends State<_DateTimeWheelSheet> {
+  static const _months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+
+  late int _baseYear; // first selectable year
+  static const _yearSpan = 4; // current year .. +3
+
+  late int _year;    // absolute year
+  late int _month;   // 1..12
+  late int _day;     // 1..daysInMonth
+  late int _hour12;  // 1..12
+  late int _minute;  // 0..59
+  late int _ampm;    // 0 = AM, 1 = PM
+
+  late FixedExtentScrollController _dayCtl, _monthCtl, _yearCtl, _hourCtl, _minCtl, _ampmCtl;
+
+  @override
+  void initState() {
+    super.initState();
+    final d = widget.initial;
+    _baseYear = DateTime.now().year;
+    _year = d.year.clamp(_baseYear, _baseYear + _yearSpan - 1);
+    _month = d.month;
+    _day = d.day;
+    _ampm = d.hour >= 12 ? 1 : 0;
+    _hour12 = d.hour % 12 == 0 ? 12 : d.hour % 12;
+    _minute = d.minute;
+
+    _dayCtl = FixedExtentScrollController(initialItem: _day - 1);
+    _monthCtl = FixedExtentScrollController(initialItem: _month - 1);
+    _yearCtl = FixedExtentScrollController(initialItem: _year - _baseYear);
+    _hourCtl = FixedExtentScrollController(initialItem: _hour12 - 1);
+    _minCtl = FixedExtentScrollController(initialItem: _minute);
+    _ampmCtl = FixedExtentScrollController(initialItem: _ampm);
+  }
+
+  @override
+  void dispose() {
+    _dayCtl.dispose();
+    _monthCtl.dispose();
+    _yearCtl.dispose();
+    _hourCtl.dispose();
+    _minCtl.dispose();
+    _ampmCtl.dispose();
+    super.dispose();
+  }
+
+  int get _daysInMonth => DateTime(_year, _month + 1, 0).day;
+
+  // After a month/year change the current day may no longer exist (e.g. 31 →
+  // Feb). Clamp it and snap the day wheel back into range.
+  void _clampDay() {
+    final max = _daysInMonth;
+    if (_day > max) {
+      _day = max;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_dayCtl.hasClients) {
+          _dayCtl.jumpToItem(_day - 1);
+        }
+      });
+    }
+  }
+
+  DateTime _compose() {
+    int h24 = _hour12 % 12;      // 12 → 0
+    if (_ampm == 1) h24 += 12;   // PM
+    final day = _day > _daysInMonth ? _daysInMonth : _day;
+    return DateTime(_year, _month, day, h24, _minute);
+  }
+
+  Widget _wheel({
+    required FixedExtentScrollController controller,
+    required int count,
+    required String Function(int) label,
+    required ValueChanged<int> onChanged,
+    int flex = 2,
+  }) {
+    final txt = widget.isDark ? Colors.white : Colors.black;
+    return Expanded(
+      flex: flex,
+      child: CupertinoPicker(
+        scrollController: controller,
+        selectionOverlay: const SizedBox.shrink(),
+        itemExtent: 40,
+        magnification: 1.05,
+        useMagnifier: true,
+        squeeze: 1.05,
+        onSelectedItemChanged: onChanged,
+        children: List.generate(
+          count,
+          (i) => Center(
+            child: Text(
+              label(i),
+              style: GoogleFonts.montserrat(fontSize: 17, fontWeight: FontWeight.w700, color: txt),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = widget.isDark;
+    final bg = isDark ? const Color(0xFF0B111E) : Colors.white;
+    final txt = isDark ? Colors.white : Colors.black;
+    // Defensive clamp so the day wheel never renders fewer rows than _day.
+    if (_day > _daysInMonth) _day = _daysInMonth;
+
+    return Container(
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(height: 12),
+          Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(2))),
+          const SizedBox(height: 24),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('SELECT DATE & TIME', style: GoogleFonts.montserrat(fontSize: 18, fontWeight: FontWeight.w900, color: txt, letterSpacing: 0.5)),
+                GestureDetector(
+                  onTap: () => Navigator.pop(context, _compose()),
+                  child: Text('DONE', style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, color: isDark ? Colors.white : _kBookingBlue, letterSpacing: 1)),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            height: 216,
+            child: Stack(
+              children: [
+                // Center selection highlight (rounded row like the web).
+                Center(
+                  child: Container(
+                    height: 40,
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    children: [
+                      // Day — row count follows the selected month/year; the
+                      // persistent controller is snapped back in _clampDay.
+                      _wheel(
+                        controller: _dayCtl,
+                        count: _daysInMonth,
+                        label: (i) => (i + 1).toString(),
+                        onChanged: (i) => _day = i + 1,
+                        flex: 2,
+                      ),
+                      _wheel(
+                        controller: _monthCtl,
+                        count: 12,
+                        label: (i) => _months[i],
+                        onChanged: (i) => setState(() { _month = i + 1; _clampDay(); }),
+                        flex: 2,
+                      ),
+                      _wheel(
+                        controller: _yearCtl,
+                        count: _yearSpan,
+                        label: (i) => (_baseYear + i).toString(),
+                        onChanged: (i) => setState(() { _year = _baseYear + i; _clampDay(); }),
+                        flex: 3,
+                      ),
+                      const SizedBox(width: 8),
+                      _wheel(
+                        controller: _hourCtl,
+                        count: 12,
+                        label: (i) => (i + 1).toString().padLeft(2, '0'),
+                        onChanged: (i) => _hour12 = i + 1,
+                        flex: 2,
+                      ),
+                      Text(':', style: GoogleFonts.montserrat(fontSize: 18, fontWeight: FontWeight.w900, color: txt)),
+                      _wheel(
+                        controller: _minCtl,
+                        count: 60,
+                        label: (i) => i.toString().padLeft(2, '0'),
+                        onChanged: (i) => _minute = i,
+                        flex: 2,
+                      ),
+                      _wheel(
+                        controller: _ampmCtl,
+                        count: 2,
+                        label: (i) => i == 0 ? 'AM' : 'PM',
+                        onChanged: (i) => _ampm = i,
+                        flex: 2,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 4, 24, 24),
+            child: GestureDetector(
+              onTap: () => Navigator.pop(context, _compose()),
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.white : Colors.black,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Center(
+                  child: Text('CONFIRM', style: GoogleFonts.montserrat(color: isDark ? Colors.black : Colors.white, fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 2)),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class GuestProjectDetailScreen extends ConsumerStatefulWidget {
   final dynamic projectData; 
   final String projectId;
@@ -97,40 +342,41 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     if (inter.isNotEmpty) _interiorImages = inter;
   }
 
-  Future<void> _fetchProjectData() async {
-    try {
-      final apiClient = ref.read(apiClientProvider);
-      
-      final results = await Future.wait<Response<dynamic>>([
-        apiClient.getProjectDetails(widget.projectId),
-        apiClient.getProjectUpdates(widget.projectId),
-        apiClient.getProjectInventory(widget.projectId),
-        apiClient.getProjectProgress(widget.projectId),
-      ]);
+  void _fetchProjectData() {
+    final apiClient = ref.read(apiClientProvider);
 
-      if (mounted) {
-        setState(() {
-          if (results[0].data['status'] == true) {
-            _fullProject = results[0].data['data'];
-            // Refresh the galleries from the authoritative detail payload
-            // (same extraction the web uses).
-            _seedGalleryImages(_fullProject);
-          }
-          if (results[1].data['status'] == true) {
-            _updates = results[1].data['data'] ?? [];
-          }
-           if (results[2].data['status'] == true) {
-            _inventory = results[2].data['data'] ?? [];
-          }
-           if (results[3].data['status'] == true) {
-            _progressPhases = results[3].data['data'] ?? [];
-          }
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
+    // Each payload renders the moment it arrives: the small
+    // updates/inventory/progress responses (KBs, <1s) must not wait behind
+    // the project-details call, whose payload can be multiple MB.
+    apiClient.getProjectDetails(widget.projectId).then((res) {
+      if (!mounted) return;
+      setState(() {
+        if (res.data['status'] == true) {
+          _fullProject = res.data['data'];
+          // Refresh the galleries from the authoritative detail payload
+          // (same extraction the web uses).
+          _seedGalleryImages(_fullProject);
+        }
+        _isLoading = false;
+      });
+    }).catchError((_) {
       if (mounted) setState(() => _isLoading = false);
-    }
+    });
+
+    apiClient.getProjectUpdates(widget.projectId).then((res) {
+      if (!mounted || res.data['status'] != true) return;
+      setState(() => _updates = res.data['data'] ?? []);
+    }).catchError((_) {});
+
+    apiClient.getProjectInventory(widget.projectId).then((res) {
+      if (!mounted || res.data['status'] != true) return;
+      setState(() => _inventory = res.data['data'] ?? []);
+    }).catchError((_) {});
+
+    apiClient.getProjectProgress(widget.projectId).then((res) {
+      if (!mounted || res.data['status'] != true) return;
+      setState(() => _progressPhases = res.data['data'] ?? []);
+    }).catchError((_) {});
   }
 
   void _launchAction(String message, [String? url, bool isError = false]) async {
@@ -148,15 +394,28 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
       final resolvedUrl = apiClient.resolveUrl(url);
       final uri = Uri.parse(resolvedUrl);
 
+      if (resolvedUrl.startsWith('http')) {
+        // Open documents (PDF flyers etc.) in the device browser / PDF viewer,
+        // which renders PDFs natively — the in-app WebView shows them blank.
+        // Fall back to the platform default, then report if both fail.
+        for (final mode in const [LaunchMode.externalApplication, LaunchMode.platformDefault]) {
+          try {
+            if (await launchUrl(uri, mode: mode)) return;
+          } catch (_) {}
+        }
+        if (mounted) {
+          _launchAction('This document isn\'t available right now', null, true);
+        }
+        return;
+      }
+
       if (await canLaunchUrl(uri)) {
-        await launchUrl(
-          uri, 
-          mode: resolvedUrl.startsWith('http') ? LaunchMode.inAppBrowserView : LaunchMode.platformDefault
-        );
+        await launchUrl(uri, mode: LaunchMode.platformDefault);
         return;
       }
     }
-    
+
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message, style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.bold, color: isError ? Colors.white : Colors.black)),
@@ -167,61 +426,18 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     );
   }
 
-  // iOS-style wheel date+time picker (matches the web IOSDateTimePicker).
+  // Web parity: bespoke wheel picker with separate Day | Month | Year | Hour |
+  // Minute | AM/PM columns under a "SELECT DATE & TIME" title (matches the
+  // web IOSDateTimePicker), instead of Flutter's combined-date Cupertino sheet.
   Future<DateTime?> _pickIosDateTime(DateTime initial) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final minDate = DateTime.now().subtract(const Duration(minutes: 1));
-    if (initial.isBefore(minDate)) initial = DateTime.now().add(const Duration(minutes: 30));
-    DateTime temp = initial;
+    final now = DateTime.now();
+    if (initial.isBefore(now)) initial = now.add(const Duration(minutes: 30));
     return showModalBottomSheet<DateTime>(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (sheetCtx) => Container(
-        height: 340,
-        decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF0B111E) : Colors.white,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-        ),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(sheetCtx),
-                    child: Text('CANCEL', style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : Colors.black54, letterSpacing: 1)),
-                  ),
-                  Text('SCHEDULE', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 2)),
-                  TextButton(
-                    onPressed: () => Navigator.pop(sheetCtx, temp),
-                    child: Text('DONE', style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 1)),
-                  ),
-                ],
-              ),
-            ),
-            Divider(height: 1, color: isDark ? Colors.white12 : Colors.black12),
-            Expanded(
-              child: CupertinoTheme(
-                data: CupertinoThemeData(
-                  brightness: isDark ? Brightness.dark : Brightness.light,
-                  textTheme: CupertinoTextThemeData(
-                    dateTimePickerTextStyle: GoogleFonts.montserrat(fontSize: 17, fontWeight: FontWeight.w700, color: isDark ? Colors.white : Colors.black),
-                  ),
-                ),
-                child: CupertinoDatePicker(
-                  mode: CupertinoDatePickerMode.dateAndTime,
-                  initialDateTime: initial,
-                  minimumDate: minDate,
-                  use24hFormat: false,
-                  onDateTimeChanged: (dt) => temp = dt,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+      isScrollControlled: true,
+      builder: (sheetCtx) => _DateTimeWheelSheet(initial: initial, isDark: isDark),
     );
   }
 
@@ -255,6 +471,18 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
         _launchAction('Please schedule a date and time for your visit', null, true);
       }
       return;
+    }
+    // Reject a past slot (the wheels allow earlier-today selections).
+    if (isBooking && _leadDate != null && _leadTime != null) {
+      final composed = DateTime(_leadDate!.year, _leadDate!.month, _leadDate!.day, _leadTime!.hour, _leadTime!.minute);
+      if (composed.isBefore(DateTime.now())) {
+        if (setModalState != null) {
+          setModalState(() => _modalErrorMessage = 'Please pick a future date and time');
+        } else {
+          _launchAction('Please pick a future date and time', null, true);
+        }
+        return;
+      }
     }
 
     setState(() => _isLoading = true);
@@ -368,20 +596,23 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     _modalErrorMessage = null;
     _notesController.clear();
 
-    showModalBottomSheet(
+    showDialog(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.6),
       builder: (context) => StatefulBuilder(
-        builder: (context, setModalState) => Container(
-          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom + 20),
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF0B111E) : Colors.white,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
+        builder: (context, setModalState) => Dialog(
+          backgroundColor: isDark ? const Color(0xFF0B111E) : Colors.white,
+          // Web parity: a centered floating card with margins on every edge,
+          // rounded on all corners — not a full-width bottom sheet.
+          insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 44),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+          clipBehavior: Clip.antiAlias,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.82),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
               const SizedBox(height: 12),
               Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(2))),
               Align(
@@ -410,19 +641,20 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                     const SizedBox(height: 16),
                     Text(
                       'A BESPOKE SHOWCASE OF LUXURY AT ${projectTitle.toUpperCase()}.',
-                      style: GoogleFonts.montserrat(fontSize: 9, color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.w900, letterSpacing: 1),
+                      // Web parity: slate-blue subtitle.
+                      style: GoogleFonts.montserrat(fontSize: 9, color: isDark ? Colors.white54 : _kBookingBlue, fontWeight: FontWeight.w900, letterSpacing: 1),
                     ),
                     const SizedBox(height: 40),
-                    
+
                     _buildInquiryField('Full Name', _nameController, LucideIcons.user),
                     const SizedBox(height: 16),
-                    _buildInquiryField('Email Address', _emailController, LucideIcons.mail),
+                    _buildInquiryField('Email Address (Optional)', _emailController, LucideIcons.mail),
                     const SizedBox(height: 16),
-                    _buildInquiryField('Phone Number', _phoneController, LucideIcons.phone),
-                    
+                    _buildInquiryField('+91 98653 21250', _phoneController, LucideIcons.phone),
+
                     const SizedBox(height: 28),
                     // Visit Type toggle (web parity)
-                    Text('VISIT TYPE', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : Colors.black54, letterSpacing: 1.5)),
+                    Text('VISIT TYPE', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : _kBookingBlue, letterSpacing: 1.5)),
                     const SizedBox(height: 10),
                     Container(
                       padding: const EdgeInsets.all(4),
@@ -456,7 +688,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                     ),
                     const SizedBox(height: 20),
                     // Schedule date + time (web parity: IOSDateTimePicker)
-                    Text('SCHEDULE', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : Colors.black54, letterSpacing: 1.5)),
+                    Text('SCHEDULE', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : _kBookingBlue, letterSpacing: 1.5)),
                     const SizedBox(height: 10),
                     GestureDetector(
                       onTap: () async {
@@ -480,24 +712,25 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                         ),
                         child: Row(
                           children: [
-                            const Icon(LucideIcons.calendar, size: 16, color: M4Theme.premiumBlue),
+                            // Web parity: blue calendar icon + blue label.
+                            Icon(LucideIcons.calendar, size: 16, color: isDark ? Colors.white : _kBookingBlue),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
                                 _leadDate == null
                                     ? 'SELECT DATE & TIME'
                                     : '${_leadDate!.day}/${_leadDate!.month}/${_leadDate!.year}   ${_leadTime?.format(context) ?? ''}',
-                                style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w800, color: isDark ? Colors.white : Colors.black, letterSpacing: 0.5),
+                                style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w800, color: isDark ? Colors.white : _kBookingBlue, letterSpacing: 0.5),
                               ),
                             ),
-                            Icon(LucideIcons.chevronRight, size: 16, color: isDark ? Colors.white38 : Colors.black38),
+                            Icon(LucideIcons.chevronRight, size: 16, color: isDark ? Colors.white38 : _kBookingBlue.withValues(alpha: 0.6)),
                           ],
                         ),
                       ),
                     ),
                     const SizedBox(height: 20),
                     // Additional notes (web parity)
-                    Text('ADDITIONAL NOTES', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : Colors.black54, letterSpacing: 1.5)),
+                    Text('ADDITIONAL NOTES', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : _kBookingBlue, letterSpacing: 1.5)),
                     const SizedBox(height: 10),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 4),
@@ -547,6 +780,13 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                           setModalState(() => _modalErrorMessage = 'Please schedule a date and time for your visit');
                           return;
                         }
+                        // The free-scrolling wheels allow earlier-today
+                        // selections; reject a past slot at submit.
+                        final composed = DateTime(_leadDate!.year, _leadDate!.month, _leadDate!.day, _leadTime!.hour, _leadTime!.minute);
+                        if (composed.isBefore(DateTime.now())) {
+                          setModalState(() => _modalErrorMessage = 'Please pick a future date and time');
+                          return;
+                        }
                         setModalState(() => _modalErrorMessage = null);
                         _submitInquiry(_leadType, planName, setModalState);
                       },
@@ -570,6 +810,8 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                 ),
               ),
             ],
+              ),
+            ),
           ),
         ),
       ),
@@ -591,7 +833,8 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: label,
-          hintStyle: GoogleFonts.montserrat(fontSize: 11, color: isDark ? Colors.white24 : Colors.black26),
+          // Web parity: clearly-legible slate-blue placeholder text.
+          hintStyle: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w500, color: isDark ? Colors.white54 : _kBookingBlue),
           contentPadding: const EdgeInsets.symmetric(vertical: 16),
         ),
       ),
@@ -632,7 +875,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                       // `asset:` entries render bundled images (used while the
                       // backend /uploads endpoint is broken).
                       child: raw.startsWith('asset:')
-                          ? Image.asset(raw.substring(6), fit: BoxFit.contain)
+                          ? Image.asset(raw.substring(6), fit: BoxFit.contain, filterQuality: FilterQuality.high)
                           : CachedNetworkImage(
                               imageUrl: apiClient.resolveUrl(raw),
                               fit: BoxFit.contain,
@@ -766,14 +1009,31 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                                   label: 'EXTERIOR',
                                   imageUrl: apiClient.resolveUrl(_exteriorImages.first),
                                   fallback: _thumbFallback(project, 'assets/cledor_exterior.jpg'),
-                                  onTap: () => _openHeroGallery(_exteriorImages),
+                                  // Bundled photo first so the gallery always
+                                  // opens with a working full image while
+                                  // /uploads is broken server-side.
+                                  onTap: () => _openHeroGallery([
+                                    if ((project?['title'] ?? '')
+                                        .toString()
+                                        .toLowerCase()
+                                        .contains('cledor'))
+                                      'asset:assets/cledor_exterior.jpg',
+                                    ..._exteriorImages,
+                                  ]),
                                 ),
                               if (hasInterior)
                                 _HeroMediaThumb(
                                   label: 'INTERIOR',
                                   imageUrl: apiClient.resolveUrl(_interiorImages.first),
                                   fallback: _thumbFallback(project, 'assets/cledor_interior.jpg'),
-                                  onTap: () => _openHeroGallery(_interiorImages),
+                                  onTap: () => _openHeroGallery([
+                                    if ((project?['title'] ?? '')
+                                        .toString()
+                                        .toLowerCase()
+                                        .contains('cledor'))
+                                      'asset:assets/cledor_interior.jpg',
+                                    ..._interiorImages,
+                                  ]),
                                 ),
                             ],
                           ),
@@ -875,6 +1135,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     return Image.asset(
       assetPath,
       fit: BoxFit.cover,
+      filterQuality: FilterQuality.high,
       errorBuilder: (_, __, ___) => hero,
     );
   }
@@ -1125,9 +1386,10 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
       padding: EdgeInsets.zero,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        childAspectRatio: 1.0,
+        // Tighter row/column gaps so amenity icons sit closer together.
+        mainAxisSpacing: 4,
+        crossAxisSpacing: 4,
+        childAspectRatio: 1.15,
       ),
       itemCount: amenitiesRaw.length,
       itemBuilder: (context, index) {
@@ -1555,12 +1817,12 @@ class _HeroMediaThumb extends StatelessWidget {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
           child: Container(
-            width: 60,
-            height: 60,
+            width: 66,
+            height: 66,
             decoration: BoxDecoration(
               color: Colors.black.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.2), width: 1.5),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.35), width: 1.5),
             ),
             clipBehavior: Clip.antiAlias,
             child: Stack(
@@ -1593,22 +1855,23 @@ class _HeroMediaThumb extends StatelessWidget {
                     CachedNetworkImage(
                       imageUrl: imageUrl!,
                       fit: BoxFit.cover,
+                      filterQuality: FilterQuality.high,
                       errorWidget: (c, e, s) =>
                           fallback ?? Container(color: Colors.white10),
                       placeholder: (c, e) => Container(color: Colors.white10),
                     ),
                   // Web parity: image stays fully visible; the label sits on a
-                  // slim scrim along the bottom edge.
+                  // high-contrast scrim along the bottom edge.
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.symmetric(vertical: 3),
-                      color: Colors.black.withValues(alpha: 0.45),
+                      padding: const EdgeInsets.symmetric(vertical: 3.5),
+                      color: Colors.black.withValues(alpha: 0.62),
                       child: Text(
                         label,
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.montserrat(color: Colors.white, fontSize: 6.5, fontWeight: FontWeight.w800, letterSpacing: 0.5),
+                        style: GoogleFonts.montserrat(color: Colors.white, fontSize: 7, fontWeight: FontWeight.w800, letterSpacing: 0.5),
                       ),
                     ),
                   ),
@@ -1848,10 +2111,10 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     child: CustomPaint(
                       painter: _DashedCirclePainter(
                         progress: overallProgress.toDouble() / 100,
-                        // Web parity: bold black dotted ring.
+                        // Web parity: bold black tick ring.
                         color: isDark ? Colors.white : Colors.black,
                         backgroundColor: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1),
-                        strokeWidth: 5,
+                        strokeWidth: 6,
                       ),
                     ),
                   ),
@@ -1894,7 +2157,8 @@ class _ConstructionDashboardCard extends ConsumerWidget {
             ),
             const SizedBox(height: 32),
             SizedBox(
-              height: 305,
+              // Web parity: compact card — image + info row, no dead space.
+              height: 248,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -1959,6 +2223,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                           height: 140,
                                           width: 240,
                                           fit: BoxFit.cover,
+                                          filterQuality: FilterQuality.high,
                                         )
                                       : Container(
                                           height: 140,
@@ -1978,13 +2243,26 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                               Positioned(
                                 top: 16,
                                 left: 16,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: status == 'COMPLETED' ? Colors.green : (status == 'IN PROGRESS' ? M4Theme.premiumBlue : Colors.black54),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: Text(status, style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1)),
+                                child: Builder(
+                                  builder: (context) {
+                                    final done = status == 'COMPLETED';
+                                    final active = status == 'IN PROGRESS';
+                                    // Web parity: green=done, blue=active,
+                                    // light pill w/ dark text = upcoming.
+                                    final badgeBg = done
+                                        ? const Color(0xFF22C55E)
+                                        : (active ? M4Theme.premiumBlue : Colors.white);
+                                    final badgeTxt = (done || active) ? Colors.white : const Color(0xFF0F172A);
+                                    return Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: badgeBg,
+                                        borderRadius: BorderRadius.circular(6),
+                                        border: (!done && !active) ? Border.all(color: Colors.black.withValues(alpha: 0.08)) : null,
+                                      ),
+                                      child: Text(status, style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: badgeTxt, letterSpacing: 1)),
+                                    );
+                                  },
                                 ),
                               ),
                             ],
@@ -1995,31 +2273,33 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(projectName.toUpperCase(), style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.bold, color: isDark ? Colors.white : const Color(0xFF0F172A), letterSpacing: 1)),
+                              Text(projectName.toUpperCase(), style: GoogleFonts.dmSerifDisplay(fontSize: 12, fontWeight: FontWeight.bold, color: isDark ? Colors.white : const Color(0xFF0F172A), letterSpacing: 1)),
                               const SizedBox(height: 12),
                               Row(
                                 children: [
                                   Stack(
                                     alignment: Alignment.center,
                                     children: [
+                                      // Web parity: progress ring — dark arc
+                                      // reflects the actual percent (20% shows
+                                      // 20%, 100% a full ring).
                                       SizedBox(
-                                        width: 32,
-                                        height: 32,
+                                        width: 34,
+                                        height: 34,
                                         child: CustomPaint(
                                           painter: _DashedCirclePainter(
-                                            progress: (phase['progressPercent'] ?? phase['progress'] ?? 0).toDouble() / 100,
-                                            // Web parity: black ring.
+                                            progress: ((phase['progressPercent'] ?? phase['progress'] ?? 0) as num).toDouble() / 100,
                                             color: isDark ? Colors.white : Colors.black,
-                                            backgroundColor: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1),
-                                            strokeWidth: 2.5,
+                                            backgroundColor: isDark ? Colors.white.withValues(alpha: 0.12) : Colors.black.withValues(alpha: 0.12),
+                                            strokeWidth: 3,
                                           ),
                                         ),
                                       ),
-                                      Text('${phase['progressPercent'] ?? phase['progress'] ?? 0}%', style: GoogleFonts.montserrat(fontSize: 7, fontWeight: FontWeight.w900)),
+                                      Text('${phase['progressPercent'] ?? phase['progress'] ?? 0}%', style: GoogleFonts.montserrat(fontSize: 7.5, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black)),
                                     ],
                                   ),
                                   const SizedBox(width: 12),
-                                  Expanded(child: Text((phase['name'] ?? phase['phaseName'] ?? 'PHASE').toString().toUpperCase(), style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: isDark ? Colors.white.withValues(alpha: 0.7) : Colors.black.withValues(alpha: 0.7), letterSpacing: 1.2))),
+                                  Expanded(child: Text((phase['name'] ?? phase['phaseName'] ?? 'PHASE').toString().toUpperCase(), style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: isDark ? Colors.white.withValues(alpha: 0.85) : Colors.black.withValues(alpha: 0.85), letterSpacing: 1.2))),
                                 ],
                               ),
                             ],
@@ -2039,21 +2319,27 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('PHASE TRACKING', style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 2)),
-                    Text('REAL-TIME DEVELOPMENT STATUS', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.bold, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 0.5)),
+                    // Web parity: slate-navy heading + muted slate subtitle.
+                    Text('PHASE TRACKING', style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 2, color: isDark ? Colors.white : const Color(0xFF1E293B))),
+                    Text('REAL-TIME DEVELOPMENT STATUS', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.bold, color: isDark ? Colors.white38 : const Color(0xFF94A3B8), letterSpacing: 0.5)),
                   ],
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  // Web parity: neutral chip, black text.
-                  decoration: BoxDecoration(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06), borderRadius: BorderRadius.circular(8)),
+                  // Web parity: soft outlined chip with black text.
+                  decoration: BoxDecoration(
+                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.04),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.15)),
+                  ),
                   child: Text('${phases.length} MILESTONES', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black)),
                 ),
               ],
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 24),
             SizedBox(
-              height: 140,
+              // Web parity: compact milestone card.
+              height: 116,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -2062,11 +2348,11 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   final phase = phases[index];
                   final progress = (phase['progressPercent'] ?? phase['progress'] ?? 0).toDouble();
                   final status = phase['status']?.toString().toUpperCase() ?? 'UPCOMING';
-                  
+
                   return Container(
                     width: 280,
                     margin: const EdgeInsets.only(right: 16),
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
                       borderRadius: BorderRadius.circular(24),
@@ -2328,9 +2614,9 @@ class _DashedCirclePainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2;
     final actualStrokeWidth = strokeWidth ?? 4.0;
-    // Web parity: chunky, clearly-separated dashes.
-    const dashCount = 40;
-    const gap = 0.45;
+    // Web parity: dense fine tick marks (like a watch bezel).
+    const dashCount = 56;
+    const gap = 0.5;
 
     final bgPaint = Paint()
       ..color = backgroundColor
@@ -2341,7 +2627,9 @@ class _DashedCirclePainter extends CustomPainter {
       ..color = color
       ..strokeWidth = actualStrokeWidth
       ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
+      // Web parity: butt caps keep the ticks crisply separated — round caps
+      // extend each dash by strokeWidth and merge them into a solid ring.
+      ..strokeCap = StrokeCap.butt;
 
     final dashAngle = (2 * 3.14159) / dashCount;
 

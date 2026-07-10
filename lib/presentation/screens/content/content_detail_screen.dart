@@ -315,7 +315,8 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.28),
+                                    // Light-grey drop shadow (was a dark shadow).
+                                    color: Colors.grey.withOpacity(0.35),
                                     blurRadius: 18,
                                     offset: const Offset(0, 7),
                                   ),

@@ -207,12 +207,12 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                         Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF60A5FA).withOpacity(0.1),
+                            color: scheme.onSurface.withOpacity(0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             _getIcon(),
-                            color: const Color(0xFF60A5FA),
+                            color: scheme.onSurface,
                             size: 18,
                           ),
                         ),
@@ -223,7 +223,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 3,
-                            color: const Color(0xFF60A5FA),
+                            color: scheme.onSurface,
                           ),
                         ),
                       ],
@@ -255,9 +255,9 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
 
               Expanded(
                 child: _isLoading
-                    ? const Center(
+                    ? Center(
                         child: CircularProgressIndicator(
-                          color: Color(0xFF60A5FA),
+                          color: scheme.onSurface,
                         ),
                       )
                     : _items.isEmpty
@@ -339,10 +339,10 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
           Container(
             padding: const EdgeInsets.all(30),
             decoration: BoxDecoration(
-              color: const Color(0xFF60A5FA).withOpacity(0.1),
+              color: scheme.onSurface.withOpacity(0.1),
               borderRadius: BorderRadius.circular(30),
             ),
-            child: Icon(_getIcon(), size: 40, color: const Color(0xFF60A5FA)),
+            child: Icon(_getIcon(), size: 40, color: scheme.onSurface),
           ),
           const SizedBox(height: 25),
           Text(
@@ -444,7 +444,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF60A5FA).withOpacity(0.1),
+                            color: scheme.onSurface.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
@@ -454,7 +454,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                             style: GoogleFonts.montserrat(
                               fontSize: 7,
                               fontWeight: FontWeight.w900,
-                              color: const Color(0xFF60A5FA),
+                              color: scheme.onSurface,
                               letterSpacing: 1,
                             ),
                           ),
@@ -501,14 +501,14 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                           style: GoogleFonts.montserrat(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
-                            color: const Color(0xFF60A5FA),
+                            color: scheme.onSurface,
                             letterSpacing: 1,
                           ),
                         ),
-                        const Icon(
+                        Icon(
                           LucideIcons.arrowRight,
                           size: 14,
-                          color: Color(0xFF60A5FA),
+                          color: scheme.onSurface,
                         ),
                       ],
                     ),

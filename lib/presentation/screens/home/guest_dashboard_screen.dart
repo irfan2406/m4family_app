@@ -17,6 +17,7 @@ import 'package:m4_mobile/presentation/screens/projects/guest_project_detail_scr
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
 import 'package:m4_mobile/presentation/screens/communities/community_detail_screen.dart';
 import 'package:m4_mobile/presentation/screens/communities/community_list_screen.dart';
+import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
 import 'dart:async';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -143,13 +144,14 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       slides.add({'image': img, 'project': p});
       if (slides.length == 3) break;
     }
-    if (slides.isNotEmpty) return slides;
+    if (slides.isNotEmpty) {
+      // The Artistic Impression hero leads with a bright interior render
+      // (bundled asset) rather than the project's exterior shot.
+      slides[0] = {...slides[0], 'image': 'assets/hero_artistic.jpg'};
+      return slides;
+    }
     return const [
-      {
-        'image':
-            'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80',
-        'project': null,
-      },
+      {'image': 'assets/hero_artistic.jpg', 'project': null},
       {
         'image':
             'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
@@ -397,7 +399,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                 'M4 FAMILY',
                 style: GoogleFonts.montserrat(
                   fontSize: 11,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 5,
                   color: Theme.of(
                     context,
@@ -608,7 +610,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                                     style: GoogleFonts.montserrat(
                                       color: Colors.white,
                                       fontSize: 8,
-                                      fontWeight: FontWeight.w800,
+                                      fontWeight: FontWeight.w600,
                                       letterSpacing: 1.5,
                                     ),
                                   ),
@@ -833,7 +835,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                                   : (isDark ? Colors.white : Colors.black)
                                         .withValues(alpha: 0.55),
                               fontSize: 12,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w600,
                               letterSpacing: 2,
                             ),
                           ),
@@ -1058,7 +1060,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       style: GoogleFonts.montserrat(
                         color: Colors.white.withValues(alpha: 0.7),
                         fontSize: 10,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 0.5,
                         height: 1.4,
                       ),
@@ -1163,7 +1165,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                   style: GoogleFonts.montserrat(
                     color: Colors.white,
                     fontSize: 12,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w600,
                     letterSpacing: 1.5,
                   ),
                 ),
@@ -1237,7 +1239,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                         style: GoogleFonts.montserrat(
                           color: Colors.white,
                           fontSize: 8,
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w500,
                           letterSpacing: 1,
                         ),
                       ),
@@ -1260,7 +1262,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                         style: GoogleFonts.montserrat(
                           color: Colors.white,
                           fontSize: 6.5,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 1.2,
                         ),
                       ),
@@ -1283,7 +1285,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                     style: GoogleFonts.montserrat(
                       color: scheme.onSurface,
                       fontSize: 18,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -1303,7 +1305,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                           style: GoogleFonts.montserrat(
                             color: scheme.onSurface.withValues(alpha: 0.55),
                             fontSize: 10,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w500,
                             letterSpacing: 1.5,
                           ),
                         ),
@@ -1326,7 +1328,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                           style: GoogleFonts.montserrat(
                             color: scheme.surface,
                             fontSize: 10,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w600,
                             letterSpacing: 2,
                           ),
                         ),
@@ -1372,6 +1374,17 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         ? 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80'
         : raw.trim();
 
+    if (src.startsWith('assets/')) {
+      return Image.asset(
+        src,
+        key: key,
+        width: width,
+        height: height,
+        fit: fit,
+        errorBuilder: (_, __, ___) => errorBox(),
+      );
+    }
+
     if (src.startsWith('data:')) {
       try {
         // Decode each base64 image ONCE (cached) instead of on every rebuild —
@@ -1413,9 +1426,35 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
   }
 
   Widget _buildFeaturedSection() {
-    if (_projects.isEmpty) return const SizedBox.shrink();
-    final project = _projects[_featuredIndex % _projects.length];
+    // Web parity: the FEATURED PROPERTY block always renders. When the projects
+    // API is unavailable (e.g. a 504 timeout) and nothing is cached, fall back
+    // to a bundled brand feature so the section never disappears from home.
+    final List<dynamic> featuredList = _projects.isNotEmpty
+        ? _projects
+        : [
+            {
+              'title': 'Cledor',
+              'description':
+                  'CLÉDOR is a thoughtfully designed residential tower that '
+                  'blends modern architecture with timeless elegance—crafted '
+                  'for those who value refined, future-ready living.',
+              'heroImage': 'assets/hero_artistic.jpg',
+            },
+          ];
+    final project = featuredList[_featuredIndex % featuredList.length];
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Web parity: use the featured project's own description (HTML stripped),
+    // falling back to a brand blurb only when the project has none.
+    final rawDesc = (project['description'] ?? '')
+        .toString()
+        .replaceAll(RegExp(r'<[^>]*>'), ' ')
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .trim();
+    final featuredDesc = rawDesc.isNotEmpty
+        ? rawDesc
+        : 'Live smart at Aura Heights—space-efficient 1 & 2 BHK homes with '
+              'curated amenities and rare parking solutions.';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1505,7 +1544,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       style: GoogleFonts.montserrat(
                         color: Colors.white,
                         fontSize: 7,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 1.5,
                       ),
                     ),
@@ -1524,7 +1563,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                         style: GoogleFonts.montserrat(
                           color: const Color(0xFFC5A358),
                           fontSize: 9,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 2.5,
                         ),
                       ),
@@ -1541,15 +1580,14 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        'Live smart at Aura Heights—space-efficient 1 & 2 BHK homes with curated amenities and rare parking solutions.'
-                            .toUpperCase(),
+                        featuredDesc.toUpperCase(),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.montserrat(
                           color: Colors.white.withOpacity(0.8),
                           fontSize: 9,
                           height: 1.6,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 1.2,
                         ),
                       ),
@@ -1590,8 +1628,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               _ScaleButton(
                 onTap: () => setState(
                   () => _featuredIndex =
-                      (_featuredIndex - 1 + _projects.length) %
-                      _projects.length,
+                      (_featuredIndex - 1 + featuredList.length) %
+                      featuredList.length,
                 ),
                 child: Container(
                   width: 56,
@@ -1615,10 +1653,15 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: _ScaleButton(
-                  onTap: () => context.push(
-                    '/projects/${project['_id']}',
-                    extra: project,
-                  ),
+                  onTap: () {
+                    final id = project['_id'];
+                    if (id != null) {
+                      context.push('/projects/$id', extra: project);
+                    } else {
+                      // Fallback feature (no live project): open Projects tab.
+                      ref.read(guestNavigationProvider.notifier).state = 1;
+                    }
+                  },
                   child: Container(
                     height: 56,
                     decoration: BoxDecoration(
@@ -1637,7 +1680,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                         'READ MORE',
                         style: GoogleFonts.montserrat(
                           color: isDark ? Colors.black : Colors.white,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           fontSize: 12,
                           letterSpacing: 3,
                         ),
@@ -1649,8 +1692,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               const SizedBox(width: 12),
               _ScaleButton(
                 onTap: () => setState(
-                  () =>
-                      _featuredIndex = (_featuredIndex + 1) % _projects.length,
+                  () => _featuredIndex =
+                      (_featuredIndex + 1) % featuredList.length,
                 ),
                 child: Container(
                   width: 56,
@@ -1690,7 +1733,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           style: GoogleFonts.montserrat(
             color: isDark ? Colors.white : Colors.black,
             fontSize: 9,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w600,
             letterSpacing: 1.5,
           ),
         ),
@@ -1842,7 +1885,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               textAlign: TextAlign.center,
               style: GoogleFonts.montserrat(
                 color: isDark ? Colors.white : Colors.black,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 fontSize: 10,
                 letterSpacing: 1,
               ),

@@ -97,7 +97,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
               'CAREERS',
               style: GoogleFonts.montserrat(
                 color: isDark ? Colors.white : Colors.black,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 fontSize: 17,
                 letterSpacing: 1.5,
               ),
@@ -254,26 +254,48 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
         .replaceAll(RegExp(r'\s+'), ' ')
         .trim();
 
+    // Web parity: big hero title, then a "Careers" sub-heading, then the
+    // description paragraph (matches the reference screenshot's three tiers).
+    // Strip a trailing "at M4" so it reads just "Careers" and doesn't repeat
+    // the big "CAREERS AT M4" hero above it.
+    var subheading = (_cmsData?['title'] ?? 'Careers').toString().trim();
+    subheading = subheading
+        .replaceAll(RegExp(r'\s*at\s+M4\s*$', caseSensitive: false), '')
+        .trim();
+    if (subheading.isEmpty) subheading = 'Careers';
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Thin heading, plain black (no gradient).
         Text(
           displayTitle,
           style: GoogleFonts.montserrat(
             color: isDark ? Colors.white : Colors.black,
-            fontSize: 40,
-            fontWeight: FontWeight.w900,
-            letterSpacing: -1.5,
+            fontSize: 34,
+            fontWeight: FontWeight.w400,
+            letterSpacing: -0.5,
             height: 1.1,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
+        Text(
+          subheading,
+          style: GoogleFonts.montserrat(
+            color: isDark ? Colors.white : const Color(0xFF2B3A55),
+            fontSize: 24,
+            fontWeight: FontWeight.w600,
+            letterSpacing: -0.5,
+            height: 1.1,
+          ),
+        ),
+        const SizedBox(height: 10),
         Text(
           displayContent,
           style: GoogleFonts.inter(
             color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
             fontSize: 16,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w400,
             height: 1.6,
           ),
         ),
@@ -315,7 +337,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                       ? (isDark ? Colors.black : Colors.white)
                       : (isDark ? Colors.white60 : Colors.black54),
                   fontSize: 9,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 1.5,
                 ),
               ),
@@ -344,12 +366,22 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
       return Container(
         padding: const EdgeInsets.symmetric(vertical: 64, horizontal: 32),
         decoration: BoxDecoration(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.02),
+          // Lighter, whiter "shadow box": soft white card with a faint border
+          // and a subtle drop shadow (matches the reference empty state).
+          color: isDark ? Colors.white.withOpacity(0.03) : Colors.white,
           borderRadius: BorderRadius.circular(48),
           border: Border.all(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
-            style: BorderStyle.solid,
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
           ),
+          boxShadow: isDark
+              ? null
+              : [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 24,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -357,12 +389,13 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                // Lighter grey logo disc.
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.035),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 LucideIcons.briefcase,
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.12),
                 size: 40,
               ),
             ),
@@ -373,7 +406,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
               style: GoogleFonts.montserrat(
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.3),
                 fontSize: 10,
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
                 letterSpacing: 2,
               ),
             ),
@@ -427,7 +460,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                       style: GoogleFonts.montserrat(
                         color: isDark ? Colors.white : Colors.black,
                         fontSize: 18,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: -0.5,
                         height: 1.15,
                       ),
@@ -444,7 +477,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                           style: GoogleFonts.montserrat(
                             color: isDark ? Colors.white70 : Colors.black87,
                             fontSize: 10,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             letterSpacing: 1.5,
                           ),
                         ),
@@ -489,7 +522,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                                   color: (isDark ? Colors.white : Colors.black)
                                       .withOpacity(0.68),
                                   fontSize: 10,
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: FontWeight.w500,
                                   letterSpacing: 1,
                                 ),
                               ),
