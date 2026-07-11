@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/providers/investor_shell_provider.dart';
 
 /// Investor profile — parity with web `app/investor/profile/page.tsx`
 /// (profile card, points, property services, referral, logout). Follows M4 conventions.
@@ -18,8 +19,6 @@ class InvestorProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
-  static const _gold = Color(0xFFFFD700);
-
   bool _loading = true;
   Map<String, dynamic>? _me;
 
@@ -106,8 +105,34 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  Material(
+                    color: textPrimary.withValues(alpha: 0.04),
+                    borderRadius: BorderRadius.circular(12),
+                    child: InkWell(
+                      onTap: () => ref
+                          .read(investorNavigationIndexProvider.notifier)
+                          .state = 0,
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        width: 40,
+                        height: 40,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: textPrimary.withValues(alpha: 0.08),
+                          ),
+                        ),
+                        child: Icon(
+                          LucideIcons.arrowLeft,
+                          size: 20,
+                          color: textPrimary,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 14),
                   Text(
                     'MY PROFILE',
                     style: GoogleFonts.montserrat(
@@ -117,6 +142,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                       letterSpacing: -0.5,
                     ),
                   ),
+                  const Spacer(),
                   Material(
                     color: textPrimary.withValues(alpha: 0.04),
                     borderRadius: BorderRadius.circular(12),
@@ -138,21 +164,27 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                 ],
               ),
               const SizedBox(height: 20),
-              _profileCard(isDark, textPrimary, muted, name: name, email: email, phone: phone, address: address, born: born, points: points, avatarUrl: _avatarUrl(u)),
+              GestureDetector(
+                onTap: () async {
+                  await context.push('/investor/profile/details');
+                  if (mounted) _fetchUser();
+                },
+                child: _profileCard(isDark, textPrimary, muted, bg, name: name, email: email, phone: phone, address: address, born: born, points: points, hasPhoto: (u['avatar'] ?? u['avatarUrl'])?.toString().trim().isNotEmpty == true, avatarUrl: _avatarUrl(u)),
+              ),
               const SizedBox(height: 28),
+              _sectionLabel('FAMILY', muted),
+              const SizedBox(height: 12),
+              _linkRow(textPrimary, muted, isDark, title: 'My Family', subtitle: 'Manage your family details', icon: LucideIcons.users, onTap: () => context.push('/investor/profile/family')),
+              const SizedBox(height: 24),
               _sectionLabel('PROPERTY SERVICES', muted),
               const SizedBox(height: 12),
               _linkRow(textPrimary, muted, isDark, title: 'My Properties', subtitle: 'View your purchased units & documents', icon: LucideIcons.building2, onTap: () => context.push('/investor/portfolio')),
-              const SizedBox(height: 10),
-              _linkRow(textPrimary, muted, isDark, title: 'Installments', subtitle: 'Track upcoming payments', icon: LucideIcons.calendar, onTap: () => context.push('/investor/installments')),
-              const SizedBox(height: 10),
-              _linkRow(textPrimary, muted, isDark, title: 'Tax Reports', subtitle: 'Download your statements', icon: LucideIcons.fileText, onTap: () => context.push('/investor/tax-reports')),
               const SizedBox(height: 24),
               _sectionLabel('MANAGEMENT & SUPPORT', muted),
               const SizedBox(height: 12),
-              _linkRow(textPrimary, muted, isDark, title: 'M4 Referral Program', subtitle: 'Share & Earn rewards', icon: LucideIcons.users, onTap: () => context.push('/investor/referral')),
+              _linkRow(textPrimary, muted, isDark, title: 'My Custom Views', subtitle: 'Personalise your purchased units', icon: LucideIcons.palette, onTap: () => context.push('/investor/my-custom-views')),
               const SizedBox(height: 10),
-              _linkRow(textPrimary, muted, isDark, title: 'Support & Contact', subtitle: '24/7 Concierge service', icon: LucideIcons.phone, onTap: () => context.push('/investor/support')),
+              _linkRow(textPrimary, muted, isDark, title: 'M4 Referral Program', subtitle: 'Share & Earn rewards', icon: LucideIcons.users, onTap: () => context.push('/investor/referral')),
               const SizedBox(height: 28),
               _logoutButton(context),
             ],
@@ -162,20 +194,49 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
     );
   }
 
+  // Web parity: first two initials (or first letter of first two words).
+  String _initials(String name) {
+    final parts = name
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((p) => p.isNotEmpty)
+        .toList();
+    if (parts.isEmpty) return 'M';
+    if (parts.length == 1) {
+      final p = parts.first;
+      return (p.length >= 2 ? p.substring(0, 2) : p).toUpperCase();
+    }
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+
   Widget _profileCard(
     bool isDark,
     Color textPrimary,
-    Color muted, {
+    Color muted,
+    Color bg, {
     required String name,
     required String email,
     required String phone,
     required String address,
     required String? born,
     required dynamic points,
+    required bool hasPhoto,
     required String avatarUrl,
   }) {
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     final border = (isDark ? Colors.white : Colors.black).withValues(alpha: isDark ? 0.08 : 0.06);
+    // Web parity: initials on a lime accent square (no photo/gold border).
+    final initials = _initials(name);
+    final Widget avatarChild = Center(
+      child: Text(
+        initials,
+        style: GoogleFonts.montserrat(
+          fontSize: 28,
+          fontWeight: FontWeight.w800,
+          color: Colors.black,
+        ),
+      ),
+    );
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32),
@@ -200,20 +261,19 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                 Container(
                   width: 80,
                   height: 80,
-                  padding: const EdgeInsets.all(1.5),
+                  clipBehavior: Clip.antiAlias,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: _gold.withValues(alpha: 0.4)),
+                    color: const Color(0xFFC4D82E),
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(16),
-                    child: CachedNetworkImage(
-                      imageUrl: avatarUrl,
-                      fit: BoxFit.cover,
-                      memCacheWidth: 160,
-                      errorWidget: (_, __, ___) => Icon(LucideIcons.user, color: muted, size: 36),
-                    ),
-                  ),
+                  child: hasPhoto
+                      ? CachedNetworkImage(
+                          imageUrl: avatarUrl,
+                          fit: BoxFit.cover,
+                          memCacheWidth: 160,
+                          errorWidget: (_, __, ___) => avatarChild,
+                        )
+                      : avatarChild,
                 ),
                 const SizedBox(width: 20),
                 Expanded(
@@ -225,8 +285,8 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.montserrat(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w800,
                           color: textPrimary,
                           letterSpacing: 0.2,
                         ),
@@ -236,32 +296,31 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                         email,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w700, color: muted),
+                        style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w600, color: muted),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         phone,
-                        style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w700, color: muted, letterSpacing: 0.5),
+                        style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w800, color: textPrimary, letterSpacing: 0.5),
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 12),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: textPrimary.withValues(alpha: 0.04),
+                          color: textPrimary,
                           borderRadius: BorderRadius.circular(100),
-                          border: Border.all(color: border),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(LucideIcons.mapPin, size: 12, color: muted),
+                            Icon(LucideIcons.mapPin, size: 12, color: bg),
                             const SizedBox(width: 6),
                             Flexible(
                               child: Text(
                                 address.toUpperCase(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: muted, letterSpacing: 1),
+                                style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: bg, letterSpacing: 1),
                               ),
                             ),
                           ],
@@ -271,11 +330,11 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                         const SizedBox(height: 8),
                         Row(
                           children: [
-                            const Icon(LucideIcons.calendar, size: 12, color: _gold),
+                            Icon(LucideIcons.calendar, size: 12, color: muted),
                             const SizedBox(width: 6),
                             Text(
                               'BORN: $born',
-                              style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w800, color: _gold, letterSpacing: 0.8),
+                              style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w800, color: textPrimary.withValues(alpha: 0.7), letterSpacing: 0.8),
                             ),
                           ],
                         ),
@@ -301,7 +360,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                 ),
                 Text(
                   '$points',
-                  style: GoogleFonts.montserrat(fontSize: 22, fontWeight: FontWeight.w900, color: _gold, letterSpacing: -0.5),
+                  style: GoogleFonts.montserrat(fontSize: 22, fontWeight: FontWeight.w900, color: textPrimary, letterSpacing: -0.5),
                 ),
               ],
             ),
@@ -347,9 +406,10 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                 height: 44,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
-                  color: _gold.withValues(alpha: 0.1),
+                  color: textPrimary.withValues(alpha: 0.05),
+                  border: Border.all(color: textPrimary.withValues(alpha: 0.06)),
                 ),
-                child: Icon(icon, size: 20, color: _gold),
+                child: Icon(icon, size: 20, color: textPrimary),
               ),
               const SizedBox(width: 14),
               Expanded(

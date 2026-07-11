@@ -146,9 +146,14 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
     final isCp = role == 'cp';
     final cpIdx = ref.watch(cpNavigationIndexProvider);
     final apiClient = ref.watch(apiClientProvider);
-    final heroImageUrl = apiClient.resolveUrl(
-      widget.community['image'] ?? widget.community['heroImage'],
-    );
+    // Match the community card/thumbnail image exactly: use the community's own
+    // image when present, otherwise the same Unsplash fallback the card uses
+    // (guest_dashboard `_pickImage([item['image']], …photo-1486406146926…)`), so
+    // the detail hero shows the same picture the thumbnail does.
+    final rawCommunityImage = (widget.community['image'] ?? '').toString().trim();
+    final heroImageUrl = rawCommunityImage.isNotEmpty
+        ? apiClient.resolveUrl(rawCommunityImage)
+        : 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80';
     final benefitsRaw = widget.community['benefits'] as List? ?? [];
     final benefits = benefitsRaw.isNotEmpty
         ? benefitsRaw

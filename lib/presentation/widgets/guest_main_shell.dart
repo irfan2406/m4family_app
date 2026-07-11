@@ -13,6 +13,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 final guestNavigationProvider = StateProvider<int>((ref) => 0);
 final drawerOpenProvider = StateProvider<bool>((ref) => false);
 
+// Bumped when the user taps "Enquiry" in the menu; the guest home watches this
+// and scrolls to its "Register Your Interest" form.
+final scrollToRegisterProvider = StateProvider<int>((ref) => 0);
+
 class GuestMainShell extends ConsumerWidget {
   const GuestMainShell({super.key});
 

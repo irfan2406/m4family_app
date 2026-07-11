@@ -1,16 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/providers/investor_shell_provider.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
 import 'package:m4_mobile/presentation/screens/home/guest_dashboard_screen.dart'
     show guestHomeCacheProvider, GuestHomeData;
@@ -90,6 +91,18 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
   // Renders an image that may be a base64 `data:` URI (how the backend stores
   // images — CachedNetworkImage can't handle those), an http URL, or a
   // relative path. Mirrors the guest home helper.
+  // Web parity: JS `||` treats empty strings as missing; Dart `??` does not.
+  // The API returns `image: ""` / `heroImage: ""` for some records, so pick the
+  // first non-empty candidate (else the fallback) instead of letting "" slip
+  // through as "present" and render an empty (placeholder) image.
+  static String _pickImage(List<dynamic> candidates, String fallback) {
+    for (final c in candidates) {
+      final s = (c ?? '').toString().trim();
+      if (s.isNotEmpty) return s;
+    }
+    return fallback;
+  }
+
   Widget _buildProjectImage(
     String raw, {
     Key? key,
@@ -97,6 +110,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
     double? height,
     BoxFit fit = BoxFit.cover,
     double errorIconSize = 50,
+    Alignment alignment = Alignment.center,
   }) {
     Widget errorBox() => Container(
       color: Colors.white10,
@@ -111,6 +125,18 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
 
     final src = raw.trim();
     if (src.isEmpty) return errorBox();
+
+    if (src.startsWith('assets/')) {
+      return Image.asset(
+        src,
+        key: key,
+        width: width,
+        height: height,
+        fit: fit,
+        alignment: alignment,
+        errorBuilder: (_, __, ___) => errorBox(),
+      );
+    }
 
     if (src.startsWith('data:')) {
       try {
@@ -128,6 +154,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
           width: width,
           height: height,
           fit: fit,
+          alignment: alignment,
           gaplessPlayback: true,
           cacheWidth: 1080,
           errorBuilder: (_, __, ___) => errorBox(),
@@ -146,25 +173,91 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
       width: width,
       height: height,
       fit: fit,
+      alignment: alignment,
       placeholder: (c, u) => Container(color: Colors.black12),
       errorWidget: (c, u, e) => errorBox(),
     );
   }
 
-  Future<void> _fetchData() async {
+  // Reads the last-known-good projects the guest home persisted to disk, so the
+  // Properties tab can show data when the (bloated) projects call 504s.
+  Future<List<dynamic>?> _loadCachedProjectsFromDisk() async {
     try {
-      final apiClient = ref.read(apiClientProvider);
+      final f = File(
+        '${Directory.systemTemp.path}/m4_guest_home_cache.json',
+      );
+      if (!await f.exists()) return null;
+      final map = jsonDecode(await f.readAsString());
+      final list = map is Map ? map['projects'] : null;
+      return (list is List && list.isNotEmpty) ? list : null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  // Shown in the Properties tab when the real projects can't load (the bloated
+  // base64 hero image makes GET /projects 504 on a cold cache) so the tab is
+  // never blank. Replaced by real data the moment it arrives.
+  static final List<Map<String, dynamic>> _placeholderProjects = [
+    {
+      '_id': 'cledor',
+      'title': 'Cledor',
+      'location': 'Mumbai',
+      'status': 'Ongoing',
+      'heroImage': 'assets/cledor_featured.jpg',
+      'description':
+          'Live smart at Aura Heights—space-efficient 1 & 2 BHK homes with curated amenities and rare parking solutions.',
+    },
+    {
+      '_id': 'skai',
+      'title': 'Skai',
+      'location': 'Mumbai',
+      'status': 'Ongoing',
+      'heroImage': 'assets/cledor_interior.jpg',
+      'description':
+          'Elevated living with panoramic city views and world-class amenities.',
+    },
+    {
+      '_id': 'ocean-view',
+      'title': 'Ocean View Residences',
+      'location': 'Mumbai',
+      'status': 'Completed',
+      'heroImage':
+          'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
+      'description': 'Where horizon meets home. Coastal elegance redefined.',
+    },
+  ];
+
+  Future<void> _fetchData() async {
+    final apiClient = ref.read(apiClientProvider);
+
+    // Cold start with no in-memory cache: hydrate projects from the on-disk
+    // payload so the Properties tab shows instantly instead of waiting on (and
+    // then failing) the slow projects call.
+    if (_projects.isEmpty) {
+      final cachedProjects = await _loadCachedProjectsFromDisk();
+      if (cachedProjects != null && mounted) {
+        setState(() {
+          _projects = cachedProjects;
+          _loading = false;
+        });
+      }
+    }
+
+    // Communities + media are small and reliable — load them first, on their
+    // own, so the tabs populate even when the bloated projects call is slow or
+    // 504s. (Previously all three shared one Future.wait, so a projects failure
+    // discarded the communities/media too.)
+    try {
       final results = await Future.wait([
-        apiClient.getProjects(),
         apiClient.getCommunities(),
         apiClient.getContent('media'),
       ]);
 
       if (mounted) {
         setState(() {
-          _projects = results[0].data['data'] ?? [];
-          _communities = results[1].data['data'] ?? [];
-          _media = results[2].data['data'] ?? [];
+          _communities = results[0].data['data'] ?? _communities;
+          _media = results[1].data['data'] ?? _media;
 
           // Fill blank space with placeholder media when none returned.
           if (_media.isEmpty) {
@@ -199,15 +292,25 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
           }
           _loading = false;
         });
-        // Cache the fresh payload so the next home mount is instant.
-        ref.read(guestHomeCacheProvider.notifier).state = GuestHomeData(
-          projects: _projects,
-          communities: _communities,
-          media: _media,
-        );
       }
-    } catch (e) {
+    } catch (_) {
       if (mounted) setState(() => _loading = false);
+    }
+
+    // Projects can be slow / return a 504 (multi-MB base64 hero image) — fetch
+    // separately so a failure never wipes the communities/media loaded above.
+    try {
+      final res = await apiClient.getProjects();
+      if (mounted) setState(() => _projects = res.data['data'] ?? _projects);
+    } catch (_) {}
+
+    // Cache whatever we managed to load for an instant next mount.
+    if (mounted) {
+      ref.read(guestHomeCacheProvider.notifier).state = GuestHomeData(
+        projects: _projects,
+        communities: _communities,
+        media: _media,
+      );
     }
   }
 
@@ -216,7 +319,15 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
     if (ctx != null) {
       Scrollable.ensureVisible(
         ctx,
-        duration: const Duration(seconds: 1),
+        duration: const Duration(milliseconds: 800),
+        curve: Curves.easeInOut,
+        alignment: 0.1,
+      );
+    } else if (_scrollController.hasClients) {
+      // Fallback: the Register Interest form sits near the bottom of the page.
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 800),
         curve: Curves.easeInOut,
       );
     }
@@ -282,6 +393,16 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Sidebar "Enquiry" quick action: scroll the Register Interest form in.
+    ref.listen<int>(investorInquiryScrollTriggerProvider, (prev, next) {
+      if (next > 0 && (prev == null || next > prev)) {
+        // Delay so the drawer close + tab switch settle before scrolling.
+        Future.delayed(const Duration(milliseconds: 450), () {
+          if (mounted) _scrollToInterestForm();
+        });
+      }
+    });
+
     if (_loading) {
       return Material(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -428,16 +549,17 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Builder(
                       builder: (context) {
-                        final mainImage = _projects.isNotEmpty
-                            ? (_projects[_heroIndex %
-                                      _projects.length]['heroImage'] ??
-                                  _projects[_heroIndex %
-                                      _projects.length]['image'] ??
-                                  _projects[_heroIndex %
-                                      _projects.length]['coverImage'] ??
-                                  'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80')
+                        final heroProject = _projects.isNotEmpty
+                            ? _projects[_heroIndex % _projects.length]
+                            : null;
+                        final mainImage = heroProject != null
+                            ? _pickImage([
+                                heroProject['heroImage'],
+                                heroProject['image'],
+                                heroProject['coverImage'],
+                              ], 'assets/hero_artistic.jpg')
                             : [
-                                'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80',
+                                'assets/hero_artistic.jpg',
                                 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
                                 'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80',
                               ][_heroIndex % 3];
@@ -705,23 +827,202 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
           ],
         ),
         const SizedBox(height: 32),
-        SizedBox(
-          height: 360,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            physics: const BouncingScrollPhysics(),
-            itemCount: _activeTab == 'Communities'
-                ? _communities.length
-                : (_activeTab == 'Media' ? _media.length : _projects.length),
-            itemBuilder: (context, index) {
-              final item = _activeTab == 'Communities'
-                  ? _communities[index]
-                  : (_activeTab == 'Media' ? _media[index] : _projects[index]);
-              return _buildTabCard(item);
-            },
-          ),
+        Builder(
+          builder: (context) {
+            // Web parity: both Properties AND Media show the projects (Media as
+            // image+title boxes, Properties as white info cards). Falls back to
+            // placeholder projects when the projects call 504s / cache is cold,
+            // so neither tab is ever blank.
+            final projectItems = _projects.isNotEmpty
+                ? _projects
+                : _placeholderProjects;
+            final tabItems = _activeTab == 'Communities'
+                ? _communities
+                : projectItems;
+            return SizedBox(
+              height: 360,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                itemCount: tabItems.length,
+                itemBuilder: (context, index) =>
+                    _buildTabCard(tabItems[index]),
+              ),
+            );
+          },
         ),
       ],
+    );
+  }
+
+  // Web parity: Properties tab card is a white "info card" — image on top with
+  // COMPLETED + ARTISTIC IMPRESSION badges, then a white section with the title,
+  // location and a READ MORE button (same as the guest home / web).
+  Widget _buildInvestorPropertyCard(dynamic item, String imageUrl) {
+    final scheme = Theme.of(context).colorScheme;
+    final title = (item['title'] ?? item['name'] ?? '').toString();
+    final location =
+        (item['location'] is Map
+                ? item['location']['name']
+                : item['location'] ?? '')
+            .toString();
+    final status = (item['status'] ?? 'Ongoing').toString();
+
+    return _ScaleButton(
+      onTap: () =>
+          context.push('/investor/projects/${item['_id']}', extra: item),
+      child: Container(
+        width: 300,
+        margin: const EdgeInsets.only(right: 20, bottom: 10),
+        decoration: BoxDecoration(
+          color: scheme.surface,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.12),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(24),
+              ),
+              child: Stack(
+                children: [
+                  _buildProjectImage(
+                    imageUrl,
+                    height: 200,
+                    width: double.infinity,
+                    errorIconSize: 40,
+                  ),
+                  Positioned(
+                    top: 12,
+                    right: 12,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.75),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        status.toUpperCase(),
+                        style: GoogleFonts.montserrat(
+                          color: Colors.white,
+                          fontSize: 8,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 10,
+                    right: 10,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.55),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        'ARTISTIC IMPRESSION',
+                        style: GoogleFonts.montserrat(
+                          color: Colors.white,
+                          fontSize: 6.5,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.lora(
+                      color: scheme.onSurface,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Icon(
+                        LucideIcons.mapPin,
+                        size: 12,
+                        color: scheme.onSurface.withValues(alpha: 0.55),
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          location.toUpperCase(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.montserrat(
+                            color: scheme.onSurface.withValues(alpha: 0.55),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  Container(
+                    width: double.infinity,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: scheme.onSurface,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'READ MORE',
+                          style: GoogleFonts.montserrat(
+                            color: scheme.surface,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 2,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Icon(
+                          LucideIcons.chevronRight,
+                          size: 14,
+                          color: scheme.surface,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -730,17 +1031,36 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
     final isMedia = _activeTab.toLowerCase() == 'media';
     final apiClient = ref.read(apiClientProvider);
 
-    final imageUrl = apiClient.resolveUrl(
-      isCommunity
-          ? (item['image'] ??
-                'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80')
-          : (isMedia
-                ? (item['thumbnail'] ??
-                      item['image'] ??
-                      'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80')
-                : (item['heroImage'] ??
-                      'https://images.unsplash.com/photo-1613545325278-f24b0cae1224?auto=format&fit=crop&q=80')),
-    );
+    final picked = isCommunity
+        ? _pickImage(
+            [item['image'], item['heroImage']],
+            'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80',
+          )
+        : (isMedia
+              ? _pickImage(
+                  [
+                    item['thumbnail'],
+                    item['image'],
+                    item['heroImage'],
+                    item['coverImage'],
+                  ],
+                  'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80',
+                )
+              : _pickImage(
+                  [item['heroImage'], item['image'], item['coverImage']],
+                  'https://images.unsplash.com/photo-1613545325278-f24b0cae1224?auto=format&fit=crop&q=80',
+                ));
+    // Asset paths must bypass resolveUrl (it would prepend the backend host and
+    // 404); http/relative paths still resolve normally.
+    final imageUrl = picked.startsWith('assets/')
+        ? picked
+        : apiClient.resolveUrl(picked);
+
+    // Web parity: Properties uses the white info card; Communities/Media keep
+    // the full-bleed image-overlay card.
+    if (!isCommunity && !isMedia) {
+      return _buildInvestorPropertyCard(item, imageUrl);
+    }
 
     return _ScaleButton(
       onTap: () {
@@ -756,7 +1076,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         width: 300,
         margin: const EdgeInsets.only(right: 20, bottom: 10),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(40),
+          borderRadius: BorderRadius.circular(isMedia ? 24 : 40),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.15),
@@ -766,88 +1086,32 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(40),
+          borderRadius: BorderRadius.circular(isMedia ? 24 : 40),
           child: Stack(
             fit: StackFit.expand,
             children: [
-              // High Resolution Image
-              _buildProjectImage(imageUrl, errorIconSize: 40),
+              // High Resolution Image (Media biases the crop toward the tower)
+              _buildProjectImage(
+                imageUrl,
+                errorIconSize: 40,
+                alignment: isMedia ? const Alignment(0.4, 0) : Alignment.center,
+              ),
 
-              // High-End Gradient Overlay
+              // Gradient Overlay — subtle for Media (title only), stronger for
+              // Communities (description + action row need more contrast).
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    stops: const [0.3, 1.0],
+                    stops: isMedia ? const [0.55, 1.0] : const [0.3, 1.0],
                     colors: [
                       Colors.transparent,
-                      Colors.black.withValues(alpha: 0.85),
+                      Colors.black.withValues(alpha: isMedia ? 0.6 : 0.85),
                     ],
                   ),
                 ),
               ),
-
-              // Play Icon for Media
-              if (isMedia)
-                Center(
-                  child:
-                      Container(
-                        width: 60,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.4),
-                            width: 2,
-                          ),
-                        ),
-                        child: const Center(
-                          child: Icon(
-                            LucideIcons.play,
-                            color: Colors.white,
-                            size: 30,
-                          ),
-                        ),
-                      ).animate().scale(
-                        begin: const Offset(0.8, 0.8),
-                        curve: Curves.elasticOut,
-                        duration: 800.ms,
-                      ),
-                ),
-
-              // Badge (for Properties/Media)
-              if (!isCommunity)
-                Positioned(
-                  top: 24,
-                  right: 24,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.6),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.1),
-                      ),
-                    ),
-                    child: Text(
-                      isMedia
-                          ? 'MEDIA'
-                          : (item['status']?.toString() ?? 'ONGOING')
-                                .toUpperCase(),
-                      style: GoogleFonts.montserrat(
-                        color: Colors.white,
-                        fontSize: 8,
-                        fontWeight: FontWeight.w400,
-                        letterSpacing: 1,
-                      ),
-                    ),
-                  ),
-                ),
 
               // Content Section
               Positioned(
@@ -862,69 +1126,77 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                       (item['title'] ?? item['name'] ?? '')
                           .toString()
                           .toUpperCase(),
-                      style: GoogleFonts.dmSerifDisplay(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w400,
-                        letterSpacing: -0.5,
-                      ),
+                      // Web parity: Media titles are small + letterspaced
+                      // (CLEDOR / SKAI); Communities use the large serif.
+                      style: isMedia
+                          ? GoogleFonts.montserrat(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 2,
+                            )
+                          : GoogleFonts.dmSerifDisplay(
+                              color: Colors.white,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w400,
+                              letterSpacing: -0.5,
+                            ),
                     ),
-                    const SizedBox(height: 10),
-                    Text(
-                      (isCommunity
-                              ? (item['overview'] ?? item['description'] ?? '')
-                              : (item['location'] is Map
-                                    ? item['location']['name']
-                                    : item['location'] ?? 'MAZGAON'))
-                          .toString()
-                          .toUpperCase(),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.montserrat(
-                        color: Colors.white.withValues(alpha: 0.7),
-                        fontSize: 10,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 0.5,
-                        height: 1.4,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          isCommunity
-                              ? 'EXPLORE COMMUNITY'
-                              : (isMedia ? 'READ ARTICLE' : 'VIEW PROPERTY'),
-                          style: GoogleFonts.montserrat(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w400,
-                            letterSpacing: 1.2,
-                          ),
+                    // Media (web parity): the card shows only the title over
+                    // the image + play button. Communities keep the fuller
+                    // layout (description + EXPLORE COMMUNITY action row).
+                    if (isCommunity) ...[
+                      const SizedBox(height: 10),
+                      Text(
+                        (item['overview'] ?? item['description'] ?? '')
+                            .toString()
+                            .toUpperCase(),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.montserrat(
+                          color: Colors.white.withValues(alpha: 0.7),
+                          fontSize: 10,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.5,
+                          height: 1.4,
                         ),
-                        Container(
-                          width: 44,
-                          height: 44,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.2),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
+                      ),
+                      const SizedBox(height: 24),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'EXPLORE COMMUNITY',
+                            style: GoogleFonts.montserrat(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w400,
+                              letterSpacing: 1.2,
+                            ),
                           ),
-                          child: const Icon(
-                            LucideIcons.arrowRight,
-                            color: Colors.black,
-                            size: 18,
+                          Container(
+                            width: 44,
+                            height: 44,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.2),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: const Icon(
+                              LucideIcons.arrowRight,
+                              color: Colors.black,
+                              size: 18,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -936,9 +1208,11 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
   }
 
   Widget _buildFeaturedSection() {
-    if (_projects.isEmpty) return const SizedBox.shrink();
-    final project = _projects[_featuredIndex % _projects.length];
-    final apiClient = ref.read(apiClientProvider);
+    // Always render — fall back to placeholder projects when the real list is
+    // empty (cold cache / 504) so the Featured section matches the web instead
+    // of vanishing.
+    final featured = _projects.isNotEmpty ? _projects : _placeholderProjects;
+    final project = featured[_featuredIndex % featured.length];
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Column(
@@ -977,14 +1251,17 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
             child: Stack(
               children: [
                 _buildProjectImage(
-                  (project['heroImage'] ??
-                          project['image'] ??
-                          project['coverImage'] ??
-                          '')
-                      .toString(),
+                  _pickImage([
+                    project['heroImage'],
+                    project['image'],
+                    project['coverImage'],
+                  ], 'assets/hero_artistic.jpg'),
                   height: 520,
                   width: double.infinity,
                   errorIconSize: 64,
+                  // Bias the crop toward the tower (right side) so the featured
+                  // card frames the building like the web, not just the ocean.
+                  alignment: const Alignment(0.55, 0),
                 ),
                 // Gradient Overlay
                 Positioned.fill(
@@ -1050,7 +1327,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                       Text(
                         (project['title'] ?? '').toString(),
                         style: GoogleFonts.lora(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontSize: 44,
                           fontWeight: FontWeight.w400,
                           height: 1,
@@ -1059,10 +1336,12 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                       ),
                       const SizedBox(height: 16),
                       Text(
-                        (project['startingPrice'] ??
-                                project['description'] ??
-                                '')
-                            .toString()
+                        ((project['description'] ?? '')
+                                        .toString()
+                                        .trim()
+                                        .isNotEmpty
+                                    ? project['description'].toString()
+                                    : 'Live smart at Aura Heights—space-efficient 1 & 2 BHK homes with curated amenities and rare parking solutions.')
                             .toUpperCase(),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -1092,7 +1371,10 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
             children: [
               _buildFeatureIcon(LucideIcons.building2, 'FULLY\nFURNISHED'),
               _buildFeatureIcon(LucideIcons.mapPin, 'PRIME\nLOCATION'),
-              _buildFeatureIcon(LucideIcons.smartphone, 'SMART\nHOMES'),
+              _buildFeatureIcon(
+                LucideIcons.smartphone,
+                '20 MIN FROM\nSHEIKH ZAYED RD',
+              ),
             ],
           ),
         ),
@@ -1108,8 +1390,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
               _ScaleButton(
                 onTap: () => setState(
                   () => _featuredIndex =
-                      (_featuredIndex - 1 + _projects.length) %
-                      _projects.length,
+                      (_featuredIndex - 1 + featured.length) % featured.length,
                 ),
                 child: Container(
                   width: 56,
@@ -1168,7 +1449,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
               _ScaleButton(
                 onTap: () => setState(
                   () =>
-                      _featuredIndex = (_featuredIndex + 1) % _projects.length,
+                      _featuredIndex = (_featuredIndex + 1) % featured.length,
                 ),
                 child: Container(
                   width: 56,
@@ -1372,7 +1653,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'REGISTER YOUR\nINTEREST',
+          'REGISTER\nINTEREST',
           style: GoogleFonts.dmSerifDisplay(
             color: isDark ? Colors.white : Colors.black,
             fontSize: 32,
@@ -1390,7 +1671,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
           'Phone Number *',
           _phoneController,
           keyboardType: TextInputType.phone,
-          hint: '+91',
+          hint: '+91 98653 21250 *',
         ),
         const SizedBox(height: 16),
         _buildLuxuryInput('Message', _messageController, isLong: true),
@@ -1405,12 +1686,28 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
               side: BorderSide(color: isDark ? Colors.white24 : Colors.black26),
             ),
             Expanded(
-              child: Text(
-                "I've read and agree to the Privacy Policy",
-                style: GoogleFonts.montserrat(
-                  color: isDark ? Colors.white54 : Colors.black54,
-                  fontSize: 11,
-                  letterSpacing: 1,
+              child: RichText(
+                text: TextSpan(
+                  style: GoogleFonts.montserrat(
+                    color: isDark ? Colors.white54 : Colors.black54,
+                    fontSize: 11,
+                    letterSpacing: 0.8,
+                    height: 1.4,
+                  ),
+                  children: [
+                    const TextSpan(text: "I'VE READ AND AGREE TO THE "),
+                    TextSpan(
+                      text: 'PRIVACY POLICY',
+                      style: GoogleFonts.montserrat(
+                        color: isDark ? Colors.white : Colors.black,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.8,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                    const TextSpan(text: '.'),
+                  ],
                 ),
               ),
             ),
@@ -1424,7 +1721,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
             onTap: _submitting ? () {} : _submitInterest,
             child: Container(
               decoration: BoxDecoration(
-                color: isDark ? Colors.white : Colors.black,
+                color: isDark ? Colors.white : const Color(0xFF0B1120),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Center(

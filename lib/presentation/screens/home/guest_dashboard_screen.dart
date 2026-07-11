@@ -111,6 +111,14 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           _loading = false;
         });
       });
+      // Menu "Enquiry" → jump to this page's Register Your Interest form.
+      ref.listenManual(scrollToRegisterProvider, (previous, next) {
+        if (!mounted) return;
+        // Let the home tab become visible/settle, then scroll to the form.
+        Future.delayed(const Duration(milliseconds: 250), () {
+          if (mounted) _scrollToInterestForm();
+        });
+      });
       _fetchData();
     });
     _heroTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
@@ -317,13 +325,32 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
   }
 
   void _scrollToInterestForm() {
-    final context = _interestFormKey.currentContext;
-    if (context != null) {
+    final ctx = _interestFormKey.currentContext;
+    if (ctx != null) {
       Scrollable.ensureVisible(
-        context,
+        ctx,
         duration: const Duration(seconds: 1),
         curve: Curves.easeInOut,
       );
+    } else if (_scrollController.hasClients) {
+      // Form not laid out yet (page at the top). It's the last section, so
+      // animate to the bottom to reveal it, then settle exactly onto it.
+      _scrollController
+          .animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 800),
+            curve: Curves.easeInOut,
+          )
+          .then((_) {
+            final c = _interestFormKey.currentContext;
+            if (c != null) {
+              Scrollable.ensureVisible(
+                c,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+            }
+          });
     }
   }
 

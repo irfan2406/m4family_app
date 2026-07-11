@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/presentation/providers/custom_views_provider.dart';
 import 'package:m4_mobile/presentation/providers/my_custom_views_provider.dart';
+
+// Web parity: the Portfolio Suite uses an orange accent (title highlight,
+// active tab, section icons) instead of the neutral foreground colour.
+const Color _kPortfolioOrange = Color(0xFFF97316);
 
 class MyCustomViewsScreen extends ConsumerStatefulWidget {
   const MyCustomViewsScreen({super.key});
@@ -64,8 +69,15 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
       leadingWidth: 60,
       leading: Center(
         child: GestureDetector(
-          onTap: () => ref.read(navigationProvider.notifier).state =
-              3, // Back to Profile
+          // Pushed (from profile / menu) → pop the route; if it's shown as a
+          // shell tab instead, fall back to switching to the Profile tab.
+          onTap: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              ref.read(navigationProvider.notifier).state = 3;
+            }
+          },
           // Web parity: back button in a rounded bordered card box.
           child: Container(
             width: 40,
@@ -88,7 +100,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
           // Web parity: "Personalisation Suite" title + "Portfolio Dashboard"
           // subtitle with a paint-bucket icon.
           Text(
-            'PERSONALISATION SUITE',
+            'PORTFOLIO SUITE',
             style: GoogleFonts.montserrat(
               fontSize: 14,
               fontWeight: FontWeight.w900,
@@ -98,19 +110,19 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
+              const Icon(
                 LucideIcons.paintBucket,
                 size: 10,
-                color: Theme.of(context).colorScheme.onSurface,
+                color: _kPortfolioOrange,
               ),
               const SizedBox(width: 5),
               Text(
-                'PORTFOLIO DASHBOARD',
+                'ASSET DASHBOARD',
                 style: GoogleFonts.montserrat(
                   fontSize: 8,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 2,
-                  color: Theme.of(context).colorScheme.onSurface,
+                  color: _kPortfolioOrange,
                 ),
               ),
             ],
@@ -160,7 +172,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                 children: [
                   // Web parity: dark `text-foreground`; MY (light) + PORTFOLIO (bold).
                   TextSpan(
-                    text: 'MY ',
+                    text: 'ELITE ',
                     style: GoogleFonts.lora(
                       color: Colors.black,
                       fontSize: 30,
@@ -171,7 +183,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                   TextSpan(
                     text: 'PORTFOLIO',
                     style: GoogleFonts.lora(
-                      color: Colors.black,
+                      color: _kPortfolioOrange,
                       fontSize: 30,
                       fontWeight: FontWeight.w700,
                       letterSpacing: -0.5,
@@ -183,8 +195,8 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
             Text(
               'PERSONALISATION SUITE',
               style: GoogleFonts.montserrat(
-                // Web parity: dark `text-primary`, readable on the light fade.
-                color: Colors.black,
+                // Web parity: orange `text-primary`, readable on the light fade.
+                color: _kPortfolioOrange,
                 fontSize: 10,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 3,
@@ -238,7 +250,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                 child: Container(
                   decoration: BoxDecoration(
                     color: _activeTab == 0
-                        ? Theme.of(context).colorScheme.onSurface
+                        ? _kPortfolioOrange
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(16),
                   ),
@@ -250,7 +262,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1,
                       color: _activeTab == 0
-                          ? Theme.of(context).colorScheme.surface
+                          ? Colors.white
                           : Theme.of(
                               context,
                             ).colorScheme.onSurface.withOpacity(0.68),
@@ -265,7 +277,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                 child: Container(
                   decoration: BoxDecoration(
                     color: _activeTab == 1
-                        ? Theme.of(context).colorScheme.onSurface
+                        ? _kPortfolioOrange
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(16),
                   ),
@@ -277,7 +289,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1,
                       color: _activeTab == 1
-                          ? Theme.of(context).colorScheme.surface
+                          ? Colors.white
                           : Theme.of(
                               context,
                             ).colorScheme.onSurface.withOpacity(0.68),
@@ -299,16 +311,91 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
       );
     }
     if (state.units.isEmpty) {
-      return SliverFillRemaining(
-        child: Center(
-          child: Text(
-            'NO UNITS FOUND',
-            style: GoogleFonts.montserrat(
-              fontSize: 10,
-              fontWeight: FontWeight.w800,
-              color: Colors.grey,
+      final foreground = isDark ? Colors.white : Colors.black;
+      // Web parity: styled empty-state card (orange icon box + heading + copy)
+      // under the "ASSET CUSTOMIZATION STATUS" header, not bare text.
+      return SliverToBoxAdapter(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 4, bottom: 20),
+              child: Row(
+                children: [
+                  const Icon(
+                    LucideIcons.paintBucket,
+                    size: 16,
+                    color: _kPortfolioOrange,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    'ASSET CUSTOMIZATION STATUS',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 2,
+                      color: foreground.withOpacity(0.6),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
+              decoration: BoxDecoration(
+                color: isDark ? Colors.white.withOpacity(0.02) : Colors.white,
+                borderRadius: BorderRadius.circular(36),
+                border: Border.all(color: foreground.withOpacity(0.06)),
+                boxShadow: isDark
+                    ? null
+                    : [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.03),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    width: 72,
+                    height: 72,
+                    decoration: BoxDecoration(
+                      color: _kPortfolioOrange.withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: const Icon(
+                      LucideIcons.layoutGrid,
+                      color: _kPortfolioOrange,
+                      size: 30,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'NO UNITS FOUND',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
+                      color: foreground,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'You currently have no purchased units registered in your portfolio that support online customization.',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      height: 1.6,
+                      color: foreground.withOpacity(0.5),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       );
     }
@@ -321,14 +408,14 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
             padding: const EdgeInsets.only(top: 4, bottom: 20),
             child: Row(
               children: [
-                Icon(
-                  LucideIcons.building2,
+                const Icon(
+                  LucideIcons.paintBucket,
                   size: 16,
-                  color: Theme.of(context).colorScheme.onSurface,
+                  color: _kPortfolioOrange,
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  'SELECT UNIT TO CUSTOMIZE',
+                  'ASSET CUSTOMIZATION STATUS',
                   style: GoogleFonts.montserrat(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,

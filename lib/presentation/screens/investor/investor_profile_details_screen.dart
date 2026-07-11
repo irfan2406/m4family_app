@@ -7,9 +7,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/wheel_date_picker.dart';
 
 /// Investor profile details — parity with web `app/investor/profile/details/page.tsx`.
 /// Edit mode for name, email, phone, address, bio + avatar upload (camera button).
@@ -29,6 +31,7 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
   final _phone = TextEditingController();
   final _address = TextEditingController();
   final _bio = TextEditingController();
+  String _dob = ''; // yyyy-MM-dd
 
   bool _loading = true;
   bool _editing = false;
@@ -42,6 +45,7 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
   String _snapPhone = '';
   String _snapAddress = '';
   String _snapBio = '';
+  String _snapDob = '';
 
   @override
   void initState() {
@@ -69,6 +73,7 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
     _phone.text = u['phone']?.toString() ?? '';
     _address.text = u['address']?.toString() ?? '';
     _bio.text = u['bio']?.toString() ?? '';
+    _dob = u['dob']?.toString() ?? '';
     final av = u['avatarUrl'] ?? u['avatar'];
     _avatarUrl = av?.toString();
   }
@@ -98,6 +103,7 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
     _snapPhone = _phone.text;
     _snapAddress = _address.text;
     _snapBio = _bio.text;
+    _snapDob = _dob;
     setState(() => _editing = true);
   }
 
@@ -107,6 +113,7 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
     _phone.text = _snapPhone;
     _address.text = _snapAddress;
     _bio.text = _snapBio;
+    _dob = _snapDob;
     setState(() => _editing = false);
   }
 
@@ -127,6 +134,7 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
         'phone': _phone.text.trim(),
         'address': _address.text.trim(),
         'bio': _bio.text.trim(),
+        if (_dob.isNotEmpty) 'dob': _dob,
       });
       if (!mounted) return;
       final ok = res.data is Map && (res.data as Map)['status'] == true;
@@ -277,6 +285,8 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
                       isDark: isDark,
                       border: border,
                     ),
+                    const SizedBox(height: 16),
+                    _dobField(textPrimary, muted, isDark, border),
                     const SizedBox(height: 16),
                     _field(
                       label: 'MAILING ADDRESS',
@@ -564,6 +574,81 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
         ),
       ],
     );
+  }
+
+  // Tappable Date of Birth field — opens the wheel picker (web parity).
+  Widget _dobField(Color textPrimary, Color muted, bool isDark, Color border) {
+    final enabled = _editing;
+    final fillColor = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : Colors.black.withValues(alpha: 0.02);
+    final borderColor = enabled ? _gold.withValues(alpha: 0.5) : border;
+    String display = 'SELECT DATE';
+    if (_dob.isNotEmpty) {
+      try {
+        display = DateFormat('d MMM y').format(DateTime.parse(_dob));
+      } catch (_) {}
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 8),
+          child: Text(
+            'DATE OF BIRTH',
+            style: GoogleFonts.montserrat(
+              fontSize: 9,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 1.5,
+              color: muted,
+            ),
+          ),
+        ),
+        GestureDetector(
+          onTap: enabled ? _pickDob : null,
+          child: Container(
+            height: 50,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: BoxDecoration(
+              color: fillColor,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: borderColor),
+            ),
+            child: Row(
+              children: [
+                Icon(LucideIcons.calendar, size: 16, color: muted),
+                const SizedBox(width: 12),
+                Text(
+                  display,
+                  style: GoogleFonts.montserrat(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: _dob.isEmpty
+                        ? muted
+                        : (enabled
+                              ? textPrimary
+                              : textPrimary.withValues(alpha: 0.8)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _pickDob() async {
+    DateTime initial;
+    try {
+      initial = _dob.isNotEmpty ? DateTime.parse(_dob) : DateTime(2000);
+    } catch (_) {
+      initial = DateTime(2000);
+    }
+    final picked = await showWheelDatePicker(context, initial: initial);
+    if (picked != null) {
+      setState(() => _dob = DateFormat('yyyy-MM-dd').format(picked));
+    }
   }
 
   Widget _actionRow(Color textPrimary, Color border) {

@@ -697,8 +697,10 @@ final GoRouter _router = GoRouter(
       builder: (context, state) => const SearchScreen(),
     ),
     GoRoute(
+      // Web parity: "Custom Views" is the Interactive Living / Design Your
+      // Destiny showcase; "My Custom Views" is the personal Portfolio Suite.
       path: '/investor/custom-views',
-      builder: (context, state) => MyCustomViewsScreen(),
+      builder: (context, state) => const GuestCustomViewsScreen(),
     ),
     GoRoute(
       path: '/investor/my-custom-views',

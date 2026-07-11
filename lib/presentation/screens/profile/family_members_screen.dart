@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -7,6 +6,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import 'package:m4_mobile/core/providers/theme_provider.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/wheel_date_picker.dart';
 import 'package:go_router/go_router.dart';
 
 class FamilyMembersScreen extends ConsumerStatefulWidget {
@@ -244,97 +244,12 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
               } catch (_) {
                 initial = DateTime(2000);
               }
-              await showModalBottomSheet(
-                context: ctx,
-                backgroundColor: Colors.transparent,
-                builder: (sheetCtx) => Container(
-                  height: 350,
-                  decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF09090B) : Colors.white,
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(30),
-                    ),
-                    border: Border.all(
-                      color: (isDark ? Colors.white : Colors.black).withValues(
-                        alpha: 0.05,
-                      ),
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(25, 20, 25, 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'SELECT DATE OF BIRTH',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 1,
-                                color: isDark ? Colors.white : Colors.black,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () => Navigator.pop(sheetCtx),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 8,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: isDark
-                                      ? Colors.white.withValues(alpha: 0.05)
-                                      : Colors.black.withValues(alpha: 0.05),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Text(
-                                  'DONE',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w900,
-                                    color: Colors.blue,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Divider(thickness: 0.5),
-                      Expanded(
-                        child: CupertinoTheme(
-                          data: CupertinoThemeData(
-                            brightness: isDark
-                                ? Brightness.dark
-                                : Brightness.light,
-                            textTheme: CupertinoTextThemeData(
-                              dateTimePickerTextStyle: GoogleFonts.montserrat(
-                                color: isDark ? Colors.white : Colors.black,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          child: CupertinoDatePicker(
-                            mode: CupertinoDatePickerMode.date,
-                            initialDateTime: initial,
-                            maximumDate: DateTime.now(),
-                            onDateTimeChanged: (picked) {
-                              setDialogState(
-                                () => dob = DateFormat(
-                                  'yyyy-MM-dd',
-                                ).format(picked),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
+              final picked = await showWheelDatePicker(ctx, initial: initial);
+              if (picked != null) {
+                setDialogState(
+                  () => dob = DateFormat('yyyy-MM-dd').format(picked),
+                );
+              }
             }
 
             return Dialog(

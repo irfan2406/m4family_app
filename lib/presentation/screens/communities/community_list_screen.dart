@@ -99,16 +99,16 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'M4 FAMILY',
+                            'OUR COMMUNITIES',
                             style: GoogleFonts.inter(
                               color: isDark ? Colors.white : Colors.black,
-                              fontSize: 18,
+                              fontSize: 15,
                               fontWeight: FontWeight.w900,
-                              letterSpacing: -1,
+                              letterSpacing: -0.3,
                             ),
                           ),
                           Text(
-                            'DEVELOPMENTS',
+                            'ECOSYSTEMS · LIFESTYLE',
                             style: GoogleFonts.inter(
                               color: (isDark ? Colors.white : Colors.black)
                                   .withOpacity(0.6),
@@ -153,23 +153,13 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'ABOUT THE',
-                    style: GoogleFonts.lora(
-                      fontSize: 32,
-                      fontWeight: FontWeight.w300,
-                      color: (isDark ? Colors.white : Colors.black).withOpacity(
-                        0.85,
-                      ),
-                      height: 1,
-                    ),
-                  ),
-                  Text(
-                    'COMMUNITIES',
-                    style: GoogleFonts.lora(
-                      fontSize: 32,
-                      fontWeight: FontWeight.w300,
+                    'DISCOVER THE LIFE',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 30,
+                      fontWeight: FontWeight.w800,
                       color: isDark ? Colors.white : Colors.black,
-                      height: 1,
+                      letterSpacing: -0.5,
+                      height: 1.1,
                     ),
                   ),
                   const SizedBox(height: 30),

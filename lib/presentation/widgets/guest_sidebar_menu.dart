@@ -8,6 +8,7 @@ import 'dart:ui';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:m4_mobile/core/providers/theme_provider.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
+import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
 
 class GuestSidebarMenu extends ConsumerStatefulWidget {
   const GuestSidebarMenu({super.key});
@@ -216,7 +217,14 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                       _QuickActionItem(
                         label: 'Enquiry',
                         icon: LucideIcons.mail,
-                        onTap: () => context.push('/contact'),
+                        // Go to the home page and scroll straight to its
+                        // "Register Your Interest" form.
+                        onTap: () {
+                          Navigator.of(context).pop(); // close the menu drawer
+                          ref.read(guestNavigationProvider.notifier).state = 0;
+                          ref.read(scrollToRegisterProvider.notifier).state++;
+                          context.go('/home');
+                        },
                       ),
                       _QuickActionItem(
                         label: 'Call',
