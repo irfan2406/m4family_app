@@ -140,11 +140,11 @@ class _InvestorPaymentsScreenState extends ConsumerState<InvestorPaymentsScreen>
           children: [
             Text(
               'Payment History',
-              style: GoogleFonts.montserrat(color: textPrimary, fontWeight: FontWeight.w800, fontSize: 16),
+              style: GoogleFonts.dmSerifDisplay(color: textPrimary, fontWeight: FontWeight.w800, fontSize: 16),
             ),
             Text(
               'FINANCIAL LEDGER',
-              style: GoogleFonts.montserrat(color: muted, fontWeight: FontWeight.w900, fontSize: 8, letterSpacing: 3),
+              style: GoogleFonts.dmSerifDisplay(color: muted, fontWeight: FontWeight.w900, fontSize: 8, letterSpacing: 3),
             ),
           ],
         ),
@@ -200,12 +200,12 @@ class _InvestorPaymentsScreenState extends ConsumerState<InvestorPaymentsScreen>
         children: [
           Text(
             label,
-            style: GoogleFonts.montserrat(color: muted, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.5),
+            style: GoogleFonts.dmSerifDisplay(color: muted, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.5),
           ),
           const SizedBox(height: 6),
           Text(
             value,
-            style: GoogleFonts.montserrat(color: valueColor, fontSize: 14, fontWeight: FontWeight.w800),
+            style: GoogleFonts.dmSerifDisplay(color: valueColor, fontSize: 14, fontWeight: FontWeight.w800),
           ),
         ],
       ),
@@ -216,10 +216,10 @@ class _InvestorPaymentsScreenState extends ConsumerState<InvestorPaymentsScreen>
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     return TextField(
       onChanged: (v) => setState(() => _searchQuery = v),
-      style: GoogleFonts.montserrat(color: textPrimary, fontSize: 13, fontWeight: FontWeight.w500),
+      style: GoogleFonts.dmSerifDisplay(color: textPrimary, fontSize: 13, fontWeight: FontWeight.w500),
       decoration: InputDecoration(
         hintText: 'Search transactions...',
-        hintStyle: GoogleFonts.montserrat(color: muted, fontSize: 13, fontWeight: FontWeight.w500),
+        hintStyle: GoogleFonts.dmSerifDisplay(color: muted, fontSize: 13, fontWeight: FontWeight.w500),
         prefixIcon: Icon(LucideIcons.search, size: 18, color: muted),
         filled: true,
         fillColor: card,
@@ -250,7 +250,7 @@ class _InvestorPaymentsScreenState extends ConsumerState<InvestorPaymentsScreen>
             ),
             child: Text(
               f.toUpperCase(),
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 color: selected ? _gold : muted,
                 fontSize: 9,
                 fontWeight: FontWeight.w800,
@@ -322,7 +322,7 @@ class _InvestorPaymentsScreenState extends ConsumerState<InvestorPaymentsScreen>
                   (t['description'] ?? '').toString(),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.montserrat(color: textPrimary, fontSize: 12.5, fontWeight: FontWeight.w700),
+                  style: GoogleFonts.dmSerifDisplay(color: textPrimary, fontSize: 12.5, fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(height: 4),
                 Row(
@@ -332,7 +332,7 @@ class _InvestorPaymentsScreenState extends ConsumerState<InvestorPaymentsScreen>
                         _formatDate((t['date'] ?? '').toString()),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.montserrat(color: muted, fontSize: 9, fontWeight: FontWeight.w600, letterSpacing: 0.5),
+                        style: GoogleFonts.dmSerifDisplay(color: muted, fontSize: 9, fontWeight: FontWeight.w600, letterSpacing: 0.5),
                       ),
                     ),
                     if (shortId.isNotEmpty) ...[
@@ -344,7 +344,7 @@ class _InvestorPaymentsScreenState extends ConsumerState<InvestorPaymentsScreen>
                       ),
                       Text(
                         shortId,
-                        style: GoogleFonts.montserrat(color: muted, fontSize: 9, fontWeight: FontWeight.w600, letterSpacing: 0.5),
+                        style: GoogleFonts.dmSerifDisplay(color: muted, fontSize: 9, fontWeight: FontWeight.w600, letterSpacing: 0.5),
                       ),
                     ],
                   ],
@@ -358,7 +358,7 @@ class _InvestorPaymentsScreenState extends ConsumerState<InvestorPaymentsScreen>
             children: [
               Text(
                 '${isIn ? '+' : ''}AED ${_formatAmount(amount)}',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   color: isIn ? _green : textPrimary,
                   fontSize: 13,
                   fontWeight: FontWeight.w800,
@@ -374,7 +374,7 @@ class _InvestorPaymentsScreenState extends ConsumerState<InvestorPaymentsScreen>
                 ),
                 child: Text(
                   statusUpper.isEmpty ? '—' : statusUpper,
-                  style: GoogleFonts.montserrat(color: statusColor, fontSize: 8, fontWeight: FontWeight.w800, letterSpacing: 0.5),
+                  style: GoogleFonts.dmSerifDisplay(color: statusColor, fontSize: 8, fontWeight: FontWeight.w800, letterSpacing: 0.5),
                 ),
               ),
             ],
@@ -393,12 +393,12 @@ class _InvestorPaymentsScreenState extends ConsumerState<InvestorPaymentsScreen>
           const SizedBox(height: 16),
           Text(
             'No transactions found',
-            style: GoogleFonts.montserrat(color: textPrimary, fontSize: 13, fontWeight: FontWeight.w700),
+            style: GoogleFonts.dmSerifDisplay(color: textPrimary, fontSize: 13, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 6),
           Text(
             'Your payment ledger is empty.',
-            style: GoogleFonts.montserrat(color: muted, fontSize: 11, fontWeight: FontWeight.w500),
+            style: GoogleFonts.dmSerifDisplay(color: muted, fontSize: 11, fontWeight: FontWeight.w500),
           ),
         ],
       ),
@@ -416,13 +416,13 @@ class _InvestorPaymentsScreenState extends ConsumerState<InvestorPaymentsScreen>
             const SizedBox(height: 16),
             Text(
               'Unable to load payments',
-              style: GoogleFonts.montserrat(color: textPrimary, fontSize: 14, fontWeight: FontWeight.w700),
+              style: GoogleFonts.dmSerifDisplay(color: textPrimary, fontSize: 14, fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 6),
             Text(
               'Please check your connection and try again.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(color: muted, fontSize: 11, fontWeight: FontWeight.w500),
+              style: GoogleFonts.dmSerifDisplay(color: muted, fontSize: 11, fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
@@ -432,7 +432,7 @@ class _InvestorPaymentsScreenState extends ConsumerState<InvestorPaymentsScreen>
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              child: Text('RETRY', style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 1)),
+              child: Text('RETRY', style: GoogleFonts.dmSerifDisplay(fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 1)),
             ),
           ],
         ),

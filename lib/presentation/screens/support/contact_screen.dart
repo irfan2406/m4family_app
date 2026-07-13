@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
+import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -169,6 +171,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBody: true,
+      drawer: const ConditionalDrawer(),
       bottomNavigationBar: NavigationPill(
         currentIndex: -1,
         onTap: (i) {
@@ -199,7 +202,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                     // CONTACT INFORMATION — plain black heading (no gradient).
                     Text(
                       'CONTACT INFORMATION',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         color: isDark ? Colors.white : Colors.black,
                         fontSize: 22,
                         fontWeight: FontWeight.w700,
@@ -218,7 +221,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                     // OUR HEAD OFFICE — plain black heading (no gradient).
                     Text(
                       'OUR HEAD OFFICE',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         color: isDark ? Colors.white : Colors.black,
                         fontSize: 22,
                         fontWeight: FontWeight.w700,
@@ -273,7 +276,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
           children: [
             Text(
               'M4 FAMILY',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
                 color: isDark ? Colors.white : Colors.black,
@@ -283,7 +286,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
             const SizedBox(height: 2),
             Text(
               'DEVELOPMENTS',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 9,
                 fontWeight: FontWeight.w800,
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
@@ -292,6 +295,8 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
             ),
           ],
         ),
+        const Spacer(),
+        const SideMenuButton(),
       ],
     ).animate().fadeIn().slideX(begin: -0.1);
   }
@@ -303,7 +308,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
       children: [
         _gradientText(
           'GET IN TOUCH WITH US',
-          GoogleFonts.montserrat(
+          GoogleFonts.dmSerifDisplay(
             fontSize: 26,
             fontWeight: FontWeight.w800,
             letterSpacing: -0.5,
@@ -318,7 +323,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
           "hello we're here to help. Please feel free to get in touch with us "
           "using the contact information below or by filling out the contact "
           "form. We strive to respond to all inquiries promptly.",
-          GoogleFonts.inter(
+          GoogleFonts.dmSerifDisplay(
             fontSize: 14,
             fontWeight: FontWeight.w500,
             height: 1.7,
@@ -395,7 +400,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                     children: [
                       Text(
                         'SUBMIT INQUIRY',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 12,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 1.5,
@@ -422,14 +427,14 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
       controller: controller,
       maxLines: maxLines,
       keyboardType: keyboardType,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.dmSerifDisplay(
         color: isDark ? Colors.white : Colors.black,
         fontSize: 14,
         fontWeight: FontWeight.w500,
       ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.montserrat(
+        hintStyle: GoogleFonts.dmSerifDisplay(
           color: (isDark ? Colors.white : Colors.black).withOpacity(0.4),
           fontSize: 14,
           fontWeight: FontWeight.w500,
@@ -486,7 +491,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
           Expanded(
             child: RichText(
               text: TextSpan(
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                   color: (isDark ? Colors.white : Colors.black).withOpacity(0.7),
@@ -495,7 +500,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                   const TextSpan(text: "I've read and agree to the "),
                   TextSpan(
                     text: 'Privacy Policy',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 12,
                       fontWeight: FontWeight.w800,
                       color: isDark ? Colors.white : Colors.black,
@@ -599,7 +604,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
               children: [
                 Text(
                   label,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     color: isDark
                         ? Colors.white.withOpacity(0.7)
                         : const Color(0xFF3E5C86),
@@ -611,7 +616,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                 const SizedBox(height: 5),
                 Text(
                   value,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     color: isDark ? Colors.white : Colors.black,
                     fontSize: valueSize,
                     fontWeight: FontWeight.w800,
@@ -623,7 +628,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                   const SizedBox(height: 4),
                   Text(
                     sub,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       color: (isDark ? Colors.white : Colors.black).withOpacity(
                         0.5,
                       ),
@@ -647,7 +652,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
       padding: const EdgeInsets.only(left: 8),
       child: Text(
         text,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           fontSize: 9,
           fontWeight: FontWeight.w800,
           color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
@@ -726,7 +731,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                   children: [
                     Text(
                       title.toUpperCase(),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 17,
                         fontWeight: FontWeight.w800,
                         color: isDark ? Colors.white : Colors.black,
@@ -737,7 +742,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                     const SizedBox(height: 12),
                     Text(
                       address,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
                         color: (isDark ? Colors.white : Colors.black)
@@ -781,7 +786,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                         const SizedBox(width: 8),
                         Text(
                           'DIRECTIONS',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 9,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 1.5,
@@ -816,7 +821,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                         const SizedBox(width: 8),
                         Text(
                           'CALL NOW',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 9,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 1.5,
@@ -884,7 +889,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                   children: [
                     Text(
                       'Open in Maps',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         color: isDark ? Colors.white : Colors.black,
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
@@ -936,7 +941,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                       const SizedBox(width: 8),
                       Text(
                         'OPEN MAP',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: isDark ? Colors.white : Colors.black,
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
@@ -1053,7 +1058,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                   children: [
                     Text(
                       value,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 15,
                         fontWeight: FontWeight.w800,
                         color: isDark ? Colors.white : Colors.black,
@@ -1063,7 +1068,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                     const SizedBox(height: 3),
                     Text(
                       label,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 9,
                         fontWeight: FontWeight.w800,
                         color: (isDark ? Colors.white : Colors.black)

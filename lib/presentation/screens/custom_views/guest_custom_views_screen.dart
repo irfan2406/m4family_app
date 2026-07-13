@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:ui';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
@@ -99,7 +100,7 @@ class _GuestCustomViewsScreenState
               children: [
                 Text(
                   'INTERACTIVE LIVING',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     color: isDark ? Colors.white : Colors.black,
                     fontWeight: FontWeight.w900,
                     fontSize: 14,
@@ -108,7 +109,7 @@ class _GuestCustomViewsScreenState
                 ),
                 Text(
                   'M4 CUSTOM SHOWCASE',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     color: (isDark ? Colors.white : Colors.black).withOpacity(
                       0.68,
                     ),
@@ -120,27 +121,9 @@ class _GuestCustomViewsScreenState
               ],
             ),
             actions: [
-              Builder(
-                builder: (context) => GestureDetector(
-                  onTap: () => Scaffold.of(context).openDrawer(),
-                  child: Container(
-                    margin: const EdgeInsets.only(
-                      right: 16,
-                      top: 20,
-                      bottom: 20,
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 14),
-                    decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Colors.black,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Icon(
-                      LucideIcons.moreHorizontal,
-                      color: isDark ? Colors.black : Colors.white,
-                      size: 18,
-                    ),
-                  ),
-                ),
+              const Padding(
+                padding: EdgeInsets.only(right: 12),
+                child: SideMenuButton(),
               ),
             ],
           ),
@@ -156,7 +139,7 @@ class _GuestCustomViewsScreenState
                         textAlign: TextAlign.center,
                         // Web parity: font-light serif (elegant, thin
                         // high-contrast), not a heavy slab display face.
-                        style: GoogleFonts.playfairDisplay(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: isDark ? Colors.white : Colors.black,
                           fontSize: 52,
                           fontWeight: FontWeight.w400,
@@ -179,7 +162,7 @@ class _GuestCustomViewsScreenState
                   Text(
                     'Experience the future of home personalisation. Our proprietary Custom Views suite allows you to visualise and craft your dream space before it\'s even built. Every M4 residence is a bespoke masterpiece, where your vision dictates the architecture of luxury. Beyond standard configurations, we offer a multi-sensory design experience—from haptic material selection to precision spatial planning. Our suite ensures that your digital blueprint translates into a tangible sanctuary of unparalleled refinement.',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       color: (isDark ? Colors.white : Colors.black).withOpacity(
                         0.7,
                       ),
@@ -254,7 +237,7 @@ class _GuestCustomViewsScreenState
                               alignment: Alignment.bottomLeft,
                               child: Text(
                                 cat['title']!,
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.dmSerifDisplay(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w900,
                                   color: Colors.white,

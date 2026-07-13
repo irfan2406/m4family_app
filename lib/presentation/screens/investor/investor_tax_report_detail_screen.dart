@@ -83,7 +83,7 @@ class _InvestorTaxReportDetailScreenState
       SnackBar(
         content: Text(
           'Opening $_name...',
-          style: GoogleFonts.montserrat(fontSize: 12),
+          style: GoogleFonts.dmSerifDisplay(fontSize: 12),
         ),
       ),
     );
@@ -95,7 +95,7 @@ class _InvestorTaxReportDetailScreenState
       SnackBar(
         content: Text(
           'Downloading $_name...',
-          style: GoogleFonts.montserrat(fontSize: 12),
+          style: GoogleFonts.dmSerifDisplay(fontSize: 12),
         ),
       ),
     );
@@ -161,7 +161,7 @@ class _InvestorTaxReportDetailScreenState
               children: [
                 Text(
                   'Report Details',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontWeight: FontWeight.w900,
                     fontSize: 16,
                     color: textPrimary,
@@ -172,7 +172,7 @@ class _InvestorTaxReportDetailScreenState
                   _id.toUpperCase(),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 9,
                     letterSpacing: 1.5,
                     fontWeight: FontWeight.w600,
@@ -215,7 +215,7 @@ class _InvestorTaxReportDetailScreenState
             const SizedBox(height: 16),
             Text(
               'Report not found',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 15,
                 fontWeight: FontWeight.w800,
                 color: textPrimary,
@@ -226,7 +226,7 @@ class _InvestorTaxReportDetailScreenState
               'The requested tax report could not be found or you do not '
               'have access to it.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(fontSize: 12, color: muted),
+              style: GoogleFonts.dmSerifDisplay(fontSize: 12, color: muted),
             ),
           ],
         ),
@@ -304,7 +304,7 @@ class _InvestorTaxReportDetailScreenState
               children: [
                 Text(
                   _name,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 17,
                     fontWeight: FontWeight.w900,
                     height: 1.25,
@@ -343,7 +343,7 @@ class _InvestorTaxReportDetailScreenState
       ),
       child: Text(
         label.toUpperCase(),
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           fontSize: 10,
           fontWeight: FontWeight.w700,
           letterSpacing: 0.8,
@@ -381,7 +381,7 @@ class _InvestorTaxReportDetailScreenState
           const SizedBox(width: 6),
           Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 9,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.2,
@@ -454,7 +454,7 @@ class _InvestorTaxReportDetailScreenState
         children: [
           Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 9,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.2,
@@ -471,7 +471,7 @@ class _InvestorTaxReportDetailScreenState
                   value,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     color: valueColor,
@@ -507,7 +507,7 @@ class _InvestorTaxReportDetailScreenState
               const SizedBox(width: 8),
               Text(
                 'DESCRIPTION',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1.2,
@@ -519,7 +519,7 @@ class _InvestorTaxReportDetailScreenState
           const SizedBox(height: 10),
           Text(
             _description,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 13,
               height: 1.55,
               fontWeight: FontWeight.w400,
@@ -550,7 +550,7 @@ class _InvestorTaxReportDetailScreenState
               'This document contains sensitive financial information. Please '
               'ensure you are in a secure environment before opening, '
               'downloading or sharing it.',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 11,
                 height: 1.5,
                 fontWeight: FontWeight.w500,
@@ -582,7 +582,7 @@ class _InvestorTaxReportDetailScreenState
         ),
         label: Text(
           'VIEW DOCUMENT',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 12,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.2,
@@ -610,7 +610,7 @@ class _InvestorTaxReportDetailScreenState
         ),
         label: Text(
           'DOWNLOAD DOCUMENT',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 12,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.2,

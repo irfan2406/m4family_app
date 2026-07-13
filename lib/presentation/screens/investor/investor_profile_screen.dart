@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
+import 'package:m4_mobile/presentation/widgets/investor_sidebar_menu.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/investor_shell_provider.dart';
@@ -98,6 +100,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
 
     return Scaffold(
       backgroundColor: bg,
+      drawer: const InvestorSidebarMenu(),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(24, 8, 24, 120),
@@ -135,7 +138,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                   const SizedBox(width: 14),
                   Text(
                     'MY PROFILE',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
                       color: textPrimary,
@@ -143,6 +146,8 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                     ),
                   ),
                   const Spacer(),
+                  const SideMenuButton(),
+                  const SizedBox(width: 10),
                   Material(
                     color: textPrimary.withValues(alpha: 0.04),
                     borderRadius: BorderRadius.circular(12),
@@ -230,7 +235,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
     final Widget avatarChild = Center(
       child: Text(
         initials,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           fontSize: 28,
           fontWeight: FontWeight.w800,
           color: Colors.black,
@@ -284,7 +289,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                         name.toUpperCase(),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 16,
                           fontWeight: FontWeight.w800,
                           color: textPrimary,
@@ -296,12 +301,12 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                         email,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w600, color: muted),
+                        style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w600, color: muted),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         phone,
-                        style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w800, color: textPrimary, letterSpacing: 0.5),
+                        style: GoogleFonts.dmSerifDisplay(fontSize: 11, fontWeight: FontWeight.w800, color: textPrimary, letterSpacing: 0.5),
                       ),
                       const SizedBox(height: 12),
                       Container(
@@ -320,7 +325,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                                 address.toUpperCase(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: bg, letterSpacing: 1),
+                                style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.w900, color: bg, letterSpacing: 1),
                               ),
                             ),
                           ],
@@ -334,7 +339,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                             const SizedBox(width: 6),
                             Text(
                               'BORN: $born',
-                              style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w800, color: textPrimary.withValues(alpha: 0.7), letterSpacing: 0.8),
+                              style: GoogleFonts.dmSerifDisplay(fontSize: 9, fontWeight: FontWeight.w800, color: textPrimary.withValues(alpha: 0.7), letterSpacing: 0.8),
                             ),
                           ],
                         ),
@@ -356,11 +361,11 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
               children: [
                 Text(
                   'POINTS',
-                  style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: textPrimary, letterSpacing: 2),
+                  style: GoogleFonts.dmSerifDisplay(fontSize: 11, fontWeight: FontWeight.w900, color: textPrimary, letterSpacing: 2),
                 ),
                 Text(
                   '$points',
-                  style: GoogleFonts.montserrat(fontSize: 22, fontWeight: FontWeight.w900, color: textPrimary, letterSpacing: -0.5),
+                  style: GoogleFonts.dmSerifDisplay(fontSize: 22, fontWeight: FontWeight.w900, color: textPrimary, letterSpacing: -0.5),
                 ),
               ],
             ),
@@ -373,7 +378,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
   Widget _sectionLabel(String text, Color muted) {
     return Text(
       text,
-      style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: muted, letterSpacing: 2.5),
+      style: GoogleFonts.dmSerifDisplay(fontSize: 9, fontWeight: FontWeight.w900, color: muted, letterSpacing: 2.5),
     );
   }
 
@@ -420,12 +425,12 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                       title.toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w700, color: textPrimary),
+                      style: GoogleFonts.dmSerifDisplay(fontSize: 12, fontWeight: FontWeight.w700, color: textPrimary),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       subtitle.toUpperCase(),
-                      style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w800, color: muted, letterSpacing: 1),
+                      style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.w800, color: muted, letterSpacing: 1),
                     ),
                   ],
                 ),
@@ -446,7 +451,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
           final go = await showDialog<bool>(
             context: context,
             builder: (ctx) => AlertDialog(
-              title: Text('Log out', style: GoogleFonts.montserrat(fontWeight: FontWeight.w700)),
+              title: Text('Log out', style: GoogleFonts.dmSerifDisplay(fontWeight: FontWeight.w700)),
               content: const Text('Sign out of your investor account?'),
               actions: [
                 TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
@@ -480,7 +485,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
               const SizedBox(width: 8),
               Text(
                 'LOG OUT',
-                style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.red, letterSpacing: 2),
+                style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.red, letterSpacing: 2),
               ),
             ],
           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:m4_mobile/core/theme/app_typography.dart';
 
 class M4Theme {
   // ===== Web palette — 1:1 with Flutter Web (app/globals.css tokens) =====
@@ -77,32 +78,19 @@ class M4Theme {
           surfaceContainerHighest: lightMuted,
           onSurfaceVariant: lightMutedFg,
         ),
-    textTheme: GoogleFonts.montserratTextTheme().copyWith(
-      displayLarge: GoogleFonts.montserrat(
-        fontSize: 32,
-        fontWeight: FontWeight.bold,
-        color: lightForeground,
-        letterSpacing: -0.5,
-      ),
-      headlineMedium: GoogleFonts.montserrat(
-        fontSize: 24,
-        fontWeight: FontWeight.w600,
-        color: lightForeground,
-      ),
-      bodyLarge: GoogleFonts.montserrat(fontSize: 16, color: lightForeground),
-      bodyMedium: GoogleFonts.montserrat(fontSize: 14, color: lightMutedFg),
-    ),
-    appBarTheme: const AppBarTheme(
+    // Centralised type scale — single source of truth (app_typography.dart).
+    textTheme: M4Type.textTheme(lightForeground, lightMutedFg),
+    appBarTheme: AppBarTheme(
       backgroundColor: Colors.transparent,
       elevation: 0,
       centerTitle: true,
-      titleTextStyle: TextStyle(
+      titleTextStyle: M4Type.sans(
         fontSize: 18,
         fontWeight: FontWeight.bold,
-        color: lightForeground,
         letterSpacing: 1.2,
+        color: lightForeground,
       ),
-      iconTheme: IconThemeData(color: lightForeground),
+      iconTheme: const IconThemeData(color: lightForeground),
     ),
   );
 
@@ -133,32 +121,18 @@ class M4Theme {
           surfaceContainerHighest: darkMuted,
           onSurfaceVariant: darkMutedFg,
         ),
-    textTheme: GoogleFonts.montserratTextTheme().copyWith(
-      displayLarge: GoogleFonts.montserrat(
-        fontSize: 32,
-        fontWeight: FontWeight.bold,
-        color: darkForeground,
-        letterSpacing: -0.5,
-      ),
-      headlineMedium: GoogleFonts.montserrat(
-        fontSize: 24,
-        fontWeight: FontWeight.w600,
-        color: darkForeground,
-      ),
-      bodyLarge: GoogleFonts.montserrat(fontSize: 16, color: darkForeground),
-      bodyMedium: GoogleFonts.montserrat(fontSize: 14, color: darkMutedFg),
-    ),
-    appBarTheme: const AppBarTheme(
+    textTheme: M4Type.textTheme(darkForeground, darkMutedFg),
+    appBarTheme: AppBarTheme(
       backgroundColor: Colors.transparent,
       elevation: 0,
       centerTitle: true,
-      titleTextStyle: TextStyle(
+      titleTextStyle: M4Type.sans(
         fontSize: 18,
         fontWeight: FontWeight.bold,
-        color: darkForeground,
         letterSpacing: 1.2,
+        color: darkForeground,
       ),
-      iconTheme: IconThemeData(color: darkForeground),
+      iconTheme: const IconThemeData(color: darkForeground),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(

@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
@@ -121,7 +122,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
       SnackBar(
         content: Text(
           message,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontWeight: FontWeight.bold,
             fontSize: 12,
           ),
@@ -146,7 +147,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
           children: [
             Text(
               (widget.job['title'] ?? '').toString().toUpperCase(),
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 color: isDark ? Colors.white : Colors.black,
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
@@ -157,7 +158,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
             const SizedBox(height: 2),
             Text(
               (widget.job['department'] ?? '').toString().toUpperCase(),
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
                 fontWeight: FontWeight.w400,
                 fontSize: 8,
@@ -212,24 +213,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
             builder: (context) => Center(
               child: Padding(
                 padding: const EdgeInsets.only(right: 12),
-                child: InkWell(
-                  onTap: () => Scaffold.of(context).openDrawer(),
-                  borderRadius: BorderRadius.circular(12),
-                  child: Container(
-                    width: 40,
-                    height: 36,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Colors.black,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      LucideIcons.moreHorizontal,
-                      size: 18,
-                      color: isDark ? Colors.black : Colors.white,
-                    ),
-                  ),
-                ),
+                child: const SideMenuButton(),
               ),
             ),
           ),
@@ -268,7 +252,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                       ),
                       child: Text(
                         'APPLYING FOR',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: (isDark ? Colors.white : Colors.black)
                               .withOpacity(0.6),
                           fontSize: 8,
@@ -281,7 +265,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                     Text(
                       (widget.job['title'] ?? '').toString().toUpperCase(),
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         color: isDark ? Colors.white : Colors.black,
                         fontWeight: FontWeight.w900,
                         fontSize: 22,
@@ -294,7 +278,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                       (widget.job['location'] ?? 'MUMBAI')
                           .toString()
                           .toUpperCase(),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         // Web parity: location shown in the M4 slate-blue accent.
                         color: isDark
                             ? Colors.white.withOpacity(0.7)
@@ -416,7 +400,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             color: isDark ? Colors.white : Colors.black,
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
@@ -451,7 +435,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                         )
                       : Text(
                           'SUBMIT APPLICATION',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 12,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 2,
@@ -472,7 +456,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
       padding: const EdgeInsets.only(left: 8),
       child: Text(
         text,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
           fontSize: 10,
           fontWeight: FontWeight.w900,
@@ -510,14 +494,14 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
             : isPhone
             ? TextInputType.phone
             : TextInputType.text,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           color: isDark ? Colors.white : Colors.black,
           fontWeight: FontWeight.bold,
           fontSize: 13,
         ),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: GoogleFonts.montserrat(
+          hintStyle: GoogleFonts.dmSerifDisplay(
             color: (isDark ? Colors.white : Colors.black).withOpacity(0.4),
             fontWeight: FontWeight.bold,
             fontSize: 13,

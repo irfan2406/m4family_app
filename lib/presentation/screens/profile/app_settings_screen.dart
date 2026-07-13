@@ -146,7 +146,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
             children: [
               Text(
                 'APP SETTINGS',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 14,
                   fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white : Colors.black,
@@ -156,7 +156,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
               const SizedBox(height: 4),
               Text(
                 'PLATFORM PREFERENCES',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
                   color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
@@ -271,7 +271,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
         children: [
           Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 8,
               fontWeight: FontWeight.w800,
               color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
@@ -326,7 +326,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
                     color: textPrimary,
@@ -335,7 +335,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 8,
                     fontWeight: FontWeight.w700,
                     color: muted,

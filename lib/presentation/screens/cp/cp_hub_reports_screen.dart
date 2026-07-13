@@ -154,7 +154,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
         backgroundColor: scheme.surface,
         elevation: 0,
         leading: IconButton(icon: const Icon(LucideIcons.arrowLeft), onPressed: () => context.pop()),
-        title: Text('Reports', style: GoogleFonts.montserrat(fontWeight: FontWeight.w900)),
+        title: Text('Reports', style: GoogleFonts.dmSerifDisplay(fontWeight: FontWeight.w900)),
       ),
       body: Column(
         children: [
@@ -234,7 +234,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
           ),
           child: Text(
             'FY $y',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 10,
               fontWeight: FontWeight.w900,
               letterSpacing: 1.6,
@@ -278,7 +278,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
             children: [
               Text(
                 'TOTAL TAX DEDUCTED',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 9,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 1.6,
@@ -288,7 +288,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
               const SizedBox(height: 10),
               Text(
                 _formatAed(total),
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 26,
                   fontWeight: FontWeight.w900,
                   letterSpacing: -0.5,
@@ -298,7 +298,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
               const SizedBox(height: 4),
               Text(
                 'FY $_year • ${_reports.length} ${_reports.length == 1 ? 'DOCUMENT' : 'DOCUMENTS'}',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 9,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1.2,
@@ -313,7 +313,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
                   icon: const Icon(LucideIcons.download, size: 14),
                   label: Text(
                     'DOWNLOAD SUMMARY',
-                    style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1.4),
+                    style: GoogleFonts.dmSerifDisplay(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1.4),
                   ),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: textPrimary,
@@ -342,7 +342,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
       _openUrl(url);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Summary will be available soon', style: GoogleFonts.montserrat(fontSize: 12))),
+        SnackBar(content: Text('Summary will be available soon', style: GoogleFonts.dmSerifDisplay(fontSize: 12))),
       );
     }
   }
@@ -394,7 +394,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
                     ),
                     child: Text(
                       type,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 7,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 0.6,
@@ -414,12 +414,12 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
                     title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w800, color: textPrimary),
+                    style: GoogleFonts.dmSerifDisplay(fontSize: 12, fontWeight: FontWeight.w800, color: textPrimary),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     [date, size].where((x) => x.trim().isNotEmpty).join(' • ').toUpperCase(),
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 9,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 1.2,
@@ -479,7 +479,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
             ListTile(
               leading: Icon(LucideIcons.externalLink, color: textPrimary, size: 20),
               title: Text('Open / Print PDF',
-                  style: GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w700, color: textPrimary)),
+                  style: GoogleFonts.dmSerifDisplay(fontSize: 13, fontWeight: FontWeight.w700, color: textPrimary)),
               onTap: () {
                 Navigator.pop(ctx);
                 _openUrl(url);
@@ -488,7 +488,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
             ListTile(
               leading: Icon(LucideIcons.share2, color: textPrimary, size: 20),
               title: Text('Share document',
-                  style: GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w700, color: textPrimary)),
+                  style: GoogleFonts.dmSerifDisplay(fontSize: 13, fontWeight: FontWeight.w700, color: textPrimary)),
               onTap: () {
                 Navigator.pop(ctx);
                 _shareUrl(url, title);
@@ -514,7 +514,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
           child: Text(
             'No documents available for FY $_year',
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w800, color: textPrimary),
+            style: GoogleFonts.dmSerifDisplay(fontSize: 13, fontWeight: FontWeight.w800, color: textPrimary),
           ),
         ),
         const SizedBox(height: 6),
@@ -522,7 +522,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
           child: Text(
             'Check back soon or select another year',
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w600, color: muted),
+            style: GoogleFonts.dmSerifDisplay(fontSize: 11, fontWeight: FontWeight.w600, color: muted),
           ),
         ),
       ],

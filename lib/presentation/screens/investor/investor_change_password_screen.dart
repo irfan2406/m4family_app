@@ -342,7 +342,7 @@ class _InvestorChangePasswordScreenState
               children: [
                 Text(
                   'SECURITY SETTINGS',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2.5,
@@ -352,7 +352,7 @@ class _InvestorChangePasswordScreenState
                 const SizedBox(height: 4),
                 Text(
                   'Change Password',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
                     letterSpacing: -0.3,
@@ -372,7 +372,7 @@ class _InvestorChangePasswordScreenState
       padding: const EdgeInsets.only(left: 4),
       child: Text(
         label,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           fontSize: 10,
           fontWeight: FontWeight.w800,
           letterSpacing: 2,
@@ -401,14 +401,14 @@ class _InvestorChangePasswordScreenState
       controller: controller,
       obscureText: obscure,
       onChanged: onChanged,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.dmSerifDisplay(
         fontSize: 14,
         fontWeight: FontWeight.w600,
         color: textPrimary,
       ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.montserrat(
+        hintStyle: GoogleFonts.dmSerifDisplay(
           fontSize: 14,
           fontWeight: FontWeight.w500,
           color: muted,
@@ -473,7 +473,7 @@ class _InvestorChangePasswordScreenState
           const SizedBox(height: 6),
           Text(
             'STRENGTH: $_strengthLabel',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 9,
               fontWeight: FontWeight.w800,
               letterSpacing: 1.5,
@@ -505,7 +505,7 @@ class _InvestorChangePasswordScreenState
           const SizedBox(width: 6),
           Text(
             matches ? 'Keys match' : 'Keys do not match',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 10,
               fontWeight: FontWeight.w600,
               color: matches ? green : red,
@@ -544,7 +544,7 @@ class _InvestorChangePasswordScreenState
               const SizedBox(width: 8),
               Text(
                 'REQUIREMENTS',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 1.5,
@@ -584,7 +584,7 @@ class _InvestorChangePasswordScreenState
           const SizedBox(width: 8),
           Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 10,
               fontWeight: FontWeight.w600,
               color: met ? green : muted,
@@ -627,7 +627,7 @@ class _InvestorChangePasswordScreenState
                 )
               : Text(
                   'UPDATE PASSWORD',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 12,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,

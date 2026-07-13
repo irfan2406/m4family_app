@@ -142,7 +142,7 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
               children: [
                 Text(
                   'TICKET LOGS',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 16,
                     fontWeight: FontWeight.w900,
                     color: isDark ? Colors.white : Colors.black,
@@ -151,7 +151,7 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
                 ),
                 Text(
                   'CONCIERGE HISTORY',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 8,
                     fontWeight: FontWeight.w700,
                     color: isDark ? Colors.white38 : Colors.black38,
@@ -198,14 +198,14 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
                       controller: _searchController,
                       onChanged: (value) =>
                           setState(() => _searchQuery = value),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         color: isDark ? Colors.white : Colors.black,
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                       ),
                       decoration: InputDecoration(
                         hintText: 'SEARCH BY ID OR SUBJECT...',
-                        hintStyle: GoogleFonts.montserrat(
+                        hintStyle: GoogleFonts.dmSerifDisplay(
                           color: isDark ? Colors.white12 : Colors.black12,
                           fontSize: 11,
                           fontWeight: FontWeight.w800,
@@ -261,7 +261,7 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
               child: Center(
                 child: Text(
                   _showOnlyPending ? 'PENDING' : 'ALL',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     color: isDark ? Colors.white : Colors.black,
                     fontSize: 9,
                     fontWeight: FontWeight.w900,
@@ -291,7 +291,7 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
           children: [
             Text(
               'FILTER BY CATEGORY',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 color: isDark ? Colors.white38 : Colors.black38,
                 fontSize: 10,
                 fontWeight: FontWeight.w800,
@@ -333,7 +333,7 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
         ),
         child: Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             color: isSelected
                 ? (isDark ? Colors.black : Colors.white)
                 : (isDark ? Colors.white : Colors.black),
@@ -362,7 +362,7 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
         children: [
           Text(
             'SERVICE AUDIT',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               color: isDark ? Colors.white38 : Colors.black38,
               fontSize: 10,
               fontWeight: FontWeight.w800,
@@ -371,7 +371,7 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
           ),
           Text(
             '$count LOGS RETRIEVED',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               color: isDark ? Colors.white38 : Colors.black38,
               fontSize: 9,
               fontWeight: FontWeight.w600,
@@ -410,7 +410,7 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
             children: [
               Text(
                 'INITIATE NEW SERVICE TICKET',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   color: isDark ? Colors.black : Colors.white,
                   fontSize: 11,
                   fontWeight: FontWeight.w900,
@@ -434,7 +434,7 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
     return Center(
       child: Text(
         'NO LOGS FOUND',
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           color: (isDark ? Colors.white : Colors.black).withOpacity(0.62),
           fontSize: 10,
           fontWeight: FontWeight.w900,
@@ -501,7 +501,7 @@ class _TicketCard extends StatelessWidget {
                       ),
                       child: Text(
                         ticket.displayId,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: isDark ? Colors.white38 : Colors.black38,
                           fontSize: 8,
                           fontWeight: FontWeight.w800,
@@ -524,7 +524,7 @@ class _TicketCard extends StatelessWidget {
                           const SizedBox(width: 4),
                           Text(
                             ticket.status.toUpperCase(),
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                               color: statusColor,
                               fontSize: 8,
                               fontWeight: FontWeight.w900,
@@ -538,7 +538,7 @@ class _TicketCard extends StatelessWidget {
                 const SizedBox(height: 16),
                 Text(
                   ticket.subject.toUpperCase(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     color: isDark ? Colors.white : Colors.black,
                     fontSize: 16,
                     fontWeight: FontWeight.w900,
@@ -629,7 +629,7 @@ class _TicketDetailSheet extends StatelessWidget {
                 ),
                 child: Text(
                   ticket.displayId,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     color: isDark ? Colors.white38 : Colors.black38,
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
@@ -649,7 +649,7 @@ class _TicketDetailSheet extends StatelessWidget {
                 ),
                 child: Text(
                   ticket.status.toUpperCase(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     color: isResolved ? Colors.green : Colors.blue,
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
@@ -661,7 +661,7 @@ class _TicketDetailSheet extends StatelessWidget {
           const SizedBox(height: 24),
           Text(
             ticket.subject.toUpperCase(),
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               color: isDark ? Colors.white : Colors.black,
               fontSize: 20,
               fontWeight: FontWeight.w900,
@@ -689,7 +689,7 @@ class _TicketDetailSheet extends StatelessWidget {
           const SizedBox(height: 32),
           Text(
             'DESCRIPTION',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               color: isDark ? Colors.white24 : Colors.black26,
               fontSize: 10,
               fontWeight: FontWeight.w800,
@@ -699,7 +699,7 @@ class _TicketDetailSheet extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             ticket.message ?? 'No description provided.',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               color: isDark ? Colors.white70 : Colors.black87,
               fontSize: 13,
               height: 1.6,
@@ -720,7 +720,7 @@ class _TicketDetailSheet extends StatelessWidget {
               ),
               child: Text(
                 'DISMISS AUDIT',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontWeight: FontWeight.w900,
                   fontSize: 12,
                 ),
@@ -744,7 +744,7 @@ class _TicketDetailSheet extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             color: isDark ? Colors.white24 : Colors.black26,
             fontSize: 10,
             fontWeight: FontWeight.w800,
@@ -753,7 +753,7 @@ class _TicketDetailSheet extends StatelessWidget {
         ),
         Text(
           value,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             color: valueColor ?? (isDark ? Colors.white : Colors.black),
             fontSize: 10,
             fontWeight: FontWeight.w900,
@@ -785,7 +785,7 @@ class _DetailItem extends StatelessWidget {
         children: [
           Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               color: isDark ? Colors.white24 : Colors.black26,
               fontSize: 8,
               fontWeight: FontWeight.w800,
@@ -795,7 +795,7 @@ class _DetailItem extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             value,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               color: valueColor ?? (isDark ? Colors.white70 : Colors.black87),
               fontSize: 10,
               fontWeight: FontWeight.w800,

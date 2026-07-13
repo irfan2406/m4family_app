@@ -112,7 +112,7 @@ class CpBookingStartScreen extends ConsumerWidget {
                   // Header
                   Text(
                     'HOW CAN\nWE HELP?',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 36,
                       fontWeight: FontWeight.w900,
                       color: textPrimary,
@@ -126,7 +126,7 @@ class CpBookingStartScreen extends ConsumerWidget {
                   // Subtitle
                   Text(
                     'INTERESTED IN ${projectTitle.toUpperCase()}?\nCHOOSE HOW YOU\'D LIKE TO PROCEED.',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 10,
                       color: textPrimary.withValues(alpha: 0.68),
                       fontWeight: FontWeight.w900,
@@ -187,7 +187,7 @@ class CpBookingStartScreen extends ConsumerWidget {
                             children: [
                               Text(
                                 'M4 FAMILY MEMBERS GET PRIORITY SITE VISITS AND EXCLUSIVE UNIT SELECTION WINDOWS.',
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.dmSerifDisplay(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w900,
                                   color: textPrimary.withValues(alpha: isDark ? 0.6 : 0.68),
@@ -200,7 +200,7 @@ class CpBookingStartScreen extends ConsumerWidget {
                                 onTap: () => context.push('/about'),
                                 child: Text(
                                   'LEARN MORE',
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.dmSerifDisplay(
                                     fontSize: 10,
                                     fontWeight: FontWeight.w900,
                                     color: M4Theme.premiumBlue,
@@ -284,7 +284,7 @@ class _BookingOptionCard extends StatelessWidget {
                 children: [
                   Text(
                     opt['title'] as String,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 12,
                       fontWeight: FontWeight.w900,
                       color: isDark ? Colors.white : Colors.black,
@@ -294,7 +294,7 @@ class _BookingOptionCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     opt['desc'] as String,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 9,
                       color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.68),
                       fontWeight: FontWeight.bold,

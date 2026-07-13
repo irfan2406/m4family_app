@@ -123,7 +123,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                               const SizedBox(width: 12),
                               Text(
                                 'BACK TO GUEST PORTAL',
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.dmSerifDisplay(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w900,
                                   fontSize: 11,
@@ -139,7 +139,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                   ],
                   Text(
                     'CHANNEL\nPARTNER',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 48,
                       fontWeight: FontWeight.w900,
                       color: Colors.white,
@@ -150,7 +150,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                   const SizedBox(height: 12),
                   Text(
                     'AUTHORIZED PARTNER ACCESS PORTAL',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
                       color: Colors.white54,
@@ -182,7 +182,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                         ),
                         child: Text(
                           'FORGOT PASSWORD?',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 10,
                             fontWeight: FontWeight.w800,
                             color: Colors.white54,
@@ -196,7 +196,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                         ),
                         child: Text(
                           'REGISTER NOW',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                             color: Colors.purpleAccent,
@@ -264,7 +264,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                                   children: [
                                     Text(
                                       'AUTHORIZE ACCESS',
-                                      style: GoogleFonts.montserrat(
+                                      style: GoogleFonts.dmSerifDisplay(
                                         fontWeight: FontWeight.w900,
                                         fontSize: 13,
                                         letterSpacing: 1.5,
@@ -299,7 +299,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                       ),
                       label: Text(
                         'BACK TO GUEST',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 11,
                           fontWeight: FontWeight.w800,
                           color: Colors.white70,
@@ -312,7 +312,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                   Text(
                     'M4 FAMILY PARTNER NETWORK\nSECURE • VERIFIED • TRUSTED',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 10,
                       fontWeight: FontWeight.w800,
                       color: Colors.white38,
@@ -353,7 +353,7 @@ class _Field extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 9,
             fontWeight: FontWeight.bold,
             color: Colors.white54,

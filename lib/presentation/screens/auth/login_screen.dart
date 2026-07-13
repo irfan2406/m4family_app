@@ -202,7 +202,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   const SizedBox(width: 16),
                   Text(
                     'BACK TO GUEST PORTAL',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       color: Colors.white,
                       fontWeight: FontWeight.w900,
                       fontSize: 12,
@@ -220,7 +220,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           children: [
             Text(
               'PHONE GATEWAY',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -229,7 +229,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             ),
             Text(
               'SECURE MULTI-FACTOR AUTHENTICATION',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
                 color: Colors.white54,
@@ -249,7 +249,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         const SizedBox(height: 16),
         Text(
           'A secure one-time access token will be dispatched via WhatsApp for identity validation.',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 10,
             color: Colors.white38,
             height: 1.5,
@@ -287,7 +287,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     children: [
                       Text(
                         'REQUEST TOKEN',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontWeight: FontWeight.w900,
                           fontSize: 13,
                           letterSpacing: 1,
@@ -328,7 +328,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   const SizedBox(width: 8),
                   Text(
                     'BACK',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       color: Colors.white70,
                       fontWeight: FontWeight.w700,
                       fontSize: 9,
@@ -346,7 +346,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           children: [
             Text(
               'FINAL CHECK',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -356,7 +356,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             Text(
               'WHATSAPP CODE SENT TO ${authState.identifier}',
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
                 color: Colors.white54,
@@ -392,7 +392,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       const SizedBox(height: 4),
                       Text(
                         authState.devOtp!,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: Colors.amber,
@@ -490,7 +490,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ? const CircularProgressIndicator(color: Colors.black)
                 : Text(
                     'AUTHENTICATE TOKEN',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontWeight: FontWeight.bold,
                       letterSpacing: 2,
                     ),
@@ -504,7 +504,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               .sendOtp(_phoneController.text, _selectedRole),
           child: Text(
             'RESEND CODE',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 10,
               fontWeight: FontWeight.bold,
               color: Colors.white54,
@@ -523,7 +523,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         children: [
           Text(
             'M4 FAMILY SECURE ACCESS',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 9,
               fontWeight: FontWeight.bold,
               color: Colors.white,
@@ -533,7 +533,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           const SizedBox(height: 4),
           Text(
             'V2.4.0 • ENCRYPTED',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 8,
               color: Colors.white,
               letterSpacing: 1.5,
@@ -582,7 +582,7 @@ class _PremiumButton extends StatelessWidget {
             const SizedBox(width: 16),
             Text(
               label,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
                 color: isPrimary ? Colors.black : Colors.white,
@@ -618,7 +618,7 @@ class _LuxuryInputField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 9,
             fontWeight: FontWeight.bold,
             color: Colors.white54,

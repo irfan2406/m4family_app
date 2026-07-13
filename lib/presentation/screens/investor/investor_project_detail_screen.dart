@@ -126,7 +126,7 @@ class _InvestorProjectDetailScreenState
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
                 fontSize: 12, fontWeight: FontWeight.bold)),
         backgroundColor: M4Theme.premiumBlue,
         behavior: SnackBarBehavior.floating,
@@ -303,7 +303,7 @@ class _InvestorProjectDetailScreenState
                       children: [
                         Text(
                           headerLabel,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                               fontSize: 30,
                               fontWeight: FontWeight.w900,
                               color: isDark ? Colors.white : Colors.black,
@@ -313,7 +313,7 @@ class _InvestorProjectDetailScreenState
                         const SizedBox(height: 14),
                         Text(
                           'A BESPOKE SHOWCASE OF LUXURY AT ${title.toUpperCase()}.',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                               fontSize: 9,
                               color: isDark ? Colors.white38 : Colors.black38,
                               fontWeight: FontWeight.w900,
@@ -339,7 +339,7 @@ class _InvestorProjectDetailScreenState
                         if (_paymentPlans.isNotEmpty) ...[
                           const SizedBox(height: 28),
                           Text('PREFERRED PLAN',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                   fontSize: 8,
                                   fontWeight: FontWeight.w900,
                                   color:
@@ -377,7 +377,7 @@ class _InvestorProjectDetailScreenState
                                   ),
                                   child: Text(
                                     n.toUpperCase(),
-                                    style: GoogleFonts.montserrat(
+                                    style: GoogleFonts.dmSerifDisplay(
                                         fontSize: 8,
                                         fontWeight: FontWeight.w900,
                                         color: isActive
@@ -397,7 +397,7 @@ class _InvestorProjectDetailScreenState
                             localType == 'Site Visit') ...[
                           const SizedBox(height: 28),
                           Text('VISIT TYPE',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                   fontSize: 8,
                                   fontWeight: FontWeight.w900,
                                   color:
@@ -435,7 +435,7 @@ class _InvestorProjectDetailScreenState
                                           t == 'VC'
                                               ? 'VIDEO CALL'
                                               : 'SITE VISIT',
-                                          style: GoogleFonts.montserrat(
+                                          style: GoogleFonts.dmSerifDisplay(
                                               fontSize: 9,
                                               fontWeight: FontWeight.w900,
                                               color: localType == t
@@ -500,7 +500,7 @@ class _InvestorProjectDetailScreenState
                                     scheduledAt == null
                                         ? 'SELECT DATE & TIME'
                                         : _formatSchedule(scheduledAt!),
-                                    style: GoogleFonts.montserrat(
+                                    style: GoogleFonts.dmSerifDisplay(
                                         fontSize: 9,
                                         fontWeight: FontWeight.w900,
                                         color: scheduledAt == null
@@ -521,7 +521,7 @@ class _InvestorProjectDetailScreenState
                         // Notes
                         const SizedBox(height: 24),
                         Text('ADDITIONAL NOTES',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                                 fontSize: 8,
                                 fontWeight: FontWeight.w900,
                                 color: isDark ? Colors.white38 : Colors.black38,
@@ -543,7 +543,7 @@ class _InvestorProjectDetailScreenState
                           child: TextField(
                             controller: _notesController,
                             maxLines: 3,
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
                                 color: isDark ? Colors.white : Colors.black),
@@ -551,7 +551,7 @@ class _InvestorProjectDetailScreenState
                               border: InputBorder.none,
                               hintText:
                                   'SPECIFIC REQUIREMENTS, PICKUP DETAILS, ETC...',
-                              hintStyle: GoogleFonts.montserrat(
+                              hintStyle: GoogleFonts.dmSerifDisplay(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w900,
                                   color: isDark
@@ -588,7 +588,7 @@ class _InvestorProjectDetailScreenState
                             child: Center(
                               child: Text(
                                 _submitting ? 'SUBMITTING...' : ctaLabel,
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.dmSerifDisplay(
                                     color: isDark
                                         ? Colors.black
                                         : Colors.white,
@@ -710,7 +710,7 @@ class _InvestorProjectDetailScreenState
                           .withValues(alpha: 0.3)),
                   const SizedBox(height: 20),
                   Text('PROJECT NOT FOUND',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                           fontSize: 16,
                           fontWeight: FontWeight.w900,
                           color: isDark ? Colors.white : Colors.black,
@@ -719,7 +719,7 @@ class _InvestorProjectDetailScreenState
                   Text(
                     'The project you are looking for might have been moved or is no longer active.',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                         color: (isDark ? Colors.white : Colors.black)
@@ -741,7 +741,7 @@ class _InvestorProjectDetailScreenState
                           color: isDark ? Colors.white : Colors.black,
                           borderRadius: BorderRadius.circular(30)),
                       child: Text('GO BACK',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
                               color: isDark ? Colors.black : Colors.white,
@@ -843,7 +843,7 @@ class _InvestorProjectDetailScreenState
                   child: Text(
                       (project['status']?.toString().toUpperCase() ??
                           'ONGOING'),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                           color: Colors.white,
                           fontSize: 8,
                           fontWeight: FontWeight.w900,
@@ -853,7 +853,7 @@ class _InvestorProjectDetailScreenState
                 Text(
                   (project['title']?.toString() ?? 'Project Name')
                       .toUpperCase(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                       color: isDark ? Colors.white : Colors.black,
                       fontSize: 32,
                       height: 1.0,
@@ -872,7 +872,7 @@ class _InvestorProjectDetailScreenState
                     Expanded(
                       child: Text(
                         location.toUpperCase(),
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                             color: isDark ? Colors.white : Colors.black,
                             fontSize: 12,
                             fontWeight: FontWeight.w900,
@@ -1013,7 +1013,7 @@ class _InvestorProjectDetailScreenState
                     ? description
                     : 'Experience the pinnacle of luxury living with floor-to-ceiling windows, Italian marble flooring, and smart home automation.')
                 .toUpperCase(),
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
                 fontSize: 11,
                 color: (isDark ? Colors.white : Colors.black)
                     .withValues(alpha: 0.8),
@@ -1031,14 +1031,14 @@ class _InvestorProjectDetailScreenState
                     size: 16, color: M4Theme.premiumBlue),
                 const SizedBox(width: 8),
                 Text('STARTING PRICE',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                         fontSize: 8,
                         fontWeight: FontWeight.w900,
                         color: isDark ? Colors.white38 : Colors.black38,
                         letterSpacing: 1)),
                 const SizedBox(width: 12),
                 Text(startingPrice,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                         fontSize: 13,
                         fontWeight: FontWeight.w900,
                         color: isDark ? Colors.white : Colors.black)),
@@ -1079,7 +1079,7 @@ class _InvestorProjectDetailScreenState
     return [
       const SizedBox(height: 24),
       Text('DOCUMENTS',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
               fontSize: 8,
               fontWeight: FontWeight.w900,
               color: isDark ? Colors.white38 : Colors.black38,
@@ -1191,7 +1191,7 @@ class _InvestorProjectDetailScreenState
                             Text(title.toUpperCase(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.dmSerifDisplay(
                                     fontSize: 10,
                                     fontWeight: FontWeight.w900,
                                     color:
@@ -1205,7 +1205,7 @@ class _InvestorProjectDetailScreenState
                                   .toUpperCase(),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                   fontSize: 8,
                                   fontWeight: FontWeight.w900,
                                   color: isDark
@@ -1239,7 +1239,7 @@ class _InvestorProjectDetailScreenState
           if (amenities.isEmpty)
             Center(
               child: Text('COMING SOON',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                       fontSize: 12,
                       color: isDark ? Colors.white38 : Colors.black38)),
             )
@@ -1285,7 +1285,7 @@ class _InvestorProjectDetailScreenState
                         child: Text(
                           name,
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                               fontSize: 8,
                               fontWeight: FontWeight.w900,
                               color: (isDark ? Colors.white : Colors.black)
@@ -1345,14 +1345,14 @@ class _InvestorProjectDetailScreenState
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text('ESTIMATED COMPLETION',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w900,
                                   color: M4Theme.premiumBlue,
                                   letterSpacing: 1)),
                           const SizedBox(height: 12),
                           Text(estimated.toUpperCase(),
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                   fontSize: 34,
                                   fontWeight: FontWeight.w900,
                                   height: 1.0,
@@ -1366,7 +1366,7 @@ class _InvestorProjectDetailScreenState
                             overflow: _showFullProgress
                                 ? TextOverflow.visible
                                 : TextOverflow.ellipsis,
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold,
                                 height: 1.6,
@@ -1379,7 +1379,7 @@ class _InvestorProjectDetailScreenState
                                 () => _showFullProgress = !_showFullProgress),
                             child: Text(
                                 _showFullProgress ? 'Show less' : 'Read more',
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.dmSerifDisplay(
                                     fontSize: 10,
                                     fontWeight: FontWeight.w900,
                                     color: M4Theme.premiumBlue)),
@@ -1412,14 +1412,14 @@ class _InvestorProjectDetailScreenState
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text('${overall.toInt()}%',
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.dmSerifDisplay(
                                       fontSize: 20,
                                       fontWeight: FontWeight.w900,
                                       color: isDark
                                           ? Colors.white
                                           : Colors.black)),
                               Text('OVERALL',
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.dmSerifDisplay(
                                       fontSize: 7,
                                       fontWeight: FontWeight.w900,
                                       color: isDark
@@ -1515,7 +1515,7 @@ class _InvestorProjectDetailScreenState
                                               BorderRadius.circular(4),
                                         ),
                                         child: Text(status,
-                                            style: GoogleFonts.montserrat(
+                                            style: GoogleFonts.dmSerifDisplay(
                                                 fontSize: 7,
                                                 fontWeight: FontWeight.w900,
                                                 color: Colors.white,
@@ -1529,7 +1529,7 @@ class _InvestorProjectDetailScreenState
                                   child: Row(
                                     children: [
                                       Text('$progress%',
-                                          style: GoogleFonts.montserrat(
+                                          style: GoogleFonts.dmSerifDisplay(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w900,
                                               color: M4Theme.premiumBlue)),
@@ -1543,7 +1543,7 @@ class _InvestorProjectDetailScreenState
                                               .toUpperCase(),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.montserrat(
+                                          style: GoogleFonts.dmSerifDisplay(
                                               fontSize: 9,
                                               fontWeight: FontWeight.w900,
                                               color: (isDark
@@ -1608,7 +1608,7 @@ class _InvestorProjectDetailScreenState
                     children: [
                       Expanded(
                         child: Text(name.toUpperCase(),
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w900,
                                 color: isDark ? Colors.white : Colors.black,
@@ -1632,7 +1632,7 @@ class _InvestorProjectDetailScreenState
                                   shape: BoxShape.circle),
                               child: Center(
                                 child: Text('${item['percentage'] ?? 0}%',
-                                    style: GoogleFonts.montserrat(
+                                    style: GoogleFonts.dmSerifDisplay(
                                         fontSize: 10,
                                         fontWeight: FontWeight.w900,
                                         color: M4Theme.premiumBlue)),
@@ -1649,7 +1649,7 @@ class _InvestorProjectDetailScreenState
                                               ?.toString()
                                               .toUpperCase() ??
                                           'INSTALLMENT',
-                                      style: GoogleFonts.montserrat(
+                                      style: GoogleFonts.dmSerifDisplay(
                                           fontSize: 9,
                                           fontWeight: FontWeight.w900,
                                           color: isDark
@@ -1658,7 +1658,7 @@ class _InvestorProjectDetailScreenState
                                           letterSpacing: 0.5)),
                                   Text(
                                       'INSTALLMENT ${item['installmentNumber'] ?? ''}',
-                                      style: GoogleFonts.montserrat(
+                                      style: GoogleFonts.dmSerifDisplay(
                                           fontSize: 8,
                                           fontWeight: FontWeight.bold,
                                           color: isDark
@@ -1681,7 +1681,7 @@ class _InvestorProjectDetailScreenState
                           borderRadius: BorderRadius.circular(14)),
                       child: Center(
                         child: Text('INQUIRE ABOUT THIS PLAN',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                                 fontSize: 9,
                                 fontWeight: FontWeight.w900,
                                 color: M4Theme.premiumBlue,
@@ -1736,14 +1736,14 @@ class _InvestorProjectDetailScreenState
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text('READY TO INVEST?',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w900,
                                   color:
                                       isDark ? Colors.white : Colors.black)),
                           const SizedBox(height: 4),
                           Text('CONNECT WITH OUR WEALTH ADVISORS',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                   fontSize: 8,
                                   fontWeight: FontWeight.w900,
                                   color: isDark
@@ -1775,7 +1775,7 @@ class _InvestorProjectDetailScreenState
                         borderRadius: BorderRadius.circular(20)),
                     child: Center(
                       child: Text('INVEST IN THIS PROJECT NOW',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                               fontSize: 11,
                               fontWeight: FontWeight.w900,
                               color: isDark ? Colors.black : Colors.white,
@@ -1852,7 +1852,7 @@ class _InvestorProjectDetailScreenState
                                 color: M4Theme.premiumBlue, size: 12),
                             const SizedBox(width: 8),
                             Text('VIEW ON MAPS',
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.dmSerifDisplay(
                                     fontSize: 8,
                                     fontWeight: FontWeight.w900,
                                     color: isDark
@@ -1881,7 +1881,7 @@ class _InvestorProjectDetailScreenState
             width: 40, height: 1.5, color: isDark ? Colors.white : Colors.black),
         const SizedBox(width: 16),
         Text(title.toUpperCase(),
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
                 fontSize: 12,
                 fontWeight: FontWeight.w900,
                 color: isDark ? Colors.white : Colors.black,
@@ -1991,7 +1991,7 @@ class _MediaThumb extends StatelessWidget {
                 Center(
                   child: Text(label,
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                           color: Colors.white,
                           fontSize: 8,
                           fontWeight: FontWeight.w900,
@@ -2038,7 +2038,7 @@ class _IconThumb extends StatelessWidget {
             Icon(icon, size: 20, color: isDark ? Colors.white : Colors.black),
             const SizedBox(height: 4),
             Text(label,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                     fontSize: 6.5,
                     fontWeight: FontWeight.w900,
                     color: isDark ? Colors.white : Colors.black,
@@ -2096,7 +2096,7 @@ class _ActionCard extends StatelessWidget {
               children: [
                 Text(label.toUpperCase(),
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                         color: isDark ? Colors.white38 : Colors.black38,
                         fontSize: 8,
                         fontWeight: FontWeight.w900,
@@ -2104,7 +2104,7 @@ class _ActionCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(value,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                         color: isDark ? Colors.white : Colors.black,
                         fontSize: 13,
                         fontWeight: FontWeight.w900,
@@ -2170,14 +2170,14 @@ class _AssetCard extends StatelessWidget {
                 Text(title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
                         color: isDark ? Colors.white : Colors.black,
                         letterSpacing: 0.5)),
                 const SizedBox(height: 4),
                 Text(subtitle,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                         fontSize: 8,
                         fontWeight: FontWeight.w900,
                         color: isDark ? Colors.white38 : Colors.black38,
@@ -2211,7 +2211,7 @@ class _AssetButton extends StatelessWidget {
             color: isDark ? Colors.white : Colors.black,
             borderRadius: BorderRadius.circular(10)),
         child: Text(label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
                 fontSize: 7.5,
                 fontWeight: FontWeight.w900,
                 color: isDark ? Colors.black : Colors.white,
@@ -2275,14 +2275,14 @@ class _InquiryField extends StatelessWidget {
       ),
       child: TextField(
         controller: controller,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
             fontSize: 12,
             fontWeight: FontWeight.bold,
             color: isDark ? Colors.white : Colors.black),
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: hint,
-          hintStyle: GoogleFonts.montserrat(
+          hintStyle: GoogleFonts.dmSerifDisplay(
               fontSize: 9,
               fontWeight: FontWeight.w900,
               color: isDark ? Colors.white24 : Colors.black26,

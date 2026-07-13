@@ -105,7 +105,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
             child: Center(
               child: Text(
                 'LEGAL VAULT',
-                style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
+                style: GoogleFonts.dmSerifDisplay(textStyle: const TextStyle(inherit: true), 
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white : Colors.black,
@@ -155,7 +155,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
               children: [
                 Text(
                   'ENCRYPTED STORAGE',
-                  style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
+                  style: GoogleFonts.dmSerifDisplay(textStyle: const TextStyle(inherit: true), 
                     fontSize: 8,
                     fontWeight: FontWeight.w800,
                     color: isDark ? Colors.white38 : Colors.black38,
@@ -164,7 +164,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
                 ),
                 Text(
                   'SECURE DOCUMENT REPOSITORY',
-                  style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
+                  style: GoogleFonts.dmSerifDisplay(textStyle: const TextStyle(inherit: true), 
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
                     color: isDark ? Colors.white : Colors.black,
@@ -192,7 +192,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
             onSelected: (selected) {
               if (selected) setState(() => _selectedFilter = f);
             },
-            labelStyle: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
+            labelStyle: GoogleFonts.dmSerifDisplay(textStyle: const TextStyle(inherit: true), 
               fontSize: 9,
               fontWeight: FontWeight.w800,
               color: _selectedFilter == f ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white54 : Colors.black54),
@@ -232,16 +232,16 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
         ),
         title: Text(
           (doc['name'] ?? 'DOCUMENT').toUpperCase(),
-          style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w800, color: isDark ? Colors.white : Colors.black),
+          style: GoogleFonts.dmSerifDisplay(fontSize: 12, fontWeight: FontWeight.w800, color: isDark ? Colors.white : Colors.black),
           overflow: TextOverflow.ellipsis,
         ),
         subtitle: Row(
           children: [
-            Text((project['title'] ?? 'GENERAL').toUpperCase(), style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w700, color: isDark ? Colors.white38 : Colors.black38)),
+            Text((project['title'] ?? 'GENERAL').toUpperCase(), style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.w700, color: isDark ? Colors.white38 : Colors.black38)),
             const SizedBox(width: 8),
             Container(width: 3, height: 3, decoration: BoxDecoration(color: (isDark ? Colors.white : Colors.black).withOpacity(0.2), shape: BoxShape.circle)),
             const SizedBox(width: 8),
-            Text(date, style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w700, color: isDark ? Colors.white38 : Colors.black38)),
+            Text(date, style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.w700, color: isDark ? Colors.white38 : Colors.black38)),
           ],
         ),
         trailing: Icon(LucideIcons.chevronRight, size: 16, color: (isDark ? Colors.white : Colors.black).withOpacity(0.2)),
@@ -276,7 +276,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
         const SizedBox(height: 24),
         Text(
           'NO DOCUMENTS FOUND',
-          style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
+          style: GoogleFonts.dmSerifDisplay(textStyle: const TextStyle(inherit: true), 
             fontSize: 10,
             fontWeight: FontWeight.w800,
             color: (isDark ? Colors.white : Colors.black).withOpacity(0.2),
@@ -318,12 +318,12 @@ class _DocumentDetailSheet extends StatelessWidget {
           Text(
             (doc['name'] ?? 'DOCUMENT').toUpperCase(),
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(fontSize: 18, fontWeight: FontWeight.w800, color: isDark ? Colors.white : Colors.black),
+            style: GoogleFonts.dmSerifDisplay(fontSize: 18, fontWeight: FontWeight.w800, color: isDark ? Colors.white : Colors.black),
           ),
           const SizedBox(height: 8),
           Text(
             'SECURE DOCUMENT ACCESS',
-            style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w800, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 2),
+            style: GoogleFonts.dmSerifDisplay(fontSize: 9, fontWeight: FontWeight.w800, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 2),
           ),
           const SizedBox(height: 32),
           _DetailRow(label: 'ADDED ON', value: DateFormat('d MMM yyyy').format(DateTime.parse(doc['createdAt'])).toUpperCase(), isDark: isDark, icon: LucideIcons.calendar),
@@ -383,10 +383,10 @@ class _DetailRow extends StatelessWidget {
             children: [
               Icon(icon, size: 16, color: color ?? (isDark ? Colors.white24 : Colors.black26)),
               const SizedBox(width: 12),
-              Text(label, style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w800, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1)),
+              Text(label, style: GoogleFonts.dmSerifDisplay(fontSize: 9, fontWeight: FontWeight.w800, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1)),
             ],
           ),
-          Text(value, style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w800, color: color ?? (isDark ? Colors.white : Colors.black))),
+          Text(value, style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w800, color: color ?? (isDark ? Colors.white : Colors.black))),
         ],
       ),
     );
@@ -408,7 +408,7 @@ class _ActionButton extends StatelessWidget {
       child: ElevatedButton.icon(
         onPressed: onTap,
         icon: Icon(icon, size: 18),
-        label: Text(label, style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
+        label: Text(label, style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
         style: ElevatedButton.styleFrom(
           backgroundColor: isPrimary ? (isDark ? Colors.white : Colors.black) : (isDark ? const Color(0xFF18181B) : Colors.white),
           foregroundColor: isPrimary ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white54 : Colors.black54),

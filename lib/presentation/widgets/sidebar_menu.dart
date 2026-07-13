@@ -113,7 +113,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                       const SizedBox(width: 16),
                       Text(
                         isInvestor ? 'INVESTOR MENU' : 'MENU',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: Theme.of(context).colorScheme.onSurface,
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
@@ -287,7 +287,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                         ),
                         child: Text(
                           'QUICK ACTIONS',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             color: Theme.of(
                               context,
                             ).colorScheme.onSurface.withOpacity(0.68),
@@ -358,7 +358,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                           children: [
                             Text(
                               'THEME MODE',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                 color: isDark ? Colors.white70 : Colors.black87,
                                 fontSize: 10,
                                 fontWeight: FontWeight.w900,
@@ -440,7 +440,7 @@ class _SidebarExitButton extends ConsumerWidget {
             ),
             title: Text(
               'Logout',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
                 fontSize: 22,
@@ -448,7 +448,7 @@ class _SidebarExitButton extends ConsumerWidget {
             ),
             content: Text(
               'Are you sure you want to logout?',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 color: Colors.white70,
                 fontSize: 14,
               ),
@@ -458,7 +458,7 @@ class _SidebarExitButton extends ConsumerWidget {
                 onPressed: () => Navigator.pop(context),
                 child: Text(
                   'CANCEL',
-                  style: GoogleFonts.montserrat(color: Colors.blueAccent),
+                  style: GoogleFonts.dmSerifDisplay(color: Colors.blueAccent),
                 ),
               ),
               TextButton(
@@ -471,7 +471,7 @@ class _SidebarExitButton extends ConsumerWidget {
                 },
                 child: Text(
                   'LOGOUT',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     color: Colors.redAccent,
                     fontWeight: FontWeight.bold,
                   ),
@@ -503,7 +503,7 @@ class _SidebarExitButton extends ConsumerWidget {
             const SizedBox(width: 12),
             Text(
               'LOG OUT',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 color: const Color(0xFFEF4444),
                 fontSize: 11,
                 fontWeight: FontWeight.w900,
@@ -595,7 +595,7 @@ class _SidebarItem extends StatelessWidget {
             ),
             title: Text(
               label,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 color: isActive ? activeColor : onSurface.withOpacity(0.65),
                 fontSize: 14,
                 fontWeight: isActive ? FontWeight.w900 : FontWeight.w700,
@@ -687,7 +687,7 @@ class _SidebarSubItem extends StatelessWidget {
       ),
       title: Text(
         label,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           color: onSurface.withOpacity(0.85),
           fontSize: 12.5,
           fontWeight: FontWeight.w700,

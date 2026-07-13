@@ -69,7 +69,7 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                       const SizedBox(width: 10),
                       Text(
                         'INVESTOR MENU',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 2,
@@ -199,7 +199,7 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                         padding: const EdgeInsets.fromLTRB(8, 24, 8, 8),
                         child: Text(
                           'QUICK ACTIONS',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 10,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 2,
@@ -253,7 +253,7 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                     children: [
                       Text(
                         'THEME MODE',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 2,
@@ -310,7 +310,7 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                           const SizedBox(width: 10),
                           Text(
                             'LOGOUT',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                               fontSize: 12,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 1.5,
@@ -377,7 +377,7 @@ class _SidebarItem extends StatelessWidget {
             Expanded(
               child: Text(
                 label,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                   color: isActive ? gold : (isDark ? Colors.white : const Color(0xFF1E293B)),
@@ -472,7 +472,7 @@ class _SidebarSubItem extends StatelessWidget {
             Expanded(
               child: Text(
                 label,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 12.5,
                   fontWeight: FontWeight.w600,
                   color: fg.withValues(alpha: 0.85),

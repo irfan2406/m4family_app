@@ -10,7 +10,7 @@ final apiClientProvider = Provider(
       'API_URL',
       // Production backend (same host the web uses). The old 10.0.2.2 fallback
       // only works inside an emulator and breaks images/data on real devices.
-      fallback: 'https://m4familyback.projectdemo.online',
+      fallback: 'https://api.mym4family.com',
     ),
   ),
 );

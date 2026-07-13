@@ -470,7 +470,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                                         ),
                                         child: Text(
                                           'ARTISTIC IMPRESSION',
-                                          style: GoogleFonts.montserrat(
+                                          style: GoogleFonts.dmSerifDisplay(
                                             color: Colors.white,
                                             fontSize: 7,
                                             fontWeight: FontWeight.w900,
@@ -661,7 +661,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         const SizedBox(height: 24),
         RichText(
           text: TextSpan(
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               color: Theme.of(
                 context,
               ).colorScheme.onSurface.withValues(alpha: 0.6),
@@ -678,7 +678,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                   onTap: () => context.push('/cp/about'),
                   child: Text(
                     'Who We Are',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       color: isDark ? Colors.white : Colors.black,
                       fontWeight: FontWeight.bold,
                       decoration: TextDecoration.underline,
@@ -721,7 +721,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                           children: [
                             Text(
                               tab.toUpperCase(),
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                 color: isSelected
                                     ? (isDark ? Colors.white : Colors.black)
                                     : (isDark ? Colors.white : Colors.black)
@@ -890,7 +890,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                           ? 'MEDIA'
                           : (item['status']?.toString() ?? 'ONGOING')
                                 .toUpperCase(),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         color: Colors.white,
                         fontSize: 8,
                         fontWeight: FontWeight.w400,
@@ -931,7 +931,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                           .toUpperCase(),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         color: Colors.white.withValues(alpha: 0.7),
                         fontSize: 10,
                         fontWeight: FontWeight.w800,
@@ -947,7 +947,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                           isCommunity
                               ? 'EXPLORE COMMUNITY'
                               : (isMedia ? 'READ ARTICLE' : 'VIEW PROPERTY'),
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             color: Colors.white,
                             fontSize: 10,
                             fontWeight: FontWeight.w400,
@@ -1051,7 +1051,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                         ),
                         child: Text(
                           status,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             color: Colors.white,
                             fontSize: 8,
                             fontWeight: FontWeight.w400,
@@ -1077,7 +1077,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                         ),
                         child: Text(
                           'ARTISTIC IMPRESSION',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             color: Colors.white,
                             fontSize: 6,
                             fontWeight: FontWeight.w900,
@@ -1121,7 +1121,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                             location,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                               fontSize: 10,
                               fontWeight: FontWeight.w700,
                               letterSpacing: 0.5,
@@ -1144,7 +1144,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                         children: [
                           Text(
                             'READ MORE',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                               color: isDark ? Colors.black : Colors.white,
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
@@ -1249,7 +1249,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                     ),
                     child: Text(
                       'ARTISTIC IMPRESSION',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         color: Colors.white,
                         fontSize: 7,
                         fontWeight: FontWeight.w900,
@@ -1268,7 +1268,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                     children: [
                       Text(
                         'FEATURED PROPERTY',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: const Color(0xFFC4A484),
                           fontSize: 9,
                           fontWeight: FontWeight.w700,
@@ -1281,7 +1281,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                       // weight, text-4xl, tracking-tight.
                       Text(
                         (project['title'] ?? '').toString(),
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: Theme.of(context).colorScheme.onSurface,
                           fontSize: 36,
                           fontWeight: FontWeight.w300,
@@ -1296,7 +1296,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                             .toUpperCase(),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: Colors.white.withValues(alpha: 0.8),
                           fontSize: 10,
                           height: 1.5,
@@ -1386,7 +1386,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                     child: Center(
                       child: Text(
                         'READ MORE',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: isDark ? Colors.black : Colors.white,
                           fontWeight: FontWeight.w900,
                           fontSize: 12,
@@ -1438,7 +1438,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         Text(
           label,
           textAlign: TextAlign.center,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             color: isDark ? Colors.white : Colors.black,
             fontSize: 9,
             fontWeight: FontWeight.w800,
@@ -1573,7 +1573,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 color: isDark ? Colors.white : Colors.black,
                 fontWeight: FontWeight.w900,
                 fontSize: 10,
@@ -1584,7 +1584,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
             Text(
               desc,
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 color: (isDark ? Colors.white : Colors.black).withValues(
                   alpha: 0.68,
                 ),
@@ -1641,7 +1641,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
             Expanded(
               child: Text(
                 "I've read and agree to the Privacy Policy",
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   color: isDark ? Colors.white54 : Colors.black54,
                   fontSize: 11,
                   letterSpacing: 1,
@@ -1668,7 +1668,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                       )
                     : Text(
                         'SUBMIT INTEREST',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: isDark ? Colors.black : Colors.white,
                           fontWeight: FontWeight.w400,
                           letterSpacing: 2,
@@ -1714,7 +1714,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         maxLines: isLong ? 5 : 1,
         decoration: InputDecoration(
           hintText: hint ?? label,
-          hintStyle: GoogleFonts.montserrat(
+          hintStyle: GoogleFonts.dmSerifDisplay(
             color: isDark ? Colors.white54 : Colors.black45,
             fontSize: 13,
           ),

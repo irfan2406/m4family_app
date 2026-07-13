@@ -155,7 +155,7 @@ class _CpForgotPasswordScreenState extends ConsumerState<CpForgotPasswordScreen>
                         onPressed: () => context.go('/home'),
                         child: Text(
                           'BACK TO GUEST PORTAL',
-                          style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 2),
+                          style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 2),
                         ),
                       ),
                     ),
@@ -181,7 +181,7 @@ class _CpForgotPasswordScreenState extends ConsumerState<CpForgotPasswordScreen>
                         : _step == 1
                             ? 'VERIFY CODE'
                             : 'NEW PASSWORD',
-                    style: GoogleFonts.montserrat(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white),
+                    style: GoogleFonts.dmSerifDisplay(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                   const SizedBox(height: 24),
                   if (_step == 0) ...[

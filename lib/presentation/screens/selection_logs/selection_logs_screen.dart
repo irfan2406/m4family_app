@@ -114,7 +114,7 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
               children: [
                 Text(
                   'CUSTOMIZATION LOGS',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 16,
                     fontWeight: FontWeight.w900,
                     color: foreground,
@@ -123,7 +123,7 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
                 ),
                 Text(
                   'PREVIOUS SELECTIONS',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 9,
                     fontWeight: FontWeight.w900,
                     color: foreground.withOpacity(0.3),
@@ -149,10 +149,10 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
         ),
         child: TextField(
           onChanged: (v) => setState(() => _searchQuery = v),
-          style: GoogleFonts.montserrat(color: foreground, fontSize: 13),
+          style: GoogleFonts.dmSerifDisplay(color: foreground, fontSize: 13),
           decoration: InputDecoration(
             hintText: 'SEARCH BY ID OR PROJECT...',
-            hintStyle: GoogleFonts.montserrat(
+            hintStyle: GoogleFonts.dmSerifDisplay(
               color: foreground.withOpacity(0.24),
               fontSize: 10,
               fontWeight: FontWeight.w900,
@@ -175,7 +175,7 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
         children: [
           Text(
             'SELECTION AUDIT',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 9,
               fontWeight: FontWeight.w900,
               color: foreground.withOpacity(0.45),
@@ -184,7 +184,7 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
           ),
           Text(
             '$count LOGS RETRIEVED',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 9,
               fontWeight: FontWeight.w900,
               color: foreground.withOpacity(0.45),
@@ -231,7 +231,7 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
               Text(
                 'NO CUSTOMIZATION LOGS FOUND',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   color: foreground.withOpacity(0.5),
                   fontWeight: FontWeight.w900,
                   fontSize: 11,
@@ -251,7 +251,7 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                   child: Text(
                     'START CUSTOMIZING',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       color: const Color(0xFFFFD700),
                       fontWeight: FontWeight.w900,
                       fontSize: 11,
@@ -354,7 +354,7 @@ class _LogCard extends StatelessWidget {
                           ),
                           child: Text(
                             '#$shortId',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                               color: foreground.withOpacity(0.3),
                               fontSize: 9,
                               fontWeight: FontWeight.w900,
@@ -385,7 +385,7 @@ class _LogCard extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     projectName.toUpperCase(),
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       color: foreground,
                       fontSize: 15,
                       fontWeight: FontWeight.w900,
@@ -408,7 +408,7 @@ class _LogCard extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     'SELECTION SUMMARY',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 8,
                       fontWeight: FontWeight.w900,
                       color: foreground.withOpacity(0.3),
@@ -423,7 +423,7 @@ class _LogCard extends StatelessWidget {
                     if (summaryItems.length > 2)
                       Text(
                         ' +${summaryItems.length - 2} MORE',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 8,
                           fontWeight: FontWeight.w900,
                           color: foreground.withOpacity(0.3),
@@ -453,7 +453,7 @@ class _LogCard extends StatelessWidget {
       ),
       child: Text(
         status,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           color: color,
           fontSize: 8,
           fontWeight: FontWeight.w900,
@@ -470,7 +470,7 @@ class _LogCard extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 8,
             fontWeight: FontWeight.w900,
             color: foreground.withOpacity(0.2),
@@ -480,7 +480,7 @@ class _LogCard extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           value,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 11,
             fontWeight: FontWeight.w800,
             color: foreground.withOpacity(0.8),
@@ -503,7 +503,7 @@ class _LogCard extends StatelessWidget {
       ),
       child: Text(
         label.toUpperCase(),
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           color: foreground.withOpacity(0.7),
           fontSize: 7.5,
           fontWeight: FontWeight.w900,
@@ -583,7 +583,7 @@ class _LogDetailDialog extends ConsumerWidget {
                             ),
                             child: Text(
                               'LOG ID: #$shortId',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                 color: foreground.withOpacity(0.5),
                                 fontSize: 9,
                                 fontWeight: FontWeight.w900,
@@ -603,7 +603,7 @@ class _LogDetailDialog extends ConsumerWidget {
                   const SizedBox(height: 24),
                   Text(
                     projectName.toUpperCase(),
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 24,
                       fontWeight: FontWeight.w900,
                       color: foreground,
@@ -618,7 +618,7 @@ class _LogDetailDialog extends ConsumerWidget {
                       Flexible(
                         child: Text(
                           'LOCATION: ${space.toUpperCase()}',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                             color: foreground.withOpacity(0.5),
@@ -631,7 +631,7 @@ class _LogDetailDialog extends ConsumerWidget {
                   const SizedBox(height: 40),
                   Text(
                     'CHOSEN SPECIFICATIONS',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       color: foreground.withOpacity(0.3),
@@ -645,7 +645,7 @@ class _LogDetailDialog extends ConsumerWidget {
                   const SizedBox(height: 40),
                   Text(
                     'PROTOCOL STATUS',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       color: foreground.withOpacity(0.3),
@@ -664,7 +664,7 @@ class _LogDetailDialog extends ConsumerWidget {
                       (status == 'PENDING' || status == 'REQUESTED')
                           ? 'Your selection is currently under review by our interior consultants. We will contact you shortly.'
                           : 'This request has been ${status.toLowerCase()} and logged in your asset history.',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 12,
                         height: 1.6,
                         color: foreground.withOpacity(0.54),
@@ -751,7 +751,7 @@ class _LogDetailDialog extends ConsumerWidget {
       ),
       child: Text(
         status,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           color: color,
           fontSize: 8,
           fontWeight: FontWeight.w900,
@@ -796,7 +796,7 @@ class _LogDetailDialog extends ConsumerWidget {
               children: [
                 Text(
                   key.toUpperCase(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     color: foreground.withOpacity(0.3),
@@ -806,7 +806,7 @@ class _LogDetailDialog extends ConsumerWidget {
                 const SizedBox(height: 2),
                 Text(
                   displayValue.toUpperCase(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 12,
                     fontWeight: FontWeight.w900,
                     color: foreground,
@@ -834,7 +834,7 @@ class _LogDetailDialog extends ConsumerWidget {
         alignment: Alignment.center,
         child: Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 11,
             fontWeight: FontWeight.w900,
             color: isPrimary ? Theme.of(context).scaffoldBackgroundColor : foreground.withOpacity(0.6),

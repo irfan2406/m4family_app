@@ -170,7 +170,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
             child: Text(
               'REFERRAL & REWARDS',
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 16,
                 fontWeight: FontWeight.w900,
                 color: textPrimary,
@@ -209,7 +209,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
         children: [
           Text(
             'MY REFERRAL IDENTITY CODE',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 9,
               fontWeight: FontWeight.w900,
               letterSpacing: 2,
@@ -229,7 +229,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
               children: [
                 Text(
                   code,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 3,
@@ -280,7 +280,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
         children: [
           Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 8,
               fontWeight: FontWeight.w900,
               letterSpacing: 1.5,
@@ -290,7 +290,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
           const SizedBox(height: 10),
           Text(
             value,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 24,
               fontWeight: FontWeight.w900,
               color: textPrimary,
@@ -328,7 +328,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
           children: [
             Text(
               'REDEEM REWARDS',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 11,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 2,
@@ -402,7 +402,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
             const SizedBox(height: 14),
             Text(
               label,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 9,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.5,
@@ -421,7 +421,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
       children: [
         Text(
           title,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 9,
             fontWeight: FontWeight.w900,
             letterSpacing: 2,
@@ -479,7 +479,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
               children: [
                 Text(
                   name.toUpperCase(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 13,
                     fontWeight: FontWeight.w800,
                     color: textPrimary,
@@ -488,7 +488,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                 const SizedBox(height: 2),
                 Text(
                   project.toUpperCase(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.5,
@@ -499,7 +499,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                   const SizedBox(height: 2),
                   Text(
                     code,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 9,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 1,
@@ -519,7 +519,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
             ),
             child: Text(
               status.toUpperCase(),
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 8,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1,
@@ -570,7 +570,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     color: textPrimary,
@@ -579,7 +579,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                 const SizedBox(height: 2),
                 Text(
                   date,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 8,
                     fontWeight: FontWeight.w700,
                     color: textPrimary.withValues(alpha: 0.4),
@@ -593,7 +593,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
             children: [
               Text(
                 '${isDebit ? '-' : '+'}$amount',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 12,
                   fontWeight: FontWeight.w900,
                   color: isDebit ? Colors.redAccent : const Color(0xFF10B981),
@@ -602,7 +602,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
               if (status.isNotEmpty)
                 Text(
                   'STATUS: ${status.toUpperCase()}',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 7,
                     fontWeight: FontWeight.w900,
                     color: textPrimary.withValues(alpha: 0.35),
@@ -629,7 +629,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
       child: Center(
         child: Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 10,
             fontWeight: FontWeight.w900,
             letterSpacing: 2,
@@ -652,7 +652,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
             Text(
               'FAILED TO LOAD REWARD HUB',
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 11,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.5,
@@ -670,7 +670,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                 ),
                 child: Text(
                   'RETRY',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -734,7 +734,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                     const SizedBox(height: 28),
                     Text(
                       'NEW\nREFERRAL',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 24,
                         fontWeight: FontWeight.w900,
                         color: textPrimary,
@@ -744,7 +744,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                     const SizedBox(height: 8),
                     Text(
                       'REFER & EARN REWARDS',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 9,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 2,
@@ -778,7 +778,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                             decoration: _inputBox(isDark, textPrimary),
                             child: Text(
                               'COULD NOT LOAD PROJECTS',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w800,
                                 color: textPrimary.withValues(alpha: 0.4),
@@ -795,7 +795,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                                 value: selectedProjectId,
                                 hint: Text(
                                   'SELECT PROJECT',
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.dmSerifDisplay(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w800,
                                     color: textPrimary.withValues(alpha: 0.3),
@@ -810,7 +810,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                                         value: p['_id'].toString(),
                                         child: Text(
                                           (p['title'] ?? p['name'] ?? 'PROJECT').toString().toUpperCase(),
-                                          style: GoogleFonts.montserrat(
+                                          style: GoogleFonts.dmSerifDisplay(
                                             fontSize: 10,
                                             fontWeight: FontWeight.w800,
                                             color: textPrimary,
@@ -902,7 +902,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                               )
                             : Text(
                                 'SUBMIT REFERRAL',
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.dmSerifDisplay(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w900,
                                   letterSpacing: 2,
@@ -925,7 +925,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
   Widget _formLabel(String text, Color textPrimary) {
     return Text(
       text,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.dmSerifDisplay(
         fontSize: 9,
         fontWeight: FontWeight.w900,
         letterSpacing: 1.5,
@@ -950,14 +950,14 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
       child: TextField(
         controller: controller,
         keyboardType: type,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           fontSize: 13,
           fontWeight: FontWeight.w700,
           color: textPrimary,
         ),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: GoogleFonts.montserrat(
+          hintStyle: GoogleFonts.dmSerifDisplay(
             fontSize: 12,
             fontWeight: FontWeight.w700,
             color: textPrimary.withValues(alpha: 0.25),

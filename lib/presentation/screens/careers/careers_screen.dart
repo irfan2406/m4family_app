@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
@@ -95,7 +96,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
           children: [
             Text(
               'CAREERS',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 color: isDark ? Colors.white : Colors.black,
                 fontWeight: FontWeight.w600,
                 fontSize: 17,
@@ -104,7 +105,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
             ),
             Text(
               'JOIN OUR ARCHITECTURAL LEGACY',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
                 fontWeight: FontWeight.w400,
                 fontSize: 8,
@@ -167,24 +168,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
             builder: (context) => Center(
               child: Padding(
                 padding: const EdgeInsets.only(right: 12),
-                child: InkWell(
-                  onTap: () => Scaffold.of(context).openDrawer(),
-                  borderRadius: BorderRadius.circular(12),
-                  child: Container(
-                    width: 40,
-                    height: 36,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Colors.black,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      LucideIcons.moreHorizontal,
-                      size: 18,
-                      color: isDark ? Colors.black : Colors.white,
-                    ),
-                  ),
-                ),
+                child: const SideMenuButton(),
               ),
             ),
           ),
@@ -270,7 +254,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
         // Thin heading, plain black (no gradient).
         Text(
           displayTitle,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             color: isDark ? Colors.white : Colors.black,
             fontSize: 34,
             fontWeight: FontWeight.w400,
@@ -281,7 +265,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
         const SizedBox(height: 20),
         Text(
           subheading,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             color: isDark ? Colors.white : const Color(0xFF2B3A55),
             fontSize: 24,
             fontWeight: FontWeight.w600,
@@ -292,7 +276,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
         const SizedBox(height: 10),
         Text(
           displayContent,
-          style: GoogleFonts.inter(
+          style: GoogleFonts.dmSerifDisplay(
             color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
             fontSize: 16,
             fontWeight: FontWeight.w400,
@@ -332,7 +316,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
               alignment: Alignment.center,
               child: Text(
                 cat,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   color: isActive
                       ? (isDark ? Colors.black : Colors.white)
                       : (isDark ? Colors.white60 : Colors.black54),
@@ -403,7 +387,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
             Text(
               'NO ACTIVE VACANCIES CURRENTLY AVAILABLE',
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.3),
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
@@ -457,7 +441,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                   children: [
                     Text(
                       (job['title'] ?? '').toString().toUpperCase(),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         color: isDark ? Colors.white : Colors.black,
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -474,7 +458,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                       children: [
                         Text(
                           (job['department'] ?? '').toString().toUpperCase(),
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             color: isDark ? Colors.white70 : Colors.black87,
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
@@ -518,7 +502,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                                 (job['location'] ?? 'MUMBAI')
                                     .toString()
                                     .toUpperCase(),
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.dmSerifDisplay(
                                   color: (isDark ? Colors.white : Colors.black)
                                       .withOpacity(0.68),
                                   fontSize: 10,

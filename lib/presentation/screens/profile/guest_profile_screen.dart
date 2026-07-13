@@ -65,7 +65,7 @@ class GuestProfileScreen extends ConsumerWidget {
                       const SizedBox(width: 16),
                       Text(
                         'MY PROFILE',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: textPrimary,
@@ -118,7 +118,7 @@ class GuestProfileScreen extends ConsumerWidget {
                                 child: Center(
                                   child: Text(
                                     '?',
-                                    style: GoogleFonts.montserrat(
+                                    style: GoogleFonts.dmSerifDisplay(
                                       fontSize: 30,
                                       fontWeight: FontWeight.bold,
                                       color: textMuted,
@@ -129,7 +129,7 @@ class GuestProfileScreen extends ConsumerWidget {
                               const SizedBox(height: 24),
                               Text(
                                 'GUEST USER',
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.dmSerifDisplay(
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,
                                   color: textPrimary,
@@ -140,7 +140,7 @@ class GuestProfileScreen extends ConsumerWidget {
                               Text(
                                 'SIGN IN TO ACCESS YOUR PERSONALIZED DASHBOARD, DOCUMENTS, AND EXCLUSIVE OFFERS.',
                                 textAlign: TextAlign.center,
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.dmSerifDisplay(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w900,
                                   color: textMuted,
@@ -170,7 +170,7 @@ class GuestProfileScreen extends ConsumerWidget {
                         Center(
                           child: Text(
                             'WHY JOIN M4 FAMILY?',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                               fontSize: 10,
                               fontWeight: FontWeight.w700,
                               color: textMuted,
@@ -200,7 +200,7 @@ class GuestProfileScreen extends ConsumerWidget {
                         // Preferences
                         Text(
                           'PREFERENCES',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 9,
                             fontWeight: FontWeight.w700,
                             color: textMuted,
@@ -240,7 +240,7 @@ class GuestProfileScreen extends ConsumerWidget {
                                   children: [
                                     Text(
                                       'DARK MODE',
-                                      style: GoogleFonts.montserrat(
+                                      style: GoogleFonts.dmSerifDisplay(
                                         fontSize: 12,
                                         fontWeight: FontWeight.bold,
                                         color: textPrimary,
@@ -249,7 +249,7 @@ class GuestProfileScreen extends ConsumerWidget {
                                     const SizedBox(height: 2),
                                     Text(
                                       isDarkMode ? 'ENABLED' : 'DISABLED',
-                                      style: GoogleFonts.montserrat(
+                                      style: GoogleFonts.dmSerifDisplay(
                                         fontSize: 8,
                                         fontWeight: FontWeight.w900,
                                         color: textMuted,
@@ -294,7 +294,7 @@ class GuestProfileScreen extends ConsumerWidget {
                                   const SizedBox(width: 8),
                                   Text(
                                     'INVESTOR LOGIN',
-                                    style: GoogleFonts.montserrat(
+                                    style: GoogleFonts.dmSerifDisplay(
                                       fontSize: 10,
                                       fontWeight: FontWeight.w900,
                                       color: const Color(0xFFD4A93B),
@@ -344,7 +344,7 @@ class _InfoTile extends StatelessWidget {
         children: [
           Text(
             title,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 11,
               fontWeight: FontWeight.bold,
               color: textPrimary,
@@ -353,7 +353,7 @@ class _InfoTile extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             body,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 9,
               color: textMuted,
               height: 1.4,
@@ -403,7 +403,7 @@ class _PrimaryButton extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 label,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
                   color: fg,

@@ -348,7 +348,7 @@ class _CpProfileDetailsScreenState extends ConsumerState<CpProfileDetailsScreen>
               children: [
                 Text(
                   'MY PROFILE',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 15,
                     fontWeight: FontWeight.w800,
                     letterSpacing: -0.3,
@@ -358,7 +358,7 @@ class _CpProfileDetailsScreenState extends ConsumerState<CpProfileDetailsScreen>
                 const SizedBox(height: 2),
                 Text(
                   'MANAGE YOUR PERSONAL DETAILS',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 8,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
@@ -483,7 +483,7 @@ class _CpProfileDetailsScreenState extends ConsumerState<CpProfileDetailsScreen>
             ),
             child: Text(
               'PLATINUM MEMBER',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 9,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 2,
@@ -518,7 +518,7 @@ class _CpProfileDetailsScreenState extends ConsumerState<CpProfileDetailsScreen>
           padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 9,
               fontWeight: FontWeight.w800,
               letterSpacing: 1.5,
@@ -531,7 +531,7 @@ class _CpProfileDetailsScreenState extends ConsumerState<CpProfileDetailsScreen>
           enabled: enabled,
           keyboardType: keyboardType,
           maxLines: maxLines,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 14,
             fontWeight: FontWeight.w600,
             color: enabled ? textPrimary : textPrimary.withValues(alpha: 0.8),
@@ -586,7 +586,7 @@ class _CpProfileDetailsScreenState extends ConsumerState<CpProfileDetailsScreen>
                 ),
                 child: Text(
                   'CANCEL',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
@@ -616,7 +616,7 @@ class _CpProfileDetailsScreenState extends ConsumerState<CpProfileDetailsScreen>
                       )
                     : Text(
                         'SAVE CHANGES',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 11,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 1.5,

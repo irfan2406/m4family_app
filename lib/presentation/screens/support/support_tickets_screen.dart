@@ -208,7 +208,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
               const SizedBox(height: 16),
               Text(
                 'LOG CATEGORY',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2,
@@ -244,7 +244,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                       ),
                       child: Text(
                         t.toUpperCase(),
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 12,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1,
@@ -323,7 +323,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
             children: [
               Text(
                 'OPERATIONAL LOGS',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 14,
                   fontWeight: FontWeight.w900,
                   color: scheme.onSurface,
@@ -333,7 +333,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
               const SizedBox(height: 2),
               Text(
                 'FULL AUDIT HISTORY',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 8,
                   fontWeight: FontWeight.w900,
                   color: scheme.onSurface.withValues(alpha: 0.68),
@@ -373,13 +373,13 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
               child: TextField(
                 controller: _searchController,
                 onChanged: (_) => setState(() {}),
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 14,
                   fontWeight: FontWeight.w800,
                 ),
                 decoration: InputDecoration(
                   hintText: 'SEARCH LOGS, TICKETS, UPD...',
-                  hintStyle: GoogleFonts.montserrat(
+                  hintStyle: GoogleFonts.dmSerifDisplay(
                     fontSize: 12,
                     fontWeight: FontWeight.w800,
                     color: scheme.onSurface.withValues(alpha: 0.68),
@@ -459,7 +459,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
               children: [
                 Text(
                   'TYPE: ${_selectedType!.toUpperCase()}',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     color: scheme.onSurface,
@@ -511,7 +511,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
             const SizedBox(height: 24),
             Text(
               'NO LOGS FOUND',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 14,
                 fontWeight: FontWeight.w900,
                 color: scheme.onSurface,
@@ -521,7 +521,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
             const SizedBox(height: 8),
             Text(
               'TRY ADJUSTING YOUR SEARCH OR FILTERS',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 9,
                 fontWeight: FontWeight.w900,
                 color: scheme.onSurface.withValues(alpha: 0.68),
@@ -555,7 +555,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                   ),
                   child: Text(
                     'RESET MATRIX',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       color: scheme.onSurface,
@@ -619,7 +619,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                         ),
                         child: Text(
                           log['id'] as String,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 8,
                             fontWeight: FontWeight.w800,
                             color: scheme.onSurface.withValues(alpha: 0.68),
@@ -641,7 +641,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                         ),
                         child: Text(
                           (log['type'] as String).toUpperCase(),
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 8,
                             fontWeight: FontWeight.w800,
                             color: scheme.onSurface.withValues(alpha: 0.68),
@@ -664,7 +664,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                   ),
                   child: Text(
                     (log['status'] as String).toUpperCase(),
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 8,
                       fontWeight: FontWeight.w900,
                       color: statusColor,
@@ -677,7 +677,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
             const SizedBox(height: 16),
             Text(
               (log['title'] as String).toUpperCase(),
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 14,
                 fontWeight: FontWeight.w900,
                 color: scheme.onSurface,
@@ -689,7 +689,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
             const SizedBox(height: 8),
             Text(
               (log['description'] as String).toUpperCase(),
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 10,
                 fontWeight: FontWeight.w700,
                 color: scheme.onSurface.withValues(alpha: 0.68),
@@ -719,7 +719,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                     const SizedBox(width: 8),
                     Text(
                       (log['date'] as String).toUpperCase(),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 9,
                         fontWeight: FontWeight.w900,
                         color: scheme.onSurface.withValues(alpha: 0.68),
@@ -732,7 +732,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                   children: [
                     Text(
                       'VIEW DETAILS',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 8,
                         fontWeight: FontWeight.w900,
                         color: scheme.onSurface.withValues(alpha: 0.68),
@@ -794,7 +794,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                           ),
                           child: Text(
                             '${log['id']} • ${(log['type'] as String).toUpperCase()}',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
                               color: const Color(0xFF666666),
@@ -828,7 +828,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                         const SizedBox(height: 36),
                         Text(
                           'LOG SUMMARY',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 11,
                             fontWeight: FontWeight.w900,
                             color: labelGrey,
@@ -848,7 +848,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                           ),
                           child: Text(
                             (log['description'] as String).toUpperCase(),
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                               fontSize: 12.5,
                               fontWeight: FontWeight.w700,
                               color: summaryText,
@@ -860,7 +860,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                         const SizedBox(height: 36),
                         Text(
                           'STRUCTURAL DATA',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 11,
                             fontWeight: FontWeight.w900,
                             color: labelGrey,
@@ -893,7 +893,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                                     children: [
                                       Text(
                                         details.keys.elementAt(i).toUpperCase(),
-                                        style: GoogleFonts.montserrat(
+                                        style: GoogleFonts.dmSerifDisplay(
                                           fontSize: 10,
                                           fontWeight: FontWeight.w800,
                                           color: Colors.black.withValues(
@@ -910,7 +910,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                                               .toString()
                                               .toUpperCase(),
                                           textAlign: TextAlign.right,
-                                          style: GoogleFonts.montserrat(
+                                          style: GoogleFonts.dmSerifDisplay(
                                             fontSize: 12,
                                             fontWeight: FontWeight.w900,
                                             color: Colors.black,
@@ -951,7 +951,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                         ),
                         child: Text(
                           'BACK TO OPERATIONAL LOGS',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 11,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 1.5,
@@ -987,7 +987,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
         children: [
           Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 10,
               fontWeight: FontWeight.w900,
               color: const Color(0xFF6B6B6B),
@@ -1011,7 +1011,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
               Flexible(
                 child: Text(
                   value.toUpperCase(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 14,
                     fontWeight: FontWeight.w900,
                     color: Colors.black,

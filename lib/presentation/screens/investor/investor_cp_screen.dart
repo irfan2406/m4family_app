@@ -92,7 +92,7 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
           children: [
             Text(
               'Partner Dashboard',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontWeight: FontWeight.w800,
                 fontSize: 16,
                 color: textPrimary,
@@ -100,7 +100,7 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
             ),
             Text(
               'ID: CP-9021 • M4 PARTNER',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 8,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 2,
@@ -156,7 +156,7 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
               Expanded(
                 child: Text(
                   'REGISTERED LEADS',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 2,
@@ -173,7 +173,7 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
                 ),
                 child: Text(
                   '${filtered.length} ACTIVE',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 8,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1.5,
@@ -208,7 +208,7 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
                     const SizedBox(height: 12),
                     Text(
                       'NO LEADS FOUND',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 10,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 2,
@@ -245,14 +245,14 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
       ),
       child: TextField(
         controller: _search,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           fontSize: 13,
           fontWeight: FontWeight.w700,
           color: textPrimary,
         ),
         decoration: InputDecoration(
           hintText: 'Search registered leads…',
-          hintStyle: GoogleFonts.montserrat(
+          hintStyle: GoogleFonts.dmSerifDisplay(
             fontSize: 13,
             fontWeight: FontWeight.w600,
             color: muted,
@@ -328,7 +328,7 @@ class _StatCard extends StatelessWidget {
               children: [
                 Text(
                   stat.label.toUpperCase(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 9,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1.5,
@@ -338,7 +338,7 @@ class _StatCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   stat.value,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
                     color: textPrimary,
@@ -413,7 +413,7 @@ class _LeadCard extends StatelessWidget {
                       lead.name.toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 15,
                         fontWeight: FontWeight.w800,
                         color: textPrimary,
@@ -425,7 +425,7 @@ class _LeadCard extends StatelessWidget {
                       lead.project.toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 10,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1.5,
@@ -445,7 +445,7 @@ class _LeadCard extends StatelessWidget {
                 ),
                 child: Text(
                   lead.status.toUpperCase(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 8,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1,
@@ -466,7 +466,7 @@ class _LeadCard extends StatelessWidget {
                     icon: const Icon(LucideIcons.phone, size: 16, color: _gold),
                     label: Text(
                       'CALL CLIENT',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 9,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1.5,
@@ -490,7 +490,7 @@ class _LeadCard extends StatelessWidget {
                     icon: Icon(LucideIcons.refreshCw, size: 16, color: bg),
                     label: Text(
                       'UPDATE STATUS',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 9,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1.5,
@@ -558,7 +558,7 @@ class _RegisterCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     'REGISTER NEW LEAD',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
                       letterSpacing: -0.5,
@@ -573,7 +573,7 @@ class _RegisterCard extends StatelessWidget {
             Text(
               'Register a high-priority lead against your channel partner ID and '
               'track it through visit, booking and payout.',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 10,
                 fontWeight: FontWeight.w500,
                 height: 1.6,
@@ -595,7 +595,7 @@ class _RegisterCard extends StatelessWidget {
                 ),
                 child: Text(
                   'REGISTER LEAD',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 2,
@@ -691,7 +691,7 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
                     children: [
                       Text(
                         'Register New Lead',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 18,
                           fontWeight: FontWeight.w800,
                           color: textPrimary,
@@ -700,7 +700,7 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
                       const SizedBox(height: 2),
                       Text(
                         'HIGH PRIORITY REGISTRATION',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 8,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 2,
@@ -732,7 +732,7 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
                   isExpanded: true,
                   dropdownColor: isDark ? const Color(0xFF111111) : Colors.white,
                   icon: Icon(LucideIcons.chevronDown, size: 18, color: muted),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
                     color: textPrimary,
@@ -770,7 +770,7 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
                 ),
                 child: Text(
                   'SUBMIT LEAD',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 11,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 2,
@@ -787,7 +787,7 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
 
   Widget _label(String text, Color muted) => Text(
         text,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           fontSize: 9,
           fontWeight: FontWeight.w800,
           letterSpacing: 1.5,
@@ -813,14 +813,14 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
       child: TextField(
         controller: c,
         keyboardType: keyboard,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           fontSize: 13,
           fontWeight: FontWeight.w700,
           color: textPrimary,
         ),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: GoogleFonts.montserrat(
+          hintStyle: GoogleFonts.dmSerifDisplay(
             fontSize: 13,
             fontWeight: FontWeight.w600,
             color: muted,

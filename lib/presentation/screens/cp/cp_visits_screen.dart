@@ -289,7 +289,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
             const SizedBox(width: 8),
             Text(
               'PERFORMANCE TRACKER',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontWeight: FontWeight.w900,
                 fontSize: 13,
                 letterSpacing: 1.2,
@@ -350,7 +350,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
             ),
             child: Text(
               label,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 9,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.2,
@@ -408,7 +408,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                   const SizedBox(height: 16),
                   Text(
                     'SYNCHRONIZING RECORDS...',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 9,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1,
@@ -463,13 +463,13 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
             ),
             child: TextField(
               onChanged: (v) => setState(() => _searchQuery = v),
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
               ),
               decoration: InputDecoration(
                 hintText: 'SEARCH CLIENT OR PROJECT...',
-                hintStyle: GoogleFonts.montserrat(
+                hintStyle: GoogleFonts.dmSerifDisplay(
                   fontSize: 9,
                   fontWeight: FontWeight.w800,
                   color: scheme.onSurface.withValues(alpha: 0.62),
@@ -512,7 +512,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                 size: 16,
                 color: scheme.onSurfaceVariant,
               ),
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 9,
                 fontWeight: FontWeight.w900,
                 color: scheme.onSurface,
@@ -589,7 +589,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                   children: [
                     Text(
                       dateStr,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 11,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 0.5,
@@ -599,7 +599,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                     const SizedBox(height: 2),
                     Text(
                       'VISIT ID: $shortId',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 8,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 0.8,
@@ -632,7 +632,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                               .toUpperCase(),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 11,
                             fontWeight: FontWeight.w900,
                             color: scheme.onSurface,
@@ -643,7 +643,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                           phone ?? email ?? '',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 8,
                             fontWeight: FontWeight.w700,
                             color: scheme.onSurfaceVariant.withValues(
@@ -665,7 +665,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       textAlign: TextAlign.right,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 11,
                         fontWeight: FontWeight.w900,
                         color: scheme.onSurface,
@@ -697,7 +697,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                           _projectTitle(v).toUpperCase(),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 11,
                             fontWeight: FontWeight.w900,
                             color: scheme.onSurface,
@@ -716,7 +716,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                   child: Text(
                     (v['configuration'] ?? 'N/A').toString().toUpperCase(),
                     textAlign: TextAlign.right,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 11,
                       fontWeight: FontWeight.w900,
                       color: scheme.onSurface,
@@ -761,7 +761,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                   ),
                   child: Text(
                     'VIEW BOOKING',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 9,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1,
@@ -790,7 +790,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
       children: [
         Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 7,
             fontWeight: FontWeight.w900,
             letterSpacing: 1,
@@ -835,7 +835,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
     if (status == 'INTERESTED') {
       return Text(
         'AWAITING ADMIN CLOSURE',
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           fontSize: 7,
           fontWeight: FontWeight.w900,
           letterSpacing: 0.8,
@@ -852,7 +852,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
           value: 'INTERESTED',
           child: Text(
             'Interested',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 11,
               fontWeight: FontWeight.w900,
               color: Colors.amber.shade800,
@@ -863,7 +863,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
           value: 'NOT_INTERESTED',
           child: Text(
             'Not Interested',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 11,
               fontWeight: FontWeight.w900,
               color: Colors.red,
@@ -885,7 +885,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
           children: [
             Text(
               'UPDATE STATUS',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 9,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1,
@@ -924,7 +924,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
           Text(
             'NO RECORDS FOUND MATCHING YOUR SEARCH',
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 10,
               fontWeight: FontWeight.w900,
               color: scheme.onSurfaceVariant.withValues(alpha: 0.68),
@@ -955,7 +955,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
           const SizedBox(width: 12),
           Text(
             'PAGE $_page / $_totalPages',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 10,
               fontWeight: FontWeight.w900,
               letterSpacing: 1.2,
@@ -1018,7 +1018,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
       ),
       child: Text(
         label,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           fontSize: 7,
           fontWeight: FontWeight.w900,
           color: fg,
@@ -1056,7 +1056,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                 children: [
                   Text(
                     'PAYMENT TRACKER',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1,
@@ -1065,7 +1065,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                   ),
                   Text(
                     'SETTLEMENT & COMMISSION STATUS',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 7,
                       fontWeight: FontWeight.w800,
                       color: scheme.onSurfaceVariant.withValues(alpha: 0.6),
@@ -1090,7 +1090,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                 ),
                 child: Text(
                   '${_bookings.length} TOTAL',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 0.8,
@@ -1114,7 +1114,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                   const SizedBox(height: 16),
                   Text(
                     'LOADING FINANCIAL LOGS...',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 9,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1,
@@ -1157,7 +1157,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                 const SizedBox(height: 16),
                 Text(
                   'ZERO FINANCIAL LOGS DETECTED',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 9,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.2,
@@ -1225,7 +1225,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                     Center(
                       child: Text(
                         '$progress%',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
                           fontStyle: FontStyle.italic,
@@ -1248,7 +1248,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                             projectTitle.toUpperCase(),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                               fontSize: 13,
                               fontWeight: FontWeight.w900,
                               color: scheme.onSurface,
@@ -1266,7 +1266,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                     const SizedBox(height: 2),
                     Text(
                       'Client: ${clientName.toString().toUpperCase()}',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 9,
                         fontWeight: FontWeight.w700,
                         color: scheme.onSurfaceVariant,
@@ -1290,7 +1290,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                       ),
                       child: Text(
                         sanctioned ? 'SANCTIONED' : 'PENDING SANCTION',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 7,
                           fontWeight: FontWeight.w900,
                           color: sanctioned
@@ -1366,7 +1366,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                     child: Text(
                       '100% Payment achieved. Notify admin for commission settlement.'
                           .toUpperCase(),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 7,
                         fontWeight: FontWeight.w900,
                         color: Colors.amber.shade800,

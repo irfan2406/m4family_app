@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'package:m4_mobile/presentation/providers/support_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:m4_mobile/presentation/screens/support/schedule_visit_screen.dart';
@@ -143,7 +144,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
               // header — just the title.
               Text(
                 'SUPPORT HUB',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
                   color: scheme.onSurface,
@@ -152,6 +153,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
               ),
             ],
           ),
+          const SideMenuButton(),
         ],
       ),
     ).animate().fadeIn().slideY(begin: -0.1);
@@ -164,7 +166,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
       children: [
         Text(
           'SUPPORT MATRIX',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 9,
             fontWeight: FontWeight.w900,
             color: scheme.onSurface,
@@ -239,7 +241,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
           children: [
             Text(
               'OPERATIONAL LOGS',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 10,
                 fontWeight: FontWeight.w900,
                 color: scheme.onSurface,
@@ -261,7 +263,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
           },
           child: Text(
             'VIEW ALL LOGS',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 9,
               fontWeight: FontWeight.w900,
               color: scheme.onSurface.withValues(alpha: 0.6),
@@ -286,7 +288,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
       child: Center(
         child: Text(
           'No active tickets.',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 13,
             fontWeight: FontWeight.w600,
             color: scheme.onSurface.withValues(alpha: 0.68),
@@ -358,7 +360,7 @@ class _MatrixItem extends StatelessWidget {
             const Spacer(),
             Text(
               title,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 color: scheme.onSurface,
                 fontWeight: FontWeight.w800,
                 fontSize: 14,
@@ -368,7 +370,7 @@ class _MatrixItem extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               subtitle.toUpperCase(),
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 color: scheme.onSurface.withValues(alpha: 0.68),
                 fontSize: 8,
                 fontWeight: FontWeight.w800,
@@ -438,7 +440,7 @@ class _TicketPreviewItem extends StatelessWidget {
                             id.isEmpty
                                 ? '—'
                                 : id.substring(0, id.length.clamp(0, 8)),
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                               color: Colors.blueAccent,
                               fontSize: 8,
                               fontWeight: FontWeight.w900,
@@ -449,7 +451,7 @@ class _TicketPreviewItem extends StatelessWidget {
                         Expanded(
                           child: Text(
                             title.toUpperCase(),
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                               color: Theme.of(context).colorScheme.onSurface,
                               fontWeight: FontWeight.w700,
                               fontSize: 13,
@@ -476,7 +478,7 @@ class _TicketPreviewItem extends StatelessWidget {
                           DateFormat(
                             'MMM d',
                           ).format(ticket.createdAt).toUpperCase(),
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             color: Theme.of(
                               context,
                             ).colorScheme.onSurface.withOpacity(0.62),
@@ -500,7 +502,7 @@ class _TicketPreviewItem extends StatelessWidget {
                 ),
                 child: Text(
                   status.toUpperCase(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     color: badgeFg,
                     fontSize: 8,
                     fontWeight: FontWeight.w900,

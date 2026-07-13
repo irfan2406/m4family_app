@@ -266,7 +266,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
               const SizedBox(width: 18),
               Text(
                 name,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 13,
                   fontWeight: FontWeight.w900,
                   color: onSurface,
@@ -331,7 +331,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                 const SizedBox(height: 24),
                 Text(
                   'BOOKING SUCCESSFUL',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 24,
                     fontWeight: FontWeight.w900,
                     color: isDark ? Colors.white : Colors.black,
@@ -341,7 +341,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                 Text(
                   'Your token payment has been received. Our team will verify the documents and contact you for the next steps.',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 10,
                     color: (isDark ? Colors.white : Colors.black).withOpacity(
                       0.6,
@@ -365,7 +365,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                     child: Center(
                       child: Text(
                         'BACK TO HOME',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: isDark ? Colors.black : Colors.white,
                           fontWeight: FontWeight.w900,
                           fontSize: 10,
@@ -406,7 +406,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
         ),
         title: Text(
           'SECURE PAYMENT',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 14,
             fontWeight: FontWeight.w900,
             color: isDark ? Colors.white : Colors.black,
@@ -473,7 +473,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                       children: [
                         Text(
                           'TOKEN AMOUNT',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                             color: Colors.white38,
@@ -483,7 +483,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                         const SizedBox(height: 12),
                         Text(
                           '₹$formattedAmount',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 36,
                             fontWeight: FontWeight.w900,
                             color: Colors.white,
@@ -514,7 +514,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                                   const SizedBox(width: 6),
                                   Text(
                                     '100% REFUNDABLE',
-                                    style: GoogleFonts.montserrat(
+                                    style: GoogleFonts.dmSerifDisplay(
                                       fontSize: 8,
                                       fontWeight: FontWeight.w900,
                                       color: Colors.white,
@@ -533,7 +533,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                             const SizedBox(width: 12),
                             Text(
                               'INSTANT RECEIPT',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                 fontSize: 8,
                                 fontWeight: FontWeight.w800,
                                 color: Colors.white.withOpacity(0.68),
@@ -556,7 +556,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
               children: [
                 Text(
                   'SELECT UNIT',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     color: (isDark ? Colors.white : Colors.black).withOpacity(
@@ -576,7 +576,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                   ),
                   child: Text(
                     'REQUIRED',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 8,
                       fontWeight: FontWeight.w900,
                       color: isDark ? Colors.black : Colors.white,
@@ -615,7 +615,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                 children: [
                   Text(
                     'AVAILABLE UNITS',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 9,
                       fontWeight: FontWeight.w900,
                       color: (isDark ? Colors.white : Colors.black).withOpacity(
@@ -647,7 +647,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                       child: Center(
                         child: Text(
                           _unitsError!.toUpperCase(),
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 9,
                             fontWeight: FontWeight.w900,
                             color: Colors.red,
@@ -669,7 +669,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                       child: Center(
                         child: Text(
                           'NO AVAILABLE UNITS FOUND FOR THIS PROJECT.',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 9,
                             fontWeight: FontWeight.w900,
                             color: Colors.red,
@@ -701,7 +701,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                               : _selectedUnitId,
                           hint: Text(
                             '-- Select a Unit / Apartment --',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                               fontSize: 11,
                               fontWeight: FontWeight.w700,
                               color: (isDark ? Colors.white : Colors.black)
@@ -717,7 +717,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                           dropdownColor: isDark
                               ? const Color(0xFF1A1C20)
                               : Colors.white,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
                             color: isDark ? Colors.white : Colors.black,
@@ -730,7 +730,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                               child: Text(
                                 _unitLabel(unit),
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.dmSerifDisplay(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w700,
                                   color: isDark ? Colors.white : Colors.black,
@@ -746,7 +746,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                   const SizedBox(height: 16),
                   Text(
                     'A UNIT IS LOCKED EXCLUSIVELY TO YOUR PROFILE ONCE THE TOKEN RESERVATION PAYMENT IS PROCESSED.',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 8,
                       fontWeight: FontWeight.w900,
                       color: (isDark ? Colors.white : Colors.black).withOpacity(
@@ -766,7 +766,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
               children: [
                 Text(
                   'COMPLIANCE DOCUMENTS',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     color: (isDark ? Colors.white : Colors.black).withOpacity(
@@ -788,7 +788,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                   ),
                   child: Text(
                     'OPTIONAL',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 8,
                       fontWeight: FontWeight.w900,
                       color: (isDark ? Colors.white : Colors.black).withOpacity(
@@ -842,7 +842,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                           doc['name']!.toUpperCase(),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                             color: isDark ? Colors.white : Colors.black,
@@ -959,7 +959,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                                   _isUploading
                                       ? 'UPLOADING SECURITY VAULT...'
                                       : 'QUICK UPLOAD DOCUMENTS',
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.dmSerifDisplay(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w900,
                                     color: isDark ? Colors.white : Colors.black,
@@ -970,7 +970,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                                   _isUploading
                                       ? 'ESTABLISHING ENCRYPTED CONNECTION'
                                       : 'TAP TO UPLOAD AADHAAR, PAN OR IDENTITY PROOF',
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.dmSerifDisplay(
                                     fontSize: 8,
                                     color: isDark
                                         ? Colors.white38
@@ -1011,7 +1011,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                         Expanded(
                           child: Text(
                             'DOCUMENTS ENSURE FASTER BOOKING VERIFICATION BY OUR TEAM.',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                               fontSize: 8,
                               fontWeight: FontWeight.w900,
                               color: isDark
@@ -1031,7 +1031,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
             const SizedBox(height: 48),
             Text(
               'PAYMENT METHOD',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 10,
                 fontWeight: FontWeight.w900,
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
@@ -1095,7 +1095,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                     Expanded(
                       child: Text(
                         'I AGREE TO THE BOOKING TERMS AND UNDERSTAND THAT THIS TOKEN AMOUNT IS FULLY REFUNDABLE WITHIN 7 DAYS OF PAYMENT.',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 9,
                           color: (isDark ? Colors.white : Colors.black)
                               .withOpacity(0.6),
@@ -1136,7 +1136,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                         children: [
                           Text(
                             'PAY ₹$formattedAmount',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                               fontSize: 14,
                               fontWeight: FontWeight.w900,
                               letterSpacing: 1,
@@ -1162,7 +1162,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                   const SizedBox(width: 10),
                   Text(
                     'PCI-DSS COMPLIANT • 256-BIT SSL ENCRYPTION',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 7,
                       fontWeight: FontWeight.w900,
                       color: isDark ? Colors.white24 : Colors.black26,

@@ -123,7 +123,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                   const SizedBox(height: 10),
                   Text(
                     'Video format not supported or unreachable',
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.dmSerifDisplay(
                       color: Colors.white.withOpacity(0.6),
                       fontSize: 12,
                     ),
@@ -223,7 +223,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                             children: [
                               Text(
                                 widget.content['type'].toString().toUpperCase(),
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.dmSerifDisplay(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w900,
                                   letterSpacing: 2,
@@ -324,7 +324,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                               ),
                               child: Text(
                                 widget.content['type'].toString().toUpperCase(),
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.dmSerifDisplay(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w900,
                                   color: scheme.onSurface,
@@ -335,7 +335,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                             const SizedBox(width: 15),
                             Text(
                               formattedDate,
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.dmSerifDisplay(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
                                 color: scheme.onSurface.withOpacity(0.68),
@@ -348,7 +348,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
 
                         Text(
                           widget.content['title'].toString().toUpperCase(),
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 30,
                             fontWeight: FontWeight.w900,
                             color: scheme.onSurface,
@@ -362,7 +362,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                         Text(
                           widget.content['description'] ??
                               'No description provided.',
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 15,
                             color: scheme.onSurface.withOpacity(0.6),
                             height: 1.8,
@@ -377,7 +377,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                           const SizedBox(height: 20),
                           HtmlWidget(
                             widget.content['content'],
-                            textStyle: GoogleFonts.inter(
+                            textStyle: GoogleFonts.dmSerifDisplay(
                               fontSize: 15,
                               color: scheme.onSurface.withOpacity(0.6),
                               height: 1.8,
@@ -413,7 +413,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                             child: Center(
                               child: Text(
                                 'CLOSE',
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.dmSerifDisplay(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w900,
                                   color: scheme.onSurface.withOpacity(0.6),
@@ -500,7 +500,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           children: [
             Text(
               'SHARE THIS ARTICLE',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 12,
                 fontWeight: FontWeight.w900,
                 color: Colors.white,
@@ -630,7 +630,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         ),
         child: Text(
           status.toUpperCase(),
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 9,
             fontWeight: FontWeight.w900,
             color: color,
@@ -691,7 +691,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
             children: [
               Text(
                 label.toUpperCase(),
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 8,
                   fontWeight: FontWeight.w900,
                   color: isDark ? Colors.white38 : Colors.black38,
@@ -701,7 +701,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               const SizedBox(height: 4),
               Text(
                 value,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 12,
                   fontWeight: FontWeight.w900,
                   color: isDark ? Colors.white : Colors.black,
@@ -775,7 +775,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 children: [
                   Text(
                     'LOCATION',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 8,
                       fontWeight: FontWeight.w900,
                       color: isDark ? Colors.white38 : Colors.black38,
@@ -785,7 +785,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                   const SizedBox(height: 4),
                   Text(
                     location,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 12,
                       fontWeight: FontWeight.w900,
                       color: isDark ? Colors.white : Colors.black,
@@ -795,7 +795,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                   const SizedBox(height: 4),
                   Text(
                     'VIEW ON MAPS ↗',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 8,
                       fontWeight: FontWeight.w900,
                       color: M4Theme.premiumBlue,
@@ -835,7 +835,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
               const SizedBox(width: 10),
               Text(
                 '$count ATTENDING',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 11,
                   fontWeight: FontWeight.w900,
                   color: isDark ? Colors.white : Colors.black,
@@ -866,7 +866,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                   child: Center(
                     child: Text(
                       initial,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 12,
                         fontWeight: FontWeight.w900,
                         color: M4Theme.premiumBlue,
@@ -904,7 +904,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           children: [
             Text(
               'RSVP TO EVENT',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 12,
                 fontWeight: FontWeight.w900,
                 color: Colors.white,
@@ -1079,7 +1079,7 @@ class _M4VideoControlsState extends State<_M4VideoControls> {
                           const SizedBox(width: 10),
                           Text(
                             '${_fmt(value.position)} / ${_fmt(value.duration)}',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                               color: Colors.white,
                               fontSize: 11,
                               fontWeight: FontWeight.w700,

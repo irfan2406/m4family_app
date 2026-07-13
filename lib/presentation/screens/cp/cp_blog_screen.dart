@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
@@ -89,7 +90,7 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
               children: [
                 Text(
                   'M4 FAMILY',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 14,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -98,7 +99,7 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                 ),
                 Text(
                   'DEVELOPMENTS',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 8,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 4,
@@ -109,26 +110,9 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
               ],
             ),
             actions: [
-              Builder(
-                builder: (ctx) => Padding(
-                  padding: const EdgeInsets.only(right: 20),
-                  child: IconButton(
-                    onPressed: () => Scaffold.of(ctx).openDrawer(),
-                    icon: const Icon(
-                      LucideIcons.moreHorizontal,
-                      size: 22,
-                      color: Colors.white,
-                    ),
-                    style: IconButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      fixedSize: const Size(56, 48),
-                    ),
-                  ),
-                ),
+              const Padding(
+                padding: EdgeInsets.only(right: 20),
+                child: SideMenuButton(),
               ),
             ],
           ),
@@ -162,7 +146,7 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                       const SizedBox(width: 14),
                       Text(
                         'CONTENT HUB',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 3,
@@ -174,7 +158,7 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                   const SizedBox(height: 16),
                   Text(
                     'M4 BLOG',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 32,
                       fontWeight: FontWeight.w900,
                       letterSpacing: -1,
@@ -185,7 +169,7 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                   const SizedBox(height: 16),
                   Text(
                     'Stay updated with our latest insights and news.',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: scheme.onSurface.withOpacity(isLight ? 0.8 : 0.6),
@@ -215,7 +199,7 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                   const SizedBox(height: 16),
                   Text(
                     'No blog posts found',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 18,
                       fontWeight: FontWeight.w900,
                       color: isLight ? Colors.black : Colors.white,
@@ -224,7 +208,7 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                   const SizedBox(height: 8),
                   Text(
                     "Check back soon for fresh updates.",
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       color: scheme.onSurface.withOpacity(isLight ? 0.7 : 0.68),
                       fontWeight: FontWeight.w600,
                     ),
@@ -326,7 +310,7 @@ class _BlogCard extends ConsumerWidget {
                     ),
                     child: Text(
                       (item['type'] ?? 'ARTICLE').toString().toUpperCase(),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 8,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 2,
@@ -355,7 +339,7 @@ class _BlogCard extends ConsumerWidget {
                     const SizedBox(width: 6),
                     Text(
                       formattedDate.toUpperCase(),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 9,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1.5,
@@ -380,7 +364,7 @@ class _BlogCard extends ConsumerWidget {
                     const SizedBox(width: 6),
                     Text(
                       'BY M4 TEAM',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 9,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1.5,
@@ -392,7 +376,7 @@ class _BlogCard extends ConsumerWidget {
                 const SizedBox(height: 16),
                 Text(
                   (item['title'] ?? '').toString().toUpperCase(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 20,
                     fontWeight: FontWeight.w900,
                     letterSpacing: -0.5,
@@ -405,7 +389,7 @@ class _BlogCard extends ConsumerWidget {
                 const SizedBox(height: 12),
                 Text(
                   (item['description'] ?? '').toString(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: scheme.onSurface.withOpacity(isLight ? 0.75 : 0.6),
@@ -425,7 +409,7 @@ class _BlogCard extends ConsumerWidget {
                       icon: const Icon(LucideIcons.arrowRight, size: 16),
                       label: Text(
                         'READ MORE',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1.5,

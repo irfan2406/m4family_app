@@ -178,7 +178,7 @@ class _InvestorPortfolioScreenState
             children: [
               Text(
                 'PORTFOLIO',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 20,
                   fontWeight: FontWeight.w800,
                   color: textPrimary,
@@ -189,7 +189,7 @@ class _InvestorPortfolioScreenState
               const SizedBox(height: 6),
               Text(
                 'MY INVESTMENTS',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 8,
                   fontWeight: FontWeight.w700,
                   color: M4Theme.premiumBlue.withValues(alpha: 0.6),
@@ -251,7 +251,7 @@ class _InvestorPortfolioScreenState
       padding: const EdgeInsets.only(left: 4),
       child: Text(
         text,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           fontSize: 9,
           fontWeight: FontWeight.w700,
           color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
@@ -294,7 +294,7 @@ class _InvestorPortfolioScreenState
               const SizedBox(width: 8),
               Text(
                 'PORTFOLIO VALUATION',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 9,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2.5,
@@ -310,7 +310,7 @@ class _InvestorPortfolioScreenState
               Flexible(
                 child: Text(
                   _formatValue(_currentValue),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 32,
                     fontWeight: FontWeight.w900,
                     color: Colors.white,
@@ -342,7 +342,7 @@ class _InvestorPortfolioScreenState
                       const SizedBox(width: 4),
                       Text(
                         '${_roiPct >= 0 ? '+' : ''}${_roiPct.toStringAsFixed(1)}%',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 11,
                           fontWeight: FontWeight.w900,
                           color: _gains >= 0 ? _green : _amber,
@@ -357,7 +357,7 @@ class _InvestorPortfolioScreenState
           const SizedBox(height: 6),
           Text(
             'CURRENT MARKET VALUE',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 9,
               fontWeight: FontWeight.w800,
               letterSpacing: 2,
@@ -396,7 +396,7 @@ class _InvestorPortfolioScreenState
       children: [
         Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 8,
             fontWeight: FontWeight.w800,
             letterSpacing: 1.5,
@@ -406,7 +406,7 @@ class _InvestorPortfolioScreenState
         const SizedBox(height: 6),
         Text(
           value,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 16,
             fontWeight: FontWeight.w900,
             color: valueColor,
@@ -495,7 +495,7 @@ class _InvestorPortfolioScreenState
             value,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 16,
               fontWeight: FontWeight.w900,
               color: textPrimary,
@@ -505,7 +505,7 @@ class _InvestorPortfolioScreenState
           const SizedBox(height: 4),
           Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 8,
               fontWeight: FontWeight.w700,
               color: muted,
@@ -612,7 +612,7 @@ class _InvestorPortfolioScreenState
             name.toUpperCase(),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 11,
               fontWeight: FontWeight.w800,
               color: textPrimary,
@@ -623,7 +623,7 @@ class _InvestorPortfolioScreenState
         const SizedBox(width: 12),
         Text(
           '${pct.toStringAsFixed(0)}%',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 11,
             fontWeight: FontWeight.w900,
             color: muted,
@@ -726,7 +726,7 @@ class _InvestorPortfolioScreenState
                 children: [
                   Text(
                     name.toUpperCase(),
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
                       color: textPrimary,
@@ -743,7 +743,7 @@ class _InvestorPortfolioScreenState
                       Expanded(
                         child: Text(
                           location.toUpperCase(),
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 9,
                             fontWeight: FontWeight.w700,
                             color: muted,
@@ -806,7 +806,7 @@ class _InvestorPortfolioScreenState
                             children: [
                               Text(
                                 'VIEW PERFORMANCE',
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.dmSerifDisplay(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w800,
                                   color:
@@ -943,7 +943,7 @@ class _InvestorPortfolioScreenState
                             children: [
                               Text(
                                 name.toUpperCase(),
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.dmSerifDisplay(
                                   fontSize: 22,
                                   fontWeight: FontWeight.w800,
                                   color: textPrimary,
@@ -963,7 +963,7 @@ class _InvestorPortfolioScreenState
                                       location.toUpperCase(),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.montserrat(
+                                      style: GoogleFonts.dmSerifDisplay(
                                         fontSize: 9,
                                         fontWeight: FontWeight.w700,
                                         color: M4Theme.premiumBlue
@@ -1012,7 +1012,7 @@ class _InvestorPortfolioScreenState
                                   children: [
                                     Text(
                                       'NET RETURN',
-                                      style: GoogleFonts.montserrat(
+                                      style: GoogleFonts.dmSerifDisplay(
                                         fontSize: 8,
                                         fontWeight: FontWeight.w800,
                                         color: muted,
@@ -1022,7 +1022,7 @@ class _InvestorPortfolioScreenState
                                     const SizedBox(height: 4),
                                     Text(
                                       '${gains >= 0 ? '+' : '-'}${_formatValue(gains.abs())}',
-                                      style: GoogleFonts.montserrat(
+                                      style: GoogleFonts.dmSerifDisplay(
                                         fontSize: 18,
                                         fontWeight: FontWeight.w900,
                                         color: gains >= 0 ? _green : _amber,
@@ -1033,7 +1033,7 @@ class _InvestorPortfolioScreenState
                               ),
                               Text(
                                 '${roi >= 0 ? '+' : ''}${roi.toStringAsFixed(1)}%',
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.dmSerifDisplay(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w900,
                                   color: gains >= 0 ? _green : _amber,
@@ -1110,7 +1110,7 @@ class _InvestorPortfolioScreenState
                                 const SizedBox(width: 8),
                                 Text(
                                   'VERIFIED INVESTMENT',
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.dmSerifDisplay(
                                     fontSize: 9,
                                     fontWeight: FontWeight.w800,
                                     color:
@@ -1147,7 +1147,7 @@ class _InvestorPortfolioScreenState
             const SizedBox(height: 20),
             Text(
               'NO INVESTMENTS YET',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
                 color: faint,
@@ -1158,7 +1158,7 @@ class _InvestorPortfolioScreenState
             Text(
               'Your portfolio holdings will appear here.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
                 color:
@@ -1177,7 +1177,7 @@ class _InvestorPortfolioScreenState
                 ),
                 child: Text(
                   'EXPLORE OPPORTUNITIES',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
                     color: isDark ? Colors.black : Colors.white,
@@ -1205,7 +1205,7 @@ class _InvestorPortfolioScreenState
             const SizedBox(height: 20),
             Text(
               'UNABLE TO LOAD PORTFOLIO',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
                 color: muted,
@@ -1224,7 +1224,7 @@ class _InvestorPortfolioScreenState
                 ),
                 child: Text(
                   'RETRY',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
                     color: isDark ? Colors.black : Colors.white,
@@ -1386,7 +1386,7 @@ class _Pill extends StatelessWidget {
       ),
       child: Text(
         text.toUpperCase(),
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           fontSize: 8,
           fontWeight: FontWeight.w800,
           color: fg,
@@ -1419,7 +1419,7 @@ class _StatusPill extends StatelessWidget {
       ),
       child: Text(
         status.toUpperCase(),
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           fontSize: 8,
           fontWeight: FontWeight.w800,
           color: color,
@@ -1457,7 +1457,7 @@ class _RoiBadge extends StatelessWidget {
           const SizedBox(width: 6),
           Text(
             '${positive ? '+' : ''}${roi.toStringAsFixed(1)}% ROI',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 10,
               fontWeight: FontWeight.w900,
               color: color,
@@ -1492,7 +1492,7 @@ class _DetailItem extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 8,
             fontWeight: FontWeight.w700,
             color: muted,
@@ -1503,7 +1503,7 @@ class _DetailItem extends StatelessWidget {
         Text(
           value.toUpperCase(),
           textAlign: alignEnd ? TextAlign.right : TextAlign.left,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 11,
             fontWeight: FontWeight.w800,
             fontStyle: FontStyle.italic,
@@ -1541,7 +1541,7 @@ class _SpecItem extends StatelessWidget {
             Expanded(
               child: Text(
                 label,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 8,
                   fontWeight: FontWeight.w700,
                   color: muted,
@@ -1554,7 +1554,7 @@ class _SpecItem extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           value.toUpperCase(),
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 12,
             fontWeight: FontWeight.w800,
             color: textPrimary,

@@ -136,7 +136,7 @@ class _InvestorReferralActiveScreenState
                 Text(
                   'ACTIVE REFERRALS',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 13,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -147,7 +147,7 @@ class _InvestorReferralActiveScreenState
                 Text(
                   'LEAD MATRIX',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 3,
@@ -181,7 +181,7 @@ class _InvestorReferralActiveScreenState
               const SizedBox(width: 8),
               Text(
                 '${_referrals.length} IN PIPELINE',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 9,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2,
@@ -232,7 +232,7 @@ class _InvestorReferralActiveScreenState
                   children: [
                     Text(
                       name,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 14,
                         fontWeight: FontWeight.w800,
                         color: textPrimary,
@@ -241,7 +241,7 @@ class _InvestorReferralActiveScreenState
                     const SizedBox(height: 4),
                     Text(
                       project.toUpperCase(),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 9,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1.5,
@@ -252,7 +252,7 @@ class _InvestorReferralActiveScreenState
                       const SizedBox(height: 4),
                       Text(
                         code,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 1,
@@ -283,7 +283,7 @@ class _InvestorReferralActiveScreenState
                   const SizedBox(width: 6),
                   Text(
                     'PIPELINE STATUS',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 8,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1.5,
@@ -295,7 +295,7 @@ class _InvestorReferralActiveScreenState
               if (phone.isNotEmpty)
                 Text(
                   phone,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     color: textPrimary,
@@ -318,7 +318,7 @@ class _InvestorReferralActiveScreenState
       ),
       child: Text(
         status.toUpperCase(),
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           fontSize: 8,
           fontWeight: FontWeight.w900,
           letterSpacing: 1,
@@ -346,7 +346,7 @@ class _InvestorReferralActiveScreenState
           Text(
             'NO ACTIVE REFERRALS IN PIPELINE',
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 10,
               fontWeight: FontWeight.w900,
               letterSpacing: 2,
@@ -368,7 +368,7 @@ class _InvestorReferralActiveScreenState
           const SizedBox(height: 16),
           Text(
             'COULD NOT LOAD REFERRALS',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 10,
               fontWeight: FontWeight.w900,
               letterSpacing: 2,
@@ -386,7 +386,7 @@ class _InvestorReferralActiveScreenState
               ),
               child: Text(
                 'RETRY',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2,

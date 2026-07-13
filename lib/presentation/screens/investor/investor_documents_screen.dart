@@ -221,7 +221,7 @@ class _InvestorDocumentsScreenState
               children: [
                 Text(
                   'LEGAL VAULT',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
                     color: textPrimary,
@@ -235,7 +235,7 @@ class _InvestorDocumentsScreenState
                     const SizedBox(width: 5),
                     Text(
                       'SECURE REPOSITORY',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 8,
                         fontWeight: FontWeight.w700,
                         color: (isDark ? Colors.white : Colors.black)
@@ -293,7 +293,7 @@ class _InvestorDocumentsScreenState
                 ),
                 child: Text(
                   f.toUpperCase(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 9,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1.5,
@@ -387,7 +387,7 @@ class _InvestorDocumentsScreenState
                     (doc['title'] ?? 'DOCUMENT').toString().toUpperCase(),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 13,
                       fontWeight: FontWeight.w800,
                       color: textPrimary,
@@ -399,7 +399,7 @@ class _InvestorDocumentsScreenState
                     children: [
                       Text(
                         _formatDate(doc['createdAt']).toUpperCase(),
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 8,
                           fontWeight: FontWeight.w700,
                           color: muted,
@@ -420,7 +420,7 @@ class _InvestorDocumentsScreenState
                         child: Text(
                           (doc['size'] ?? '').toString().toUpperCase(),
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 8,
                             fontWeight: FontWeight.w700,
                             color: _gold.withValues(alpha: 0.7),
@@ -505,7 +505,7 @@ class _InvestorDocumentsScreenState
         const SizedBox(height: 24),
         Text(
           'NO DOCUMENTS FOUND',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 10,
             fontWeight: FontWeight.w800,
             color: muted,
@@ -530,7 +530,7 @@ class _InvestorDocumentsScreenState
             Text(
               _error ?? 'Something went wrong',
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
                 color: textPrimary,
@@ -548,7 +548,7 @@ class _InvestorDocumentsScreenState
                 ),
                 child: Text(
                   'RETRY',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 2,
@@ -674,7 +674,7 @@ class _DocumentDetail extends StatelessWidget {
                     ),
                     child: Text(
                       'SECURED ${type.toUpperCase()}',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 8,
                         fontWeight: FontWeight.w800,
                         color: _gold,
@@ -685,7 +685,7 @@ class _DocumentDetail extends StatelessWidget {
                   const SizedBox(height: 12),
                   Text(
                     (doc['title'] ?? 'DOCUMENT').toString().toUpperCase(),
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
                       color: textPrimary,
@@ -718,7 +718,7 @@ class _DocumentDetail extends StatelessWidget {
                   const SizedBox(height: 20),
                   Text(
                     'VERIFICATION STATUS',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 8,
                       fontWeight: FontWeight.w800,
                       color: muted,
@@ -744,7 +744,7 @@ class _DocumentDetail extends StatelessWidget {
                         const SizedBox(width: 8),
                         Text(
                           'ENCRYPTED & VERIFIED',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 9,
                             fontWeight: FontWeight.w800,
                             color: const Color(0xFF22C55E),
@@ -759,7 +759,7 @@ class _DocumentDetail extends StatelessWidget {
                     const SizedBox(height: 20),
                     Text(
                       'DOCUMENT OVERVIEW',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 8,
                         fontWeight: FontWeight.w800,
                         color: muted,
@@ -769,7 +769,7 @@ class _DocumentDetail extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       '"${doc['description']}"',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                         fontStyle: FontStyle.italic,
@@ -790,7 +790,7 @@ class _DocumentDetail extends StatelessWidget {
                       icon: const Icon(LucideIcons.eye, size: 18),
                       label: Text(
                         'OPEN SECURE LINK',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1.5,
@@ -860,7 +860,7 @@ class _MetaTile extends StatelessWidget {
                 child: Text(
                   label,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 7,
                     fontWeight: FontWeight.w800,
                     color: muted,
@@ -875,7 +875,7 @@ class _MetaTile extends StatelessWidget {
             value,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 11,
               fontWeight: FontWeight.w800,
               color: textPrimary,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
@@ -173,7 +174,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                       children: [
                         Text(
                           'M4 FAMILY',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 14,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 2.5,
@@ -182,7 +183,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                         ),
                         Text(
                           'DEVELOPMENTS',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 8,
                             fontWeight: FontWeight.w700,
                             letterSpacing: 3.5,
@@ -219,7 +220,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                         const SizedBox(width: 15),
                         Text(
                           'CONTENT HUB',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 3,
@@ -231,7 +232,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                     const SizedBox(height: 20),
                     Text(
                       _getTitle(),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 32,
                         fontWeight: FontWeight.w900,
                         color: scheme.onSurface,
@@ -242,7 +243,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                     const SizedBox(height: 15),
                     Text(
                       _getSubtitle(),
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 14,
                         color: scheme.onSurface.withOpacity(0.68),
                         fontWeight: FontWeight.w500,
@@ -304,29 +305,9 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
   }
 
   Widget _buildMenuButton() {
-    final scheme = Theme.of(context).colorScheme;
-    return GestureDetector(
+    // Canonical side-menu button (identical size/colour to every other screen).
+    return SideMenuButton(
       onTap: () => _scaffoldKey.currentState?.openDrawer(),
-      child: Container(
-        width: 56,
-        height: 48,
-        decoration: BoxDecoration(
-          color: scheme.onSurface,
-          borderRadius: BorderRadius.circular(18),
-          boxShadow: [
-            BoxShadow(
-              color: scheme.onSurface.withOpacity(0.2),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
-            ),
-          ],
-        ),
-        child: Icon(
-          LucideIcons.moreHorizontal,
-          size: 24,
-          color: scheme.surface,
-        ),
-      ),
     );
   }
 
@@ -347,7 +328,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
           const SizedBox(height: 25),
           Text(
             'NO ${widget.contentType.toUpperCase()} POSTS FOUND',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 16,
               fontWeight: FontWeight.w900,
               color: scheme.onSurface,
@@ -359,7 +340,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
             child: Text(
               "We're working on something amazing. Check back soon for fresh updates from our content hub.",
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 13,
                 color: scheme.onSurface.withOpacity(0.68),
                 height: 1.5,
@@ -451,7 +432,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                             (item['type'] ?? widget.contentType)
                                 .toString()
                                 .toUpperCase(),
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                               fontSize: 7,
                               fontWeight: FontWeight.w900,
                               color: scheme.onSurface,
@@ -461,7 +442,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                         ),
                         Text(
                           formattedDate,
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 9,
                             fontWeight: FontWeight.bold,
                             color: scheme.onSurface.withOpacity(0.62),
@@ -474,7 +455,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                       item['title'].toString().toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 14,
                         fontWeight: FontWeight.w900,
                         color: scheme.onSurface,
@@ -486,7 +467,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                       item['description'] ?? '',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 10,
                         color: scheme.onSurface.withOpacity(0.68),
                         fontWeight: FontWeight.w500,
@@ -498,7 +479,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                       children: [
                         Text(
                           'READ ARTICLE',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                             color: scheme.onSurface,

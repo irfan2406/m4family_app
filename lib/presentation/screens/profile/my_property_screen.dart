@@ -98,7 +98,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
             child: Center(
               child: Text(
                 'MY PROPERTY',
-                style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
+                style: GoogleFonts.dmSerifDisplay(textStyle: const TextStyle(inherit: true), 
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white : Colors.black,
@@ -133,7 +133,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
             children: [
               Text(
                 'PORTFOLIO OVERVIEW',
-                style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
+                style: GoogleFonts.dmSerifDisplay(textStyle: const TextStyle(inherit: true), 
                   fontSize: 8,
                   fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white38 : Colors.black38,
@@ -143,7 +143,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
               const SizedBox(height: 8),
               Text(
                 '$units Units • $visits Visits',
-                style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
+                style: GoogleFonts.dmSerifDisplay(textStyle: const TextStyle(inherit: true), 
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white : Colors.black,
@@ -156,7 +156,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
             children: [
               Text(
                 'TOTAL VALUE',
-                style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
+                style: GoogleFonts.dmSerifDisplay(textStyle: const TextStyle(inherit: true), 
                   fontSize: 8,
                   fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white38 : Colors.black38,
@@ -166,7 +166,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
               const SizedBox(height: 8),
               Text(
                 '₹${NumberFormat('#,##,###').format(_totalValue)}',
-                style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
+                style: GoogleFonts.dmSerifDisplay(textStyle: const TextStyle(inherit: true), 
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
                   color: const Color(0xFF22C55E),
@@ -214,7 +214,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                     children: [
                       Text(
                         (project['title'] ?? 'Unknown Project').toUpperCase(),
-                        style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
+                        style: GoogleFonts.dmSerifDisplay(textStyle: const TextStyle(inherit: true), 
                           fontSize: 14,
                           fontWeight: FontWeight.w800,
                           color: isDark ? Colors.white : Colors.black,
@@ -227,7 +227,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                           const SizedBox(width: 4),
                           Text(
                             (project['location']?['name'] ?? 'Developing Area').toUpperCase(),
-                            style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
+                            style: GoogleFonts.dmSerifDisplay(textStyle: const TextStyle(inherit: true), 
                               fontSize: 9,
                               fontWeight: FontWeight.w700,
                               color: isDark ? Colors.white38 : Colors.black38,
@@ -273,8 +273,8 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('PAYMENT PROGRESS', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white24 : Colors.black26, letterSpacing: 1.5)),
-                        Text('$paymentPercent% PAID', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: const Color(0xFF22C55E))),
+                        Text('PAYMENT PROGRESS', style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white24 : Colors.black26, letterSpacing: 1.5)),
+                        Text('$paymentPercent% PAID', style: GoogleFonts.dmSerifDisplay(fontSize: 9, fontWeight: FontWeight.w900, color: const Color(0xFF22C55E))),
                       ],
                     ),
                     const SizedBox(height: 8),
@@ -314,7 +314,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
         const SizedBox(height: 24),
         Text(
           'NO PROPERTY RECORDS FOUND',
-          style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
+          style: GoogleFonts.dmSerifDisplay(textStyle: const TextStyle(inherit: true), 
             fontSize: 10,
             fontWeight: FontWeight.w800,
             color: (isDark ? Colors.white : Colors.black).withOpacity(0.2),
@@ -342,7 +342,7 @@ class _StatusBadge extends StatelessWidget {
       ),
       child: Text(
         status.toUpperCase(),
-        style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: color, letterSpacing: 0.5),
+        style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.w900, color: color, letterSpacing: 0.5),
       ),
     );
   }
@@ -360,9 +360,9 @@ class _InfoItem extends StatelessWidget {
     return Column(
       crossAxisAlignment: crossAlign,
       children: [
-        Text(label, style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w800, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1)),
+        Text(label, style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.w800, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1)),
         const SizedBox(height: 4),
-        Text(value, style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black)),
+        Text(value, style: GoogleFonts.dmSerifDisplay(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black)),
       ],
     );
   }

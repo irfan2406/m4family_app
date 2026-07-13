@@ -111,7 +111,7 @@ class _InvestorSecurityScreenState
   void _toast(String msg) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg, style: GoogleFonts.montserrat(fontSize: 12))),
+      SnackBar(content: Text(msg, style: GoogleFonts.dmSerifDisplay(fontSize: 12))),
     );
   }
 
@@ -165,7 +165,7 @@ class _InvestorSecurityScreenState
                 const SizedBox(width: 8),
                 Text(
                   'Security & Privacy',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontWeight: FontWeight.w800,
                     fontSize: 16,
                     color: textPrimary,
@@ -177,7 +177,7 @@ class _InvestorSecurityScreenState
               padding: const EdgeInsets.only(left: 14, top: 1),
               child: Text(
                 'ACCOUNT PROTECTION',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 9,
                   letterSpacing: 1.5,
                   fontWeight: FontWeight.w600,
@@ -303,7 +303,7 @@ class _InvestorSecurityScreenState
           const SizedBox(height: 16),
           Text(
             'Account Protected',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 18,
               fontWeight: FontWeight.w700,
               color: textPrimary,
@@ -315,7 +315,7 @@ class _InvestorSecurityScreenState
             child: Text(
               'Your account is secured with military-grade encryption and 2FA.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
                 height: 1.4,
@@ -331,7 +331,7 @@ class _InvestorSecurityScreenState
   Widget _sectionLabel(String label, Color muted) {
     return Text(
       label,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.dmSerifDisplay(
         fontSize: 10,
         fontWeight: FontWeight.bold,
         letterSpacing: 2,
@@ -380,7 +380,7 @@ class _InvestorSecurityScreenState
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: textPrimary,
@@ -389,7 +389,7 @@ class _InvestorSecurityScreenState
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
                       color: muted,
@@ -510,7 +510,7 @@ class _InvestorSecurityScreenState
               children: [
                 Text(
                   login['device'] ?? '',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                     color: textPrimary,
@@ -520,7 +520,7 @@ class _InvestorSecurityScreenState
                   const SizedBox(height: 2),
                   Text(
                     meta,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 9,
                       fontWeight: FontWeight.w500,
                       color: muted,
@@ -542,7 +542,7 @@ class _InvestorSecurityScreenState
             ),
             child: Text(
               status.toUpperCase(),
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 8,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1,
@@ -572,7 +572,7 @@ class _InvestorSecurityScreenState
           const SizedBox(height: 12),
           Text(
             title,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 13,
               fontWeight: FontWeight.w700,
               color: textPrimary,
@@ -582,7 +582,7 @@ class _InvestorSecurityScreenState
           Text(
             subtitle,
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 11,
               fontWeight: FontWeight.w500,
               color: muted,
@@ -594,7 +594,7 @@ class _InvestorSecurityScreenState
               onPressed: onAction,
               child: Text(
                 actionLabel,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 2,
@@ -620,7 +620,7 @@ class _InvestorSecurityScreenState
           ),
           child: Text(
             'SIGN OUT OF ALL DEVICES',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 10,
               fontWeight: FontWeight.bold,
               letterSpacing: 2,

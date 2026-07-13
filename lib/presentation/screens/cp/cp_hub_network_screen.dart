@@ -84,7 +84,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(icon: const Icon(LucideIcons.arrowLeft), onPressed: () => context.pop()),
-        title: Text('Network', style: GoogleFonts.montserrat(fontWeight: FontWeight.w800)),
+        title: Text('Network', style: GoogleFonts.dmSerifDisplay(fontWeight: FontWeight.w800)),
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
@@ -125,12 +125,12 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                         children: [
                           const Icon(LucideIcons.calendar, size: 16, color: purple),
                           const SizedBox(width: 8),
-                          Text('Upcoming Events', style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 0.2)),
+                          Text('Upcoming Events', style: GoogleFonts.dmSerifDisplay(fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 0.2)),
                         ],
                       ),
                       TextButton(
                         onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Events coming soon'))),
-                        child: Text('VIEW ALL', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1.6, color: purple)),
+                        child: Text('VIEW ALL', style: GoogleFonts.dmSerifDisplay(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1.6, color: purple)),
                       ),
                     ],
                   ),
@@ -157,18 +157,18 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                               ),
                               child: Text(
                                 (e['type'] ?? '').toString().toUpperCase(),
-                                style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.2, color: Colors.white),
+                                style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.2, color: Colors.white),
                               ),
                             ),
                           ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(e['title']!.toString(), style: GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w900)),
+                              Text(e['title']!.toString(), style: GoogleFonts.dmSerifDisplay(fontSize: 13, fontWeight: FontWeight.w900)),
                               const SizedBox(height: 6),
                               Text(
                                 '${e['date']} • ${e['location']}',
-                                style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w700, color: scheme.onSurface.withValues(alpha: 0.68)),
+                                style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w700, color: scheme.onSurface.withValues(alpha: 0.68)),
                               ),
                               const SizedBox(height: 10),
                               FilledButton(
@@ -179,7 +179,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                                   minimumSize: const Size.fromHeight(36),
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                 ),
-                                child: Text('RSVP NOW', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2)),
+                                child: Text('RSVP NOW', style: GoogleFonts.dmSerifDisplay(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2)),
                               ),
                             ],
                           ),
@@ -195,18 +195,18 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                         children: [
                           const Icon(LucideIcons.users, size: 16, color: purple),
                           const SizedBox(width: 8),
-                          Text('Member Spotlight', style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 0.2)),
+                          Text('Member Spotlight', style: GoogleFonts.dmSerifDisplay(fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 0.2)),
                         ],
                       ),
                       TextButton(
                         onPressed: () => context.push('/cp/referral'),
-                        child: Text('VIEW ALL REFERRALS', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1.6, color: purple)),
+                        child: Text('VIEW ALL REFERRALS', style: GoogleFonts.dmSerifDisplay(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1.6, color: purple)),
                       ),
                     ],
                   ),
                   const SizedBox(height: 10),
                   if (members.isEmpty)
-                    Text('No referrals in your network yet', style: GoogleFonts.montserrat(color: scheme.onSurfaceVariant))
+                    Text('No referrals in your network yet', style: GoogleFonts.dmSerifDisplay(color: scheme.onSurfaceVariant))
                   else
                     GridView.builder(
                       shrinkWrap: true,
@@ -239,21 +239,21 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                                   shape: BoxShape.circle,
                                   gradient: LinearGradient(colors: [Color(0xFFA855F7), Color(0xFF6D28D9)]),
                                 ),
-                                child: Center(child: Text(initial, style: GoogleFonts.montserrat(color: Colors.white, fontWeight: FontWeight.w900))),
+                                child: Center(child: Text(initial, style: GoogleFonts.dmSerifDisplay(color: Colors.white, fontWeight: FontWeight.w900))),
                               ),
                               const SizedBox(height: 8),
                               Text(
                                 name.isEmpty ? 'Partner' : name,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900),
+                                style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w900),
                               ),
                               const SizedBox(height: 2),
                               Text(
                                 industry.toUpperCase(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w800, letterSpacing: 1.2, color: scheme.onSurface.withValues(alpha: 0.68)),
+                                style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.w800, letterSpacing: 1.2, color: scheme.onSurface.withValues(alpha: 0.68)),
                               ),
                             ],
                           ),
@@ -274,11 +274,11 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Private Forum', style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900)),
+                              Text('Private Forum', style: GoogleFonts.dmSerifDisplay(fontSize: 12, fontWeight: FontWeight.w900)),
                               const SizedBox(height: 4),
                               Text(
                                 'Discuss trends with verified Partners',
-                                style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w700, color: scheme.onSurface.withValues(alpha: 0.68)),
+                                style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w700, color: scheme.onSurface.withValues(alpha: 0.68)),
                               ),
                             ],
                           ),
@@ -326,12 +326,12 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
             value,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.montserrat(fontSize: 18, fontWeight: FontWeight.w900),
+            style: GoogleFonts.dmSerifDisplay(fontSize: 18, fontWeight: FontWeight.w900),
           ),
           const SizedBox(height: 4),
           Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 8,
               fontWeight: FontWeight.w900,
               letterSpacing: 1.2,

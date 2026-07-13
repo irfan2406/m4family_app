@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
@@ -174,7 +175,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           children: [
             Text(
               'WHO WE ARE',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 color: isDark ? Colors.white : Colors.black,
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
@@ -183,7 +184,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             ),
             Text(
               'M4 FAMILY COLLECTIVE',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 color: isDark ? Colors.white : Colors.black,
                 fontWeight: FontWeight.w400,
                 fontSize: 8,
@@ -244,24 +245,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             builder: (context) => Center(
               child: Padding(
                 padding: const EdgeInsets.only(right: 12),
-                child: InkWell(
-                  onTap: () => Scaffold.of(context).openDrawer(),
-                  borderRadius: BorderRadius.circular(12),
-                  child: Container(
-                    width: 40,
-                    height: 36,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Colors.black,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      LucideIcons.moreHorizontal,
-                      size: 18,
-                      color: isDark ? Colors.black : Colors.white,
-                    ),
-                  ),
-                ),
+                child: const SideMenuButton(),
               ),
             ),
           ),
@@ -426,7 +410,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                               step['label'].toString().toUpperCase(),
                               maxLines: 1,
                               softWrap: false,
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.dmSerifDisplay(
                                 color: isActive
                                     ? (isDark ? Colors.white : Colors.black)
                                     : (isDark
@@ -483,7 +467,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             children: [
               Text(
                 '"M4 Family, with over a decade of excellence in Mumbai’s real estate landscape, has established itself as a trusted name in premium residential development."',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   color: isDark ? Colors.white : Colors.black,
                   fontSize: 13,
                   fontWeight: FontWeight.w400,
@@ -493,7 +477,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
               const SizedBox(height: 20),
               Text(
                 'Renowned for delivering homes that blend contemporary design with enduring quality, we take pride in creating spaces that inspire modern living while retaining timeless value.',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   color: isDark ? Colors.white : Colors.black,
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
@@ -503,7 +487,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
               const SizedBox(height: 20),
               Text(
                 'Every development we undertake reflects meticulous planning, uncompromising quality, and a commitment to delivering on promises. From Aura Heights to our latest offering Ocean View, we continue to redefine what it means to call a place home.',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   color: isDark ? Colors.white : Colors.black,
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
@@ -591,7 +575,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                         children: [
                           Text(
                             item['year']!,
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.dmSerifDisplay(
                               color: colorScheme.primary,
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
@@ -601,7 +585,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                           const SizedBox(height: 8),
                           Text(
                             item['title']!.toUpperCase(),
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                               color: isDark ? Colors.white : Colors.black,
                               fontSize: 16,
                               fontWeight: FontWeight.w900,
@@ -611,7 +595,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                           const SizedBox(height: 8),
                           Text(
                             (item['desc'] ?? item['content'] ?? '').toString(),
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.dmSerifDisplay(
                               color: isDark ? Colors.white70 : Colors.black54,
                               fontSize: 12,
                               height: 1.6,
@@ -693,7 +677,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   const SizedBox(height: 16),
                   Text(
                     pillar['title'].toString().toUpperCase(),
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.dmSerifDisplay(
                       color: isDark ? Colors.white : Colors.black,
                       fontSize: 11,
                       fontWeight: FontWeight.w900,
@@ -704,7 +688,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   Text(
                     pillar['desc'],
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.dmSerifDisplay(
                       color: (isDark ? Colors.white : Colors.black).withOpacity(
                         0.68,
                       ),
@@ -756,7 +740,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         Text(
           'EXPERIENCE THE FUTURE OF HOME PERSONALISATION. OUR PROPRIETARY CUSTOM VIEWS SUITE ALLOWS YOU TO VISUALISE AND CRAFT YOUR DREAM SPACE BEFORE IT\'S EVEN BUILT.',
           textAlign: TextAlign.center,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
             fontSize: 11,
             fontWeight: FontWeight.w500,
@@ -820,7 +804,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         children: [
           Text(
             'CUSTOMER VIEWS',
-            style: GoogleFonts.inter(
+            style: GoogleFonts.dmSerifDisplay(
               color: colorScheme.primary,
               fontSize: 10,
               fontWeight: FontWeight.w900,
@@ -830,7 +814,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           const SizedBox(height: 16),
           Text(
             '"AT M4 FAMILY, WE BELIEVE THAT LUXURY IS DEEPLY PERSONAL. OUR \'CUSTOMER VIEWS\' PHILOSOPHY ENSURES THAT EVERY RESIDENT\'S PERSPECTIVE IS VALUED, ALLOWING FOR A COLLABORATIVE APPROACH TO CREATING LIVING SPACES THAT REFLECT INDIVIDUAL LIFESTYLES AND ASPIRATIONS. WE INVITE YOU TO EXPLORE OUR BESPOKE PERSONALISATION OPTIONS, WHERE YOUR VISION MEETS OUR ARCHITECTURAL EXCELLENCE."',
-            style: GoogleFonts.inter(
+            style: GoogleFonts.dmSerifDisplay(
               color: (isDark ? Colors.white : Colors.black).withOpacity(0.7),
               fontSize: 11,
               fontWeight: FontWeight.w800,
@@ -882,7 +866,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 children: [
                   Text(
                     'THE COLLECTIVE',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       color: Colors.white60,
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
@@ -892,7 +876,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   const SizedBox(height: 4),
                   Text(
                     'M4 LEGACY',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       color: Colors.white,
                       fontSize: 32,
                       fontWeight: FontWeight.w900,
@@ -940,7 +924,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         const SizedBox(width: 16),
         Text(
           title,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             color: isDark ? Colors.white : Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w900,
@@ -1043,7 +1027,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   children: [
                     Text(
                       section['title'].toString().toUpperCase(),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         color: isDark ? Colors.white : Colors.black,
                         fontSize: 15,
                         fontWeight: FontWeight.w900,
@@ -1068,7 +1052,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           Text(
             section['content'].toString().toUpperCase(),
             // Web parity: lighter, less heavy body copy inside the card.
-            style: GoogleFonts.inter(
+            style: GoogleFonts.dmSerifDisplay(
               color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
               fontSize: 11,
               fontWeight: FontWeight.w600,
@@ -1162,7 +1146,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   const SizedBox(height: 24),
                   Text(
                     'YOUR DESIGN JOURNEY',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       color: Colors.white,
                       fontSize: 22,
                       fontWeight: FontWeight.w900,
@@ -1172,7 +1156,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   const SizedBox(height: 4),
                   Text(
                     'PERSONALISE EVERY DETAIL',
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.dmSerifDisplay(
                       color: Colors.white.withOpacity(0.68),
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
@@ -1183,7 +1167,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   Text(
                     'CHOOSE YOUR MATERIALS, EXPLORE CONFIGURATIONS, AND SEE YOUR VISION COME TO LIFE WITH M4 CUSTOM VIEWS.',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.dmSerifDisplay(
                       color: Colors.white.withOpacity(0.7),
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
@@ -1227,7 +1211,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                                     AuthStatus.authenticated
                                 ? 'CUSTOM VIEWS'
                                 : 'ENQUIRE FOR CUSTOM VIEWS',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.dmSerifDisplay(
                               fontWeight: FontWeight.w900,
                               fontSize: 11,
                               letterSpacing: 1,
@@ -1277,7 +1261,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                     Expanded(
                       child: Text(
                         'CUSTOM PERSONALISATION',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: isDark ? Colors.white : Colors.black,
                           fontWeight: FontWeight.w900,
                           fontSize: 17,
@@ -1298,7 +1282,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 const SizedBox(height: 8),
                 Text(
                   'Enter your details to receive our premium personalisation catalog and schedule a consultation.',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     // Web parity: muted gray subtitle, not solid black.
                     color: isDark ? Colors.white54 : const Color(0xFF6B7280),
                     fontSize: 12,
@@ -1399,7 +1383,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                           )
                         : Text(
                             'SEND REQUEST',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                               fontWeight: FontWeight.w400,
                               fontSize: 12,
                               letterSpacing: 2,
@@ -1424,7 +1408,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
       padding: const EdgeInsets.only(left: 4, bottom: 10),
       child: Text(
         label,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           // Web parity: muted slate-gray field labels.
           color: isDark ? Colors.white54 : const Color(0xFF8A93A5),
           fontSize: 10,
@@ -1452,14 +1436,14 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     const gold = Color(0xFFC5A358);
     return TextField(
       controller: controller,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.dmSerifDisplay(
         color: isDark ? Colors.white : Colors.black,
         fontSize: 14,
         fontWeight: FontWeight.w500,
       ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.montserrat(
+        hintStyle: GoogleFonts.dmSerifDisplay(
           color: isDark ? Colors.white38 : const Color(0xFF9AA1AD),
           fontSize: 14,
           fontWeight: FontWeight.w500,
@@ -1513,7 +1497,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 ),
                 child: Text(
                   'BACK',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     color: isDark ? Colors.white : Colors.black,
                     fontWeight: FontWeight.w900,
                     fontSize: 10,
@@ -1550,7 +1534,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 children: [
                   Text(
                     'NEXT STEP',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontWeight: FontWeight.w900,
                       fontSize: 10,
                       letterSpacing: 2,

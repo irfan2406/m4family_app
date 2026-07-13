@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:ui';
 import 'package:m4_mobile/core/theme/app_theme.dart';
@@ -216,7 +217,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                         children: [
                           Text(
                             'M4 FAMILY',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.dmSerifDisplay(
                               color: isDark ? Colors.white : Colors.black,
                               fontSize: 18,
                               fontWeight: FontWeight.w900,
@@ -225,7 +226,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                           ),
                           Text(
                             'DEVELOPMENTS',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.dmSerifDisplay(
                               color: (isDark ? Colors.white : Colors.black)
                                   .withOpacity(0.68),
                               fontSize: 8,
@@ -236,16 +237,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                         ],
                       ),
                       const SizedBox(width: 8),
-                      Builder(
-                        builder: (context) => IconButton(
-                          icon: Icon(
-                            LucideIcons.moreHorizontal,
-                            color: isDark ? Colors.white : Colors.black,
-                            size: 28,
-                          ),
-                          onPressed: () => Scaffold.of(context).openDrawer(),
-                        ),
-                      ),
+                      const SideMenuButton(),
                     ],
                   ),
                 ],
@@ -301,7 +293,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                         children: [
                           Text(
                             widget.community['title']?.toString() ?? '',
-                            style: GoogleFonts.lora(
+                            style: GoogleFonts.dmSerifDisplay(
                               fontSize: 38,
                               fontWeight: FontWeight.w400,
                               color: Colors.white,
@@ -313,7 +305,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                             (widget.community['subtitle'] ?? '')
                                 .toString()
                                 .toUpperCase(),
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.dmSerifDisplay(
                               color: const Color(0xFFC6A355),
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
@@ -379,7 +371,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                             (widget.community['location'] ?? '')
                                 .toString()
                                 .toUpperCase(),
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.dmSerifDisplay(
                               color: isDark ? Colors.white : Colors.black,
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
@@ -403,7 +395,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                     widget.community['overview'] ??
                         widget.community['description'] ??
                         '',
-                    style: GoogleFonts.lora(
+                    style: GoogleFonts.dmSerifDisplay(
                       color: (isDark ? Colors.white : Colors.black).withOpacity(
                         0.6,
                       ),
@@ -470,7 +462,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                               child: Text(
                                 benefit['label'].toString().toUpperCase(),
                                 textAlign: TextAlign.center,
-                                style: GoogleFonts.inter(
+                                style: GoogleFonts.dmSerifDisplay(
                                   color: (isDark ? Colors.white : Colors.black)
                                       .withOpacity(0.7),
                                   fontSize: 8,
@@ -511,7 +503,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                           ),
                           child: Text(
                             'VIEW ALL',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.dmSerifDisplay(
                               color: (isDark ? Colors.white : Colors.black)
                                   .withOpacity(0.68),
                               fontSize: 10,
@@ -596,7 +588,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                                     ?.toString()
                                                     .toUpperCase() ??
                                                 '',
-                                            style: GoogleFonts.inter(
+                                            style: GoogleFonts.dmSerifDisplay(
                                               color: Colors.white,
                                               fontSize: 16,
                                               fontWeight: FontWeight.w900,
@@ -622,7 +614,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                                 project['startingPrice']
                                                     .toString()
                                                     .toUpperCase(),
-                                                style: GoogleFonts.inter(
+                                                style: GoogleFonts.dmSerifDisplay(
                                                   color: Colors.white70,
                                                   fontSize: 10,
                                                   fontWeight: FontWeight.w700,
@@ -644,7 +636,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                                         '')
                                                     .toString()
                                                     .toUpperCase(),
-                                                style: GoogleFonts.inter(
+                                                style: GoogleFonts.dmSerifDisplay(
                                                   color: Colors.white54,
                                                   fontSize: 8,
                                                   fontWeight: FontWeight.bold,
@@ -745,7 +737,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                 )
                               : Text(
                                   'REGISTER INTEREST',
-                                  style: GoogleFonts.inter(
+                                  style: GoogleFonts.dmSerifDisplay(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w900,
                                     letterSpacing: 3,
@@ -757,7 +749,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                       Center(
                         child: Text(
                           'EXCLUSIVE GUEST PREVIEW - LIMITED OPPORTUNITIES',
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.dmSerifDisplay(
                             color: (isDark ? Colors.white : Colors.black)
                                 .withOpacity(0.68),
                             fontSize: 8,
@@ -829,7 +821,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                     children: [
                                       Text(
                                         'M4 AURA HEIGHTS',
-                                        style: GoogleFonts.inter(
+                                        style: GoogleFonts.dmSerifDisplay(
                                           color: Colors.white,
                                           fontSize: 16,
                                           fontWeight: FontWeight.w900,
@@ -838,7 +830,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                       const SizedBox(height: 5),
                                       Text(
                                         'GRANT ROAD, MUMBAI - 400007',
-                                        style: GoogleFonts.inter(
+                                        style: GoogleFonts.dmSerifDisplay(
                                           color: Colors.white.withOpacity(0.6),
                                           fontSize: 10,
                                           fontWeight: FontWeight.w500,
@@ -892,7 +884,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
       ),
       child: TextField(
         controller: controller,
-        style: GoogleFonts.inter(
+        style: GoogleFonts.dmSerifDisplay(
           color: isDark ? Colors.white : Colors.black,
           fontSize: 13,
           fontWeight: FontWeight.bold,
@@ -900,7 +892,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: hint.toUpperCase(),
-          hintStyle: GoogleFonts.inter(
+          hintStyle: GoogleFonts.dmSerifDisplay(
             color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
             fontSize: 10,
             fontWeight: FontWeight.w900,
@@ -933,14 +925,14 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
           ),
           dropdownColor: isDark ? const Color(0xFF111111) : Colors.white,
           borderRadius: BorderRadius.circular(20),
-          style: GoogleFonts.inter(
+          style: GoogleFonts.dmSerifDisplay(
             color: textColor,
             fontSize: 13,
             fontWeight: FontWeight.bold,
           ),
           hint: Text(
             'SELECT PROPERTY / PROJECT',
-            style: GoogleFonts.inter(
+            style: GoogleFonts.dmSerifDisplay(
               color: textColor.withValues(alpha: 0.68),
               fontSize: 10,
               fontWeight: FontWeight.w900,
@@ -961,7 +953,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                   display,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.dmSerifDisplay(
                     color: textColor.withValues(alpha: 0.6),
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
@@ -976,7 +968,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
               value: 'Any',
               child: Text(
                 'ANY PROJECT / PROPERTY',
-                style: GoogleFonts.inter(
+                style: GoogleFonts.dmSerifDisplay(
                   color: textColor,
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
@@ -990,7 +982,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                 value: title,
                 child: Text(
                   title.toUpperCase(),
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.dmSerifDisplay(
                     color: textColor,
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
@@ -1052,7 +1044,7 @@ class _SectionHeader extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.lora(
+                  style: GoogleFonts.dmSerifDisplay(
                     color: isDark ? Colors.white : Colors.black,
                     fontSize: 26,
                     fontWeight: FontWeight.w400,
@@ -1062,7 +1054,7 @@ class _SectionHeader extends StatelessWidget {
                 const SizedBox(height: 5),
                 Text(
                   subtitle,
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.dmSerifDisplay(
                     color: (isDark ? Colors.white : Colors.black).withOpacity(
                       0.68,
                     ),
@@ -1131,7 +1123,7 @@ class CommunityProjectsScreen extends ConsumerWidget {
                         const SizedBox(width: 10),
                         Text(
                           'BACK',
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.dmSerifDisplay(
                             color: (isDark ? Colors.white : Colors.black)
                                 .withOpacity(0.68),
                             fontSize: 10,
@@ -1147,7 +1139,7 @@ class CommunityProjectsScreen extends ConsumerWidget {
                     children: [
                       Text(
                         'M4 FAMILY',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: isDark ? Colors.white : Colors.black,
                           fontSize: 18,
                           fontWeight: FontWeight.w900,
@@ -1156,7 +1148,7 @@ class CommunityProjectsScreen extends ConsumerWidget {
                       ),
                       Text(
                         'COMMUNITY PORTFOLIO',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: (isDark ? Colors.white : Colors.black)
                               .withOpacity(0.68),
                           fontSize: 8,
@@ -1264,7 +1256,7 @@ class CommunityProjectsScreen extends ConsumerWidget {
                                 ),
                                 child: Text(
                                   project['status'].toString().toUpperCase(),
-                                  style: GoogleFonts.inter(
+                                  style: GoogleFonts.dmSerifDisplay(
                                     color: Colors.white,
                                     fontSize: 8,
                                     fontWeight: FontWeight.w900,
@@ -1291,7 +1283,7 @@ class CommunityProjectsScreen extends ConsumerWidget {
                                                 ?.toString()
                                                 .toUpperCase() ??
                                             '',
-                                        style: GoogleFonts.inter(
+                                        style: GoogleFonts.dmSerifDisplay(
                                           color: Colors.white,
                                           fontSize: 22,
                                           fontWeight: FontWeight.w900,
@@ -1313,7 +1305,7 @@ class CommunityProjectsScreen extends ConsumerWidget {
                                                     '')
                                                 .toString()
                                                 .toUpperCase(),
-                                            style: GoogleFonts.inter(
+                                            style: GoogleFonts.dmSerifDisplay(
                                               color: Colors.white54,
                                               fontSize: 9,
                                               fontWeight: FontWeight.bold,
@@ -1333,7 +1325,7 @@ class CommunityProjectsScreen extends ConsumerWidget {
                                               'upon request') ...[
                                         Text(
                                           'STARTING FROM',
-                                          style: GoogleFonts.inter(
+                                          style: GoogleFonts.dmSerifDisplay(
                                             color: Colors.white.withOpacity(
                                               0.68,
                                             ),
@@ -1346,7 +1338,7 @@ class CommunityProjectsScreen extends ConsumerWidget {
                                           project['startingPrice']
                                               .toString()
                                               .toUpperCase(),
-                                          style: GoogleFonts.lora(
+                                          style: GoogleFonts.dmSerifDisplay(
                                             color: Colors.white,
                                             fontSize: 18,
                                             fontWeight: FontWeight.w600,
@@ -1356,7 +1348,7 @@ class CommunityProjectsScreen extends ConsumerWidget {
                                       const SizedBox(height: 4),
                                       Text(
                                         '* ARTISTIC IMPRESSION',
-                                        style: GoogleFonts.inter(
+                                        style: GoogleFonts.dmSerifDisplay(
                                           color: Colors.white.withOpacity(0.2),
                                           fontSize: 6,
                                           fontWeight: FontWeight.bold,

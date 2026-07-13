@@ -183,7 +183,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
             child: Text(
               'MEMBER DASHBOARD',
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 16,
                 fontWeight: FontWeight.w900,
                 color: textPrimary,
@@ -253,7 +253,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                                 const SizedBox(width: 8),
                                 Text(
                                   'PLATINUM MEMBER',
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.dmSerifDisplay(
                                     fontSize: 10,
                                     fontWeight: FontWeight.w800,
                                     letterSpacing: 2,
@@ -265,7 +265,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                             const SizedBox(height: 6),
                             Text(
                               'Active Membership',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                 fontSize: 22,
                                 fontWeight: FontWeight.w900,
                                 color: Colors.white,
@@ -284,7 +284,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                         ),
                         child: Text(
                           'PRO',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 11,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 1,
@@ -333,7 +333,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
             children: [
               Text(
                 label.toUpperCase(),
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 8,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 1.5,
@@ -343,7 +343,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
               const SizedBox(height: 6),
               Text(
                 value,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 14,
                   fontWeight: FontWeight.w800,
                   color: Colors.white,
@@ -365,7 +365,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
       children: [
         Text(
           'DOCUMENT REPOSITORY',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 9,
             fontWeight: FontWeight.w900,
             letterSpacing: 2,
@@ -380,7 +380,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
           ),
           child: Text(
             'M4 SECURE',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 8,
               fontWeight: FontWeight.w900,
               letterSpacing: 1.5,
@@ -408,7 +408,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
             const SizedBox(height: 16),
             Text(
               'NO DOCUMENTS YET',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 10,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 2,
@@ -475,7 +475,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                   title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 13,
                     fontWeight: FontWeight.w800,
                     color: textPrimary,
@@ -499,7 +499,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                       ],
                       Text(
                         meta[i].toUpperCase(),
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 8,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 0.8,
@@ -558,7 +558,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                       maxLines: 1,
                       softWrap: false,
                       overflow: TextOverflow.visible,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 28,
                         fontWeight: FontWeight.w900,
                         color: textPrimary,
@@ -587,7 +587,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                     children: [
                       Text(
                         'SECURE ACCESS ONLY',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 11,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1,
@@ -597,7 +597,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                       const SizedBox(height: 4),
                       Text(
                         'All documents downloaded contain a unique user watermark for security. Unauthorized sharing is strictly prohibited.',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 10,
                           fontWeight: FontWeight.w500,
                           height: 1.4,
@@ -635,7 +635,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
             const SizedBox(width: 12),
             Text(
               'UPGRADE MEMBERSHIP TIER',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 11,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.5,

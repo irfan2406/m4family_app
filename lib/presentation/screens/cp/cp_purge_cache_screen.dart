@@ -93,7 +93,7 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
         SnackBar(
           content: Text(
             'Cache purged. The app cache has been rebuilt.',
-            style: GoogleFonts.montserrat(fontSize: 12),
+            style: GoogleFonts.dmSerifDisplay(fontSize: 12),
           ),
         ),
       );
@@ -103,7 +103,7 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
         SnackBar(
           content: Text(
             'Purge failed: $e',
-            style: GoogleFonts.montserrat(fontSize: 12),
+            style: GoogleFonts.dmSerifDisplay(fontSize: 12),
           ),
         ),
       );
@@ -145,7 +145,7 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
           children: [
             Text(
               'Purge Cache',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontWeight: FontWeight.w800,
                 fontSize: 16,
                 color: textPrimary,
@@ -153,7 +153,7 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
             ),
             Text(
               'SYSTEM MAINTENANCE',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 9,
                 letterSpacing: 1.5,
                 fontWeight: FontWeight.w600,
@@ -181,7 +181,7 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
           Center(
             child: Text(
               'M4 FAMILY PRIVATE OFFICE',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 8,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 4,
@@ -230,7 +230,7 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
               children: [
                 Text(
                   'DESTRUCTIVE OPERATION',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 11,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.5,
@@ -243,7 +243,7 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
                   'artifacts and offline render buffers. Your account and saved '
                   'data are not affected, but the workspace will rebuild its '
                   'caches on next load.',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 11,
                     height: 1.5,
                     fontWeight: FontWeight.w500,
@@ -296,7 +296,7 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
                 children: [
                   Text(
                     s.title,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                       color: textPrimary,
@@ -305,7 +305,7 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
                   const SizedBox(height: 2),
                   Text(
                     s.subtitle,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
                       height: 1.4,
@@ -373,7 +373,7 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
                 Expanded(
                   child: Text(
                     e.key,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: checked
@@ -427,7 +427,7 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
                   const SizedBox(width: 10),
                   Text(
                     allDone ? 'CACHE PURGED' : 'PURGE CACHE & REBUILD',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 12,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1.5,
@@ -454,7 +454,7 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
         const SizedBox(width: 8),
         Text(
           text,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 10,
             fontWeight: FontWeight.w900,
             letterSpacing: 2,

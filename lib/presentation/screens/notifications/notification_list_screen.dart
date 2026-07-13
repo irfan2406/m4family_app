@@ -120,7 +120,7 @@ class NotificationListScreen extends ConsumerWidget {
                             Flexible(
                               child: Text(
                                 'NOTIFICATIONS',
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.dmSerifDisplay(
                                   fontSize: 17,
                                   fontWeight: FontWeight.w800,
                                   color: scheme.onSurface,
@@ -134,7 +134,7 @@ class NotificationListScreen extends ConsumerWidget {
                         const SizedBox(height: 2),
                         Text(
                           isCp ? 'PARTNER UPDATES' : 'STAY UPDATED',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 9,
                             fontWeight: FontWeight.w700,
                             color: scheme.onSurfaceVariant.withValues(
@@ -178,7 +178,7 @@ class NotificationListScreen extends ConsumerWidget {
                             const SizedBox(width: 6),
                             Text(
                               'MARK ALL',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                 fontSize: 9,
                                 fontWeight: FontWeight.w800,
                                 color: isCp ? purple : scheme.onSurface,
@@ -252,7 +252,7 @@ class NotificationListScreen extends ConsumerWidget {
           const SizedBox(height: 24),
           Text(
             'NO NOTIFICATIONS',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 12,
               fontWeight: FontWeight.w900,
               color: scheme.onSurface.withValues(alpha: 0.68),
@@ -262,7 +262,7 @@ class NotificationListScreen extends ConsumerWidget {
           const SizedBox(height: 8),
           Text(
             'We\'ll notify you when something important happens.',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 10,
               color: scheme.onSurface.withValues(alpha: 0.68),
             ),
@@ -347,7 +347,7 @@ class _NotificationItem extends StatelessWidget {
                           Expanded(
                             child: Text(
                               notification.title.toString().toUpperCase(),
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w800,
                                 color: isRead
@@ -364,7 +364,7 @@ class _NotificationItem extends StatelessWidget {
                             padding: const EdgeInsets.only(top: 2),
                             child: Text(
                               timeStr,
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                 fontSize: 8,
                                 color: scheme.onSurfaceVariant.withValues(
                                   alpha: 0.7,
@@ -393,7 +393,7 @@ class _NotificationItem extends StatelessWidget {
                         notification.message.toString(),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 11,
                           color: scheme.onSurfaceVariant,
                           height: 1.5,
@@ -491,7 +491,7 @@ class _NotificationItem extends StatelessWidget {
                         (notification.type ?? 'UPDATE')
                             .toString()
                             .toUpperCase(),
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 8,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1,
@@ -503,7 +503,7 @@ class _NotificationItem extends StatelessWidget {
                     Flexible(
                       child: Text(
                         '• $timeStr',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 8,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1,
@@ -518,7 +518,7 @@ class _NotificationItem extends StatelessWidget {
                 Text(
                   notification.title.toString(),
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 22,
                     fontWeight: FontWeight.w900,
                     color: scheme.onSurface,
@@ -538,7 +538,7 @@ class _NotificationItem extends StatelessWidget {
                   child: Text(
                     notification.message.toString(),
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: scheme.onSurface.withValues(alpha: 0.8),
@@ -562,7 +562,7 @@ class _NotificationItem extends StatelessWidget {
                     ),
                     child: Text(
                       isCp ? 'ACKNOWLEDGE' : 'DONE',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 12,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 2,

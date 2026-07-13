@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -90,7 +91,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Padding(padding: const EdgeInsets.all(16), child: Text('Update status', style: GoogleFonts.montserrat(fontWeight: FontWeight.bold))),
+            Padding(padding: const EdgeInsets.all(16), child: Text('Update status', style: GoogleFonts.dmSerifDisplay(fontWeight: FontWeight.bold))),
             ...options.map((s) => ListTile(
               title: Text(s.replaceAll('_', ' ')),
               trailing: s == current ? const Icon(Icons.check, size: 18) : null,
@@ -154,28 +155,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                       fit: BoxFit.contain,
                     ),
                   ),
-                  Builder(
-                    builder: (context) => GestureDetector(
-                      onTap: () => Scaffold.of(context).openDrawer(),
-                      child: Container(
-                        width: 56,
-                        height: 36,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).brightness == Brightness.dark 
-                              ? Colors.white 
-                              : Colors.black,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Icon(
-                          LucideIcons.moreHorizontal, 
-                          color: Theme.of(context).brightness == Brightness.dark 
-                              ? Colors.black 
-                              : Colors.white, 
-                          size: 24
-                        ),
-                      ),
-                    ),
-                  ),
+                  const SideMenuButton(),
                 ],
               ),
             ),
@@ -271,7 +251,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                               ),
                               child: Text(
                                 'ARTISTIC IMPRESSION',
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.dmSerifDisplay(
                                   color: Colors.white,
                                   fontSize: 7,
                                   fontWeight: FontWeight.w900,
@@ -344,7 +324,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('AVAILABLE COMMISSION', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2.5, color: Colors.white70)),
+              Text('AVAILABLE COMMISSION', style: GoogleFonts.dmSerifDisplay(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2.5, color: Colors.white70)),
               const Icon(LucideIcons.wallet, color: Colors.white, size: 24),
             ],
           ),
@@ -353,8 +333,8 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
             children: [
-              Text('AED ', style: GoogleFonts.montserrat(fontSize: 16, fontWeight: FontWeight.w900, color: Colors.white54)),
-              Text(_balance().toString(), style: GoogleFonts.montserrat(fontSize: 48, fontWeight: FontWeight.w900, color: Colors.white, height: 1)),
+              Text('AED ', style: GoogleFonts.dmSerifDisplay(fontSize: 16, fontWeight: FontWeight.w900, color: Colors.white54)),
+              Text(_balance().toString(), style: GoogleFonts.dmSerifDisplay(fontSize: 48, fontWeight: FontWeight.w900, color: Colors.white, height: 1)),
             ],
           ),
           const SizedBox(height: 32),
@@ -378,9 +358,9 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label, style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: Colors.white60, letterSpacing: 1)),
+            Text(label, style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.w900, color: Colors.white60, letterSpacing: 1)),
             const SizedBox(height: 6),
-            Text(val, style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, color: Colors.white)),
+            Text(val, style: GoogleFonts.dmSerifDisplay(fontSize: 12, fontWeight: FontWeight.w900, color: Colors.white)),
           ],
         ),
       ),
@@ -404,7 +384,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
           onPressed: onViewAll,
           child: Row(
             children: [
-              Text('View all', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.black)),
+              Text('View all', style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.black)),
               const SizedBox(width: 4),
               const Icon(LucideIcons.chevronRight, size: 12, color: Colors.black),
             ],
@@ -450,8 +430,8 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
             children: [
               img.isNotEmpty ? CachedNetworkImage(imageUrl: img, fit: BoxFit.cover) : Container(color: Colors.grey.shade200),
               Container(decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Colors.transparent, Colors.black.withOpacity(0.8)]))),
-              Positioned(top: 15, left: 15, child: Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4), decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)), child: Text('ONGOING', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900)))),
-              Positioned(left: 15, right: 15, bottom: 20, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(p['title'] ?? '', style: GoogleFonts.montserrat(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 16)), const SizedBox(height: 4), Text('FROM 18% YOY', style: GoogleFonts.montserrat(color: Colors.white60, fontWeight: FontWeight.w800, fontSize: 8, letterSpacing: 1))])),
+              Positioned(top: 15, left: 15, child: Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4), decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)), child: Text('ONGOING', style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.w900)))),
+              Positioned(left: 15, right: 15, bottom: 20, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(p['title'] ?? '', style: GoogleFonts.dmSerifDisplay(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 16)), const SizedBox(height: 4), Text('FROM 18% YOY', style: GoogleFonts.dmSerifDisplay(color: Colors.white60, fontWeight: FontWeight.w800, fontSize: 8, letterSpacing: 1))])),
               Positioned(right: 15, bottom: 20, child: Container(width: 32, height: 32, decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), shape: BoxShape.circle), child: const Icon(LucideIcons.arrowUpRight, color: Colors.white, size: 16))),
             ],
           ),
@@ -464,13 +444,13 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text('REGISTERED LEADS', style: GoogleFonts.montserrat(fontWeight: FontWeight.w900, letterSpacing: 0.5)),
+        Text('REGISTERED LEADS', style: GoogleFonts.dmSerifDisplay(fontWeight: FontWeight.w900, letterSpacing: 0.5)),
         GestureDetector(
           onTap: () => setState(() => _showSearch = !_showSearch),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(color: scheme.surfaceContainer, borderRadius: BorderRadius.circular(99)),
-            child: Row(children: [Icon(LucideIcons.search, size: 14, color: scheme.onSurface.withOpacity(0.3)), const SizedBox(width: 8), Text('FILTER', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1))]),
+            child: Row(children: [Icon(LucideIcons.search, size: 14, color: scheme.onSurface.withOpacity(0.3)), const SizedBox(width: 8), Text('FILTER', style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1))]),
           ),
         ),
       ],
@@ -482,10 +462,10 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: TextField(
         onChanged: (v) => setState(() => _searchQuery = v),
-        style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w700),
+        style: GoogleFonts.dmSerifDisplay(fontSize: 14, fontWeight: FontWeight.w700),
         decoration: InputDecoration(
           hintText: 'SEARCH PROSPECTS...',
-          hintStyle: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.black12, letterSpacing: 2),
+          hintStyle: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.black12, letterSpacing: 2),
           filled: true,
           fillColor: scheme.surfaceContainer,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
@@ -512,8 +492,8 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(_leadName(lead).toLowerCase(), style: GoogleFonts.montserrat(fontSize: 20, fontWeight: FontWeight.w800, letterSpacing: -0.5)), Text(_leadProject(lead).toUpperCase(), style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.black45, letterSpacing: 1.5))]),
-                  Container(padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6), decoration: BoxDecoration(color: const Color(0xFF14B8A6).withOpacity(0.15), borderRadius: BorderRadius.circular(99)), child: Text(status.replaceAll('_', ' ').toUpperCase(), style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: const Color(0xFF14B8A6), letterSpacing: 1))),
+                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(_leadName(lead).toLowerCase(), style: GoogleFonts.dmSerifDisplay(fontSize: 20, fontWeight: FontWeight.w800, letterSpacing: -0.5)), Text(_leadProject(lead).toUpperCase(), style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.black45, letterSpacing: 1.5))]),
+                  Container(padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6), decoration: BoxDecoration(color: const Color(0xFF14B8A6).withOpacity(0.15), borderRadius: BorderRadius.circular(99)), child: Text(status.replaceAll('_', ' ').toUpperCase(), style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.w900, color: const Color(0xFF14B8A6), letterSpacing: 1))),
                 ],
               ),
               const SizedBox(height: 24),
@@ -523,13 +503,13 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
               const SizedBox(height: 32),
               Row(
                 children: [
-                  Expanded(child: OutlinedButton(onPressed: phone.isEmpty ? null : () => launchUrl(Uri.parse('tel:$phone')), style: OutlinedButton.styleFrom(minimumSize: const Size(0, 56), side: BorderSide(color: Colors.black.withOpacity(0.05)), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28))), child: Text('CALL CLIENT', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.black, letterSpacing: 1)))),
+                  Expanded(child: OutlinedButton(onPressed: phone.isEmpty ? null : () => launchUrl(Uri.parse('tel:$phone')), style: OutlinedButton.styleFrom(minimumSize: const Size(0, 56), side: BorderSide(color: Colors.black.withOpacity(0.05)), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28))), child: Text('CALL CLIENT', style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.black, letterSpacing: 1)))),
                   const SizedBox(width: 12),
-                  Expanded(child: ElevatedButton(onPressed: id.isEmpty ? null : () => _showStatusSheet(id, status), style: ElevatedButton.styleFrom(backgroundColor: Colors.black, foregroundColor: Colors.white, minimumSize: const Size(0, 56), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28))), child: Text('UPDATE STATUS', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1)))),
+                  Expanded(child: ElevatedButton(onPressed: id.isEmpty ? null : () => _showStatusSheet(id, status), style: ElevatedButton.styleFrom(backgroundColor: Colors.black, foregroundColor: Colors.white, minimumSize: const Size(0, 56), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28))), child: Text('UPDATE STATUS', style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1)))),
                 ],
               ),
               const SizedBox(height: 16),
-              Container(padding: const EdgeInsets.all(20), decoration: BoxDecoration(color: scheme.surfaceContainer.withValues(alpha: 0.3), borderRadius: BorderRadius.circular(24), border: Border.all(color: scheme.surfaceContainer)), child: Row(children: [const Icon(LucideIcons.wallet, size: 16, color: Colors.black54), const SizedBox(width: 12), Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('PAYMENT JOURNEY', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1)), const SizedBox(height: 4), Text('WAITING FOR FIRST PAYMENT\nSCHEDULE...', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w700, color: Colors.black45, height: 1.5))]))])),
+              Container(padding: const EdgeInsets.all(20), decoration: BoxDecoration(color: scheme.surfaceContainer.withValues(alpha: 0.3), borderRadius: BorderRadius.circular(24), border: Border.all(color: scheme.surfaceContainer)), child: Row(children: [const Icon(LucideIcons.wallet, size: 16, color: Colors.black54), const SizedBox(width: 12), Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('PAYMENT JOURNEY', style: GoogleFonts.dmSerifDisplay(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1)), const SizedBox(height: 4), Text('WAITING FOR FIRST PAYMENT\nSCHEDULE...', style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.w700, color: Colors.black45, height: 1.5))]))])),
             ],
           ),
         ),
@@ -538,6 +518,6 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
   }
 
   Widget _traceStep(String label, {required bool active}) {
-    return Text(label, style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: active ? Colors.black : Colors.black12, letterSpacing: 1));
+    return Text(label, style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.w900, color: active ? Colors.black : Colors.black12, letterSpacing: 1));
   }
 }

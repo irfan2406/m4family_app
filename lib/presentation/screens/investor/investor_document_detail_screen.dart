@@ -94,7 +94,7 @@ class _InvestorDocumentDetailScreenState
         SnackBar(
           content: Text(
             'Secure link not available for this document',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
                 fontWeight: FontWeight.bold, fontSize: 12),
           ),
           backgroundColor: Colors.redAccent,
@@ -209,7 +209,7 @@ class _InvestorDocumentDetailScreenState
           Text(
             title,
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 14,
               fontWeight: FontWeight.w800,
               color: textPrimary,
@@ -220,7 +220,7 @@ class _InvestorDocumentDetailScreenState
           Text(
             subtitle,
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 11,
               fontWeight: FontWeight.w500,
               color: muted,
@@ -328,7 +328,7 @@ class _InvestorDocumentDetailScreenState
                   ),
                   child: Text(
                     'SECURED ${type.toUpperCase()}',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 8,
                       fontWeight: FontWeight.w800,
                       color: _gold,
@@ -339,7 +339,7 @@ class _InvestorDocumentDetailScreenState
                 const SizedBox(height: 12),
                 Text(
                   title.toUpperCase(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 20,
                     fontWeight: FontWeight.w800,
                     color: textPrimary,
@@ -383,7 +383,7 @@ class _InvestorDocumentDetailScreenState
                 // ── Verification status ───────────────────────────────
                 Text(
                   'VERIFICATION STATUS',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 8,
                     fontWeight: FontWeight.w800,
                     color: muted,
@@ -406,7 +406,7 @@ class _InvestorDocumentDetailScreenState
                       const SizedBox(width: 8),
                       Text(
                         'ENCRYPTED & VERIFIED',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 9,
                           fontWeight: FontWeight.w800,
                           color: _green,
@@ -421,7 +421,7 @@ class _InvestorDocumentDetailScreenState
                 // ── Description / overview ────────────────────────────
                 Text(
                   'DOCUMENT OVERVIEW',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 8,
                     fontWeight: FontWeight.w800,
                     color: muted,
@@ -431,7 +431,7 @@ class _InvestorDocumentDetailScreenState
                 const SizedBox(height: 8),
                 Text(
                   '"$description"',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 11,
                     fontWeight: FontWeight.w500,
                     fontStyle: FontStyle.italic,
@@ -496,7 +496,7 @@ class _MetaCell extends StatelessWidget {
               const SizedBox(width: 6),
               Text(
                 label,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 7,
                   fontWeight: FontWeight.w800,
                   color: muted,
@@ -508,7 +508,7 @@ class _MetaCell extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             value,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 11,
               fontWeight: FontWeight.w800,
               color: textPrimary,
@@ -543,7 +543,7 @@ class _PrimaryButton extends StatelessWidget {
         icon: Icon(icon, size: 18),
         label: Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 11,
             fontWeight: FontWeight.w900,
             letterSpacing: 1.5,

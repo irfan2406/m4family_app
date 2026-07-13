@@ -78,14 +78,14 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
         backgroundColor: scheme.surface,
         elevation: 0,
         leading: IconButton(icon: const Icon(LucideIcons.arrowLeft), onPressed: () => context.pop()),
-        title: Text('Analytics', style: GoogleFonts.montserrat(fontWeight: FontWeight.w900)),
+        title: Text('Analytics', style: GoogleFonts.dmSerifDisplay(fontWeight: FontWeight.w900)),
       ),
       body: _loading
           ? Center(child: CircularProgressIndicator(color: accent))
           : ListView(
               padding: const EdgeInsets.fromLTRB(20, 10, 20, 24),
               children: [
-                Text('PORTFOLIO PERFORMANCE', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2.4, color: scheme.onSurface.withValues(alpha: 0.68))),
+                Text('PORTFOLIO PERFORMANCE', style: GoogleFonts.dmSerifDisplay(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2.4, color: scheme.onSurface.withValues(alpha: 0.68))),
                 const SizedBox(height: 14),
                 _rangeTabs(scheme, selected: _range, onPick: (v) => setState(() => _range = v)),
                 const SizedBox(height: 16),
@@ -105,7 +105,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                   children: [
                     Icon(LucideIcons.pieChart, size: 16, color: purple),
                     const SizedBox(width: 8),
-                    Text('Asset Allocation', style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w800)),
+                    Text('Asset Allocation', style: GoogleFonts.dmSerifDisplay(fontSize: 12, fontWeight: FontWeight.w800)),
                   ],
                 ),
                 const SizedBox(height: 12),
@@ -125,7 +125,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('BACKEND (CP PERFORMANCE)', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2, color: scheme.onSurface.withValues(alpha: 0.68))),
+                        Text('BACKEND (CP PERFORMANCE)', style: GoogleFonts.dmSerifDisplay(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2, color: scheme.onSurface.withValues(alpha: 0.68))),
                         const SizedBox(height: 10),
                         _kv('Total leads', '${_data!['totalLeads'] ?? 0}', scheme),
                         _kv('Bookings / conversions', '${_data!['totalConversions'] ?? 0}', scheme),
@@ -166,7 +166,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                   child: Text(
                     r,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1.4,
@@ -198,9 +198,9 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
       ),
       child: Column(
         children: [
-          Text(label, textAlign: TextAlign.center, style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1.1, color: scheme.onSurface.withValues(alpha: 0.68))),
+          Text(label, textAlign: TextAlign.center, style: GoogleFonts.dmSerifDisplay(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1.1, color: scheme.onSurface.withValues(alpha: 0.68))),
           const SizedBox(height: 8),
-          Text(value, style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900)),
+          Text(value, style: GoogleFonts.dmSerifDisplay(fontSize: 12, fontWeight: FontWeight.w900)),
           const SizedBox(height: 6),
           if (change.isNotEmpty)
             Row(
@@ -208,7 +208,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
               children: [
                 Icon(trendUp ? LucideIcons.trendingUp : LucideIcons.activity, size: 12, color: trendUp ? const Color(0xFF34D399) : const Color(0xFFF87171)),
                 const SizedBox(width: 4),
-                Text(change, style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: trendUp ? const Color(0xFF34D399) : const Color(0xFFF87171))),
+                Text(change, style: GoogleFonts.dmSerifDisplay(fontSize: 9, fontWeight: FontWeight.w900, color: trendUp ? const Color(0xFF34D399) : const Color(0xFFF87171))),
               ],
             ),
         ],
@@ -246,9 +246,9 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Growth Trajectory', style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900)),
+                  Text('Growth Trajectory', style: GoogleFonts.dmSerifDisplay(fontSize: 12, fontWeight: FontWeight.w900)),
                   const SizedBox(height: 2),
-                  Text('Portfolio valuation over time', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w700, color: scheme.onSurface.withValues(alpha: 0.68))),
+                  Text('Portfolio valuation over time', style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w700, color: scheme.onSurface.withValues(alpha: 0.68))),
                 ],
               ),
               Container(
@@ -299,7 +299,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                   child: Text(
                     _monthShort((m['_id'] ?? '').toString()),
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.8, color: scheme.onSurface.withValues(alpha: 0.68)),
+                    style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.8, color: scheme.onSurface.withValues(alpha: 0.68)),
                   ),
                 ),
             ],
@@ -317,8 +317,8 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(child: Text(label, style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w800, color: scheme.onSurface.withValues(alpha: 0.7)))),
-              Text('$value%', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: scheme.onSurface.withValues(alpha: 0.7))),
+              Expanded(child: Text(label, style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w800, color: scheme.onSurface.withValues(alpha: 0.7)))),
+              Text('$value%', style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w900, color: scheme.onSurface.withValues(alpha: 0.7))),
             ],
           ),
           const SizedBox(height: 6),
@@ -350,8 +350,8 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Expanded(child: Text(k, style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w600, color: scheme.onSurface.withValues(alpha: 0.65)))),
-            Text(v, style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900)),
+            Expanded(child: Text(k, style: GoogleFonts.dmSerifDisplay(fontSize: 11, fontWeight: FontWeight.w600, color: scheme.onSurface.withValues(alpha: 0.65)))),
+            Text(v, style: GoogleFonts.dmSerifDisplay(fontSize: 11, fontWeight: FontWeight.w900)),
           ],
         ),
       );

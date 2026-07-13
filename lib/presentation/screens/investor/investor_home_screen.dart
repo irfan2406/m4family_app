@@ -228,6 +228,31 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
     },
   ];
 
+  // Web parity: the MEDIA tab shows real-estate cards over interior/property
+  // photos (matching the web), not the project towers only.
+  static final List<Map<String, dynamic>> _placeholderMedia = [
+    {
+      '_id': 'media1',
+      'title': 'Ocean View',
+      'image': 'assets/hero_artistic.jpg',
+    },
+    {
+      '_id': 'media2',
+      'title': 'Ocean View',
+      'image': 'assets/custom_view_1.png',
+    },
+    {
+      '_id': 'media3',
+      'title': 'Aura Residences',
+      'image': 'assets/community_luxury.png',
+    },
+    {
+      '_id': 'media4',
+      'title': 'Cledor',
+      'image': 'assets/cledor_featured.jpg',
+    },
+  ];
+
   Future<void> _fetchData() async {
     final apiClient = ref.read(apiClientProvider);
 
@@ -421,7 +446,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
               const SizedBox(height: 18),
               Text(
                 'M4 FAMILY',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 11,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 5,
@@ -625,7 +650,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                                 ),
                                 child: Text(
                                   'ARTISTIC IMPRESSION',
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.dmSerifDisplay(
                                     color: Colors.white,
                                     fontSize: 7,
                                     fontWeight: FontWeight.w900,
@@ -733,7 +758,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         const SizedBox(height: 24),
         RichText(
           text: TextSpan(
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               color: Theme.of(
                 context,
               ).colorScheme.onSurface.withValues(alpha: 0.6),
@@ -750,7 +775,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                   onTap: () => context.push('/investor/about'),
                   child: Text(
                     'Who We Are',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       color: isDark ? Colors.white : Colors.black,
                       fontWeight: FontWeight.bold,
                       decoration: TextDecoration.underline,
@@ -796,7 +821,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                           children: [
                             Text(
                               tab.toUpperCase(),
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                 color: isSelected
                                     ? (isDark ? Colors.white : Colors.black)
                                     : (isDark ? Colors.white : Colors.black)
@@ -829,16 +854,16 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         const SizedBox(height: 32),
         Builder(
           builder: (context) {
-            // Web parity: both Properties AND Media show the projects (Media as
-            // image+title boxes, Properties as white info cards). Falls back to
-            // placeholder projects when the projects call 504s / cache is cold,
-            // so neither tab is ever blank.
+            // Web parity: Properties shows the projects (white info cards);
+            // Media shows "Ocean View" living-room boxes; Communities its own
+            // list. Projects fall back to placeholders when the projects call
+            // 504s / cache is cold, so no tab is ever blank.
             final projectItems = _projects.isNotEmpty
                 ? _projects
                 : _placeholderProjects;
             final tabItems = _activeTab == 'Communities'
                 ? _communities
-                : projectItems;
+                : (_activeTab == 'Media' ? _placeholderMedia : projectItems);
             return SizedBox(
               height: 360,
               child: ListView.builder(
@@ -914,7 +939,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                       ),
                       child: Text(
                         status.toUpperCase(),
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: Colors.white,
                           fontSize: 8,
                           fontWeight: FontWeight.w500,
@@ -937,7 +962,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                       ),
                       child: Text(
                         'ARTISTIC IMPRESSION',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: Colors.white,
                           fontSize: 6.5,
                           fontWeight: FontWeight.w600,
@@ -958,7 +983,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                     title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.lora(
+                    style: GoogleFonts.dmSerifDisplay(
                       color: scheme.onSurface,
                       fontSize: 20,
                       fontWeight: FontWeight.w500,
@@ -978,7 +1003,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                           location.toUpperCase(),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             color: scheme.onSurface.withValues(alpha: 0.55),
                             fontSize: 10,
                             fontWeight: FontWeight.w500,
@@ -1001,7 +1026,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                       children: [
                         Text(
                           'READ MORE',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             color: scheme.surface,
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
@@ -1094,7 +1119,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
               _buildProjectImage(
                 imageUrl,
                 errorIconSize: 40,
-                alignment: isMedia ? const Alignment(0.4, 0) : Alignment.center,
+                alignment: Alignment.center,
               ),
 
               // Gradient Overlay — subtle for Media (title only), stronger for
@@ -1129,7 +1154,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                       // Web parity: Media titles are small + letterspaced
                       // (CLEDOR / SKAI); Communities use the large serif.
                       style: isMedia
-                          ? GoogleFonts.montserrat(
+                          ? GoogleFonts.dmSerifDisplay(
                               color: Colors.white,
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
@@ -1153,7 +1178,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                             .toUpperCase(),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: Colors.white.withValues(alpha: 0.7),
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
@@ -1167,7 +1192,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                         children: [
                           Text(
                             'EXPLORE COMMUNITY',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                               color: Colors.white,
                               fontSize: 10,
                               fontWeight: FontWeight.w400,
@@ -1297,7 +1322,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                     ),
                     child: Text(
                       'ARTISTIC IMPRESSION',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         color: Colors.white,
                         fontSize: 7,
                         fontWeight: FontWeight.w900,
@@ -1316,7 +1341,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                     children: [
                       Text(
                         'FEATURED PROPERTY',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: const Color(0xFFC5A358),
                           fontSize: 9,
                           fontWeight: FontWeight.w900,
@@ -1326,7 +1351,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                       const SizedBox(height: 12),
                       Text(
                         (project['title'] ?? '').toString(),
-                        style: GoogleFonts.lora(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: Colors.black,
                           fontSize: 44,
                           fontWeight: FontWeight.w400,
@@ -1345,7 +1370,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                             .toUpperCase(),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: Colors.white.withValues(alpha: 0.8),
                           fontSize: 9,
                           height: 1.6,
@@ -1434,7 +1459,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                     child: Center(
                       child: Text(
                         'READ MORE',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: isDark ? Colors.black : Colors.white,
                           fontWeight: FontWeight.w900,
                           fontSize: 12,
@@ -1486,7 +1511,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         Text(
           label,
           textAlign: TextAlign.center,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             color: isDark ? Colors.white : Colors.black,
             fontSize: 9,
             fontWeight: FontWeight.w800,
@@ -1620,7 +1645,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 color: isDark ? Colors.white : Colors.black,
                 fontWeight: FontWeight.w900,
                 fontSize: 10,
@@ -1631,7 +1656,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
             Text(
               desc,
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 color: (isDark ? Colors.white : Colors.black).withValues(
                   alpha: 0.5,
                 ),
@@ -1688,7 +1713,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
             Expanded(
               child: RichText(
                 text: TextSpan(
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     color: isDark ? Colors.white54 : Colors.black54,
                     fontSize: 11,
                     letterSpacing: 0.8,
@@ -1698,7 +1723,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                     const TextSpan(text: "I'VE READ AND AGREE TO THE "),
                     TextSpan(
                       text: 'PRIVACY POLICY',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         color: isDark ? Colors.white : Colors.black,
                         fontSize: 11,
                         fontWeight: FontWeight.w900,
@@ -1731,7 +1756,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                       )
                     : Text(
                         'SUBMIT INTEREST',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: isDark ? Colors.black : Colors.white,
                           fontWeight: FontWeight.w400,
                           letterSpacing: 2,
@@ -1777,7 +1802,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         maxLines: isLong ? 5 : 1,
         decoration: InputDecoration(
           hintText: hint ?? label,
-          hintStyle: GoogleFonts.montserrat(
+          hintStyle: GoogleFonts.dmSerifDisplay(
             color: isDark ? Colors.white54 : Colors.black45,
             fontSize: 13,
           ),

@@ -10,6 +10,7 @@ import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_detail_screen.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
@@ -114,7 +115,7 @@ class ProjectListScreen extends ConsumerWidget {
                       children: [
                         Text(
                           'REFINE SEARCH',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 22,
                             fontWeight: FontWeight.w900,
                             color: Theme.of(context).colorScheme.onSurface,
@@ -252,7 +253,7 @@ class ProjectListScreen extends ConsumerWidget {
                         ),
                         child: Text(
                           'APPLY SEARCH MATRIX',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 12,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 1.5,
@@ -345,7 +346,7 @@ class ProjectListScreen extends ConsumerWidget {
                                   'M4 PROPERTIES',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.dmSerifDisplay(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w900,
                                     color: Theme.of(
@@ -359,7 +360,7 @@ class ProjectListScreen extends ConsumerWidget {
                                   'DISCOVER CURATED LUXURY',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.dmSerifDisplay(
                                     fontSize: 8,
                                     fontWeight: FontWeight.w700,
                                     color: Theme.of(
@@ -373,7 +374,7 @@ class ProjectListScreen extends ConsumerWidget {
                                   'DISCOVER',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.dmSerifDisplay(
                                     fontSize: 8,
                                     fontWeight: FontWeight.w700,
                                     color: Theme.of(
@@ -387,7 +388,7 @@ class ProjectListScreen extends ConsumerWidget {
                                   'M4 PROPERTIES',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.dmSerifDisplay(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w800,
                                     color: Theme.of(
@@ -448,27 +449,9 @@ class ProjectListScreen extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(width: 6),
-                      // Web parity: dark "..." menu button that opens the
-                      // sidebar drawer.
-                      Builder(
-                        builder: (ctx) => GestureDetector(
-                          onTap: () => Scaffold.of(ctx).openDrawer(),
-                          child: Container(
-                            width: 44,
-                            height: 36,
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: isDark ? Colors.white : Colors.black,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Icon(
-                              LucideIcons.moreHorizontal,
-                              size: 18,
-                              color: isDark ? Colors.black : Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
+                      // Canonical side-menu button (same size/colour in every
+                      // portal, light & dark) that opens the sidebar drawer.
+                      const SideMenuButton(),
                     ],
                   ),
                 ],
@@ -510,7 +493,7 @@ class ProjectListScreen extends ConsumerWidget {
                         ),
                         child: Text(
                           filter.toUpperCase(),
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 10,
                             fontWeight: isSelected
                                 ? FontWeight.w900
@@ -634,7 +617,7 @@ class ProjectListScreen extends ConsumerWidget {
                                 ? 'TAKING LONGER THAN USUAL'
                                 : "COULDN'T LOAD PROPERTIES",
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                               fontSize: 12,
                               fontWeight: FontWeight.w900,
                               color: onSurface,
@@ -647,7 +630,7 @@ class ProjectListScreen extends ConsumerWidget {
                                 ? 'The server may be waking up. Please try again.'
                                 : 'Please check your connection and try again.',
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                               fontSize: 11,
                               fontWeight: FontWeight.w500,
                               color: onSurface.withOpacity(0.5),
@@ -668,7 +651,7 @@ class ProjectListScreen extends ConsumerWidget {
                               ),
                               child: Text(
                                 'RETRY',
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.dmSerifDisplay(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w900,
                                   color: isDark ? Colors.black : Colors.white,
@@ -762,7 +745,7 @@ class _ProjectGridItem extends StatelessWidget {
                 ),
                 child: Text(
                   'ARTISTIC IMPRESSION',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 7,
                     fontWeight: FontWeight.w900,
                     color: Colors.white.withOpacity(0.6),
@@ -790,7 +773,7 @@ class _ProjectGridItem extends StatelessWidget {
                         (project['title'] ?? 'M4 PROJECT')
                             .toString()
                             .toUpperCase(),
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 20,
                           fontWeight: FontWeight.w800,
                           color: Colors.white,
@@ -811,7 +794,7 @@ class _ProjectGridItem extends StatelessWidget {
                           Expanded(
                             child: Text(
                               locationLabel.toUpperCase(),
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                 fontSize: 9,
                                 color: Colors.white70,
                                 fontWeight: FontWeight.w900,
@@ -906,7 +889,7 @@ class _ProjectListRowItem extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   (project['title'] ?? 'M4 PROJECT').toString().toUpperCase(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 16,
                     fontWeight: FontWeight.w900,
                     color: isDark ? Colors.white : Colors.black,
@@ -929,7 +912,7 @@ class _ProjectListRowItem extends StatelessWidget {
                     Expanded(
                       child: Text(
                         project['location']?['name'] ?? 'N/A',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 11,
                           color: Theme.of(
                             context,
@@ -983,7 +966,7 @@ class _Badge extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           fontSize: 8,
           fontWeight: FontWeight.w900,
           color: Theme.of(context).colorScheme.onSurface,
@@ -1014,7 +997,7 @@ class _FilterSection extends StatelessWidget {
       children: [
         Text(
           title,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 10,
             fontWeight: FontWeight.w900,
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.75),
@@ -1063,7 +1046,7 @@ class _FilterSection extends StatelessWidget {
                 ),
                 child: Text(
                   opt.toUpperCase(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 9,
                     fontWeight: FontWeight.w900,
                     color: isSelected

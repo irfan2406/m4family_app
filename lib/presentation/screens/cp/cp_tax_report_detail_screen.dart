@@ -83,7 +83,7 @@ class _CpTaxReportDetailScreenState
       SnackBar(
         content: Text(
           'Downloading $name...',
-          style: GoogleFonts.montserrat(fontSize: 12),
+          style: GoogleFonts.dmSerifDisplay(fontSize: 12),
         ),
       ),
     );
@@ -146,7 +146,7 @@ class _CpTaxReportDetailScreenState
               children: [
                 Text(
                   'Tax Report',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontWeight: FontWeight.w900,
                     fontSize: 16,
                     color: textPrimary,
@@ -155,7 +155,7 @@ class _CpTaxReportDetailScreenState
                 const SizedBox(height: 2),
                 Text(
                   'FISCAL COMPLIANCE',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 9,
                     letterSpacing: 1.5,
                     fontWeight: FontWeight.w600,
@@ -198,7 +198,7 @@ class _CpTaxReportDetailScreenState
             const SizedBox(height: 16),
             Text(
               'Report not found',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 15,
                 fontWeight: FontWeight.w800,
                 color: textPrimary,
@@ -208,7 +208,7 @@ class _CpTaxReportDetailScreenState
             Text(
               'This tax report could not be found or you do not have access.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(fontSize: 12, color: muted),
+              style: GoogleFonts.dmSerifDisplay(fontSize: 12, color: muted),
             ),
           ],
         ),
@@ -245,7 +245,7 @@ class _CpTaxReportDetailScreenState
               Text(
                 _name,
                 textAlign: TextAlign.center,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 20,
                   fontWeight: FontWeight.w900,
                   letterSpacing: -0.3,
@@ -284,7 +284,7 @@ class _CpTaxReportDetailScreenState
           const SizedBox(width: 6),
           Text(
             'VERIFIED DOCUMENT',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 9,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.2,
@@ -349,7 +349,7 @@ class _CpTaxReportDetailScreenState
       children: [
         Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 10,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.2,
@@ -371,7 +371,7 @@ class _CpTaxReportDetailScreenState
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.right,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: textPrimary,
@@ -403,7 +403,7 @@ class _CpTaxReportDetailScreenState
         children: [
           Text(
             'DESCRIPTION',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 10,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.2,
@@ -413,7 +413,7 @@ class _CpTaxReportDetailScreenState
           const SizedBox(height: 10),
           Text(
             _description,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 13,
               height: 1.55,
               fontWeight: FontWeight.w400,
@@ -445,7 +445,7 @@ class _CpTaxReportDetailScreenState
               children: [
                 Text(
                   'SECURE DOCUMENT',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.2,
@@ -456,7 +456,7 @@ class _CpTaxReportDetailScreenState
                 Text(
                   'This document contains confidential financial information. '
                   'Do not share it with unauthorised parties.',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 12,
                     height: 1.5,
                     fontWeight: FontWeight.w400,
@@ -488,7 +488,7 @@ class _CpTaxReportDetailScreenState
         ),
         label: Text(
           'DOWNLOAD DOCUMENT',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 12,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.2,

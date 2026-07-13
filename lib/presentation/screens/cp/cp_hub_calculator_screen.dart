@@ -31,7 +31,7 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(icon: const Icon(LucideIcons.arrowLeft), onPressed: () => context.pop()),
-        title: Text('Calculator', style: GoogleFonts.montserrat(fontWeight: FontWeight.w900)),
+        title: Text('Calculator', style: GoogleFonts.dmSerifDisplay(fontWeight: FontWeight.w900)),
       ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(20, 14, 20, 24),
@@ -55,13 +55,13 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
               children: [
                 Text(
                   'PROJECTED MATURITY VALUE',
-                  style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2, color: purple),
+                  style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2, color: purple),
                 ),
                 const SizedBox(height: 10),
                 Text(
                   fmt.format(total),
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.montserrat(fontSize: 28, fontWeight: FontWeight.w900, letterSpacing: -0.4),
+                  style: GoogleFonts.dmSerifDisplay(fontSize: 28, fontWeight: FontWeight.w900, letterSpacing: -0.4),
                 ),
                 const SizedBox(height: 12),
                 Container(
@@ -78,7 +78,7 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
                       const SizedBox(width: 8),
                       Text(
                         '+${fmt.format(profit)} PROFIT',
-                        style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.2, color: const Color(0xFF34D399)),
+                        style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.2, color: const Color(0xFF34D399)),
                       ),
                     ],
                   ),
@@ -148,7 +148,7 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
                 Expanded(
                   child: Text(
                     'Disclaimer: Calculations are estimates based on compounded annual growth rate. Actual returns may vary based on market conditions and project performance.',
-                    style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w700, height: 1.5, color: scheme.onSurface.withValues(alpha: 0.6)),
+                    style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w700, height: 1.5, color: scheme.onSurface.withValues(alpha: 0.6)),
                   ),
                 ),
               ],
@@ -168,9 +168,9 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
           children: [
             Text(
               label.toUpperCase(),
-              style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.6, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.68)),
+              style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.6, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.68)),
             ),
-            Text(valueText, style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900)),
+            Text(valueText, style: GoogleFonts.dmSerifDisplay(fontSize: 12, fontWeight: FontWeight.w900)),
           ],
         ),
         const SizedBox(height: 8),

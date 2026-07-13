@@ -151,7 +151,7 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
               children: [
                 Text(
                   'Commission details',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontWeight: FontWeight.w900,
                     fontSize: 16,
                     color: textPrimary,
@@ -160,7 +160,7 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
                 const SizedBox(height: 2),
                 Text(
                   _shortId,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 1,
@@ -201,7 +201,7 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
             const SizedBox(height: 16),
             Text(
               'Commission not found',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 15,
                 fontWeight: FontWeight.w800,
                 color: textPrimary,
@@ -211,7 +211,7 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
             Text(
               'This commission could not be found or you do not have access.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(fontSize: 12, color: muted),
+              style: GoogleFonts.dmSerifDisplay(fontSize: 12, color: muted),
             ),
           ],
         ),
@@ -243,7 +243,7 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
             const SizedBox(height: 16),
             Text(
               '+${_amountLabel()}',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 30,
                 fontWeight: FontWeight.w900,
                 letterSpacing: -0.5,
@@ -253,7 +253,7 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
             const SizedBox(height: 6),
             Text(
               status.toUpperCase(),
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 10,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.5,
@@ -309,7 +309,7 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.right,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                   color: textPrimary,
@@ -343,7 +343,7 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
               children: [
                 Text(
                   'COMMISSION ID',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.2,
@@ -394,7 +394,7 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
       children: [
         Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 10,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.2,
@@ -409,7 +409,7 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
   Widget _valueText(String text, Color textPrimary) {
     return Text(
       text,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.dmSerifDisplay(
         fontSize: 12,
         fontWeight: FontWeight.w500,
         color: textPrimary,

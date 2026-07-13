@@ -501,7 +501,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               alignment: Alignment.centerLeft,
               child: Text(
                 'SELECT DATE & TIME',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 15,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 0.5,
@@ -539,7 +539,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     ),
                     child: Text(
                       'CANCEL',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1,
                       ),
@@ -560,7 +560,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     ),
                     child: Text(
                       'CONFIRM',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1,
                       ),
@@ -823,7 +823,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         ),
                         child: Text(
                           status,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 8,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 2,
@@ -908,7 +908,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         // Title + location (dark, below hero — web parity)
                         Text(
                           title.toUpperCase(),
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 22,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 0.4,
@@ -944,7 +944,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                                 const SizedBox(width: 6),
                                 Text(
                                   _locationLine(),
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.dmSerifDisplay(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w800,
                                     color: scheme.onSurface.withValues(
@@ -997,7 +997,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         const SizedBox(height: 12),
                         Text(
                           'EXPERIENCE THE PINNACLE OF LUXURY LIVING WITH FLOOR-TO-CEILING WINDOWS, ITALIAN MARBLE FLOORING, AND SMART HOME AUTOMATION.',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
                             letterSpacing: -0.2,
@@ -1157,7 +1157,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 child: Text(
                   label,
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     color: Colors.white,
@@ -1210,7 +1210,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               const SizedBox(height: 2),
               Text(
                 '360°',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 9,
                   fontWeight: FontWeight.w900,
                 ),
@@ -1249,7 +1249,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           Text(
             label.toUpperCase(),
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 8,
               fontWeight: FontWeight.w900,
               letterSpacing: 1.5,
@@ -1262,7 +1262,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 13,
               fontWeight: FontWeight.w800,
               color: scheme.onSurface,
@@ -1291,7 +1291,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         const SizedBox(width: 10),
         Text(
           title.toUpperCase(),
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 13,
             fontWeight: FontWeight.w900,
             letterSpacing: 3,
@@ -1343,7 +1343,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               children: [
                 Text(
                   title.toUpperCase(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 12,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.2,
@@ -1353,7 +1353,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 const SizedBox(height: 3),
                 Text(
                   subtitle.toUpperCase(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 9,
                     fontWeight: FontWeight.w900,
                     color: subColor,
@@ -1381,7 +1381,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               ),
               child: Text(
                 'WATCH',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 1.4,
@@ -1412,7 +1412,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                   ),
                   child: Text(
                     'VIEW',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1.2,
@@ -1453,7 +1453,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     if (list.isEmpty) {
       return Text(
         'No amenities listed',
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           color: scheme.onSurfaceVariant,
           fontSize: 11,
         ),
@@ -1489,7 +1489,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 9.5,
                 fontWeight: FontWeight.w600,
                 height: 1.2,
@@ -1524,7 +1524,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               children: [
                 Text(
                   'ESTIMATED COMPLETION DATE',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 9,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 2,
@@ -1534,7 +1534,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 const SizedBox(height: 6),
                 Text(
                   est,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 28,
                     fontWeight: FontWeight.w900,
                     letterSpacing: -1,
@@ -1548,7 +1548,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                   overflow: _showFullProgressDesc
                       ? TextOverflow.visible
                       : TextOverflow.ellipsis,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                     color: scheme.onSurfaceVariant,
@@ -1562,7 +1562,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                   ),
                   child: Text(
                     _showFullProgressDesc ? 'Show less' : 'Read more',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
                       color: accent,
@@ -1594,14 +1594,14 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                       children: [
                         Text(
                           '$pct%',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 22,
                             fontWeight: FontWeight.w900,
                           ),
                         ),
                         Text(
                           'OVERALL',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 9,
                             fontWeight: FontWeight.w800,
                             color: scheme.onSurfaceVariant,
@@ -1721,7 +1721,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                           ),
                           child: Text(
                             status.toUpperCase(),
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                               fontSize: 8,
                               fontWeight: FontWeight.w900,
                               letterSpacing: 1,
@@ -1761,7 +1761,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         (_project?['title'] ?? '').toString().toUpperCase(),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 11,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1.2,
@@ -1788,7 +1788,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                                   child: Center(
                                     child: Text(
                                       '$pct%',
-                                      style: GoogleFonts.montserrat(
+                                      style: GoogleFonts.dmSerifDisplay(
                                         fontSize: 9,
                                         fontWeight: FontWeight.w900,
                                         color: scheme.onSurfaceVariant,
@@ -1805,7 +1805,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                               name.toUpperCase(),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w800,
                                 color: scheme.onSurfaceVariant,
@@ -1836,7 +1836,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       children: [
         Text(
           '2026',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 20,
             fontWeight: FontWeight.w900,
             color: accent,
@@ -1895,7 +1895,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               children: [
                 Text(
                   'PHASE TRACKING',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 13,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -1905,7 +1905,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 const SizedBox(height: 4),
                 Text(
                   'REAL-TIME DEVELOPMENT STATUS',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 8,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1,
@@ -1923,7 +1923,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               ),
               child: Text(
                 '${phases.length} MILESTONES',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 8,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 1,
@@ -1989,7 +1989,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                           ),
                           child: Text(
                             (i + 1).toString().padLeft(2, '0'),
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
                               color: scheme.onSurfaceVariant,
@@ -2005,7 +2005,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                                 name.toUpperCase(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.dmSerifDisplay(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w900,
                                   letterSpacing: 0.6,
@@ -2026,7 +2026,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                                   const SizedBox(width: 6),
                                   Text(
                                     status.toUpperCase(),
-                                    style: GoogleFonts.montserrat(
+                                    style: GoogleFonts.dmSerifDisplay(
                                       fontSize: 8,
                                       fontWeight: FontWeight.w800,
                                       letterSpacing: 0.6,
@@ -2040,7 +2040,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         ),
                         Text(
                           '$pct%',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 15,
                             fontWeight: FontWeight.w900,
                             color: scheme.onSurface,
@@ -2087,7 +2087,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         children: [
           Text(
             'Registration',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 18,
               fontWeight: FontWeight.w600,
             ),
@@ -2110,7 +2110,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     Colors.transparent,
                   ),
                 ),
-                textStyle: GoogleFonts.montserrat(
+                textStyle: GoogleFonts.dmSerifDisplay(
                   fontWeight: FontWeight.w700,
                   color: scheme.onSurface,
                 ),
@@ -2197,7 +2197,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                   )
                 : Text(
                     'PROCEED',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontWeight: FontWeight.w900,
                       letterSpacing: 3,
                     ),
@@ -2274,7 +2274,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               ),
               child: Text(
                 'BOOK VISIT',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontWeight: FontWeight.w900,
                   fontSize: 12,
                   letterSpacing: 2,
@@ -2369,7 +2369,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               icon: const Icon(LucideIcons.mapPin, size: 16),
               label: Text(
                 'VIEW ON MAPS',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 9,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2,
@@ -2435,7 +2435,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                           children: [
                             Text(
                               'VIDEO CALL',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: -0.2,
@@ -2446,7 +2446,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                               (_project?['title'] ?? '')
                                   .toString()
                                   .toUpperCase(),
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                 fontSize: 9,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 1.4,
@@ -2597,7 +2597,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                             )
                           : Text(
                               'SUBMIT',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 3,
                               ),
@@ -2634,7 +2634,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         ),
         child: Text(
           label.toUpperCase(),
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 11,
             fontWeight: FontWeight.w900,
             letterSpacing: 1,
@@ -2651,7 +2651,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     // Web labels are uppercase (text-[10.5px] font-black uppercase).
     return Text(
       text.toUpperCase(),
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.dmSerifDisplay(
         fontSize: 10.5,
         fontWeight: FontWeight.w900,
         color: scheme.onSurface,
@@ -2670,7 +2670,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       controller: controller,
       keyboardType: keyboardType,
       decoration: _cpInputDec(scheme, hint: hint),
-      style: GoogleFonts.montserrat(fontWeight: FontWeight.w700),
+      style: GoogleFonts.dmSerifDisplay(fontWeight: FontWeight.w700),
     );
   }
 
@@ -2678,7 +2678,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     final isLight = scheme.brightness == Brightness.light;
     return InputDecoration(
       hintText: hint,
-      hintStyle: GoogleFonts.montserrat(
+      hintStyle: GoogleFonts.dmSerifDisplay(
         fontSize: 10,
         fontWeight: FontWeight.w900,
         letterSpacing: 1.8,
@@ -2806,7 +2806,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 right: 16,
                 child: Text(
                   '${_galleryIndex + 1} / ${_gallery.length}',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     color: Colors.white,
                     fontWeight: FontWeight.w800,
                   ),

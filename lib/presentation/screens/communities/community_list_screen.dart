@@ -4,6 +4,7 @@ import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'dart:convert';
 import 'dart:ui';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
@@ -100,7 +101,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                         children: [
                           Text(
                             'OUR COMMUNITIES',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.dmSerifDisplay(
                               color: isDark ? Colors.white : Colors.black,
                               fontSize: 15,
                               fontWeight: FontWeight.w900,
@@ -109,7 +110,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                           ),
                           Text(
                             'ECOSYSTEMS · LIFESTYLE',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.dmSerifDisplay(
                               color: (isDark ? Colors.white : Colors.black)
                                   .withOpacity(0.6),
                               fontSize: 8,
@@ -121,25 +122,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       ),
                     ],
                   ),
-                  Builder(
-                    builder: (context) => GestureDetector(
-                      onTap: () => Scaffold.of(context).openDrawer(),
-                      child: Container(
-                        width: 52,
-                        height: 36,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: isDark ? Colors.white : Colors.black,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Icon(
-                          LucideIcons.moreHorizontal,
-                          color: isDark ? Colors.black : Colors.white,
-                          size: 18,
-                        ),
-                      ),
-                    ),
-                  ),
+                  const SideMenuButton(),
                 ],
               ),
             ),
@@ -154,7 +137,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                 children: [
                   Text(
                     'DISCOVER THE LIFE',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 30,
                       fontWeight: FontWeight.w800,
                       color: isDark ? Colors.white : Colors.black,
@@ -172,7 +155,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       'At M4 Family Developments, we are dedicated to delivering a luxury experience that goes beyond the ordinary. Our commitment to exquisite living, unparalleled quality, and iconic design is evident in ...',
                       // Web parity: description is sans-serif (font-sans),
                       // muted, text-[13px] font-medium (not serif).
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.dmSerifDisplay(
                         color: (isDark ? Colors.white : Colors.black)
                             .withOpacity(0.6),
                         fontSize: 13,
@@ -184,7 +167,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       'At M4 Family Developments, we are dedicated to delivering a luxury experience that goes beyond the ordinary. Our commitment to exquisite living, unparalleled quality, and iconic design is evident in every community we curate. We believe in creating spaces that faster connection, inspiration, and a sense of belonging for every resident. Our developments are strategically located to offer the best of urban living with a touch of serenity.',
                       // Web parity: description is sans-serif (font-sans),
                       // muted, text-[13px] font-medium (not serif).
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.dmSerifDisplay(
                         color: (isDark ? Colors.white : Colors.black)
                             .withOpacity(0.6),
                         fontSize: 13,
@@ -209,7 +192,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       ),
                       child: Text(
                         _isExpanded ? 'Read less' : 'Read more',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: isDark ? Colors.white : Colors.black,
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
@@ -377,7 +360,7 @@ class _CommunityCard extends ConsumerWidget {
                       children: [
                         Text(
                           community['title']?.toString() ?? 'COMMUNITY',
-                          style: GoogleFonts.lora(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 28,
                             fontWeight: FontWeight.w400,
                             color: Colors.white,
@@ -391,7 +374,7 @@ class _CommunityCard extends ConsumerWidget {
                               '',
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 13,
                             color: Colors.white.withOpacity(0.8),
                             height: 1.5,

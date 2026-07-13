@@ -146,7 +146,7 @@ class _InvestorEliteInvestorConnectScreenState
           children: [
             Text(
               'Investor Connect',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontWeight: FontWeight.w900,
                 fontSize: 16,
                 color: textPrimary,
@@ -154,7 +154,7 @@ class _InvestorEliteInvestorConnectScreenState
             ),
             Text(
               'ELITE INVESTOR NETWORK',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 8,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 2,
@@ -179,7 +179,7 @@ class _InvestorEliteInvestorConnectScreenState
                       // ── Greeting ──────────────────────────────────────────
                       Text(
                         greeting,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 22,
                           fontWeight: FontWeight.w900,
                           letterSpacing: -1,
@@ -190,7 +190,7 @@ class _InvestorEliteInvestorConnectScreenState
                       const SizedBox(height: 8),
                       Text(
                         'Connect with fellow investors and co-invest in proven deals.',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                           color: muted,
@@ -204,7 +204,7 @@ class _InvestorEliteInvestorConnectScreenState
                         children: [
                           Text(
                             'NETWORK STATS',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                               fontSize: 10,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 4,
@@ -220,7 +220,7 @@ class _InvestorEliteInvestorConnectScreenState
                             ),
                             child: Text(
                               'LIVE',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                 fontSize: 8,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 1.5,
@@ -239,7 +239,7 @@ class _InvestorEliteInvestorConnectScreenState
                       // ── Active Co-Investors ──────────────────────────────
                       Text(
                         'ACTIVE CO-INVESTORS',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 4,
@@ -261,7 +261,7 @@ class _InvestorEliteInvestorConnectScreenState
                       // ── Successful Deals ─────────────────────────────────
                       Text(
                         'SUCCESSFUL DEALS',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 4,
@@ -300,7 +300,7 @@ class _InvestorEliteInvestorConnectScreenState
             Text(
               _error ?? 'Something went wrong',
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
                 color: textPrimary,
@@ -316,7 +316,7 @@ class _InvestorEliteInvestorConnectScreenState
               ),
               child: Text(
                 'RETRY',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 11,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2,
@@ -337,7 +337,7 @@ class _InvestorEliteInvestorConnectScreenState
       child: Center(
         child: Text(
           message,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             color: muted,
             fontWeight: FontWeight.w700,
           ),
@@ -391,7 +391,7 @@ class _InvestorEliteInvestorConnectScreenState
                 children: [
                   Text(
                     s.label.toUpperCase(),
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 2,
@@ -401,7 +401,7 @@ class _InvestorEliteInvestorConnectScreenState
                   const SizedBox(height: 6),
                   Text(
                     s.value.toUpperCase(),
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 26,
                       fontWeight: FontWeight.w900,
                       height: 1,
@@ -412,7 +412,7 @@ class _InvestorEliteInvestorConnectScreenState
                   const SizedBox(height: 4),
                   Text(
                     s.growth,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 10,
                       fontWeight: FontWeight.w800,
                       color: Colors.green.shade500,
@@ -493,7 +493,7 @@ class _InvestorEliteInvestorConnectScreenState
                     children: [
                       Text(
                         p.name,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 16,
                           fontWeight: FontWeight.w900,
                           letterSpacing: -0.5,
@@ -508,7 +508,7 @@ class _InvestorEliteInvestorConnectScreenState
                           Flexible(
                             child: Text(
                               p.location,
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w700,
                                 color: muted,
@@ -525,7 +525,7 @@ class _InvestorEliteInvestorConnectScreenState
                   children: [
                     Text(
                       'PORTFOLIO',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 8,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1.5,
@@ -535,7 +535,7 @@ class _InvestorEliteInvestorConnectScreenState
                     const SizedBox(height: 2),
                     Text(
                       p.portfolio,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 16,
                         fontWeight: FontWeight.w900,
                         letterSpacing: -0.5,
@@ -562,7 +562,7 @@ class _InvestorEliteInvestorConnectScreenState
                         ),
                         child: Text(
                           tag.toUpperCase(),
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 9,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 1,
@@ -594,7 +594,7 @@ class _InvestorEliteInvestorConnectScreenState
                 ),
                 label: Text(
                   'CONNECT',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -679,7 +679,7 @@ class _InvestorEliteInvestorConnectScreenState
                         ),
                         child: Text(
                           d.roi.toUpperCase(),
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 1.5,
@@ -698,7 +698,7 @@ class _InvestorEliteInvestorConnectScreenState
                   children: [
                     Text(
                       d.title.toUpperCase(),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 18,
                         fontWeight: FontWeight.w900,
                         letterSpacing: -0.5,
@@ -715,7 +715,7 @@ class _InvestorEliteInvestorConnectScreenState
                         Flexible(
                           child: Text(
                             d.syndicate.toUpperCase(),
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
                               letterSpacing: 1.5,
@@ -737,7 +737,7 @@ class _InvestorEliteInvestorConnectScreenState
                           children: [
                             Text(
                               'TICKET CLOSED',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                 fontSize: 9,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 2,
@@ -747,7 +747,7 @@ class _InvestorEliteInvestorConnectScreenState
                             const SizedBox(height: 4),
                             Text(
                               d.ticket.toUpperCase(),
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: -0.5,
@@ -764,7 +764,7 @@ class _InvestorEliteInvestorConnectScreenState
                             const SizedBox(width: 6),
                             Text(
                               'FUNDED',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 2,
@@ -846,7 +846,7 @@ class _InvestorEliteInvestorConnectScreenState
                           children: [
                             Text(
                               'RELATIONSHIP DESK',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: -0.5,
@@ -857,7 +857,7 @@ class _InvestorEliteInvestorConnectScreenState
                             const SizedBox(height: 6),
                             Text(
                               'CURATED INTRODUCTIONS',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 1.5,
@@ -890,7 +890,7 @@ class _InvestorEliteInvestorConnectScreenState
                       ),
                       child: Text(
                         'REQUEST AN INTRODUCTION',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 2,

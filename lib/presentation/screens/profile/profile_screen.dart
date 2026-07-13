@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'package:intl/intl.dart';
 import 'package:m4_mobile/core/providers/theme_provider.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
@@ -86,17 +87,24 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         children: [
           Text(
             'MY PROFILE',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 22,
               fontWeight: FontWeight.w900,
               color: isDark ? Colors.white : Colors.black,
               letterSpacing: -0.5,
             ),
           ),
-          _IconButton(
-            icon: LucideIcons.settings,
-            isDark: isDark,
-            onTap: () => context.push('/profile/settings'),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SideMenuButton(),
+              const SizedBox(width: 10),
+              _IconButton(
+                icon: LucideIcons.settings,
+                isDark: isDark,
+                onTap: () => context.push('/profile/settings'),
+              ),
+            ],
           ),
         ],
       ),
@@ -174,7 +182,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     children: [
                       Text(
                         fullName.toUpperCase(),
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 20,
                           fontWeight: FontWeight.w900,
                           color: isDark ? Colors.white : Colors.black,
@@ -184,7 +192,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       const SizedBox(height: 4),
                       Text(
                         email,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                           color: isDark ? Colors.white38 : Colors.black45,
@@ -192,7 +200,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       ),
                       Text(
                         phone,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                           color: isDark ? Colors.white38 : Colors.black45,
@@ -226,7 +234,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 address.toUpperCase(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.dmSerifDisplay(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w800,
                                   color: isDark
@@ -251,7 +259,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           const SizedBox(width: 6),
                           Text(
                             'BORN: ${born.toUpperCase()}',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                               fontSize: 9,
                               fontWeight: FontWeight.w700,
                               color: isDark ? Colors.white38 : Colors.black45,
@@ -283,7 +291,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               children: [
                 Text(
                   'POINTS',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 12,
                     fontWeight: FontWeight.w900,
                     color: isDark ? Colors.white : Colors.black,
@@ -292,7 +300,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
                 Text(
                   points,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 22,
                     fontWeight: FontWeight.w900,
                     color: isDark ? Colors.white : Colors.black,
@@ -376,7 +384,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             const SizedBox(width: 12),
             Text(
               'LOG OUT',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 12,
                 fontWeight: FontWeight.w900,
                 color: Colors.redAccent,
@@ -410,7 +418,7 @@ class _SectionTitle extends StatelessWidget {
       padding: const EdgeInsets.only(left: 8, bottom: 4),
       child: Text(
         title,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           fontSize: 11,
           fontWeight: FontWeight.w900,
           color: isDark
@@ -479,7 +487,7 @@ class _SupportTile extends StatelessWidget {
                 children: [
                   Text(
                     label,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 12,
                       fontWeight: FontWeight.w800,
                       color: isDark ? Colors.white : Colors.black,
@@ -488,7 +496,7 @@ class _SupportTile extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 8,
                       fontWeight: FontWeight.w700,
                       color: isDark ? Colors.white24 : Colors.black45,

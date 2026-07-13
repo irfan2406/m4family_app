@@ -230,7 +230,7 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                       padding: const EdgeInsets.only(top: 12),
                       child: RichText(
                         text: TextSpan(
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             color: isDark ? Colors.white54 : Colors.black54,
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
@@ -240,7 +240,7 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                             const TextSpan(text: "I'VE READ AND AGREE TO THE "),
                             TextSpan(
                               text: 'PRIVACY POLICY',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                 color: isDark ? Colors.white : Colors.black,
                                 fontSize: 11,
                                 fontWeight: FontWeight.w900,
@@ -281,7 +281,7 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                         )
                       : Text(
                           'SUBMIT INTEREST',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontWeight: FontWeight.w800,
                             fontSize: 13,
                             letterSpacing: 2,
@@ -330,11 +330,11 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
         style: TextStyle(color: isDark ? Colors.white : Colors.black),
         decoration: InputDecoration(
           hintText: label,
-          hintStyle: GoogleFonts.montserrat(
+          hintStyle: GoogleFonts.dmSerifDisplay(
             color: isDark ? Colors.white54 : Colors.black45,
             fontSize: 13,
           ),
-          errorStyle: GoogleFonts.montserrat(
+          errorStyle: GoogleFonts.dmSerifDisplay(
             color: Colors.redAccent,
             fontSize: 11,
             fontWeight: FontWeight.w600,

@@ -117,7 +117,7 @@ class _WheelDatePickerSheetState extends State<_WheelDatePickerSheet> {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'SELECT DATE',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 16,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 0.5,
@@ -191,7 +191,7 @@ class _WheelDatePickerSheetState extends State<_WheelDatePickerSheet> {
                         ),
                         child: Text(
                           'CANCEL',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 12,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 1,
@@ -219,7 +219,7 @@ class _WheelDatePickerSheetState extends State<_WheelDatePickerSheet> {
                         ),
                         child: Text(
                           'CONFIRM',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 12,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 1,
@@ -258,7 +258,7 @@ class _WheelDatePickerSheetState extends State<_WheelDatePickerSheet> {
         builder: (ctx, i) => Center(
           child: Text(
             label(i),
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 18,
               fontWeight: FontWeight.w700,
               color: fg,

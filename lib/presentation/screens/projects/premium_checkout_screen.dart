@@ -71,7 +71,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
         backgroundColor: _gold,
         content: Text(
           'Welcome to M4 Elite! Your membership is now active.',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             color: Colors.black,
             fontWeight: FontWeight.w700,
             fontSize: 13,
@@ -98,7 +98,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
         ),
         title: Text(
           'ELITE CHECKOUT',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 14,
             fontWeight: FontWeight.w900,
             color: textPrimary,
@@ -159,7 +159,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                             ),
                             child: Text(
                               'M4 ELITE',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w900,
                                 color: Colors.black,
@@ -170,7 +170,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                           const SizedBox(height: 10),
                           Text(
                             'Lifetime Membership',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                               color: textPrimary,
@@ -184,7 +184,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                       children: [
                         Text(
                           '₹4,999',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                             color: textPrimary,
@@ -192,7 +192,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                         ),
                         Text(
                           'Fixed One-time',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 10,
                             color: muted,
                           ),
@@ -221,7 +221,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
             padding: const EdgeInsets.only(left: 4, bottom: 12),
             child: Text(
               'PAYMENT DETAILS',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 11,
                 fontWeight: FontWeight.w900,
                 color: muted,
@@ -331,7 +331,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                   child: Text(
                     'Your transaction is secured with bank-grade encryption. '
                     'M4 Family does not store your card details on our servers.',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 11,
                       color: muted,
                       height: 1.5,
@@ -364,7 +364,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
               child: Center(
                 child: Text(
                   'Pay ₹4,999',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 17,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
@@ -388,7 +388,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
         const SizedBox(width: 8),
         Text(
           label,
-          style: GoogleFonts.montserrat(fontSize: 12, color: muted),
+          style: GoogleFonts.dmSerifDisplay(fontSize: 12, color: muted),
         ),
       ],
     );
@@ -397,7 +397,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
   Widget _fieldLabel(String text, Color muted) {
     return Text(
       text,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.dmSerifDisplay(
         fontSize: 10,
         fontWeight: FontWeight.w900,
         color: muted,
@@ -430,7 +430,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
       textAlign: center ? TextAlign.center : TextAlign.start,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.dmSerifDisplay(
         fontSize: 17,
         fontWeight: FontWeight.w600,
         color: textPrimary,
@@ -439,7 +439,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
       decoration: InputDecoration(
         counterText: '',
         hintText: hint,
-        hintStyle: GoogleFonts.montserrat(
+        hintStyle: GoogleFonts.dmSerifDisplay(
           fontSize: 17,
           fontWeight: FontWeight.w600,
           color: muted,
@@ -503,7 +503,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
           const SizedBox(height: 28),
           Text(
             'Verifying Payment',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 22,
               fontWeight: FontWeight.bold,
               color: textPrimary,
@@ -512,7 +512,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
           const SizedBox(height: 8),
           Text(
             'Communicating with your banking partner...',
-            style: GoogleFonts.montserrat(fontSize: 13, color: muted),
+            style: GoogleFonts.dmSerifDisplay(fontSize: 13, color: muted),
           ),
         ],
       ),
@@ -585,7 +585,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
             const SizedBox(height: 32),
             Text(
               'ELITE ACTIVE',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 24,
                 fontWeight: FontWeight.w900,
                 color: textPrimary,
@@ -594,7 +594,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
             const SizedBox(height: 8),
             Text(
               'WELCOME TO THE INNER CIRCLE',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
                 color: _gold,
@@ -608,7 +608,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                 'Your premium membership is now active. Explore exclusive '
                 'property tours and premium features.',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 13,
                   color: muted,
                   height: 1.5,
@@ -632,7 +632,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                       child: Center(
                         child: Text(
                           'Explore M4 Projects',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                             color: isDark ? Colors.black : Colors.white,
@@ -650,7 +650,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                       child: Center(
                         child: Text(
                           'Go to Profile',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: muted,

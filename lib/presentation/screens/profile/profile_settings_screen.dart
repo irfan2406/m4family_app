@@ -142,7 +142,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                   children: [
                     Text(
                       "SELECT BIRTHDAY",
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 12,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1,
@@ -163,7 +163,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                         ),
                         child: Text(
                           "DONE",
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                             color: Colors.blue,
@@ -180,7 +180,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                   data: CupertinoThemeData(
                     brightness: isDark ? Brightness.dark : Brightness.light,
                     textTheme: CupertinoTextThemeData(
-                      dateTimePickerTextStyle: GoogleFonts.montserrat(
+                      dateTimePickerTextStyle: GoogleFonts.dmSerifDisplay(
                         color: isDark ? Colors.white : Colors.black,
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -325,7 +325,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                       padding: const EdgeInsets.only(left: 4, bottom: 16),
                       child: Text(
                         'ACCOUNT DETAILS',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 9,
                           fontWeight: FontWeight.w800,
                           color: isDark ? Colors.white38 : Colors.black38,
@@ -534,7 +534,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           Text(
             name.toUpperCase(),
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 18,
               fontWeight: FontWeight.w900,
               color: isDark ? Colors.white : Colors.black,
@@ -545,7 +545,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           Text(
             email.toUpperCase(),
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 9,
               fontWeight: FontWeight.w800,
               color: isDark ? Colors.white38 : Colors.black45,
@@ -563,7 +563,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       child: Center(
         child: Text(
           initial,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             textStyle: const TextStyle(inherit: true),
             fontSize: 32,
             fontWeight: FontWeight.w800,
@@ -588,7 +588,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
             child: Center(
               child: Text(
                 'SETTINGS',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   textStyle: const TextStyle(inherit: true),
                   fontSize: 14,
                   fontWeight: FontWeight.w800,
@@ -626,7 +626,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
               ),
               label: Text(
                 'SAVE',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 1,
@@ -652,7 +652,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               textStyle: const TextStyle(inherit: true),
               fontSize: 8,
               fontWeight: FontWeight.w800,
@@ -676,7 +676,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
             controller: controller,
             enabled: enabled,
             textCapitalization: capitalization,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               textStyle: const TextStyle(inherit: true),
               fontSize: 13,
               fontWeight: FontWeight.w800,
@@ -710,7 +710,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               textStyle: const TextStyle(inherit: true),
               fontSize: 8,
               fontWeight: FontWeight.w800,
@@ -742,7 +742,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                     ),
                     child: Text(
                       controller.text.isEmpty ? "SELECT DATE" : controller.text,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         textStyle: const TextStyle(inherit: true),
                         fontSize: 13,
                         fontWeight: FontWeight.w800,
@@ -775,7 +775,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       children: [
         Text(
           "NOTIFICATION PREFERENCES",
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             textStyle: const TextStyle(inherit: true),
             fontSize: 9,
             fontWeight: FontWeight.w800,
@@ -850,7 +850,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
                     color: isDark ? Colors.white : Colors.black,
@@ -858,7 +858,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                 ),
                 Text(
                   subtitle,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 8,
                     fontWeight: FontWeight.w700,
                     color: isDark ? Colors.white38 : Colors.black38,
@@ -894,7 +894,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
         ),
         child: Text(
           'DEACTIVATE ACCOUNT',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             textStyle: const TextStyle(inherit: true),
             fontSize: 9,
             fontWeight: FontWeight.w900,

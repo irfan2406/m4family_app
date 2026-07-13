@@ -73,7 +73,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
               alignment: Alignment.centerLeft,
               child: Text(
                 'SELECT DATE & TIME',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 15,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 0.5,
@@ -107,7 +107,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                     ),
                     child: Text(
                       'CANCEL',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1,
                       ),
@@ -128,7 +128,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                     ),
                     child: Text(
                       'CONFIRM',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1,
                       ),
@@ -255,7 +255,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
           children: [
             Text(
               'SCHEDULE VISIT',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 16,
                 fontWeight: FontWeight.w900,
                 color: Theme.of(context).colorScheme.onSurface,
@@ -264,7 +264,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
             ),
             Text(
               'PREMIUM PROTOCOL',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 8,
                 fontWeight: FontWeight.w700,
                 color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
@@ -322,7 +322,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                   Expanded(
                     child: Text(
                       'NOTE: OUR RELATIONSHIP MANAGER WILL CONTACT YOU WITHIN 2 HOURS TO CONFIRM YOUR SCHEDULE.',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 10,
                         fontWeight: FontWeight.w800,
                         color: Theme.of(
@@ -381,7 +381,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
               child: Text(
                 '* PICK-UP AND DROP FACILITY INCLUDED FOR PREMIUM TIER MEMBERS.',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 8,
                   fontWeight: FontWeight.w900,
                   color: Theme.of(
@@ -401,7 +401,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
   Widget _buildLabel(String label) {
     return Text(
       label,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.dmSerifDisplay(
         fontSize: 10,
         fontWeight: FontWeight.w900,
         color: Theme.of(context).colorScheme.onSurface.withOpacity(0.65),
@@ -442,14 +442,14 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
         controller: controller,
         maxLines: maxLines,
         keyboardType: keyboardType,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           color: isDark ? Colors.white : Colors.black,
           fontSize: 13,
           fontWeight: FontWeight.bold,
         ),
         decoration: InputDecoration(
           hintText: hint.toUpperCase(),
-          hintStyle: GoogleFonts.montserrat(
+          hintStyle: GoogleFonts.dmSerifDisplay(
             color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
             fontSize: 13,
             fontWeight: FontWeight.bold,
@@ -522,7 +522,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                   selectedProject != null
                       ? _projectLabel(selectedProject)
                       : 'CHOOSE PROPERTY',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     color: selectedProject != null
                         ? (isDark ? Colors.white : Colors.black)
                         : (isDark ? Colors.white : Colors.black).withOpacity(
@@ -592,7 +592,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                     ),
                     child: Text(
                       _projectLabel(project),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         color: isSelected
                             ? (isDark ? Colors.white : Colors.black)
                             : (isDark ? Colors.white70 : Colors.black87),
@@ -651,7 +651,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
             Expanded(
               child: Text(
                 text,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   color: isPlaceholder
                       ? (isDark ? Colors.white : Colors.black).withOpacity(0.68)
                       : (isDark ? Colors.white : Colors.black),
@@ -702,7 +702,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                 children: [
                   Text(
                     'SECURE BOOKING',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontWeight: FontWeight.w900,
                       fontSize: 13,
                       letterSpacing: 2,

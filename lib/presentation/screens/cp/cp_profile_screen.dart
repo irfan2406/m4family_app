@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
+import 'package:m4_mobile/presentation/widgets/cp_sidebar_menu.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 
 /// CP profile — parity with web `app/(cp)/cp/profile/page.tsx`. The web page
@@ -117,6 +119,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
 
     return Scaffold(
       backgroundColor: scheme.surface,
+      drawer: const CpSidebarMenu(),
       body: Stack(
         children: [
           Positioned(
@@ -146,17 +149,19 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      const SideMenuButton(),
+                      const SizedBox(width: 12),
                       Text(
                         'MY PROFILE',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
                           color: scheme.onSurface,
                           letterSpacing: -0.5,
                         ),
                       ),
+                      const Spacer(),
                       Material(
                         color: scheme.surfaceContainerHighest.withValues(
                           alpha: 0.85,
@@ -208,7 +213,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                   const SizedBox(height: 32),
                   Text(
                     'TEAM & ACCESS',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 9,
                       fontWeight: FontWeight.w700,
                       color: scheme.onSurfaceVariant,
@@ -224,7 +229,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                   const SizedBox(height: 28),
                   Text(
                     'QUICK ACTIONS',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 9,
                       fontWeight: FontWeight.w700,
                       color: scheme.onSurface,
@@ -281,7 +286,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                           builder: (ctx) => AlertDialog(
                             title: Text(
                               'Log out',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -332,7 +337,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                             const SizedBox(width: 8),
                             Text(
                               'LOG OUT',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w800,
                                 color: scheme.error,
@@ -433,7 +438,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                         name.toUpperCase(),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 21,
                           fontWeight: FontWeight.w700,
                           color: scheme.onSurface,
@@ -447,7 +452,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                         phone.toUpperCase(),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
                           color: scheme.primary.withValues(alpha: 0.8),
@@ -459,7 +464,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                         email.toLowerCase(),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 9,
                           fontWeight: FontWeight.w700,
                           color: scheme.onSurface.withValues(alpha: 0.6),
@@ -493,7 +498,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                             Expanded(
                               child: Text(
                                 'BORN: $born',
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.dmSerifDisplay(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w700,
                                   color: scheme.primary,
@@ -525,7 +530,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
       ),
       child: Text(
         text.toUpperCase(),
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           fontSize: 8,
           fontWeight: FontWeight.w900,
           color: scheme.primary,
@@ -584,7 +589,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                     textAlign: TextAlign.center,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 9.5,
                       fontWeight: FontWeight.w900,
                       color: scheme.onSurface,
@@ -645,7 +650,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
               Expanded(
                 child: Text(
                   'EMPLOYEE MANAGEMENT',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     color: scheme.onSurface,

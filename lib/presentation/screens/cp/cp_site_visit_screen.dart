@@ -104,7 +104,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
               alignment: Alignment.centerLeft,
               child: Text(
                 'SELECT DATE & TIME',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 15,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 0.5,
@@ -138,7 +138,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                     ),
                     child: Text(
                       'CANCEL',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1,
                       ),
@@ -159,7 +159,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                     ),
                     child: Text(
                       'CONFIRM',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1,
                       ),
@@ -268,7 +268,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
           children: [
             Text(
               'SITE VISIT',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 16,
                 fontWeight: FontWeight.w900,
                 color: Theme.of(context).colorScheme.onSurface,
@@ -277,7 +277,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
             ),
             Text(
               'PROTOCOL VERIFICATION',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 8,
                 fontWeight: FontWeight.w700,
                 color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
@@ -323,7 +323,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                       Expanded(
                         child: Text(
                           'NOTE: OUR MANAGER WILL CONTACT YOU WITHIN 2 HOURS TO CONFIRM YOUR SCHEDULE.',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             fontSize: 10,
                             fontWeight: FontWeight.w800,
                             color: Colors.white,
@@ -410,7 +410,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
   Widget _buildLabel(String label) {
     return Text(
       label,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.dmSerifDisplay(
         fontSize: 10,
         fontWeight: FontWeight.w900,
         color: Theme.of(context).colorScheme.onSurface.withOpacity(0.65),
@@ -453,14 +453,14 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
         maxLines: maxLines,
         keyboardType: keyboardType,
         validator: validator,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           color: isDark ? Colors.white : Colors.black,
           fontSize: 13,
           fontWeight: FontWeight.bold,
         ),
         decoration: InputDecoration(
           hintText: hint.toUpperCase(),
-          hintStyle: GoogleFonts.montserrat(
+          hintStyle: GoogleFonts.dmSerifDisplay(
             color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
             fontSize: 13,
             fontWeight: FontWeight.bold,
@@ -474,7 +474,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                   size: 18,
                 )
               : null,
-          errorStyle: GoogleFonts.montserrat(
+          errorStyle: GoogleFonts.dmSerifDisplay(
             color: Colors.redAccent,
             fontSize: 10,
           ),
@@ -531,7 +531,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                   selectedProject != null
                       ? selectedProject['title'].toString().toUpperCase()
                       : 'CHOOSE PROJECT',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     color: selectedProject != null
                         ? (isDark ? Colors.white : Colors.black)
                         : (isDark ? Colors.white : Colors.black).withOpacity(
@@ -601,7 +601,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                     ),
                     child: Text(
                       (project['title'] ?? '').toString().toUpperCase(),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         color: isSelected
                             ? (isDark ? Colors.white : Colors.black)
                             : (isDark ? Colors.white70 : Colors.black87),
@@ -663,7 +663,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                             .toString()
                             .toUpperCase()
                       : 'SELECT EMPLOYEE',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     color: selectedEmployee.isNotEmpty
                         ? (isDark ? Colors.white : Colors.black)
                         : (isDark ? Colors.white : Colors.black).withOpacity(
@@ -733,7 +733,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                     ),
                     child: Text(
                       '${(emp['name'] ?? '').toString().toUpperCase()}${emp['phone'] != null ? ' (${emp['phone']})' : ''}',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         color: isSelected
                             ? (isDark ? Colors.white : Colors.black)
                             : (isDark ? Colors.white70 : Colors.black87),
@@ -792,7 +792,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
             Expanded(
               child: Text(
                 text,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   color: isPlaceholder
                       ? (isDark ? Colors.white : Colors.black).withOpacity(0.68)
                       : (isDark ? Colors.white : Colors.black),
@@ -846,7 +846,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                 children: [
                   Text(
                     'SECURE BOOKING',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontWeight: FontWeight.w900,
                       fontSize: 13,
                       letterSpacing: 2,

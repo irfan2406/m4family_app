@@ -424,7 +424,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               const SizedBox(height: 18),
               Text(
                 'M4 FAMILY',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 5,
@@ -518,9 +518,11 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // ⭐️ Tagline (Living the M4 Life) — small, left-aligned like web
+                  // Tagline (Living the M4 Life) — full-width script image,
+                  // cropped tight to the text band so there is no large gap
+                  // before the hero. Same in light and dark mode.
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 4, 24, 20),
+                    padding: const EdgeInsets.only(top: 12, bottom: 8),
                     child: ColorFiltered(
                       colorFilter: ColorFilter.matrix(
                         Theme.of(context).brightness == Brightness.dark
@@ -539,20 +541,11 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                                 0, 0, 0, 1, 0,
                               ],
                       ),
-                      // The asset is a 1024×1024 canvas whose script artwork
-                      // lives only in the middle band (y≈424–613, measured).
-                      // Crop to that band so the tagline renders compact and
-                      // left-aligned like the web.
-                      child: ClipRect(
-                        child: Align(
-                          alignment: const Alignment(0, 0.015),
-                          heightFactor: 0.21,
-                          child: Image.asset(
-                            'assets/living_m4_life.png',
-                            width: MediaQuery.of(context).size.width * 0.62,
-                            fit: BoxFit.fitWidth,
-                          ),
-                        ),
+                      child: Image.asset(
+                        'assets/living_m4_life.png',
+                        width: MediaQuery.of(context).size.width,
+                        height: 120,
+                        fit: BoxFit.fitWidth,
                       ),
                     ),
                   ),
@@ -634,7 +627,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                                   ),
                                   child: Text(
                                     'ARTISTIC IMPRESSION',
-                                    style: GoogleFonts.montserrat(
+                                    style: GoogleFonts.dmSerifDisplay(
                                       color: Colors.white,
                                       fontSize: 8,
                                       fontWeight: FontWeight.w600,
@@ -784,7 +777,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         const SizedBox(height: 24),
         RichText(
           text: TextSpan(
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
               fontSize: 14,
               height: 1.8,
@@ -799,7 +792,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                   onTap: () => context.push('/about'),
                   child: Text(
                     'Who We Are',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       color: isDark ? Colors.white : Colors.black,
                       fontWeight: FontWeight.bold,
                       decoration: TextDecoration.underline,
@@ -856,7 +849,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                           ),
                           child: Text(
                             tab.toUpperCase(),
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                               color: isSelected
                                   ? (isDark ? Colors.white : Colors.black)
                                   : (isDark ? Colors.white : Colors.black)
@@ -1043,7 +1036,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                           ? 'MEDIA'
                           : (item['status']?.toString() ?? 'ONGOING')
                                 .toUpperCase(),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         color: Colors.white,
                         fontSize: 8,
                         fontWeight: FontWeight.w400,
@@ -1084,7 +1077,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                           .toUpperCase(),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         color: Colors.white.withValues(alpha: 0.7),
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
@@ -1100,7 +1093,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                           isCommunity
                               ? 'EXPLORE COMMUNITY'
                               : (isMedia ? 'READ ARTICLE' : 'VIEW PROPERTY'),
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             color: Colors.white,
                             fontSize: 10,
                             fontWeight: FontWeight.w400,
@@ -1189,7 +1182,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                   (item['title'] ?? item['name'] ?? '')
                       .toString()
                       .toUpperCase(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     color: Colors.white,
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -1263,7 +1256,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       ),
                       child: Text(
                         status.toUpperCase(),
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: Colors.white,
                           fontSize: 8,
                           fontWeight: FontWeight.w500,
@@ -1286,7 +1279,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       ),
                       child: Text(
                         'ARTISTIC IMPRESSION',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: Colors.white,
                           fontSize: 6.5,
                           fontWeight: FontWeight.w600,
@@ -1309,7 +1302,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                     title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       color: scheme.onSurface,
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
@@ -1329,7 +1322,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                           location.toUpperCase(),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             color: scheme.onSurface.withValues(alpha: 0.55),
                             fontSize: 10,
                             fontWeight: FontWeight.w500,
@@ -1352,7 +1345,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       children: [
                         Text(
                           'READ MORE',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             color: scheme.surface,
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
@@ -1568,7 +1561,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                     ),
                     child: Text(
                       'ARTISTIC IMPRESSION',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         color: Colors.white,
                         fontSize: 7,
                         fontWeight: FontWeight.w600,
@@ -1587,7 +1580,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                     children: [
                       Text(
                         'FEATURED PROPERTY',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: const Color(0xFFC5A358),
                           fontSize: 9,
                           fontWeight: FontWeight.w600,
@@ -1597,7 +1590,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       const SizedBox(height: 12),
                       Text(
                         (project['title'] ?? '').toString(),
-                        style: GoogleFonts.lora(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: Colors.white,
                           fontSize: 44,
                           fontWeight: FontWeight.w400,
@@ -1610,7 +1603,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                         featuredDesc.toUpperCase(),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: Colors.white.withOpacity(0.8),
                           fontSize: 9,
                           height: 1.6,
@@ -1705,7 +1698,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                     child: Center(
                       child: Text(
                         'READ MORE',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: isDark ? Colors.black : Colors.white,
                           fontWeight: FontWeight.w600,
                           fontSize: 12,
@@ -1757,7 +1750,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         Text(
           label,
           textAlign: TextAlign.center,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             color: isDark ? Colors.white : Colors.black,
             fontSize: 9,
             fontWeight: FontWeight.w600,
@@ -1910,7 +1903,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 color: isDark ? Colors.white : Colors.black,
                 fontWeight: FontWeight.w600,
                 fontSize: 10,
@@ -1921,7 +1914,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             Text(
               desc,
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
                 fontSize: 8,
                 fontWeight: FontWeight.w500,
@@ -1971,7 +1964,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             Expanded(
               child: Text(
                 "I've read and agree to the Privacy Policy",
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   color: isDark ? Colors.white54 : Colors.black54,
                   fontSize: 11,
                   letterSpacing: 1,
@@ -1998,7 +1991,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       )
                     : Text(
                         'SUBMIT INTEREST',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: isDark ? Colors.black : Colors.white,
                           fontWeight: FontWeight.w400,
                           letterSpacing: 2,
@@ -2041,7 +2034,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         maxLines: isLong ? 5 : 1,
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: GoogleFonts.montserrat(
+          hintStyle: GoogleFonts.dmSerifDisplay(
             color: isDark ? Colors.white54 : Colors.black45,
             fontSize: 13,
           ),

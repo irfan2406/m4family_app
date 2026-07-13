@@ -86,11 +86,11 @@ class _DeactivateAccountScreenState extends ConsumerState<DeactivateAccountScree
           children: [
             Text(
               'DEACTIVATE',
-              style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), color: const Color(0xFFEF4444), fontSize: 14, fontWeight: FontWeight.w900, letterSpacing: 1),
+              style: GoogleFonts.dmSerifDisplay(textStyle: const TextStyle(inherit: true), color: const Color(0xFFEF4444), fontSize: 14, fontWeight: FontWeight.w900, letterSpacing: 1),
             ),
             Text(
               'PURGE PROTOCOL',
-              style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), color: isDark ? Colors.white24 : Colors.black26, fontSize: 8, fontWeight: FontWeight.w800, letterSpacing: 2),
+              style: GoogleFonts.dmSerifDisplay(textStyle: const TextStyle(inherit: true), color: isDark ? Colors.white24 : Colors.black26, fontSize: 8, fontWeight: FontWeight.w800, letterSpacing: 2),
             ),
           ],
         ),
@@ -125,12 +125,12 @@ class _DeactivateAccountScreenState extends ConsumerState<DeactivateAccountScree
                       children: [
                         Text(
                           'CRITICAL WARNING',
-                          style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), color: const Color(0xFFEF4444), fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                          style: GoogleFonts.dmSerifDisplay(textStyle: const TextStyle(inherit: true), color: const Color(0xFFEF4444), fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 0.5),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           'Final action. All institutional ties, documents, and historical data will be permanently purged.',
-                          style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), color: const Color(0xFFEF4444).withOpacity(0.6), fontSize: 9, fontWeight: FontWeight.w800, height: 1.4),
+                          style: GoogleFonts.dmSerifDisplay(textStyle: const TextStyle(inherit: true), color: const Color(0xFFEF4444).withOpacity(0.6), fontSize: 9, fontWeight: FontWeight.w800, height: 1.4),
                         ),
                       ],
                     ),
@@ -154,7 +154,7 @@ class _DeactivateAccountScreenState extends ConsumerState<DeactivateAccountScree
                 children: [
                   Text(
                     'PURGE SCOPE',
-                    style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), color: isDark ? Colors.white38 : Colors.black38, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.5),
+                    style: GoogleFonts.dmSerifDisplay(textStyle: const TextStyle(inherit: true), color: isDark ? Colors.white38 : Colors.black38, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.5),
                   ),
                   const SizedBox(height: 16),
                   ...[
@@ -175,7 +175,7 @@ class _DeactivateAccountScreenState extends ConsumerState<DeactivateAccountScree
                         const SizedBox(width: 12),
                         Text(
                           item.toUpperCase(),
-                          style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), color: isDark ? Colors.white60 : Colors.black54, fontSize: 9, fontWeight: FontWeight.w800),
+                          style: GoogleFonts.dmSerifDisplay(textStyle: const TextStyle(inherit: true), color: isDark ? Colors.white60 : Colors.black54, fontSize: 9, fontWeight: FontWeight.w800),
                         ),
                       ],
                     ),
@@ -198,22 +198,22 @@ class _DeactivateAccountScreenState extends ConsumerState<DeactivateAccountScree
                 children: [
                   Text(
                     'CONFIRMATION',
-                    style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), color: isDark ? Colors.white38 : Colors.black38, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.5),
+                    style: GoogleFonts.dmSerifDisplay(textStyle: const TextStyle(inherit: true), color: isDark ? Colors.white38 : Colors.black38, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.5),
                   ),
                   const SizedBox(height: 16),
                   
                   Text(
                     'TYPE DELETE',
-                    style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), color: const Color(0xFFEF4444), fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.5),
+                    style: GoogleFonts.dmSerifDisplay(textStyle: const TextStyle(inherit: true), color: const Color(0xFFEF4444), fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.5),
                   ),
                   const SizedBox(height: 8),
                   TextField(
                     controller: _confirmController,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), color: const Color(0xFFEF4444), fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 4),
+                    style: GoogleFonts.dmSerifDisplay(textStyle: const TextStyle(inherit: true), color: const Color(0xFFEF4444), fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 4),
                     decoration: InputDecoration(
                       hintText: "DELETE",
-                      hintStyle: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), color: const Color(0xFFEF4444).withOpacity(0.1), fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 4),
+                      hintStyle: GoogleFonts.dmSerifDisplay(textStyle: const TextStyle(inherit: true), color: const Color(0xFFEF4444).withOpacity(0.1), fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 4),
                       filled: true,
                       fillColor: (isDark ? Colors.white : Colors.black).withOpacity(0.02),
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
@@ -246,7 +246,7 @@ class _DeactivateAccountScreenState extends ConsumerState<DeactivateAccountScree
                           Expanded(
                             child: Text(
                               'I acknowledge that this protocol will erase my entire digital legacy within M4. Final & irreversible.',
-                              style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), color: isDark ? Colors.white38 : Colors.black38, fontSize: 9, fontWeight: FontWeight.w800, height: 1.5),
+                              style: GoogleFonts.dmSerifDisplay(textStyle: const TextStyle(inherit: true), color: isDark ? Colors.white38 : Colors.black38, fontSize: 9, fontWeight: FontWeight.w800, height: 1.5),
                             ),
                           ),
                         ],
@@ -256,7 +256,7 @@ class _DeactivateAccountScreenState extends ConsumerState<DeactivateAccountScree
                   
                   if (_error.isNotEmpty) ...[
                     const SizedBox(height: 12),
-                    Center(child: Text(_error, style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), color: const Color(0xFFEF4444), fontSize: 8, fontWeight: FontWeight.w900))),
+                    Center(child: Text(_error, style: GoogleFonts.dmSerifDisplay(textStyle: const TextStyle(inherit: true), color: const Color(0xFFEF4444), fontSize: 8, fontWeight: FontWeight.w900))),
                   ],
 
                   const SizedBox(height: 24),
@@ -274,7 +274,7 @@ class _DeactivateAccountScreenState extends ConsumerState<DeactivateAccountScree
                       ),
                       child: _isDeleting 
                         ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                        : Text('EXECUTE PURGE', style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2)),
+                        : Text('EXECUTE PURGE', style: GoogleFonts.dmSerifDisplay(textStyle: const TextStyle(inherit: true), fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2)),
                     ),
                   ),
                 ],
@@ -286,7 +286,7 @@ class _DeactivateAccountScreenState extends ConsumerState<DeactivateAccountScree
               onPressed: () => context.pop(),
               child: Text(
                 'ABORT PROTOCOL',
-                style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), color: isDark ? Colors.white30 : Colors.black26, fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2),
+                style: GoogleFonts.dmSerifDisplay(textStyle: const TextStyle(inherit: true), color: isDark ? Colors.white30 : Colors.black26, fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2),
               ),
             ),
           ],

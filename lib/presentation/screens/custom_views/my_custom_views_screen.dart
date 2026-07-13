@@ -101,7 +101,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
           // subtitle with a paint-bucket icon.
           Text(
             'PORTFOLIO SUITE',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 14,
               fontWeight: FontWeight.w900,
               letterSpacing: -0.5,
@@ -118,7 +118,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
               const SizedBox(width: 5),
               Text(
                 'ASSET DASHBOARD',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 8,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 2,
@@ -173,7 +173,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                   // Web parity: dark `text-foreground`; MY (light) + PORTFOLIO (bold).
                   TextSpan(
                     text: 'ELITE ',
-                    style: GoogleFonts.lora(
+                    style: GoogleFonts.dmSerifDisplay(
                       color: Colors.black,
                       fontSize: 30,
                       fontWeight: FontWeight.w300,
@@ -182,7 +182,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                   ),
                   TextSpan(
                     text: 'PORTFOLIO',
-                    style: GoogleFonts.lora(
+                    style: GoogleFonts.dmSerifDisplay(
                       color: _kPortfolioOrange,
                       fontSize: 30,
                       fontWeight: FontWeight.w700,
@@ -194,7 +194,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
             ).animate().fadeIn(duration: 800.ms).slideY(begin: 0.2, end: 0),
             Text(
               'PERSONALISATION SUITE',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 // Web parity: orange `text-primary`, readable on the light fade.
                 color: _kPortfolioOrange,
                 fontSize: 10,
@@ -218,7 +218,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
           const SizedBox(height: 12),
           Text(
             'Automatic reflection of your purchased units from the M4 Admin Panel. Select a unit below to start or manage your bespoke interior customizations.',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 13,
               height: 1.6,
               fontWeight: FontWeight.w500,
@@ -257,7 +257,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                   alignment: Alignment.center,
                   child: Text(
                     'SELECTION',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1,
@@ -284,7 +284,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                   alignment: Alignment.center,
                   child: Text(
                     'HISTORY',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1,
@@ -329,7 +329,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                   const SizedBox(width: 12),
                   Text(
                     'ASSET CUSTOMIZATION STATUS',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 2,
@@ -374,7 +374,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                   const SizedBox(height: 24),
                   Text(
                     'NO UNITS FOUND',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 16,
                       fontWeight: FontWeight.w900,
                       color: foreground,
@@ -385,7 +385,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                   Text(
                     'You currently have no purchased units registered in your portfolio that support online customization.',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                       height: 1.6,
@@ -416,7 +416,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                 const SizedBox(width: 12),
                 Text(
                   'ASSET CUSTOMIZATION STATUS',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -471,7 +471,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
             child: Center(
               child: Text(
                 'NO HISTORY FOUND',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2,
@@ -505,7 +505,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                 const SizedBox(width: 12),
                 Text(
                   'SELECTION HISTORY',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -516,7 +516,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
             ),
             Text(
               '$count LOGS',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.dmSerifDisplay(
                 fontSize: 8,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.5,
@@ -535,7 +535,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
           ),
           child: TextField(
             onChanged: (v) => setState(() => _historyQuery = v),
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 10,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.5,
@@ -551,7 +551,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                 color: fg.withOpacity(0.4),
               ),
               hintText: 'SEARCH BY PROJECT OR ID...',
-              hintStyle: GoogleFonts.montserrat(
+              hintStyle: GoogleFonts.dmSerifDisplay(
                 fontSize: 10,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.5,
@@ -615,7 +615,7 @@ class _UnitCard extends ConsumerWidget {
                                 )
                                 .toUpperCase() ??
                             'UNIT',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 7,
                           fontWeight: FontWeight.w900,
                           color: foreground.withOpacity(0.68),
@@ -625,7 +625,7 @@ class _UnitCard extends ConsumerWidget {
                       Text(
                         unit['projectName']?.toString().toUpperCase() ??
                             'M4 PROJECT',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 13,
                           fontWeight: FontWeight.w900,
                           color: foreground,
@@ -764,7 +764,7 @@ class _UnitCard extends ConsumerWidget {
                         status == 'NOT_STARTED'
                             ? 'START PERSONALISATION'
                             : 'MANAGE SELECTION',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: isDark ? Colors.black : Colors.white,
                           fontSize: 11,
                           fontWeight: FontWeight.w900,
@@ -873,7 +873,7 @@ class _HistoryCard extends StatelessWidget {
                       Text(
                         req['project']?['title']?.toString().toUpperCase() ??
                             'STANDARD UNIT',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 13,
                           fontWeight: FontWeight.w900,
                           color: foreground,
@@ -952,7 +952,7 @@ class _HistoryMeta extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 8,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
@@ -963,7 +963,7 @@ class _HistoryMeta extends StatelessWidget {
         Text(
           value,
           textAlign: alignEnd ? TextAlign.right : TextAlign.left,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 10,
             fontWeight: FontWeight.w700,
             color: foreground,
@@ -1037,7 +1037,7 @@ class _DetailDialog {
                                 Text(
                                   req['project']?['title'] ??
                                       'Standard Selection',
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.dmSerifDisplay(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w900,
                                     letterSpacing: -0.5,
@@ -1065,7 +1065,7 @@ class _DetailDialog {
                                                 ?.toString()
                                                 .toUpperCase() ??
                                             'FULL UNIT',
-                                        style: GoogleFonts.montserrat(
+                                        style: GoogleFonts.dmSerifDisplay(
                                           fontSize: 9,
                                           fontWeight: FontWeight.w800,
                                           letterSpacing: 1.2,
@@ -1139,7 +1139,7 @@ class _DetailDialog {
                                                   maxLines: 1,
                                                   overflow:
                                                       TextOverflow.ellipsis,
-                                                  style: GoogleFonts.montserrat(
+                                                  style: GoogleFonts.dmSerifDisplay(
                                                     fontSize: 7,
                                                     fontWeight: FontWeight.w900,
                                                     letterSpacing: 1.0,
@@ -1153,7 +1153,7 @@ class _DetailDialog {
                                                   maxLines: 1,
                                                   overflow:
                                                       TextOverflow.ellipsis,
-                                                  style: GoogleFonts.montserrat(
+                                                  style: GoogleFonts.dmSerifDisplay(
                                                     fontSize: 11,
                                                     fontWeight: FontWeight.w900,
                                                     letterSpacing: 0.5,
@@ -1224,7 +1224,7 @@ class _DetailDialog {
                                 child: Text(
                                   errorMessage!.toUpperCase(),
                                   textAlign: TextAlign.center,
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.dmSerifDisplay(
                                     color: Colors.redAccent,
                                     fontSize: 9,
                                     fontWeight: FontWeight.w800,
@@ -1378,7 +1378,7 @@ class _DetailDialog {
                                           child: Text(
                                             'MODIFY SELECTIONS',
                                             textAlign: TextAlign.center,
-                                            style: GoogleFonts.montserrat(
+                                            style: GoogleFonts.dmSerifDisplay(
                                               color: Colors.white,
                                               fontSize: 10,
                                               fontWeight: FontWeight.w900,
@@ -1420,7 +1420,7 @@ class _DetailDialog {
                                         child: Text(
                                           'CLOSE VIEW',
                                           textAlign: TextAlign.center,
-                                          style: GoogleFonts.montserrat(
+                                          style: GoogleFonts.dmSerifDisplay(
                                             color: Theme.of(context)
                                                 .colorScheme
                                                 .onSurface
@@ -1485,7 +1485,7 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.dmSerifDisplay(
         fontSize: 8,
         fontWeight: FontWeight.w900,
         letterSpacing: 2,
@@ -1518,7 +1518,7 @@ class _StatusBadge extends StatelessWidget {
       child: Text(
         // Web parity: "NOT STARTED" (space, not underscore).
         status.replaceAll('_', ' ').toUpperCase(),
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           color: color,
           fontSize: 8,
           fontWeight: FontWeight.w900,
@@ -1599,7 +1599,7 @@ class _DetailItem extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 8,
             fontWeight: FontWeight.w900,
             color: foreground.withOpacity(0.68),
@@ -1609,7 +1609,7 @@ class _DetailItem extends StatelessWidget {
         const SizedBox(height: 6),
         Text(
           value.toUpperCase(),
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             fontSize: 11,
             fontWeight: FontWeight.w900,
             color: isPrimary

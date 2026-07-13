@@ -56,7 +56,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                   padding: const EdgeInsets.fromLTRB(24, 20, 24, 10),
                   child: Text(
                     'MENU',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       color: (isDark ? Colors.white : Colors.black).withOpacity(
                         0.68,
                       ),
@@ -204,7 +204,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                         padding: const EdgeInsets.symmetric(horizontal: 14),
                         child: Text(
                           'QUICK ACTIONS',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.dmSerifDisplay(
                             color: (isDark ? Colors.white : Colors.black)
                                 .withOpacity(0.6),
                             fontSize: 10,
@@ -258,7 +258,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                     children: [
                       Text(
                         'THEME MODE',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           color: isDark ? Colors.white70 : Colors.black87,
                           fontSize: 11,
                           fontWeight: FontWeight.w900,
@@ -318,7 +318,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                           const SizedBox(width: 12),
                           Text(
                             'EXIT APP',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                               color: Colors.red,
                               fontWeight: FontWeight.w900,
                               fontSize: 13,
@@ -378,7 +378,7 @@ class _MenuItem extends StatelessWidget {
       ),
       title: Text(
         label,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           color: isActive
               ? (isDark ? Colors.white : Colors.black)
               : (isDark
@@ -439,7 +439,7 @@ class _DropdownMenuItem extends StatelessWidget {
           ),
           title: Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               color: (isDark ? Colors.white : Colors.black).withOpacity(
                 isOpen ? 1.0 : 0.8,
               ),
@@ -488,7 +488,7 @@ class _SubItem extends StatelessWidget {
         ),
         title: Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.dmSerifDisplay(
             color: (isDark ? Colors.white : Colors.black).withOpacity(0.85),
             fontSize: 13,
             fontWeight: FontWeight.w700,
@@ -530,7 +530,7 @@ class _QuickActionItem extends StatelessWidget {
       ),
       title: Text(
         label,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           color: (isDark ? Colors.white : Colors.black).withOpacity(0.8),
           fontSize: 15,
           fontWeight: FontWeight.w700,

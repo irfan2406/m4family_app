@@ -183,7 +183,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                               const SizedBox(width: 12),
                               Text(
                                 'BACK TO GUEST PORTAL',
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.dmSerifDisplay(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w900,
                                   fontSize: 11,
@@ -240,7 +240,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                   const SizedBox(height: 32),
                   Text(
                     'PARTNER\nREGISTRATION',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 42,
                       fontWeight: FontWeight.w900,
                       color: Colors.white,
@@ -251,7 +251,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                   const SizedBox(height: 12),
                   Text(
                     'JOIN M4 FAMILY CHANNEL PARTNER NETWORK',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.dmSerifDisplay(
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
                       color: Colors.white54,
@@ -347,7 +347,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                               children: [
                                 Text(
                                   'COMPLETE REGISTRATION',
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.dmSerifDisplay(
                                     fontWeight: FontWeight.w900,
                                     fontSize: 13,
                                     letterSpacing: 1.5,
@@ -375,7 +375,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                     ),
                     child: Text(
                       'ALREADY HAVE AN ACCOUNT? LOGIN',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 10,
                         fontWeight: FontWeight.w800,
                         color: Colors.white54,
@@ -397,7 +397,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
     padding: const EdgeInsets.only(bottom: 12),
     child: Text(
       t,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.dmSerifDisplay(
         fontSize: 10,
         fontWeight: FontWeight.bold,
         color: Colors.purpleAccent.withValues(alpha: 0.7),
@@ -433,7 +433,7 @@ class _CpField extends StatelessWidget {
         children: [
           Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 9,
               fontWeight: FontWeight.bold,
               color: Colors.white54,

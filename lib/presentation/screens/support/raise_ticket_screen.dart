@@ -168,7 +168,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                     child: Text(
                       'RAISE TICKET',
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.dmSerifDisplay(
                         fontSize: 17,
                         fontWeight: FontWeight.w800,
                         color: onSurface,
@@ -213,7 +213,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                           Expanded(
                             child: Text(
                               'MOST TICKETS ARE RESOLVED WITHIN 4-6 WORKING HOURS. PLEASE PROVIDE DETAIL.',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.dmSerifDisplay(
                                 fontSize: 9,
                                 fontWeight: FontWeight.w800,
                                 color: amber.withOpacity(0.75),
@@ -235,7 +235,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                         controller: _subjectController,
                         textCapitalization: TextCapitalization.characters,
                         cursorColor: onSurface,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 13,
                           fontWeight: FontWeight.w800,
                           color: onSurface,
@@ -258,7 +258,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                           isExpanded: true,
                           hint: Text(
                             'SELECT CATEGORY',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.dmSerifDisplay(
                               fontSize: 11,
                               fontWeight: FontWeight.w800,
                               color: onSurface.withOpacity(0.68),
@@ -280,7 +280,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                                   value: e.key,
                                   child: Text(
                                     e.value,
-                                    style: GoogleFonts.montserrat(
+                                    style: GoogleFonts.dmSerifDisplay(
                                       fontSize: 11,
                                       fontWeight: FontWeight.w800,
                                       color: onSurface,
@@ -304,7 +304,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                         controller: _messageController,
                         maxLines: 6,
                         cursorColor: onSurface,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.dmSerifDisplay(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                           color: onSurface,
@@ -341,7 +341,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                                 _attachments.isEmpty
                                     ? 'ADD FILES (PDF, JPG)'
                                     : '${_attachments.length} FILE(S) ATTACHED',
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.dmSerifDisplay(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w800,
                                   color: onSurface.withOpacity(0.68),
@@ -380,7 +380,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                                 children: [
                                   Text(
                                     'RAISE TICKET',
-                                    style: GoogleFonts.montserrat(
+                                    style: GoogleFonts.dmSerifDisplay(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w900,
                                       letterSpacing: 1.5,
@@ -406,7 +406,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
     padding: const EdgeInsets.only(left: 4),
     child: Text(
       text,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.dmSerifDisplay(
         fontSize: 9,
         fontWeight: FontWeight.w800,
         color: onSurface.withOpacity(0.68),
@@ -432,7 +432,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
   InputDecoration _inputDecoration(String hint, Color onSurface) =>
       InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.montserrat(
+        hintStyle: GoogleFonts.dmSerifDisplay(
           fontSize: 12,
           fontWeight: FontWeight.w700,
           color: onSurface.withOpacity(0.68),

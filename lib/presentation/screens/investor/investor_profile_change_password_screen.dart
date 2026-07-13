@@ -294,7 +294,7 @@ class _InvestorProfileChangePasswordScreenState
               children: [
                 Text(
                   'CREDENTIAL UPDATE',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2.5,
@@ -304,7 +304,7 @@ class _InvestorProfileChangePasswordScreenState
                 const SizedBox(height: 4),
                 Text(
                   'Security',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
                     letterSpacing: -0.3,
@@ -324,7 +324,7 @@ class _InvestorProfileChangePasswordScreenState
       padding: const EdgeInsets.only(left: 4),
       child: Text(
         label,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.dmSerifDisplay(
           fontSize: 10,
           fontWeight: FontWeight.w800,
           letterSpacing: 2,
@@ -353,14 +353,14 @@ class _InvestorProfileChangePasswordScreenState
       controller: controller,
       obscureText: obscure,
       onChanged: onChanged,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.dmSerifDisplay(
         fontSize: 14,
         fontWeight: FontWeight.w600,
         color: textPrimary,
       ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.montserrat(
+        hintStyle: GoogleFonts.dmSerifDisplay(
           fontSize: 14,
           fontWeight: FontWeight.w500,
           color: muted,
@@ -424,7 +424,7 @@ class _InvestorProfileChangePasswordScreenState
               const SizedBox(width: 8),
               Text(
                 'REQUIREMENTS',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.dmSerifDisplay(
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 1.5,
@@ -464,7 +464,7 @@ class _InvestorProfileChangePasswordScreenState
           const SizedBox(width: 8),
           Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.dmSerifDisplay(
               fontSize: 10,
               fontWeight: FontWeight.w600,
               color: met ? green : muted,
@@ -507,7 +507,7 @@ class _InvestorProfileChangePasswordScreenState
                 )
               : Text(
                   'SECURE UPDATE',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.dmSerifDisplay(
                     fontSize: 12,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
