@@ -25,22 +25,27 @@ class M4Theme {
   static const Color lightDestructive = Color(0xFFEF4444); // --destructive
   static const Color lightBorder = Color(0xFFD7DFEA); // --border / --input
 
-  // DARK (.dark)
-  static const Color darkBackground = Color(
-    0xFF04060B,
-  ); // --background 222 47% 3%
+  // DARK (.dark) — cohesive navy system (222° hue). Two tiers that never clash:
+  //  • PAGE BASE (#0A0E16) → both `background` AND `surface`, so every screen's
+  //    page reads identically whether it uses scaffoldBackgroundColor or
+  //    scheme.surface as its backdrop (this was the source of the mismatch).
+  //  • ELEVATED CARD (#181F2D) → surfaceContainerHighest; every card lifts off
+  //    the page by the same amount everywhere. Border is one step lighter again.
+  static const Color darkBackground = Color(0xFF0A0E16); // page base
   static const Color darkForeground = Color(0xFFF8FAFC); // --foreground
-  static const Color darkCard = Color(0xFF0B111E); // --card 222 47% 8%
+  static const Color darkCard = Color(0xFF0A0E16); // == page base (see note)
   static const Color darkPrimary = Color(0xFFF8FAFC); // --primary
   static const Color darkPrimaryFg = Color(0xFF0F172A); // --primary-foreground
-  static const Color darkSecondary = Color(0xFF0E1525); // --secondary
-  static const Color darkMuted = Color(0xFF0E1525); // --muted
+  static const Color darkSecondary = Color(0xFF181F2D); // elevated card
+  static const Color darkMuted = Color(
+    0xFF181F2D,
+  ); // elevated card (cards use this)
   static const Color darkMutedFg = Color(
     0xFFCFD7E2,
   ); // --muted-foreground 215 25% 85%
-  static const Color darkAccent = Color(0xFF10192D); // --accent
+  static const Color darkAccent = Color(0xFF202A3B); // accent surface
   static const Color darkDestructive = Color(0xFF7F1D1D); // --destructive
-  static const Color darkBorder = Color(0xFF10192D); // --border / --input
+  static const Color darkBorder = Color(0xFF2B3648); // hairline (lifts on card)
 
   // Legacy aliases used across the app — mapped to the exact web palette.
   static const Color background = darkBackground;

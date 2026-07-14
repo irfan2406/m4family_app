@@ -161,8 +161,10 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
           padding: padding,
           decoration: BoxDecoration(
             // Web parity: glass-card is a bright WHITE card in light mode (it
-            // pops off the background via the shadow), not a grey tint.
-            color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
+            // pops off the background via the shadow), not a grey tint. In dark
+            // mode the shared elevated card surface (theme darkCard) so every
+            // card across the app reads as one cohesive system.
+            color: isDark ? const Color(0xFF181F2D) : Colors.white,
             borderRadius: BorderRadius.circular(40),
             border: Border.all(color: border),
             boxShadow: [

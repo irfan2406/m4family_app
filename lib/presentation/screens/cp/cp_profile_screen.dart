@@ -5,8 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
-import 'package:m4_mobile/presentation/widgets/cp_sidebar_menu.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 
 /// CP profile — parity with web `app/(cp)/cp/profile/page.tsx`. The web page
@@ -119,7 +117,6 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
 
     return Scaffold(
       backgroundColor: scheme.surface,
-      drawer: const CpSidebarMenu(),
       body: Stack(
         children: [
           Positioned(
@@ -134,7 +131,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                     center: const Alignment(-0.8, -1),
                     radius: 1.2,
                     colors: [
-                      scheme.primary.withValues(alpha: 0.06),
+                      const Color(0xFF3B6FB5).withValues(alpha: 0.10),
                       Colors.transparent,
                     ],
                   ),
@@ -150,8 +147,6 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                 children: [
                   Row(
                     children: [
-                      const SideMenuButton(),
-                      const SizedBox(width: 12),
                       Text(
                         'MY PROFILE',
                         style: GoogleFonts.dmSerifDisplay(
@@ -371,11 +366,9 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(40),
-        border: Border.all(
-          color: scheme.outlineVariant.withValues(alpha: 0.45),
-        ),
-        color: scheme.surfaceContainerHighest.withValues(alpha: 0.4),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.6)),
+        color: scheme.surfaceContainerHighest,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(
@@ -390,7 +383,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(32),
+            padding: const EdgeInsets.all(22),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -398,8 +391,8 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                   clipBehavior: Clip.none,
                   children: [
                     Container(
-                      width: 116,
-                      height: 116,
+                      width: 96,
+                      height: 96,
                       padding: const EdgeInsets.all(2),
                       decoration: BoxDecoration(
                         // Web parity: `rounded-full` — circular, not squared.
@@ -439,9 +432,10 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.dmSerifDisplay(
-                          fontSize: 21,
+                          fontSize: 18,
                           fontWeight: FontWeight.w700,
                           color: scheme.onSurface,
+                          height: 1.1,
                           letterSpacing: 0.2,
                         ),
                       ),
@@ -626,7 +620,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
             border: Border.all(
               color: scheme.outlineVariant.withValues(alpha: 0.35),
             ),
-            color: scheme.onSurface.withValues(alpha: 0.03),
+            color: scheme.surfaceContainerHighest,
           ),
           child: Row(
             children: [

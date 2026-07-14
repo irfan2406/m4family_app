@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
 
@@ -549,14 +550,20 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
       margin: const EdgeInsets.only(bottom: 18),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: scheme.surfaceContainerHighest.withValues(alpha: 0.25),
-        borderRadius: BorderRadius.circular(40),
-        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.4)),
+        color: scheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(
+          color: scheme.brightness == Brightness.dark
+              ? Colors.white.withValues(alpha: 0.07)
+              : scheme.outlineVariant.withValues(alpha: 0.55),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 30,
-            offset: const Offset(0, 14),
+            color: Colors.black.withValues(
+              alpha: scheme.brightness == Brightness.dark ? 0.35 : 0.08,
+            ),
+            blurRadius: 24,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
@@ -736,13 +743,25 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                   _iconAction(
                     scheme,
                     LucideIcons.phone,
-                    phone != null && phone.isNotEmpty ? () {} : null,
+                    phone != null && phone.isNotEmpty
+                        ? () => _contact('tel', phone)
+                        : null,
+                  ),
+                  const SizedBox(width: 8),
+                  _iconAction(
+                    scheme,
+                    LucideIcons.messageSquare,
+                    phone != null && phone.isNotEmpty
+                        ? () => _contact('sms', phone)
+                        : null,
                   ),
                   const SizedBox(width: 8),
                   _iconAction(
                     scheme,
                     LucideIcons.mail,
-                    email != null && email.isNotEmpty ? () {} : null,
+                    email != null && email.isNotEmpty
+                        ? () => _contact('mailto', email)
+                        : null,
                   ),
                 ],
               ),
@@ -801,6 +820,31 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
         child,
       ],
     );
+  }
+
+  // Opens the phone dialer (tel:), SMS composer (sms:) or e-mail client
+  // (mailto:) for the client. Digits are stripped of spaces/formatting so the
+  // dialer receives a clean number.
+  Future<void> _contact(String scheme, String raw) async {
+    final value = scheme == 'mailto'
+        ? raw.trim()
+        : raw.replaceAll(RegExp(r'[^0-9+]'), '');
+    if (value.isEmpty) return;
+    final uri = Uri(scheme: scheme, path: value);
+    try {
+      final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (!ok && mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('No app found to open $scheme')));
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Could not open')));
+      }
+    }
   }
 
   Widget _iconAction(ColorScheme scheme, IconData icon, VoidCallback? onTap) {
@@ -980,41 +1024,37 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
   }
 
   Widget _statusChip(ColorScheme scheme, String status) {
-    Color bg;
-    Color fg;
+    final isDark = scheme.brightness == Brightness.dark;
+    Color base;
     String label;
     switch (status) {
       case 'NEW':
-        bg = Colors.blue.withValues(alpha: 0.1);
-        fg = Colors.blue;
+        base = const Color(0xFF3B82F6); // blue
         label = 'NEW VISIT';
         break;
       case 'INTERESTED':
-        bg = Colors.amber.withValues(alpha: 0.1);
-        fg = Colors.amber.shade800;
+        base = const Color(0xFFF59E0B); // amber
         label = 'INTERESTED';
         break;
       case 'NOT_INTERESTED':
-        bg = Colors.red.withValues(alpha: 0.1);
-        fg = Colors.red;
+        base = const Color(0xFFEF4444); // red
         label = 'NOT INTERESTED';
         break;
       case 'CLOSED':
-        bg = Colors.green.withValues(alpha: 0.1);
-        fg = Colors.green;
+        base = const Color(0xFF10B981); // green
         label = 'CLOSED / BOOKING';
         break;
       default:
-        bg = scheme.surfaceContainerHighest;
-        fg = scheme.onSurfaceVariant;
+        base = scheme.onSurfaceVariant;
         label = status;
     }
+    final fg = isDark ? Color.lerp(base, Colors.white, 0.28)! : base;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: bg,
+        color: base.withValues(alpha: isDark ? 0.20 : 0.12),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: fg.withValues(alpha: 0.2)),
+        border: Border.all(color: base.withValues(alpha: isDark ? 0.45 : 0.30)),
       ),
       child: Text(
         label,
@@ -1190,14 +1230,27 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: isReady
-            ? Colors.green.withValues(alpha: 0.03)
-            : scheme.surfaceContainerHighest.withValues(alpha: 0.25),
-        borderRadius: BorderRadius.circular(40),
+            ? (scheme.brightness == Brightness.dark
+                  ? const Color(0xFF10251E)
+                  : const Color(0xFFF1FBF6))
+            : scheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(28),
         border: Border.all(
           color: isReady
-              ? Colors.green.withValues(alpha: 0.2)
-              : scheme.outlineVariant.withValues(alpha: 0.4),
+              ? const Color(0xFF10B981).withValues(alpha: 0.35)
+              : (scheme.brightness == Brightness.dark
+                    ? Colors.white.withValues(alpha: 0.07)
+                    : scheme.outlineVariant.withValues(alpha: 0.55)),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(
+              alpha: scheme.brightness == Brightness.dark ? 0.35 : 0.08,
+            ),
+            blurRadius: 24,
+            offset: const Offset(0, 10),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

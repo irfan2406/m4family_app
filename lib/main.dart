@@ -153,6 +153,9 @@ class M4FamilyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Single theme source for the WHOLE app (screens, drawers, popups): the
+    // stored light/dark preference. This keeps everything consistent — the
+    // drawer follows the same setting as every screen — and the toggle works.
     final themeMode = ref.watch(themeProvider);
 
     return MaterialApp.router(
@@ -161,6 +164,9 @@ class M4FamilyApp extends ConsumerWidget {
       theme: M4Theme.lightTheme,
       darkTheme: M4Theme.darkTheme,
       themeMode: themeMode,
+      // Instant theme switch — disable MaterialApp's ~200ms cross-fade so the
+      // WHOLE app (screens + menu) flips light/dark together, with zero delay.
+      themeAnimationDuration: Duration.zero,
       routerConfig: _router,
     );
   }

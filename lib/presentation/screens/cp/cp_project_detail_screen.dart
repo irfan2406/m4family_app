@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:dio/dio.dart';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -10,6 +11,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
+import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
 import 'package:m4_mobile/presentation/widgets/luxury_amenity_icon.dart';
 import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
 import 'package:share_plus/share_plus.dart';
@@ -367,15 +370,13 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     }
 
     final typedEmp = _regEmployeeEntered.text.trim();
-    final hasPick = _regEmployeeId != null && _regEmployeeId!.isNotEmpty;
-    if (!typedEmp.isNotEmpty && !hasPick) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Enter employee name or select from list'),
-        ),
-      );
-      return;
-    }
+    // Employee name is OPTIONAL (web parity). "Other" (value 'other') is a
+    // free-text choice, not a real employee id, so it never counts as a picked
+    // employee — the typed name is used instead.
+    final hasPick =
+        _regEmployeeId != null &&
+        _regEmployeeId!.isNotEmpty &&
+        _regEmployeeId != 'other';
     if (_regClientName.text.trim().isEmpty ||
         _regClientPhone.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -744,8 +745,18 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         ? (p['heroImages'] as List).first?.toString()
         : p['heroImage']?.toString();
 
+    final cpIdx = ref.watch(cpNavigationIndexProvider);
+
     return Scaffold(
       backgroundColor: scheme.surface,
+      extendBody: true,
+      bottomNavigationBar: CpBottomNav(
+        currentIndex: cpIdx,
+        onTap: (i) {
+          context.go('/home');
+          ref.read(cpNavigationIndexProvider.notifier).state = i;
+        },
+      ),
       body: Stack(
         children: [
           CustomScrollView(
@@ -1070,7 +1081,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         _sectionTitle('Location', scheme, accent),
                         const SizedBox(height: 12),
                         _locationCard(p, scheme),
-                        const SizedBox(height: 90),
+                        const SizedBox(height: 130),
                       ],
                     ),
                   ),
@@ -1503,116 +1514,138 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
   }
 
   Widget _progressCard(Map<String, dynamic> p, int pct, ColorScheme scheme) {
-    final est = (p['estimatedCompletionDate'] ?? 'Q1 2028').toString();
+    final estRaw = (p['estimatedCompletionDate'] ?? '').toString().trim();
+    final est = estRaw.isEmpty ? 'Q1 2028' : estRaw;
     final isLight = scheme.brightness == Brightness.light;
     final accent = isLight ? Colors.black : scheme.primary;
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(34),
+        borderRadius: BorderRadius.circular(28),
         border: Border.all(
-          color: scheme.outlineVariant.withValues(alpha: 0.35),
+          color: scheme.outlineVariant.withValues(alpha: isLight ? 0.10 : 0.35),
         ),
-        color: scheme.surfaceContainerHighest.withValues(alpha: 0.22),
+        color: isLight
+            ? Colors.white
+            : scheme.surfaceContainerHighest.withValues(alpha: 0.4),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isLight ? 0.10 : 0.45),
+            blurRadius: 28,
+            offset: const Offset(0, 12),
+          ),
+        ],
       ),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'ESTIMATED COMPLETION DATE',
-                  style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 9,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 2,
-                    color: accent.withValues(alpha: 0.7),
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  est,
-                  style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: -1,
-                    color: isLight ? Colors.black : scheme.onSurface,
-                  ),
-                ),
-                const SizedBox(height: 14),
-                Text(
-                  'As the project progresses, significant milestones are reached, showcasing our team’s dedication and expertise. We are steadily moving closer to our completion goal, ensuring quality and safety at every step. Each phase is handled with precision to meet our luxury standards and timeline.',
-                  maxLines: _showFullProgressDesc ? null : 3,
-                  overflow: _showFullProgressDesc
-                      ? TextOverflow.visible
-                      : TextOverflow.ellipsis,
-                  style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: scheme.onSurfaceVariant,
-                    height: 1.6,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                GestureDetector(
-                  onTap: () => setState(
-                    () => _showFullProgressDesc = !_showFullProgressDesc,
-                  ),
-                  child: Text(
-                    _showFullProgressDesc ? 'Show less' : 'Read more',
-                    style: GoogleFonts.dmSerifDisplay(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      color: accent,
-                      decoration: TextDecoration.underline,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'ESTIMATED\nCOMPLETION\nDATE',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.2,
+                        height: 1.3,
+                        color: scheme.onSurface.withValues(alpha: 0.5),
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: 8),
+                    Text(
+                      est.replaceAll(' ', '\n'),
+                      style: GoogleFonts.montserrat(
+                        fontSize: 46,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: -1.5,
+                        height: 1.02,
+                        color: isLight ? Colors.black : scheme.onSurface,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
+              const SizedBox(width: 12),
+              SizedBox(
+                width: 126,
+                height: 126,
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: CustomPaint(
+                        painter: _DottedProgressRingPainter(
+                          progress: pct / 100.0,
+                          color: accent,
+                          trackColor: scheme.onSurface.withValues(alpha: 0.14),
+                          dotCount: 48,
+                          dotRadius: 1.0,
+                          dashLength: 5,
+                          margin: 6,
+                        ),
+                      ),
+                    ),
+                    Positioned.fill(
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              '$pct%',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                            Text(
+                              'OVERALL',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w800,
+                                color: scheme.onSurfaceVariant,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Text(
+            'As the project progresses, significant milestones are reached, showcasing our team’s dedication and expertise. We are steadily moving closer to our completion goal, ensuring quality and safety at every step. Each phase is handled with precision to meet our luxury standards and timeline.',
+            maxLines: _showFullProgressDesc ? null : 3,
+            overflow: _showFullProgressDesc
+                ? TextOverflow.visible
+                : TextOverflow.ellipsis,
+            style: GoogleFonts.montserrat(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w500,
+              color: scheme.onSurface.withValues(alpha: 0.55),
+              height: 1.55,
             ),
           ),
-          const SizedBox(width: 16),
-          SizedBox(
-            width: 110,
-            height: 110,
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: CircularProgressIndicator(
-                    value: pct / 100.0,
-                    strokeWidth: 4,
-                    color: accent,
-                    backgroundColor: scheme.onSurface.withValues(alpha: 0.08),
-                  ),
-                ),
-                Positioned.fill(
-                  child: Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          '$pct%',
-                          style: GoogleFonts.dmSerifDisplay(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w900,
-                          ),
-                        ),
-                        Text(
-                          'OVERALL',
-                          style: GoogleFonts.dmSerifDisplay(
-                            fontSize: 9,
-                            fontWeight: FontWeight.w800,
-                            color: scheme.onSurfaceVariant,
-                            letterSpacing: 1,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+          const SizedBox(height: 10),
+          GestureDetector(
+            onTap: () =>
+                setState(() => _showFullProgressDesc = !_showFullProgressDesc),
+            child: Text(
+              _showFullProgressDesc ? 'Show less' : 'Read more',
+              style: GoogleFonts.montserrat(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w700,
+                color: isLight ? Colors.black : scheme.onSurface,
+              ),
             ),
           ),
         ],
@@ -1634,194 +1667,206 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             ),
           );
 
-    return SizedBox(
-      height: 260,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 2),
-        itemCount: phases.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
-        itemBuilder: (context, i) {
-          final ph = phases[i];
-          final img =
-              (ph['images'] is List && (ph['images'] as List).isNotEmpty)
-              ? _stringUrl((ph['images'] as List).first)
-              : _stringUrl(ph['image']);
-          final status = (ph['status'] ?? 'In Progress').toString();
-          final name = (ph['name'] ?? ph['phaseName'] ?? 'Phase').toString();
-          final pct = (ph['progressPercent'] is num)
-              ? (ph['progressPercent'] as num).toInt().clamp(0, 100)
-              : 0;
+    return Column(
+      children: [
+        for (int i = 0; i < phases.length; i++) ...[
+          if (i > 0) const SizedBox(height: 16),
+          _phaseCard(phases[i], scheme, isLight, accent),
+        ],
+      ],
+    );
+  }
 
-          Color badgeBg;
-          Color badgeFg;
-          if (status == 'Completed') {
-            badgeBg = Colors.green;
-            badgeFg = Colors.white;
-          } else if (status == 'In Progress') {
-            badgeBg = accent;
-            badgeFg = isLight ? Colors.white : scheme.onPrimary;
-          } else {
-            badgeBg = scheme.surfaceContainerHighest;
-            badgeFg = scheme.onSurfaceVariant;
-          }
+  Widget _phaseCard(
+    Map<String, dynamic> ph,
+    ColorScheme scheme,
+    bool isLight,
+    Color accent,
+  ) {
+    final img = (ph['images'] is List && (ph['images'] as List).isNotEmpty)
+        ? _stringUrl((ph['images'] as List).first)
+        : _stringUrl(ph['image']);
+    final status = (ph['status'] ?? 'In Progress').toString();
+    final name = (ph['name'] ?? ph['phaseName'] ?? 'Phase').toString();
+    final pct = (ph['progressPercent'] is num)
+        ? (ph['progressPercent'] as num).toInt().clamp(0, 100)
+        : 0;
 
-          return Container(
-            width: 240,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(26),
-              border: Border.all(
-                color: scheme.outlineVariant.withValues(alpha: 0.35),
-              ),
-              color: scheme.surfaceContainerHighest.withValues(alpha: 0.22),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+    Color badgeBg;
+    Color badgeFg;
+    if (status == 'Completed') {
+      badgeBg = Colors.green;
+      badgeFg = Colors.white;
+    } else if (status == 'In Progress') {
+      badgeBg = accent;
+      badgeFg = isLight ? Colors.white : scheme.onPrimary;
+    } else {
+      badgeBg = scheme.surfaceContainerHighest;
+      badgeFg = scheme.onSurfaceVariant;
+    }
+
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: scheme.outlineVariant.withValues(alpha: isLight ? 0.10 : 0.35),
+        ),
+        color: isLight
+            ? Colors.white
+            : scheme.surfaceContainerHighest.withValues(alpha: 0.4),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isLight ? 0.13 : 0.45),
+            blurRadius: 26,
+            offset: const Offset(0, 12),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          AspectRatio(
+            aspectRatio: 16 / 10,
+            child: Stack(
+              fit: StackFit.expand,
               children: [
-                Expanded(
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      _projectImage(img, fit: BoxFit.cover),
-                      Positioned.fill(
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: () {
-                              final urls = _stringList(ph['images']);
-                              if (urls.isNotEmpty) {
-                                _openGallery(urls);
-                              } else if (img != null && img.isNotEmpty) {
-                                _openGallery([img]);
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'No progress images available',
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        top: 12,
-                        left: 12,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: badgeBg,
-                            borderRadius: BorderRadius.circular(999),
-                          ),
-                          child: Text(
-                            status.toUpperCase(),
-                            style: GoogleFonts.dmSerifDisplay(
-                              fontSize: 8,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 1,
-                              color: badgeFg,
+                _projectImage(img, fit: BoxFit.cover),
+                Positioned.fill(
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () {
+                        final urls = _stringList(ph['images']);
+                        if (urls.isNotEmpty) {
+                          _openGallery(urls);
+                        } else if (img != null && img.isNotEmpty) {
+                          _openGallery([img]);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('No progress images available'),
                             ),
-                          ),
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 12,
+                  left: 12,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: badgeBg,
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Text(
+                      status.toUpperCase(),
+                      style: GoogleFonts.montserrat(
+                        fontSize: 8,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1,
+                        color: badgeFg,
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned.fill(
+                  child: IgnorePointer(
+                    ignoring: true,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black.withValues(alpha: 0.55),
+                          ],
                         ),
                       ),
-                      Positioned.fill(
-                        child: IgnorePointer(
-                          ignoring: true,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.transparent,
-                                  Colors.black.withValues(alpha: 0.55),
-                                ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Web parity: the project title is the card's heading;
+                // the phase name sits next to the small progress ring.
+                Text(
+                  (_project?['title'] ?? '').toString().toUpperCase(),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.montserrat(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 42,
+                      height: 42,
+                      child: Stack(
+                        children: [
+                          Positioned.fill(
+                            child: CircularProgressIndicator(
+                              value: pct / 100.0,
+                              strokeWidth: 3,
+                              color: accent,
+                              backgroundColor: scheme.onSurface.withValues(
+                                alpha: 0.12,
                               ),
                             ),
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(14),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Web parity: the project title is the card's heading;
-                      // the phase name sits next to the small progress ring.
-                      Text(
-                        (_project?['title'] ?? '').toString().toUpperCase(),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.dmSerifDisplay(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 1.2,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: 42,
-                            height: 42,
-                            child: Stack(
-                              children: [
-                                Positioned.fill(
-                                  child: CircularProgressIndicator(
-                                    value: pct / 100.0,
-                                    strokeWidth: 3,
-                                    color: accent,
-                                    backgroundColor: scheme.onSurface
-                                        .withValues(alpha: 0.12),
-                                  ),
+                          Positioned.fill(
+                            child: Center(
+                              child: Text(
+                                '$pct%',
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w900,
+                                  color: scheme.onSurfaceVariant,
                                 ),
-                                Positioned.fill(
-                                  child: Center(
-                                    child: Text(
-                                      '$pct%',
-                                      style: GoogleFonts.dmSerifDisplay(
-                                        fontSize: 9,
-                                        fontWeight: FontWeight.w900,
-                                        color: scheme.onSurfaceVariant,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              name.toUpperCase(),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.dmSerifDisplay(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w800,
-                                color: scheme.onSurfaceVariant,
-                                letterSpacing: 0.6,
                               ),
                             ),
                           ),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        name.toUpperCase(),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.montserrat(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w800,
+                          color: scheme.onSurfaceVariant,
+                          letterSpacing: 0.6,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          );
-        },
+          ),
+        ],
       ),
     );
   }
@@ -1836,7 +1881,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       children: [
         Text(
           '2026',
-          style: GoogleFonts.dmSerifDisplay(
+          style: GoogleFonts.montserrat(
             fontSize: 20,
             fontWeight: FontWeight.w900,
             color: accent,
@@ -1895,7 +1940,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               children: [
                 Text(
                   'PHASE TRACKING',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.montserrat(
                     fontSize: 13,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -1905,7 +1950,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 const SizedBox(height: 4),
                 Text(
                   'REAL-TIME DEVELOPMENT STATUS',
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.montserrat(
                     fontSize: 8,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1,
@@ -1923,7 +1968,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               ),
               child: Text(
                 '${phases.length} MILESTONES',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.montserrat(
                   fontSize: 8,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 1,
@@ -1989,7 +2034,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                           ),
                           child: Text(
                             (i + 1).toString().padLeft(2, '0'),
-                            style: GoogleFonts.dmSerifDisplay(
+                            style: GoogleFonts.montserrat(
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
                               color: scheme.onSurfaceVariant,
@@ -2005,7 +2050,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                                 name.toUpperCase(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.dmSerifDisplay(
+                                style: GoogleFonts.montserrat(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w900,
                                   letterSpacing: 0.6,
@@ -2026,7 +2071,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                                   const SizedBox(width: 6),
                                   Text(
                                     status.toUpperCase(),
-                                    style: GoogleFonts.dmSerifDisplay(
+                                    style: GoogleFonts.montserrat(
                                       fontSize: 8,
                                       fontWeight: FontWeight.w800,
                                       letterSpacing: 0.6,
@@ -2040,7 +2085,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         ),
                         Text(
                           '$pct%',
-                          style: GoogleFonts.dmSerifDisplay(
+                          style: GoogleFonts.montserrat(
                             fontSize: 15,
                             fontWeight: FontWeight.w900,
                             color: scheme.onSurface,
@@ -2095,45 +2140,57 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           const SizedBox(height: 12),
           _cpLabel(scheme, 'Employee Name'),
           const SizedBox(height: 6),
-          Theme(
-            data: Theme.of(context).copyWith(
-              focusColor: accent,
-              canvasColor: scheme.surface,
-              cardColor: scheme.surface,
-              colorScheme: Theme.of(
-                context,
-              ).colorScheme.copyWith(primary: accent),
-              dropdownMenuTheme: DropdownMenuThemeData(
-                menuStyle: MenuStyle(
-                  backgroundColor: WidgetStatePropertyAll(scheme.surface),
-                  surfaceTintColor: const WidgetStatePropertyAll(
-                    Colors.transparent,
+          DropdownButtonFormField<String>(
+            initialValue: _regEmployeeId,
+            isExpanded: true,
+            dropdownColor: isLight ? Colors.white : const Color(0xFF17212F),
+            borderRadius: BorderRadius.circular(16),
+            elevation: 4,
+            iconEnabledColor: scheme.onSurface.withValues(alpha: 0.55),
+            style: GoogleFonts.montserrat(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: scheme.onSurface,
+            ),
+            items: [
+              DropdownMenuItem(
+                value: null,
+                child: Text(
+                  '— Select —',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: scheme.onSurface.withValues(alpha: 0.55),
                   ),
-                ),
-                textStyle: GoogleFonts.dmSerifDisplay(
-                  fontWeight: FontWeight.w700,
-                  color: scheme.onSurface,
                 ),
               ),
-            ),
-            child: DropdownButtonFormField<String>(
-              initialValue: _regEmployeeId,
-              items: [
-                const DropdownMenuItem(value: null, child: Text('— Select —')),
-                ..._employees.map(
-                  (e) => DropdownMenuItem(
-                    value: e['_id']?.toString(),
-                    child: Text((e['name'] ?? '').toString()),
+              ..._employees.map(
+                (e) => DropdownMenuItem(
+                  value: e['_id']?.toString(),
+                  child: Text(
+                    (e['name'] ?? '').toString().toUpperCase(),
+                    style: GoogleFonts.montserrat(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: scheme.onSurface,
+                    ),
                   ),
                 ),
-                const DropdownMenuItem(
-                  value: 'other',
-                  child: Text('+ OTHER (TYPE NAME)'),
+              ),
+              DropdownMenuItem(
+                value: 'other',
+                child: Text(
+                  '+ OTHER (TYPE NAME)',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                    color: const Color(0xFFEAA33E),
+                  ),
                 ),
-              ],
-              onChanged: (v) => setState(() => _regEmployeeId = v),
-              decoration: _cpInputDec(scheme, hint: '— Select —'),
-            ),
+              ),
+            ],
+            onChanged: (v) => setState(() => _regEmployeeId = v),
+            decoration: _cpInputDec(scheme, hint: '— Select —'),
           ),
           // Conditional free-text field — only when "Other" is picked (web parity).
           if (_regEmployeeId == 'other') ...[
@@ -2466,15 +2523,43 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     const SizedBox(height: 6),
                     DropdownButtonFormField<String>(
                       initialValue: _selectedProjectId,
+                      isExpanded: true,
+                      dropdownColor: scheme.brightness == Brightness.light
+                          ? Colors.white
+                          : const Color(0xFF17212F),
+                      borderRadius: BorderRadius.circular(16),
+                      elevation: 4,
+                      iconEnabledColor: scheme.onSurface.withValues(
+                        alpha: 0.55,
+                      ),
+                      style: GoogleFonts.montserrat(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: scheme.onSurface,
+                      ),
                       items: [
-                        const DropdownMenuItem(
+                        DropdownMenuItem(
                           value: null,
-                          child: Text('— Select Project —'),
+                          child: Text(
+                            '— Select Project —',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: scheme.onSurface.withValues(alpha: 0.55),
+                            ),
+                          ),
                         ),
                         ..._allProjects.map(
                           (proj) => DropdownMenuItem(
                             value: (proj['_id'] ?? proj['id'])?.toString(),
-                            child: Text((proj['title'] ?? '').toString()),
+                            child: Text(
+                              (proj['title'] ?? '').toString().toUpperCase(),
+                              style: GoogleFonts.montserrat(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: scheme.onSurface,
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -2489,20 +2574,55 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     const SizedBox(height: 6),
                     DropdownButtonFormField<String>(
                       initialValue: _employeeId,
+                      isExpanded: true,
+                      dropdownColor: scheme.brightness == Brightness.light
+                          ? Colors.white
+                          : const Color(0xFF17212F),
+                      borderRadius: BorderRadius.circular(16),
+                      elevation: 4,
+                      iconEnabledColor: scheme.onSurface.withValues(
+                        alpha: 0.55,
+                      ),
+                      style: GoogleFonts.montserrat(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: scheme.onSurface,
+                      ),
                       items: [
-                        const DropdownMenuItem(
+                        DropdownMenuItem(
                           value: null,
-                          child: Text('— Select —'),
+                          child: Text(
+                            '— Select —',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: scheme.onSurface.withValues(alpha: 0.55),
+                            ),
+                          ),
                         ),
                         ..._employees.map(
                           (e) => DropdownMenuItem(
                             value: e['_id']?.toString(),
-                            child: Text((e['name'] ?? '').toString()),
+                            child: Text(
+                              (e['name'] ?? '').toString().toUpperCase(),
+                              style: GoogleFonts.montserrat(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: scheme.onSurface,
+                              ),
+                            ),
                           ),
                         ),
-                        const DropdownMenuItem(
+                        DropdownMenuItem(
                           value: 'other',
-                          child: Text('+ OTHER (TYPE NAME)'),
+                          child: Text(
+                            '+ OTHER (TYPE NAME)',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w800,
+                              color: const Color(0xFFEAA33E),
+                            ),
+                          ),
                         ),
                       ],
                       onChanged: (v) => setState(() => _employeeId = v),
@@ -2841,4 +2961,78 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       ),
     );
   }
+}
+
+/// Dotted progress ring — matches the web "% OVERALL" circle: evenly-spaced
+/// round dots around the ring, coloured up to [progress] (0–1), the remainder
+/// shown faint in [trackColor].
+class _DottedProgressRingPainter extends CustomPainter {
+  const _DottedProgressRingPainter({
+    required this.progress,
+    required this.color,
+    required this.trackColor,
+    this.dotCount = 40,
+    this.dotRadius = 2.8,
+    this.margin = 5,
+    this.dashLength = 0,
+  });
+
+  final double progress;
+  final Color color;
+  final Color trackColor;
+  final int dotCount;
+  final double dotRadius;
+  final double margin;
+
+  /// When > 0 each mark is drawn as a short radial dash (tick) of this length
+  /// instead of a round dot — matches the web ring's elongated ticks.
+  final double dashLength;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = (math.min(size.width, size.height) / 2) - margin;
+    final filled = (progress.clamp(0.0, 1.0) * dotCount).round();
+    for (int i = 0; i < dotCount; i++) {
+      final angle = -math.pi / 2 + (2 * math.pi / dotCount) * i;
+      final paint = Paint()..color = i < filled ? color : trackColor;
+      if (dashLength > 0) {
+        paint
+          ..strokeWidth = dotRadius * 2
+          ..strokeCap = StrokeCap.round;
+        final inner = radius - dashLength / 2;
+        final outer = radius + dashLength / 2;
+        canvas.drawLine(
+          Offset(
+            center.dx + math.cos(angle) * inner,
+            center.dy + math.sin(angle) * inner,
+          ),
+          Offset(
+            center.dx + math.cos(angle) * outer,
+            center.dy + math.sin(angle) * outer,
+          ),
+          paint,
+        );
+      } else {
+        canvas.drawCircle(
+          Offset(
+            center.dx + math.cos(angle) * radius,
+            center.dy + math.sin(angle) * radius,
+          ),
+          dotRadius,
+          paint,
+        );
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _DottedProgressRingPainter old) =>
+      old.progress != progress ||
+      old.color != color ||
+      old.trackColor != trackColor ||
+      old.dotCount != dotCount ||
+      old.dotRadius != dotRadius ||
+      old.margin != margin ||
+      old.dashLength != dashLength;
 }

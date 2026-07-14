@@ -5,8 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
-import 'package:m4_mobile/presentation/widgets/investor_sidebar_menu.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/investor_shell_provider.dart';
@@ -100,7 +98,6 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
 
     return Scaffold(
       backgroundColor: bg,
-      drawer: const InvestorSidebarMenu(),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(24, 8, 24, 120),
@@ -146,8 +143,6 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                     ),
                   ),
                   const Spacer(),
-                  const SideMenuButton(),
-                  const SizedBox(width: 10),
                   Material(
                     color: textPrimary.withValues(alpha: 0.04),
                     borderRadius: BorderRadius.circular(12),

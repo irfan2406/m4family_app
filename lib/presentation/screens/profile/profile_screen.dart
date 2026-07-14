@@ -3,7 +3,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'package:intl/intl.dart';
 import 'package:m4_mobile/core/providers/theme_provider.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
@@ -94,17 +93,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               letterSpacing: -0.5,
             ),
           ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SideMenuButton(),
-              const SizedBox(width: 10),
-              _IconButton(
-                icon: LucideIcons.settings,
-                isDark: isDark,
-                onTap: () => context.push('/profile/settings'),
-              ),
-            ],
+          _IconButton(
+            icon: LucideIcons.settings,
+            isDark: isDark,
+            onTap: () => context.push('/profile/settings'),
           ),
         ],
       ),

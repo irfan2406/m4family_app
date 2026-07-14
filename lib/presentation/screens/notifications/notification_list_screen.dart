@@ -109,14 +109,6 @@ class NotificationListScreen extends ConsumerWidget {
                       children: [
                         Row(
                           children: [
-                            if (isCp) ...[
-                              const Icon(
-                                LucideIcons.sparkles,
-                                size: 13,
-                                color: purple,
-                              ),
-                              const SizedBox(width: 6),
-                            ],
                             Flexible(
                               child: Text(
                                 'NOTIFICATIONS',

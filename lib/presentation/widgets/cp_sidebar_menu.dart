@@ -58,12 +58,6 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                   padding: const EdgeInsets.fromLTRB(24, 20, 24, 12),
                   child: Row(
                     children: [
-                      const Icon(
-                        LucideIcons.sparkles,
-                        size: 16,
-                        color: Color(0xFF9333EA),
-                      ),
-                      const SizedBox(width: 10),
                       Text(
                         'PARTNER MENU',
                         style: GoogleFonts.dmSerifDisplay(

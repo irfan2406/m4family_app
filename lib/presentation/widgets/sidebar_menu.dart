@@ -95,22 +95,6 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                   padding: const EdgeInsets.fromLTRB(32, 48, 32, 32),
                   child: Row(
                     children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: accentColor.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: accentColor.withOpacity(0.2),
-                          ),
-                        ),
-                        child: Icon(
-                          isInvestor ? LucideIcons.crown : LucideIcons.sparkles,
-                          color: accentColor,
-                          size: 20,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
                       Text(
                         isInvestor ? 'INVESTOR MENU' : 'MENU',
                         style: GoogleFonts.dmSerifDisplay(

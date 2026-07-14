@@ -65,8 +65,6 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                   padding: const EdgeInsets.fromLTRB(24, 20, 24, 12),
                   child: Row(
                     children: [
-                      const Icon(LucideIcons.crown, size: 16, color: _gold),
-                      const SizedBox(width: 10),
                       Text(
                         'INVESTOR MENU',
                         style: GoogleFonts.dmSerifDisplay(

@@ -297,20 +297,23 @@ class ProjectListScreen extends ConsumerWidget {
                       children: [
                         InkWell(
                           onTap: () {
-                            if (cpCatalogMode) {
-                              ref
-                                      .read(cpNavigationIndexProvider.notifier)
-                                      .state =
-                                  0;
-                              context.go('/home');
+                            // Robust back: if a route was pushed, pop it;
+                            // otherwise this is a shell tab, so switch that
+                            // portal's shell back to its Home tab.
+                            if (context.canPop()) {
+                              context.pop();
                               return;
                             }
-                            if (Navigator.canPop(context)) {
-                              Navigator.pop(context);
+                            if (cpCatalogMode) {
+                              ref
+                                  .read(cpNavigationIndexProvider.notifier)
+                                  .state = 0;
+                            } else {
+                              ref.read(navigationProvider.notifier).state = 0;
+                              ref
+                                  .read(guestNavigationProvider.notifier)
+                                  .state = 0;
                             }
-                            ref.read(navigationProvider.notifier).state = 0;
-                            ref.read(guestNavigationProvider.notifier).state =
-                                0;
                           },
                           borderRadius: BorderRadius.circular(12),
                           // Web parity: contained back button (light rounded
