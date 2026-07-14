@@ -507,21 +507,19 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                               aspectRatio: 4 / 3,
                               child: Container(
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(32),
+                                  borderRadius: BorderRadius.circular(24),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.15),
-                                      blurRadius: 30,
-                                      offset: const Offset(0, 15),
+                                      color: Colors.black.withOpacity(0.12),
+                                      blurRadius: 24,
+                                      offset: const Offset(0, 12),
                                     ),
                                   ],
                                 ),
                                 child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(32),
+                                  borderRadius: BorderRadius.circular(24),
                                   child: AnimatedSwitcher(
-                                    duration: const Duration(
-                                      milliseconds: 800,
-                                    ),
+                                    duration: const Duration(milliseconds: 800),
                                     transitionBuilder:
                                         (
                                           Widget child,
@@ -593,12 +591,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: List.generate(3, (index) {
-                                  final isSelected =
-                                      (_heroSlide % 3) == index;
+                                  final isSelected = (_heroSlide % 3) == index;
                                   return AnimatedContainer(
-                                    duration: const Duration(
-                                      milliseconds: 300,
-                                    ),
+                                    duration: const Duration(milliseconds: 300),
                                     margin: const EdgeInsets.symmetric(
                                       horizontal: 4,
                                     ),
@@ -607,9 +602,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                     decoration: BoxDecoration(
                                       color: isSelected
                                           ? Colors.black
-                                          : Colors.white.withOpacity(
-                                              0.5,
-                                            ),
+                                          : Colors.white.withOpacity(0.5),
                                       borderRadius: BorderRadius.circular(2),
                                     ),
                                   );
@@ -629,20 +622,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           // ⭐️ DISCOVERY SECTION TABS (Web Parity)
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withOpacity(0.1),
-                        ),
-                      ),
-                    ),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    physics: const BouncingScrollPhysics(),
                     child: Row(
                       children: [
                         _WebTab(
@@ -651,14 +637,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                           onTap: () =>
                               setState(() => _topTabCategory = 'COMMUNITIES'),
                         ),
-                        const SizedBox(width: 32),
+                        const SizedBox(width: 44),
                         _WebTab(
                           label: 'PROPERTIES',
                           isActive: _topTabCategory == 'PROPERTIES',
                           onTap: () =>
                               setState(() => _topTabCategory = 'PROPERTIES'),
                         ),
-                        const SizedBox(width: 32),
+                        const SizedBox(width: 44),
                         _WebTab(
                           label: 'MEDIA',
                           isActive: _topTabCategory == 'MEDIA',
@@ -668,7 +654,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 28),
                   Text(
                     _topTabCategory == 'COMMUNITIES'
                         ? 'M4 COMMUNITIES'
@@ -743,14 +729,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                     item['description'] ??
                                     'Explore this master-planned community',
                                 imageUrl: (() {
-                                  final title = (item['title'] ?? '').toString().toUpperCase();
+                                  final title = (item['title'] ?? '')
+                                      .toString()
+                                      .toUpperCase();
                                   if (title.contains('HEEYYA HOOO')) {
                                     return 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80';
                                   }
                                   if (title.contains('MAZGAON')) {
                                     return 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80';
                                   }
-                                  
+
                                   final rawImg = item['image']?.toString();
                                   if (rawImg != null &&
                                       rawImg.isNotEmpty &&
@@ -1410,9 +1398,13 @@ class _CategoryChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: isActive
               ? (isDark ? Colors.white : Colors.black)
-              : (isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05)),
+              : (isDark
+                    ? Colors.white.withOpacity(0.05)
+                    : Colors.black.withOpacity(0.05)),
           borderRadius: BorderRadius.circular(30),
-          border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
+          border: Border.all(
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+          ),
         ),
         child: Text(
           label,
@@ -1476,13 +1468,17 @@ class _ProjectCard extends StatelessWidget {
                       errorWidget: Container(color: Colors.white10),
                     )
                   : Container(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.05),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.05),
                       height: double.infinity,
                       width: double.infinity,
                       child: Center(
                         child: Icon(
                           LucideIcons.building,
-                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withOpacity(0.2),
                           size: 40,
                         ),
                       ),
@@ -1503,7 +1499,10 @@ class _ProjectCard extends StatelessWidget {
                   top: 16,
                   right: 16,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 5,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.black.withOpacity(0.6),
                       borderRadius: BorderRadius.circular(20),
@@ -1544,7 +1543,11 @@ class _ProjectCard extends StatelessWidget {
                       const SizedBox(height: 6),
                       Row(
                         children: [
-                          Icon(LucideIcons.mapPin, color: Colors.white.withOpacity(0.6), size: 10),
+                          Icon(
+                            LucideIcons.mapPin,
+                            color: Colors.white.withOpacity(0.6),
+                            size: 10,
+                          ),
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
@@ -2206,18 +2209,18 @@ class _WebTab extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.only(bottom: 8),
         decoration: BoxDecoration(
           border: isActive
-              ? Border(bottom: BorderSide(color: onSurface, width: 2.5))
+              ? Border(bottom: BorderSide(color: onSurface, width: 2))
               : null,
         ),
         child: Text(
           label,
           style: GoogleFonts.dmSerifDisplay(
-            color: isActive ? onSurface : onSurface.withOpacity(0.68),
-            fontSize: 12, // 👈 Matched with web text-xs
-            fontWeight: FontWeight.w900, // 👈 Matched with web font-black
+            color: isActive ? onSurface : onSurface.withOpacity(0.55),
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
             letterSpacing: 2,
           ),
         ),
@@ -2492,7 +2495,10 @@ class _CommunityCard extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     stops: const [0.3, 1.0],
-                    colors: [Colors.transparent, Colors.black.withOpacity(0.85)],
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withOpacity(0.85),
+                    ],
                   ),
                 ),
               ),
