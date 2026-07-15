@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
@@ -20,6 +21,31 @@ Future<List<dynamic>?> _loadCachedProjects() async {
     return (list is List && list.isNotEmpty) ? list : null;
   } catch (_) {
     return null;
+  }
+}
+
+/// Persists a freshly fetched catalog into the shared home cache.
+///
+/// Without this the live payload was thrown away whenever the grace window
+/// below won the race (which it always does — the endpoint takes ~90s), so the
+/// app stayed on [_placeholderProjects] forever. Those placeholders use slugs
+/// as `_id` ('cledor', 'skai'), and submitting one to the API fails with
+/// `Cast to ObjectId failed for value "cledor"` — every booking/visit against a
+/// placeholder project was rejected. Saving the live payload lets the app heal
+/// itself: the next read gets real projects with real ObjectIds.
+Future<void> _saveCachedProjects(List<dynamic> projects) async {
+  try {
+    final f = _homeCacheFile;
+    Map<String, dynamic> map = {};
+    if (await f.exists()) {
+      final decoded = jsonDecode(await f.readAsString());
+      if (decoded is Map) map = Map<String, dynamic>.from(decoded);
+    }
+    // Merge — the guest home owns the communities/media slices of this file.
+    map['projects'] = projects;
+    await f.writeAsString(jsonEncode(map));
+  } catch (_) {
+    // Best-effort cache; never surface to the UI.
   }
 }
 
@@ -109,14 +135,39 @@ final projectsProvider = FutureProvider<List<dynamic>>((ref) async {
   // never spins for a minute while the bloated endpoint times out).
   final cached = await _loadCachedProjects();
   final fallback = cached ?? _placeholderProjects();
+  // True when the only thing we can show is the placeholder set, whose ids are
+  // slugs — anything booked against those is rejected server-side.
+  final servingPlaceholders = cached == null;
+
+  var disposed = false;
+  ref.onDispose(() => disposed = true);
 
   // Stale-while-revalidate: race the live fetch against a short grace window.
   // If it wins with fresh data, use it; if the backend is slow or 504s (the
   // projects payload is bloated by a multi-MB base64 hero), return the fallback
   // at ~8s instead of blocking until fetchLive exhausts all its retries (~60s+).
-  final live = fetchLive().then<List<dynamic>?>((v) => v).catchError(
-    (_) => null,
+  final live = fetchLive()
+      .then<List<dynamic>?>((v) => v)
+      .catchError((_) => null);
+
+  // Let the live fetch finish even when the grace window wins, and PERSIST it.
+  // Previously its result was simply dropped, so the app never obtained real
+  // projects and stayed on the slug-id placeholders — which made every booking
+  // fail with `Cast to ObjectId failed for value "cledor"`. Now the next read
+  // (or app start) picks up real projects with real ObjectIds.
+  unawaited(
+    live.then((data) async {
+      if (data == null || data.isEmpty) return;
+      await _saveCachedProjects(data);
+      // If all we could show was placeholders, swap them for the real catalog
+      // as soon as it lands — without this the session stayed on slug ids and
+      // every booking failed until the app was restarted. Guarded on
+      // `servingPlaceholders` so a re-run (which now reads a real cache) can't
+      // invalidate itself again and loop.
+      if (servingPlaceholders && !disposed) ref.invalidateSelf();
+    }),
   );
+
   final result = await Future.any<List<dynamic>?>([
     live,
     Future<List<dynamic>?>.delayed(const Duration(seconds: 8), () => null),

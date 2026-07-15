@@ -61,6 +61,12 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
   List<dynamic> _communities = [];
   List<dynamic> _media = [];
   bool _loading = true;
+
+  // Inline validation for the "Register your interest" form — the field itself
+  // turns red instead of a snackbar popping over the page.
+  String? _nameError;
+  String? _emailError;
+  String? _phoneError;
   // Per-slice freshness: set when NETWORK data lands, so the async disk-cache
   // read never overwrites fresh data — but still fills slices whose fetch
   // failed or is still in flight (e.g. offline cold start).
@@ -236,10 +242,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     // second; the projects payload can be several MB (hero images). Fetch them
     // independently and render as soon as the fast pair arrives — the hero
     // section shows its built-in placeholders until projects stream in.
-    final fastPair = Future.wait([
-          apiClient.getCommunities(),
-          apiClient.getContent('media'),
-        ])
+    final fastPair = Future.wait([apiClient.getCommunities(), apiClient.getContent('media')])
         .then((results) {
           if (!mounted) return false;
           setState(() {
@@ -354,15 +357,27 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     }
   }
 
+  /// Marks the empty required fields red in place. Returns true when valid.
+  bool _validateInterest() {
+    final nameErr = _nameController.text.trim().isEmpty
+        ? 'Please enter your full name'
+        : null;
+    final emailErr = _emailController.text.trim().isEmpty
+        ? 'Please enter your email address'
+        : null;
+    final phoneErr = _phoneController.text.trim().isEmpty
+        ? 'Please enter your phone number'
+        : null;
+    setState(() {
+      _nameError = nameErr;
+      _emailError = emailErr;
+      _phoneError = phoneErr;
+    });
+    return nameErr == null && emailErr == null && phoneErr == null;
+  }
+
   Future<void> _submitInterest() async {
-    if (_nameController.text.isEmpty ||
-        _emailController.text.isEmpty ||
-        _phoneController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all required fields (*)')),
-      );
-      return;
-    }
+    if (!_validateInterest()) return;
     if (!_agreedToTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please agree to the Privacy Policy')),
@@ -378,8 +393,11 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         'email': _emailController.text,
         'phone': _phoneController.text,
         'message': _messageController.text,
-        'interest': 'Guest Interest',
-        'source': 'Mobile Guest Portal',
+        // Server-side enums — anything else is rejected with a 400. Valid:
+        // interest = Buying | Selling | Site Visit | Video Call
+        // (case-sensitive); source = online | cp | walk-in | referral | other.
+        'interest': 'Buying',
+        'source': 'online',
       });
 
       if (mounted) {
@@ -554,172 +572,166 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Builder(
-                        builder: (context) {
-                          final slides = _heroSlides;
-                          final slide = slides[_heroIndex % slides.length];
-                          final mainImage = slide['image'] as String;
-                          final project = slide['project'];
-                          final hasMedia =
-                              project != null &&
-                              project['media'] is List &&
-                              (project['media'] as List).isNotEmpty;
-                          final dotCount = slides.length;
+                      builder: (context) {
+                        final slides = _heroSlides;
+                        final slide = slides[_heroIndex % slides.length];
+                        final mainImage = slide['image'] as String;
+                        final project = slide['project'];
+                        final hasMedia =
+                            project != null &&
+                            project['media'] is List &&
+                            (project['media'] as List).isNotEmpty;
+                        final dotCount = slides.length;
 
-                          return Stack(
-                            children: [
-                              AspectRatio(
-                                aspectRatio: 4 / 3,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(24),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.12),
-                                        blurRadius: 24,
-                                        offset: const Offset(0, 12),
-                                      ),
-                                    ],
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(24),
-                                    child: AnimatedSwitcher(
-                                      duration: const Duration(
-                                        milliseconds: 800,
-                                      ),
-                                      transitionBuilder:
-                                          (
-                                            Widget child,
-                                            Animation<double> animation,
-                                          ) {
-                                            return FadeTransition(
-                                              opacity: animation,
-                                              child: child,
-                                            );
-                                          },
-                                      child: _buildProjectImage(
-                                        mainImage.toString(),
-                                        key: ValueKey<int>(_heroIndex),
-                                        width: double.infinity,
-                                        height: double.infinity,
-                                        errorIcon: LucideIcons.image,
-                                        errorIconSize: 50,
-                                      ),
+                        return Stack(
+                          children: [
+                            AspectRatio(
+                              aspectRatio: 4 / 3,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(24),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.12),
+                                      blurRadius: 24,
+                                      offset: const Offset(0, 12),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ),
-
-                              // Artistic Impression Badge
-                              Positioned(
-                                top: 16,
-                                right: 16,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.45),
-                                    borderRadius: BorderRadius.circular(6),
-                                    border: Border.all(
-                                      color: Colors.white.withOpacity(0.1),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'ARTISTIC IMPRESSION',
-                                    style: GoogleFonts.dmSerifDisplay(
-                                      color: Colors.white,
-                                      fontSize: 8,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: 1.5,
-                                    ),
-                                  ),
-                                ),
-                              ),
-
-                              // ▶ Play affordance (web parity: shown when the
-                              // project has attached media)
-                              if (hasMedia)
-                                Positioned.fill(
-                                  child: Center(
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        final id = project['_id'];
-                                        if (id != null) {
-                                          context.push(
-                                            '/projects/$id',
-                                            extra: project,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(24),
+                                  child: AnimatedSwitcher(
+                                    duration: const Duration(milliseconds: 800),
+                                    transitionBuilder:
+                                        (
+                                          Widget child,
+                                          Animation<double> animation,
+                                        ) {
+                                          return FadeTransition(
+                                            opacity: animation,
+                                            child: child,
                                           );
-                                        }
-                                      },
-                                      child: Container(
-                                        width: 64,
-                                        height: 64,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white.withValues(
-                                            alpha: 0.75,
-                                          ),
-                                          shape: BoxShape.circle,
+                                        },
+                                    child: _buildProjectImage(
+                                      mainImage.toString(),
+                                      key: ValueKey<int>(_heroIndex),
+                                      width: double.infinity,
+                                      height: double.infinity,
+                                      errorIcon: LucideIcons.image,
+                                      errorIconSize: 50,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            // Artistic Impression Badge
+                            Positioned(
+                              top: 16,
+                              right: 16,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.45),
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: Colors.white.withOpacity(0.1),
+                                  ),
+                                ),
+                                child: Text(
+                                  'ARTISTIC IMPRESSION',
+                                  style: GoogleFonts.dmSerifDisplay(
+                                    color: Colors.white,
+                                    fontSize: 8,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 1.5,
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            // ▶ Play affordance (web parity: shown when the
+                            // project has attached media)
+                            if (hasMedia)
+                              Positioned.fill(
+                                child: Center(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      final id = project['_id'];
+                                      if (id != null) {
+                                        context.push(
+                                          '/projects/$id',
+                                          extra: project,
+                                        );
+                                      }
+                                    },
+                                    child: Container(
+                                      width: 64,
+                                      height: 64,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withValues(
+                                          alpha: 0.75,
                                         ),
-                                        child: const Center(
-                                          child: Icon(
-                                            LucideIcons.play,
-                                            color: Colors.black87,
-                                            size: 26,
-                                          ),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Center(
+                                        child: Icon(
+                                          LucideIcons.play,
+                                          color: Colors.black87,
+                                          size: 26,
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
-
-                              // Pagination Dots (web parity: bottom-left,
-                              // active becomes a wider dark pill; count follows
-                              // the actual carousel length)
-                              Positioned(
-                                bottom: 18,
-                                left: 20,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: List.generate(dotCount, (index) {
-                                    final isSelected =
-                                        (_heroIndex % dotCount) == index;
-                                    return AnimatedContainer(
-                                      duration: const Duration(
-                                        milliseconds: 300,
-                                      ),
-                                      margin: const EdgeInsets.symmetric(
-                                        horizontal: 4,
-                                      ),
-                                      width: isSelected ? 22 : 8,
-                                      height: 8,
-                                      decoration: BoxDecoration(
-                                        color: isSelected
-                                            ? Colors.black.withValues(
-                                                alpha: 0.85,
-                                              )
-                                            : Colors.white.withValues(
-                                                alpha: 0.75,
-                                              ),
-                                        borderRadius: BorderRadius.circular(4),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withValues(
-                                              alpha: 0.15,
-                                            ),
-                                            blurRadius: 4,
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }),
-                                ),
                               ),
-                            ],
-                          );
-                        },
-                      ),
+
+                            // Pagination Dots (web parity: bottom-left,
+                            // active becomes a wider dark pill; count follows
+                            // the actual carousel length)
+                            Positioned(
+                              bottom: 18,
+                              left: 20,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: List.generate(dotCount, (index) {
+                                  final isSelected =
+                                      (_heroIndex % dotCount) == index;
+                                  return AnimatedContainer(
+                                    duration: const Duration(milliseconds: 300),
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 4,
+                                    ),
+                                    width: isSelected ? 22 : 8,
+                                    height: 8,
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? Colors.black.withValues(alpha: 0.85)
+                                          : Colors.white.withValues(
+                                              alpha: 0.75,
+                                            ),
+                                      borderRadius: BorderRadius.circular(4),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(
+                                            alpha: 0.15,
+                                          ),
+                                          blurRadius: 4,
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
+                  ),
                 ],
               ),
             ),
@@ -875,19 +887,49 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           // lists stretch children to this height, so it matches the card's
           // content height exactly (image 180 + info section + margin).
           height: _activeTab == 'Properties' ? 336 : 320,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            physics: const BouncingScrollPhysics(),
-            // Web parity: the Media tab is a visual gallery of the catalog
-            // projects (hero image + title), not the CMS media articles.
-            itemCount: _activeTab == 'Communities'
-                ? _communities.length
-                : _projects.length,
-            itemBuilder: (context, index) {
-              final item = _activeTab == 'Communities'
-                  ? _communities[index]
-                  : _projects[index];
-              return _buildTabCard(item);
+          child: Builder(
+            builder: (context) {
+              final isCommunities = _activeTab == 'Communities';
+              final items = isCommunities ? _communities : _projects;
+              // Properties/Media render the projects payload, which arrives via
+              // projectsProvider and can take a while (multi-MB). Surface its
+              // real state — an empty box while loading/failed reads as broken.
+              if (items.isEmpty && !isCommunities) {
+                final projectsAsync = ref.watch(projectsProvider);
+                if (projectsAsync is AsyncLoading) {
+                  return const Center(
+                    child: SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  );
+                }
+                if (projectsAsync is AsyncError) {
+                  return Center(
+                    child: TextButton.icon(
+                      onPressed: () => ref.invalidate(projectsProvider),
+                      icon: const Icon(LucideIcons.refreshCw, size: 14),
+                      label: Text(
+                        'RETRY',
+                        style: GoogleFonts.dmSerifDisplay(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                    ),
+                  );
+                }
+              }
+              return ListView.builder(
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                // Web parity: the Media tab is a visual gallery of the catalog
+                // projects (hero image + title), not the CMS media articles.
+                itemCount: items.length,
+                itemBuilder: (context, index) => _buildTabCard(items[index]),
+              );
             },
           ),
         ),
@@ -1141,7 +1183,10 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80',
     );
     return _ScaleButton(
-      onTap: () => context.push('/projects/${item['_id']}', extra: item),
+      // Media tiles open the Media Gallery (content hub) — the same target as
+      // the menu's Media entry. They used to open the project detail page,
+      // which is the Properties tab's destination, not this one's.
+      onTap: () => context.push('/media'),
       child: Container(
         width: MediaQuery.of(context).size.width * 0.56,
         margin: const EdgeInsets.only(right: 16, bottom: 10),
@@ -1944,11 +1989,33 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           ),
         ),
         const SizedBox(height: 48),
-        _buildLuxuryInput('Full Name *', _nameController),
+        _buildLuxuryInput(
+          'Full Name *',
+          _nameController,
+          errorText: _nameError,
+          // Clear the red state as soon as they start typing.
+          onChanged: (v) {
+            if (_nameError != null) setState(() => _nameError = null);
+          },
+        ),
         const SizedBox(height: 16),
-        _buildLuxuryInput('Email *', _emailController),
+        _buildLuxuryInput(
+          'Email *',
+          _emailController,
+          errorText: _emailError,
+          onChanged: (v) {
+            if (_emailError != null) setState(() => _emailError = null);
+          },
+        ),
         const SizedBox(height: 16),
-        _buildLuxuryInput('Phone Number *', _phoneController),
+        _buildLuxuryInput(
+          'Phone Number *',
+          _phoneController,
+          errorText: _phoneError,
+          onChanged: (v) {
+            if (_phoneError != null) setState(() => _phoneError = null);
+          },
+        ),
         const SizedBox(height: 16),
         _buildLuxuryInput('Message', _messageController, isLong: true),
         const SizedBox(height: 24),
@@ -2009,42 +2076,71 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     String hint,
     TextEditingController controller, {
     bool isLong = false,
+    // When set, the field turns red and shows the message underneath — keeps
+    // validation on the field instead of a snackbar over the page.
+    String? errorText,
+    ValueChanged<String>? onChanged,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? Colors.black : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.12),
-        ),
-        boxShadow: isDark
-            ? []
-            : [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                ),
-              ],
-      ),
-      child: TextField(
-        controller: controller,
-        style: TextStyle(color: isDark ? Colors.white : Colors.black),
-        maxLines: isLong ? 5 : 1,
-        decoration: InputDecoration(
-          hintText: hint,
-          hintStyle: GoogleFonts.dmSerifDisplay(
-            color: isDark ? Colors.white54 : Colors.black45,
-            fontSize: 13,
+    final hasError = errorText != null;
+    const errorColor = Color(0xFFE24B4A);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: isDark ? Colors.black : Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: hasError
+                  ? errorColor
+                  : (isDark ? Colors.white : Colors.black).withOpacity(0.12),
+              width: hasError ? 1.5 : 1,
+            ),
+            boxShadow: isDark
+                ? []
+                : [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
           ),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 24,
-            vertical: 20,
+          child: TextField(
+            controller: controller,
+            onChanged: onChanged,
+            style: TextStyle(color: isDark ? Colors.white : Colors.black),
+            maxLines: isLong ? 5 : 1,
+            decoration: InputDecoration(
+              hintText: hint,
+              hintStyle: GoogleFonts.dmSerifDisplay(
+                color: hasError
+                    ? errorColor.withOpacity(0.75)
+                    : (isDark ? Colors.white54 : Colors.black45),
+                fontSize: 13,
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 20,
+              ),
+              border: InputBorder.none,
+            ),
           ),
-          border: InputBorder.none,
         ),
-      ),
+        if (hasError)
+          Padding(
+            padding: const EdgeInsets.only(left: 10, top: 6),
+            child: Text(
+              errorText,
+              style: GoogleFonts.dmSerifDisplay(
+                color: errorColor,
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

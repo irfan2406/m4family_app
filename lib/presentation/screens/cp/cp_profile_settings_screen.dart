@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -207,32 +208,50 @@ class _CpProfileSettingsScreenState
       if (!mounted) return;
       final ok = res.data is Map && (res.data as Map)['status'] == true;
       if (ok) {
-        await ref.read(authProvider.notifier).fetchMe();
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Profile updated successfully')),
-          );
+        // The PATCH already returns the saved user — apply it locally so the
+        // change shows instantly. Previously this awaited a SECOND round-trip
+        // (fetchMe) before doing anything, which is why saving felt slow; that
+        // refresh now runs in the background just to reconcile.
+        final updated = (res.data as Map)['data'];
+        if (updated is Map) {
+          ref
+              .read(authProvider.notifier)
+              .setUser(Map<String, dynamic>.from(updated));
         }
+        _toast('Profile updated successfully', success: true);
+        unawaited(ref.read(authProvider.notifier).fetchMe());
       } else {
         final msg = res.data is Map
             ? (res.data as Map)['message']?.toString()
             : null;
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(msg ?? 'Update failed')));
+        _toast(msg ?? 'Update failed');
       }
     } on DioException catch (e) {
       if (mounted) {
         final m = e.response?.data is Map
             ? (e.response!.data as Map)['message']?.toString()
             : null;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(m ?? e.message ?? 'Network error')),
-        );
+        _toast(m ?? 'Network error. Please try again.');
       }
     } finally {
       if (mounted) setState(() => _saving = false);
     }
+  }
+
+  /// Red on failure, green on success.
+  void _toast(String message, {bool success = false}) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: success
+              ? const Color(0xFF10B981)
+              : const Color(0xFFE24B4A),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
   }
 
   // Web parity: `IOSDateTimePicker` with mode="date" — absolute Day/Month/Year

@@ -134,7 +134,80 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       } catch (e) {
         debugPrint('Error launching URL: $e');
       }
+      return;
     }
+
+    // No URL: the call is purely user feedback (validation errors, submit
+    // results). This method used to surface the message ONLY as a side-effect
+    // of opening a url — so every `_launchAction(msg, null)` silently did
+    // nothing and submitting the form looked completely unresponsive.
+    _showMessage(message);
+  }
+
+  /// Toast feedback — green on success, red on failure.
+  ///
+  /// Rendered in the ROOT overlay so it floats ABOVE the booking sheet, and
+  /// sits just above the submit button — right where the user is looking. A
+  /// normal SnackBar renders inside the Scaffold *under* the modal route, which
+  /// pushed it to the very bottom of the screen, below the form.
+  void _showMessage(String message, {bool success = false}) {
+    if (!mounted) return;
+    final overlay = Overlay.of(context, rootOverlay: true);
+    late final OverlayEntry entry;
+    entry = OverlayEntry(
+      builder: (ctx) => Positioned(
+        // Above the submit button; lifts with the keyboard when it's open.
+        bottom: MediaQuery.of(ctx).viewInsets.bottom + 120,
+        left: 16,
+        right: 16,
+        child: IgnorePointer(
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              decoration: BoxDecoration(
+                color: success
+                    ? const Color(0xFF10B981)
+                    : const Color(0xFFE24B4A),
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.25),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    success ? LucideIcons.checkCircle : LucideIcons.alertCircle,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      message,
+                      style: GoogleFonts.dmSerifDisplay(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                        height: 1.35,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    overlay.insert(entry);
+    Future.delayed(const Duration(seconds: 3), () {
+      if (entry.mounted) entry.remove();
+    });
   }
 
   @override
@@ -158,17 +231,26 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               authUser?['username']?.toString() ??
               'App User')
         : _nameController.text.trim();
+    // `phone` is REQUIRED by the API. For visits it comes from the profile, but
+    // that can be blank — in which case the sheet shows a phone field and we
+    // fall back to it. Submitting blank used to reach the server and come back
+    // as a 400, which surfaced as a misleading "Connection error".
+    final authPhone = (authUser?['phone']?.toString() ?? '').trim();
     final phone = isVisit
-        ? (authUser?['phone']?.toString() ?? '')
+        ? (authPhone.isNotEmpty ? authPhone : _phoneController.text.trim())
         : _phoneController.text.trim();
 
     if (isVisit) {
       if (_inquiryDateTime == null) {
-        _launchAction('Please select a date & time for your visit', null);
+        _showMessage('Please select a date & time for your visit');
+        return;
+      }
+      if (phone.isEmpty) {
+        _showMessage('Please enter your phone number');
         return;
       }
     } else if (name.isEmpty || phone.isEmpty) {
-      _launchAction('Please enter your name and phone number', null);
+      _showMessage('Please enter your name and phone number');
       return;
     }
 
@@ -192,8 +274,11 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
             ? 'Site Visit'
             : 'Buying',
         'configuration': _selectedConfig,
-        'source': 'mobile_app',
-        'projectId': widget.projectId,
+        // Server-side enum: source = online | cp | walk-in | referral | other.
+        'source': 'online',
+        // Only ever send a real ObjectId — widget.projectId can be a route slug,
+        // which makes the API reject the whole lead (CastToObjectId/BSONError).
+        if (widget.projectId.length == 24) 'projectId': widget.projectId,
         'project': project?['title'] ?? 'General',
         if (isVisit && dt != null)
           'visitDate': '${dt.year}-${two(dt.month)}-${two(dt.day)}',
@@ -211,19 +296,20 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
 
       if (res.data['status'] == true) {
         if (mounted) {
+          // Close the sheet FIRST so the confirmation isn't hidden behind it.
           Navigator.pop(context);
-          _launchAction(
+          _showMessage(
             type == 'General'
                 ? 'Inquiry submitted! Our advisor will contact you shortly.'
                 : 'Booking request received! Our team will call you to confirm the time.',
-            null,
+            success: true,
           );
         }
       } else {
-        _launchAction(res.data['message'] ?? 'Failed to submit inquiry', null);
+        _showMessage(res.data['message'] ?? 'Failed to submit inquiry');
       }
     } catch (e) {
-      _launchAction('Connection error. Please try again.', null);
+      _showMessage('Connection error. Please try again.');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -708,6 +794,20 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                         ),
                       ),
                     ),
+                    // The API requires a phone. Visits normally take it from
+                    // the profile — ask for it here when that's blank, instead
+                    // of submitting empty and failing with a 400.
+                    if ((authUser?['phone']?.toString() ?? '')
+                        .trim()
+                        .isEmpty) ...[
+                      const SizedBox(height: 24),
+                      _buildInquiryField(
+                        'PHONE NUMBER *',
+                        _phoneController,
+                        LucideIcons.phone,
+                      ),
+                    ],
+
                     // ADDITIONAL NOTES
                     const SizedBox(height: 24),
                     _inquiryLabel('ADDITIONAL NOTES', isDark),
@@ -1366,6 +1466,10 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
             child: CachedNetworkImage(
               imageUrl: heroUrl,
               fit: BoxFit.cover,
+              // Decode at roughly display size and skip the default 500ms
+              // fade — full-res decodes are what make the hero appear late.
+              memCacheWidth: 1080,
+              fadeInDuration: Duration.zero,
               placeholder: (context, url) => Container(
                 color: isDark ? Colors.white10 : Colors.black.withOpacity(0.1),
               ),
@@ -2130,6 +2234,10 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                       CachedNetworkImage(
                         imageUrl: url,
                         fit: BoxFit.cover,
+                        // Thumbnails render ~90dp wide — decoding the full-res
+                        // source here was the main cost on this row.
+                        memCacheWidth: 300,
+                        fadeInDuration: Duration.zero,
                         placeholder: (context, url) => Container(
                           color: isDark
                               ? Colors.white10
@@ -2825,6 +2933,8 @@ class _FloorPlanItem extends StatelessWidget {
                 fit: BoxFit.cover,
                 height: 200,
                 width: double.infinity,
+                memCacheWidth: 900,
+                fadeInDuration: Duration.zero,
                 placeholder: (context, url) =>
                     Container(height: 200, color: Colors.black12),
                 errorWidget: (context, url, error) => Container(
@@ -3057,6 +3167,8 @@ class _ConstructionUpdateCard extends StatelessWidget {
                   height: 180,
                   width: double.infinity,
                   fit: BoxFit.cover,
+                  memCacheWidth: 900,
+                  fadeInDuration: Duration.zero,
                   placeholder: (context, url) =>
                       Container(height: 180, color: Colors.black12),
                   errorWidget: (context, url, error) => Container(
@@ -3697,6 +3809,8 @@ class _HeroMediaThumb extends StatelessWidget {
               CachedNetworkImage(
                 imageUrl: imageUrl!,
                 fit: BoxFit.cover,
+                memCacheWidth: 900,
+                fadeInDuration: Duration.zero,
                 placeholder: (context, url) => Container(
                   color: isDark
                       ? Colors.white10
@@ -4133,6 +4247,8 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                 height: 180,
                                 width: 260,
                                 fit: BoxFit.cover,
+                                memCacheWidth: 600,
+                                fadeInDuration: Duration.zero,
                                 placeholder: (context, url) => Container(
                                   height: 180,
                                   width: 260,
@@ -4607,6 +4723,8 @@ class _MediaFloatThumbnail extends StatelessWidget {
                     fit: BoxFit.cover,
                     width: double.infinity,
                     height: double.infinity,
+                    memCacheWidth: 1080,
+                    fadeInDuration: Duration.zero,
                     placeholder: (context, url) =>
                         Container(color: Colors.black12),
                     errorWidget: (context, url, error) =>

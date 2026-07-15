@@ -26,7 +26,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> with Single
     ref.read(authProvider);
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1800),
+      // Was 1800ms. The session check above already runs in parallel, so this
+      // was pure waiting on every cold start — the splash still plays, just
+      // without holding the app back for the better part of two seconds.
+      duration: const Duration(milliseconds: 900),
     )..forward().then((_) {
         if (mounted) {
           context.go('/home');

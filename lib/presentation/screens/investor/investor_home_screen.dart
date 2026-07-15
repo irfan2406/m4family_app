@@ -11,6 +11,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:m4_mobile/presentation/providers/investor_shell_provider.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
 import 'package:m4_mobile/presentation/screens/home/guest_dashboard_screen.dart'
@@ -51,6 +52,12 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
   final TextEditingController _messageController = TextEditingController();
   bool _submitting = false;
   bool _agreedToTerms = false;
+
+  // Inline validation for the "Register your interest" form — the field itself
+  // turns red instead of a snackbar popping over the page.
+  String? _nameError;
+  String? _emailError;
+  String? _phoneError;
 
   Timer? _heroTimer;
 
@@ -183,9 +190,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
   // Properties tab can show data when the (bloated) projects call 504s.
   Future<List<dynamic>?> _loadCachedProjectsFromDisk() async {
     try {
-      final f = File(
-        '${Directory.systemTemp.path}/m4_guest_home_cache.json',
-      );
+      final f = File('${Directory.systemTemp.path}/m4_guest_home_cache.json');
       if (!await f.exists()) return null;
       final map = jsonDecode(await f.readAsString());
       final list = map is Map ? map['projects'] : null;
@@ -246,11 +251,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
       'title': 'Aura Residences',
       'image': 'assets/community_luxury.png',
     },
-    {
-      '_id': 'media4',
-      'title': 'Cledor',
-      'image': 'assets/cledor_featured.jpg',
-    },
+    {'_id': 'media4', 'title': 'Cledor', 'image': 'assets/cledor_featured.jpg'},
   ];
 
   Future<void> _fetchData() async {
@@ -324,9 +325,14 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
 
     // Projects can be slow / return a 504 (multi-MB base64 hero image) — fetch
     // separately so a failure never wipes the communities/media loaded above.
+    // Via the shared projectsProvider: cached + retried + ONE download for the
+    // whole app, instead of this screen pulling the multi-MB catalog again.
     try {
-      final res = await apiClient.getProjects();
-      if (mounted) setState(() => _projects = res.data['data'] ?? _projects);
+      if (ref.read(projectsProvider) is AsyncError) {
+        ref.invalidate(projectsProvider);
+      }
+      final list = await ref.read(projectsProvider.future);
+      if (mounted && list.isNotEmpty) setState(() => _projects = list);
     } catch (_) {}
 
     // Cache whatever we managed to load for an instant next mount.
@@ -358,15 +364,27 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
     }
   }
 
+  /// Marks the empty required fields red in place. Returns true when valid.
+  bool _validateInterest() {
+    final nameErr = _nameController.text.trim().isEmpty
+        ? 'Please enter your full name'
+        : null;
+    final emailErr = _emailController.text.trim().isEmpty
+        ? 'Please enter your email address'
+        : null;
+    final phoneErr = _phoneController.text.trim().isEmpty
+        ? 'Please enter your phone number'
+        : null;
+    setState(() {
+      _nameError = nameErr;
+      _emailError = emailErr;
+      _phoneError = phoneErr;
+    });
+    return nameErr == null && emailErr == null && phoneErr == null;
+  }
+
   Future<void> _submitInterest() async {
-    if (_nameController.text.isEmpty ||
-        _emailController.text.isEmpty ||
-        _phoneController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all required fields (*)')),
-      );
-      return;
-    }
+    if (!_validateInterest()) return;
     if (!_agreedToTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please agree to the Privacy Policy')),
@@ -378,19 +396,22 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
     try {
       final apiClient = ref.read(apiClientProvider);
       final user = ref.read(authProvider).user;
-      final investor =
-          user?['firstName']?.toString() ??
-          user?['fullName']?.toString() ??
-          user?['phone']?.toString() ??
-          'Investor';
+      // `userId` is an ObjectId reference — the old code put the investor's
+      // *display name* here ('Investor' / firstName), which made the API reject
+      // the whole lead with:
+      //   userId: Cast to ObjectId failed for value "Investor" … BSONError
+      final investorId = (user?['_id'] ?? user?['id'])?.toString() ?? '';
       await apiClient.submitLead({
         'name': _nameController.text,
         'email': _emailController.text,
         'phone': _phoneController.text,
         'message': _messageController.text,
-        'interest': 'Investor Interest',
-        'source': 'investor',
-        'userId': investor,
+        // Server-side enums — anything else is rejected with a 400. Valid:
+        // interest = Buying | Selling | Site Visit | Video Call
+        // (case-sensitive); source = online | cp | walk-in | referral | other.
+        'interest': 'Buying',
+        'source': 'online',
+        if (investorId.length == 24) 'userId': investorId,
       });
 
       if (mounted) {
@@ -568,8 +589,10 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                 ),
 
                 // Hero carousel (4:3, auto-cycle, badge, dots).
+                // Was -110, which pulled the hero up until it touched the
+                // "Living the M4 Life" logo — leave it breathing room.
                 Transform.translate(
-                  offset: const Offset(0, -110),
+                  offset: const Offset(0, -70),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Builder(
@@ -870,8 +893,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                 scrollDirection: Axis.horizontal,
                 physics: const BouncingScrollPhysics(),
                 itemCount: tabItems.length,
-                itemBuilder: (context, index) =>
-                    _buildTabCard(tabItems[index]),
+                itemBuilder: (context, index) => _buildTabCard(tabItems[index]),
               ),
             );
           },
@@ -1362,11 +1384,11 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                       const SizedBox(height: 16),
                       Text(
                         ((project['description'] ?? '')
-                                        .toString()
-                                        .trim()
-                                        .isNotEmpty
-                                    ? project['description'].toString()
-                                    : 'Live smart at Aura Heights—space-efficient 1 & 2 BHK homes with curated amenities and rare parking solutions.')
+                                    .toString()
+                                    .trim()
+                                    .isNotEmpty
+                                ? project['description'].toString()
+                                : 'Live smart at Aura Heights—space-efficient 1 & 2 BHK homes with curated amenities and rare parking solutions.')
                             .toUpperCase(),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -1473,8 +1495,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
               const SizedBox(width: 12),
               _ScaleButton(
                 onTap: () => setState(
-                  () =>
-                      _featuredIndex = (_featuredIndex + 1) % featured.length,
+                  () => _featuredIndex = (_featuredIndex + 1) % featured.length,
                 ),
                 child: Container(
                   width: 56,
@@ -1688,15 +1709,34 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
           ),
         ),
         const SizedBox(height: 48),
-        _buildLuxuryInput('Full Name *', _nameController),
+        _buildLuxuryInput(
+          'Full Name *',
+          _nameController,
+          errorText: _nameError,
+          // Clear the red state as soon as they start typing.
+          onChanged: (v) {
+            if (_nameError != null) setState(() => _nameError = null);
+          },
+        ),
         const SizedBox(height: 16),
-        _buildLuxuryInput('Email *', _emailController),
+        _buildLuxuryInput(
+          'Email *',
+          _emailController,
+          errorText: _emailError,
+          onChanged: (v) {
+            if (_emailError != null) setState(() => _emailError = null);
+          },
+        ),
         const SizedBox(height: 16),
         _buildLuxuryInput(
           'Phone Number *',
           _phoneController,
           keyboardType: TextInputType.phone,
           hint: '+91 98653 21250 *',
+          errorText: _phoneError,
+          onChanged: (v) {
+            if (_phoneError != null) setState(() => _phoneError = null);
+          },
         ),
         const SizedBox(height: 16),
         _buildLuxuryInput('Message', _messageController, isLong: true),
@@ -1776,43 +1816,74 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
     bool isLong = false,
     TextInputType? keyboardType,
     String? hint,
+    // When set, the field turns red and shows the message underneath — keeps
+    // validation on the field instead of a snackbar over the page.
+    String? errorText,
+    ValueChanged<String>? onChanged,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? Colors.black : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.12),
-        ),
-        boxShadow: isDark
-            ? []
-            : [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                ),
-              ],
-      ),
-      child: TextField(
-        controller: controller,
-        keyboardType: keyboardType,
-        style: TextStyle(color: isDark ? Colors.white : Colors.black),
-        maxLines: isLong ? 5 : 1,
-        decoration: InputDecoration(
-          hintText: hint ?? label,
-          hintStyle: GoogleFonts.dmSerifDisplay(
-            color: isDark ? Colors.white54 : Colors.black45,
-            fontSize: 13,
+    final hasError = errorText != null;
+    const errorColor = Color(0xFFE24B4A);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: isDark ? Colors.black : Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: hasError
+                  ? errorColor
+                  : (isDark ? Colors.white : Colors.black).withValues(
+                      alpha: 0.12,
+                    ),
+              width: hasError ? 1.5 : 1,
+            ),
+            boxShadow: isDark
+                ? []
+                : [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
           ),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 24,
-            vertical: 20,
+          child: TextField(
+            controller: controller,
+            keyboardType: keyboardType,
+            onChanged: onChanged,
+            style: TextStyle(color: isDark ? Colors.white : Colors.black),
+            maxLines: isLong ? 5 : 1,
+            decoration: InputDecoration(
+              hintText: hint ?? label,
+              hintStyle: GoogleFonts.dmSerifDisplay(
+                color: hasError
+                    ? errorColor.withValues(alpha: 0.75)
+                    : (isDark ? Colors.white54 : Colors.black45),
+                fontSize: 13,
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 20,
+              ),
+              border: InputBorder.none,
+            ),
           ),
-          border: InputBorder.none,
         ),
-      ),
+        if (hasError)
+          Padding(
+            padding: const EdgeInsets.only(left: 10, top: 6),
+            child: Text(
+              errorText,
+              style: GoogleFonts.dmSerifDisplay(
+                color: errorColor,
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

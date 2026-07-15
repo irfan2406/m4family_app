@@ -92,7 +92,9 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
         'email': _emailController.text.trim(),
         'phone': _phoneController.text.trim(),
         'message': _messageController.text.trim(),
-        'interest': 'Investing',
+        // Server-side enum — 'Investing' isn't valid and was rejected with a
+        // 400. Valid: Buying | Selling | Site Visit | Video Call.
+        'interest': 'Buying',
         'source': 'online',
         'notes': 'Submitted via Investor Relations Page',
       });

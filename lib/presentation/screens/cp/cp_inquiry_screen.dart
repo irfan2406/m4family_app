@@ -88,8 +88,11 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
         'name': name,
         'email': email,
         'phone': phone,
-        'interest': 'Channel Partner Interest',
-        'source': 'cp inquiry',
+        // Server-side enums: interest = Buying | Selling | Site Visit | Video
+        // Call (case-sensitive); source = online | cp | walk-in | referral |
+        // other. Anything else is rejected with a 400.
+        'interest': 'Buying',
+        'source': 'cp',
         'notes': _message.text.trim(),
       });
       if (!mounted) return;

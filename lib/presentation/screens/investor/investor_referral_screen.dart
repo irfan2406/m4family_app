@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
 
@@ -16,12 +15,18 @@ class InvestorReferralScreen extends ConsumerStatefulWidget {
   const InvestorReferralScreen({super.key});
 
   @override
-  ConsumerState<InvestorReferralScreen> createState() => _InvestorReferralScreenState();
+  ConsumerState<InvestorReferralScreen> createState() =>
+      _InvestorReferralScreenState();
 }
 
-class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen> {
-  static const _gold = Color(0xFFFFD700);
-  static const _closedStatuses = {'CLOSED', 'CREDITED', 'BOOKING_DONE', 'Booked'};
+class _InvestorReferralScreenState
+    extends ConsumerState<InvestorReferralScreen> {
+  static const _closedStatuses = {
+    'CLOSED',
+    'CREDITED',
+    'BOOKING_DONE',
+    'Booked',
+  };
 
   Map<String, dynamic>? _wallet;
   List<dynamic> _referrals = [];
@@ -72,9 +77,11 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
     return (w['balance'] ?? w['availableBalance'] ?? 0) as num? ?? 0;
   }
 
-  bool _isClosed(dynamic r) => _closedStatuses.contains((r is Map ? r['status'] : null)?.toString());
+  bool _isClosed(dynamic r) =>
+      _closedStatuses.contains((r is Map ? r['status'] : null)?.toString());
 
-  List<dynamic> get _activeReferrals => _referrals.where((r) => !_isClosed(r)).toList();
+  List<dynamic> get _activeReferrals =>
+      _referrals.where((r) => !_isClosed(r)).toList();
   int get _closedCount => _referrals.where(_isClosed).length;
 
   String _referralCode() {
@@ -84,7 +91,8 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
     return code;
   }
 
-  String _refName(dynamic r) => (r['referralName'] ?? r['clientName'] ?? 'REFERRAL').toString();
+  String _refName(dynamic r) =>
+      (r['referralName'] ?? r['clientName'] ?? 'REFERRAL').toString();
   String _refStatus(dynamic r) => (r['status'] ?? 'NEW').toString();
   String _refProject(dynamic r) {
     final pid = r['projectId'];
@@ -107,40 +115,56 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
             _buildHeader(isDark, textPrimary),
             Expanded(
               child: _loading
-                  ? const Center(child: CircularProgressIndicator(color: M4Theme.premiumBlue))
+                  ? Center(
+                      child: CircularProgressIndicator(
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
+                    )
                   : _error && _wallet == null && _referrals.isEmpty
-                      ? _buildErrorState(isDark, textPrimary)
-                      : RefreshIndicator(
-                          onRefresh: _load,
-                          color: M4Theme.premiumBlue,
-                          backgroundColor: isDark ? const Color(0xFF1C1C1E) : Colors.white,
-                          child: SingleChildScrollView(
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            padding: const EdgeInsets.symmetric(horizontal: 24),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const SizedBox(height: 12),
-                                _buildCodeCard(isDark, textPrimary),
-                                const SizedBox(height: 20),
-                                _buildStatsRow(isDark, textPrimary),
-                                const SizedBox(height: 20),
-                                _buildRedeemButton(isDark, textPrimary),
-                                const SizedBox(height: 20),
-                                _buildActionGrid(isDark, textPrimary),
-                                const SizedBox(height: 32),
-                                _buildSectionHeader('ACTIVE REFERRALS', LucideIcons.users, isDark, textPrimary),
-                                const SizedBox(height: 16),
-                                _buildReferralsList(isDark, textPrimary),
-                                const SizedBox(height: 32),
-                                _buildSectionHeader('POINT HISTORY', LucideIcons.history, isDark, textPrimary),
-                                const SizedBox(height: 16),
-                                _buildHistoryList(isDark, textPrimary),
-                                const SizedBox(height: 100),
-                              ],
+                  ? _buildErrorState(isDark, textPrimary)
+                  : RefreshIndicator(
+                      onRefresh: _load,
+                      color: isDark ? Colors.white : Colors.black,
+                      backgroundColor: isDark
+                          ? const Color(0xFF1C1C1E)
+                          : Colors.white,
+                      child: SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 12),
+                            _buildCodeCard(isDark, textPrimary),
+                            const SizedBox(height: 20),
+                            _buildStatsRow(isDark, textPrimary),
+                            const SizedBox(height: 20),
+                            _buildRedeemButton(isDark, textPrimary),
+                            const SizedBox(height: 20),
+                            _buildActionGrid(isDark, textPrimary),
+                            const SizedBox(height: 32),
+                            _buildSectionHeader(
+                              'ACTIVE REFERRALS',
+                              LucideIcons.users,
+                              isDark,
+                              textPrimary,
                             ),
-                          ),
+                            const SizedBox(height: 16),
+                            _buildReferralsList(isDark, textPrimary),
+                            const SizedBox(height: 32),
+                            _buildSectionHeader(
+                              'POINT HISTORY',
+                              LucideIcons.history,
+                              isDark,
+                              textPrimary,
+                            ),
+                            const SizedBox(height: 16),
+                            _buildHistoryList(isDark, textPrimary),
+                            const SizedBox(height: 100),
+                          ],
                         ),
+                      ),
+                    ),
             ),
           ],
         ),
@@ -155,7 +179,8 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
       child: Row(
         children: [
           GestureDetector(
-            onTap: () => context.canPop() ? context.pop() : context.go('/investor/home'),
+            onTap: () =>
+                context.canPop() ? context.pop() : context.go('/investor/home'),
             child: Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
@@ -188,7 +213,9 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
   Widget _buildCodeCard(bool isDark, Color textPrimary) {
     final code = _referralCode();
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
-    final border = isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06);
+    final border = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.black.withValues(alpha: 0.06);
 
     return Container(
       width: double.infinity,
@@ -233,7 +260,9 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 3,
-                    color: M4Theme.premiumBlue,
+                    // Was the gold accent — plain ink now (white on dark, since
+                    // black there would be unreadable).
+                    color: isDark ? Colors.white : Colors.black,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -243,7 +272,11 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                     Clipboard.setData(ClipboardData(text: code));
                     _toast('Referral code copied to clipboard!', success: true);
                   },
-                  child: Icon(LucideIcons.copy, size: 16, color: textPrimary.withValues(alpha: 0.5)),
+                  child: Icon(
+                    LucideIcons.copy,
+                    size: 16,
+                    color: textPrimary.withValues(alpha: 0.5),
+                  ),
                 ),
               ],
             ),
@@ -257,18 +290,36 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
   Widget _buildStatsRow(bool isDark, Color textPrimary) {
     return Row(
       children: [
-        Expanded(child: _statCard('POINTS', _points().toString(), isDark, textPrimary)),
+        Expanded(
+          child: _statCard('POINTS', _points().toString(), isDark, textPrimary),
+        ),
         const SizedBox(width: 12),
-        Expanded(child: _statCard('REFERRALS', _activeReferrals.length.toString(), isDark, textPrimary)),
+        Expanded(
+          child: _statCard(
+            'REFERRALS',
+            _activeReferrals.length.toString(),
+            isDark,
+            textPrimary,
+          ),
+        ),
         const SizedBox(width: 12),
-        Expanded(child: _statCard('CLOSED', _closedCount.toString(), isDark, textPrimary)),
+        Expanded(
+          child: _statCard(
+            'CLOSED',
+            _closedCount.toString(),
+            isDark,
+            textPrimary,
+          ),
+        ),
       ],
     );
   }
 
   Widget _statCard(String label, String value, bool isDark, Color textPrimary) {
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
-    final border = isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06);
+    final border = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.black.withValues(alpha: 0.06);
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 22),
       decoration: BoxDecoration(
@@ -336,7 +387,11 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
               ),
             ),
             const SizedBox(width: 12),
-            Icon(LucideIcons.gift, size: 18, color: isDark ? Colors.black : Colors.white),
+            Icon(
+              LucideIcons.gift,
+              size: 18,
+              color: isDark ? Colors.black : Colors.white,
+            ),
           ],
         ),
       ),
@@ -375,9 +430,17 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
     );
   }
 
-  Widget _actionCard(IconData icon, String label, bool isDark, Color textPrimary, VoidCallback onTap) {
+  Widget _actionCard(
+    IconData icon,
+    String label,
+    bool isDark,
+    Color textPrimary,
+    VoidCallback onTap,
+  ) {
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
-    final border = isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06);
+    final border = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.black.withValues(alpha: 0.06);
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -416,7 +479,12 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
   }
 
   // ─── Section Header ────────────────────────────────────────────
-  Widget _buildSectionHeader(String title, IconData icon, bool isDark, Color textPrimary) {
+  Widget _buildSectionHeader(
+    String title,
+    IconData icon,
+    bool isDark,
+    Color textPrimary,
+  ) {
     return Row(
       children: [
         Text(
@@ -441,13 +509,17 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
       return _emptyBox('NO ACTIVE REFERRALS YET', isDark, textPrimary);
     }
     return Column(
-      children: active.map((r) => _referralCard(r, isDark, textPrimary)).toList(),
+      children: active
+          .map((r) => _referralCard(r, isDark, textPrimary))
+          .toList(),
     );
   }
 
   Widget _referralCard(dynamic r, bool isDark, Color textPrimary) {
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
-    final border = isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06);
+    final border = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.black.withValues(alpha: 0.06);
     final name = _refName(r);
     final project = _refProject(r);
     final status = _refStatus(r);
@@ -492,7 +564,8 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.5,
-                    color: M4Theme.premiumBlue,
+                    // Was the gold accent — plain ink now.
+                    color: isDark ? Colors.white : Colors.black,
                   ),
                 ),
                 if (code != null && code.isNotEmpty) ...[
@@ -503,7 +576,11 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                       fontSize: 9,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 1,
-                      color: _gold,
+                      // Was _gold — slightly muted ink so it still reads as
+                      // secondary next to the name above it.
+                      color: (isDark ? Colors.white : Colors.black).withValues(
+                        alpha: 0.65,
+                      ),
                     ),
                   ),
                 ],
@@ -538,12 +615,16 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
       return _emptyBox('NO RECENT HISTORY', isDark, textPrimary);
     }
     return Column(
-      children: _transactions.map((t) => _historyItem(t, isDark, textPrimary)).toList(),
+      children: _transactions
+          .map((t) => _historyItem(t, isDark, textPrimary))
+          .toList(),
     );
   }
 
   Widget _historyItem(dynamic txn, bool isDark, Color textPrimary) {
-    final border = isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06);
+    final border = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.black.withValues(alpha: 0.06);
     final type = (txn['type'] ?? 'CREDIT').toString();
     final reference = (txn['reference'] ?? '').toString();
     final status = (txn['status'] ?? '').toString();
@@ -551,7 +632,9 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
     final isDebit = type.toUpperCase() == 'DEBIT';
     final date = _formatDate(txn['createdAt']);
 
-    final title = reference.isNotEmpty ? '${type.toUpperCase()} - $reference' : type.toUpperCase();
+    final title = reference.isNotEmpty
+        ? '${type.toUpperCase()} - $reference'
+        : type.toUpperCase();
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -617,7 +700,9 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
 
   // ─── Shared widgets ────────────────────────────────────────────
   Widget _emptyBox(String label, bool isDark, Color textPrimary) {
-    final border = isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06);
+    final border = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.black.withValues(alpha: 0.06);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 40),
@@ -647,7 +732,11 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(LucideIcons.alertCircle, size: 40, color: textPrimary.withValues(alpha: 0.3)),
+            Icon(
+              LucideIcons.alertCircle,
+              size: 40,
+              color: textPrimary.withValues(alpha: 0.3),
+            ),
             const SizedBox(height: 16),
             Text(
               'FAILED TO LOAD REWARD HUB',
@@ -663,9 +752,13 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
             GestureDetector(
               onTap: _load,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 28,
+                  vertical: 14,
+                ),
                 decoration: BoxDecoration(
-                  color: M4Theme.premiumBlue,
+                  // Was the gold accent — matches the app's black CTA style.
+                  color: isDark ? Colors.white : Colors.black,
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Text(
@@ -674,7 +767,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
-                    color: Colors.white,
+                    color: isDark ? Colors.black : Colors.white,
                   ),
                 ),
               ),
@@ -695,7 +788,9 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
     String? selectedProjectId;
     bool submitting = false;
 
-    final border = isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06);
+    final border = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.black.withValues(alpha: 0.06);
 
     showModalBottomSheet(
       context: context,
@@ -713,7 +808,9 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
               ),
               decoration: BoxDecoration(
                 color: isDark ? const Color(0xFF18181B) : Colors.white,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(40),
+                ),
                 border: Border.all(color: border),
               ),
               child: SingleChildScrollView(
@@ -763,11 +860,14 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                           loading: () => Container(
                             height: 56,
                             decoration: _inputBox(isDark, textPrimary),
-                            child: const Center(
+                            child: Center(
                               child: SizedBox(
                                 width: 20,
                                 height: 20,
-                                child: CircularProgressIndicator(strokeWidth: 2, color: M4Theme.premiumBlue),
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: isDark ? Colors.white : Colors.black,
+                                ),
                               ),
                             ),
                           ),
@@ -801,15 +901,23 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                                     color: textPrimary.withValues(alpha: 0.3),
                                   ),
                                 ),
-                                dropdownColor: isDark ? const Color(0xFF1C1C1E) : Colors.white,
-                                icon: Icon(LucideIcons.chevronDown, size: 16, color: textPrimary.withValues(alpha: 0.3)),
+                                dropdownColor: isDark
+                                    ? const Color(0xFF1C1C1E)
+                                    : Colors.white,
+                                icon: Icon(
+                                  LucideIcons.chevronDown,
+                                  size: 16,
+                                  color: textPrimary.withValues(alpha: 0.3),
+                                ),
                                 items: [
                                   for (final p in projects)
                                     if ((p['_id']?.toString() ?? '').isNotEmpty)
                                       DropdownMenuItem(
                                         value: p['_id'].toString(),
                                         child: Text(
-                                          (p['title'] ?? p['name'] ?? 'PROJECT').toString().toUpperCase(),
+                                          (p['title'] ?? p['name'] ?? 'PROJECT')
+                                              .toString()
+                                              .toUpperCase(),
                                           style: GoogleFonts.dmSerifDisplay(
                                             fontSize: 10,
                                             fontWeight: FontWeight.w800,
@@ -818,7 +926,8 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                                         ),
                                       ),
                                 ],
-                                onChanged: (v) => setModalState(() => selectedProjectId = v),
+                                onChanged: (v) =>
+                                    setModalState(() => selectedProjectId = v),
                               ),
                             ),
                           ),
@@ -834,12 +943,24 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
 
                     _formLabel('MOBILE NUMBER', textPrimary),
                     const SizedBox(height: 10),
-                    _formField(phoneCtrl, '+91 XXXXX XXXXX', isDark, textPrimary, type: TextInputType.phone),
+                    _formField(
+                      phoneCtrl,
+                      '+91 XXXXX XXXXX',
+                      isDark,
+                      textPrimary,
+                      type: TextInputType.phone,
+                    ),
                     const SizedBox(height: 20),
 
                     _formLabel("FRIEND'S EMAIL", textPrimary),
                     const SizedBox(height: 10),
-                    _formField(emailCtrl, 'email@example.com', isDark, textPrimary, type: TextInputType.emailAddress),
+                    _formField(
+                      emailCtrl,
+                      'email@example.com',
+                      isDark,
+                      textPrimary,
+                      type: TextInputType.emailAddress,
+                    ),
                     const SizedBox(height: 32),
 
                     GestureDetector(
@@ -857,14 +978,17 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                               final navigator = Navigator.of(ctx);
                               try {
                                 final api = ref.read(apiClientProvider);
-                                final res = await api.post('/api/investor/referrals', {
-                                  'projectId': selectedProjectId,
-                                  'referralName': nameCtrl.text.trim(),
-                                  'referralPhone': phoneCtrl.text.trim(),
-                                  'referralEmail': emailCtrl.text.trim(),
-                                });
+                                final res = await api
+                                    .post('/api/investor/referrals', {
+                                      'projectId': selectedProjectId,
+                                      'referralName': nameCtrl.text.trim(),
+                                      'referralPhone': phoneCtrl.text.trim(),
+                                      'referralEmail': emailCtrl.text.trim(),
+                                    });
                                 if (!mounted) return;
-                                final ok = res.data is Map && res.data['status'] == true ||
+                                final ok =
+                                    res.data is Map &&
+                                        res.data['status'] == true ||
                                     res.statusCode == 200 ||
                                     res.statusCode == 201;
                                 if (ok) {
@@ -872,7 +996,9 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                                   _toast('Referral registered!', success: true);
                                   _load();
                                 } else {
-                                  final msg = res.data is Map ? res.data['message']?.toString() : null;
+                                  final msg = res.data is Map
+                                      ? res.data['message']?.toString()
+                                      : null;
                                   _toast(msg ?? 'Failed to register referral');
                                   setModalState(() => submitting = false);
                                 }
@@ -942,8 +1068,13 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
     );
   }
 
-  Widget _formField(TextEditingController controller, String hint, bool isDark, Color textPrimary,
-      {TextInputType type = TextInputType.text}) {
+  Widget _formField(
+    TextEditingController controller,
+    String hint,
+    bool isDark,
+    Color textPrimary, {
+    TextInputType type = TextInputType.text,
+  }) {
     return Container(
       height: 56,
       decoration: _inputBox(isDark, textPrimary),

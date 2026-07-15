@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:ui';
 import 'package:m4_mobile/core/theme/app_theme.dart';
@@ -105,14 +104,17 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
         'email': _emailController.text,
         'phone': _phoneController.text,
         'location': _locationController.text,
-        'interest': 'Community Interest',
+        // Server-side enums: interest = Buying | Selling | Site Visit | Video
+        // Call (case-sensitive); source = online | cp | walk-in | referral |
+        // other. Anything else is rejected with a 400.
+        'interest': 'Buying',
         'message':
             'Expressing interest in community: ${widget.community['title']}'
             '${_selectedProject != 'Any' ? ' | Interested Project: $_selectedProject' : ''}',
         'projectName': _selectedProject != 'Any'
             ? _selectedProject
             : widget.community['title'],
-        'source': 'Mobile Guest Portal',
+        'source': 'online',
       });
 
       if (mounted) {
@@ -151,7 +153,9 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
     // image when present, otherwise the same Unsplash fallback the card uses
     // (guest_dashboard `_pickImage([item['image']], …photo-1486406146926…)`), so
     // the detail hero shows the same picture the thumbnail does.
-    final rawCommunityImage = (widget.community['image'] ?? '').toString().trim();
+    final rawCommunityImage = (widget.community['image'] ?? '')
+        .toString()
+        .trim();
     final heroImageUrl = rawCommunityImage.isNotEmpty
         ? apiClient.resolveUrl(rawCommunityImage)
         : 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80';
@@ -236,8 +240,6 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(width: 8),
-                      const SideMenuButton(),
                     ],
                   ),
                 ],
@@ -614,12 +616,14 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                                 project['startingPrice']
                                                     .toString()
                                                     .toUpperCase(),
-                                                style: GoogleFonts.dmSerifDisplay(
-                                                  color: Colors.white70,
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.w700,
-                                                  letterSpacing: 0.5,
-                                                ),
+                                                style:
+                                                    GoogleFonts.dmSerifDisplay(
+                                                      color: Colors.white70,
+                                                      fontSize: 10,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      letterSpacing: 0.5,
+                                                    ),
                                               ),
                                             ),
                                           Row(
@@ -636,12 +640,14 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                                         '')
                                                     .toString()
                                                     .toUpperCase(),
-                                                style: GoogleFonts.dmSerifDisplay(
-                                                  color: Colors.white54,
-                                                  fontSize: 8,
-                                                  fontWeight: FontWeight.bold,
-                                                  letterSpacing: 1,
-                                                ),
+                                                style:
+                                                    GoogleFonts.dmSerifDisplay(
+                                                      color: Colors.white54,
+                                                      fontSize: 8,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      letterSpacing: 1,
+                                                    ),
                                               ),
                                             ],
                                           ),

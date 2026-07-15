@@ -62,7 +62,8 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
         'phone': _phoneController.text.trim(),
         'message': _notesController.text.trim(),
         'interest': 'Buying',
-        'source': 'App',
+        // Server-side enum: source = online | cp | walk-in | referral | other.
+        'source': 'online',
         'project': widget.projectId,
       });
 

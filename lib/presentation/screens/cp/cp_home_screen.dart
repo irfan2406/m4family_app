@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -10,6 +12,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
 
@@ -45,6 +48,13 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
   bool _submitting = false;
   bool _agreedToTerms = false;
 
+  // Inline validation for the partner interest form — errors live on the field
+  // itself instead of a toast over the page.
+  String? _nameError;
+  String? _emailError;
+  String? _phoneError;
+  bool _termsError = false;
+
   Timer? _heroTimer;
 
   @override
@@ -73,15 +83,22 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
   Future<void> _fetchData() async {
     try {
       final apiClient = ref.read(apiClientProvider);
-      final results = await Future.wait([
-        apiClient.getProjects(),
-        apiClient.getCommunities(),
-      ]);
+      // Projects go through the shared projectsProvider rather than a bare
+      // getProjects(): it caches the multi-MB catalog (so re-entering the CP
+      // portal is instant), retries cold-start timeouts, and shares ONE
+      // download with the other screens instead of re-fetching per screen.
+      if (ref.read(projectsProvider) is AsyncError) {
+        ref.invalidate(projectsProvider);
+      }
+      final projectsFuture = ref.read(projectsProvider.future);
+      final communitiesFuture = apiClient.getCommunities();
+      final projects = await projectsFuture;
+      final communitiesRes = await communitiesFuture;
 
       if (mounted) {
         setState(() {
-          _projects = results[0].data['data'] ?? [];
-          _communities = results[1].data['data'] ?? [];
+          _projects = projects;
+          _communities = communitiesRes.data['data'] ?? [];
 
           // Media tab mirrors web: flatten each project's heroImages (or its
           // single heroImage) into one media item per image.
@@ -124,68 +141,66 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
     }
   }
 
-  void _validationToast(String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg), backgroundColor: Colors.red.shade700),
-    );
-  }
-
-  Future<void> _submitInterest() async {
+  /// Validates in place: every problem is shown ON the field it belongs to
+  /// (red border + message) rather than as a toast over the page.
+  bool _validateInterest() {
     final name = _nameController.text.trim();
     final email = _emailController.text.trim();
     final phone = _phoneController.text.trim();
-
-    // Full Name: required, at least 2 chars.
-    if (name.isEmpty) {
-      _validationToast('Please enter your full name');
-      return;
-    }
-    if (name.length < 2) {
-      _validationToast('Please enter a valid name');
-      return;
-    }
-    // Email: required + valid format.
-    if (email.isEmpty) {
-      _validationToast('Please enter your email address');
-      return;
-    }
-    final emailValid = RegExp(r'^[\w.+-]+@[\w-]+\.[\w.-]+$').hasMatch(email);
-    if (!emailValid) {
-      _validationToast('Please enter a valid email address');
-      return;
-    }
-    // Phone: required + at least 10 digits (ignores +91 / spaces / dashes).
-    if (phone.isEmpty) {
-      _validationToast('Please enter your phone number');
-      return;
-    }
     final phoneDigits = phone.replaceAll(RegExp(r'\D'), '');
-    if (phoneDigits.length < 10) {
-      _validationToast('Please enter a valid 10-digit phone number');
-      return;
-    }
-    if (!_agreedToTerms) {
-      _validationToast('Please agree to the Privacy Policy');
-      return;
-    }
+    final emailValid = RegExp(r'^[\w.+-]+@[\w-]+\.[\w.-]+$').hasMatch(email);
+
+    final nameErr = name.isEmpty
+        ? 'Please enter your full name'
+        : (name.length < 2 ? 'Please enter a valid name' : null);
+    final emailErr = email.isEmpty
+        ? 'Please enter your email address'
+        : (!emailValid ? 'Please enter a valid email address' : null);
+    final phoneErr = phone.isEmpty
+        ? 'Please enter your phone number'
+        : (phoneDigits.length < 10
+              ? 'Please enter a valid 10-digit phone number'
+              : null);
+
+    setState(() {
+      _nameError = nameErr;
+      _emailError = emailErr;
+      _phoneError = phoneErr;
+      _termsError = !_agreedToTerms;
+    });
+    return nameErr == null &&
+        emailErr == null &&
+        phoneErr == null &&
+        _agreedToTerms;
+  }
+
+  Future<void> _submitInterest() async {
+    if (!_validateInterest()) return;
+    final name = _nameController.text.trim();
+    final email = _emailController.text.trim();
+    final phone = _phoneController.text.trim();
 
     setState(() => _submitting = true);
     try {
       final apiClient = ref.read(apiClientProvider);
       final user = ref.read(authProvider).user;
-      final partner =
-          user?['firstName']?.toString() ??
-          user?['companyName']?.toString() ??
-          user?['phone']?.toString() ??
-          'Partner';
+      // `userId` is an ObjectId reference. The old code put the partner's
+      // *display name* here ('Partner' / firstName / companyName), which made
+      // the API reject the entire lead with:
+      //   userId: Cast to ObjectId failed for value "Partner" … BSONError
+      // Send the real id, and only when it actually looks like one.
+      final partnerId = (user?['_id'] ?? user?['id'])?.toString() ?? '';
       await apiClient.submitLead({
         'name': name,
         'email': email,
         'phone': phone,
         'message': _messageController.text.trim(),
-        'interest': 'Channel Partner Interest',
-        'source': 'cp app',
-        'userId': partner,
+        // Server-side enums: interest = Buying | Selling | Site Visit | Video
+        // Call (case-sensitive); source = online | cp | walk-in | referral |
+        // other. Anything else is rejected with a 400.
+        'interest': 'Buying',
+        'source': 'cp',
+        if (partnerId.length == 24) 'userId': partnerId,
       });
 
       if (mounted) {
@@ -202,10 +217,27 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         setState(() => _agreedToTerms = false);
       }
     } catch (e) {
-      if (mounted)
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Submission failed: $e')));
+      if (!mounted) return;
+      // Surface the API's own reason; a raw DioException dump filled the screen
+      // and told the user nothing.
+      String msg = 'Could not submit right now. Please try again.';
+      if (e is DioException) {
+        final data = e.response?.data;
+        if (data is Map && data['message'] != null) {
+          msg = data['message'].toString();
+        } else if (e.type == DioExceptionType.connectionError ||
+            e.type == DioExceptionType.connectionTimeout ||
+            e.type == DioExceptionType.receiveTimeout) {
+          msg = 'Connection problem. Please try again.';
+        }
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(msg),
+          backgroundColor: const Color(0xFFE24B4A),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
@@ -1616,15 +1648,34 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
           ),
         ),
         const SizedBox(height: 48),
-        _buildLuxuryInput('Full Name *', _nameController),
+        _buildLuxuryInput(
+          'Full Name *',
+          _nameController,
+          errorText: _nameError,
+          // Clear the red state as soon as they start typing.
+          onChanged: (v) {
+            if (_nameError != null) setState(() => _nameError = null);
+          },
+        ),
         const SizedBox(height: 16),
-        _buildLuxuryInput('Email *', _emailController),
+        _buildLuxuryInput(
+          'Email *',
+          _emailController,
+          errorText: _emailError,
+          onChanged: (v) {
+            if (_emailError != null) setState(() => _emailError = null);
+          },
+        ),
         const SizedBox(height: 16),
         _buildLuxuryInput(
           'Phone Number *',
           _phoneController,
           keyboardType: TextInputType.phone,
           hint: '+91',
+          errorText: _phoneError,
+          onChanged: (v) {
+            if (_phoneError != null) setState(() => _phoneError = null);
+          },
         ),
         const SizedBox(height: 16),
         _buildLuxuryInput('Message', _messageController, isLong: true),
@@ -1633,16 +1684,27 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
           children: [
             Checkbox(
               value: _agreedToTerms,
-              onChanged: (val) => setState(() => _agreedToTerms = val ?? false),
+              // Un-ticked on submit turns this red in place — no popup.
+              onChanged: (val) => setState(() {
+                _agreedToTerms = val ?? false;
+                if (_agreedToTerms) _termsError = false;
+              }),
               activeColor: isDark ? Colors.white : Colors.black,
               checkColor: isDark ? Colors.black : Colors.white,
-              side: BorderSide(color: isDark ? Colors.white24 : Colors.black26),
+              side: BorderSide(
+                color: _termsError
+                    ? const Color(0xFFE24B4A)
+                    : (isDark ? Colors.white24 : Colors.black26),
+                width: _termsError ? 1.8 : 1,
+              ),
             ),
             Expanded(
               child: Text(
                 "I've read and agree to the Privacy Policy",
                 style: GoogleFonts.dmSerifDisplay(
-                  color: isDark ? Colors.white54 : Colors.black54,
+                  color: _termsError
+                      ? const Color(0xFFE24B4A)
+                      : (isDark ? Colors.white54 : Colors.black54),
                   fontSize: 11,
                   letterSpacing: 1,
                 ),
@@ -1688,43 +1750,74 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
     bool isLong = false,
     TextInputType? keyboardType,
     String? hint,
+    // When set, the field turns red and shows the message underneath — keeps
+    // validation on the field instead of a toast over the page.
+    String? errorText,
+    ValueChanged<String>? onChanged,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark ? Colors.black : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.12),
-        ),
-        boxShadow: isDark
-            ? []
-            : [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                ),
-              ],
-      ),
-      child: TextField(
-        controller: controller,
-        keyboardType: keyboardType,
-        style: TextStyle(color: isDark ? Colors.white : Colors.black),
-        maxLines: isLong ? 5 : 1,
-        decoration: InputDecoration(
-          hintText: hint ?? label,
-          hintStyle: GoogleFonts.dmSerifDisplay(
-            color: isDark ? Colors.white54 : Colors.black45,
-            fontSize: 13,
+    final hasError = errorText != null;
+    const errorColor = Color(0xFFE24B4A);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: isDark ? Colors.black : Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: hasError
+                  ? errorColor
+                  : (isDark ? Colors.white : Colors.black).withValues(
+                      alpha: 0.12,
+                    ),
+              width: hasError ? 1.5 : 1,
+            ),
+            boxShadow: isDark
+                ? []
+                : [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
           ),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 24,
-            vertical: 20,
+          child: TextField(
+            controller: controller,
+            keyboardType: keyboardType,
+            onChanged: onChanged,
+            style: TextStyle(color: isDark ? Colors.white : Colors.black),
+            maxLines: isLong ? 5 : 1,
+            decoration: InputDecoration(
+              hintText: hint ?? label,
+              hintStyle: GoogleFonts.dmSerifDisplay(
+                color: hasError
+                    ? errorColor.withValues(alpha: 0.75)
+                    : (isDark ? Colors.white54 : Colors.black45),
+                fontSize: 13,
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 20,
+              ),
+              border: InputBorder.none,
+            ),
           ),
-          border: InputBorder.none,
         ),
-      ),
+        if (hasError)
+          Padding(
+            padding: const EdgeInsets.only(left: 10, top: 6),
+            child: Text(
+              errorText,
+              style: GoogleFonts.dmSerifDisplay(
+                color: errorColor,
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

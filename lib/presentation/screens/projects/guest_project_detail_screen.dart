@@ -41,19 +41,37 @@ class _DateTimeWheelSheet extends StatefulWidget {
 }
 
 class _DateTimeWheelSheetState extends State<_DateTimeWheelSheet> {
-  static const _months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  static const _months = [
+    'JAN',
+    'FEB',
+    'MAR',
+    'APR',
+    'MAY',
+    'JUN',
+    'JUL',
+    'AUG',
+    'SEP',
+    'OCT',
+    'NOV',
+    'DEC',
+  ];
 
   late int _baseYear; // first selectable year
   static const _yearSpan = 4; // current year .. +3
 
-  late int _year;    // absolute year
-  late int _month;   // 1..12
-  late int _day;     // 1..daysInMonth
-  late int _hour12;  // 1..12
-  late int _minute;  // 0..59
-  late int _ampm;    // 0 = AM, 1 = PM
+  late int _year; // absolute year
+  late int _month; // 1..12
+  late int _day; // 1..daysInMonth
+  late int _hour12; // 1..12
+  late int _minute; // 0..59
+  late int _ampm; // 0 = AM, 1 = PM
 
-  late FixedExtentScrollController _dayCtl, _monthCtl, _yearCtl, _hourCtl, _minCtl, _ampmCtl;
+  late FixedExtentScrollController _dayCtl,
+      _monthCtl,
+      _yearCtl,
+      _hourCtl,
+      _minCtl,
+      _ampmCtl;
 
   @override
   void initState() {
@@ -103,8 +121,8 @@ class _DateTimeWheelSheetState extends State<_DateTimeWheelSheet> {
   }
 
   DateTime _compose() {
-    int h24 = _hour12 % 12;      // 12 → 0
-    if (_ampm == 1) h24 += 12;   // PM
+    int h24 = _hour12 % 12; // 12 → 0
+    if (_ampm == 1) h24 += 12; // PM
     final day = _day > _daysInMonth ? _daysInMonth : _day;
     return DateTime(_year, _month, day, h24, _minute);
   }
@@ -132,7 +150,11 @@ class _DateTimeWheelSheetState extends State<_DateTimeWheelSheet> {
           (i) => Center(
             child: Text(
               label(i),
-              style: GoogleFonts.dmSerifDisplay(fontSize: 17, fontWeight: FontWeight.w700, color: txt),
+              style: GoogleFonts.dmSerifDisplay(
+                fontSize: 17,
+                fontWeight: FontWeight.w700,
+                color: txt,
+              ),
             ),
           ),
         ),
@@ -158,17 +180,40 @@ class _DateTimeWheelSheetState extends State<_DateTimeWheelSheet> {
         mainAxisSize: MainAxisSize.min,
         children: [
           const SizedBox(height: 12),
-          Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(2))),
+          Container(
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: isDark ? Colors.white24 : Colors.black12,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
           const SizedBox(height: 24),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('SELECT DATE & TIME', style: GoogleFonts.dmSerifDisplay(fontSize: 18, fontWeight: FontWeight.w900, color: txt, letterSpacing: 0.5)),
+                Text(
+                  'SELECT DATE & TIME',
+                  style: GoogleFonts.dmSerifDisplay(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w900,
+                    color: txt,
+                    letterSpacing: 0.5,
+                  ),
+                ),
                 GestureDetector(
                   onTap: () => Navigator.pop(context, _compose()),
-                  child: Text('DONE', style: GoogleFonts.dmSerifDisplay(fontSize: 12, fontWeight: FontWeight.w900, color: isDark ? Colors.white : _kBookingBlue, letterSpacing: 1)),
+                  child: Text(
+                    'DONE',
+                    style: GoogleFonts.dmSerifDisplay(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w900,
+                      color: isDark ? Colors.white : _kBookingBlue,
+                      letterSpacing: 1,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -184,7 +229,9 @@ class _DateTimeWheelSheetState extends State<_DateTimeWheelSheet> {
                     height: 40,
                     margin: const EdgeInsets.symmetric(horizontal: 16),
                     decoration: BoxDecoration(
-                      color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                      color: (isDark ? Colors.white : Colors.black).withValues(
+                        alpha: 0.05,
+                      ),
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
@@ -206,14 +253,20 @@ class _DateTimeWheelSheetState extends State<_DateTimeWheelSheet> {
                         controller: _monthCtl,
                         count: 12,
                         label: (i) => _months[i],
-                        onChanged: (i) => setState(() { _month = i + 1; _clampDay(); }),
+                        onChanged: (i) => setState(() {
+                          _month = i + 1;
+                          _clampDay();
+                        }),
                         flex: 2,
                       ),
                       _wheel(
                         controller: _yearCtl,
                         count: _yearSpan,
                         label: (i) => (_baseYear + i).toString(),
-                        onChanged: (i) => setState(() { _year = _baseYear + i; _clampDay(); }),
+                        onChanged: (i) => setState(() {
+                          _year = _baseYear + i;
+                          _clampDay();
+                        }),
                         flex: 3,
                       ),
                       const SizedBox(width: 8),
@@ -224,7 +277,14 @@ class _DateTimeWheelSheetState extends State<_DateTimeWheelSheet> {
                         onChanged: (i) => _hour12 = i + 1,
                         flex: 2,
                       ),
-                      Text(':', style: GoogleFonts.dmSerifDisplay(fontSize: 18, fontWeight: FontWeight.w900, color: txt)),
+                      Text(
+                        ':',
+                        style: GoogleFonts.dmSerifDisplay(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w900,
+                          color: txt,
+                        ),
+                      ),
                       _wheel(
                         controller: _minCtl,
                         count: 60,
@@ -258,7 +318,15 @@ class _DateTimeWheelSheetState extends State<_DateTimeWheelSheet> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Center(
-                  child: Text('CONFIRM', style: GoogleFonts.dmSerifDisplay(color: isDark ? Colors.black : Colors.white, fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 2)),
+                  child: Text(
+                    'CONFIRM',
+                    style: GoogleFonts.dmSerifDisplay(
+                      color: isDark ? Colors.black : Colors.white,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 2,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -270,20 +338,22 @@ class _DateTimeWheelSheetState extends State<_DateTimeWheelSheet> {
 }
 
 class GuestProjectDetailScreen extends ConsumerStatefulWidget {
-  final dynamic projectData; 
+  final dynamic projectData;
   final String projectId;
 
   const GuestProjectDetailScreen({
-    super.key, 
+    super.key,
     required this.projectId,
     this.projectData,
   });
 
   @override
-  ConsumerState<GuestProjectDetailScreen> createState() => _GuestProjectDetailScreenState();
+  ConsumerState<GuestProjectDetailScreen> createState() =>
+      _GuestProjectDetailScreenState();
 }
 
-class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScreen> {
+class _GuestProjectDetailScreenState
+    extends ConsumerState<GuestProjectDetailScreen> {
   List<dynamic> _paymentPlans = [];
   dynamic _fullProject;
   List<dynamic> _updates = [];
@@ -348,38 +418,54 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     // Each payload renders the moment it arrives: the small
     // updates/inventory/progress responses (KBs, <1s) must not wait behind
     // the project-details call, whose payload can be multiple MB.
-    apiClient.getProjectDetails(widget.projectId).then((res) {
-      if (!mounted) return;
-      setState(() {
-        if (res.data['status'] == true) {
-          _fullProject = res.data['data'];
-          // Refresh the galleries from the authoritative detail payload
-          // (same extraction the web uses).
-          _seedGalleryImages(_fullProject);
-        }
-        _isLoading = false;
-      });
-    }).catchError((_) {
-      if (mounted) setState(() => _isLoading = false);
-    });
+    apiClient
+        .getProjectDetails(widget.projectId)
+        .then((res) {
+          if (!mounted) return;
+          setState(() {
+            if (res.data['status'] == true) {
+              _fullProject = res.data['data'];
+              // Refresh the galleries from the authoritative detail payload
+              // (same extraction the web uses).
+              _seedGalleryImages(_fullProject);
+            }
+            _isLoading = false;
+          });
+        })
+        .catchError((_) {
+          if (mounted) setState(() => _isLoading = false);
+        });
 
-    apiClient.getProjectUpdates(widget.projectId).then((res) {
-      if (!mounted || res.data['status'] != true) return;
-      setState(() => _updates = res.data['data'] ?? []);
-    }).catchError((_) {});
+    apiClient
+        .getProjectUpdates(widget.projectId)
+        .then((res) {
+          if (!mounted || res.data['status'] != true) return;
+          setState(() => _updates = res.data['data'] ?? []);
+        })
+        .catchError((_) {});
 
-    apiClient.getProjectInventory(widget.projectId).then((res) {
-      if (!mounted || res.data['status'] != true) return;
-      setState(() => _inventory = res.data['data'] ?? []);
-    }).catchError((_) {});
+    apiClient
+        .getProjectInventory(widget.projectId)
+        .then((res) {
+          if (!mounted || res.data['status'] != true) return;
+          setState(() => _inventory = res.data['data'] ?? []);
+        })
+        .catchError((_) {});
 
-    apiClient.getProjectProgress(widget.projectId).then((res) {
-      if (!mounted || res.data['status'] != true) return;
-      setState(() => _progressPhases = res.data['data'] ?? []);
-    }).catchError((_) {});
+    apiClient
+        .getProjectProgress(widget.projectId)
+        .then((res) {
+          if (!mounted || res.data['status'] != true) return;
+          setState(() => _progressPhases = res.data['data'] ?? []);
+        })
+        .catchError((_) {});
   }
 
-  void _launchAction(String message, [String? url, bool isError = false]) async {
+  void _launchAction(
+    String message, [
+    String? url,
+    bool isError = false,
+  ]) async {
     if (url != null && url.isNotEmpty) {
       if (url.startsWith('tel:')) {
         await SupportHandlers.launchCall(url.replaceFirst('tel:', ''));
@@ -389,7 +475,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
         await SupportHandlers.launchEmail(url.replaceFirst('mailto:', ''));
         return;
       }
-      
+
       final apiClient = ref.read(apiClientProvider);
       final resolvedUrl = apiClient.resolveUrl(url);
       final uri = Uri.parse(resolvedUrl);
@@ -398,7 +484,10 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
         // Open documents (PDF flyers etc.) in the device browser / PDF viewer,
         // which renders PDFs natively — the in-app WebView shows them blank.
         // Fall back to the platform default, then report if both fail.
-        for (final mode in const [LaunchMode.externalApplication, LaunchMode.platformDefault]) {
+        for (final mode in const [
+          LaunchMode.externalApplication,
+          LaunchMode.platformDefault,
+        ]) {
           try {
             if (await launchUrl(uri, mode: mode)) return;
           } catch (_) {}
@@ -418,8 +507,17 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message, style: GoogleFonts.dmSerifDisplay(fontSize: 12, fontWeight: FontWeight.bold, color: isError ? Colors.white : Colors.black)),
-        backgroundColor: isError ? const Color(0xFFDC2626) : M4Theme.premiumBlue,
+        content: Text(
+          message,
+          style: GoogleFonts.dmSerifDisplay(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: isError ? Colors.white : Colors.black,
+          ),
+        ),
+        backgroundColor: isError
+            ? const Color(0xFFDC2626)
+            : M4Theme.premiumBlue,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
@@ -437,7 +535,8 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      builder: (sheetCtx) => _DateTimeWheelSheet(initial: initial, isDark: isDark),
+      builder: (sheetCtx) =>
+          _DateTimeWheelSheet(initial: initial, isDark: isDark),
     );
   }
 
@@ -451,12 +550,18 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     super.dispose();
   }
 
-  Future<void> _submitInquiry(String type, [String? plan, StateSetter? setModalState]) async {
+  Future<void> _submitInquiry(
+    String type, [
+    String? plan,
+    StateSetter? setModalState,
+  ]) async {
     final name = _nameController.text.trim();
     final phone = _phoneController.text.trim();
     if (name.isEmpty || phone.isEmpty) {
       if (setModalState != null) {
-        setModalState(() => _modalErrorMessage = 'Please enter your name and phone number');
+        setModalState(
+          () => _modalErrorMessage = 'Please enter your name and phone number',
+        );
       } else {
         _launchAction('Please enter your name and phone number', null, true);
       }
@@ -466,18 +571,33 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     // Web parity: a Video Call / Site Visit requires a scheduled date + time.
     if (isBooking && (_leadDate == null || _leadTime == null)) {
       if (setModalState != null) {
-        setModalState(() => _modalErrorMessage = 'Please schedule a date and time for your visit');
+        setModalState(
+          () => _modalErrorMessage =
+              'Please schedule a date and time for your visit',
+        );
       } else {
-        _launchAction('Please schedule a date and time for your visit', null, true);
+        _launchAction(
+          'Please schedule a date and time for your visit',
+          null,
+          true,
+        );
       }
       return;
     }
     // Reject a past slot (the wheels allow earlier-today selections).
     if (isBooking && _leadDate != null && _leadTime != null) {
-      final composed = DateTime(_leadDate!.year, _leadDate!.month, _leadDate!.day, _leadTime!.hour, _leadTime!.minute);
+      final composed = DateTime(
+        _leadDate!.year,
+        _leadDate!.month,
+        _leadDate!.day,
+        _leadTime!.hour,
+        _leadTime!.minute,
+      );
       if (composed.isBefore(DateTime.now())) {
         if (setModalState != null) {
-          setModalState(() => _modalErrorMessage = 'Please pick a future date and time');
+          setModalState(
+            () => _modalErrorMessage = 'Please pick a future date and time',
+          );
         } else {
           _launchAction('Please pick a future date and time', null, true);
         }
@@ -489,13 +609,20 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     try {
       final apiClient = ref.read(apiClientProvider);
       final project = _fullProject ?? widget.projectData;
-      final interest = type == 'VC' ? 'Video Call' : type == 'Site Visit' ? 'Site Visit' : 'General Enquiry';
+      // Server-side enum: Buying | Selling | Site Visit | Video Call
+      // (case-sensitive). 'General Enquiry' was rejected with a 400.
+      final interest = type == 'VC'
+          ? 'Video Call'
+          : type == 'Site Visit'
+          ? 'Site Visit'
+          : 'Buying';
 
       String? visitDate;
       String? visitTime;
       if (isBooking && _leadDate != null) {
         final d = _leadDate!;
-        visitDate = '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+        visitDate =
+            '${d.year}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
         visitTime = _leadTime?.format(context);
       }
       final notes = _notesController.text.trim();
@@ -503,15 +630,22 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
       final res = await apiClient.submitLead({
         'name': name,
         'phone': phone,
-        'email': _emailController.text.trim().isNotEmpty ? _emailController.text.trim() : null,
+        'email': _emailController.text.trim().isNotEmpty
+            ? _emailController.text.trim()
+            : null,
         'interest': interest,
         'configuration': _selectedConfig,
         if (visitDate != null) 'visitDate': visitDate,
         if (visitTime != null) 'visitTime': visitTime,
         if (notes.isNotEmpty) 'notes': notes,
-        'location': _locationController.text.trim().isNotEmpty ? _locationController.text.trim() : null,
-        'source': 'mobile_app',
-        'projectId': widget.projectId,
+        'location': _locationController.text.trim().isNotEmpty
+            ? _locationController.text.trim()
+            : null,
+        // Server-side enum: source = online | cp | walk-in | referral | other.
+        'source': 'online',
+        // Only ever send a real ObjectId — widget.projectId can be a route slug,
+        // which makes the API reject the whole lead (CastToObjectId/BSONError).
+        if (widget.projectId.length == 24) 'projectId': widget.projectId,
         'project': project?['title'] ?? 'General',
         'message': isBooking
             ? 'Requested $interest for ${project?['title']}'
@@ -521,7 +655,12 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
       if (res.data['status'] == true) {
         if (mounted) {
           Navigator.pop(context);
-          _launchAction(isBooking ? 'Booking request received! Our team will call you to confirm the time.' : 'Interest registered! Our team will contact you shortly.', null);
+          _launchAction(
+            isBooking
+                ? 'Booking request received! Our team will call you to confirm the time.'
+                : 'Interest registered! Our team will contact you shortly.',
+            null,
+          );
         }
       } else {
         final err = res.data['message'] ?? 'Failed to submit';
@@ -578,14 +717,21 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     }
   }
 
-  void _showRequestDetailsDialog(dynamic project, [dynamic plan, String type = 'General']) {
+  void _showRequestDetailsDialog(
+    dynamic project, [
+    dynamic plan,
+    String type = 'General',
+  ]) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final planName = plan is Map ? plan['name']?.toString() : plan?.toString();
     final projectTitle = project?['title'] ?? 'this project';
 
     final authUser = ref.read(authProvider).user;
     if (authUser != null) {
-      _nameController.text = authUser['fullName']?.toString() ?? authUser['username']?.toString() ?? '';
+      _nameController.text =
+          authUser['fullName']?.toString() ??
+          authUser['username']?.toString() ??
+          '';
       _phoneController.text = authUser['phone']?.toString() ?? '';
       _emailController.text = authUser['email']?.toString() ?? '';
     }
@@ -604,212 +750,390 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
           backgroundColor: isDark ? const Color(0xFF0B111E) : Colors.white,
           // Web parity: a centered floating card with margins on every edge,
           // rounded on all corners — not a full-width bottom sheet.
-          insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 44),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 44,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(28),
+          ),
           clipBehavior: Clip.antiAlias,
           child: ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.82),
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.82,
+            ),
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-              const SizedBox(height: 12),
-              Container(width: 40, height: 4, decoration: BoxDecoration(color: isDark ? Colors.white24 : Colors.black12, borderRadius: BorderRadius.circular(2))),
-              Align(
-                alignment: Alignment.topRight,
-                child: IconButton(
-                  onPressed: () {
-                    if (Navigator.canPop(context)) {
-                      Navigator.pop(context);
-                    } else {
-                      Navigator.pushReplacementNamed(context, '/guest/home');
-                    }
-                  },
-                  icon: Icon(LucideIcons.x, color: isDark ? Colors.white38 : Colors.black38, size: 20),
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                     Text(
-                      _leadType == 'VC' ? 'BOOK A VIDEO CALL' : 'BOOK A SITE VISIT',
-                      style: GoogleFonts.dmSerifDisplay(fontSize: 26, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, height: 1.1, letterSpacing: -1),
+                  const SizedBox(height: 12),
+                  Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: isDark ? Colors.white24 : Colors.black12,
+                      borderRadius: BorderRadius.circular(2),
                     ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'A BESPOKE SHOWCASE OF LUXURY AT ${projectTitle.toUpperCase()}.',
-                      // Web parity: slate-blue subtitle.
-                      style: GoogleFonts.dmSerifDisplay(fontSize: 9, color: isDark ? Colors.white54 : _kBookingBlue, fontWeight: FontWeight.w900, letterSpacing: 1),
-                    ),
-                    const SizedBox(height: 40),
-
-                    _buildInquiryField('Full Name', _nameController, LucideIcons.user),
-                    const SizedBox(height: 16),
-                    _buildInquiryField('Email Address (Optional)', _emailController, LucideIcons.mail),
-                    const SizedBox(height: 16),
-                    _buildInquiryField('+91 98653 21250', _phoneController, LucideIcons.phone),
-
-                    const SizedBox(height: 28),
-                    // Visit Type toggle (web parity)
-                    Text('VISIT TYPE', style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : _kBookingBlue, letterSpacing: 1.5)),
-                    const SizedBox(height: 10),
-                    Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06)),
+                  ),
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: IconButton(
+                      onPressed: () {
+                        if (Navigator.canPop(context)) {
+                          Navigator.pop(context);
+                        } else {
+                          Navigator.pushReplacementNamed(
+                            context,
+                            '/guest/home',
+                          );
+                        }
+                      },
+                      icon: Icon(
+                        LucideIcons.x,
+                        color: isDark ? Colors.white38 : Colors.black38,
+                        size: 20,
                       ),
-                      child: Row(
-                        children: [
-                          for (final opt in const [['Site Visit', 'Site Visit'], ['Video Call', 'VC']])
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () => setModalState(() => _leadType = opt[1]),
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
-                                  decoration: BoxDecoration(
-                                    color: _leadType == opt[1] ? (isDark ? Colors.white : Colors.black) : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(9),
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _leadType == 'VC'
+                              ? 'BOOK A VIDEO CALL'
+                              : 'BOOK A SITE VISIT',
+                          style: GoogleFonts.dmSerifDisplay(
+                            fontSize: 26,
+                            fontWeight: FontWeight.w900,
+                            color: isDark ? Colors.white : Colors.black,
+                            height: 1.1,
+                            letterSpacing: -1,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'A BESPOKE SHOWCASE OF LUXURY AT ${projectTitle.toUpperCase()}.',
+                          // Web parity: slate-blue subtitle.
+                          style: GoogleFonts.dmSerifDisplay(
+                            fontSize: 9,
+                            color: isDark ? Colors.white54 : _kBookingBlue,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                        const SizedBox(height: 40),
+
+                        _buildInquiryField(
+                          'Full Name',
+                          _nameController,
+                          LucideIcons.user,
+                        ),
+                        const SizedBox(height: 16),
+                        _buildInquiryField(
+                          'Email Address (Optional)',
+                          _emailController,
+                          LucideIcons.mail,
+                        ),
+                        const SizedBox(height: 16),
+                        _buildInquiryField(
+                          '+91 98653 21250',
+                          _phoneController,
+                          LucideIcons.phone,
+                        ),
+
+                        const SizedBox(height: 28),
+                        // Visit Type toggle (web parity)
+                        Text(
+                          'VISIT TYPE',
+                          style: GoogleFonts.dmSerifDisplay(
+                            fontSize: 8,
+                            fontWeight: FontWeight.w900,
+                            color: isDark ? Colors.white54 : _kBookingBlue,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.05)
+                                : Colors.black.withValues(alpha: 0.04),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.08)
+                                  : Colors.black.withValues(alpha: 0.06),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              for (final opt in const [
+                                ['Site Visit', 'Site Visit'],
+                                ['Video Call', 'VC'],
+                              ])
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: () =>
+                                        setModalState(() => _leadType = opt[1]),
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 12,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: _leadType == opt[1]
+                                            ? (isDark
+                                                  ? Colors.white
+                                                  : Colors.black)
+                                            : Colors.transparent,
+                                        borderRadius: BorderRadius.circular(9),
+                                      ),
+                                      child: Text(
+                                        opt[0].toUpperCase(),
+                                        style: GoogleFonts.dmSerifDisplay(
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.w900,
+                                          letterSpacing: 1,
+                                          color: _leadType == opt[1]
+                                              ? (isDark
+                                                    ? Colors.black
+                                                    : Colors.white)
+                                              : (isDark
+                                                    ? Colors.white54
+                                                    : Colors.black54),
+                                        ),
+                                      ),
+                                    ),
                                   ),
+                                ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        // Schedule date + time (web parity: IOSDateTimePicker)
+                        Text(
+                          'SCHEDULE',
+                          style: GoogleFonts.dmSerifDisplay(
+                            fontSize: 8,
+                            fontWeight: FontWeight.w900,
+                            color: isDark ? Colors.white54 : _kBookingBlue,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        GestureDetector(
+                          onTap: () async {
+                            final initial = _leadDate != null
+                                ? DateTime(
+                                    _leadDate!.year,
+                                    _leadDate!.month,
+                                    _leadDate!.day,
+                                    _leadTime?.hour ?? 10,
+                                    _leadTime?.minute ?? 0,
+                                  )
+                                : DateTime.now().add(const Duration(hours: 1));
+                            final dt = await _pickIosDateTime(initial);
+                            if (dt != null) {
+                              setModalState(() {
+                                _leadDate = DateTime(dt.year, dt.month, dt.day);
+                                _leadTime = TimeOfDay(
+                                  hour: dt.hour,
+                                  minute: dt.minute,
+                                );
+                              });
+                            }
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 18,
+                              vertical: 16,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.03)
+                                  : const Color(0xFFF8FAFC),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: isDark
+                                    ? Colors.white.withValues(alpha: 0.08)
+                                    : Colors.black.withValues(alpha: 0.08),
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                // Web parity: blue calendar icon + blue label.
+                                Icon(
+                                  LucideIcons.calendar,
+                                  size: 16,
+                                  color: isDark ? Colors.white : _kBookingBlue,
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
                                   child: Text(
-                                    opt[0].toUpperCase(),
-                                    style: GoogleFonts.dmSerifDisplay(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1, color: _leadType == opt[1] ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white54 : Colors.black54)),
+                                    _leadDate == null
+                                        ? 'SELECT DATE & TIME'
+                                        : '${_leadDate!.day}/${_leadDate!.month}/${_leadDate!.year}   ${_leadTime?.format(context) ?? ''}',
+                                    style: GoogleFonts.dmSerifDisplay(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w800,
+                                      color: isDark
+                                          ? Colors.white
+                                          : _kBookingBlue,
+                                      letterSpacing: 0.5,
+                                    ),
                                   ),
+                                ),
+                                Icon(
+                                  LucideIcons.chevronRight,
+                                  size: 16,
+                                  color: isDark
+                                      ? Colors.white38
+                                      : _kBookingBlue.withValues(alpha: 0.6),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        // Additional notes (web parity)
+                        Text(
+                          'ADDITIONAL NOTES',
+                          style: GoogleFonts.dmSerifDisplay(
+                            fontSize: 8,
+                            fontWeight: FontWeight.w900,
+                            color: isDark ? Colors.white54 : _kBookingBlue,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 18,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.03)
+                                : const Color(0xFFF8FAFC),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.08)
+                                  : Colors.black.withValues(alpha: 0.08),
+                            ),
+                          ),
+                          child: TextField(
+                            controller: _notesController,
+                            maxLines: 3,
+                            style: GoogleFonts.dmSerifDisplay(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: isDark ? Colors.white : Colors.black,
+                            ),
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              hintText:
+                                  'SPECIFIC REQUIREMENTS, PICKUP DETAILS, ETC...',
+                              hintStyle: GoogleFonts.dmSerifDisplay(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w800,
+                                color: isDark ? Colors.white24 : Colors.black26,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 40),
+                        if (_modalErrorMessage != null) ...[
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFDC2626),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              _modalErrorMessage!,
+                              style: GoogleFonts.dmSerifDisplay(
+                                color: Colors.white,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                        _ScaleButton(
+                          onTap: () {
+                            final name = _nameController.text.trim();
+                            final phone = _phoneController.text.trim();
+                            if (name.isEmpty || phone.isEmpty) {
+                              setModalState(
+                                () => _modalErrorMessage =
+                                    'Please enter your name and phone number',
+                              );
+                              return;
+                            }
+                            if (_leadDate == null || _leadTime == null) {
+                              setModalState(
+                                () => _modalErrorMessage =
+                                    'Please schedule a date and time for your visit',
+                              );
+                              return;
+                            }
+                            // The free-scrolling wheels allow earlier-today
+                            // selections; reject a past slot at submit.
+                            final composed = DateTime(
+                              _leadDate!.year,
+                              _leadDate!.month,
+                              _leadDate!.day,
+                              _leadTime!.hour,
+                              _leadTime!.minute,
+                            );
+                            if (composed.isBefore(DateTime.now())) {
+                              setModalState(
+                                () => _modalErrorMessage =
+                                    'Please pick a future date and time',
+                              );
+                              return;
+                            }
+                            setModalState(() => _modalErrorMessage = null);
+                            _submitInquiry(_leadType, planName, setModalState);
+                          },
+                          child: Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(vertical: 20),
+                            decoration: BoxDecoration(
+                              color: isDark ? Colors.white : Colors.black,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'CONFIRM BOOKING',
+                                style: GoogleFonts.dmSerifDisplay(
+                                  color: isDark ? Colors.black : Colors.white,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 1.5,
                                 ),
                               ),
                             ),
-                        ],
-                      ),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                      ],
                     ),
-                    const SizedBox(height: 20),
-                    // Schedule date + time (web parity: IOSDateTimePicker)
-                    Text('SCHEDULE', style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : _kBookingBlue, letterSpacing: 1.5)),
-                    const SizedBox(height: 10),
-                    GestureDetector(
-                      onTap: () async {
-                        final initial = _leadDate != null
-                            ? DateTime(_leadDate!.year, _leadDate!.month, _leadDate!.day, _leadTime?.hour ?? 10, _leadTime?.minute ?? 0)
-                            : DateTime.now().add(const Duration(hours: 1));
-                        final dt = await _pickIosDateTime(initial);
-                        if (dt != null) {
-                          setModalState(() {
-                            _leadDate = DateTime(dt.year, dt.month, dt.day);
-                            _leadTime = TimeOfDay(hour: dt.hour, minute: dt.minute);
-                          });
-                        }
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
-                        decoration: BoxDecoration(
-                          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF8FAFC),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.08)),
-                        ),
-                        child: Row(
-                          children: [
-                            // Web parity: blue calendar icon + blue label.
-                            Icon(LucideIcons.calendar, size: 16, color: isDark ? Colors.white : _kBookingBlue),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                _leadDate == null
-                                    ? 'SELECT DATE & TIME'
-                                    : '${_leadDate!.day}/${_leadDate!.month}/${_leadDate!.year}   ${_leadTime?.format(context) ?? ''}',
-                                style: GoogleFonts.dmSerifDisplay(fontSize: 11, fontWeight: FontWeight.w800, color: isDark ? Colors.white : _kBookingBlue, letterSpacing: 0.5),
-                              ),
-                            ),
-                            Icon(LucideIcons.chevronRight, size: 16, color: isDark ? Colors.white38 : _kBookingBlue.withValues(alpha: 0.6)),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    // Additional notes (web parity)
-                    Text('ADDITIONAL NOTES', style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : _kBookingBlue, letterSpacing: 1.5)),
-                    const SizedBox(height: 10),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF8FAFC),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.08)),
-                      ),
-                      child: TextField(
-                        controller: _notesController,
-                        maxLines: 3,
-                        style: GoogleFonts.dmSerifDisplay(fontSize: 11, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black),
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: 'SPECIFIC REQUIREMENTS, PICKUP DETAILS, ETC...',
-                          hintStyle: GoogleFonts.dmSerifDisplay(fontSize: 9, fontWeight: FontWeight.w800, color: isDark ? Colors.white24 : Colors.black26, letterSpacing: 0.5),
-                        ),
-                      ),
-                    ),
-                    
-                    const SizedBox(height: 40),
-                    if (_modalErrorMessage != null) ...[
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFDC2626),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Text(
-                          _modalErrorMessage!,
-                          style: GoogleFonts.dmSerifDisplay(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-                    _ScaleButton(
-                      onTap: () {
-                        final name = _nameController.text.trim();
-                        final phone = _phoneController.text.trim();
-                        if (name.isEmpty || phone.isEmpty) {
-                          setModalState(() => _modalErrorMessage = 'Please enter your name and phone number');
-                          return;
-                        }
-                        if (_leadDate == null || _leadTime == null) {
-                          setModalState(() => _modalErrorMessage = 'Please schedule a date and time for your visit');
-                          return;
-                        }
-                        // The free-scrolling wheels allow earlier-today
-                        // selections; reject a past slot at submit.
-                        final composed = DateTime(_leadDate!.year, _leadDate!.month, _leadDate!.day, _leadTime!.hour, _leadTime!.minute);
-                        if (composed.isBefore(DateTime.now())) {
-                          setModalState(() => _modalErrorMessage = 'Please pick a future date and time');
-                          return;
-                        }
-                        setModalState(() => _modalErrorMessage = null);
-                        _submitInquiry(_leadType, planName, setModalState);
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(vertical: 20),
-                        decoration: BoxDecoration(
-                          color: isDark ? Colors.white : Colors.black,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'CONFIRM BOOKING',
-                            style: GoogleFonts.dmSerifDisplay(color: isDark ? Colors.black : Colors.white, fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1.5)
-                          )
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                  ],
-                ),
-              ),
-            ],
+                  ),
+                ],
               ),
             ),
           ),
@@ -818,23 +1142,41 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     );
   }
 
-  Widget _buildInquiryField(String label, TextEditingController controller, IconData icon) {
+  Widget _buildInquiryField(
+    String label,
+    TextEditingController controller,
+    IconData icon,
+  ) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF8FAFC),
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.03)
+            : const Color(0xFFF8FAFC),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.08)),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.black.withValues(alpha: 0.08),
+        ),
       ),
       child: TextField(
         controller: controller,
-        style: GoogleFonts.dmSerifDisplay(fontSize: 12, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black),
+        style: GoogleFonts.dmSerifDisplay(
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+          color: isDark ? Colors.white : Colors.black,
+        ),
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: label,
           // Web parity: clearly-legible slate-blue placeholder text.
-          hintStyle: GoogleFonts.dmSerifDisplay(fontSize: 12, fontWeight: FontWeight.w500, color: isDark ? Colors.white54 : _kBookingBlue),
+          hintStyle: GoogleFonts.dmSerifDisplay(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: isDark ? Colors.white54 : _kBookingBlue,
+          ),
           contentPadding: const EdgeInsets.symmetric(vertical: 16),
         ),
       ),
@@ -852,7 +1194,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
   void _showMediaLightbox(List<String> urls, String type) {
     final apiClient = ref.read(apiClientProvider);
     final PageController pageController = PageController();
-    
+
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -875,12 +1217,24 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                       // `asset:` entries render bundled images (used while the
                       // backend /uploads endpoint is broken).
                       child: raw.startsWith('asset:')
-                          ? Image.asset(raw.substring(6), fit: BoxFit.contain, filterQuality: FilterQuality.high)
+                          ? Image.asset(
+                              raw.substring(6),
+                              fit: BoxFit.contain,
+                              filterQuality: FilterQuality.high,
+                            )
                           : CachedNetworkImage(
                               imageUrl: apiClient.resolveUrl(raw),
                               fit: BoxFit.contain,
-                              placeholder: (context, url) => const Center(child: CircularProgressIndicator(color: Colors.white24)),
-                              errorWidget: (context, url, error) => const Icon(LucideIcons.image, color: Colors.white24, size: 50),
+                              placeholder: (context, url) => const Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.white24,
+                                ),
+                              ),
+                              errorWidget: (context, url, error) => const Icon(
+                                LucideIcons.image,
+                                color: Colors.white24,
+                                size: 50,
+                              ),
                             ),
                     ),
                   );
@@ -893,8 +1247,15 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                   bottom: 0,
                   child: Center(
                     child: IconButton(
-                      onPressed: () => pageController.previousPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut),
-                      icon: Icon(LucideIcons.chevronLeft, color: Colors.white.withValues(alpha: 0.4), size: 20),
+                      onPressed: () => pageController.previousPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                      ),
+                      icon: Icon(
+                        LucideIcons.chevronLeft,
+                        color: Colors.white.withValues(alpha: 0.4),
+                        size: 20,
+                      ),
                     ),
                   ),
                 ),
@@ -904,8 +1265,15 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                   bottom: 0,
                   child: Center(
                     child: IconButton(
-                      onPressed: () => pageController.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.easeInOut),
-                      icon: Icon(LucideIcons.chevronRight, color: Colors.white.withValues(alpha: 0.4), size: 20),
+                      onPressed: () => pageController.nextPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                      ),
+                      icon: Icon(
+                        LucideIcons.chevronRight,
+                        color: Colors.white.withValues(alpha: 0.4),
+                        size: 20,
+                      ),
                     ),
                   ),
                 ),
@@ -914,7 +1282,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                 top: MediaQuery.of(context).padding.top + 20,
                 right: 20,
                 child: _CircleAction(
-                  icon: LucideIcons.x, 
+                  icon: LucideIcons.x,
                   onTap: () => Navigator.pop(context),
                   color: Colors.white,
                 ),
@@ -926,7 +1294,10 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                   right: 0,
                   child: Center(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.black.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(20),
@@ -934,10 +1305,18 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                       child: ListenableBuilder(
                         listenable: pageController,
                         builder: (context, child) {
-                          final page = (pageController.hasClients ? (pageController.page?.round() ?? 0) : 0) + 1;
+                          final page =
+                              (pageController.hasClients
+                                  ? (pageController.page?.round() ?? 0)
+                                  : 0) +
+                              1;
                           return Text(
                             '$page / ${urls.length}',
-                            style: GoogleFonts.dmSerifDisplay(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                            style: GoogleFonts.dmSerifDisplay(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
                           );
                         },
                       ),
@@ -1007,8 +1386,13 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                               if (hasExterior)
                                 _HeroMediaThumb(
                                   label: 'EXTERIOR',
-                                  imageUrl: apiClient.resolveUrl(_exteriorImages.first),
-                                  fallback: _thumbFallback(project, 'assets/cledor_exterior.jpg'),
+                                  imageUrl: apiClient.resolveUrl(
+                                    _exteriorImages.first,
+                                  ),
+                                  fallback: _thumbFallback(
+                                    project,
+                                    'assets/cledor_exterior.jpg',
+                                  ),
                                   // Bundled photo first so the gallery always
                                   // opens with a working full image while
                                   // /uploads is broken server-side.
@@ -1024,8 +1408,13 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                               if (hasInterior)
                                 _HeroMediaThumb(
                                   label: 'INTERIOR',
-                                  imageUrl: apiClient.resolveUrl(_interiorImages.first),
-                                  fallback: _thumbFallback(project, 'assets/cledor_interior.jpg'),
+                                  imageUrl: apiClient.resolveUrl(
+                                    _interiorImages.first,
+                                  ),
+                                  fallback: _thumbFallback(
+                                    project,
+                                    'assets/cledor_interior.jpg',
+                                  ),
                                   onTap: () => _openHeroGallery([
                                     if ((project?['title'] ?? '')
                                         .toString()
@@ -1041,7 +1430,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                         const SizedBox(height: 24),
                       ],
                     );
-                  }
+                  },
                 ),
                 // Title + Location — web parity (below the hero, on the content bg)
                 Padding(
@@ -1050,10 +1439,13 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        (project?['title']?.toString() ?? 'Project Name').toUpperCase(),
+                        (project?['title']?.toString() ?? 'Project Name')
+                            .toUpperCase(),
                         // Web parity: heavy sans title, not serif.
                         style: GoogleFonts.dmSerifDisplay(
-                          color: isDark ? Colors.white : const Color(0xFF09090B),
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF09090B),
                           fontSize: 24,
                           height: 1.0,
                           fontWeight: FontWeight.w800,
@@ -1062,19 +1454,37 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                       ),
                       const SizedBox(height: 12),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
                         decoration: BoxDecoration(
-                          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.03),
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.05)
+                              : Colors.black.withValues(alpha: 0.03),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.08)),
+                          border: Border.all(
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.08)
+                                : Colors.black.withValues(alpha: 0.08),
+                          ),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(LucideIcons.mapPin, color: isDark ? Colors.white70 : Colors.black87, size: 14),
+                            Icon(
+                              LucideIcons.mapPin,
+                              color: isDark ? Colors.white70 : Colors.black87,
+                              size: 14,
+                            ),
                             const SizedBox(width: 6),
                             Text(
-                              (project?['locationName'] ?? (project?['location'] is Map ? project?['location']?['name'] : project?['location']) ?? 'Mazgaon').toString(),
+                              (project?['locationName'] ??
+                                      (project?['location'] is Map
+                                          ? project?['location']?['name']
+                                          : project?['location']) ??
+                                      'Mazgaon')
+                                  .toString(),
                               style: GoogleFonts.dmSerifDisplay(
                                 color: isDark ? Colors.white : Colors.black,
                                 fontSize: 11,
@@ -1092,11 +1502,38 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Row(
                     children: [
-                      Expanded(child: _OverviewActionCard(label: 'VIDEO CALL', value: 'Connect Now', icon: LucideIcons.video, isAction: true, onTap: () => _showRequestDetailsDialog(project, null, 'VC'))),
+                      Expanded(
+                        child: _OverviewActionCard(
+                          label: 'VIDEO CALL',
+                          value: 'Connect Now',
+                          icon: LucideIcons.video,
+                          isAction: true,
+                          onTap: () =>
+                              _showRequestDetailsDialog(project, null, 'VC'),
+                        ),
+                      ),
                       const SizedBox(width: 10),
-                      Expanded(child: _OverviewActionCard(label: 'COMPLETION', value: '${project?['completion'] ?? 0}%', icon: LucideIcons.calendar)),
+                      Expanded(
+                        child: _OverviewActionCard(
+                          label: 'COMPLETION',
+                          value: '${project?['completion'] ?? 0}%',
+                          icon: LucideIcons.calendar,
+                        ),
+                      ),
                       const SizedBox(width: 10),
-                      Expanded(child: _OverviewActionCard(label: 'SITE VISIT', value: 'Book Tour', icon: LucideIcons.eye, isAction: true, onTap: () => _showRequestDetailsDialog(project, null, 'Site Visit'))),
+                      Expanded(
+                        child: _OverviewActionCard(
+                          label: 'SITE VISIT',
+                          value: 'Book Tour',
+                          icon: LucideIcons.eye,
+                          isAction: true,
+                          onTap: () => _showRequestDetailsDialog(
+                            project,
+                            null,
+                            'Site Visit',
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -1149,7 +1586,9 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
   Widget _heroImage(String src) {
     Widget errorBox() => Container(
       color: const Color(0xFF1A1A1A),
-      child: const Center(child: Icon(LucideIcons.building2, color: Colors.white24, size: 40)),
+      child: const Center(
+        child: Icon(LucideIcons.building2, color: Colors.white24, size: 40),
+      ),
     );
     if (src.startsWith('data:')) {
       try {
@@ -1174,6 +1613,9 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     return CachedNetworkImage(
       imageUrl: src,
       fit: BoxFit.cover,
+      // Decode near display size and skip the default 500ms fade.
+      memCacheWidth: 900,
+      fadeInDuration: Duration.zero,
       placeholder: (context, url) => Container(color: Colors.black12),
       errorWidget: (context, url, error) => errorBox(),
     );
@@ -1181,7 +1623,9 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
 
   Widget _buildHero(dynamic project, bool isDark) {
     final apiClient = ref.read(apiClientProvider);
-    final heroUrl = apiClient.resolveUrl(project?['heroImage'] ?? project?['coverImage']);
+    final heroUrl = apiClient.resolveUrl(
+      project?['heroImage'] ?? project?['coverImage'],
+    );
 
     return AspectRatio(
       aspectRatio: 16 / 9,
@@ -1210,10 +1654,18 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
             left: 24,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(4)),
+              decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(4),
+              ),
               child: Text(
                 (project?['status']?.toString().toUpperCase() ?? 'ONGOING'),
-                style: GoogleFonts.dmSerifDisplay(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.5),
+                style: GoogleFonts.dmSerifDisplay(
+                  color: Colors.white,
+                  fontSize: 8,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.5,
+                ),
               ),
             ),
           ),
@@ -1226,7 +1678,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _SquareAction(
-                  icon: LucideIcons.chevronLeft, 
+                  icon: LucideIcons.chevronLeft,
                   onTap: () {
                     if (context.canPop()) {
                       context.pop();
@@ -1234,18 +1686,20 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                       // Safety fallback if opened directly
                       context.go('/home');
                     }
-                  }
+                  },
                 ),
                 Row(
                   children: [
                     _SquareAction(
-                      icon: LucideIcons.share2, 
-                      onTap: () => Share.share('Check out ${project?['title']} on M4 Family!')
+                      icon: LucideIcons.share2,
+                      onTap: () => Share.share(
+                        'Check out ${project?['title']} on M4 Family!',
+                      ),
                     ),
                     const SizedBox(width: 8),
                     _SquareAction(
-                      icon: LucideIcons.moreHorizontal, 
-                      onTap: () => _scaffoldKey.currentState?.openDrawer()
+                      icon: LucideIcons.moreHorizontal,
+                      onTap: () => _scaffoldKey.currentState?.openDrawer(),
                     ),
                   ],
                 ),
@@ -1271,10 +1725,12 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
             'EXPERIENCE THE PINNACLE OF LUXURY LIVING WITH FLOOR-TO-CEILING WINDOWS, ITALIAN MARBLE FLOORING, AND SMART HOME AUTOMATION.',
             style: GoogleFonts.dmSerifDisplay(
               fontSize: 11,
-              color: isDark ? Colors.white.withValues(alpha: 0.78) : Colors.black.withValues(alpha: 0.78),
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.78)
+                  : Colors.black.withValues(alpha: 0.78),
               fontWeight: FontWeight.w600,
               height: 1.6,
-              letterSpacing: 0.5
+              letterSpacing: 0.5,
             ),
           ),
           if (flyerUrl != null) ...[
@@ -1295,16 +1751,20 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       children: [
-        Container(width: 40, height: 1.5, color: isDark ? Colors.white : Colors.black),
+        Container(
+          width: 40,
+          height: 1.5,
+          color: isDark ? Colors.white : Colors.black,
+        ),
         const SizedBox(width: 16),
         Text(
-          title.toUpperCase(), 
+          title.toUpperCase(),
           style: GoogleFonts.dmSerifDisplay(
-            fontSize: 12, 
-            fontWeight: FontWeight.w900, 
-            color: isDark ? Colors.white : Colors.black, 
-            letterSpacing: 4
-          )
+            fontSize: 12,
+            fontWeight: FontWeight.w900,
+            color: isDark ? Colors.white : Colors.black,
+            letterSpacing: 4,
+          ),
         ),
       ],
     );
@@ -1321,7 +1781,15 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
           _ConstructionDashboardCard(
             // Web parity: overall % = average of phase progress (falls back to project.completion).
             overallProgress: _progressPhases.isNotEmpty
-                ? (_progressPhases.fold<num>(0, (a, p) => a + ((p['progressPercent'] ?? p['progress'] ?? 0) as num)) / _progressPhases.length).round()
+                ? (_progressPhases.fold<num>(
+                            0,
+                            (a, p) =>
+                                a +
+                                ((p['progressPercent'] ?? p['progress'] ?? 0)
+                                    as num),
+                          ) /
+                          _progressPhases.length)
+                      .round()
                 : (project?['completion'] ?? 0),
             // Web parity: the API returns "" (empty, not null) here — fall
             // back to the same default the web displays.
@@ -1337,7 +1805,8 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
             }(),
             phases: _progressPhases,
             showFullProgress: _showFullProgress,
-            onToggleReadMore: () => setState(() => _showFullProgress = !_showFullProgress),
+            onToggleReadMore: () =>
+                setState(() => _showFullProgress = !_showFullProgress),
             onPhaseTap: (url) => _showMediaLightbox([url], 'IMAGE'),
             projectName: project?['title'] ?? 'PROJECT',
           ),
@@ -1361,7 +1830,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
   }
 
   Widget _buildLocationSection(dynamic project) {
-     return Padding(
+    return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1376,7 +1845,8 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
 
   Widget _buildAmenities(dynamic project) {
     final amenitiesRaw = project?['amenities'] as List? ?? [];
-    if (amenitiesRaw.isEmpty) return const _EmptyTabContent(message: 'Coming soon');
+    if (amenitiesRaw.isEmpty)
+      return const _EmptyTabContent(message: 'Coming soon');
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final apiClient = ref.read(apiClientProvider);
 
@@ -1394,10 +1864,18 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
       itemCount: amenitiesRaw.length,
       itemBuilder: (context, index) {
         final amenity = amenitiesRaw[index];
-        final name = (amenity is Map ? (amenity['name']?.toString() ?? 'Amenity') : amenity.toString()).toUpperCase();
+        final name =
+            (amenity is Map
+                    ? (amenity['name']?.toString() ?? 'Amenity')
+                    : amenity.toString())
+                .toUpperCase();
         final rawIcon = amenity is Map ? amenity['icon']?.toString() : null;
-        final hasUploadedIcon = rawIcon != null && rawIcon.isNotEmpty &&
-            (rawIcon.startsWith('/') || rawIcon.startsWith('http') || rawIcon.contains('.'));
+        final hasUploadedIcon =
+            rawIcon != null &&
+            rawIcon.isNotEmpty &&
+            (rawIcon.startsWith('/') ||
+                rawIcon.startsWith('http') ||
+                rawIcon.contains('.'));
 
         // Web parity: full LuxuryAmenityIcon (uploaded icon -> name-mapped SVG -> Lucide).
         return Column(
@@ -1409,7 +1887,9 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
               size: 42,
               // Temporary: the backend /uploads endpoint is broken (302 loop);
               // bundled snapshot of the web's Lobby icon keeps parity.
-              fallbackAsset: name == 'LOBBY' ? 'assets/amenity_lobby.png' : null,
+              fallbackAsset: name == 'LOBBY'
+                  ? 'assets/amenity_lobby.png'
+                  : null,
             ),
             const SizedBox(height: 10),
             Padding(
@@ -1422,7 +1902,9 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                 style: GoogleFonts.dmSerifDisplay(
                   fontSize: 8.5,
                   fontWeight: FontWeight.w600,
-                  color: isDark ? Colors.white.withValues(alpha: 0.8) : Colors.black.withValues(alpha: 0.8),
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.8)
+                      : Colors.black.withValues(alpha: 0.8),
                   letterSpacing: 0.5,
                   height: 1.2,
                 ),
@@ -1433,7 +1915,6 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
       },
     );
   }
-
 
   Widget _buildBottomActions(dynamic project) {
     return Positioned(
@@ -1446,13 +1927,22 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
           color: Colors.white,
           borderRadius: BorderRadius.circular(40),
           boxShadow: [
-             BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 20, offset: const Offset(0, 10)),
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
           ],
         ),
         child: Row(
           children: [
             const SizedBox(width: 20),
-            _BottomIconAction(icon: LucideIcons.phone, onTap: () => SupportHandlers.launchCall(project?['phone'] ?? project?['contactPhone'])),
+            _BottomIconAction(
+              icon: LucideIcons.phone,
+              onTap: () => SupportHandlers.launchCall(
+                project?['phone'] ?? project?['contactPhone'],
+              ),
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: _ScaleButton(
@@ -1466,7 +1956,12 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                   child: Center(
                     child: Text(
                       'BOOK NOW',
-                      style: GoogleFonts.dmSerifDisplay(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 2),
+                      style: GoogleFonts.dmSerifDisplay(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 13,
+                        letterSpacing: 2,
+                      ),
                     ),
                   ),
                 ),
@@ -1488,7 +1983,8 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     if (n.contains('jogging') || n.contains('track')) return LucideIcons.wind;
     if (n.contains('garden') || n.contains('park')) return LucideIcons.trees;
     if (n.contains('fire') || n.contains('pit')) return LucideIcons.flame;
-    if (n.contains('playground') || n.contains('kids')) return LucideIcons.toyBrick;
+    if (n.contains('playground') || n.contains('kids'))
+      return LucideIcons.toyBrick;
     if (n.contains('clubhouse')) return LucideIcons.building2;
     if (n.contains('security')) return LucideIcons.shieldCheck;
     if (n.contains('parking')) return LucideIcons.car;
@@ -1497,18 +1993,29 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
   }
 
   Widget _buildLocation(dynamic project) {
-    final rawLoc = (project?['location'] is Map ? project?['location']?['name'] : project?['location'])?.toString() ?? '';
-    const defaultLoc = 'NA 604, 6th Floor, M4 Aura Heights, Grant Road, Mumbai - 400007';
-    final invalid = rawLoc.trim().isEmpty || ['NA', 'N/A', 'NONE'].contains(rawLoc.trim().toUpperCase());
+    final rawLoc =
+        (project?['location'] is Map
+                ? project?['location']?['name']
+                : project?['location'])
+            ?.toString() ??
+        '';
+    const defaultLoc =
+        'NA 604, 6th Floor, M4 Aura Heights, Grant Road, Mumbai - 400007';
+    final invalid =
+        rawLoc.trim().isEmpty ||
+        ['NA', 'N/A', 'NONE'].contains(rawLoc.trim().toUpperCase());
     final loc = invalid ? defaultLoc : rawLoc;
 
     // Web parity: embedded Google Map (iframe -> WebView) + View on Maps button.
     return _LocationMap(
       location: loc,
-      onOpenMaps: () => _launchAction('Opening Maps...', 'https://www.google.com/maps?q=${Uri.encodeComponent(loc)}'),
+      onOpenMaps: () => _launchAction(
+        'Opening Maps...',
+        'https://www.google.com/maps?q=${Uri.encodeComponent(loc)}',
+      ),
     );
-
   }
+
   Widget _buildInterestSection(dynamic project) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
@@ -1523,28 +2030,54 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF0B111E) : Colors.white,
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
-              boxShadow: isDark ? [] : [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                )
-              ],
+              border: Border.all(
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.05)
+                    : Colors.black.withValues(alpha: 0.05),
+              ),
+              boxShadow: isDark
+                  ? []
+                  : [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.05),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Web parity: black heading, not gold.
-                Text('INITIALIZE YOUR PREMIUM EXPERIENCE', style: GoogleFonts.dmSerifDisplay(fontSize: 9, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 1.5)),
+                Text(
+                  'INITIALIZE YOUR PREMIUM EXPERIENCE',
+                  style: GoogleFonts.dmSerifDisplay(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w900,
+                    color: isDark ? Colors.white : Colors.black,
+                    letterSpacing: 1.5,
+                  ),
+                ),
                 const SizedBox(height: 24),
-                _InterestInput(hint: 'FULL NAME *', controller: _nameController),
+                _InterestInput(
+                  hint: 'FULL NAME *',
+                  controller: _nameController,
+                ),
                 const SizedBox(height: 16),
-                _InterestInput(hint: 'EMAIL ADDRESS', controller: _emailController),
+                _InterestInput(
+                  hint: 'EMAIL ADDRESS',
+                  controller: _emailController,
+                ),
                 const SizedBox(height: 16),
-                _InterestInput(hint: '+91 98653 21250 *', controller: _phoneController),
+                _InterestInput(
+                  hint: '+91 98653 21250 *',
+                  controller: _phoneController,
+                ),
                 const SizedBox(height: 16),
-                _InterestInput(hint: 'YOUR LOCATION (E.G. DUBAI, UAE)', controller: _locationController),
+                _InterestInput(
+                  hint: 'YOUR LOCATION (E.G. DUBAI, UAE)',
+                  controller: _locationController,
+                ),
                 const SizedBox(height: 24),
                 _ScaleButton(
                   onTap: () => _submitInquiry('General'),
@@ -1555,7 +2088,17 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                       color: isDark ? Colors.white : Colors.black,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Center(child: Text('REGISTER INTEREST', style: GoogleFonts.dmSerifDisplay(color: isDark ? Colors.black : Colors.white, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2))),
+                    child: Center(
+                      child: Text(
+                        'REGISTER INTEREST',
+                        style: GoogleFonts.dmSerifDisplay(
+                          color: isDark ? Colors.black : Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 2,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -1569,7 +2112,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
   Widget _buildPaymentPlansSection() {
     if (_paymentPlans.isEmpty) return const SizedBox.shrink();
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Column(
@@ -1577,51 +2120,115 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
         children: [
           _buildSectionHeader('Payment Plans'),
           const SizedBox(height: 16),
-          ..._paymentPlans.map((plan) => Container(
-            margin: const EdgeInsets.only(bottom: 16),
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF1F5F9),
-              borderRadius: BorderRadius.circular(32),
-              border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(plan['name']?.toString().toUpperCase() ?? 'STANDARD PLAN', style: GoogleFonts.dmSerifDisplay(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 0.5)),
-                    const Icon(LucideIcons.wallet, color: M4Theme.premiumBlue, size: 16),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                ...(plan['items'] as List? ?? []).map((item) => Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: Row(
+          ..._paymentPlans
+              .map(
+                (plan) => Container(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.03)
+                        : const Color(0xFFF1F5F9),
+                    borderRadius: BorderRadius.circular(32),
+                    border: Border.all(
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.05)
+                          : Colors.black.withValues(alpha: 0.05),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(color: M4Theme.premiumBlue.withValues(alpha: 0.1), shape: BoxShape.circle),
-                        child: Center(child: Text('${item['percentage']}%', style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue))),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            plan['name']?.toString().toUpperCase() ??
+                                'STANDARD PLAN',
+                            style: GoogleFonts.dmSerifDisplay(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w900,
+                              color: isDark ? Colors.white : Colors.black,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                          const Icon(
+                            LucideIcons.wallet,
+                            color: M4Theme.premiumBlue,
+                            size: 16,
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(item['description']?.toString().toUpperCase() ?? 'INSTALLMENT', style: GoogleFonts.dmSerifDisplay(fontSize: 9, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 0.5)),
-                            Text('INSTALLMENT ${item['installmentNumber'] ?? ''}', style: GoogleFonts.dmSerifDisplay(fontSize: 8, color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                      ),
+                      const SizedBox(height: 24),
+                      ...(plan['items'] as List? ?? [])
+                          .map(
+                            (item) => Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 40,
+                                    height: 40,
+                                    decoration: BoxDecoration(
+                                      color: M4Theme.premiumBlue.withValues(
+                                        alpha: 0.1,
+                                      ),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        '${item['percentage']}%',
+                                        style: GoogleFonts.dmSerifDisplay(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w900,
+                                          color: M4Theme.premiumBlue,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          item['description']
+                                                  ?.toString()
+                                                  .toUpperCase() ??
+                                              'INSTALLMENT',
+                                          style: GoogleFonts.dmSerifDisplay(
+                                            fontSize: 9,
+                                            fontWeight: FontWeight.w900,
+                                            color: isDark
+                                                ? Colors.white
+                                                : Colors.black,
+                                            letterSpacing: 0.5,
+                                          ),
+                                        ),
+                                        Text(
+                                          'INSTALLMENT ${item['installmentNumber'] ?? ''}',
+                                          style: GoogleFonts.dmSerifDisplay(
+                                            fontSize: 8,
+                                            color: isDark
+                                                ? Colors.white38
+                                                : Colors.black38,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                          .toList(),
                     ],
                   ),
-                )).toList(),
-              ],
-            ),
-          )).toList(),
+                ),
+              )
+              .toList(),
         ],
       ),
     );
@@ -1638,25 +2245,46 @@ class _InterestInput extends StatelessWidget {
   final String hint;
   final IconData? icon;
   final TextEditingController controller;
-  const _InterestInput({required this.hint, this.icon, required this.controller});
+  const _InterestInput({
+    required this.hint,
+    this.icon,
+    required this.controller,
+  });
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF8FAFC),
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.03)
+            : const Color(0xFFF8FAFC),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.08)),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.black.withValues(alpha: 0.08),
+        ),
       ),
       child: TextField(
         controller: controller,
-        style: GoogleFonts.dmSerifDisplay(fontSize: 11, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black),
+        style: GoogleFonts.dmSerifDisplay(
+          fontSize: 11,
+          fontWeight: FontWeight.bold,
+          color: isDark ? Colors.white : Colors.black,
+        ),
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: hint,
-          hintStyle: GoogleFonts.dmSerifDisplay(fontSize: 9, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black45, letterSpacing: 1),
-          icon: icon != null ? Icon(icon, size: 14, color: M4Theme.premiumBlue) : null,
+          hintStyle: GoogleFonts.dmSerifDisplay(
+            fontSize: 9,
+            fontWeight: FontWeight.w900,
+            color: isDark ? Colors.white38 : Colors.black45,
+            letterSpacing: 1,
+          ),
+          icon: icon != null
+              ? Icon(icon, size: 14, color: M4Theme.premiumBlue)
+              : null,
         ),
       ),
     );
@@ -1671,17 +2299,17 @@ class _OverviewActionCard extends StatelessWidget {
   final VoidCallback? onTap;
 
   const _OverviewActionCard({
-    required this.label, 
-    required this.value, 
-    required this.icon, 
-    this.isAction = false, 
-    this.onTap
+    required this.label,
+    required this.value,
+    required this.icon,
+    this.isAction = false,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -1691,21 +2319,29 @@ class _OverviewActionCard extends StatelessWidget {
           color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.white,
           borderRadius: BorderRadius.circular(32),
           border: Border.all(
-            color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05),
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.08)
+                : Colors.black.withValues(alpha: 0.05),
             width: 1,
           ),
-          boxShadow: isDark ? [] : [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
-            )
-          ],
+          boxShadow: isDark
+              ? []
+              : [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Icon(icon, color: isDark ? Colors.white38 : Colors.black38, size: 24),
+            Icon(
+              icon,
+              color: isDark ? Colors.white38 : Colors.black38,
+              size: 24,
+            ),
             Column(
               children: [
                 Text(
@@ -1781,11 +2417,23 @@ class _BottomIconAction extends StatelessWidget {
         width: 56,
         height: 56,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF4F4F5),
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.05)
+              : const Color(0xFFF4F4F5),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05)),
+          border: Border.all(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.1)
+                : Colors.black.withValues(alpha: 0.05),
+          ),
         ),
-        child: Center(child: Icon(icon, color: isDark ? Colors.white : Colors.black, size: 20)),
+        child: Center(
+          child: Icon(
+            icon,
+            color: isDark ? Colors.white : Colors.black,
+            size: 20,
+          ),
+        ),
       ),
     );
   }
@@ -1805,7 +2453,7 @@ class _HeroMediaThumb extends StatelessWidget {
     this.fallback,
     this.isVR = false,
     this.isCinematic = false,
-    required this.onTap
+    required this.onTap,
   });
 
   @override
@@ -1822,7 +2470,10 @@ class _HeroMediaThumb extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.black.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.35), width: 1.5),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.35),
+                width: 1.5,
+              ),
             ),
             clipBehavior: Clip.antiAlias,
             child: Stack(
@@ -1836,15 +2487,22 @@ class _HeroMediaThumb extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
-                            isVR ? LucideIcons.refreshCw : LucideIcons.playCircle, 
-                            color: Colors.white, 
-                            size: 16
+                            isVR
+                                ? LucideIcons.refreshCw
+                                : LucideIcons.playCircle,
+                            color: Colors.white,
+                            size: 16,
                           ),
                           const SizedBox(height: 2),
                           Text(
                             label,
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.dmSerifDisplay(color: Colors.white, fontSize: 6, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                            style: GoogleFonts.dmSerifDisplay(
+                              color: Colors.white,
+                              fontSize: 6,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 0.5,
+                            ),
                           ),
                         ],
                       ),
@@ -1856,6 +2514,8 @@ class _HeroMediaThumb extends StatelessWidget {
                       imageUrl: imageUrl!,
                       fit: BoxFit.cover,
                       filterQuality: FilterQuality.high,
+                      memCacheWidth: 1080,
+                      fadeInDuration: Duration.zero,
                       errorWidget: (c, e, s) =>
                           fallback ?? Container(color: Colors.white10),
                       placeholder: (c, e) => Container(color: Colors.white10),
@@ -1871,7 +2531,12 @@ class _HeroMediaThumb extends StatelessWidget {
                       child: Text(
                         label,
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.dmSerifDisplay(color: Colors.white, fontSize: 7, fontWeight: FontWeight.w800, letterSpacing: 0.5),
+                        style: GoogleFonts.dmSerifDisplay(
+                          color: Colors.white,
+                          fontSize: 7,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.5,
+                        ),
                       ),
                     ),
                   ),
@@ -1918,7 +2583,15 @@ class _SectionHeader extends StatelessWidget {
   const _SectionHeader({required this.title});
   @override
   Widget build(BuildContext context) {
-    return Text(title.toUpperCase(), style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 2));
+    return Text(
+      title.toUpperCase(),
+      style: GoogleFonts.dmSerifDisplay(
+        fontSize: 10,
+        fontWeight: FontWeight.w900,
+        color: M4Theme.premiumBlue,
+        letterSpacing: 2,
+      ),
+    );
   }
 }
 
@@ -1928,7 +2601,16 @@ class _EmptyTabContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Center(child: Text(message.toUpperCase(), textAlign: TextAlign.center, style: GoogleFonts.dmSerifDisplay(fontSize: 12, color: isDark ? Colors.white38 : Colors.black38)));
+    return Center(
+      child: Text(
+        message.toUpperCase(),
+        textAlign: TextAlign.center,
+        style: GoogleFonts.dmSerifDisplay(
+          fontSize: 12,
+          color: isDark ? Colors.white38 : Colors.black38,
+        ),
+      ),
+    );
   }
 }
 
@@ -1941,10 +2623,10 @@ class _MultimediaAssetCard extends StatelessWidget {
   final bool isPrimary;
 
   const _MultimediaAssetCard({
-    required this.title, 
-    required this.subtitle, 
-    required this.icon, 
-    required this.onView, 
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+    required this.onView,
     this.onDownload,
     this.isPrimary = false,
   });
@@ -1961,33 +2643,63 @@ class _MultimediaAssetCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
             borderRadius: BorderRadius.circular(40),
-            border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05)),
-            boxShadow: isDark ? [] : [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 30,
-                offset: const Offset(0, 10),
-              )
-            ],
+            border: Border.all(
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.08)
+                  : Colors.black.withValues(alpha: 0.05),
+            ),
+            boxShadow: isDark
+                ? []
+                : [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 30,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
           ),
           child: Row(
             children: [
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.04),
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : Colors.black.withValues(alpha: 0.04),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Icon(icon, color: isDark ? Colors.white70 : Colors.black.withValues(alpha: 0.7), size: 20),
+                child: Icon(
+                  icon,
+                  color: isDark
+                      ? Colors.white70
+                      : Colors.black.withValues(alpha: 0.7),
+                  size: 20,
+                ),
               ),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title.toUpperCase(), style: GoogleFonts.dmSerifDisplay(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 0.5)),
+                    Text(
+                      title.toUpperCase(),
+                      style: GoogleFonts.dmSerifDisplay(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w900,
+                        color: isDark ? Colors.white : Colors.black,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
                     const SizedBox(height: 4),
-                    Text(subtitle.replaceFirst('•', ' • ').toUpperCase(), style: GoogleFonts.dmSerifDisplay(fontSize: 8, color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                    Text(
+                      subtitle.replaceFirst('•', ' • ').toUpperCase(),
+                      style: GoogleFonts.dmSerifDisplay(
+                        fontSize: 8,
+                        color: isDark ? Colors.white38 : Colors.black38,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -1995,7 +2707,11 @@ class _MultimediaAssetCard extends StatelessWidget {
               _AssetButton(label: 'VIEW', isOutline: true, onTap: onView),
               if (onDownload != null) ...[
                 const SizedBox(width: 8),
-                _AssetButton(label: 'DOWNLOAD', isOutline: false, onTap: onDownload!),
+                _AssetButton(
+                  label: 'DOWNLOAD',
+                  isOutline: false,
+                  onTap: onDownload!,
+                ),
               ],
             ],
           ),
@@ -2009,7 +2725,11 @@ class _AssetButton extends StatelessWidget {
   final String label;
   final bool isOutline;
   final VoidCallback onTap;
-  const _AssetButton({required this.label, required this.isOutline, required this.onTap});
+  const _AssetButton({
+    required this.label,
+    required this.isOutline,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -2019,10 +2739,20 @@ class _AssetButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
-          color: isOutline ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white : Colors.black),
+          color: isOutline
+              ? (isDark ? Colors.white : Colors.black)
+              : (isDark ? Colors.white : Colors.black),
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Text(label, style: GoogleFonts.dmSerifDisplay(fontSize: 7.5, fontWeight: FontWeight.w900, color: isDark ? Colors.black : Colors.white, letterSpacing: 1.0)),
+        child: Text(
+          label,
+          style: GoogleFonts.dmSerifDisplay(
+            fontSize: 7.5,
+            fontWeight: FontWeight.w900,
+            color: isDark ? Colors.black : Colors.white,
+            letterSpacing: 1.0,
+          ),
+        ),
       ),
     );
   }
@@ -2038,8 +2768,8 @@ class _ConstructionDashboardCard extends ConsumerWidget {
   final String projectName;
 
   const _ConstructionDashboardCard({
-    required this.overallProgress, 
-    required this.estimatedCompletion, 
+    required this.overallProgress,
+    required this.estimatedCompletion,
     required this.phases,
     required this.showFullProgress,
     required this.onToggleReadMore,
@@ -2051,14 +2781,18 @@ class _ConstructionDashboardCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final apiClient = ref.read(apiClientProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF0B111E) : const Color(0xFFF8FAFC),
         borderRadius: BorderRadius.circular(40),
-        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.05)
+              : Colors.black.withValues(alpha: 0.05),
+        ),
       ),
       child: Column(
         children: [
@@ -2070,9 +2804,25 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Web parity: muted dark label + heavy black sans date.
-                    Text('ESTIMATED COMPLETION DATE', style: GoogleFonts.dmSerifDisplay(fontSize: 9, fontWeight: FontWeight.w900, color: isDark ? Colors.white60 : Colors.black54, letterSpacing: 1)),
+                    Text(
+                      'ESTIMATED COMPLETION DATE',
+                      style: GoogleFonts.dmSerifDisplay(
+                        fontSize: 9,
+                        fontWeight: FontWeight.w900,
+                        color: isDark ? Colors.white60 : Colors.black54,
+                        letterSpacing: 1,
+                      ),
+                    ),
                     const SizedBox(height: 12),
-                    Text(estimatedCompletion, style: GoogleFonts.dmSerifDisplay(fontSize: 44, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, height: 1.02)),
+                    Text(
+                      estimatedCompletion,
+                      style: GoogleFonts.dmSerifDisplay(
+                        fontSize: 44,
+                        fontWeight: FontWeight.w900,
+                        color: isDark ? Colors.white : Colors.black,
+                        height: 1.02,
+                      ),
+                    ),
                     const SizedBox(height: 24),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -2080,12 +2830,14 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                         Text(
                           'As the project progresses, significant milestones are reached, showcasing our team\'s dedication and expertise. We are steadily moving closer to our completion goal, ensuring quality and safety at every step. Each phase is handled with precision to meet our luxury standards and timeline.',
                           maxLines: showFullProgress ? null : 3,
-                          overflow: showFullProgress ? TextOverflow.visible : TextOverflow.ellipsis,
+                          overflow: showFullProgress
+                              ? TextOverflow.visible
+                              : TextOverflow.ellipsis,
                           style: GoogleFonts.dmSerifDisplay(
-                            fontSize: 11, 
-                            color: isDark ? Colors.white54 : Colors.black54, 
-                            height: 1.6, 
-                            fontWeight: FontWeight.w500
+                            fontSize: 11,
+                            color: isDark ? Colors.white54 : Colors.black54,
+                            height: 1.6,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         const SizedBox(height: 10),
@@ -2093,7 +2845,11 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                           onTap: onToggleReadMore,
                           child: Text(
                             showFullProgress ? 'Show less' : 'Read more',
-                            style: GoogleFonts.dmSerifDisplay(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black),
+                            style: GoogleFonts.dmSerifDisplay(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w900,
+                              color: isDark ? Colors.white : Colors.black,
+                            ),
                           ),
                         ),
                       ],
@@ -2113,7 +2869,9 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                         progress: overallProgress.toDouble() / 100,
                         // Web parity: bold black tick ring.
                         color: isDark ? Colors.white : Colors.black,
-                        backgroundColor: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.1),
+                        backgroundColor: isDark
+                            ? Colors.white.withValues(alpha: 0.1)
+                            : Colors.black.withValues(alpha: 0.1),
                         strokeWidth: 6,
                       ),
                     ),
@@ -2121,8 +2879,23 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('${overallProgress.toInt()}%', style: GoogleFonts.dmSerifDisplay(fontSize: 22, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black)),
-                      Text('OVERALL', style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1)),
+                      Text(
+                        '${overallProgress.toInt()}%',
+                        style: GoogleFonts.dmSerifDisplay(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w900,
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
+                      ),
+                      Text(
+                        'OVERALL',
+                        style: GoogleFonts.dmSerifDisplay(
+                          fontSize: 8,
+                          fontWeight: FontWeight.w900,
+                          color: isDark ? Colors.white38 : Colors.black38,
+                          letterSpacing: 1,
+                        ),
+                      ),
                     ],
                   ),
                 ],
@@ -2134,20 +2907,35 @@ class _ConstructionDashboardCard extends ConsumerWidget {
             // Timeline Slider
             Row(
               children: [
-                Text('2026', style: GoogleFonts.dmSerifDisplay(fontSize: 18, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black)),
+                Text(
+                  '2026',
+                  style: GoogleFonts.dmSerifDisplay(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w900,
+                    color: isDark ? Colors.white : Colors.black,
+                  ),
+                ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Stack(
                     alignment: Alignment.centerLeft,
                     children: [
-                      Container(height: 1, color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.1)),
+                      Container(
+                        height: 1,
+                        color: isDark
+                            ? Colors.white10
+                            : Colors.black.withValues(alpha: 0.1),
+                      ),
                       Container(
                         width: 12,
                         height: 12,
                         decoration: BoxDecoration(
                           color: isDark ? Colors.black : Colors.white,
                           shape: BoxShape.circle,
-                          border: Border.all(color: isDark ? Colors.white : Colors.black, width: 2),
+                          border: Border.all(
+                            color: isDark ? Colors.white : Colors.black,
+                            width: 2,
+                          ),
                         ),
                       ),
                     ],
@@ -2166,17 +2954,29 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                 itemBuilder: (context, index) {
                   final phase = phases[index];
                   final phaseImages = phase['images'] as List?;
-                  final firstPhaseImg = (phaseImages != null && phaseImages.isNotEmpty) ? phaseImages[0] : '';
-                  final imageUrl = apiClient.resolveUrl(phase['image'] ?? firstPhaseImg);
-                  final status = phase['status']?.toString().toUpperCase() ?? 'UPCOMING';
-                  
+                  final firstPhaseImg =
+                      (phaseImages != null && phaseImages.isNotEmpty)
+                      ? phaseImages[0]
+                      : '';
+                  final imageUrl = apiClient.resolveUrl(
+                    phase['image'] ?? firstPhaseImg,
+                  );
+                  final status =
+                      phase['status']?.toString().toUpperCase() ?? 'UPCOMING';
+
                   return Container(
                     width: 240,
                     margin: const EdgeInsets.only(right: 16),
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.03)
+                          : Colors.white,
                       borderRadius: BorderRadius.circular(32),
-                      border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
+                      border: Border.all(
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.05)
+                            : Colors.black.withValues(alpha: 0.05),
+                      ),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -2195,18 +2995,24 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                           child: Stack(
                             children: [
                               ClipRRect(
-                                borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+                                borderRadius: const BorderRadius.vertical(
+                                  top: Radius.circular(32),
+                                ),
                                 child: CachedNetworkImage(
-                                  imageUrl: imageUrl, 
-                                  height: 140, 
-                                  width: 240, 
-                                  fit: BoxFit.cover, 
+                                  imageUrl: imageUrl,
+                                  height: 140,
+                                  width: 240,
+                                  fit: BoxFit.cover,
                                   placeholder: (c, u) => Container(
-                                    height: 140, 
-                                    color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
+                                    height: 140,
+                                    color: isDark
+                                        ? const Color(0xFF1E293B)
+                                        : const Color(0xFFF1F5F9),
                                     child: Icon(
                                       LucideIcons.image,
-                                      color: isDark ? Colors.white24 : Colors.black26,
+                                      color: isDark
+                                          ? Colors.white24
+                                          : Colors.black26,
                                       size: 24,
                                     ),
                                   ),
@@ -2214,10 +3020,12 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                   // Demolition phase, fall back to the bundled
                                   // snapshot of the web's phase photo.
                                   errorWidget: (c, e, s) =>
-                                      (phase['phaseName'] ?? phase['name'] ?? '')
-                                              .toString()
-                                              .toLowerCase()
-                                              .contains('demolition')
+                                      (phase['phaseName'] ??
+                                              phase['name'] ??
+                                              '')
+                                          .toString()
+                                          .toLowerCase()
+                                          .contains('demolition')
                                       ? Image.asset(
                                           'assets/cledor_phase_demolition.jpg',
                                           height: 140,
@@ -2251,16 +3059,37 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                     // light pill w/ dark text = upcoming.
                                     final badgeBg = done
                                         ? const Color(0xFF22C55E)
-                                        : (active ? M4Theme.premiumBlue : Colors.white);
-                                    final badgeTxt = (done || active) ? Colors.white : const Color(0xFF0F172A);
+                                        : (active
+                                              ? M4Theme.premiumBlue
+                                              : Colors.white);
+                                    final badgeTxt = (done || active)
+                                        ? Colors.white
+                                        : const Color(0xFF0F172A);
                                     return Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 4,
+                                      ),
                                       decoration: BoxDecoration(
                                         color: badgeBg,
                                         borderRadius: BorderRadius.circular(6),
-                                        border: (!done && !active) ? Border.all(color: Colors.black.withValues(alpha: 0.08)) : null,
+                                        border: (!done && !active)
+                                            ? Border.all(
+                                                color: Colors.black.withValues(
+                                                  alpha: 0.08,
+                                                ),
+                                              )
+                                            : null,
                                       ),
-                                      child: Text(status, style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.w900, color: badgeTxt, letterSpacing: 1)),
+                                      child: Text(
+                                        status,
+                                        style: GoogleFonts.dmSerifDisplay(
+                                          fontSize: 8,
+                                          fontWeight: FontWeight.w900,
+                                          color: badgeTxt,
+                                          letterSpacing: 1,
+                                        ),
+                                      ),
                                     );
                                   },
                                 ),
@@ -2273,7 +3102,17 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(projectName.toUpperCase(), style: GoogleFonts.dmSerifDisplay(fontSize: 12, fontWeight: FontWeight.bold, color: isDark ? Colors.white : const Color(0xFF0F172A), letterSpacing: 1)),
+                              Text(
+                                projectName.toUpperCase(),
+                                style: GoogleFonts.dmSerifDisplay(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: isDark
+                                      ? Colors.white
+                                      : const Color(0xFF0F172A),
+                                  letterSpacing: 1,
+                                ),
+                              ),
                               const SizedBox(height: 12),
                               Row(
                                 children: [
@@ -2288,18 +3127,61 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                         height: 34,
                                         child: CustomPaint(
                                           painter: _DashedCirclePainter(
-                                            progress: ((phase['progressPercent'] ?? phase['progress'] ?? 0) as num).toDouble() / 100,
-                                            color: isDark ? Colors.white : Colors.black,
-                                            backgroundColor: isDark ? Colors.white.withValues(alpha: 0.12) : Colors.black.withValues(alpha: 0.12),
+                                            progress:
+                                                ((phase['progressPercent'] ??
+                                                            phase['progress'] ??
+                                                            0)
+                                                        as num)
+                                                    .toDouble() /
+                                                100,
+                                            color: isDark
+                                                ? Colors.white
+                                                : Colors.black,
+                                            backgroundColor: isDark
+                                                ? Colors.white.withValues(
+                                                    alpha: 0.12,
+                                                  )
+                                                : Colors.black.withValues(
+                                                    alpha: 0.12,
+                                                  ),
                                             strokeWidth: 3,
                                           ),
                                         ),
                                       ),
-                                      Text('${phase['progressPercent'] ?? phase['progress'] ?? 0}%', style: GoogleFonts.dmSerifDisplay(fontSize: 7.5, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black)),
+                                      Text(
+                                        '${phase['progressPercent'] ?? phase['progress'] ?? 0}%',
+                                        style: GoogleFonts.dmSerifDisplay(
+                                          fontSize: 7.5,
+                                          fontWeight: FontWeight.w900,
+                                          color: isDark
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                      ),
                                     ],
                                   ),
                                   const SizedBox(width: 12),
-                                  Expanded(child: Text((phase['name'] ?? phase['phaseName'] ?? 'PHASE').toString().toUpperCase(), style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w900, color: isDark ? Colors.white.withValues(alpha: 0.85) : Colors.black.withValues(alpha: 0.85), letterSpacing: 1.2))),
+                                  Expanded(
+                                    child: Text(
+                                      (phase['name'] ??
+                                              phase['phaseName'] ??
+                                              'PHASE')
+                                          .toString()
+                                          .toUpperCase(),
+                                      style: GoogleFonts.dmSerifDisplay(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w900,
+                                        color: isDark
+                                            ? Colors.white.withValues(
+                                                alpha: 0.85,
+                                              )
+                                            : Colors.black.withValues(
+                                                alpha: 0.85,
+                                              ),
+                                        letterSpacing: 1.2,
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
                             ],
@@ -2311,7 +3193,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                 },
               ),
             ),
-          const SizedBox(height: 64),
+            const SizedBox(height: 64),
             // Phase Tracking List
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -2320,19 +3202,53 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Web parity: slate-navy heading + muted slate subtitle.
-                    Text('PHASE TRACKING', style: GoogleFonts.dmSerifDisplay(fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 2, color: isDark ? Colors.white : const Color(0xFF1E293B))),
-                    Text('REAL-TIME DEVELOPMENT STATUS', style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.bold, color: isDark ? Colors.white38 : const Color(0xFF94A3B8), letterSpacing: 0.5)),
+                    Text(
+                      'PHASE TRACKING',
+                      style: GoogleFonts.dmSerifDisplay(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 2,
+                        color: isDark ? Colors.white : const Color(0xFF1E293B),
+                      ),
+                    ),
+                    Text(
+                      'REAL-TIME DEVELOPMENT STATUS',
+                      style: GoogleFonts.dmSerifDisplay(
+                        fontSize: 8,
+                        fontWeight: FontWeight.bold,
+                        color: isDark
+                            ? Colors.white38
+                            : const Color(0xFF94A3B8),
+                        letterSpacing: 0.5,
+                      ),
+                    ),
                   ],
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   // Web parity: soft outlined chip with black text.
                   decoration: BoxDecoration(
-                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.04),
+                    color: (isDark ? Colors.white : Colors.black).withValues(
+                      alpha: 0.04,
+                    ),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.15)),
+                    border: Border.all(
+                      color: (isDark ? Colors.white : Colors.black).withValues(
+                        alpha: 0.15,
+                      ),
+                    ),
                   ),
-                  child: Text('${phases.length} MILESTONES', style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black)),
+                  child: Text(
+                    '${phases.length} MILESTONES',
+                    style: GoogleFonts.dmSerifDisplay(
+                      fontSize: 8,
+                      fontWeight: FontWeight.w900,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -2346,18 +3262,35 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                 itemCount: phases.length,
                 itemBuilder: (context, index) {
                   final phase = phases[index];
-                  final progress = (phase['progressPercent'] ?? phase['progress'] ?? 0).toDouble();
-                  final status = phase['status']?.toString().toUpperCase() ?? 'UPCOMING';
+                  final progress =
+                      (phase['progressPercent'] ?? phase['progress'] ?? 0)
+                          .toDouble();
+                  final status =
+                      phase['status']?.toString().toUpperCase() ?? 'UPCOMING';
 
                   return Container(
                     width: 280,
                     margin: const EdgeInsets.only(right: 16),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.03)
+                          : Colors.white,
                       borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
-                      boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 15, offset: const Offset(0, 6))],
+                      border: Border.all(
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.05)
+                            : Colors.black.withValues(alpha: 0.05),
+                      ),
+                      boxShadow: isDark
+                          ? []
+                          : [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.03),
+                                blurRadius: 15,
+                                offset: const Offset(0, 6),
+                              ),
+                            ],
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -2367,26 +3300,85 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                             Container(
                               width: 36,
                               height: 36,
-                              decoration: BoxDecoration(color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(10)),
-                              child: Center(child: Text((index + 1).toString().padLeft(2, '0'), style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black38))),
+                              decoration: BoxDecoration(
+                                color: isDark
+                                    ? Colors.white.withValues(alpha: 0.05)
+                                    : const Color(0xFFF1F5F9),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  (index + 1).toString().padLeft(2, '0'),
+                                  style: GoogleFonts.dmSerifDisplay(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w900,
+                                    color: isDark
+                                        ? Colors.white38
+                                        : Colors.black38,
+                                  ),
+                                ),
+                              ),
                             ),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text((phase['name'] ?? phase['phaseName'] ?? 'PHASE').toString().toUpperCase(), style: GoogleFonts.dmSerifDisplay(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white : const Color(0xFF1E293B))),
+                                  Text(
+                                    (phase['name'] ??
+                                            phase['phaseName'] ??
+                                            'PHASE')
+                                        .toString()
+                                        .toUpperCase(),
+                                    style: GoogleFonts.dmSerifDisplay(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w900,
+                                      color: isDark
+                                          ? Colors.white
+                                          : const Color(0xFF1E293B),
+                                    ),
+                                  ),
                                   Row(
                                     children: [
-                                      Container(width: 6, height: 6, decoration: BoxDecoration(color: progress >= 100 ? Colors.green : (progress > 0 ? M4Theme.premiumBlue : Colors.grey), shape: BoxShape.circle)),
+                                      Container(
+                                        width: 6,
+                                        height: 6,
+                                        decoration: BoxDecoration(
+                                          color: progress >= 100
+                                              ? Colors.green
+                                              : (progress > 0
+                                                    ? M4Theme.premiumBlue
+                                                    : Colors.grey),
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
                                       const SizedBox(width: 6),
-                                      Text(status, style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.bold, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 0.5)),
+                                      Text(
+                                        status,
+                                        style: GoogleFonts.dmSerifDisplay(
+                                          fontSize: 8,
+                                          fontWeight: FontWeight.bold,
+                                          color: isDark
+                                              ? Colors.white38
+                                              : Colors.black38,
+                                          letterSpacing: 0.5,
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ],
                               ),
                             ),
-                            Text('${progress.toInt()}%', style: GoogleFonts.dmSerifDisplay(fontSize: 16, fontWeight: FontWeight.w900, color: isDark ? Colors.white : const Color(0xFF0F172A))),
+                            Text(
+                              '${progress.toInt()}%',
+                              style: GoogleFonts.dmSerifDisplay(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w900,
+                                color: isDark
+                                    ? Colors.white
+                                    : const Color(0xFF0F172A),
+                              ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 12),
@@ -2395,24 +3387,43 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                             Container(
                               height: 6,
                               width: double.infinity,
-                              decoration: BoxDecoration(color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(10)),
+                              decoration: BoxDecoration(
+                                color: isDark
+                                    ? Colors.white.withValues(alpha: 0.05)
+                                    : const Color(0xFFF1F5F9),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
                             TweenAnimationBuilder<double>(
                               duration: const Duration(milliseconds: 1500),
                               curve: Curves.easeOutQuart,
-                              tween: Tween<double>(begin: 0, end: progress / 100),
-                              builder: (context, value, _) => FractionallySizedBox(
-                                widthFactor: value,
-                                child: Container(
-                                  height: 6,
-                                  decoration: BoxDecoration(
-                                    // Web parity: solid black progress bar.
-                                    color: isDark ? Colors.white : Colors.black,
-                                    borderRadius: BorderRadius.circular(10),
-                                    boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.2), blurRadius: 8, offset: const Offset(0, 2))],
-                                  ),
-                                ),
+                              tween: Tween<double>(
+                                begin: 0,
+                                end: progress / 100,
                               ),
+                              builder: (context, value, _) =>
+                                  FractionallySizedBox(
+                                    widthFactor: value,
+                                    child: Container(
+                                      height: 6,
+                                      decoration: BoxDecoration(
+                                        // Web parity: solid black progress bar.
+                                        color: isDark
+                                            ? Colors.white
+                                            : Colors.black,
+                                        borderRadius: BorderRadius.circular(10),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withValues(
+                                              alpha: 0.2,
+                                            ),
+                                            blurRadius: 8,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
                             ),
                           ],
                         ),
@@ -2434,29 +3445,47 @@ class _FilterChip extends StatelessWidget {
   final bool isActive;
   final VoidCallback onTap;
 
-  const _FilterChip({required this.label, required this.isActive, required this.onTap});
+  const _FilterChip({
+    required this.label,
+    required this.isActive,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: isActive ? M4Theme.premiumBlue : Colors.black.withValues(alpha: 0.04),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: isActive ? M4Theme.premiumBlue : Colors.black.withValues(alpha: 0.05)),
-        ),
-        child: Text(
-          label,
-          style: GoogleFonts.dmSerifDisplay(
-            fontSize: 9,
-            fontWeight: FontWeight.w900,
-            color: isActive ? Colors.white : Colors.black.withValues(alpha: 0.4),
-            letterSpacing: 1.0,
-          ),
-        ),
-      ).animate(target: isActive ? 1 : 0).scale(duration: 100.ms, end: const Offset(0.95, 0.95)),
+      child:
+          Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: isActive
+                      ? M4Theme.premiumBlue
+                      : Colors.black.withValues(alpha: 0.04),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isActive
+                        ? M4Theme.premiumBlue
+                        : Colors.black.withValues(alpha: 0.05),
+                  ),
+                ),
+                child: Text(
+                  label,
+                  style: GoogleFonts.dmSerifDisplay(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w900,
+                    color: isActive
+                        ? Colors.white
+                        : Colors.black.withValues(alpha: 0.4),
+                    letterSpacing: 1.0,
+                  ),
+                ),
+              )
+              .animate(target: isActive ? 1 : 0)
+              .scale(duration: 100.ms, end: const Offset(0.95, 0.95)),
     );
   }
 }
@@ -2477,18 +3506,30 @@ class _SquareAction extends StatelessWidget {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: color ?? (isDark ? Colors.white.withValues(alpha: 0.1) : Colors.white),
+          color:
+              color ??
+              (isDark ? Colors.white.withValues(alpha: 0.1) : Colors.white),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05)),
-          boxShadow: isDark ? [] : [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4)
-            )
-          ],
+          border: Border.all(
+            color: (isDark ? Colors.white : Colors.black).withValues(
+              alpha: 0.05,
+            ),
+          ),
+          boxShadow: isDark
+              ? []
+              : [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
         ),
-        child: Icon(icon, color: isDark ? Colors.white : Colors.black, size: 20),
+        child: Icon(
+          icon,
+          color: isDark ? Colors.white : Colors.black,
+          size: 20,
+        ),
       ),
     );
   }
@@ -2514,7 +3555,8 @@ class _LocationMapState extends State<_LocationMap> {
       ..setBackgroundColor(const Color(0xFF0B111E));
 
     final locEncoded = Uri.encodeComponent(widget.location);
-    final htmlContent = '''
+    final htmlContent =
+        '''
       <!DOCTYPE html>
       <html>
         <head>
@@ -2558,7 +3600,7 @@ class _LocationMapState extends State<_LocationMap> {
             color: Colors.black.withValues(alpha: 0.15),
             blurRadius: 20,
             offset: const Offset(0, 10),
-          )
+          ),
         ],
       ),
       clipBehavior: Clip.antiAlias,
@@ -2572,19 +3614,45 @@ class _LocationMapState extends State<_LocationMap> {
             child: _ScaleButton(
               onTap: widget.onOpenMaps,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 9,
+                ),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF0B111E) : Colors.white.withValues(alpha: 0.95),
+                  color: isDark
+                      ? const Color(0xFF0B111E)
+                      : Colors.white.withValues(alpha: 0.95),
                   borderRadius: BorderRadius.circular(30),
-                  border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.08)),
-                  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.15), blurRadius: 10)],
+                  border: Border.all(
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.08)
+                        : Colors.black.withValues(alpha: 0.08),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.15),
+                      blurRadius: 10,
+                    ),
+                  ],
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(LucideIcons.mapPin, color: M4Theme.premiumBlue, size: 12),
+                    const Icon(
+                      LucideIcons.mapPin,
+                      color: M4Theme.premiumBlue,
+                      size: 12,
+                    ),
                     const SizedBox(width: 6),
-                    Text('VIEW ON MAPS', style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 1)),
+                    Text(
+                      'VIEW ON MAPS',
+                      style: GoogleFonts.dmSerifDisplay(
+                        fontSize: 8,
+                        fontWeight: FontWeight.w900,
+                        color: isDark ? Colors.white : Colors.black,
+                        letterSpacing: 1,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -2603,8 +3671,8 @@ class _DashedCirclePainter extends CustomPainter {
   final double? strokeWidth;
 
   _DashedCirclePainter({
-    required this.progress, 
-    required this.color, 
+    required this.progress,
+    required this.color,
     required this.backgroundColor,
     this.strokeWidth,
   });
@@ -2634,28 +3702,28 @@ class _DashedCirclePainter extends CustomPainter {
     final dashAngle = (2 * 3.14159) / dashCount;
 
     for (int i = 0; i < dashCount; i++) {
-        final startAngle = i * dashAngle;
-        final sweepAngle = dashAngle * (1 - gap);
-        
-        // Draw background segment
-        canvas.drawArc(
-            Rect.fromCircle(center: center, radius: radius),
-            startAngle,
-            sweepAngle,
-            false,
-            bgPaint
-        );
+      final startAngle = i * dashAngle;
+      final sweepAngle = dashAngle * (1 - gap);
 
-        // Draw progress segment if within range
-        if (i < dashCount * progress) {
-            canvas.drawArc(
-                Rect.fromCircle(center: center, radius: radius),
-                startAngle,
-                sweepAngle,
-                false,
-                progressPaint
-            );
-        }
+      // Draw background segment
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        startAngle,
+        sweepAngle,
+        false,
+        bgPaint,
+      );
+
+      // Draw progress segment if within range
+      if (i < dashCount * progress) {
+        canvas.drawArc(
+          Rect.fromCircle(center: center, radius: radius),
+          startAngle,
+          sweepAngle,
+          false,
+          progressPaint,
+        );
+      }
     }
   }
 
@@ -2692,7 +3760,8 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
   void _compileImages() {
     final List<String> imgs = [];
     final project = widget.project;
-    if (project['heroImage'] != null && project['heroImage'].toString().isNotEmpty) {
+    if (project['heroImage'] != null &&
+        project['heroImage'].toString().isNotEmpty) {
       imgs.add(project['heroImage'].toString());
     }
     if (project['heroImages'] is List) {
@@ -2709,14 +3778,19 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
     }
     _uniqueImages = imgs.toSet().where((img) => img.isNotEmpty).toList();
     if (_uniqueImages.isEmpty) {
-      _uniqueImages.add('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80');
+      _uniqueImages.add(
+        'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80',
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final title = (widget.project['title']?.toString() ?? 'M4 Estate').toUpperCase();
-    final description = widget.project['description']?.toString() ?? 'A curated luxury development by M4 Properties.';
+    final title = (widget.project['title']?.toString() ?? 'M4 Estate')
+        .toUpperCase();
+    final description =
+        widget.project['description']?.toString() ??
+        'A curated luxury development by M4 Properties.';
     final primaryImg = _uniqueImages.first;
 
     return Scaffold(
@@ -2731,7 +3805,7 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
                 child: _buildBackground(primaryImg),
               ),
             ),
-            
+
             // Content
             Column(
               children: [
@@ -2747,10 +3821,12 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
                             return Expanded(
                               child: Container(
                                 height: 3,
-                                margin: const EdgeInsets.symmetric(horizontal: 3),
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 3,
+                                ),
                                 decoration: BoxDecoration(
-                                  color: index <= _currentStep 
-                                      ? M4Theme.premiumBlue 
+                                  color: index <= _currentStep
+                                      ? M4Theme.premiumBlue
                                       : Colors.white.withOpacity(0.2),
                                   borderRadius: BorderRadius.circular(1.5),
                                 ),
@@ -2770,7 +3846,11 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
                             shape: BoxShape.circle,
                             color: Colors.white.withOpacity(0.1),
                           ),
-                          child: const Icon(LucideIcons.x, color: Colors.white, size: 18),
+                          child: const Icon(
+                            LucideIcons.x,
+                            color: Colors.white,
+                            size: 18,
+                          ),
                         ),
                       ),
                     ],
@@ -2818,7 +3898,10 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
                           }
                         },
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 12,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(20),
@@ -3002,7 +4085,9 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
               return ListenableBuilder(
                 listenable: _pageController,
                 builder: (context, _) {
-                  final page = _pageController.hasClients ? (_pageController.page ?? 0).round() : 0;
+                  final page = _pageController.hasClients
+                      ? (_pageController.page ?? 0).round()
+                      : 0;
                   final isSelected = page == index;
                   return AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
@@ -3038,8 +4123,16 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
               color: M4Theme.premiumBlue.withOpacity(0.2),
               border: Border.all(color: M4Theme.premiumBlue, width: 2),
             ),
-            child: const Icon(LucideIcons.check, color: M4Theme.premiumBlue, size: 36),
-          ).animate().scale(delay: 150.ms, duration: 400.ms, curve: Curves.easeOutBack),
+            child: const Icon(
+              LucideIcons.check,
+              color: M4Theme.premiumBlue,
+              size: 36,
+            ),
+          ).animate().scale(
+            delay: 150.ms,
+            duration: 400.ms,
+            curve: Curves.easeOutBack,
+          ),
           const SizedBox(height: 32),
           Text(
             'YOUR JOURNEY STARTS HERE',
@@ -3062,7 +4155,7 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
             ),
           ),
           const SizedBox(height: 48),
-          
+
           // Action buttons
           SizedBox(
             width: double.infinity,
@@ -3072,11 +4165,17 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: M4Theme.premiumBlue,
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
               ),
               child: Text(
                 'BOOK VIDEO CALL',
-                style: GoogleFonts.dmSerifDisplay(fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 2),
+                style: GoogleFonts.dmSerifDisplay(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 2,
+                ),
               ),
             ),
           ),
@@ -3089,11 +4188,17 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
               style: OutlinedButton.styleFrom(
                 side: const BorderSide(color: Colors.white24, width: 1.5),
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
               ),
               child: Text(
                 'CONTINUE TO SITE VISIT',
-                style: GoogleFonts.dmSerifDisplay(fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 2),
+                style: GoogleFonts.dmSerifDisplay(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 2,
+                ),
               ),
             ),
           ),
@@ -3138,6 +4243,8 @@ class ImageBackground extends StatelessWidget {
       childImage = CachedNetworkImage(
         imageUrl: resolvedUrl,
         fit: BoxFit.cover,
+        memCacheWidth: 900,
+        fadeInDuration: Duration.zero,
         placeholder: (context, url) => Container(color: Colors.black26),
         errorWidget: (context, url, error) => Image.network(
           'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80',

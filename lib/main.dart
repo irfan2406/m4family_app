@@ -591,13 +591,23 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/investor/projects/:id',
-      builder: (context, state) =>
-          InvestorProjectDetailScreen(projectId: state.pathParameters['id']!),
+      // Callers push the project they already have as `extra`; forward it so the
+      // page renders instantly and still works when the id is a placeholder slug.
+      builder: (context, state) => InvestorProjectDetailScreen(
+        projectId: state.pathParameters['id']!,
+        projectData: state.extra is Map
+            ? Map<String, dynamic>.from(state.extra as Map)
+            : null,
+      ),
     ),
     GoRoute(
       path: '/investor/projects/:id/3d-view',
-      builder: (context, state) =>
-          InvestorProjectDetailScreen(projectId: state.pathParameters['id']!),
+      builder: (context, state) => InvestorProjectDetailScreen(
+        projectId: state.pathParameters['id']!,
+        projectData: state.extra is Map
+            ? Map<String, dynamic>.from(state.extra as Map)
+            : null,
+      ),
     ),
     // Investor elite
     GoRoute(

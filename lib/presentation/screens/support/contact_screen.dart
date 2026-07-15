@@ -56,7 +56,9 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
         _emailController.text.trim().isEmpty ||
         _phoneController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in your name, email and phone')),
+        const SnackBar(
+          content: Text('Please fill in your name, email and phone'),
+        ),
       );
       return;
     }
@@ -74,12 +76,14 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
         'email': _emailController.text.trim(),
         'phone': _phoneController.text.trim(),
         'message': _messageController.text.trim(),
-        'source': 'App Contact Form',
+        // Server-side enum: source = online | cp | walk-in | referral | other.
+        'source': 'online',
       });
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Thank you! We will get in touch with you shortly.'),
+          backgroundColor: Color(0xFF10B981),
         ),
       );
       _nameController.clear();
@@ -89,9 +93,9 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
       _agreedToPrivacy = false;
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: $e')));
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
@@ -301,12 +305,12 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
     ).animate().fadeIn().slideX(begin: -0.1);
   }
 
-  // Web parity: gradient "GET IN TOUCH WITH US" heading + intro paragraph.
+  // "GET IN TOUCH WITH US" heading + intro paragraph.
   Widget _buildIntro(bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _gradientText(
+        _introText(
           'GET IN TOUCH WITH US',
           GoogleFonts.dmSerifDisplay(
             fontSize: 26,
@@ -317,7 +321,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
           isDark,
         ),
         const SizedBox(height: 18),
-        _gradientText(
+        _introText(
           "Thank you for visiting our website! We would love to hear from "
           "you. Whether you have a question, feedback, or simply want to say "
           "hello we're here to help. Please feel free to get in touch with us "
@@ -334,21 +338,14 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
     ).animate().fadeIn(delay: 80.ms);
   }
 
-  // Web parity: blue→gold gradient text in light mode; readable in dark mode.
-  Widget _gradientText(String text, TextStyle style, bool isDark) {
-    if (isDark) {
-      return Text(
-        text,
-        style: style.copyWith(color: Colors.white.withOpacity(0.9)),
-      );
-    }
-    return ShaderMask(
-      shaderCallback: (bounds) => const LinearGradient(
-        colors: [Color(0xFF2F4A73), Color(0xFFB08D3E)],
-        begin: Alignment.centerLeft,
-        end: Alignment.centerRight,
-      ).createShader(bounds),
-      child: Text(text, style: style.copyWith(color: Colors.white)),
+  // Was a blue→gold gradient (ShaderMask) in light mode; now solid — near-black
+  // on light, white on dark so it stays readable in both.
+  Widget _introText(String text, TextStyle style, bool isDark) {
+    return Text(
+      text,
+      style: style.copyWith(
+        color: isDark ? Colors.white.withOpacity(0.9) : Colors.black,
+      ),
     );
   }
 
@@ -435,7 +432,8 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: GoogleFonts.dmSerifDisplay(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.4),
+          // Was 0.4 — too faint to read on the white field.
+          color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
           fontSize: 14,
           fontWeight: FontWeight.w500,
         ),
@@ -494,7 +492,9 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                 style: GoogleFonts.dmSerifDisplay(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.7),
+                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    0.7,
+                  ),
                 ),
                 children: [
                   const TextSpan(text: "I've read and agree to the "),

@@ -59,11 +59,24 @@ class M4Image extends ConsumerWidget {
     final apiClient = ref.read(apiClientProvider);
     final resolvedUrl = apiClient.resolveUrl(imageUrl);
 
+    // Decode at roughly the size we actually paint at rather than the source's
+    // full resolution, and skip CachedNetworkImage's default 500ms fade — both
+    // are why images appeared late. Falls back to the screen width when this
+    // image is sized by its parent (width == null / infinite).
+    final media = MediaQuery.maybeOf(context);
+    final dpr = media?.devicePixelRatio ?? 2.0;
+    final logicalWidth = (width != null && width!.isFinite)
+        ? width!
+        : (media?.size.width ?? 400.0);
+    final memWidth = (logicalWidth * dpr).round().clamp(64, 2048);
+
     return CachedNetworkImage(
       imageUrl: resolvedUrl,
       fit: fit,
       width: width,
       height: height,
+      memCacheWidth: memWidth,
+      fadeInDuration: Duration.zero,
       placeholder: (context, url) => placeholder ?? Container(color: Colors.black12),
       errorWidget: (context, url, error) => errorWidget ?? _buildFallback(),
     );

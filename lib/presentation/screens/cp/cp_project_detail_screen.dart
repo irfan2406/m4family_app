@@ -11,6 +11,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
 import 'package:m4_mobile/presentation/widgets/luxury_amenity_icon.dart';
@@ -70,6 +71,16 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
   // Registration (interest) form — web section `#registration`
   bool _regSubmitting = false;
   String? _regEmployeeId;
+
+  // Inline validation for the Registration form — each error is shown on its
+  // own field rather than as a snackbar that didn't say which one was wrong.
+  String? _regNameError;
+  String? _regPhoneError;
+  String? _regEmailError;
+
+  /// Resolved project ObjectId for the registration payload — null when we only
+  /// have a slug (the API rejects a non-ObjectId here).
+  String? _regProjectId;
   final _regEmployeeEntered = TextEditingController();
   final _regClientName = TextEditingController();
   final _regClientPhone = TextEditingController();
@@ -320,7 +331,16 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
   }
 
   Future<void> _openVideoCallSheet() async {
-    // fetch employees once (CP CRM)
+    // Open the sheet FIRST. These fetches used to be awaited before it opened —
+    // and the projects catalog takes ~90s (multi-MB payload), so tapping
+    // "Connect Now" appeared to do nothing at all for a minute and a half.
+    // The dropdowns fill in as each fetch lands.
+    //
+    // Web parity: client fields start EMPTY — don't prefill with the CP's own
+    // account details. "Select Project" also starts unselected, matching web.
+    if (mounted) setState(() => _leadOpen = true);
+
+    // Employees (CP CRM) — small payload, lands quickly.
     if (_employees.isEmpty) {
       try {
         final res = await ref.read(apiClientProvider).getCpEmployees();
@@ -329,27 +349,24 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           _employees = (body['data'] as List)
               .map((e) => Map<String, dynamic>.from(e as Map))
               .toList();
+          if (mounted) setState(() {});
         }
       } catch (_) {}
     }
 
-    // Fetch all projects for the "Select Project" dropdown (web parity).
+    // Projects for the "Select Project" dropdown. Go through the shared
+    // projectsProvider rather than a bare getProjects(): it's cached, so this
+    // no longer re-downloads the multi-MB catalog every time the sheet opens.
     if (_allProjects.isEmpty) {
       try {
-        final res = await ref.read(apiClientProvider).getProjects();
-        final body = res.data;
-        final list = body is Map ? body['data'] : null;
-        if (list is List) {
-          _allProjects = list
-              .map((e) => Map<String, dynamic>.from(e as Map))
-              .toList();
-        }
+        final list = await ref.read(projectsProvider.future);
+        _allProjects = list
+            .whereType<Map>()
+            .map((e) => Map<String, dynamic>.from(e))
+            .toList();
+        if (mounted) setState(() {});
       } catch (_) {}
     }
-
-    // Web parity: client fields start EMPTY — don't prefill with the CP's own
-    // account details. "Select Project" also starts unselected, matching web.
-    if (mounted) setState(() => _leadOpen = true);
   }
 
   Future<void> _submitRegistration() async {
@@ -377,19 +394,29 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         _regEmployeeId != null &&
         _regEmployeeId!.isNotEmpty &&
         _regEmployeeId != 'other';
-    if (_regClientName.text.trim().isEmpty ||
-        _regClientPhone.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Enter client name and number')),
-      );
-      return;
-    }
-    if (_regClientEmail.text.trim().isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Enter email address')));
-      return;
-    }
+    // Each problem is reported ON its own field (red border + reason) instead
+    // of a snackbar that didn't say which field was wrong.
+    final email = _regClientEmail.text.trim();
+    final phone = _regClientPhone.text.trim();
+    final nameErr = _regClientName.text.trim().isEmpty
+        ? 'Enter the client name'
+        : null;
+    final phoneErr = phone.isEmpty
+        ? 'Enter the client number'
+        : (phone.replaceAll(RegExp(r'\D'), '').length < 10
+              ? 'Enter a valid 10-digit number'
+              : null);
+    final emailErr = email.isEmpty
+        ? 'Enter the email address'
+        : (!RegExp(r'^[\w.+-]+@[\w-]+\.[\w.-]+$').hasMatch(email)
+              ? 'Enter a valid email address'
+              : null);
+    setState(() {
+      _regNameError = nameErr;
+      _regPhoneError = phoneErr;
+      _regEmailError = emailErr;
+    });
+    if (nameErr != null || phoneErr != null || emailErr != null) return;
 
     final selectName = hasPick
         ? _employees
@@ -412,6 +439,11 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         ref.read(authProvider).user?['_id']?.toString() ??
         ref.read(authProvider).user?['id']?.toString();
 
+    // Resolve a REAL project ObjectId; widget.projectId may be a route slug.
+    final regProjectIdRaw =
+        p['_id']?.toString() ?? p['id']?.toString() ?? widget.projectId;
+    _regProjectId = regProjectIdRaw.length == 24 ? regProjectIdRaw : null;
+
     setState(() => _regSubmitting = true);
     try {
       final api = ref.read(apiClientProvider);
@@ -419,11 +451,17 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         'name': _regClientName.text.trim(),
         'email': _regClientEmail.text.trim(),
         'phone': _regClientPhone.text.trim(),
-        'projectId':
-            p['_id']?.toString() ?? p['id']?.toString() ?? widget.projectId,
+        // `projectId` is an ObjectId ref. widget.projectId can be a route SLUG
+        // ("cledor"), which made the API reject the whole lead with a
+        // CastToObjectId/BSONError — so only send a real id (same guard as
+        // sourceId below). `project` still carries the title either way.
+        if (_regProjectId != null) 'projectId': _regProjectId,
         'project': (p['title'] ?? 'Project').toString(),
-        'interest': 'Registration',
-        'status': 'new',
+        // Server-side enum — 'Registration' isn't a valid value and was
+        // rejected with a 400. Valid: Buying | Selling | Site Visit | Video Call.
+        'interest': 'Buying',
+        // Enum is UPPERCASE ('new' was rejected). Valid: NEW | INTERESTED | …
+        'status': 'NEW',
         'source': 'cp',
         'message':
             'CP portal registration • Employee: $employeeName • Project: ${(p['title'] ?? 'N/A').toString()}${loc.isNotEmpty ? ' • Location: $loc' : ''}',
@@ -436,9 +474,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       if (!mounted) return;
       final ok = res.data is Map ? (res.data as Map)['status'] == true : false;
       if (ok) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Registration submitted')));
+        _regToast('Registration submitted', success: true);
         _regEmployeeEntered.clear();
         _regClientName.clear();
         _regClientPhone.clear();
@@ -449,18 +485,13 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         final msg = res.data is Map
             ? (res.data as Map)['message']?.toString()
             : null;
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(msg ?? 'Submission failed')));
+        _regToast(msg ?? 'Submission failed');
       }
     } on DioException catch (e) {
       final msg = e.response?.data is Map
           ? (e.response!.data as Map)['message']?.toString()
           : null;
-      if (mounted)
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(msg ?? 'Submission failed')));
+      if (mounted) _regToast(msg ?? 'Submission failed');
     } finally {
       if (mounted) setState(() => _regSubmitting = false);
     }
@@ -586,23 +617,17 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     final typedEmp = _employeeEntered.text.trim();
     final hasPick = _employeeId != null && _employeeId!.isNotEmpty;
     if (!typedEmp.isNotEmpty && !hasPick) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Enter or select employee name')),
-      );
+      _regToast('Enter or select employee name');
       return;
     }
     if (_clientName.text.trim().isEmpty ||
         _clientPhone.text.trim().isEmpty ||
         _clientEmail.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Enter client name, number, and email')),
-      );
+      _regToast('Enter client name, number, and email');
       return;
     }
     if (_videoCallDt == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Select date and time')));
+      _regToast('Select date and time');
       return;
     }
 
@@ -651,10 +676,13 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         'name': _clientName.text.trim(),
         'phone': _clientPhone.text.trim(),
         'email': _clientEmail.text.trim(),
-        'projectId': effectiveProjectId,
+        // Only ever send a real ObjectId — a slug here made the API reject the
+        // whole lead with a CastToObjectId/BSONError.
+        if (effectiveProjectId.length == 24) 'projectId': effectiveProjectId,
         'project': effectiveProjectTitle,
         'interest': _visitType,
-        'status': 'new',
+        // Enum is UPPERCASE ('new' was rejected). Valid: NEW | INTERESTED | …
+        'status': 'NEW',
         'source': 'cp',
         'message':
             'CP video call • Employee: $employeeName • ${(p['title'] ?? '').toString()}',
@@ -669,25 +697,18 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       final ok = res.data is Map ? (res.data as Map)['status'] == true : false;
       if (ok) {
         setState(() => _leadOpen = false);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Request submitted')));
+        _regToast('Request submitted', success: true);
       } else {
         final msg = res.data is Map
             ? (res.data as Map)['message']?.toString()
             : null;
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(msg ?? 'Submission failed')));
+        _regToast(msg ?? 'Submission failed');
       }
     } on DioException catch (e) {
       final msg = e.response?.data is Map
           ? (e.response!.data as Map)['message']?.toString()
           : null;
-      if (mounted)
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(msg ?? 'Submission failed')));
+      if (mounted) _regToast(msg ?? 'Submission failed');
     } finally {
       if (mounted) setState(() => _leadSubmitting = false);
     }
@@ -2208,6 +2229,11 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             controller: _regClientName,
             hint: 'CLIENT NAME',
             scheme: scheme,
+            errorText: _regNameError,
+            // Clear the red state as soon as they start typing.
+            onChanged: (v) {
+              if (_regNameError != null) setState(() => _regNameError = null);
+            },
           ),
           const SizedBox(height: 12),
           _cpLabel(scheme, 'Client Number'),
@@ -2217,6 +2243,10 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             hint: '+91 98653 21250',
             scheme: scheme,
             keyboardType: TextInputType.phone,
+            errorText: _regPhoneError,
+            onChanged: (v) {
+              if (_regPhoneError != null) setState(() => _regPhoneError = null);
+            },
           ),
           const SizedBox(height: 12),
           _cpLabel(scheme, 'E-mail'),
@@ -2226,6 +2256,10 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             hint: 'EMAIL ADDRESS',
             scheme: scheme,
             keyboardType: TextInputType.emailAddress,
+            errorText: _regEmailError,
+            onChanged: (v) {
+              if (_regEmailError != null) setState(() => _regEmailError = null);
+            },
           ),
           const SizedBox(height: 12),
           _cpLabel(scheme, 'Location'),
@@ -2455,6 +2489,12 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     final btnBg = isLight ? Colors.black : Colors.white;
     final btnFg = isLight ? Colors.white : Colors.black;
     final accent = isLight ? Colors.black : scheme.primary;
+    final media = MediaQuery.of(context);
+    // Clear the floating bottom nav (the sheet used to butt straight into it),
+    // and ride up with the keyboard when a field is focused.
+    final bottomGap = media.viewInsets.bottom > 0
+        ? media.viewInsets.bottom + 12
+        : 96.0;
     return Positioned.fill(
       child: Material(
         color: Colors.black.withValues(alpha: 0.45),
@@ -2462,12 +2502,21 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           child: Align(
             alignment: Alignment.bottomCenter,
             child: Container(
+              margin: EdgeInsets.fromLTRB(12, 12, 12, bottomGap),
+              // Never swallow the whole screen — it had no height cap at all.
+              constraints: BoxConstraints(maxHeight: media.size.height * 0.70),
               padding: const EdgeInsets.fromLTRB(18, 14, 18, 18),
               decoration: BoxDecoration(
                 color: scheme.surface,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(34),
-                ),
+                // Floats clear of the nav now, so round every corner.
+                borderRadius: BorderRadius.circular(28),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.28),
+                    blurRadius: 30,
+                    offset: const Offset(0, 12),
+                  ),
+                ],
               ),
               child: SingleChildScrollView(
                 child: Column(
@@ -2780,24 +2829,74 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     );
   }
 
+  /// Registration result toast — red on failure, green on success.
+  void _regToast(String message, {bool success = false}) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(
+            message,
+            style: GoogleFonts.dmSerifDisplay(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+          ),
+          backgroundColor: success
+              ? const Color(0xFF10B981)
+              : const Color(0xFFE24B4A),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
+  }
+
   Widget _cpField({
     required TextEditingController controller,
     required String hint,
     required ColorScheme scheme,
     TextInputType? keyboardType,
+    // When set, the field turns red and shows the reason underneath — the
+    // problem stays on the field it belongs to, no snackbar over the page.
+    String? errorText,
+    ValueChanged<String>? onChanged,
   }) {
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
-      decoration: _cpInputDec(scheme, hint: hint),
+      onChanged: onChanged,
+      decoration: _cpInputDec(scheme, hint: hint, errorText: errorText),
       style: GoogleFonts.dmSerifDisplay(fontWeight: FontWeight.w700),
     );
   }
 
-  InputDecoration _cpInputDec(ColorScheme scheme, {required String hint}) {
+  InputDecoration _cpInputDec(
+    ColorScheme scheme, {
+    required String hint,
+    String? errorText,
+  }) {
     final isLight = scheme.brightness == Brightness.light;
+    const errorColor = Color(0xFFE24B4A);
     return InputDecoration(
       hintText: hint,
+      errorText: errorText,
+      errorStyle: GoogleFonts.dmSerifDisplay(
+        fontSize: 11,
+        fontWeight: FontWeight.w600,
+        color: errorColor,
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: errorColor, width: 1.5),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: errorColor, width: 1.5),
+      ),
       hintStyle: GoogleFonts.dmSerifDisplay(
         fontSize: 10,
         fontWeight: FontWeight.w900,

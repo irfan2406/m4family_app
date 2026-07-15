@@ -2232,7 +2232,9 @@ class _ConsultationSection extends ConsumerWidget {
                               'name': nameController.text,
                               'phone': phoneController.text,
                               'email': emailController.text,
-                              'source': 'App Custom Views Consultation',
+                              // Server-side enum: source = online | cp |
+                              // walk-in | referral | other.
+                              'source': 'online',
                             });
 
                             if (context.mounted) {

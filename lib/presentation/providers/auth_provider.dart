@@ -75,6 +75,13 @@ class AuthNotifier extends StateNotifier<AuthState> {
     if (mounted) state = state.copyWith(bootstrapped: true);
   }
 
+  /// Applies an already-known user payload (e.g. the body a PATCH /me returns)
+  /// so the UI reflects a save immediately, without waiting on [fetchMe].
+  void setUser(Map<String, dynamic> user) {
+    if (!mounted) return;
+    state = state.copyWith(status: AuthStatus.authenticated, user: user);
+  }
+
   Future<void> fetchMe() async {
     try {
       final response = await _apiClient.getCurrentUser();

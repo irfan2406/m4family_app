@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
@@ -182,8 +183,17 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
         _selectedProjectId == null ||
         _employeeId == null ||
         _scheduledAt == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please complete all fields')),
+      _showMessage('Please complete all fields');
+      return;
+    }
+    // The catalog falls back to placeholder projects (slug ids like 'cledor')
+    // while the bloated projects endpoint is still loading. Booking one can
+    // only fail server-side with `Cast to ObjectId failed`, so stop here and
+    // say what's actually happening rather than surfacing a BSON error.
+    if (_selectedProjectId!.length != 24) {
+      _showMessage(
+        'Still loading the live project list — please wait a moment, '
+        'then reselect the project.',
       );
       return;
     }
@@ -205,26 +215,64 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
       if (!mounted) return;
       final ok = res.data is Map && (res.data as Map)['status'] == true;
       if (ok) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Visit scheduled successfully!')),
-        );
+        _showMessage('Visit scheduled successfully!', success: true);
         Navigator.pop(context);
       } else {
         final msg = res.data is Map
             ? (res.data as Map)['message']?.toString()
             : null;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(msg ?? 'Failed to schedule visit')),
-        );
+        _showMessage(msg ?? 'Failed to schedule visit');
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error: $e')));
+      _showMessage(_errorText(e));
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
+  }
+
+  /// The API explains *why* it rejected a request in `message` — surface that
+  /// instead of dumping the raw DioException (which said nothing useful and
+  /// filled the screen).
+  String _errorText(Object e) {
+    if (e is DioException) {
+      final data = e.response?.data;
+      if (data is Map && data['message'] != null) {
+        return data['message'].toString();
+      }
+      if (e.type == DioExceptionType.connectionError ||
+          e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout) {
+        return 'Connection problem. Please try again.';
+      }
+    }
+    return 'Could not schedule the visit. Please try again.';
+  }
+
+  /// Red on failure, green on success.
+  void _showMessage(String message, {bool success = false}) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(
+            message,
+            style: GoogleFonts.dmSerifDisplay(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+          ),
+          backgroundColor: success
+              ? const Color(0xFF10B981)
+              : const Color(0xFFE24B4A),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
   }
 
   @override

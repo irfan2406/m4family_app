@@ -171,9 +171,12 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
             'App User',
         'phone': authUser?['phone']?.toString() ?? '',
         'interest': 'Site Visit',
-        'projectId': _selectedProjectId,
+        // Only ever send a real ObjectId (CastToObjectId/BSONError otherwise).
+        if ((_selectedProjectId?.length ?? 0) == 24)
+          'projectId': _selectedProjectId,
         'message': visitDetails,
-        'source': 'Mobile App',
+        // Server-side enum: source = online | cp | walk-in | referral | other.
+        'source': 'online',
       });
 
       if (!mounted) return;

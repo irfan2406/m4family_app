@@ -13,6 +13,7 @@ import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:m4_mobile/presentation/screens/pages/pages_list_screen.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_detail_screen.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
@@ -57,6 +58,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _messageController = TextEditingController();
   String? _selectedProject;
+
+  // Inline validation for the "Register your interest" form — the field itself
+  // turns red instead of a snackbar popping over the page.
+  String? _nameError;
+  String? _emailError;
+  String? _phoneError;
   bool _isSubmitting = false;
 
   @override
@@ -168,9 +175,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         child: Text(
           'NO MEDIA FOUND',
           style: GoogleFonts.dmSerifDisplay(
-            color: Colors.white10,
+            // Was Colors.white10 — invisible on the light background.
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.4),
             fontSize: 10,
             fontWeight: FontWeight.w900,
+            letterSpacing: 1.5,
           ),
         ),
       );
@@ -182,28 +193,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       itemCount: media.length > 12 ? 12 : media.length,
       itemBuilder: (context, index) {
         final m = media[index];
-        final project = m['project'];
         return _MediaCard(
           imageUrl: m['image'] as String,
           title: m['title'] as String,
-          onTap: () {
-            final projectId = project is Map
-                ? (project['_id']?.toString() ??
-                      project['id']?.toString() ??
-                      '')
-                : '';
-            if (projectId.isNotEmpty) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ProjectDetailScreen(
-                    projectId: projectId,
-                    projectData: project,
-                  ),
-                ),
-              );
-            }
-          },
+          // Media tiles open the Media Gallery (content hub) — same target as
+          // the menu's Media entry and the guest home — not the project page.
+          onTap: () => context.push('/media'),
         );
       },
     );
@@ -227,24 +222,21 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 
   Future<void> _fetchProjects() async {
+    // Go through the shared projectsProvider rather than a bare getProjects():
+    // it caches the (multi-MB) catalog payload so re-entering Home is instant,
+    // retries cold-start timeouts, and shares ONE download with the Projects
+    // tab. The old direct call also gated on `status == true`, which left the
+    // list silently empty whenever the API omitted that field.
     try {
-      final apiClient = ref.read(apiClientProvider);
-      final response = await apiClient.getProjects();
-      if (response.data['status'] == true && response.data['data'] is List) {
-        setState(() {
-          _projects = response.data['data'];
-          _projectsLoading = false;
-        });
-      } else {
-        setState(() => _projectsLoading = false);
-        final msg = response.data['message'] ?? 'Unknown error';
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('API Error: $msg'),
-            backgroundColor: Colors.orangeAccent,
-          ),
-        );
+      if (ref.read(projectsProvider) is AsyncError) {
+        ref.invalidate(projectsProvider);
       }
+      final projects = await ref.read(projectsProvider.future);
+      if (!mounted) return;
+      setState(() {
+        _projects = projects;
+        _projectsLoading = false;
+      });
     } catch (e) {
       if (mounted) {
         setState(() => _projectsLoading = false);
@@ -283,20 +275,31 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     }
   }
 
+  /// Marks the empty required fields red in place. Returns true when valid.
+  /// (Replaces the old snackbar — and the `_selectedProject == null` gate,
+  /// which could never pass: the project dropdown isn't part of this form, so
+  /// nothing ever set it and every submit failed even when fully filled.)
+  bool _validateInquiry() {
+    final nameErr = _nameController.text.trim().isEmpty
+        ? 'Please enter your full name'
+        : null;
+    final emailErr = _emailController.text.trim().isEmpty
+        ? 'Please enter your email address'
+        : null;
+    final phoneErr = _phoneController.text.trim().isEmpty
+        ? 'Please enter your phone number'
+        : null;
+    setState(() {
+      _nameError = nameErr;
+      _emailError = emailErr;
+      _phoneError = phoneErr;
+    });
+    return nameErr == null && emailErr == null && phoneErr == null;
+  }
+
   Future<void> _submitInquiry() async {
     final apiClient = ref.read(apiClientProvider);
-    if (_nameController.text.isEmpty ||
-        _emailController.text.isEmpty ||
-        _phoneController.text.isEmpty ||
-        _selectedProject == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please fill all required fields (*)'),
-          backgroundColor: Colors.redAccent,
-        ),
-      );
-      return;
-    }
+    if (!_validateInquiry()) return;
 
     setState(() => _isSubmitting = true);
 
@@ -306,11 +309,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         'email': _emailController.text,
         'phone': _phoneController.text,
         'message': _messageController.text,
-        'interest': 'Property Inquiry',
+        // `interest` and `source` are server-side enums — anything else is
+        // rejected with a 400. Valid: interest = Buying | Selling | Site Visit
+        // | Video Call (case-sensitive); source = online | cp | walk-in |
+        // referral | other.
+        'interest': 'Buying',
         'projectName': _selectedProject,
-        'source': 'Mobile Dashboard Inquiry',
+        'source': 'online',
       });
 
+      if (!mounted) return;
       if (response.data['status'] == true) {
         _nameController.clear();
         _emailController.clear();
@@ -324,16 +332,26 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             backgroundColor: Colors.green,
           ),
         );
+      } else {
+        // The API answered but rejected it — don't fail silently.
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not submit right now. Please try again.'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
       }
     } catch (e) {
+      if (!mounted) return;
+      // A raw DioException dump helps nobody — keep it human.
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Submission failed: $e'),
+        const SnackBar(
+          content: Text('Could not submit right now. Please try again.'),
           backgroundColor: Colors.redAccent,
         ),
       );
     } finally {
-      setState(() => _isSubmitting = false);
+      if (mounted) setState(() => _isSubmitting = false);
     }
   }
 
@@ -680,8 +698,19 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   (_topTabCategory == 'COMMUNITIES'
                       ? _communitiesLoading
                       : _projectsLoading)
-                  ? const Center(
-                      child: CircularProgressIndicator(color: Colors.white10),
+                  ? Center(
+                      // Was Colors.white10 — invisible on the light background,
+                      // so the section read as "nothing is loading".
+                      child: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.4),
+                        ),
+                      ),
                     )
                   : Builder(
                       builder: (context) {
@@ -703,9 +732,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             child: Text(
                               'NO ITEMS FOUND',
                               style: GoogleFonts.dmSerifDisplay(
-                                color: Colors.white10,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.4),
                                 fontSize: 10,
                                 fontWeight: FontWeight.w900,
+                                letterSpacing: 1.5,
                               ),
                             ),
                           );
@@ -1320,16 +1352,33 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   _PremiumInputField(
                     label: 'Full Name *',
                     controller: _nameController,
+                    errorText: _nameError,
+                    // Clear the red state as soon as they start typing.
+                    onChanged: (v) {
+                      if (_nameError != null) setState(() => _nameError = null);
+                    },
                   ),
                   _PremiumInputField(
                     label: 'Email Address *',
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
+                    errorText: _emailError,
+                    onChanged: (v) {
+                      if (_emailError != null) {
+                        setState(() => _emailError = null);
+                      }
+                    },
                   ),
                   _PremiumInputField(
                     label: 'Phone Number *',
                     controller: _phoneController,
                     keyboardType: TextInputType.phone,
+                    errorText: _phoneError,
+                    onChanged: (v) {
+                      if (_phoneError != null) {
+                        setState(() => _phoneError = null);
+                      }
+                    },
                   ),
                   _PremiumInputField(
                     label: 'Message',
@@ -1917,68 +1966,106 @@ class _PremiumInputField extends StatelessWidget {
   final TextInputType keyboardType;
   final int maxLines;
 
+  /// When set, the field itself turns red and shows this message underneath —
+  /// validation stays on the field instead of a snackbar over the page.
+  final String? errorText;
+  final ValueChanged<String>? onChanged;
+
   const _PremiumInputField({
     required this.label,
     required this.controller,
     this.keyboardType = TextInputType.text,
     this.maxLines = 1,
+    this.errorText,
+    this.onChanged,
   });
+
+  static const _errorColor = Color(0xFFE24B4A);
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final hasError = errorText != null;
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(15),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
-            decoration: BoxDecoration(
-              // Web parity: white field with a soft shadow.
-              color: isDark ? Colors.white.withOpacity(0.04) : Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
-              ),
-              boxShadow: isDark
-                  ? null
-                  : [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 18,
-                        offset: const Offset(0, 8),
-                      ),
-                    ],
-            ),
-            child: TextFormField(
-              controller: controller,
-              keyboardType: keyboardType,
-              maxLines: maxLines,
-              cursorColor: Theme.of(context).colorScheme.onSurface,
-              style: GoogleFonts.dmSerifDisplay(
-                color: Theme.of(context).colorScheme.onSurface,
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
-              // Web parity: a placeholder that disappears on typing (not a
-              // floating label that sits above the typed text).
-              decoration: InputDecoration(
-                isCollapsed: true,
-                hintText: label,
-                hintStyle: GoogleFonts.dmSerifDisplay(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withOpacity(0.68),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 22,
+                  vertical: 16,
                 ),
-                border: InputBorder.none,
+                decoration: BoxDecoration(
+                  // Web parity: white field with a soft shadow.
+                  color: isDark ? Colors.white.withOpacity(0.04) : Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: hasError
+                        ? _errorColor
+                        : (isDark ? Colors.white : Colors.black).withOpacity(
+                            0.08,
+                          ),
+                    width: hasError ? 1.5 : 1,
+                  ),
+                  boxShadow: isDark
+                      ? null
+                      : [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 18,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
+                ),
+                child: TextFormField(
+                  controller: controller,
+                  keyboardType: keyboardType,
+                  maxLines: maxLines,
+                  onChanged: onChanged,
+                  cursorColor: Theme.of(context).colorScheme.onSurface,
+                  style: GoogleFonts.dmSerifDisplay(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  // Web parity: a placeholder that disappears on typing (not a
+                  // floating label that sits above the typed text).
+                  decoration: InputDecoration(
+                    isCollapsed: true,
+                    hintText: label,
+                    hintStyle: GoogleFonts.dmSerifDisplay(
+                      color: hasError
+                          ? _errorColor.withOpacity(0.75)
+                          : Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withOpacity(0.68),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    border: InputBorder.none,
+                  ),
+                ),
               ),
             ),
           ),
-        ),
+          if (hasError)
+            Padding(
+              padding: const EdgeInsets.only(left: 10, top: 6),
+              child: Text(
+                errorText!,
+                style: GoogleFonts.dmSerifDisplay(
+                  color: _errorColor,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
