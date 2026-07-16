@@ -42,7 +42,9 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final success = await ref.read(supportProvider.notifier).createTicket(
+    final success = await ref
+        .read(supportProvider.notifier)
+        .createTicket(
           subject: _subjectController.text,
           category: _selectedCategory,
           message: _messageController.text,
@@ -52,13 +54,19 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
     if (mounted) {
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Ticket raised successfully!')),
+          const SnackBar(
+            backgroundColor: Color(0xFF10B981),
+            content: Text('Ticket raised successfully!'),
+          ),
         );
         Navigator.pop(context);
       } else {
         final error = ref.read(supportProvider).error;
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(error ?? 'Failed to raise ticket')),
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text(error ?? 'Failed to raise ticket'),
+          ),
         );
       }
     }
@@ -70,7 +78,9 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
     final isLoading = ref.watch(supportProvider).isLoading;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF09090B) : const Color(0xFFF8FAFC),
+      backgroundColor: isDark
+          ? const Color(0xFF09090B)
+          : const Color(0xFFF8FAFC),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -83,11 +93,21 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    0.05,
+                  ),
                   shape: BoxShape.circle,
-                  border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
+                  border: Border.all(
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      0.1,
+                    ),
+                  ),
                 ),
-                child: Icon(LucideIcons.chevronLeft, color: isDark ? Colors.white : Colors.black, size: 16),
+                child: Icon(
+                  LucideIcons.chevronLeft,
+                  color: isDark ? Colors.white : Colors.black,
+                  size: 16,
+                ),
               ),
             ),
           ),
@@ -178,14 +198,24 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
+                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    0.03,
+                  ),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+                  border: Border.all(
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      0.05,
+                    ),
+                  ),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(LucideIcons.info, color: isDark ? Colors.white38 : Colors.black54, size: 20),
+                    Icon(
+                      LucideIcons.info,
+                      color: isDark ? Colors.white38 : Colors.black54,
+                      size: 20,
+                    ),
                     const SizedBox(width: 16),
                     Expanded(
                       child: Text(
@@ -236,26 +266,44 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
       controller: controller,
       maxLines: maxLines,
       validator: validator,
-      style: GoogleFonts.dmSerifDisplay(color: isDark ? Colors.white : Colors.black, fontSize: 13, fontWeight: FontWeight.w700),
+      style: GoogleFonts.dmSerifDisplay(
+        color: isDark ? Colors.white : Colors.black,
+        fontSize: 13,
+        fontWeight: FontWeight.w700,
+      ),
       decoration: InputDecoration(
         filled: true,
         fillColor: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
         hintText: hint,
-        hintStyle: GoogleFonts.dmSerifDisplay(color: isDark ? Colors.white24 : Colors.black26, fontSize: 12, fontWeight: FontWeight.w700),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        hintStyle: GoogleFonts.dmSerifDisplay(
+          color: isDark ? Colors.white24 : Colors.black26,
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 16,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+          borderSide: BorderSide(
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+          ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+          borderSide: BorderSide(
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: Color(0xFF3B82F6), width: 1.5),
         ),
-        errorStyle: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w700),
+        errorStyle: GoogleFonts.dmSerifDisplay(
+          fontSize: 10,
+          fontWeight: FontWeight.w700,
+        ),
       ),
     ).animate().fadeIn(delay: 100.ms);
   }
@@ -275,7 +323,9 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
               color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: _isCategoryOpen ? const Color(0xFF3B82F6) : (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                color: _isCategoryOpen
+                    ? const Color(0xFF3B82F6)
+                    : (isDark ? Colors.white : Colors.black).withOpacity(0.05),
               ),
             ),
             child: Row(
@@ -295,7 +345,9 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                   ),
                 ),
                 Icon(
-                  _isCategoryOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown,
+                  _isCategoryOpen
+                      ? LucideIcons.chevronUp
+                      : LucideIcons.chevronDown,
                   color: isDark ? Colors.white24 : Colors.black26,
                   size: 16,
                 ),
@@ -315,7 +367,11 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                 decoration: BoxDecoration(
                   color: isDark ? const Color(0xFF111111) : Colors.white,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+                  border: Border.all(
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      0.05,
+                    ),
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(isDark ? 0.5 : 0.1),
@@ -337,17 +393,26 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                       },
                       child: Container(
                         width: double.infinity,
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
                         decoration: BoxDecoration(
-                          color: isSelected ? const Color(0xFF3B82F6).withOpacity(0.1) : Colors.transparent,
+                          color: isSelected
+                              ? const Color(0xFF3B82F6).withOpacity(0.1)
+                              : Colors.transparent,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
                           category.toUpperCase(),
                           style: GoogleFonts.dmSerifDisplay(
-                            color: isSelected ? const Color(0xFF3B82F6) : (isDark ? Colors.white38 : Colors.black54),
+                            color: isSelected
+                                ? const Color(0xFF3B82F6)
+                                : (isDark ? Colors.white38 : Colors.black54),
                             fontSize: 10,
-                            fontWeight: isSelected ? FontWeight.w900 : FontWeight.w700,
+                            fontWeight: isSelected
+                                ? FontWeight.w900
+                                : FontWeight.w700,
                             letterSpacing: 0.5,
                           ),
                         ),
@@ -377,7 +442,9 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
               color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: _isPriorityOpen ? const Color(0xFF3B82F6) : (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                color: _isPriorityOpen
+                    ? const Color(0xFF3B82F6)
+                    : (isDark ? Colors.white : Colors.black).withOpacity(0.05),
               ),
             ),
             child: Row(
@@ -397,7 +464,9 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                   ),
                 ),
                 Icon(
-                  _isPriorityOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown,
+                  _isPriorityOpen
+                      ? LucideIcons.chevronUp
+                      : LucideIcons.chevronDown,
                   color: isDark ? Colors.white24 : Colors.black26,
                   size: 16,
                 ),
@@ -417,7 +486,11 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                 decoration: BoxDecoration(
                   color: isDark ? const Color(0xFF111111) : Colors.white,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+                  border: Border.all(
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      0.05,
+                    ),
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(isDark ? 0.5 : 0.1),
@@ -439,17 +512,26 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                       },
                       child: Container(
                         width: double.infinity,
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 14,
+                        ),
                         decoration: BoxDecoration(
-                          color: isSelected ? const Color(0xFF3B82F6).withOpacity(0.1) : Colors.transparent,
+                          color: isSelected
+                              ? const Color(0xFF3B82F6).withOpacity(0.1)
+                              : Colors.transparent,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
                           priority.toUpperCase(),
                           style: GoogleFonts.dmSerifDisplay(
-                            color: isSelected ? const Color(0xFF3B82F6) : (isDark ? Colors.white38 : Colors.black54),
+                            color: isSelected
+                                ? const Color(0xFF3B82F6)
+                                : (isDark ? Colors.white38 : Colors.black54),
                             fontSize: 10,
-                            fontWeight: isSelected ? FontWeight.w900 : FontWeight.w700,
+                            fontWeight: isSelected
+                                ? FontWeight.w900
+                                : FontWeight.w700,
                             letterSpacing: 0.5,
                           ),
                         ),
@@ -473,7 +555,10 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
 
     if (result != null) {
       setState(() {
-        _selectedFilePaths = [..._selectedFilePaths, ...result.paths.whereType<String>()];
+        _selectedFilePaths = [
+          ..._selectedFilePaths,
+          ...result.paths.whereType<String>(),
+        ];
       });
     }
   }
@@ -489,17 +574,25 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
             decoration: BoxDecoration(
               color: (isDark ? Colors.white : Colors.black).withOpacity(0.02),
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+              border: Border.all(
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+              ),
             ),
             child: Column(
               children: [
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      0.03,
+                    ),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(LucideIcons.paperclip, color: isDark ? Colors.white24 : Colors.black26, size: 20),
+                  child: Icon(
+                    LucideIcons.paperclip,
+                    color: isDark ? Colors.white24 : Colors.black26,
+                    size: 20,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -529,7 +622,9 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
               child: Row(
                 children: [
                   Icon(
-                    fileName.toLowerCase().endsWith('.pdf') ? LucideIcons.fileText : LucideIcons.image,
+                    fileName.toLowerCase().endsWith('.pdf')
+                        ? LucideIcons.fileText
+                        : LucideIcons.image,
                     color: isDark ? Colors.white38 : Colors.black38,
                     size: 16,
                   ),
@@ -537,7 +632,11 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                   Expanded(
                     child: Text(
                       fileName,
-                      style: GoogleFonts.dmSerifDisplay(color: isDark ? Colors.white70 : Colors.black87, fontSize: 12, fontWeight: FontWeight.w600),
+                      style: GoogleFonts.dmSerifDisplay(
+                        color: isDark ? Colors.white70 : Colors.black87,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -545,7 +644,11 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                   IconButton(
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
-                    icon: Icon(LucideIcons.x, color: isDark ? Colors.white38 : Colors.black38, size: 14),
+                    icon: Icon(
+                      LucideIcons.x,
+                      color: isDark ? Colors.white38 : Colors.black38,
+                      size: 14,
+                    ),
                     onPressed: () {
                       setState(() {
                         _selectedFilePaths.remove(path);
@@ -580,14 +683,19 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
         style: ElevatedButton.styleFrom(
           backgroundColor: isDark ? Colors.white : Colors.black,
           foregroundColor: isDark ? Colors.black : Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           elevation: 0,
         ),
         child: isLoading
             ? SizedBox(
                 height: 20,
                 width: 20,
-                child: CircularProgressIndicator(color: isDark ? Colors.black : Colors.white, strokeWidth: 2),
+                child: CircularProgressIndicator(
+                  color: isDark ? Colors.black : Colors.white,
+                  strokeWidth: 2,
+                ),
               )
             : Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -601,7 +709,11 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  Icon(LucideIcons.send, color: isDark ? Colors.black : Colors.white, size: 16),
+                  Icon(
+                    LucideIcons.send,
+                    color: isDark ? Colors.black : Colors.white,
+                    size: 16,
+                  ),
                 ],
               ),
       ),

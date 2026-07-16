@@ -40,10 +40,7 @@ class MyCustomViewsNotifier extends StateNotifier<MyCustomViewsState> {
   MyCustomViewsNotifier(this._ref) : super(MyCustomViewsState());
 
   Future<void> fetchAll() async {
-    await Future.wait([
-      fetchUnits(),
-      fetchHistory(),
-    ]);
+    await Future.wait([fetchUnits(), fetchHistory()]);
   }
 
   Future<void> fetchUnits() async {
@@ -51,7 +48,7 @@ class MyCustomViewsNotifier extends StateNotifier<MyCustomViewsState> {
     try {
       final apiClient = _ref.read(apiClientProvider);
       final response = await apiClient.getMyUnits();
-      
+
       if (response.data['status'] == true) {
         state = state.copyWith(
           units: response.data['data'] ?? [],
@@ -73,7 +70,7 @@ class MyCustomViewsNotifier extends StateNotifier<MyCustomViewsState> {
     try {
       final apiClient = _ref.read(apiClientProvider);
       final response = await apiClient.getMyCustomViews();
-      
+
       if (response.data['status'] == true) {
         state = state.copyWith(
           history: response.data['data'] ?? [],
@@ -91,6 +88,7 @@ class MyCustomViewsNotifier extends StateNotifier<MyCustomViewsState> {
   }
 }
 
-final myCustomViewsProvider = StateNotifierProvider<MyCustomViewsNotifier, MyCustomViewsState>((ref) {
-  return MyCustomViewsNotifier(ref);
-});
+final myCustomViewsProvider =
+    StateNotifierProvider<MyCustomViewsNotifier, MyCustomViewsState>((ref) {
+      return MyCustomViewsNotifier(ref);
+    });

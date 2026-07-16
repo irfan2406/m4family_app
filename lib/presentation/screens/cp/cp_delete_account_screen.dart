@@ -81,7 +81,10 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(msg, style: GoogleFonts.dmSerifDisplay(fontWeight: FontWeight.w600)),
+        content: Text(
+          msg,
+          style: GoogleFonts.dmSerifDisplay(fontWeight: FontWeight.w600),
+        ),
         backgroundColor: error ? _dangerDeep : Colors.green,
       ),
     );
@@ -96,7 +99,9 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
         final isDark = Theme.of(ctx).brightness == Brightness.dark;
         return AlertDialog(
           backgroundColor: isDark ? Colors.black : Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
           title: Text(
             'FINAL CONFIRMATION',
             style: GoogleFonts.dmSerifDisplay(
@@ -112,7 +117,9 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
             style: GoogleFonts.dmSerifDisplay(
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.7),
+              color: (isDark ? Colors.white : Colors.black).withValues(
+                alpha: 0.7,
+              ),
             ),
           ),
           actions: [
@@ -123,7 +130,9 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
                 style: GoogleFonts.dmSerifDisplay(
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
-                  color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
+                  color: (isDark ? Colors.white : Colors.black).withValues(
+                    alpha: 0.6,
+                  ),
                 ),
               ),
             ),
@@ -131,7 +140,9 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
               onPressed: () => Navigator.pop(ctx, true),
               style: FilledButton.styleFrom(
                 backgroundColor: _dangerDeep,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               child: Text(
                 'DELETE FOREVER',
@@ -162,7 +173,9 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
         // After session ends, go to guest mode, not the login page.
         context.go('/home');
       } else {
-        final msg = res.data is Map ? (res.data as Map)['message']?.toString() : null;
+        final msg = res.data is Map
+            ? (res.data as Map)['message']?.toString()
+            : null;
         _snack(msg ?? 'Failed to delete account', error: true);
       }
     } on DioException catch (e) {
@@ -305,7 +318,11 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
                   color: _danger.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: const Icon(LucideIcons.alertTriangle, size: 20, color: _danger),
+                child: const Icon(
+                  LucideIcons.alertTriangle,
+                  size: 20,
+                  color: _danger,
+                ),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -352,7 +369,12 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
   }
 
   // ── Purge scope list ───────────────────────────────────────────────────
-  Widget _purgeScopeCard(Color card, Color border, Color textPrimary, Color muted) {
+  Widget _purgeScopeCard(
+    Color card,
+    Color border,
+    Color textPrimary,
+    Color muted,
+  ) {
     return Container(
       decoration: BoxDecoration(
         color: card,
@@ -404,7 +426,11 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
                       ],
                     ),
                   ),
-                  Icon(LucideIcons.x, size: 16, color: _danger.withValues(alpha: 0.6)),
+                  Icon(
+                    LucideIcons.x,
+                    size: 16,
+                    color: _danger.withValues(alpha: 0.6),
+                  ),
                 ],
               ),
             ),
@@ -417,7 +443,12 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
   }
 
   // ── Type-DELETE confirmation ───────────────────────────────────────────
-  Widget _confirmField(Color card, Color border, Color textPrimary, Color muted) {
+  Widget _confirmField(
+    Color card,
+    Color border,
+    Color textPrimary,
+    Color muted,
+  ) {
     final ok = _confirmMatches;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -464,7 +495,10 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
                 color: muted.withValues(alpha: 0.68),
               ),
               border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 18,
+                vertical: 16,
+              ),
               suffixIcon: _confirmCtrl.text.isEmpty
                   ? null
                   : Icon(
@@ -480,7 +514,12 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
   }
 
   // ── Password re-auth ───────────────────────────────────────────────────
-  Widget _passwordField(Color card, Color border, Color textPrimary, Color muted) {
+  Widget _passwordField(
+    Color card,
+    Color border,
+    Color textPrimary,
+    Color muted,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -519,7 +558,10 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
                 color: muted.withValues(alpha: 0.68),
               ),
               border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 18,
+                vertical: 16,
+              ),
               prefixIcon: Icon(LucideIcons.lock, size: 16, color: muted),
               suffixIcon: GestureDetector(
                 onTap: () => setState(() => _obscurePass = !_obscurePass),
@@ -543,7 +585,9 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: _acknowledged ? _danger.withValues(alpha: 0.06) : Colors.transparent,
+          color: _acknowledged
+              ? _danger.withValues(alpha: 0.06)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: _acknowledged ? _danger.withValues(alpha: 0.4) : border,
@@ -614,12 +658,19 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
               ? const SizedBox(
                   width: 22,
                   height: 22,
-                  child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
                 )
               : Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(LucideIcons.trash2, color: Colors.white, size: 16),
+                    const Icon(
+                      LucideIcons.trash2,
+                      color: Colors.white,
+                      size: 16,
+                    ),
                     const SizedBox(width: 12),
                     Text(
                       'PERMANENTLY DELETE ACCOUNT',

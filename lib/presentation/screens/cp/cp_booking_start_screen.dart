@@ -20,7 +20,8 @@ class CpBookingStartScreen extends ConsumerWidget {
     final bg = isDark ? Colors.black : Colors.white;
     final textPrimary = isDark ? Colors.white : Colors.black;
 
-    final projectTitle = (project is Map ? project['title'] : null)?.toString() ?? 'Project';
+    final projectTitle =
+        (project is Map ? project['title'] : null)?.toString() ?? 'Project';
 
     final List<Map<String, dynamic>> options = [
       {
@@ -86,7 +87,9 @@ class CpBookingStartScreen extends ConsumerWidget {
                       width: 56,
                       height: 56,
                       decoration: BoxDecoration(
-                        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.03)
+                            : Colors.white,
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color: isDark
@@ -103,7 +106,11 @@ class CpBookingStartScreen extends ConsumerWidget {
                                 ),
                               ],
                       ),
-                      child: Icon(LucideIcons.arrowLeft, color: textPrimary, size: 24),
+                      child: Icon(
+                        LucideIcons.arrowLeft,
+                        color: textPrimary,
+                        size: 24,
+                      ),
                     ),
                   ),
 
@@ -142,79 +149,95 @@ class CpBookingStartScreen extends ConsumerWidget {
                     final i = entry.key;
                     final opt = entry.value;
                     return Padding(
-                      padding: const EdgeInsets.only(bottom: 20),
-                      child: _BookingOptionCard(
-                        opt: opt,
-                        isDark: isDark,
-                        onTap: () => context.push(opt['route'] as String),
-                      ),
-                    ).animate().fadeIn(delay: (600 + (i * 100)).ms).moveX(begin: -20, end: 0);
+                          padding: const EdgeInsets.only(bottom: 20),
+                          child: _BookingOptionCard(
+                            opt: opt,
+                            isDark: isDark,
+                            onTap: () => context.push(opt['route'] as String),
+                          ),
+                        )
+                        .animate()
+                        .fadeIn(delay: (600 + (i * 100)).ms)
+                        .moveX(begin: -20, end: 0);
                   }),
 
                   const SizedBox(height: 40),
 
                   // Info Box
                   Container(
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: M4Theme.premiumBlue.withValues(alpha: 0.05),
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: M4Theme.premiumBlue.withValues(alpha: 0.1)),
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: M4Theme.premiumBlue,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(
-                                color: M4Theme.premiumBlue.withValues(alpha: 0.3),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
+                        padding: const EdgeInsets.all(24),
+                        decoration: BoxDecoration(
+                          color: M4Theme.premiumBlue.withValues(alpha: 0.05),
+                          borderRadius: BorderRadius.circular(24),
+                          border: Border.all(
+                            color: M4Theme.premiumBlue.withValues(alpha: 0.1),
                           ),
-                          child: const Icon(LucideIcons.info, color: Colors.white, size: 20),
                         ),
-                        const SizedBox(width: 20),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'M4 FAMILY MEMBERS GET PRIORITY SITE VISITS AND EXCLUSIVE UNIT SELECTION WINDOWS.',
-                                style: GoogleFonts.dmSerifDisplay(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w900,
-                                  color: textPrimary.withValues(alpha: isDark ? 0.6 : 0.68),
-                                  letterSpacing: 0.5,
-                                  height: 1.6,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              GestureDetector(
-                                onTap: () => context.push('/about'),
-                                child: Text(
-                                  'LEARN MORE',
-                                  style: GoogleFonts.dmSerifDisplay(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w900,
-                                    color: M4Theme.premiumBlue,
-                                    letterSpacing: 1,
-                                    decoration: TextDecoration.underline,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: 40,
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: M4Theme.premiumBlue,
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: M4Theme.premiumBlue.withValues(
+                                      alpha: 0.3,
+                                    ),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
                                   ),
-                                ),
+                                ],
                               ),
-                            ],
-                          ),
+                              child: const Icon(
+                                LucideIcons.info,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            ),
+                            const SizedBox(width: 20),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'M4 FAMILY MEMBERS GET PRIORITY SITE VISITS AND EXCLUSIVE UNIT SELECTION WINDOWS.',
+                                    style: GoogleFonts.dmSerifDisplay(
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.w900,
+                                      color: textPrimary.withValues(
+                                        alpha: isDark ? 0.6 : 0.68,
+                                      ),
+                                      letterSpacing: 0.5,
+                                      height: 1.6,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  GestureDetector(
+                                    onTap: () => context.push('/about'),
+                                    child: Text(
+                                      'LEARN MORE',
+                                      style: GoogleFonts.dmSerifDisplay(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w900,
+                                        color: M4Theme.premiumBlue,
+                                        letterSpacing: 1,
+                                        decoration: TextDecoration.underline,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ).animate().fadeIn(delay: 1000.ms).scale(
+                      )
+                      .animate()
+                      .fadeIn(delay: 1000.ms)
+                      .scale(
                         begin: const Offset(0.95, 0.95),
                         end: const Offset(1, 1),
                       ),
@@ -296,7 +319,9 @@ class _BookingOptionCard extends StatelessWidget {
                     opt['desc'] as String,
                     style: GoogleFonts.dmSerifDisplay(
                       fontSize: 9,
-                      color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.68),
+                      color: (isDark ? Colors.white : Colors.black).withValues(
+                        alpha: 0.68,
+                      ),
                       fontWeight: FontWeight.bold,
                       height: 1.4,
                     ),
@@ -309,12 +334,16 @@ class _BookingOptionCard extends StatelessWidget {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                color: (isDark ? Colors.white : Colors.black).withValues(
+                  alpha: 0.05,
+                ),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 LucideIcons.chevronRight,
-                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+                color: (isDark ? Colors.white : Colors.black).withValues(
+                  alpha: 0.5,
+                ),
                 size: 16,
               ),
             ),

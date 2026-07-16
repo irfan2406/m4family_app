@@ -27,4 +27,3 @@ class _CpShellEntryScreenState extends ConsumerState<CpShellEntryScreen> {
     return const CpMainShell();
   }
 }
-

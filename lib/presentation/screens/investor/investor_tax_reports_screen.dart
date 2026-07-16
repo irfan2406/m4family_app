@@ -82,7 +82,9 @@ class _InvestorTaxReportsScreenState
     return _rows
         .whereType<Map>()
         .map((r) => Map<String, dynamic>.from(r))
-        .where((m) => _yearFilter == null || m['year']?.toString() == _yearFilter)
+        .where(
+          (m) => _yearFilter == null || m['year']?.toString() == _yearFilter,
+        )
         .toList();
   }
 
@@ -98,7 +100,10 @@ class _InvestorTaxReportsScreenState
   void _toast(String msg) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg, style: GoogleFonts.dmSerifDisplay(fontSize: 12))),
+      SnackBar(
+        backgroundColor: const Color(0xFFE24B4A),
+        content: Text(msg, style: GoogleFonts.dmSerifDisplay(fontSize: 12)),
+      ),
     );
   }
 
@@ -152,21 +157,21 @@ class _InvestorTaxReportsScreenState
               child: CircularProgressIndicator(color: M4Theme.premiumBlue),
             )
           : _error
-              ? _errorState(textPrimary, muted)
-              : RefreshIndicator(
-                  color: M4Theme.premiumBlue,
-                  onRefresh: _load,
-                  child: ListView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: EdgeInsets.zero,
-                    children: [
-                      _yearSelector(textPrimary, muted, card, border),
-                      _summaryCard(isDark, textPrimary, muted, border),
-                      _documentList(isDark, textPrimary, muted, card, border),
-                      const SizedBox(height: 24),
-                    ],
-                  ),
-                ),
+          ? _errorState(textPrimary, muted)
+          : RefreshIndicator(
+              color: M4Theme.premiumBlue,
+              onRefresh: _load,
+              child: ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: EdgeInsets.zero,
+                children: [
+                  _yearSelector(textPrimary, muted, card, border),
+                  _summaryCard(isDark, textPrimary, muted, border),
+                  _documentList(isDark, textPrimary, muted, card, border),
+                  const SizedBox(height: 24),
+                ],
+              ),
+            ),
     );
   }
 
@@ -216,7 +221,12 @@ class _InvestorTaxReportsScreenState
   }
 
   // ─── Year Selector ──────────────────────────────────────────────────────────
-  Widget _yearSelector(Color textPrimary, Color muted, Color card, Color border) {
+  Widget _yearSelector(
+    Color textPrimary,
+    Color muted,
+    Color card,
+    Color border,
+  ) {
     final years = _years;
     if (years.isEmpty) return const SizedBox.shrink();
     return Container(
@@ -235,8 +245,10 @@ class _InvestorTaxReportsScreenState
                 onTap: () => setState(() => _yearFilter = year),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: selected ? _gold : card,
                     borderRadius: BorderRadius.circular(10),
@@ -269,9 +281,17 @@ class _InvestorTaxReportsScreenState
   }
 
   // ─── Summary Card ─────────────────────────────────────────────────────────────
-  Widget _summaryCard(bool isDark, Color textPrimary, Color muted, Color border) {
-    final fmt =
-        NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0);
+  Widget _summaryCard(
+    bool isDark,
+    Color textPrimary,
+    Color muted,
+    Color border,
+  ) {
+    final fmt = NumberFormat.currency(
+      locale: 'en_IN',
+      symbol: '₹',
+      decimalDigits: 0,
+    );
     final total = _totalTaxDeducted;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
@@ -345,8 +365,10 @@ class _InvestorTaxReportsScreenState
                   style: OutlinedButton.styleFrom(
                     foregroundColor: textPrimary,
                     side: BorderSide(color: border),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 6,
+                    ),
                     minimumSize: const Size(0, 32),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -407,16 +429,16 @@ class _InvestorTaxReportsScreenState
             )
           else
             ...reports.asMap().entries.map(
-                  (e) => _documentCard(
-                    e.value,
-                    e.key,
-                    isDark,
-                    textPrimary,
-                    muted,
-                    card,
-                    border,
-                  ),
-                ),
+              (e) => _documentCard(
+                e.value,
+                e.key,
+                isDark,
+                textPrimary,
+                muted,
+                card,
+                border,
+              ),
+            ),
         ],
       ),
     );
@@ -476,7 +498,11 @@ class _InvestorTaxReportsScreenState
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(color: red.withValues(alpha: 0.2)),
                     ),
-                    child: const Icon(LucideIcons.fileText, size: 20, color: red),
+                    child: const Icon(
+                      LucideIcons.fileText,
+                      size: 20,
+                      color: red,
+                    ),
                   ),
                   const SizedBox(width: 16),
                   // Title + meta.
@@ -512,8 +538,9 @@ class _InvestorTaxReportsScreenState
                             ),
                             if (size.isNotEmpty) ...[
                               Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                ),
                                 child: Container(
                                   width: 3,
                                   height: 3,
@@ -553,8 +580,11 @@ class _InvestorTaxReportsScreenState
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(color: border),
                         ),
-                        child:
-                            Icon(LucideIcons.download, size: 16, color: muted),
+                        child: Icon(
+                          LucideIcons.download,
+                          size: 16,
+                          color: muted,
+                        ),
                       ),
                     ),
                   ),

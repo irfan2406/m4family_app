@@ -10,6 +10,7 @@ import 'package:m4_mobile/presentation/widgets/cp_sidebar_menu.dart';
 import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:m4_mobile/presentation/screens/content/content_detail_screen.dart';
 
 class CpBlogScreen extends ConsumerStatefulWidget {
   const CpBlogScreen({super.key});
@@ -247,197 +248,139 @@ class _BlogCard extends ConsumerWidget {
       item['image'] ?? item['thumbnail'] ?? item['coverImage'],
     );
     final date = DateTime.tryParse(item['createdAt'] ?? '') ?? DateTime.now();
-    final formattedDate = DateFormat('MMMM dd, yyyy').format(date);
+    final shortDate = DateFormat('M/d/yyyy').format(date);
 
+    // Web parity: a compact horizontal card — small square cover on the left,
+    // BLOG badge + title + READ ARTICLE on the right, date top-right. Tapping
+    // anywhere opens the article (READ MORE / share were dead `() {}` before).
     return Container(
-      margin: const EdgeInsets.only(bottom: 32),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF18181B) : Colors.white,
-        borderRadius: BorderRadius.circular(40),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(color: scheme.onSurface.withOpacity(0.05)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
-            blurRadius: 30,
-            offset: const Offset(0, 15),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
       clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Cover Image
-          AspectRatio(
-            aspectRatio: 16 / 10,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                CachedNetworkImage(
-                  imageUrl: imageUrl,
-                  fit: BoxFit.cover,
-                  placeholder: (_, __) =>
-                      Container(color: scheme.surfaceContainerHighest),
-                  errorWidget: (_, __, ___) => Container(
-                    color: scheme.surfaceContainerHighest,
-                    child: const Icon(LucideIcons.image, color: Colors.grey),
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.transparent,
-                        Colors.black.withOpacity(0.6),
-                      ],
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 20,
-                  right: 20,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(100),
-                      border: Border.all(color: Colors.white.withOpacity(0.2)),
-                    ),
-                    child: Text(
-                      (item['type'] ?? 'ARTICLE').toString().toUpperCase(),
-                      style: GoogleFonts.dmSerifDisplay(
-                        fontSize: 8,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 2,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ContentDetailScreen(content: item),
             ),
           ),
-
-          // Content
-          Padding(
-            padding: const EdgeInsets.all(28),
-            child: Column(
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Icon(
-                      LucideIcons.calendar,
-                      size: 12,
-                      color: scheme.onSurface.withOpacity(0.3),
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      formattedDate.toUpperCase(),
-                      style: GoogleFonts.dmSerifDisplay(
-                        fontSize: 9,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 1.5,
-                        color: scheme.onSurface.withOpacity(0.68),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: SizedBox(
+                    width: 92,
+                    height: 92,
+                    child: CachedNetworkImage(
+                      imageUrl: imageUrl,
+                      fit: BoxFit.cover,
+                      placeholder: (_, __) =>
+                          Container(color: scheme.surfaceContainerHighest),
+                      errorWidget: (_, __, ___) => Container(
+                        color: scheme.surfaceContainerHighest,
+                        child: const Icon(
+                          LucideIcons.image,
+                          color: Colors.grey,
+                          size: 20,
+                        ),
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    Container(
-                      width: 4,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: scheme.primary.withOpacity(0.4),
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Icon(
-                      LucideIcons.user,
-                      size: 12,
-                      color: scheme.onSurface.withOpacity(0.3),
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      'BY M4 TEAM',
-                      style: GoogleFonts.dmSerifDisplay(
-                        fontSize: 9,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 1.5,
-                        color: scheme.onSurface.withOpacity(0.68),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  (item['title'] ?? '').toString().toUpperCase(),
-                  style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: -0.5,
-                    height: 1.1,
-                    color: isLight ? Colors.black : Colors.white,
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 12),
-                Text(
-                  (item['description'] ?? '').toString(),
-                  style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: scheme.onSurface.withOpacity(isLight ? 0.75 : 0.6),
-                    height: 1.5,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 24),
-                Container(height: 1, color: scheme.onSurface.withOpacity(0.05)),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextButton.icon(
-                      onPressed: () {},
-                      icon: const Icon(LucideIcons.arrowRight, size: 16),
-                      label: Text(
-                        'READ MORE',
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: scheme.onSurface.withOpacity(0.06),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              (item['type'] ?? 'BLOG').toString().toUpperCase(),
+                              style: GoogleFonts.dmSerifDisplay(
+                                fontSize: 8,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 1.2,
+                                color: scheme.onSurface.withOpacity(0.7),
+                              ),
+                            ),
+                          ),
+                          const Spacer(),
+                          Text(
+                            shortDate,
+                            style: GoogleFonts.dmSerifDisplay(
+                              fontSize: 9,
+                              fontWeight: FontWeight.w700,
+                              color: scheme.onSurface.withOpacity(0.4),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        (item['title'] ?? '').toString().toUpperCase(),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.dmSerifDisplay(
-                          fontSize: 10,
+                          fontSize: 13,
                           fontWeight: FontWeight.w900,
-                          letterSpacing: 1.5,
+                          height: 1.15,
+                          letterSpacing: -0.3,
+                          color: isLight ? Colors.black : Colors.white,
                         ),
                       ),
-                      style: TextButton.styleFrom(
-                        foregroundColor: isLight
-                            ? Colors.black
-                            : scheme.primary,
-                        padding: EdgeInsets.zero,
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          Text(
+                            'READ ARTICLE',
+                            style: GoogleFonts.dmSerifDisplay(
+                              fontSize: 9,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 1,
+                              color: isLight ? Colors.black : scheme.primary,
+                            ),
+                          ),
+                          const Spacer(),
+                          Icon(
+                            LucideIcons.arrowRight,
+                            size: 14,
+                            color: isLight ? Colors.black : scheme.primary,
+                          ),
+                        ],
                       ),
-                    ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(LucideIcons.share2, size: 18),
-                      style: IconButton.styleFrom(
-                        backgroundColor: scheme.onSurface.withOpacity(0.05),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }

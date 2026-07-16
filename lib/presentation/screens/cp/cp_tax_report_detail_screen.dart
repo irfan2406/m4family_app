@@ -54,11 +54,11 @@ class _CpTaxReportDetailScreenState
         final d = res.data['data'];
         if (d is List) {
           final match = d.whereType<Map>().cast<Map>().firstWhere(
-                (m) =>
-                    (m['id']?.toString() ?? m['_id']?.toString() ?? '') ==
-                    widget.reportId,
-                orElse: () => const {},
-              );
+            (m) =>
+                (m['id']?.toString() ?? m['_id']?.toString() ?? '') ==
+                widget.reportId,
+            orElse: () => const {},
+          );
           if (match.isNotEmpty) {
             _report = Map<String, dynamic>.from(match);
           } else if (_report == null) {
@@ -81,6 +81,7 @@ class _CpTaxReportDetailScreenState
     final name = _report?['name']?.toString() ?? 'document';
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
+        backgroundColor: const Color(0xFFE24B4A),
         content: Text(
           'Downloading $name...',
           style: GoogleFonts.dmSerifDisplay(fontSize: 12),
@@ -117,12 +118,13 @@ class _CpTaxReportDetailScreenState
             Expanded(
               child: _loading && _report == null
                   ? const Center(
-                      child:
-                          CircularProgressIndicator(color: M4Theme.premiumBlue),
+                      child: CircularProgressIndicator(
+                        color: M4Theme.premiumBlue,
+                      ),
                     )
                   : (_error && _report == null)
-                      ? _errorState(textPrimary, muted)
-                      : _content(isDark, textPrimary, muted),
+                  ? _errorState(textPrimary, muted)
+                  : _content(isDark, textPrimary, muted),
             ),
           ],
         ),
@@ -171,12 +173,14 @@ class _CpTaxReportDetailScreenState
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color:
-                    (isDark ? Colors.white : Colors.black).withValues(alpha: 0.04),
+                color: (isDark ? Colors.white : Colors.black).withValues(
+                  alpha: 0.04,
+                ),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Colors.black)
-                      .withValues(alpha: 0.08),
+                  color: (isDark ? Colors.white : Colors.black).withValues(
+                    alpha: 0.08,
+                  ),
                 ),
               ),
               child: Icon(LucideIcons.download, size: 18, color: muted),
@@ -301,7 +305,9 @@ class _CpTaxReportDetailScreenState
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
-    final divider = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06);
+    final divider = (isDark ? Colors.white : Colors.black).withValues(
+      alpha: 0.06,
+    );
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -312,25 +318,51 @@ class _CpTaxReportDetailScreenState
       ),
       child: Column(
         children: [
-          _metaRow('TYPE', _type, textPrimary, muted, icon: LucideIcons.fileText),
+          _metaRow(
+            'TYPE',
+            _type,
+            textPrimary,
+            muted,
+            icon: LucideIcons.fileText,
+          ),
           if (_size.isNotEmpty) ...[
             _hr(divider),
-            _metaRow('SIZE', _size.toUpperCase(), textPrimary, muted,
-                icon: LucideIcons.hardDrive),
+            _metaRow(
+              'SIZE',
+              _size.toUpperCase(),
+              textPrimary,
+              muted,
+              icon: LucideIcons.hardDrive,
+            ),
           ],
           if (_date.isNotEmpty) ...[
             _hr(divider),
-            _metaRow('DATE', _date.toUpperCase(), textPrimary, muted,
-                icon: LucideIcons.calendar),
+            _metaRow(
+              'DATE',
+              _date.toUpperCase(),
+              textPrimary,
+              muted,
+              icon: LucideIcons.calendar,
+            ),
           ],
           if (_year.isNotEmpty) ...[
             _hr(divider),
-            _metaRow('YEAR', _year.toUpperCase(), textPrimary, muted,
-                icon: LucideIcons.clock),
+            _metaRow(
+              'YEAR',
+              _year.toUpperCase(),
+              textPrimary,
+              muted,
+              icon: LucideIcons.clock,
+            ),
           ],
           _hr(divider),
-          _metaRow('STATUS', _status.toUpperCase(), textPrimary, muted,
-              icon: LucideIcons.checkCircle),
+          _metaRow(
+            'STATUS',
+            _status.toUpperCase(),
+            textPrimary,
+            muted,
+            icon: LucideIcons.checkCircle,
+          ),
         ],
       ),
     );

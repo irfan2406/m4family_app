@@ -48,8 +48,9 @@ class _InvestorProfileChangePasswordScreenState
   bool get _hasMinLength => _newPass.text.length >= 8;
   bool get _hasUppercase => RegExp(r'[A-Z]').hasMatch(_newPass.text);
   bool get _hasNumber => RegExp(r'[0-9]').hasMatch(_newPass.text);
-  bool get _hasSpecial =>
-      RegExp(r'''[!@#$%^&*(),.?":{}|<>_\-\[\]\\/;'`~+=]''').hasMatch(_newPass.text);
+  bool get _hasSpecial => RegExp(
+    r'''[!@#$%^&*(),.?":{}|<>_\-\[\]\\/;'`~+=]''',
+  ).hasMatch(_newPass.text);
 
   void _snack(String msg, {bool error = false}) {
     if (!mounted) return;
@@ -112,8 +113,9 @@ class _InvestorProfileChangePasswordScreenState
         if (!mounted) return;
         _back();
       } else {
-        final msg =
-            res.data is Map ? (res.data as Map)['message']?.toString() : null;
+        final msg = res.data is Map
+            ? (res.data as Map)['message']?.toString()
+            : null;
         _snack(msg ?? 'Failed to update password', error: true);
       }
     } on DioException catch (e) {
@@ -368,7 +370,10 @@ class _InvestorProfileChangePasswordScreenState
         filled: true,
         fillColor: card,
         isDense: true,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 16,
+        ),
         prefixIcon: Icon(LucideIcons.lock, size: 16, color: muted),
         suffixIcon: showToggle
             ? IconButton(
@@ -419,8 +424,11 @@ class _InvestorProfileChangePasswordScreenState
         children: [
           Row(
             children: [
-              Icon(LucideIcons.alertCircle,
-                  size: 14, color: _gold.withValues(alpha: 0.7)),
+              Icon(
+                LucideIcons.alertCircle,
+                size: 14,
+                color: _gold.withValues(alpha: 0.7),
+              ),
               const SizedBox(width: 8),
               Text(
                 'REQUIREMENTS',
@@ -503,7 +511,9 @@ class _InvestorProfileChangePasswordScreenState
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
-                      strokeWidth: 2, color: Colors.black),
+                    strokeWidth: 2,
+                    color: Colors.black,
+                  ),
                 )
               : Text(
                   'SECURE UPDATE',

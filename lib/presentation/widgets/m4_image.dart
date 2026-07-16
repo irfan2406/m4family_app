@@ -39,7 +39,9 @@ class M4Image extends ConsumerWidget {
         final commaIndex = imageUrl!.indexOf('base64,');
         if (commaIndex != -1) {
           final bytes = _base64Cache.putIfAbsent(imageUrl!, () {
-            final base64Str = imageUrl!.substring(commaIndex + 7).replaceAll(RegExp(r'\s'), '');
+            final base64Str = imageUrl!
+                .substring(commaIndex + 7)
+                .replaceAll(RegExp(r'\s'), '');
             return base64Decode(base64Str);
           });
           return Image.memory(
@@ -77,7 +79,8 @@ class M4Image extends ConsumerWidget {
       height: height,
       memCacheWidth: memWidth,
       fadeInDuration: Duration.zero,
-      placeholder: (context, url) => placeholder ?? Container(color: Colors.black12),
+      placeholder: (context, url) =>
+          placeholder ?? Container(color: Colors.black12),
       errorWidget: (context, url, error) => errorWidget ?? _buildFallback(),
     );
   }

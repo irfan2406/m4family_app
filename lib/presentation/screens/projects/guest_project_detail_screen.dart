@@ -517,7 +517,7 @@ class _GuestProjectDetailScreenState
         ),
         backgroundColor: isError
             ? const Color(0xFFDC2626)
-            : M4Theme.premiumBlue,
+            : const Color(0xFF10B981),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
@@ -711,7 +711,10 @@ class _GuestProjectDetailScreenState
     } else {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not launch virtual tour link')),
+          const SnackBar(
+            backgroundColor: Color(0xFFE24B4A),
+            content: Text('Could not launch virtual tour link'),
+          ),
         );
       }
     }

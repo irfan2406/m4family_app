@@ -32,8 +32,18 @@ class _InvestorInstallmentsScreenState
   static const List<String> _filters = ['All', 'PAID', 'PENDING', 'OVERDUE'];
 
   static const List<String> _months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
 
   @override
@@ -88,8 +98,8 @@ class _InvestorInstallmentsScreenState
           return _Installment(
             id: (s['_id'] ?? s['id'] ?? '').toString(),
             projectTitle: projectTitle,
-            milestoneName:
-                (s['milestoneName'] ?? 'Installment Payment').toString(),
+            milestoneName: (s['milestoneName'] ?? 'Installment Payment')
+                .toString(),
             amount: amount,
             dueDate: dueDate != null ? _formatDate(dueDate) : '--',
             status: status,
@@ -121,7 +131,8 @@ class _InvestorInstallmentsScreenState
     return 0;
   }
 
-  String _formatDate(DateTime d) => '${d.day} ${_months[d.month - 1]} ${d.year}';
+  String _formatDate(DateTime d) =>
+      '${d.day} ${_months[d.month - 1]} ${d.year}';
 
   String _formatAmount(double amount) {
     final whole = amount.round().toString();
@@ -218,8 +229,11 @@ class _InvestorInstallmentsScreenState
                         shape: BoxShape.circle,
                         border: Border.all(color: border),
                       ),
-                      child: Icon(LucideIcons.chevronLeft,
-                          size: 20, color: textPrimary),
+                      child: Icon(
+                        LucideIcons.chevronLeft,
+                        size: 20,
+                        color: textPrimary,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -258,70 +272,76 @@ class _InvestorInstallmentsScreenState
               child: _loading
                   ? const Center(
                       child: CircularProgressIndicator(
-                          color: M4Theme.premiumBlue),
+                        color: M4Theme.premiumBlue,
+                      ),
                     )
                   : _error
-                      ? _buildError(isDark, textPrimary, muted)
-                      : RefreshIndicator(
-                          onRefresh: _fetchInstallments,
-                          color: M4Theme.premiumBlue,
-                          child: CustomScrollView(
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            slivers: [
-                              // Stats
-                              SliverToBoxAdapter(
-                                child: _buildStats(
-                                  isDark: isDark,
-                                  border: border,
-                                  muted: muted,
-                                  totalPaid: totalPaid,
-                                  totalDue: totalDue,
-                                ),
-                              ),
-                              // Filters
-                              SliverToBoxAdapter(
-                                child: _buildFilters(
-                                  isDark: isDark,
-                                  border: border,
-                                  muted: muted,
-                                ),
-                              ),
-                              // List / Empty
-                              if (filtered.isEmpty)
-                                SliverFillRemaining(
-                                  hasScrollBody: false,
-                                  child: _buildEmpty(muted),
-                                )
-                              else
-                                SliverPadding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                      24, 16, 24, 32),
-                                  sliver: SliverList(
-                                    delegate: SliverChildBuilderDelegate(
-                                      (context, index) {
-                                        final item = filtered[index];
-                                        return Padding(
-                                          padding:
-                                              const EdgeInsets.only(bottom: 12),
-                                          child: _buildRow(
-                                            item: item,
-                                            isDark: isDark,
-                                            border: border,
-                                            textPrimary: textPrimary,
-                                            muted: muted,
-                                          ),
-                                        )
-                                            .animate()
-                                            .fadeIn(delay: (index * 50).ms)
-                                            .moveY(begin: 10, end: 0);
-                                      },
-                                      childCount: filtered.length,
-                                    ),
-                                  ),
-                                ),
-                            ],
+                  ? _buildError(isDark, textPrimary, muted)
+                  : RefreshIndicator(
+                      onRefresh: _fetchInstallments,
+                      color: M4Theme.premiumBlue,
+                      child: CustomScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        slivers: [
+                          // Stats
+                          SliverToBoxAdapter(
+                            child: _buildStats(
+                              isDark: isDark,
+                              border: border,
+                              muted: muted,
+                              totalPaid: totalPaid,
+                              totalDue: totalDue,
+                            ),
                           ),
-                        ),
+                          // Filters
+                          SliverToBoxAdapter(
+                            child: _buildFilters(
+                              isDark: isDark,
+                              border: border,
+                              muted: muted,
+                            ),
+                          ),
+                          // List / Empty
+                          if (filtered.isEmpty)
+                            SliverFillRemaining(
+                              hasScrollBody: false,
+                              child: _buildEmpty(muted),
+                            )
+                          else
+                            SliverPadding(
+                              padding: const EdgeInsets.fromLTRB(
+                                24,
+                                16,
+                                24,
+                                32,
+                              ),
+                              sliver: SliverList(
+                                delegate: SliverChildBuilderDelegate((
+                                  context,
+                                  index,
+                                ) {
+                                  final item = filtered[index];
+                                  return Padding(
+                                        padding: const EdgeInsets.only(
+                                          bottom: 12,
+                                        ),
+                                        child: _buildRow(
+                                          item: item,
+                                          isDark: isDark,
+                                          border: border,
+                                          textPrimary: textPrimary,
+                                          muted: muted,
+                                        ),
+                                      )
+                                      .animate()
+                                      .fadeIn(delay: (index * 50).ms)
+                                      .moveY(begin: 10, end: 0);
+                                }, childCount: filtered.length),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
             ),
           ],
         ),
@@ -353,11 +373,7 @@ class _InvestorInstallmentsScreenState
               muted: muted,
             ),
           ),
-          Container(
-            width: 1,
-            height: 40,
-            color: border,
-          ),
+          Container(width: 1, height: 40, color: border),
           const SizedBox(width: 16),
           Expanded(
             child: _statTile(
@@ -427,13 +443,12 @@ class _InvestorInstallmentsScreenState
               decoration: BoxDecoration(
                 color: active
                     ? activeColor.withValues(alpha: 0.1)
-                    : (isDark ? Colors.white : Colors.black)
-                        .withValues(alpha: 0.03),
+                    : (isDark ? Colors.white : Colors.black).withValues(
+                        alpha: 0.03,
+                      ),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: active
-                      ? activeColor.withValues(alpha: 0.3)
-                      : border,
+                  color: active ? activeColor.withValues(alpha: 0.3) : border,
                 ),
               ),
               child: Text(
@@ -461,8 +476,7 @@ class _InvestorInstallmentsScreenState
     required Color muted,
   }) {
     final color = _statusColor(item.status);
-    final cardBg =
-        isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final cardBg = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -524,9 +538,11 @@ class _InvestorInstallmentsScreenState
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    Icon(LucideIcons.calendarClock,
-                        size: 10,
-                        color: muted.withValues(alpha: 0.7)),
+                    Icon(
+                      LucideIcons.calendarClock,
+                      size: 10,
+                      color: muted.withValues(alpha: 0.7),
+                    ),
                     const SizedBox(width: 4),
                     Text(
                       item.dueDate,
@@ -556,8 +572,7 @@ class _InvestorInstallmentsScreenState
               ),
               const SizedBox(height: 6),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(6),
@@ -588,8 +603,11 @@ class _InvestorInstallmentsScreenState
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(LucideIcons.calendarClock,
-                size: 44, color: muted.withValues(alpha: 0.4)),
+            Icon(
+              LucideIcons.calendarClock,
+              size: 44,
+              color: muted.withValues(alpha: 0.4),
+            ),
             const SizedBox(height: 16),
             Text(
               'NO INSTALLMENTS FOUND',
@@ -626,8 +644,11 @@ class _InvestorInstallmentsScreenState
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(LucideIcons.alertTriangle,
-                size: 44, color: _gold.withValues(alpha: 0.8)),
+            Icon(
+              LucideIcons.alertTriangle,
+              size: 44,
+              color: _gold.withValues(alpha: 0.8),
+            ),
             const SizedBox(height: 16),
             Text(
               'COULD NOT LOAD SCHEDULE',
@@ -653,8 +674,10 @@ class _InvestorInstallmentsScreenState
             GestureDetector(
               onTap: _fetchInstallments,
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   color: M4Theme.premiumBlue,
                   borderRadius: BorderRadius.circular(12),

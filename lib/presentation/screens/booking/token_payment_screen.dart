@@ -87,9 +87,12 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
 
   void _showToast(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: const Color(0xFFE24B4A),
+        content: Text(message),
+      ),
+    );
   }
 
   Future<void> _pickDocument() async {
@@ -197,7 +200,10 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Payment failed: ${e.toString()}')),
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text('Payment failed: ${e.toString()}'),
+          ),
         );
       }
     } finally {

@@ -4,7 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
-import 'package:m4_mobile/presentation/providers/auth_provider.dart' show apiClientProvider;
+import 'package:m4_mobile/presentation/providers/auth_provider.dart'
+    show apiClientProvider;
 
 /// Web `/investor/referral/closed` parity (web `app/investor/referral/closed/page.tsx`):
 /// the "Success Vault" — closed/credited referrals that converted into bookings.
@@ -25,7 +26,12 @@ class _InvestorReferralClosedScreenState
   static const _emerald = Color(0xFF10B981);
 
   // Statuses considered closed/credited (the only ones shown here).
-  static const _closedStatuses = ['CLOSED', 'CREDITED', 'BOOKING_DONE', 'Booked'];
+  static const _closedStatuses = [
+    'CLOSED',
+    'CREDITED',
+    'BOOKING_DONE',
+    'Booked',
+  ];
 
   List<dynamic> _referrals = [];
   bool _loading = true;
@@ -91,7 +97,8 @@ class _InvestorReferralClosedScreenState
   }
 
   String _closedDate(dynamic r) {
-    final raw = r['closedAt'] ?? r['creditedAt'] ?? r['updatedAt'] ?? r['createdAt'];
+    final raw =
+        r['closedAt'] ?? r['creditedAt'] ?? r['updatedAt'] ?? r['createdAt'];
     if (raw == null) return '';
     final parsed = DateTime.tryParse(raw.toString());
     if (parsed == null) return '';
@@ -126,10 +133,10 @@ class _InvestorReferralClosedScreenState
                       ),
                     )
                   : _error
-                      ? _buildError(muted)
-                      : _referrals.isEmpty
-                          ? _buildEmpty(muted)
-                          : _buildList(isDark, textPrimary, muted, border),
+                  ? _buildError(muted)
+                  : _referrals.isEmpty
+                  ? _buildEmpty(muted)
+                  : _buildList(isDark, textPrimary, muted, border),
             ),
           ],
         ),

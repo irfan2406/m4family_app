@@ -45,20 +45,17 @@ class SupportNotifier extends StateNotifier<SupportState> {
     try {
       final apiClient = _ref.read(apiClientProvider);
       final response = await apiClient.getTickets();
-      
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         final List<dynamic> data = response.data['data'] ?? [];
         final List<TicketModel> tickets = data
             .map((json) => TicketModel.fromJson(json))
             .toList();
-        
+
         // Sort by date newest first
         tickets.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-        
-        state = state.copyWith(
-          tickets: tickets,
-          isLoading: false,
-        );
+
+        state = state.copyWith(tickets: tickets, isLoading: false);
       } else {
         state = state.copyWith(
           isLoading: false,
@@ -66,10 +63,7 @@ class SupportNotifier extends StateNotifier<SupportState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -78,28 +72,19 @@ class SupportNotifier extends StateNotifier<SupportState> {
     try {
       final apiClient = _ref.read(apiClientProvider);
       final response = await apiClient.getLogs();
-      
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         final List<dynamic> data = response.data['data'] ?? [];
         final List<ActivityLog> logs = data
             .map((json) => ActivityLog.fromJson(json))
             .toList();
-        
-        state = state.copyWith(
-          logs: logs,
-          isLoading: false,
-        );
+
+        state = state.copyWith(logs: logs, isLoading: false);
       } else {
-        state = state.copyWith(
-          isLoading: false,
-          error: 'Failed to load logs',
-        );
+        state = state.copyWith(isLoading: false, error: 'Failed to load logs');
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -119,7 +104,7 @@ class SupportNotifier extends StateNotifier<SupportState> {
         'priority': 'Medium', // Default priority as seen in web
         'attachments': attachments,
       });
-      
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         await fetchTickets(); // Refresh list
         return true;
@@ -131,10 +116,7 @@ class SupportNotifier extends StateNotifier<SupportState> {
         return false;
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
       return false;
     }
   }
@@ -209,13 +191,10 @@ class SupportNotifier extends StateNotifier<SupportState> {
     try {
       final apiClient = _ref.read(apiClientProvider);
       final response = await apiClient.getMySupportDocuments();
-      
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         final List<dynamic> documents = response.data['data'] ?? [];
-        state = state.copyWith(
-          documents: documents,
-          isLoading: false,
-        );
+        state = state.copyWith(documents: documents, isLoading: false);
       } else {
         state = state.copyWith(
           isLoading: false,
@@ -223,14 +202,13 @@ class SupportNotifier extends StateNotifier<SupportState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 }
 
-final supportProvider = StateNotifierProvider<SupportNotifier, SupportState>((ref) {
+final supportProvider = StateNotifierProvider<SupportNotifier, SupportState>((
+  ref,
+) {
   return SupportNotifier(ref);
 });

@@ -28,7 +28,9 @@ class InvestorBottomNav extends StatelessWidget {
     final surface = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.white.withValues(alpha: 0.95);
-    final border = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08);
+    final border = (isDark ? Colors.white : Colors.black).withValues(
+      alpha: 0.08,
+    );
 
     return SafeArea(
       top: false,
@@ -62,7 +64,10 @@ class InvestorBottomNav extends StatelessWidget {
                     onTap: () => onTap(i),
                     borderRadius: BorderRadius.circular(14),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 10,
+                      ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
@@ -72,16 +77,22 @@ class InvestorBottomNav extends StatelessWidget {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(14),
                               color: active
-                                  ? onSurf.withValues(alpha: isDark ? 0.12 : 0.08)
+                                  ? onSurf.withValues(
+                                      alpha: isDark ? 0.12 : 0.08,
+                                    )
                                   : null,
                               border: active
-                                  ? Border.all(color: onSurf.withValues(alpha: 0.12))
+                                  ? Border.all(
+                                      color: onSurf.withValues(alpha: 0.12),
+                                    )
                                   : null,
                             ),
                             child: Icon(
                               _icons[i],
                               size: 22,
-                              color: active ? onSurf : onSurf.withValues(alpha: 0.38),
+                              color: active
+                                  ? onSurf
+                                  : onSurf.withValues(alpha: 0.38),
                             ),
                           ),
                           const SizedBox(height: 4),

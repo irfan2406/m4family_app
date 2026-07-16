@@ -4,7 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
-import 'package:m4_mobile/presentation/providers/auth_provider.dart' show apiClientProvider;
+import 'package:m4_mobile/presentation/providers/auth_provider.dart'
+    show apiClientProvider;
 
 /// Web `/investor/referral/active` parity: active (not yet closed/credited)
 /// referrals in the lead pipeline. Shows referral name, project, status and
@@ -20,7 +21,12 @@ class InvestorReferralActiveScreen extends ConsumerStatefulWidget {
 class _InvestorReferralActiveScreenState
     extends ConsumerState<InvestorReferralActiveScreen> {
   // Statuses considered closed/credited (excluded from the active list).
-  static const _closedStatuses = ['CLOSED', 'CREDITED', 'BOOKING_DONE', 'Booked'];
+  static const _closedStatuses = [
+    'CLOSED',
+    'CREDITED',
+    'BOOKING_DONE',
+    'Booked',
+  ];
 
   List<dynamic> _referrals = [];
   bool _loading = true;
@@ -96,10 +102,10 @@ class _InvestorReferralActiveScreenState
                       ),
                     )
                   : _error
-                      ? _buildError(textPrimary, muted)
-                      : _referrals.isEmpty
-                          ? _buildEmpty(muted)
-                          : _buildList(isDark, textPrimary, muted, border),
+                  ? _buildError(textPrimary, muted)
+                  : _referrals.isEmpty
+                  ? _buildEmpty(muted)
+                  : _buildList(isDark, textPrimary, muted, border),
             ),
           ],
         ),

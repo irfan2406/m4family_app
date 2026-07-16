@@ -130,7 +130,10 @@ class _CpProfileSettingsScreenState
     if (len > 2 * 1024 * 1024) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('File too large (max 2MB)')),
+          const SnackBar(
+            backgroundColor: Color(0xFFE24B4A),
+            content: Text('File too large (max 2MB)'),
+          ),
         );
       }
       return;
@@ -146,9 +149,12 @@ class _CpProfileSettingsScreenState
       }
       if (newUrl == null || newUrl.isEmpty) {
         if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('Upload failed')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              backgroundColor: Color(0xFFE24B4A),
+              content: Text('Upload failed'),
+            ),
+          );
         }
         return;
       }
@@ -161,7 +167,10 @@ class _CpProfileSettingsScreenState
         await ref.read(authProvider.notifier).fetchMe();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Profile photo updated')),
+            const SnackBar(
+              backgroundColor: Color(0xFF10B981),
+              content: Text('Profile photo updated'),
+            ),
           );
         }
       } else {
@@ -169,9 +178,12 @@ class _CpProfileSettingsScreenState
             ? (patch.data as Map)['message']?.toString()
             : null;
         if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(msg ?? 'Update failed')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: const Color(0xFFE24B4A),
+              content: Text(msg ?? 'Update failed'),
+            ),
+          );
         }
       }
     } on DioException catch (e) {
@@ -179,9 +191,12 @@ class _CpProfileSettingsScreenState
         final m = e.response?.data is Map
             ? (e.response!.data as Map)['message']?.toString()
             : null;
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(m ?? 'Upload failed')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text(m ?? 'Upload failed'),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _uploadingAvatar = false);
@@ -411,15 +426,21 @@ class _CpProfileSettingsScreenState
         final msg = res.data is Map
             ? (res.data as Map)['message']?.toString()
             : null;
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(msg ?? 'Failed')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text(msg ?? 'Failed'),
+          ),
+        );
       }
     } on DioException catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(e.message ?? 'Error')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text(e.message ?? 'Error'),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _sessionsBusy = false);
@@ -467,15 +488,21 @@ class _CpProfileSettingsScreenState
         final msg = res.data is Map
             ? (res.data as Map)['message']?.toString()
             : null;
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(msg ?? 'Failed')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text(msg ?? 'Failed'),
+          ),
+        );
       }
     } on DioException catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(e.message ?? 'Error')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text(e.message ?? 'Error'),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _deleteBusy = false);
@@ -496,6 +523,7 @@ class _CpProfileSettingsScreenState
               if (_newPass.text.length < 4) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
+                    backgroundColor: Color(0xFFE24B4A),
                     content: Text('Passcode must be at least 4 digits'),
                   ),
                 );
@@ -503,7 +531,10 @@ class _CpProfileSettingsScreenState
               }
               if (_newPass.text != _confPass.text) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('New passcodes do not match')),
+                  const SnackBar(
+                    backgroundColor: Color(0xFFE24B4A),
+                    content: Text('New passcodes do not match'),
+                  ),
                 );
                 return;
               }
@@ -526,6 +557,7 @@ class _CpProfileSettingsScreenState
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
+                        backgroundColor: Color(0xFF10B981),
                         content: Text('Passcode updated successfully'),
                       ),
                     );
@@ -537,6 +569,7 @@ class _CpProfileSettingsScreenState
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
+                        backgroundColor: const Color(0xFFE24B4A),
                         content: Text(msg ?? 'Failed to update passcode'),
                       ),
                     );
@@ -548,7 +581,10 @@ class _CpProfileSettingsScreenState
                       ? (e.response!.data as Map)['message']?.toString()
                       : null;
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(m ?? 'Error updating passcode')),
+                    SnackBar(
+                      backgroundColor: const Color(0xFFE24B4A),
+                      content: Text(m ?? 'Error updating passcode'),
+                    ),
                   );
                 }
               } finally {

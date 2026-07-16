@@ -25,7 +25,8 @@ class SideMenuButton extends StatelessWidget {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: onTap ??
+      onTap:
+          onTap ??
           () {
             final scaffold = Scaffold.maybeOf(context);
             if (scaffold?.hasDrawer ?? false) {

@@ -18,7 +18,8 @@ class CpTokenPaymentScreen extends ConsumerStatefulWidget {
   const CpTokenPaymentScreen({super.key, required this.projectId});
 
   @override
-  ConsumerState<CpTokenPaymentScreen> createState() => _CpTokenPaymentScreenState();
+  ConsumerState<CpTokenPaymentScreen> createState() =>
+      _CpTokenPaymentScreenState();
 }
 
 class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
@@ -74,8 +75,11 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
       if (res.data['status'] == true) {
         setState(() => _isSuccess = true);
       } else {
-        setState(() => _errorMessage =
-            res.data['message']?.toString() ?? 'Payment could not be processed.');
+        setState(
+          () => _errorMessage =
+              res.data['message']?.toString() ??
+              'Payment could not be processed.',
+        );
         _showToast(_errorMessage!);
       }
     } catch (e) {
@@ -89,11 +93,19 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
   void _showToast(String message) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
+      SnackBar(
+        backgroundColor: const Color(0xFFE24B4A),
+        content: Text(message),
+      ),
     );
   }
 
-  Widget _buildPaymentMethod(String id, String name, IconData icon, bool isDark) {
+  Widget _buildPaymentMethod(
+    String id,
+    String name,
+    IconData icon,
+    bool isDark,
+  ) {
     final isActive = _selectedMethod == id;
     final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
     final border = isDark
@@ -108,7 +120,9 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
           decoration: BoxDecoration(
             color: isActive
                 ? M4Theme.premiumBlue.withValues(alpha: 0.06)
-                : (isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white),
+                : (isDark
+                      ? Colors.white.withValues(alpha: 0.03)
+                      : Colors.white),
             borderRadius: BorderRadius.circular(24),
             border: Border.all(color: isActive ? M4Theme.premiumBlue : border),
           ),
@@ -121,11 +135,15 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                   color: isActive
                       ? M4Theme.premiumBlue
                       : (isDark
-                          ? Colors.white.withValues(alpha: 0.06)
-                          : Colors.black.withValues(alpha: 0.04)),
+                            ? Colors.white.withValues(alpha: 0.06)
+                            : Colors.black.withValues(alpha: 0.04)),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Icon(icon, color: isActive ? Colors.white : muted, size: 22),
+                child: Icon(
+                  icon,
+                  color: isActive ? Colors.white : muted,
+                  size: 22,
+                ),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -147,7 +165,11 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                     color: M4Theme.premiumBlue,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(LucideIcons.check, color: Colors.white, size: 16),
+                  child: const Icon(
+                    LucideIcons.check,
+                    color: Colors.white,
+                    size: 16,
+                  ),
                 )
               else
                 Container(
@@ -184,7 +206,11 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                     color: M4Theme.premiumBlue.withValues(alpha: 0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(LucideIcons.check, size: 48, color: M4Theme.premiumBlue),
+                  child: const Icon(
+                    LucideIcons.check,
+                    size: 48,
+                    color: M4Theme.premiumBlue,
+                  ),
                 ),
                 const SizedBox(height: 32),
                 Text(
@@ -202,7 +228,9 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                   textAlign: TextAlign.center,
                   style: GoogleFonts.dmSerifDisplay(
                     fontSize: 10,
-                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.68),
+                    color: (isDark ? Colors.white : Colors.black).withValues(
+                      alpha: 0.68,
+                    ),
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.2,
                     height: 1.8,
@@ -254,7 +282,8 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
         elevation: 0,
         leading: IconButton(
           icon: Icon(LucideIcons.chevronLeft, color: textPrimary),
-          onPressed: () => context.canPop() ? context.pop() : context.go('/cp/dashboard'),
+          onPressed: () =>
+              context.canPop() ? context.pop() : context.go('/cp/dashboard'),
         ),
         title: Text(
           'SECURE PAYMENT',
@@ -325,7 +354,10 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                         ),
                         const SizedBox(height: 16),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 7,
+                          ),
                           decoration: BoxDecoration(
                             color: M4Theme.premiumBlue.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(20),
@@ -386,9 +418,24 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
               ),
             ),
             const SizedBox(height: 24),
-            _buildPaymentMethod('upi', 'UPI (PHONEPE/GPAY)', LucideIcons.smartphone, isDark),
-            _buildPaymentMethod('card', 'CREDIT / DEBIT CARD', LucideIcons.creditCard, isDark),
-            _buildPaymentMethod('net', 'NET BANKING', LucideIcons.wallet, isDark),
+            _buildPaymentMethod(
+              'upi',
+              'UPI (PHONEPE/GPAY)',
+              LucideIcons.smartphone,
+              isDark,
+            ),
+            _buildPaymentMethod(
+              'card',
+              'CREDIT / DEBIT CARD',
+              LucideIcons.creditCard,
+              isDark,
+            ),
+            _buildPaymentMethod(
+              'net',
+              'NET BANKING',
+              LucideIcons.wallet,
+              isDark,
+            ),
 
             // Terms Checkbox
             const SizedBox(height: 24),
@@ -399,7 +446,9 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                 decoration: BoxDecoration(
                   color: M4Theme.premiumBlue.withValues(alpha: 0.04),
                   borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: M4Theme.premiumBlue.withValues(alpha: 0.1)),
+                  border: Border.all(
+                    color: M4Theme.premiumBlue.withValues(alpha: 0.1),
+                  ),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -440,20 +489,25 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: _agreed && !_isLoading ? _submitPayment : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: textPrimary,
-                  foregroundColor: bg,
-                  padding: const EdgeInsets.symmetric(vertical: 24),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-                  elevation: 0,
-                ).copyWith(
-                  backgroundColor: WidgetStateProperty.resolveWith((states) {
-                    if (states.contains(WidgetState.disabled)) {
-                      return textPrimary.withValues(alpha: 0.1);
-                    }
-                    return textPrimary;
-                  }),
-                ),
+                style:
+                    ElevatedButton.styleFrom(
+                      backgroundColor: textPrimary,
+                      foregroundColor: bg,
+                      padding: const EdgeInsets.symmetric(vertical: 24),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(40),
+                      ),
+                      elevation: 0,
+                    ).copyWith(
+                      backgroundColor: WidgetStateProperty.resolveWith((
+                        states,
+                      ) {
+                        if (states.contains(WidgetState.disabled)) {
+                          return textPrimary.withValues(alpha: 0.1);
+                        }
+                        return textPrimary;
+                      }),
+                    ),
                 child: _isLoading
                     ? CupertinoActivityIndicator(color: bg)
                     : Row(

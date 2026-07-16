@@ -80,13 +80,18 @@ class _InvestorSecurityScreenState
           final s = Map<String, dynamic>.from(raw);
           parsed.add({
             'device':
-                (s['device'] ?? s['deviceType'] ?? s['userAgent'] ?? 'Unknown device')
+                (s['device'] ??
+                        s['deviceType'] ??
+                        s['userAgent'] ??
+                        'Unknown device')
                     .toString(),
-            'location': (s['location'] ?? s['city'] ?? s['ip'] ?? '').toString(),
-            'time':
-                (s['time'] ?? s['lastActivity'] ?? s['createdAt'] ?? '').toString(),
+            'location': (s['location'] ?? s['city'] ?? s['ip'] ?? '')
+                .toString(),
+            'time': (s['time'] ?? s['lastActivity'] ?? s['createdAt'] ?? '')
+                .toString(),
             'status':
-                ((s['status'] ?? (s['active'] == true ? 'Active' : 'Logged out')))
+                ((s['status'] ??
+                        (s['active'] == true ? 'Active' : 'Logged out')))
                     .toString(),
           });
         }
@@ -111,7 +116,10 @@ class _InvestorSecurityScreenState
   void _toast(String msg) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg, style: GoogleFonts.dmSerifDisplay(fontSize: 12))),
+      SnackBar(
+        backgroundColor: const Color(0xFFE24B4A),
+        content: Text(msg, style: GoogleFonts.dmSerifDisplay(fontSize: 12)),
+      ),
     );
   }
 
@@ -143,9 +151,8 @@ class _InvestorSecurityScreenState
         elevation: 0,
         leading: IconButton(
           icon: Icon(LucideIcons.arrowLeft, color: textPrimary),
-          onPressed: () => context.canPop()
-              ? context.pop()
-              : context.go('/investor/home'),
+          onPressed: () =>
+              context.canPop() ? context.pop() : context.go('/investor/home'),
         ),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -274,7 +281,11 @@ class _InvestorSecurityScreenState
                     color: _green.withValues(alpha: 0.1),
                     border: Border.all(color: _green.withValues(alpha: 0.2)),
                   ),
-                  child: const Icon(LucideIcons.shield, size: 32, color: _green),
+                  child: const Icon(
+                    LucideIcons.shield,
+                    size: 32,
+                    color: _green,
+                  ),
                 ),
                 Positioned(
                   top: 0,

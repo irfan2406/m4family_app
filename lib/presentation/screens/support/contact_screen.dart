@@ -57,6 +57,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
         _phoneController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
+          backgroundColor: Color(0xFFE24B4A),
           content: Text('Please fill in your name, email and phone'),
         ),
       );
@@ -64,7 +65,10 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
     }
     if (!_agreedToPrivacy) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please agree to the Privacy Policy')),
+        const SnackBar(
+          backgroundColor: Color(0xFFE24B4A),
+          content: Text('Please agree to the Privacy Policy'),
+        ),
       );
       return;
     }
@@ -93,9 +97,12 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
       _agreedToPrivacy = false;
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: const Color(0xFFE24B4A),
+          content: Text('Error: $e'),
+        ),
+      );
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }

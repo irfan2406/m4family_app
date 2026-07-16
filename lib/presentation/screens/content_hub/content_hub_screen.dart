@@ -306,9 +306,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
 
   Widget _buildMenuButton() {
     // Canonical side-menu button (identical size/colour to every other screen).
-    return SideMenuButton(
-      onTap: () => _scaffoldKey.currentState?.openDrawer(),
-    );
+    return SideMenuButton(onTap: () => _scaffoldKey.currentState?.openDrawer());
   }
 
   Widget _buildEmptyState() {

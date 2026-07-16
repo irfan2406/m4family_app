@@ -1139,13 +1139,15 @@ class _DetailDialog {
                                                   maxLines: 1,
                                                   overflow:
                                                       TextOverflow.ellipsis,
-                                                  style: GoogleFonts.dmSerifDisplay(
-                                                    fontSize: 7,
-                                                    fontWeight: FontWeight.w900,
-                                                    letterSpacing: 1.0,
-                                                    color: scheme.onSurface
-                                                        .withOpacity(0.68),
-                                                  ),
+                                                  style:
+                                                      GoogleFonts.dmSerifDisplay(
+                                                        fontSize: 7,
+                                                        fontWeight:
+                                                            FontWeight.w900,
+                                                        letterSpacing: 1.0,
+                                                        color: scheme.onSurface
+                                                            .withOpacity(0.68),
+                                                      ),
                                                 ),
                                                 const SizedBox(height: 2),
                                                 Text(
@@ -1153,11 +1155,13 @@ class _DetailDialog {
                                                   maxLines: 1,
                                                   overflow:
                                                       TextOverflow.ellipsis,
-                                                  style: GoogleFonts.dmSerifDisplay(
-                                                    fontSize: 11,
-                                                    fontWeight: FontWeight.w900,
-                                                    letterSpacing: 0.5,
-                                                  ),
+                                                  style:
+                                                      GoogleFonts.dmSerifDisplay(
+                                                        fontSize: 11,
+                                                        fontWeight:
+                                                            FontWeight.w900,
+                                                        letterSpacing: 0.5,
+                                                      ),
                                                 ),
                                               ],
                                             ),

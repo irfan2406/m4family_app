@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -711,13 +712,13 @@ class _InvestorProjectDetailScreenState
   String _formatSchedule(DateTime d) => '${_dateOnly(d)}  •  ${_timeOnly(d)}';
 
   // ─── Lightbox ──────────────────────────────────────────────────────────────
-  void _openGallery(List<String> urls) {
+  void _openGallery(List<String> urls, {int initialIndex = 0}) {
     if (urls.isEmpty) {
       _toast('Gallery coming soon!');
       return;
     }
     final apiClient = ref.read(apiClientProvider);
-    final pageController = PageController();
+    final pageController = PageController(initialPage: initialIndex);
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -887,6 +888,10 @@ class _InvestorProjectDetailScreenState
             const SizedBox(height: 32),
             _buildConstructionSection(project, isDark),
             const SizedBox(height: 32),
+            _buildPhaseTrackingSection(isDark),
+            const SizedBox(height: 32),
+            _buildGallerySection(project, isDark),
+            const SizedBox(height: 32),
             _buildPaymentPlansSection(isDark),
             const SizedBox(height: 32),
             _buildInvestSection(project, isDark),
@@ -975,29 +980,47 @@ class _InvestorProjectDetailScreenState
                     letterSpacing: -1.5,
                   ),
                 ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Icon(
-                      LucideIcons.mapPin,
-                      color: isDark
-                          ? Colors.white70
-                          : Colors.black.withValues(alpha: 0.7),
-                      size: 14,
+                const SizedBox(height: 12),
+                // Web parity: location sits in a bordered rounded pill, not as
+                // plain inline text.
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 8,
                     ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        location.toUpperCase(),
-                        style: GoogleFonts.dmSerifDisplay(
-                          color: isDark ? Colors.white : Colors.black,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 1,
-                        ),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.06)
+                          : Colors.white,
+                      borderRadius: BorderRadius.circular(30),
+                      border: Border.all(
+                        color: (isDark ? Colors.white : Colors.black)
+                            .withValues(alpha: 0.14),
                       ),
                     ),
-                  ],
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          LucideIcons.mapPin,
+                          color: isDark ? Colors.white : Colors.black,
+                          size: 13,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          location,
+                          style: GoogleFonts.dmSerifDisplay(
+                            color: isDark ? Colors.white : Colors.black,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.3,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -1120,6 +1143,15 @@ class _InvestorProjectDetailScreenState
     final brochure = project['brochure']?.toString();
     final description = project['description']?.toString();
     final startingPrice = project['startingPrice']?.toString();
+    // Web parity: the overview block always shows a WALKTHROUGH card. Pull the
+    // best-available video/tour link; _openUrl gracefully toasts if absent.
+    final walkthrough =
+        (project['walkthroughUrl'] ??
+                project['videoUrl'] ??
+                project['virtualTour'] ??
+                project['walkthrough'] ??
+                project['videoTour'])
+            ?.toString();
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -1135,9 +1167,8 @@ class _InvestorProjectDetailScreenState
                 .toUpperCase(),
             style: GoogleFonts.dmSerifDisplay(
               fontSize: 11,
-              color: (isDark ? Colors.white : Colors.black).withValues(
-                alpha: 0.8,
-              ),
+              // Web parity: overview copy is rendered in the brand blue, not black.
+              color: M4Theme.premiumBlue,
               fontWeight: FontWeight.w900,
               height: 1.6,
               letterSpacing: 0.5,
@@ -1198,6 +1229,12 @@ class _InvestorProjectDetailScreenState
               onDownload: () => _openUrl(brochure),
             ),
           ],
+          // Web parity: WALKTHROUGH card below the flyer, single WATCH STORY CTA.
+          const SizedBox(height: 16),
+          _WalkthroughCard(
+            isDark: isDark,
+            onWatch: () => _openUrl(walkthrough),
+          ),
           ..._buildDocuments(project, isDark),
         ],
       ),
@@ -1542,22 +1579,25 @@ class _InvestorProjectDetailScreenState
                     ),
                     const SizedBox(width: 16),
                     SizedBox(
-                      width: 90,
-                      height: 90,
+                      width: 104,
+                      height: 104,
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          SizedBox(
-                            width: 90,
-                            height: 90,
-                            child: CircularProgressIndicator(
-                              value: overall.toDouble() / 100,
-                              strokeWidth: 5,
-                              backgroundColor: isDark
-                                  ? Colors.white.withValues(alpha: 0.1)
-                                  : Colors.black.withValues(alpha: 0.08),
-                              valueColor: const AlwaysStoppedAnimation<Color>(
-                                M4Theme.premiumBlue,
+                          // Web parity (matches the CP properties detail): a
+                          // dotted/dashed ring rather than a solid arc.
+                          Positioned.fill(
+                            child: CustomPaint(
+                              painter: _DottedProgressRingPainter(
+                                progress: overall.toDouble() / 100,
+                                color: M4Theme.premiumBlue,
+                                trackColor:
+                                    (isDark ? Colors.white : Colors.black)
+                                        .withValues(alpha: 0.22),
+                                dotCount: 46,
+                                dotRadius: 1.7,
+                                dashLength: 7,
+                                margin: 7,
                               ),
                             ),
                           ),
@@ -1567,7 +1607,7 @@ class _InvestorProjectDetailScreenState
                               Text(
                                 '${overall.toInt()}%',
                                 style: GoogleFonts.dmSerifDisplay(
-                                  fontSize: 20,
+                                  fontSize: 22,
                                   fontWeight: FontWeight.w900,
                                   color: isDark ? Colors.white : Colors.black,
                                 ),
@@ -1575,7 +1615,7 @@ class _InvestorProjectDetailScreenState
                               Text(
                                 'OVERALL',
                                 style: GoogleFonts.dmSerifDisplay(
-                                  fontSize: 7,
+                                  fontSize: 8,
                                   fontWeight: FontWeight.w900,
                                   color: isDark
                                       ? Colors.white38
@@ -1735,6 +1775,284 @@ class _InvestorProjectDetailScreenState
                 ],
               ],
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Web parity (image 4 / CP properties): "PHASE TRACKING" summary — a header
+  // with a milestone-count badge, then one card per phase showing index, name,
+  // status and a progress bar.
+  Widget _buildPhaseTrackingSection(bool isDark) {
+    if (_progressPhases.isEmpty) return const SizedBox.shrink();
+    final phases = _progressPhases
+        .whereType<Map>()
+        .map((m) => Map<String, dynamic>.from(m))
+        .toList();
+    if (phases.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'PHASE TRACKING',
+                    style: GoogleFonts.dmSerifDisplay(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 2,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'REAL-TIME DEVELOPMENT STATUS',
+                    style: GoogleFonts.dmSerifDisplay(
+                      fontSize: 8,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1,
+                      color: isDark ? Colors.white38 : Colors.black38,
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(999),
+                  border: Border.all(
+                    color: M4Theme.premiumBlue.withValues(alpha: 0.25),
+                  ),
+                  color: M4Theme.premiumBlue.withValues(alpha: 0.06),
+                ),
+                child: Text(
+                  '${phases.length} MILESTONES',
+                  style: GoogleFonts.dmSerifDisplay(
+                    fontSize: 8,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1,
+                    color: M4Theme.premiumBlue,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ...phases.asMap().entries.map((entry) {
+            final i = entry.key;
+            final ph = entry.value;
+            final status = (ph['status'] ?? 'In Progress').toString();
+            final name = (ph['name'] ?? ph['phaseName'] ?? 'Phase').toString();
+            final pctRaw = ph['progressPercent'] ?? ph['progress'] ?? 0;
+            final pct = (pctRaw is num)
+                ? pctRaw.toInt().clamp(0, 100)
+                : (int.tryParse('$pctRaw') ?? 0).clamp(0, 100);
+            final isCompleted = status.toUpperCase() == 'COMPLETED';
+            final statusColor = isCompleted
+                ? Colors.green
+                : M4Theme.premiumBlue;
+            return Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.03)
+                    : const Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.08)
+                      : Colors.black.withValues(alpha: 0.06),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 34,
+                        height: 34,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: (isDark ? Colors.white : Colors.black)
+                              .withValues(alpha: 0.05),
+                          border: Border.all(
+                            color: (isDark ? Colors.white : Colors.black)
+                                .withValues(alpha: 0.08),
+                          ),
+                        ),
+                        child: Text(
+                          (i + 1).toString().padLeft(2, '0'),
+                          style: GoogleFonts.dmSerifDisplay(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w900,
+                            color: isDark ? Colors.white54 : Colors.black54,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              name.toUpperCase(),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.dmSerifDisplay(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 0.5,
+                                color: isDark ? Colors.white : Colors.black,
+                              ),
+                            ),
+                            const SizedBox(height: 3),
+                            Row(
+                              children: [
+                                Container(
+                                  width: 6,
+                                  height: 6,
+                                  decoration: BoxDecoration(
+                                    color: statusColor,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  status.toUpperCase(),
+                                  style: GoogleFonts.dmSerifDisplay(
+                                    fontSize: 8,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: 1,
+                                    color: statusColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      Text(
+                        '$pct%',
+                        style: GoogleFonts.dmSerifDisplay(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w900,
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(999),
+                    child: LinearProgressIndicator(
+                      value: pct / 100,
+                      minHeight: 6,
+                      backgroundColor: (isDark ? Colors.white : Colors.black)
+                          .withValues(alpha: 0.08),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        isCompleted
+                            ? Colors.green
+                            : (isDark ? Colors.white : Colors.black),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+
+  // Collects every usable image for the gallery grid: dedicated gallery/images
+  // fields, the exterior/interior sets, and any media urls.
+  List<String> _galleryImages() {
+    final imgs = <String>[];
+    void addList(dynamic v) {
+      if (v is List) {
+        for (final e in v) {
+          if (e is String) {
+            imgs.add(e);
+          } else if (e is Map && e['url'] != null) {
+            imgs.add(e['url'].toString());
+          }
+        }
+      }
+    }
+
+    addList(_project?['gallery']);
+    addList(_project?['images']);
+    addList(_project?['galleryImages']);
+    imgs.addAll(_exteriorImages);
+    imgs.addAll(_interiorImages);
+    addList(_project?['media']);
+    return imgs.where((s) => s.trim().isNotEmpty).toSet().toList();
+  }
+
+  Widget _buildGallerySection(Map<String, dynamic> project, bool isDark) {
+    final apiClient = ref.read(apiClientProvider);
+    final images = _galleryImages();
+    if (images.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _sectionHeader('Gallery', isDark),
+          const SizedBox(height: 24),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: EdgeInsets.zero,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              childAspectRatio: 1.1,
+            ),
+            itemCount: images.length,
+            itemBuilder: (context, index) {
+              return GestureDetector(
+                onTap: () => _openGallery(images, initialIndex: index),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: CachedNetworkImage(
+                    imageUrl: apiClient.resolveUrl(images[index]),
+                    fit: BoxFit.cover,
+                    placeholder: (c, u) => Container(
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.04)
+                          : Colors.black12,
+                    ),
+                    errorWidget: (c, u, e) => Container(
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.04)
+                          : Colors.black12,
+                      child: const Icon(
+                        LucideIcons.image,
+                        color: Colors.white30,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),
@@ -2437,9 +2755,10 @@ class _AssetCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          _AssetButton(label: 'VIEW', onTap: onView),
+          // Web parity: VIEW is an outline button, DOWNLOAD (was "GET") is filled.
+          _AssetButton(label: 'VIEW', onTap: onView, filled: false),
           const SizedBox(width: 8),
-          _AssetButton(label: 'GET', onTap: onDownload),
+          _AssetButton(label: 'DOWNLOAD', onTap: onDownload),
         ],
       ),
     );
@@ -2449,28 +2768,143 @@ class _AssetCard extends StatelessWidget {
 class _AssetButton extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
-  const _AssetButton({required this.label, required this.onTap});
+  final bool filled;
+  const _AssetButton({
+    required this.label,
+    required this.onTap,
+    this.filled = true,
+  });
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final fg = filled
+        ? (isDark ? Colors.black : Colors.white)
+        : (isDark ? Colors.white : Colors.black);
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white : Colors.black,
+          color: filled
+              ? (isDark ? Colors.white : Colors.black)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
+          border: filled
+              ? null
+              : Border.all(
+                  color: (isDark ? Colors.white : Colors.black).withValues(
+                    alpha: 0.25,
+                  ),
+                ),
         ),
         child: Text(
           label,
           style: GoogleFonts.dmSerifDisplay(
             fontSize: 7.5,
             fontWeight: FontWeight.w900,
-            color: isDark ? Colors.black : Colors.white,
+            color: fg,
             letterSpacing: 1.0,
           ),
         ),
+      ),
+    );
+  }
+}
+
+// Web parity: a media asset card with a single "WATCH STORY" action (unlike
+// _AssetCard's VIEW + DOWNLOAD pair). Used for the WALKTHROUGH row.
+class _WalkthroughCard extends StatelessWidget {
+  final bool isDark;
+  final VoidCallback onWatch;
+  const _WalkthroughCard({required this.isDark, required this.onWatch});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.black.withValues(alpha: 0.06),
+        ),
+        boxShadow: isDark
+            ? []
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: M4Theme.premiumBlue.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Icon(
+              LucideIcons.video,
+              color: M4Theme.premiumBlue,
+              size: 18,
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'WALKTHROUGH',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.dmSerifDisplay(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    color: isDark ? Colors.white : Colors.black,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'CINEMATIC TOUR • 4K',
+                  style: GoogleFonts.dmSerifDisplay(
+                    fontSize: 8,
+                    fontWeight: FontWeight.w900,
+                    color: isDark ? Colors.white38 : Colors.black38,
+                    letterSpacing: 1,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          GestureDetector(
+            onTap: onWatch,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                color: isDark ? Colors.white : Colors.black,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                'WATCH STORY',
+                style: GoogleFonts.dmSerifDisplay(
+                  fontSize: 7.5,
+                  fontWeight: FontWeight.w900,
+                  color: isDark ? Colors.black : Colors.white,
+                  letterSpacing: 1.0,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -2561,4 +2995,77 @@ class _InquiryField extends StatelessWidget {
       ),
     );
   }
+}
+
+// Web parity (shared with the CP properties detail): a ring of short radial
+// dashes, filled up to [progress]. Matches the "100% OVERALL" ring on web.
+class _DottedProgressRingPainter extends CustomPainter {
+  const _DottedProgressRingPainter({
+    required this.progress,
+    required this.color,
+    required this.trackColor,
+    this.dotCount = 40,
+    this.dotRadius = 2.8,
+    this.margin = 5,
+    this.dashLength = 0,
+  });
+
+  final double progress;
+  final Color color;
+  final Color trackColor;
+  final int dotCount;
+  final double dotRadius;
+  final double margin;
+
+  /// When > 0 each mark is drawn as a short radial dash (tick) of this length
+  /// instead of a round dot — matches the web ring's elongated ticks.
+  final double dashLength;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = (math.min(size.width, size.height) / 2) - margin;
+    final filled = (progress.clamp(0.0, 1.0) * dotCount).round();
+    for (int i = 0; i < dotCount; i++) {
+      final angle = -math.pi / 2 + (2 * math.pi / dotCount) * i;
+      final paint = Paint()..color = i < filled ? color : trackColor;
+      if (dashLength > 0) {
+        paint
+          ..strokeWidth = dotRadius * 2
+          ..strokeCap = StrokeCap.round;
+        final inner = radius - dashLength / 2;
+        final outer = radius + dashLength / 2;
+        canvas.drawLine(
+          Offset(
+            center.dx + math.cos(angle) * inner,
+            center.dy + math.sin(angle) * inner,
+          ),
+          Offset(
+            center.dx + math.cos(angle) * outer,
+            center.dy + math.sin(angle) * outer,
+          ),
+          paint,
+        );
+      } else {
+        canvas.drawCircle(
+          Offset(
+            center.dx + math.cos(angle) * radius,
+            center.dy + math.sin(angle) * radius,
+          ),
+          dotRadius,
+          paint,
+        );
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _DottedProgressRingPainter old) =>
+      old.progress != progress ||
+      old.color != color ||
+      old.trackColor != trackColor ||
+      old.dotCount != dotCount ||
+      old.dotRadius != dotRadius ||
+      old.margin != margin ||
+      old.dashLength != dashLength;
 }

@@ -15,7 +15,8 @@ class InvestorProfileScreen extends ConsumerStatefulWidget {
   const InvestorProfileScreen({super.key});
 
   @override
-  ConsumerState<InvestorProfileScreen> createState() => _InvestorProfileScreenState();
+  ConsumerState<InvestorProfileScreen> createState() =>
+      _InvestorProfileScreenState();
 }
 
 class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
@@ -84,15 +85,21 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
     if (_loading) {
       return Scaffold(
         backgroundColor: bg,
-        body: const Center(child: CircularProgressIndicator(color: M4Theme.premiumBlue)),
+        body: const Center(
+          child: CircularProgressIndicator(color: M4Theme.premiumBlue),
+        ),
       );
     }
 
     final u = _user();
     final name = _name(u);
     final email = u['email']?.toString() ?? 'no email provided';
-    final phone = u['phone']?.toString().isNotEmpty == true ? u['phone'].toString() : 'Not provided';
-    final address = u['address']?.toString().isNotEmpty == true ? u['address'].toString() : 'No address provided';
+    final phone = u['phone']?.toString().isNotEmpty == true
+        ? u['phone'].toString()
+        : 'Not provided';
+    final address = u['address']?.toString().isNotEmpty == true
+        ? u['address'].toString()
+        : 'No address provided';
     final points = u['loyaltyPoints'] ?? 0;
     final born = _born(u);
 
@@ -110,9 +117,13 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                     color: textPrimary.withValues(alpha: 0.04),
                     borderRadius: BorderRadius.circular(12),
                     child: InkWell(
-                      onTap: () => ref
-                          .read(investorNavigationIndexProvider.notifier)
-                          .state = 0,
+                      onTap: () =>
+                          ref
+                                  .read(
+                                    investorNavigationIndexProvider.notifier,
+                                  )
+                                  .state =
+                              0,
                       borderRadius: BorderRadius.circular(12),
                       child: Container(
                         width: 40,
@@ -155,9 +166,15 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: textPrimary.withValues(alpha: 0.08)),
+                          border: Border.all(
+                            color: textPrimary.withValues(alpha: 0.08),
+                          ),
                         ),
-                        child: Icon(LucideIcons.settings, size: 20, color: muted),
+                        child: Icon(
+                          LucideIcons.settings,
+                          size: 20,
+                          color: muted,
+                        ),
                       ),
                     ),
                   ),
@@ -169,22 +186,72 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                   await context.push('/investor/profile/details');
                   if (mounted) _fetchUser();
                 },
-                child: _profileCard(isDark, textPrimary, muted, bg, name: name, email: email, phone: phone, address: address, born: born, points: points, hasPhoto: (u['avatar'] ?? u['avatarUrl'])?.toString().trim().isNotEmpty == true, avatarUrl: _avatarUrl(u)),
+                child: _profileCard(
+                  isDark,
+                  textPrimary,
+                  muted,
+                  bg,
+                  name: name,
+                  email: email,
+                  phone: phone,
+                  address: address,
+                  born: born,
+                  points: points,
+                  hasPhoto:
+                      (u['avatar'] ?? u['avatarUrl'])
+                          ?.toString()
+                          .trim()
+                          .isNotEmpty ==
+                      true,
+                  avatarUrl: _avatarUrl(u),
+                ),
               ),
               const SizedBox(height: 28),
               _sectionLabel('FAMILY', muted),
               const SizedBox(height: 12),
-              _linkRow(textPrimary, muted, isDark, title: 'My Family', subtitle: 'Manage your family details', icon: LucideIcons.users, onTap: () => context.push('/investor/profile/family')),
+              _linkRow(
+                textPrimary,
+                muted,
+                isDark,
+                title: 'My Family',
+                subtitle: 'Manage your family details',
+                icon: LucideIcons.users,
+                onTap: () => context.push('/investor/profile/family'),
+              ),
               const SizedBox(height: 24),
               _sectionLabel('PROPERTY SERVICES', muted),
               const SizedBox(height: 12),
-              _linkRow(textPrimary, muted, isDark, title: 'My Properties', subtitle: 'View your purchased units & documents', icon: LucideIcons.building2, onTap: () => context.push('/investor/portfolio')),
+              _linkRow(
+                textPrimary,
+                muted,
+                isDark,
+                title: 'My Properties',
+                subtitle: 'View your purchased units & documents',
+                icon: LucideIcons.building2,
+                onTap: () => context.push('/investor/portfolio'),
+              ),
               const SizedBox(height: 24),
               _sectionLabel('MANAGEMENT & SUPPORT', muted),
               const SizedBox(height: 12),
-              _linkRow(textPrimary, muted, isDark, title: 'My Custom Views', subtitle: 'Personalise your purchased units', icon: LucideIcons.palette, onTap: () => context.push('/investor/my-custom-views')),
+              _linkRow(
+                textPrimary,
+                muted,
+                isDark,
+                title: 'My Custom Views',
+                subtitle: 'Personalise your purchased units',
+                icon: LucideIcons.palette,
+                onTap: () => context.push('/investor/my-custom-views'),
+              ),
               const SizedBox(height: 10),
-              _linkRow(textPrimary, muted, isDark, title: 'M4 Referral Program', subtitle: 'Share & Earn rewards', icon: LucideIcons.users, onTap: () => context.push('/investor/referral')),
+              _linkRow(
+                textPrimary,
+                muted,
+                isDark,
+                title: 'M4 Referral Program',
+                subtitle: 'Share & Earn rewards',
+                icon: LucideIcons.users,
+                onTap: () => context.push('/investor/referral'),
+              ),
               const SizedBox(height: 28),
               _logoutButton(context),
             ],
@@ -224,7 +291,9 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
     required String avatarUrl,
   }) {
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
-    final border = (isDark ? Colors.white : Colors.black).withValues(alpha: isDark ? 0.08 : 0.06);
+    final border = (isDark ? Colors.white : Colors.black).withValues(
+      alpha: isDark ? 0.08 : 0.06,
+    );
     // Web parity: initials on a lime accent square (no photo/gold border).
     final initials = _initials(name);
     final Widget avatarChild = Center(
@@ -296,16 +365,28 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                         email,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w600, color: muted),
+                        style: GoogleFonts.dmSerifDisplay(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: muted,
+                        ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         phone,
-                        style: GoogleFonts.dmSerifDisplay(fontSize: 11, fontWeight: FontWeight.w800, color: textPrimary, letterSpacing: 0.5),
+                        style: GoogleFonts.dmSerifDisplay(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                          color: textPrimary,
+                          letterSpacing: 0.5,
+                        ),
                       ),
                       const SizedBox(height: 12),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
                           color: textPrimary,
                           borderRadius: BorderRadius.circular(100),
@@ -320,7 +401,12 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                                 address.toUpperCase(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.w900, color: bg, letterSpacing: 1),
+                                style: GoogleFonts.dmSerifDisplay(
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.w900,
+                                  color: bg,
+                                  letterSpacing: 1,
+                                ),
                               ),
                             ),
                           ],
@@ -334,7 +420,12 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                             const SizedBox(width: 6),
                             Text(
                               'BORN: $born',
-                              style: GoogleFonts.dmSerifDisplay(fontSize: 9, fontWeight: FontWeight.w800, color: textPrimary.withValues(alpha: 0.7), letterSpacing: 0.8),
+                              style: GoogleFonts.dmSerifDisplay(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w800,
+                                color: textPrimary.withValues(alpha: 0.7),
+                                letterSpacing: 0.8,
+                              ),
                             ),
                           ],
                         ),
@@ -356,11 +447,21 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
               children: [
                 Text(
                   'POINTS',
-                  style: GoogleFonts.dmSerifDisplay(fontSize: 11, fontWeight: FontWeight.w900, color: textPrimary, letterSpacing: 2),
+                  style: GoogleFonts.dmSerifDisplay(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w900,
+                    color: textPrimary,
+                    letterSpacing: 2,
+                  ),
                 ),
                 Text(
                   '$points',
-                  style: GoogleFonts.dmSerifDisplay(fontSize: 22, fontWeight: FontWeight.w900, color: textPrimary, letterSpacing: -0.5),
+                  style: GoogleFonts.dmSerifDisplay(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w900,
+                    color: textPrimary,
+                    letterSpacing: -0.5,
+                  ),
                 ),
               ],
             ),
@@ -373,7 +474,12 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
   Widget _sectionLabel(String text, Color muted) {
     return Text(
       text,
-      style: GoogleFonts.dmSerifDisplay(fontSize: 9, fontWeight: FontWeight.w900, color: muted, letterSpacing: 2.5),
+      style: GoogleFonts.dmSerifDisplay(
+        fontSize: 9,
+        fontWeight: FontWeight.w900,
+        color: muted,
+        letterSpacing: 2.5,
+      ),
     );
   }
 
@@ -386,7 +492,9 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
     required IconData icon,
     required VoidCallback onTap,
   }) {
-    final border = (isDark ? Colors.white : Colors.black).withValues(alpha: isDark ? 0.08 : 0.06);
+    final border = (isDark ? Colors.white : Colors.black).withValues(
+      alpha: isDark ? 0.08 : 0.06,
+    );
     return Material(
       color: textPrimary.withValues(alpha: 0.03),
       borderRadius: BorderRadius.circular(24),
@@ -407,7 +515,9 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12),
                   color: textPrimary.withValues(alpha: 0.05),
-                  border: Border.all(color: textPrimary.withValues(alpha: 0.06)),
+                  border: Border.all(
+                    color: textPrimary.withValues(alpha: 0.06),
+                  ),
                 ),
                 child: Icon(icon, size: 20, color: textPrimary),
               ),
@@ -420,12 +530,21 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                       title.toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.dmSerifDisplay(fontSize: 12, fontWeight: FontWeight.w700, color: textPrimary),
+                      style: GoogleFonts.dmSerifDisplay(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: textPrimary,
+                      ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       subtitle.toUpperCase(),
-                      style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.w800, color: muted, letterSpacing: 1),
+                      style: GoogleFonts.dmSerifDisplay(
+                        fontSize: 8,
+                        fontWeight: FontWeight.w800,
+                        color: muted,
+                        letterSpacing: 1,
+                      ),
                     ),
                   ],
                 ),
@@ -446,13 +565,22 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
           final go = await showDialog<bool>(
             context: context,
             builder: (ctx) => AlertDialog(
-              title: Text('Log out', style: GoogleFonts.dmSerifDisplay(fontWeight: FontWeight.w700)),
+              title: Text(
+                'Log out',
+                style: GoogleFonts.dmSerifDisplay(fontWeight: FontWeight.w700),
+              ),
               content: const Text('Sign out of your investor account?'),
               actions: [
-                TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  child: const Text('Cancel'),
+                ),
                 TextButton(
                   onPressed: () => Navigator.pop(ctx, true),
-                  child: const Text('Log out', style: TextStyle(color: Colors.red)),
+                  child: const Text(
+                    'Log out',
+                    style: TextStyle(color: Colors.red),
+                  ),
                 ),
               ],
             ),
@@ -480,7 +608,12 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
               const SizedBox(width: 8),
               Text(
                 'LOG OUT',
-                style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.red, letterSpacing: 2),
+                style: GoogleFonts.dmSerifDisplay(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.red,
+                  letterSpacing: 2,
+                ),
               ),
             ],
           ),

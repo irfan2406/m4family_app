@@ -46,10 +46,12 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
   List<_Lead> get _filtered {
     if (_q.isEmpty) return _leads;
     return _leads
-        .where((l) =>
-            l.name.toLowerCase().contains(_q) ||
-            l.project.toLowerCase().contains(_q) ||
-            l.status.toLowerCase().contains(_q))
+        .where(
+          (l) =>
+              l.name.toLowerCase().contains(_q) ||
+              l.project.toLowerCase().contains(_q) ||
+              l.status.toLowerCase().contains(_q),
+        )
         .toList();
   }
 
@@ -135,16 +137,18 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
           const SizedBox(height: 20),
 
           // Dashboard stats
-          ..._stats.map((s) => Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: _StatCard(
-                  stat: s,
-                  textPrimary: textPrimary,
-                  muted: muted,
-                  card: card,
-                  border: border,
-                ),
-              )),
+          ..._stats.map(
+            (s) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _StatCard(
+                stat: s,
+                textPrimary: textPrimary,
+                muted: muted,
+                card: card,
+                border: border,
+              ),
+            ),
+          ),
 
           const SizedBox(height: 12),
 
@@ -165,8 +169,7 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
                 ),
               ),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
                   color: _gold.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(999),
@@ -186,16 +189,18 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
           const SizedBox(height: 16),
 
           // Lead cards
-          ...filtered.map((l) => _LeadCard(
-                lead: l,
-                textPrimary: textPrimary,
-                muted: muted,
-                card: card,
-                border: border,
-                bg: bg,
-                onCall: _call,
-                onUpdate: _openLeadForm,
-              )),
+          ...filtered.map(
+            (l) => _LeadCard(
+              lead: l,
+              textPrimary: textPrimary,
+              muted: muted,
+              card: card,
+              border: border,
+              bg: bg,
+              onCall: _call,
+              onUpdate: _openLeadForm,
+            ),
+          ),
 
           if (filtered.isEmpty)
             Padding(
@@ -203,8 +208,11 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
               child: Center(
                 child: Column(
                   children: [
-                    Icon(LucideIcons.searchX,
-                        size: 36, color: textPrimary.withValues(alpha: 0.25)),
+                    Icon(
+                      LucideIcons.searchX,
+                      size: 36,
+                      color: textPrimary.withValues(alpha: 0.25),
+                    ),
                     const SizedBox(height: 12),
                     Text(
                       'NO LEADS FOUND',
@@ -235,7 +243,11 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
   }
 
   Widget _buildSearch(
-      Color textPrimary, Color muted, Color card, Color border) {
+    Color textPrimary,
+    Color muted,
+    Color card,
+    Color border,
+  ) {
     return Container(
       height: 58,
       decoration: BoxDecoration(
@@ -259,8 +271,10 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
           ),
           prefixIcon: const Icon(LucideIcons.search, size: 20, color: _gold),
           border: InputBorder.none,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 8, vertical: 18),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 8,
+            vertical: 18,
+          ),
         ),
         onChanged: (v) => setState(() => _q = v.trim().toLowerCase()),
       ),
@@ -437,8 +451,10 @@ class _LeadCard extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
                   color: _gold.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(999),
@@ -476,7 +492,8 @@ class _LeadCard extends StatelessWidget {
                     style: OutlinedButton.styleFrom(
                       side: BorderSide(color: border),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                     ),
                   ),
                 ),
@@ -502,7 +519,8 @@ class _LeadCard extends StatelessWidget {
                       foregroundColor: bg,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                     ),
                   ),
                 ),
@@ -552,7 +570,11 @@ class _RegisterCard extends StatelessWidget {
                     color: bg.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(LucideIcons.userPlus, size: 24, color: _gold),
+                  child: const Icon(
+                    LucideIcons.userPlus,
+                    size: 24,
+                    color: _gold,
+                  ),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -591,7 +613,8 @@ class _RegisterCard extends StatelessWidget {
                   foregroundColor: textPrimary,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                 ),
                 child: Text(
                   'REGISTER LEAD',
@@ -640,7 +663,10 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
   void _submit() {
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Lead registered successfully.')),
+      const SnackBar(
+        backgroundColor: Color(0xFF10B981),
+        content: Text('Lead registered successfully.'),
+      ),
     );
   }
 
@@ -730,7 +756,9 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
                 child: DropdownButton<String>(
                   value: _project,
                   isExpanded: true,
-                  dropdownColor: isDark ? const Color(0xFF111111) : Colors.white,
+                  dropdownColor: isDark
+                      ? const Color(0xFF111111)
+                      : Colors.white,
                   icon: Icon(LucideIcons.chevronDown, size: 18, color: muted),
                   style: GoogleFonts.dmSerifDisplay(
                     fontSize: 13,
@@ -740,21 +768,33 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
                   items: _projects
                       .map((p) => DropdownMenuItem(value: p, child: Text(p)))
                       .toList(),
-                  onChanged: (v) =>
-                      setState(() => _project = v ?? _project),
+                  onChanged: (v) => setState(() => _project = v ?? _project),
                 ),
               ),
             ),
             const SizedBox(height: 16),
             _label('CLIENT FULL NAME', muted),
             const SizedBox(height: 8),
-            _field(_name, 'Enter client name', textPrimary, muted, card, border),
+            _field(
+              _name,
+              'Enter client name',
+              textPrimary,
+              muted,
+              card,
+              border,
+            ),
             const SizedBox(height: 16),
             _label('CLIENT MOBILE', muted),
             const SizedBox(height: 8),
-            _field(_mobile, 'Enter client mobile', textPrimary, muted, card,
-                border,
-                keyboard: TextInputType.phone),
+            _field(
+              _mobile,
+              'Enter client mobile',
+              textPrimary,
+              muted,
+              card,
+              border,
+              keyboard: TextInputType.phone,
+            ),
             const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
@@ -766,7 +806,8 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
                   foregroundColor: bg,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                 ),
                 child: Text(
                   'SUBMIT LEAD',
@@ -786,14 +827,14 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
   }
 
   Widget _label(String text, Color muted) => Text(
-        text,
-        style: GoogleFonts.dmSerifDisplay(
-          fontSize: 9,
-          fontWeight: FontWeight.w800,
-          letterSpacing: 1.5,
-          color: muted,
-        ),
-      );
+    text,
+    style: GoogleFonts.dmSerifDisplay(
+      fontSize: 9,
+      fontWeight: FontWeight.w800,
+      letterSpacing: 1.5,
+      color: muted,
+    ),
+  );
 
   Widget _field(
     TextEditingController c,
@@ -826,8 +867,10 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
             color: muted,
           ),
           border: InputBorder.none,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 16,
+          ),
         ),
       ),
     );

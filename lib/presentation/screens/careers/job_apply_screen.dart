@@ -127,7 +127,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
             fontSize: 12,
           ),
         ),
-        backgroundColor: isError ? Colors.redAccent : Colors.teal,
+        backgroundColor: isError ? Colors.redAccent : const Color(0xFF10B981),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
@@ -296,7 +296,10 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
               // Form Fields
               _buildLabel('FULL NAME', isDark),
               const SizedBox(height: 12),
-              _buildTextField(controller: _fullNameController, hint: 'JOHN DOE'),
+              _buildTextField(
+                controller: _fullNameController,
+                hint: 'JOHN DOE',
+              ),
               const SizedBox(height: 32),
 
               _buildLabel('PHONE NUMBER', isDark),
@@ -367,47 +370,50 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                         Container(
                           width: 64,
                           height: 64,
-                        decoration: BoxDecoration(
-                          color: _resumeFile != null
-                              ? Colors.black
-                              : (isDark ? Colors.white : Colors.black),
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              blurRadius: 20,
-                              offset: const Offset(0, 10),
-                            ),
-                          ],
-                        ),
-                        child: Icon(
-                          _resumeFile != null
-                              ? LucideIcons.fileCheck
-                              : LucideIcons.rocket,
-                          color: _resumeFile != null
-                              ? Colors.white
-                              : (isDark ? Colors.black : Colors.white),
-                          size: 30,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 24),
-                        child: Text(
-                          _resumeFile != null
-                              ? _resumeFile!.path.split('/').last.toUpperCase()
-                              : 'SELECT PDF DOCUMENT',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.dmSerifDisplay(
-                            color: isDark ? Colors.white : Colors.black,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 2,
+                          decoration: BoxDecoration(
+                            color: _resumeFile != null
+                                ? Colors.black
+                                : (isDark ? Colors.white : Colors.black),
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 20,
+                                offset: const Offset(0, 10),
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            _resumeFile != null
+                                ? LucideIcons.fileCheck
+                                : LucideIcons.rocket,
+                            color: _resumeFile != null
+                                ? Colors.white
+                                : (isDark ? Colors.black : Colors.white),
+                            size: 30,
                           ),
                         ),
-                      ),
+                        const SizedBox(height: 24),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          child: Text(
+                            _resumeFile != null
+                                ? _resumeFile!.path
+                                      .split('/')
+                                      .last
+                                      .toUpperCase()
+                                : 'SELECT PDF DOCUMENT',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.dmSerifDisplay(
+                              color: isDark ? Colors.white : Colors.black,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 2,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),

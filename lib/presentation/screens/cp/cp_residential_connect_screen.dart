@@ -102,7 +102,11 @@ class _CpResidentialConnectScreenState
             children: [
               // Property status
               _PropertyCard(
-                  card: card, border: border, scheme: scheme, muted: muted),
+                card: card,
+                border: border,
+                scheme: scheme,
+                muted: muted,
+              ),
               const SizedBox(height: 28),
 
               // Institutional services
@@ -116,13 +120,15 @@ class _CpResidentialConnectScreenState
                 crossAxisSpacing: 16,
                 childAspectRatio: 1.05,
                 children: _services
-                    .map((s) => _ServiceCard(
-                          service: s,
-                          card: card,
-                          border: border,
-                          scheme: scheme,
-                          muted: muted,
-                        ))
+                    .map(
+                      (s) => _ServiceCard(
+                        service: s,
+                        card: card,
+                        border: border,
+                        scheme: scheme,
+                        muted: muted,
+                      ),
+                    )
                     .toList(),
               ),
               const SizedBox(height: 28),
@@ -130,16 +136,18 @@ class _CpResidentialConnectScreenState
               // Update stream
               _SectionHeader(label: 'UPDATE STREAM', muted: muted),
               const SizedBox(height: 16),
-              ..._alerts.map((a) => Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: _AlertItem(
-                      alert: a,
-                      card: card,
-                      border: border,
-                      scheme: scheme,
-                      muted: muted,
-                    ),
-                  )),
+              ..._alerts.map(
+                (a) => Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: _AlertItem(
+                    alert: a,
+                    card: card,
+                    border: border,
+                    scheme: scheme,
+                    muted: muted,
+                  ),
+                ),
+              ),
               const SizedBox(height: 16),
 
               // Community chat CTA
@@ -252,7 +260,11 @@ class _PropertyCardState extends State<_PropertyCard> {
                       color: scheme.onSurface,
                       borderRadius: BorderRadius.circular(18),
                     ),
-                    child: Icon(LucideIcons.home, size: 28, color: scheme.surface),
+                    child: Icon(
+                      LucideIcons.home,
+                      size: 28,
+                      color: scheme.surface,
+                    ),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
@@ -288,8 +300,10 @@ class _PropertyCardState extends State<_PropertyCard> {
                   const SizedBox(width: 8),
                   // Verified badge
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 5,
+                    ),
                     decoration: BoxDecoration(
                       color: scheme.primary,
                       borderRadius: BorderRadius.circular(999),
@@ -338,8 +352,9 @@ class _PropertyCardState extends State<_PropertyCard> {
                 child: LinearProgressIndicator(
                   value: 0.85,
                   minHeight: 10,
-                  backgroundColor:
-                      scheme.surfaceContainerHighest.withValues(alpha: 0.6),
+                  backgroundColor: scheme.surfaceContainerHighest.withValues(
+                    alpha: 0.6,
+                  ),
                   valueColor: AlwaysStoppedAnimation<Color>(scheme.primary),
                 ),
               ),
@@ -407,7 +422,11 @@ class _ServiceCardState extends State<_ServiceCard> {
                   borderRadius: BorderRadius.circular(15),
                   border: Border.all(color: widget.border),
                 ),
-                child: Icon(widget.service.icon, size: 24, color: scheme.primary),
+                child: Icon(
+                  widget.service.icon,
+                  size: 24,
+                  color: scheme.primary,
+                ),
               ),
               const SizedBox(height: 14),
               Column(
@@ -551,8 +570,11 @@ class _AlertItemState extends State<_AlertItem> {
                   shape: BoxShape.circle,
                   border: Border.all(color: widget.border),
                 ),
-                child: Icon(LucideIcons.chevronRight,
-                    size: 18, color: widget.muted),
+                child: Icon(
+                  LucideIcons.chevronRight,
+                  size: 18,
+                  color: widget.muted,
+                ),
               ),
             ],
           ),
@@ -620,8 +642,11 @@ class _CommunityChatCard extends StatelessWidget {
                           color: scheme.surface,
                           borderRadius: BorderRadius.circular(18),
                         ),
-                        child: Icon(LucideIcons.messageSquare,
-                            size: 28, color: scheme.primary),
+                        child: Icon(
+                          LucideIcons.messageSquare,
+                          size: 28,
+                          color: scheme.primary,
+                        ),
                       ),
                       const SizedBox(width: 14),
                       Expanded(
@@ -662,7 +687,9 @@ class _CommunityChatCard extends StatelessWidget {
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                              content: Text('Secure link coming soon.')),
+                            backgroundColor: Color(0xFFE24B4A),
+                            content: Text('Secure link coming soon.'),
+                          ),
                         );
                       },
                       style: FilledButton.styleFrom(
@@ -670,7 +697,8 @@ class _CommunityChatCard extends StatelessWidget {
                         foregroundColor: scheme.onSurface,
                         elevation: 3,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                       ),
                       child: Text(
                         'INITIATE SECURE LINK',

@@ -99,7 +99,25 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _load();
       _loadLiked();
+      // Populate the Registration "Employee Name" dropdown up front — it used
+      // to fetch only when the video-call sheet opened or on submit, so the
+      // list showed just "Select / Other" until then (web loads it on mount).
+      _fetchEmployees();
     });
+  }
+
+  Future<void> _fetchEmployees() async {
+    if (_employees.isNotEmpty) return;
+    try {
+      final res = await ref.read(apiClientProvider).getCpEmployees();
+      final body = res.data;
+      if (body is Map && body['status'] == true && body['data'] is List) {
+        final list = (body['data'] as List)
+            .map((e) => Map<String, dynamic>.from(e as Map))
+            .toList();
+        if (mounted) setState(() => _employees = list);
+      }
+    } catch (_) {}
   }
 
   @override
@@ -268,6 +286,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
+        backgroundColor: const Color(0xFF10B981),
         content: Text(next ? 'Saved to favorites' : 'Removed from favorites'),
       ),
     );
@@ -285,9 +304,12 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
 
   void _openOrWarn(String? url, [String message = 'Not available']) {
     if (url == null || url.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: const Color(0xFFE24B4A),
+          content: Text(message),
+        ),
+      );
       return;
     }
     _openUrl(url);
@@ -926,6 +948,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
+                                      backgroundColor: Color(0xFFE24B4A),
                                       content: Text(
                                         '360° Virtual Tour coming soon',
                                       ),
@@ -1078,7 +1101,8 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         _sectionTitle('Amenities', scheme, accent),
                         const SizedBox(height: 12),
                         _amenitiesGrid(p, scheme),
-                        const SizedBox(height: 26),
+                        // Halved (was 26) — tighter gap below Amenities.
+                        const SizedBox(height: 13),
                         _sectionTitle('Construction Progress', scheme, accent),
                         const SizedBox(height: 12),
                         _progressCard(p, overallPct, scheme),
@@ -1481,7 +1505,16 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
 
   Widget _amenitiesGrid(Map<String, dynamic> p, ColorScheme scheme) {
     final am = p['amenities'];
-    final list = am is List ? am : <dynamic>[];
+    final rawList = am is List ? am : <dynamic>[];
+    // Drop blank entries. The data carried empty amenity slots which rendered as
+    // invisible grid cells — that's what left the big empty band under "Lobby".
+    final list = rawList.where((e) {
+      final n = (e is String ? e : (e is Map ? e['name'] : e))
+              ?.toString()
+              .trim() ??
+          '';
+      return n.isNotEmpty;
+    }).toList();
     if (list.isEmpty) {
       return Text(
         'No amenities listed',
@@ -1498,7 +1531,9 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         crossAxisCount: 3,
         crossAxisSpacing: 8,
         mainAxisSpacing: 16,
-        childAspectRatio: 1.0,
+        // Cap each cell to the icon+label height. Square cells (aspect 1.0) left
+        // a tall empty band under a short row (e.g. just "Lobby").
+        mainAxisExtent: 88,
       ),
       itemCount: list.length,
       itemBuilder: (context, i) {
@@ -1572,11 +1607,12 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     Text(
                       'ESTIMATED\nCOMPLETION\nDATE',
                       style: GoogleFonts.montserrat(
-                        fontSize: 11,
+                        fontSize: 12,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 1.2,
                         height: 1.3,
-                        color: scheme.onSurface.withValues(alpha: 0.5),
+                        // Was 0.5 — too faint to read.
+                        color: scheme.onSurface.withValues(alpha: 0.72),
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -1604,11 +1640,13 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         painter: _DottedProgressRingPainter(
                           progress: pct / 100.0,
                           color: accent,
-                          trackColor: scheme.onSurface.withValues(alpha: 0.14),
-                          dotCount: 48,
-                          dotRadius: 1.0,
-                          dashLength: 5,
-                          margin: 6,
+                          // Darker unfilled track + thicker, longer dashes so
+                          // the ring reads clearly (was 1.0/5 — too faint).
+                          trackColor: scheme.onSurface.withValues(alpha: 0.22),
+                          dotCount: 46,
+                          dotRadius: 1.7,
+                          dashLength: 7,
+                          margin: 7,
                         ),
                       ),
                     ),
@@ -1620,16 +1658,18 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                             Text(
                               '$pct%',
                               style: GoogleFonts.montserrat(
-                                fontSize: 22,
+                                fontSize: 24,
                                 fontWeight: FontWeight.w900,
+                                // Was inheriting the theme's navy — force dark.
+                                color: isLight ? Colors.black : scheme.onSurface,
                               ),
                             ),
                             Text(
                               'OVERALL',
                               style: GoogleFonts.montserrat(
-                                fontSize: 9,
+                                fontSize: 10,
                                 fontWeight: FontWeight.w800,
-                                color: scheme.onSurfaceVariant,
+                                color: scheme.onSurface.withValues(alpha: 0.7),
                                 letterSpacing: 1,
                               ),
                             ),
@@ -1650,9 +1690,11 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 ? TextOverflow.visible
                 : TextOverflow.ellipsis,
             style: GoogleFonts.montserrat(
-              fontSize: 12.5,
+              // Was 12.5 / 0.55 — small and faint. Bigger + darker for
+              // readability.
+              fontSize: 13.5,
               fontWeight: FontWeight.w500,
-              color: scheme.onSurface.withValues(alpha: 0.55),
+              color: scheme.onSurface.withValues(alpha: 0.72),
               height: 1.55,
             ),
           ),
@@ -1767,6 +1809,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
+                              backgroundColor: Color(0xFFE24B4A),
                               content: Text('No progress images available'),
                             ),
                           );
@@ -2156,6 +2199,9 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             style: GoogleFonts.dmSerifDisplay(
               fontSize: 18,
               fontWeight: FontWeight.w600,
+              // Was inheriting the theme's blue/navy — force plain ink (black on
+              // light, white on dark).
+              color: scheme.onSurface,
             ),
           ),
           const SizedBox(height: 12),
@@ -2340,7 +2386,10 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Contact not available')),
+                      const SnackBar(
+                        backgroundColor: Color(0xFFE24B4A),
+                        content: Text('Contact not available'),
+                      ),
                     );
                   }
                 },

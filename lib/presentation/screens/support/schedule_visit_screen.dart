@@ -151,7 +151,10 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
     // from the logged-in account (web pre-fills these from the stored user).
     if (_selectedProjectId == null || _scheduledAt == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all required fields')),
+        const SnackBar(
+          backgroundColor: Color(0xFFE24B4A),
+          content: Text('Please fill in all required fields'),
+        ),
       );
       return;
     }
@@ -184,6 +187,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
       if (response.data['status'] == true) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
+            backgroundColor: Color(0xFF10B981),
             content: Text(
               'Visit scheduled successfully! We will contact you soon.',
             ),
@@ -193,6 +197,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
             content: Text(
               response.data['message'] ?? 'Failed to schedule visit',
             ),
@@ -201,9 +206,12 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: const Color(0xFFE24B4A),
+          content: Text('Error: $e'),
+        ),
+      );
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }

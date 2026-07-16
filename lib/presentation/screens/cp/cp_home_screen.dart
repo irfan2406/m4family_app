@@ -1225,121 +1225,127 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         ),
         const SizedBox(height: 40),
 
-        // Main Artistic Card
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 24),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(50),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.2),
-                blurRadius: 40,
-                offset: const Offset(0, 20),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(50),
-            child: Stack(
-              children: [
-                _buildProjectImage(
-                  _getImg(project, 0),
-                  height: 520,
-                  width: double.infinity,
-                ),
-                // Gradient Overlay
-                Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          Colors.black.withValues(alpha: 0.55),
-                        ],
-                        stops: const [0.5, 1.0],
-                      ),
-                    ),
-                  ),
-                ),
-                // Artistic Impression Badge
-                Positioned(
-                  top: 24,
-                  right: 24,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.6),
-                      borderRadius: BorderRadius.circular(4),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.2),
-                      ),
-                    ),
-                    child: Text(
-                      'ARTISTIC IMPRESSION',
-                      style: GoogleFonts.dmSerifDisplay(
-                        color: Colors.white,
-                        fontSize: 7,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 1.5,
-                      ),
-                    ),
-                  ),
-                ),
-                // Content Overlay
-                Positioned(
-                  bottom: 40,
-                  left: 32,
-                  right: 32,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'FEATURED PROPERTY',
-                        style: GoogleFonts.dmSerifDisplay(
-                          color: const Color(0xFFC4A484),
-                          fontSize: 9,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 1.8,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      // Web renders this in Montserrat (globals.css forces
-                      // montserrat !important over the font-serif class), light
-                      // weight, text-4xl, tracking-tight.
-                      Text(
-                        (project['title'] ?? '').toString(),
-                        style: GoogleFonts.dmSerifDisplay(
-                          color: Theme.of(context).colorScheme.onSurface,
-                          fontSize: 36,
-                          fontWeight: FontWeight.w300,
-                          height: 1,
-                          letterSpacing: -0.5,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      // Hardcoded subtitle to match web SharedHomePage.
-                      Text(
-                        'Live smart at Aura Heights—space-efficient 1 & 2 BHK homes with curated amenities and rare parking solutions.'
-                            .toUpperCase(),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.dmSerifDisplay(
-                          color: Colors.white.withValues(alpha: 0.8),
-                          fontSize: 10,
-                          height: 1.5,
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: 1.2,
-                        ),
-                      ),
-                    ],
-                  ),
+        // Main Artistic Card — the artwork itself opens the project detail,
+        // same target as READ MORE below (it wasn't tappable before).
+        GestureDetector(
+          onTap: () =>
+              context.push('/cp/projects/${project['_id']}', extra: project),
+          behavior: HitTestBehavior.opaque,
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 24),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(50),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 40,
+                  offset: const Offset(0, 20),
                 ),
               ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(50),
+              child: Stack(
+                children: [
+                  _buildProjectImage(
+                    _getImg(project, 0),
+                    height: 520,
+                    width: double.infinity,
+                  ),
+                  // Gradient Overlay
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black.withValues(alpha: 0.55),
+                          ],
+                          stops: const [0.5, 1.0],
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Artistic Impression Badge
+                  Positioned(
+                    top: 24,
+                    right: 24,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.6),
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.2),
+                        ),
+                      ),
+                      child: Text(
+                        'ARTISTIC IMPRESSION',
+                        style: GoogleFonts.dmSerifDisplay(
+                          color: Colors.white,
+                          fontSize: 7,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Content Overlay
+                  Positioned(
+                    bottom: 40,
+                    left: 32,
+                    right: 32,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'FEATURED PROPERTY',
+                          style: GoogleFonts.dmSerifDisplay(
+                            color: const Color(0xFFC4A484),
+                            fontSize: 9,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1.8,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        // Web renders this in Montserrat (globals.css forces
+                        // montserrat !important over the font-serif class), light
+                        // weight, text-4xl, tracking-tight.
+                        Text(
+                          (project['title'] ?? '').toString(),
+                          style: GoogleFonts.dmSerifDisplay(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            fontSize: 36,
+                            fontWeight: FontWeight.w300,
+                            height: 1,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        // Hardcoded subtitle to match web SharedHomePage.
+                        Text(
+                          'Live smart at Aura Heights—space-efficient 1 & 2 BHK homes with curated amenities and rare parking solutions.'
+                              .toUpperCase(),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.dmSerifDisplay(
+                            color: Colors.white.withValues(alpha: 0.8),
+                            fontSize: 10,
+                            height: 1.5,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

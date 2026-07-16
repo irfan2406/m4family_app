@@ -26,13 +26,11 @@ class InvestorMainShell extends ConsumerWidget {
 
     return Scaffold(
       drawer: const InvestorSidebarMenu(),
-      body: IndexedStack(
-        index: idx,
-        children: screens,
-      ),
+      body: IndexedStack(index: idx, children: screens),
       bottomNavigationBar: InvestorBottomNav(
         currentIndex: idx,
-        onTap: (i) => ref.read(investorNavigationIndexProvider.notifier).state = i,
+        onTap: (i) =>
+            ref.read(investorNavigationIndexProvider.notifier).state = i,
       ),
     );
   }

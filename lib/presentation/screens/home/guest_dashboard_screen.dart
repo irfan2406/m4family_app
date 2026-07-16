@@ -380,7 +380,10 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     if (!_validateInterest()) return;
     if (!_agreedToTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please agree to the Privacy Policy')),
+        const SnackBar(
+          backgroundColor: Color(0xFFE24B4A),
+          content: Text('Please agree to the Privacy Policy'),
+        ),
       );
       return;
     }
@@ -414,9 +417,12 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         setState(() => _agreedToTerms = false);
       }
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Submission failed: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: const Color(0xFFE24B4A),
+          content: Text('Submission failed: $e'),
+        ),
+      );
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
@@ -1177,6 +1183,19 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
   /// Web-parity media card: the web's Media tab is a visual gallery of the
   /// catalog projects — full-bleed hero image with just the project title in
   /// small white caps at the bottom-left.
+  /// Opens the featured project's detail page. Shared by the card image and the
+  /// READ MORE button — tapping the artwork did nothing before, which read as
+  /// the section being dead.
+  void _openFeatured(dynamic project) {
+    final id = project['_id'];
+    if (id != null) {
+      context.push('/projects/$id', extra: project);
+    } else {
+      // No live project at all: fall back to the Projects tab.
+      ref.read(guestNavigationProvider.notifier).state = 1;
+    }
+  }
+
   Widget _buildMediaCard(dynamic item) {
     final rawImage = _pickImage(
       [item['heroImage'], item['image']],
@@ -1498,7 +1517,15 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         ? _projects
         : [
             {
+              // Carries an id (and the fields the detail page reads) so READ
+              // MORE can actually open it. Without `_id` the button fell
+              // through to "switch to the Projects tab" and the card looked
+              // dead — the detail screen renders from the `extra` we pass, so
+              // this works even though the id isn't a real ObjectId.
+              '_id': 'cledor',
               'title': 'Cledor',
+              'status': 'Ongoing',
+              'location': {'name': 'Mumbai'},
               'description':
                   'CLÉDOR is a thoughtfully designed residential tower that '
                   'blends modern architecture with timeless elegance—crafted '
@@ -1539,127 +1566,134 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         ),
         const SizedBox(height: 40),
 
-        // ⭐️ Main Artistic Card
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 24),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(50),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                blurRadius: 40,
-                offset: const Offset(0, 20),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(50),
-            child: Stack(
-              children: [
-                _buildProjectImage(
-                  () {
-                    final hero = project['heroImages'];
-                    if (hero is List &&
-                        hero.isNotEmpty &&
-                        hero.first != null &&
-                        hero.first.toString().trim().isNotEmpty) {
-                      return hero.first.toString();
-                    }
-                    return (project['heroImage'] ??
-                            project['image'] ??
-                            project['coverImage'] ??
-                            '')
-                        .toString();
-                  }(),
-                  height: 520,
-                  width: double.infinity,
-                ),
-                // Gradient Overlay
-                Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          Colors.black.withOpacity(0.7),
-                        ],
-                        stops: const [0.5, 1.0],
-                      ),
-                    ),
-                  ),
-                ),
-                // Artistic Impression Badge
-                Positioned(
-                  top: 24,
-                  right: 24,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.6),
-                      borderRadius: BorderRadius.circular(4),
-                      border: Border.all(color: Colors.white.withOpacity(0.2)),
-                    ),
-                    child: Text(
-                      'ARTISTIC IMPRESSION',
-                      style: GoogleFonts.dmSerifDisplay(
-                        color: Colors.white,
-                        fontSize: 7,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 1.5,
-                      ),
-                    ),
-                  ),
-                ),
-                // Content Overlay
-                Positioned(
-                  bottom: 40,
-                  left: 32,
-                  right: 32,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'FEATURED PROPERTY',
-                        style: GoogleFonts.dmSerifDisplay(
-                          color: const Color(0xFFC5A358),
-                          fontSize: 9,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 2.5,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        (project['title'] ?? '').toString(),
-                        style: GoogleFonts.dmSerifDisplay(
-                          color: Colors.white,
-                          fontSize: 44,
-                          fontWeight: FontWeight.w400,
-                          height: 1,
-                          letterSpacing: -1,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        featuredDesc.toUpperCase(),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.dmSerifDisplay(
-                          color: Colors.white.withOpacity(0.8),
-                          fontSize: 9,
-                          height: 1.6,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: 1.2,
-                        ),
-                      ),
-                    ],
-                  ),
+        // ⭐️ Main Artistic Card — the artwork itself opens the project, same as
+        // READ MORE below it.
+        GestureDetector(
+          onTap: () => _openFeatured(project),
+          behavior: HitTestBehavior.opaque,
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 24),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(50),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 40,
+                  offset: const Offset(0, 20),
                 ),
               ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(50),
+              child: Stack(
+                children: [
+                  _buildProjectImage(
+                    () {
+                      final hero = project['heroImages'];
+                      if (hero is List &&
+                          hero.isNotEmpty &&
+                          hero.first != null &&
+                          hero.first.toString().trim().isNotEmpty) {
+                        return hero.first.toString();
+                      }
+                      return (project['heroImage'] ??
+                              project['image'] ??
+                              project['coverImage'] ??
+                              '')
+                          .toString();
+                    }(),
+                    height: 520,
+                    width: double.infinity,
+                  ),
+                  // Gradient Overlay
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black.withOpacity(0.7),
+                          ],
+                          stops: const [0.5, 1.0],
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Artistic Impression Badge
+                  Positioned(
+                    top: 24,
+                    right: 24,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.6),
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.2),
+                        ),
+                      ),
+                      child: Text(
+                        'ARTISTIC IMPRESSION',
+                        style: GoogleFonts.dmSerifDisplay(
+                          color: Colors.white,
+                          fontSize: 7,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Content Overlay
+                  Positioned(
+                    bottom: 40,
+                    left: 32,
+                    right: 32,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'FEATURED PROPERTY',
+                          style: GoogleFonts.dmSerifDisplay(
+                            color: const Color(0xFFC5A358),
+                            fontSize: 9,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 2.5,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          (project['title'] ?? '').toString(),
+                          style: GoogleFonts.dmSerifDisplay(
+                            color: Colors.white,
+                            fontSize: 44,
+                            fontWeight: FontWeight.w400,
+                            height: 1,
+                            letterSpacing: -1,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          featuredDesc.toUpperCase(),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.dmSerifDisplay(
+                            color: Colors.white.withOpacity(0.8),
+                            fontSize: 9,
+                            height: 1.6,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -1718,15 +1752,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: _ScaleButton(
-                  onTap: () {
-                    final id = project['_id'];
-                    if (id != null) {
-                      context.push('/projects/$id', extra: project);
-                    } else {
-                      // Fallback feature (no live project): open Projects tab.
-                      ref.read(guestNavigationProvider.notifier).state = 1;
-                    }
-                  },
+                  onTap: () => _openFeatured(project),
                   child: Container(
                     height: 56,
                     decoration: BoxDecoration(

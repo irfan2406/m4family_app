@@ -27,28 +27,27 @@ class GuestMainShell extends ConsumerWidget {
 
     final List<Widget> screens = [
       const GuestDashboardScreen(), // 0: Home
-      const ProjectListScreen(),   // 1: Projects
-      const AboutScreen(),         // 2: About
-      const CareersScreen(),       // 3: Careers
-      const ContactScreen(),       // 4: Contact
+      const ProjectListScreen(), // 1: Projects
+      const AboutScreen(), // 2: About
+      const CareersScreen(), // 3: Careers
+      const ContactScreen(), // 4: Contact
     ];
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       drawer: const ConditionalDrawer(),
-      onDrawerChanged: (isOpen) => ref.read(drawerOpenProvider.notifier).state = isOpen,
+      onDrawerChanged: (isOpen) =>
+          ref.read(drawerOpenProvider.notifier).state = isOpen,
       body: Stack(
         children: [
-          IndexedStack(
-            index: currentIndex,
-            children: screens,
-          ),
+          IndexedStack(index: currentIndex, children: screens),
           if (!isDrawerOpen)
             Align(
               alignment: Alignment.bottomCenter,
               child: _GuestNavigationPill(
                 currentIndex: currentIndex,
-                onTap: (index) => ref.read(guestNavigationProvider.notifier).state = index,
+                onTap: (index) =>
+                    ref.read(guestNavigationProvider.notifier).state = index,
               ),
             ),
         ],
@@ -70,30 +69,54 @@ class _GuestNavigationPill extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 48),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: isDark ? Colors.black.withOpacity(0.9) : Colors.white.withOpacity(0.9),
+        color: isDark
+            ? Colors.black.withOpacity(0.9)
+            : Colors.white.withOpacity(0.9),
         borderRadius: BorderRadius.circular(100),
-        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+        border: Border.all(
+          color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+        ),
         boxShadow: [
           BoxShadow(
             color: (isDark ? Colors.black : Colors.grey).withValues(alpha: 0.4),
             blurRadius: 40,
             spreadRadius: 4,
             offset: const Offset(0, 15),
-          )
+          ),
         ],
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _NavIcon(icon: LucideIcons.home, isActive: currentIndex == 0, onTap: () => onTap(0)),
+          _NavIcon(
+            icon: LucideIcons.home,
+            isActive: currentIndex == 0,
+            onTap: () => onTap(0),
+          ),
           const SizedBox(width: 12),
-          _NavIcon(icon: LucideIcons.building2, isActive: currentIndex == 1, onTap: () => onTap(1)),
+          _NavIcon(
+            icon: LucideIcons.building2,
+            isActive: currentIndex == 1,
+            onTap: () => onTap(1),
+          ),
           const SizedBox(width: 12),
-          _NavIcon(icon: LucideIcons.info, isActive: currentIndex == 2, onTap: () => onTap(2)),
+          _NavIcon(
+            icon: LucideIcons.info,
+            isActive: currentIndex == 2,
+            onTap: () => onTap(2),
+          ),
           const SizedBox(width: 12),
-          _NavIcon(icon: LucideIcons.briefcase, isActive: currentIndex == 3, onTap: () => onTap(3)),
+          _NavIcon(
+            icon: LucideIcons.briefcase,
+            isActive: currentIndex == 3,
+            onTap: () => onTap(3),
+          ),
           const SizedBox(width: 12),
-          _NavIcon(icon: LucideIcons.headphones, isActive: currentIndex == 4, onTap: () => onTap(4)),
+          _NavIcon(
+            icon: LucideIcons.headphones,
+            isActive: currentIndex == 4,
+            onTap: () => onTap(4),
+          ),
         ],
       ),
     );
@@ -105,7 +128,11 @@ class _NavIcon extends StatelessWidget {
   final bool isActive;
   final VoidCallback onTap;
 
-  const _NavIcon({required this.icon, required this.isActive, required this.onTap});
+  const _NavIcon({
+    required this.icon,
+    required this.isActive,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -116,15 +143,28 @@ class _NavIcon extends StatelessWidget {
         width: 56,
         height: 56,
         decoration: BoxDecoration(
-          color: isActive ? (isDark ? Colors.white : Colors.black) : Colors.transparent,
+          color: isActive
+              ? (isDark ? Colors.white : Colors.black)
+              : Colors.transparent,
           shape: BoxShape.circle,
-          boxShadow: isActive ? [BoxShadow(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1), blurRadius: 10)] : [],
+          boxShadow: isActive
+              ? [
+                  BoxShadow(
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      0.1,
+                    ),
+                    blurRadius: 10,
+                  ),
+                ]
+              : [],
         ),
         child: Center(
           child: Icon(
-            icon, 
-            color: isActive ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white70 : Colors.black54), 
-            size: 24
+            icon,
+            color: isActive
+                ? (isDark ? Colors.black : Colors.white)
+                : (isDark ? Colors.white70 : Colors.black54),
+            size: 24,
           ),
         ),
       ),
@@ -141,15 +181,22 @@ class _ScaleButton extends StatefulWidget {
   State<_ScaleButton> createState() => _ScaleButtonState();
 }
 
-class _ScaleButtonState extends State<_ScaleButton> with SingleTickerProviderStateMixin {
+class _ScaleButtonState extends State<_ScaleButton>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scale;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 100));
-    _scale = Tween<double>(begin: 1.0, end: 0.95).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 100),
+    );
+    _scale = Tween<double>(
+      begin: 1.0,
+      end: 0.95,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override

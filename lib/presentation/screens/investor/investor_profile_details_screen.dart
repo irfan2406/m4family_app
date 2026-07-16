@@ -20,10 +20,12 @@ class InvestorProfileDetailsScreen extends ConsumerStatefulWidget {
   const InvestorProfileDetailsScreen({super.key});
 
   @override
-  ConsumerState<InvestorProfileDetailsScreen> createState() => _InvestorProfileDetailsScreenState();
+  ConsumerState<InvestorProfileDetailsScreen> createState() =>
+      _InvestorProfileDetailsScreenState();
 }
 
-class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDetailsScreen> {
+class _InvestorProfileDetailsScreenState
+    extends ConsumerState<InvestorProfileDetailsScreen> {
   static const _gold = Color(0xFFFFD700);
 
   final _name = TextEditingController();
@@ -143,17 +145,34 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
         if (mounted) {
           setState(() => _editing = false);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Profile updated successfully')),
+            const SnackBar(
+              backgroundColor: Color(0xFF10B981),
+              content: Text('Profile updated successfully'),
+            ),
           );
         }
       } else {
-        final msg = res.data is Map ? (res.data as Map)['message']?.toString() : null;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg ?? 'Update failed')));
+        final msg = res.data is Map
+            ? (res.data as Map)['message']?.toString()
+            : null;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text(msg ?? 'Update failed'),
+          ),
+        );
       }
     } on DioException catch (e) {
       if (mounted) {
-        final m = e.response?.data is Map ? (e.response!.data as Map)['message']?.toString() : null;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m ?? e.message ?? 'Network error')));
+        final m = e.response?.data is Map
+            ? (e.response!.data as Map)['message']?.toString()
+            : null;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text(m ?? e.message ?? 'Network error'),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -173,7 +192,10 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
     if (len > 2 * 1024 * 1024) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('File too large (max 2MB)')),
+          const SnackBar(
+            backgroundColor: Color(0xFFE24B4A),
+            content: Text('File too large (max 2MB)'),
+          ),
         );
       }
       return;
@@ -190,31 +212,53 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
       if (newUrl == null || newUrl.isEmpty) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Upload failed')),
+            const SnackBar(
+              backgroundColor: Color(0xFFE24B4A),
+              content: Text('Upload failed'),
+            ),
           );
         }
         return;
       }
-      final patch = await ref.read(apiClientProvider).updateMe({'avatarUrl': newUrl});
+      final patch = await ref.read(apiClientProvider).updateMe({
+        'avatarUrl': newUrl,
+      });
       final ok = patch.data is Map && (patch.data as Map)['status'] == true;
       if (ok) {
         setState(() => _avatarUrl = newUrl);
         await ref.read(authProvider.notifier).fetchMe();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Profile photo updated')),
+            const SnackBar(
+              backgroundColor: Color(0xFF10B981),
+              content: Text('Profile photo updated'),
+            ),
           );
         }
       } else {
-        final msg = patch.data is Map ? (patch.data as Map)['message']?.toString() : null;
+        final msg = patch.data is Map
+            ? (patch.data as Map)['message']?.toString()
+            : null;
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg ?? 'Update failed')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: const Color(0xFFE24B4A),
+              content: Text(msg ?? 'Update failed'),
+            ),
+          );
         }
       }
     } on DioException catch (e) {
       if (mounted) {
-        final m = e.response?.data is Map ? (e.response!.data as Map)['message']?.toString() : null;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m ?? 'Upload failed')));
+        final m = e.response?.data is Map
+            ? (e.response!.data as Map)['message']?.toString()
+            : null;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text(m ?? 'Upload failed'),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _uploadingAvatar = false);
@@ -228,7 +272,9 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
     final textPrimary = isDark ? Colors.white : Colors.black;
     final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
-    final border = isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06);
+    final border = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.black.withValues(alpha: 0.06);
 
     if (_loading) {
       return Scaffold(
@@ -335,7 +381,9 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
             color: card,
             borderRadius: BorderRadius.circular(10),
             child: InkWell(
-              onTap: () => context.canPop() ? context.pop() : context.go('/investor/home'),
+              onTap: () => context.canPop()
+                  ? context.pop()
+                  : context.go('/investor/home'),
               borderRadius: BorderRadius.circular(10),
               child: Container(
                 width: 38,
@@ -345,7 +393,11 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(color: border),
                 ),
-                child: Icon(LucideIcons.arrowLeft, size: 18, color: textPrimary),
+                child: Icon(
+                  LucideIcons.arrowLeft,
+                  size: 18,
+                  color: textPrimary,
+                ),
               ),
             ),
           ),
@@ -433,16 +485,23 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
                   borderRadius: BorderRadius.circular(23),
                   child: _avatarUrl != null && _avatarUrl!.isNotEmpty
                       ? CachedNetworkImage(
-                          imageUrl: ref.read(apiClientProvider).resolveUrl(_avatarUrl!),
+                          imageUrl: ref
+                              .read(apiClientProvider)
+                              .resolveUrl(_avatarUrl!),
                           fit: BoxFit.cover,
                           alignment: Alignment.center,
                           memCacheWidth: 192,
                           memCacheHeight: 192,
                           fadeInDuration: Duration.zero,
-                          errorWidget: (_, __, ___) =>
-                              const Icon(LucideIcons.user, size: 40, color: _gold),
+                          errorWidget: (_, __, ___) => const Icon(
+                            LucideIcons.user,
+                            size: 40,
+                            color: _gold,
+                          ),
                         )
-                      : const Center(child: Icon(LucideIcons.user, size: 40, color: _gold)),
+                      : const Center(
+                          child: Icon(LucideIcons.user, size: 40, color: _gold),
+                        ),
                 ),
               ),
               if (_uploadingAvatar)
@@ -456,7 +515,10 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
                       child: SizedBox(
                         width: 26,
                         height: 26,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
@@ -474,7 +536,11 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
                       onTap: _uploadingAvatar ? null : _pickAndUploadAvatar,
                       child: const Padding(
                         padding: EdgeInsets.all(9),
-                        child: Icon(LucideIcons.camera, size: 16, color: Colors.black),
+                        child: Icon(
+                          LucideIcons.camera,
+                          size: 16,
+                          color: Colors.black,
+                        ),
                       ),
                     ),
                   ),
@@ -516,7 +582,9 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
     int maxLines = 1,
   }) {
     final enabled = _editing;
-    final fillColor = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.black.withValues(alpha: 0.02);
+    final fillColor = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : Colors.black.withValues(alpha: 0.02);
     final borderColor = enabled ? _gold.withValues(alpha: 0.5) : border;
 
     return Column(
@@ -547,11 +615,21 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
           decoration: InputDecoration(
             isDense: true,
             prefixIcon: Padding(
-              padding: EdgeInsets.only(left: 12, right: 8, bottom: maxLines > 1 ? (maxLines - 1) * 18.0 : 0),
+              padding: EdgeInsets.only(
+                left: 12,
+                right: 8,
+                bottom: maxLines > 1 ? (maxLines - 1) * 18.0 : 0,
+              ),
               child: Icon(icon, size: 16, color: muted),
             ),
-            prefixIconConstraints: const BoxConstraints(minWidth: 36, minHeight: 20),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
+            prefixIconConstraints: const BoxConstraints(
+              minWidth: 36,
+              minHeight: 20,
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 8,
+              vertical: 14,
+            ),
             filled: true,
             fillColor: fillColor,
             border: OutlineInputBorder(
@@ -695,7 +773,10 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
                     ? const SizedBox(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.black,
+                        ),
                       )
                     : Text(
                         'SAVE CHANGES',

@@ -276,7 +276,10 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to upload profile picture')),
+          const SnackBar(
+            backgroundColor: Color(0xFFE24B4A),
+            content: Text('Failed to upload profile picture'),
+          ),
         );
       }
     } finally {

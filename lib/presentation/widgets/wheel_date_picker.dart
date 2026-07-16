@@ -72,7 +72,9 @@ class _WheelDatePickerSheetState extends State<_WheelDatePickerSheet> {
     _day = widget.initial.day;
     _dayCtrl = FixedExtentScrollController(initialItem: _day - 1);
     _monthCtrl = FixedExtentScrollController(initialItem: _month - 1);
-    _yearCtrl = FixedExtentScrollController(initialItem: _year - widget.minYear);
+    _yearCtrl = FixedExtentScrollController(
+      initialItem: _year - widget.minYear,
+    );
   }
 
   @override
@@ -215,7 +217,9 @@ class _WheelDatePickerSheetState extends State<_WheelDatePickerSheet> {
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(18),
-                          color: isDark ? Colors.white : const Color(0xFF0B1120),
+                          color: isDark
+                              ? Colors.white
+                              : const Color(0xFF0B1120),
                         ),
                         child: Text(
                           'CONFIRM',

@@ -625,8 +625,9 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
             icon: LucideIcons.phone,
             label: 'CAREER HELPLINE',
             value: helpline,
-            onTap: () =>
-                _launchUrl('tel:${helpline.replaceAll(RegExp(r'[^+0-9]'), '')}'),
+            onTap: () => _launchUrl(
+              'tel:${helpline.replaceAll(RegExp(r'[^+0-9]'), '')}',
+            ),
             isDark: isDark,
           ),
         ],
@@ -702,9 +703,12 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else if (mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Could not open $url')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: const Color(0xFFE24B4A),
+          content: Text('Could not open $url'),
+        ),
+      );
     }
   }
 }

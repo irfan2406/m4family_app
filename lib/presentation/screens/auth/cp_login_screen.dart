@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:m4_mobile/core/providers/theme_provider.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 
 /// Mirrors web `app/auth/cp/login/page.tsx`: CP ID + password → `POST /auth/login`, role must be CP.
@@ -29,7 +28,6 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
   Widget build(BuildContext context) {
     final fromGuest =
         GoRouterState.of(context).uri.queryParameters['from'] == 'guest';
-    final isDark = ref.watch(themeProvider) == ThemeMode.dark;
 
     ref.listen<AuthState>(authProvider, (prev, next) {
       if (next.status == AuthStatus.authenticated) {
@@ -68,27 +66,6 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                             LucideIcons.chevronLeft,
                             color: Colors.white70,
                             size: 18,
-                          ),
-                        ),
-                      ),
-                      // Working light/dark theme toggle (sun in light mode,
-                      // moon in dark mode) — updates the global themeProvider.
-                      GestureDetector(
-                        onTap: () => ref
-                            .read(themeProvider.notifier)
-                            .setTheme(
-                              isDark ? ThemeMode.light : ThemeMode.dark,
-                            ),
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.purple.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Icon(
-                            isDark ? LucideIcons.moon : LucideIcons.sun,
-                            color: Colors.purpleAccent,
-                            size: 22,
                           ),
                         ),
                       ),
@@ -225,6 +202,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                                   if (id.isEmpty || pw.isEmpty) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
+                                        backgroundColor: Color(0xFFE24B4A),
                                         content: Text(
                                           'Please enter both CP ID and password',
                                         ),
@@ -238,7 +216,12 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                                   if (!context.mounted) return;
                                   if (err != null) {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text(err)),
+                                      SnackBar(
+                                        backgroundColor: const Color(
+                                          0xFFE24B4A,
+                                        ),
+                                        content: Text(err),
+                                      ),
                                     );
                                   }
                                 },

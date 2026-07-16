@@ -91,7 +91,10 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
         _emailController.text.isEmpty ||
         _phoneController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all required fields')),
+        const SnackBar(
+          backgroundColor: Color(0xFFE24B4A),
+          content: Text('Please fill all required fields'),
+        ),
       );
       return;
     }
@@ -132,9 +135,12 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Submission failed: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text('Submission failed: $e'),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
@@ -188,73 +194,57 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
         slivers: [
           // 🔝 Sticky Header
           SliverToBoxAdapter(
+            // Web parity: a single "← Communities" back control, and a hairline
+            // under the bar (web `header … border-b border-border`).
             child: Container(
-              padding: const EdgeInsets.fromLTRB(25, 60, 15, 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Container(
-                      width: 45,
-                      height: 45,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: (isDark ? Colors.white : Colors.black)
-                            .withOpacity(0.05),
-                        border: Border.all(
-                          color: (isDark ? Colors.white : Colors.black)
-                              .withOpacity(0.1),
-                        ),
-                      ),
-                      child: Icon(
-                        LucideIcons.chevronLeft,
-                        color: isDark ? Colors.white : Colors.black,
-                        size: 20,
-                      ),
+              padding: const EdgeInsets.fromLTRB(24, 56, 24, 18),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      0.08,
                     ),
                   ),
-                  Row(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            'M4 FAMILY',
-                            style: GoogleFonts.dmSerifDisplay(
-                              color: isDark ? Colors.white : Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: -1,
-                            ),
-                          ),
-                          Text(
-                            'DEVELOPMENTS',
-                            style: GoogleFonts.dmSerifDisplay(
-                              color: (isDark ? Colors.white : Colors.black)
-                                  .withOpacity(0.68),
-                              fontSize: 8,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 3,
-                            ),
-                          ),
-                        ],
+                ),
+              ),
+              child: GestureDetector(
+                onTap: () => Navigator.pop(context),
+                behavior: HitTestBehavior.opaque,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      LucideIcons.arrowLeft,
+                      color: (isDark ? Colors.white : Colors.black).withOpacity(
+                        0.7,
                       ),
-                    ],
-                  ),
-                ],
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'COMMUNITIES',
+                      style: GoogleFonts.dmSerifDisplay(
+                        color: (isDark ? Colors.white : Colors.black)
+                            .withOpacity(0.7),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 2,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
 
           // 🏗️ Hero Section
+          // Web parity: `relative aspect-[4/3] w-full overflow-hidden` — the
+          // image runs edge to edge with no inset or rounding.
           SliverToBoxAdapter(
-            child: Container(
-              height: 400,
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(50),
+            child: AspectRatio(
+              aspectRatio: 4 / 3,
+              child: SizedBox(
+                width: double.infinity,
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
@@ -286,20 +276,27 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                         ),
                       ),
                     ),
+                    // Web: `absolute bottom-10 left-8 right-8`.
                     Positioned(
                       bottom: 40,
-                      left: 30,
-                      right: 30,
+                      left: 32,
+                      right: 32,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             widget.community['title']?.toString() ?? '',
                             style: GoogleFonts.dmSerifDisplay(
-                              fontSize: 38,
-                              fontWeight: FontWeight.w400,
+                              // Web: `text-3xl font-light tracking-tight` — a
+                              // light serif, not the heavy weight we had.
+                              fontSize: 34,
+                              fontWeight: FontWeight.w300,
+                              letterSpacing: -0.8,
                               color: Colors.white,
-                              height: 1,
+                              height: 1.05,
+                              shadows: const [
+                                Shadow(blurRadius: 12, color: Colors.black38),
+                              ],
                             ),
                           ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.2),
                           const SizedBox(height: 12),
@@ -388,9 +385,13 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                   const SizedBox(height: 50),
 
                   // About Section
+                  // Web parity: the heading is "ABOUT THE COMMUNITY" with the
+                  // community name as the kicker beneath it — we had the two
+                  // the other way round.
                   _SectionHeader(
-                    title: widget.community['title']?.toString() ?? 'Community',
-                    subtitle: 'About the community',
+                    title: 'About the community',
+                    subtitle:
+                        'About ${widget.community['title']?.toString() ?? 'Community'}',
                   ),
                   const SizedBox(height: 25),
                   Text(
@@ -410,74 +411,72 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                   const SizedBox(height: 50),
 
                   // Benefits
-                  _SectionHeader(
-                    title: 'Benefits',
-                    subtitle:
-                        '${widget.community['title']?.toString() ?? 'Community'} Lifestyle Advantages',
-                  ),
+                  // Web shows a bare "BENEFITS" heading — no kicker.
+                  const _SectionHeader(title: 'Benefits', subtitle: ''),
                   const SizedBox(height: 30),
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 15,
-                          mainAxisSpacing: 15,
-                          childAspectRatio: 1.0,
-                        ),
-                    itemCount: benefits.length,
-                    itemBuilder: (context, index) {
-                      final benefit = benefits[index];
-                      return Container(
-                        decoration: BoxDecoration(
-                          color: (isDark ? Colors.white : Colors.black)
-                              .withOpacity(0.04),
-                          borderRadius: BorderRadius.circular(35),
-                          border: Border.all(
+                  // Web parity: compact fixed-size squares packed from the left
+                  // (measured 126×126 with a 12px gap), NOT a 2-column grid —
+                  // that stretched each card to half the screen and pushed a
+                  // wide gap between them. Wrap also flows to a second row once
+                  // there are more than two benefits.
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children: benefits.map((benefit) {
+                      return SizedBox(
+                        width: 126,
+                        height: 126,
+                        child: Container(
+                          decoration: BoxDecoration(
                             color: (isDark ? Colors.white : Colors.black)
-                                .withOpacity(0.06),
-                          ),
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              width: 50,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: (isDark ? Colors.white : Colors.black)
-                                    .withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Icon(
-                                _getIcon(benefit['icon']),
-                                color: isDark ? Colors.white : Colors.black,
-                                size: 24,
-                              ),
+                                .withOpacity(0.04),
+                            borderRadius: BorderRadius.circular(32),
+                            border: Border.all(
+                              color: (isDark ? Colors.white : Colors.black)
+                                  .withOpacity(0.06),
                             ),
-                            const SizedBox(height: 15),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                              ),
-                              child: Text(
-                                benefit['label'].toString().toUpperCase(),
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.dmSerifDisplay(
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: 48,
+                                height: 48,
+                                decoration: BoxDecoration(
                                   color: (isDark ? Colors.white : Colors.black)
-                                      .withOpacity(0.7),
-                                  fontSize: 8,
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: 0.5,
-                                  height: 1.4,
+                                      .withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Icon(
+                                  _getIcon(benefit['icon']),
+                                  color: isDark ? Colors.white : Colors.black,
+                                  size: 24,
                                 ),
                               ),
-                            ),
-                          ],
+                              const SizedBox(height: 12),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                ),
+                                child: Text(
+                                  benefit['label'].toString().toUpperCase(),
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.dmSerifDisplay(
+                                    color:
+                                        (isDark ? Colors.white : Colors.black)
+                                            .withOpacity(0.7),
+                                    fontSize: 8,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: 0.5,
+                                    height: 1.4,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       );
-                    },
+                    }).toList(),
                   ),
 
                   const SizedBox(height: 60),
@@ -687,9 +686,10 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                     key: _inquiryKey,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Web keeps this on one line.
                       const _SectionHeader(
-                        title: 'EXPRESS\nINTEREST',
-                        subtitle: 'INITIALIZE YOUR PREMIUM EXPERIENCE',
+                        title: 'Express interest',
+                        subtitle: 'Initialize your premium experience',
                       ),
                       const SizedBox(height: 30),
                       _buildInput('Full Name *', _nameController),
@@ -909,98 +909,114 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
     );
   }
 
+  /// One entry in the project dropdown.
+  ///
+  /// Web parity (`text-[10px] font-bold uppercase tracking-widest`, item
+  /// `rounded-xl py-2 pl-3 pr-8`): options render UPPERCASE — the site does it
+  /// in CSS, so its markup reads title case but the list shows caps — and the
+  /// selected one is highlighted and carries a check on the right. The closed
+  /// button keeps title case (only its placeholder is uppercased).
+  Widget _dropdownItem(String label, String value, Color textColor) {
+    final selected = _selectedProject == value;
+    return Container(
+      padding: const EdgeInsets.fromLTRB(12, 8, 8, 8),
+      decoration: BoxDecoration(
+        color: selected ? textColor.withValues(alpha: 0.08) : null,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              label.toUpperCase(),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.dmSerifDisplay(
+                color: textColor.withValues(alpha: selected ? 1 : 0.68),
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1,
+              ),
+            ),
+          ),
+          if (selected) ...[
+            const SizedBox(width: 8),
+            Icon(LucideIcons.check, size: 14, color: textColor),
+          ],
+        ],
+      ),
+    );
+  }
+
   Widget _buildProjectDropdown() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final textColor = isDark ? Colors.white : Colors.black;
-    return Container(
-      height: 56,
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      decoration: BoxDecoration(
-        color: textColor.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: textColor.withValues(alpha: 0.05)),
+    final closedLabel = _selectedProject == 'Any'
+        ? 'Any Project / Property'
+        : _selectedProject;
+
+    // Web parity: `h-14 rounded-2xl border-border bg-card px-6`, and the list
+    // drops BELOW the control (Radix popper) with the trigger still visible.
+    // Material's DropdownButton instead lays its menu OVER the button, hiding
+    // it — hence PopupMenuButton with a downward offset.
+    return PopupMenuButton<String>(
+      offset: const Offset(0, 64),
+      constraints: const BoxConstraints(minWidth: 240),
+      color: isDark ? const Color(0xFF111111) : Colors.white,
+      elevation: 8,
+      // Web popup: `rounded-2xl border shadow-2xl`.
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: textColor.withValues(alpha: 0.08)),
       ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: _selectedProject,
-          isExpanded: true,
-          icon: Icon(
-            LucideIcons.chevronDown,
-            color: textColor.withValues(alpha: 0.4),
-            size: 18,
-          ),
-          dropdownColor: isDark ? const Color(0xFF111111) : Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          style: GoogleFonts.dmSerifDisplay(
-            color: textColor,
-            fontSize: 13,
-            fontWeight: FontWeight.bold,
-          ),
-          hint: Text(
-            'SELECT PROPERTY / PROJECT',
-            style: GoogleFonts.dmSerifDisplay(
-              color: textColor.withValues(alpha: 0.68),
-              fontSize: 10,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 2,
-            ),
-          ),
-          selectedItemBuilder: (context) {
-            return <String>[
-              'Any',
-              ..._projects.map((p) => (p['title'] ?? '').toString()),
-            ].map((label) {
-              final display = label == 'Any'
-                  ? 'ANY PROJECT / PROPERTY'
-                  : label.toUpperCase();
-              return Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  display,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.dmSerifDisplay(
-                    color: textColor.withValues(alpha: 0.6),
-                    fontSize: 10,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 2,
-                  ),
-                ),
-              );
-            }).toList();
-          },
-          items: [
-            DropdownMenuItem<String>(
-              value: 'Any',
+      onSelected: (value) => setState(() => _selectedProject = value),
+      itemBuilder: (context) => [
+        PopupMenuItem<String>(
+          value: 'Any',
+          height: 40,
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: _dropdownItem('Any Project / Property', 'Any', textColor),
+        ),
+        ..._projects.map((project) {
+          final title = (project['title'] ?? '').toString();
+          return PopupMenuItem<String>(
+            value: title,
+            height: 40,
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: _dropdownItem(title, title, textColor),
+          );
+        }),
+      ],
+      child: Container(
+        height: 56,
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        decoration: BoxDecoration(
+          color: textColor.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: textColor.withValues(alpha: 0.05)),
+        ),
+        child: Row(
+          children: [
+            Expanded(
               child: Text(
-                'ANY PROJECT / PROPERTY',
+                // Title case on the trigger — only the web's *placeholder* is
+                // uppercased; the list itself renders caps.
+                closedLabel,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: GoogleFonts.dmSerifDisplay(
                   color: textColor,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 2,
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            ..._projects.map((project) {
-              final title = (project['title'] ?? '').toString();
-              return DropdownMenuItem<String>(
-                value: title,
-                child: Text(
-                  title.toUpperCase(),
-                  style: GoogleFonts.dmSerifDisplay(
-                    color: textColor,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 2,
-                  ),
-                ),
-              );
-            }),
+            Icon(
+              LucideIcons.chevronDown,
+              color: textColor.withValues(alpha: 0.4),
+              size: 18,
+            ),
           ],
-          onChanged: (value) {
-            if (value != null) setState(() => _selectedProject = value);
-          },
         ),
       ),
     );
@@ -1021,7 +1037,10 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
       case 'Bus':
         return LucideIcons.bus;
       default:
-        return LucideIcons.sparkles;
+        // Web parity: unmapped icon names fall back to lucide's
+        // circle-question-mark (we showed sparkles), which is why e.g.
+        // CONNECTIVITY rendered a different glyph than the site.
+        return LucideIcons.helpCircle;
     }
   }
 }
@@ -1045,31 +1064,37 @@ class _SectionHeader extends StatelessWidget {
               color: isDark ? Colors.white : Colors.black,
             ),
             const SizedBox(width: 20),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: GoogleFonts.dmSerifDisplay(
-                    color: isDark ? Colors.white : Colors.black,
-                    fontSize: 26,
-                    fontWeight: FontWeight.w400,
-                    height: 1.1,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  subtitle,
-                  style: GoogleFonts.dmSerifDisplay(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(
-                      0.68,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    // Web parity: the section heading is a heavy uppercase
+                    // display line (it wraps), not a light title-case one.
+                    title.toUpperCase(),
+                    style: GoogleFonts.dmSerifDisplay(
+                      color: isDark ? Colors.white : Colors.black,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -0.5,
+                      height: 1.15,
                     ),
-                    fontSize: 10,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 2,
                   ),
-                ),
-              ],
+                  if (subtitle.isNotEmpty) ...[
+                    const SizedBox(height: 5),
+                    Text(
+                      subtitle.toUpperCase(),
+                      style: GoogleFonts.dmSerifDisplay(
+                        color: (isDark ? Colors.white : Colors.black)
+                            .withOpacity(0.68),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 2,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
             ),
           ],
         ),

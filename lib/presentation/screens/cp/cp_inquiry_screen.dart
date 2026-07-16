@@ -102,12 +102,16 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
           res.data['status'] == true;
       if (ok) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Interest registered successfully!')),
+          const SnackBar(
+            backgroundColor: Color(0xFF10B981),
+            content: Text('Interest registered successfully!'),
+          ),
         );
         context.pop();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
             content: Text(
               (res.data is Map ? res.data['message']?.toString() : null) ??
                   'Failed to submit',
@@ -117,9 +121,12 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('$e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text('$e'),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _submitting = false);

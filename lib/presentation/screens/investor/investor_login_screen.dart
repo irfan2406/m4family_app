@@ -36,7 +36,10 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
     final pw = _passwordController.text;
     if (email.isEmpty || pw.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please provide your Email and Password')),
+        const SnackBar(
+          backgroundColor: Color(0xFFE24B4A),
+          content: Text('Please provide your Email and Password'),
+        ),
       );
       return;
     }
@@ -45,7 +48,9 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
         .loginInvestorWithPassword(email, pw);
     if (!mounted) return;
     if (err != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(backgroundColor: const Color(0xFFE24B4A), content: Text(err)),
+      );
     }
   }
 

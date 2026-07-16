@@ -14,7 +14,8 @@ class OnboardingScreen extends ConsumerStatefulWidget {
   ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends ConsumerState<OnboardingScreen> with SingleTickerProviderStateMixin {
+class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -24,17 +25,19 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> with Single
     // parallel with the animation. By the time we navigate to /home, the auth
     // state is already resolved and the home renders instantly — no extra wait.
     ref.read(authProvider);
-    _controller = AnimationController(
-      vsync: this,
-      // Was 1800ms. The session check above already runs in parallel, so this
-      // was pure waiting on every cold start — the splash still plays, just
-      // without holding the app back for the better part of two seconds.
-      duration: const Duration(milliseconds: 900),
-    )..forward().then((_) {
-        if (mounted) {
-          context.go('/home');
-        }
-      });
+    _controller =
+        AnimationController(
+            vsync: this,
+            // Was 1800ms. The session check above already runs in parallel, so this
+            // was pure waiting on every cold start — the splash still plays, just
+            // without holding the app back for the better part of two seconds.
+            duration: const Duration(milliseconds: 900),
+          )
+          ..forward().then((_) {
+            if (mounted) {
+              context.go('/home');
+            }
+          });
   }
 
   @override
@@ -51,10 +54,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> with Single
         fit: StackFit.expand,
         children: [
           // Pure Black Background
-          Positioned.fill(
-            child: Container(color: Colors.black),
-          ),
-          
+          Positioned.fill(child: Container(color: Colors.black)),
+
           // Main Animation Stack
           Center(
             child: Column(
@@ -63,15 +64,21 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> with Single
                 // Logo Container (Centered and Clean)
                 Container(
                   padding: const EdgeInsets.all(24),
-                  child: Image.asset(
-                    'assets/m4_family_logo.png',
-                    width: 220,
-                    fit: BoxFit.contain,
-                    color: Colors.white,
-                  )
-                  .animate()
-                  .fadeIn(duration: 1500.ms, curve: Curves.easeOut)
-                  .moveY(begin: 10, end: 0, duration: 1500.ms, curve: Curves.easeOut),
+                  child:
+                      Image.asset(
+                            'assets/m4_family_logo.png',
+                            width: 220,
+                            fit: BoxFit.contain,
+                            color: Colors.white,
+                          )
+                          .animate()
+                          .fadeIn(duration: 1500.ms, curve: Curves.easeOut)
+                          .moveY(
+                            begin: 10,
+                            end: 0,
+                            duration: 1500.ms,
+                            curve: Curves.easeOut,
+                          ),
                 ),
               ],
             ),
@@ -99,17 +106,23 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> with Single
                         child: FractionallySizedBox(
                           alignment: Alignment.centerLeft,
                           widthFactor: 1.0,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.6),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.white.withOpacity(0.4),
-                                  blurRadius: 4,
+                          child:
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.6),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.white.withOpacity(0.4),
+                                      blurRadius: 4,
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ).animate().moveX(begin: -160, end: 160, duration: 1800.ms, curve: Curves.linear),
+                              ).animate().moveX(
+                                begin: -160,
+                                end: 160,
+                                duration: 1800.ms,
+                                curve: Curves.linear,
+                              ),
                         ),
                       ),
                     ],
@@ -123,5 +136,3 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> with Single
     );
   }
 }
-
-

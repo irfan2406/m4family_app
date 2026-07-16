@@ -22,7 +22,8 @@ class CpPaymentDetailScreen extends ConsumerStatefulWidget {
   });
 
   @override
-  ConsumerState<CpPaymentDetailScreen> createState() => _CpPaymentDetailScreenState();
+  ConsumerState<CpPaymentDetailScreen> createState() =>
+      _CpPaymentDetailScreenState();
 }
 
 class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
@@ -48,7 +49,9 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
       final api = ref.read(apiClientProvider);
       final res = await api.get('/api/cp/commissions/${widget.commissionId}');
       if (!mounted) return;
-      if (res.statusCode == 200 && res.data['status'] == true && res.data['data'] is Map) {
+      if (res.statusCode == 200 &&
+          res.data['status'] == true &&
+          res.data['data'] is Map) {
         _commission = Map<String, dynamic>.from(res.data['data'] as Map);
       } else if (_commission == null) {
         _error = true;
@@ -74,18 +77,25 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
 
   void _downloadReceipt() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Receipt export is not available yet.')),
+      const SnackBar(
+        backgroundColor: Color(0xFFE24B4A),
+        content: Text('Receipt export is not available yet.'),
+      ),
     );
   }
 
   String get _shortId {
     final id = widget.commissionId;
-    return id.length > 8 ? id.substring(id.length - 8).toUpperCase() : id.toUpperCase();
+    return id.length > 8
+        ? id.substring(id.length - 8).toUpperCase()
+        : id.toUpperCase();
   }
 
   String _amountLabel() {
     final amount = _commission?['amount'];
-    final num value = amount is num ? amount : num.tryParse('${amount ?? 0}') ?? 0;
+    final num value = amount is num
+        ? amount
+        : num.tryParse('${amount ?? 0}') ?? 0;
     final formatted = NumberFormat('#,##0', 'en_US').format(value);
     return 'AED $formatted';
   }
@@ -123,11 +133,13 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
             Expanded(
               child: _loading && _commission == null
                   ? const Center(
-                      child: CircularProgressIndicator(color: M4Theme.premiumBlue),
+                      child: CircularProgressIndicator(
+                        color: M4Theme.premiumBlue,
+                      ),
                     )
                   : (_error && _commission == null)
-                      ? _errorState(textPrimary, muted)
-                      : _content(isDark, textPrimary, muted),
+                  ? _errorState(textPrimary, muted)
+                  : _content(isDark, textPrimary, muted),
             ),
           ],
         ),
@@ -176,10 +188,14 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.04),
+                color: (isDark ? Colors.white : Colors.black).withValues(
+                  alpha: 0.04,
+                ),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08),
+                  color: (isDark ? Colors.white : Colors.black).withValues(
+                    alpha: 0.08,
+                  ),
                 ),
               ),
               child: Icon(LucideIcons.download, size: 18, color: muted),
@@ -238,7 +254,11 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: green.withValues(alpha: 0.20)),
               ),
-              child: const Icon(LucideIcons.arrowDownLeft, size: 32, color: green),
+              child: const Icon(
+                LucideIcons.arrowDownLeft,
+                size: 32,
+                color: green,
+              ),
             ),
             const SizedBox(height: 16),
             Text(
@@ -275,7 +295,9 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
-    final divider = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06);
+    final divider = (isDark ? Colors.white : Colors.black).withValues(
+      alpha: 0.06,
+    );
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -286,7 +308,10 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
       ),
       child: Column(
         children: [
-          _row(label: 'TYPE', valueWidget: _valueText('Commission', textPrimary)),
+          _row(
+            label: 'TYPE',
+            valueWidget: _valueText('Commission', textPrimary),
+          ),
           _hr(divider),
           _row(
             label: 'DATE',
@@ -369,10 +394,14 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.04),
+                color: (isDark ? Colors.white : Colors.black).withValues(
+                  alpha: 0.04,
+                ),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08),
+                  color: (isDark ? Colors.white : Colors.black).withValues(
+                    alpha: 0.08,
+                  ),
                 ),
               ),
               child: Icon(LucideIcons.copy, size: 15, color: muted),
@@ -384,10 +413,11 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
   }
 
   Widget _row({required String label, required Widget valueWidget}) {
-    final muted = (Theme.of(context).brightness == Brightness.dark
-            ? Colors.white
-            : Colors.black)
-        .withValues(alpha: 0.5);
+    final muted =
+        (Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black)
+            .withValues(alpha: 0.5);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -401,7 +431,9 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
             color: muted,
           ),
         ),
-        Flexible(child: Align(alignment: Alignment.centerRight, child: valueWidget)),
+        Flexible(
+          child: Align(alignment: Alignment.centerRight, child: valueWidget),
+        ),
       ],
     );
   }

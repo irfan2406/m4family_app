@@ -164,7 +164,10 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
   Future<void> _submitBooking() async {
     if (_selectedDate == null || _selectedTime == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a date and time')),
+        const SnackBar(
+          backgroundColor: Color(0xFFE24B4A),
+          content: Text('Please select a date and time'),
+        ),
       );
       return;
     }
@@ -194,6 +197,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
             content: Text(res.data['message'] ?? 'Failed to schedule visit'),
           ),
         );
@@ -201,6 +205,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
+          backgroundColor: Color(0xFFE24B4A),
           content: Text('Error scheduling visit. Please try again.'),
         ),
       );

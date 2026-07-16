@@ -169,76 +169,41 @@ class _InvestorEliteInvestorConnectScreenState
               child: CircularProgressIndicator(color: M4Theme.premiumBlue),
             )
           : _error != null
-              ? _errorState(textPrimary, muted)
-              : RefreshIndicator(
-                  color: M4Theme.premiumBlue,
-                  onRefresh: _load,
-                  child: ListView(
-                    padding: const EdgeInsets.all(20),
+          ? _errorState(textPrimary, muted)
+          : RefreshIndicator(
+              color: M4Theme.premiumBlue,
+              onRefresh: _load,
+              child: ListView(
+                padding: const EdgeInsets.all(20),
+                children: [
+                  // ── Greeting ──────────────────────────────────────────
+                  Text(
+                    greeting,
+                    style: GoogleFonts.dmSerifDisplay(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -1,
+                      height: 1,
+                      color: textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Connect with fellow investors and co-invest in proven deals.',
+                    style: GoogleFonts.dmSerifDisplay(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: muted,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // ── Network Stats ────────────────────────────────────
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // ── Greeting ──────────────────────────────────────────
                       Text(
-                        greeting,
-                        style: GoogleFonts.dmSerifDisplay(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: -1,
-                          height: 1,
-                          color: textPrimary,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Connect with fellow investors and co-invest in proven deals.',
-                        style: GoogleFonts.dmSerifDisplay(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: muted,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-
-                      // ── Network Stats ────────────────────────────────────
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'NETWORK STATS',
-                            style: GoogleFonts.dmSerifDisplay(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 4,
-                              color: muted,
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 5),
-                            decoration: BoxDecoration(
-                              color: M4Theme.premiumBlue.withValues(alpha: 0.2),
-                              borderRadius: BorderRadius.circular(999),
-                            ),
-                            child: Text(
-                              'LIVE',
-                              style: GoogleFonts.dmSerifDisplay(
-                                fontSize: 8,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: 1.5,
-                                color: M4Theme.premiumBlue,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      ..._stats.map((s) =>
-                          _statCard(s, isDark, textPrimary, muted, card, border)),
-
-                      const SizedBox(height: 12),
-
-                      // ── Active Co-Investors ──────────────────────────────
-                      Text(
-                        'ACTIVE CO-INVESTORS',
+                        'NETWORK STATS',
                         style: GoogleFonts.dmSerifDisplay(
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
@@ -246,44 +211,97 @@ class _InvestorEliteInvestorConnectScreenState
                           color: muted,
                         ),
                       ),
-                      const SizedBox(height: 20),
-                      if (_peers.isEmpty)
-                        _emptyState(
-                          'No co-investors in your network yet',
-                          muted,
-                        )
-                      else
-                        ..._peers.map((p) => _peerCard(
-                            p, isDark, textPrimary, muted, card, border)),
-
-                      const SizedBox(height: 12),
-
-                      // ── Successful Deals ─────────────────────────────────
-                      Text(
-                        'SUCCESSFUL DEALS',
-                        style: GoogleFonts.dmSerifDisplay(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 4,
-                          color: muted,
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: M4Theme.premiumBlue.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: Text(
+                          'LIVE',
+                          style: GoogleFonts.dmSerifDisplay(
+                            fontSize: 8,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 1.5,
+                            color: M4Theme.premiumBlue,
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 20),
-                      if (_deals.isEmpty)
-                        _emptyState('No deals to show right now', muted)
-                      else
-                        ..._deals.map((d) => _dealCard(
-                            d, isDark, bg, textPrimary, muted, card, border)),
-
-                      const SizedBox(height: 8),
-
-                      // ── Concierge Panel ──────────────────────────────────
-                      _concierge(isDark, bg, textPrimary),
-
-                      const SizedBox(height: 40),
                     ],
                   ),
-                ),
+                  const SizedBox(height: 20),
+                  ..._stats.map(
+                    (s) =>
+                        _statCard(s, isDark, textPrimary, muted, card, border),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // ── Active Co-Investors ──────────────────────────────
+                  Text(
+                    'ACTIVE CO-INVESTORS',
+                    style: GoogleFonts.dmSerifDisplay(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 4,
+                      color: muted,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  if (_peers.isEmpty)
+                    _emptyState('No co-investors in your network yet', muted)
+                  else
+                    ..._peers.map(
+                      (p) => _peerCard(
+                        p,
+                        isDark,
+                        textPrimary,
+                        muted,
+                        card,
+                        border,
+                      ),
+                    ),
+
+                  const SizedBox(height: 12),
+
+                  // ── Successful Deals ─────────────────────────────────
+                  Text(
+                    'SUCCESSFUL DEALS',
+                    style: GoogleFonts.dmSerifDisplay(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 4,
+                      color: muted,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  if (_deals.isEmpty)
+                    _emptyState('No deals to show right now', muted)
+                  else
+                    ..._deals.map(
+                      (d) => _dealCard(
+                        d,
+                        isDark,
+                        bg,
+                        textPrimary,
+                        muted,
+                        card,
+                        border,
+                      ),
+                    ),
+
+                  const SizedBox(height: 8),
+
+                  // ── Concierge Panel ──────────────────────────────────
+                  _concierge(isDark, bg, textPrimary),
+
+                  const SizedBox(height: 40),
+                ],
+              ),
+            ),
     );
   }
 
@@ -469,8 +487,9 @@ class _InvestorEliteInvestorConnectScreenState
                       width: 56,
                       height: 56,
                       child: CachedNetworkImage(
-                        imageUrl:
-                            ref.read(apiClientProvider).resolveUrl(p.avatar),
+                        imageUrl: ref
+                            .read(apiClientProvider)
+                            .resolveUrl(p.avatar),
                         fit: BoxFit.cover,
                         placeholder: (_, __) => Container(
                           color: (isDark ? Colors.white : Colors.black)
@@ -551,25 +570,29 @@ class _InvestorEliteInvestorConnectScreenState
               spacing: 8,
               runSpacing: 8,
               children: p.interests
-                  .map((tag) => Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: (isDark ? Colors.white : Colors.black)
-                              .withValues(alpha: 0.04),
-                          borderRadius: BorderRadius.circular(999),
-                          border: Border.all(color: border),
+                  .map(
+                    (tag) => Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: (isDark ? Colors.white : Colors.black)
+                            .withValues(alpha: 0.04),
+                        borderRadius: BorderRadius.circular(999),
+                        border: Border.all(color: border),
+                      ),
+                      child: Text(
+                        tag.toUpperCase(),
+                        style: GoogleFonts.dmSerifDisplay(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1,
+                          color: textPrimary,
                         ),
-                        child: Text(
-                          tag.toUpperCase(),
-                          style: GoogleFonts.dmSerifDisplay(
-                            fontSize: 9,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 1,
-                            color: textPrimary,
-                          ),
-                        ),
-                      ))
+                      ),
+                    ),
+                  )
                   .toList(),
             ),
             const SizedBox(height: 16),
@@ -580,12 +603,18 @@ class _InvestorEliteInvestorConnectScreenState
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Connection request sent to ${p.name} — demo'),
+                      backgroundColor: const Color(0xFF10B981),
+                      content: Text(
+                        'Connection request sent to ${p.name} — demo',
+                      ),
                     ),
                   );
                 },
-                icon: const Icon(LucideIcons.userPlus,
-                    size: 16, color: M4Theme.premiumBlue),
+                icon: const Icon(
+                  LucideIcons.userPlus,
+                  size: 16,
+                  color: M4Theme.premiumBlue,
+                ),
                 style: OutlinedButton.styleFrom(
                   side: BorderSide(color: border),
                   shape: RoundedRectangleBorder(
@@ -672,7 +701,9 @@ class _InvestorEliteInvestorConnectScreenState
                       right: 16,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 14, vertical: 7),
+                          horizontal: 14,
+                          vertical: 7,
+                        ),
                         decoration: BoxDecoration(
                           color: _gold,
                           borderRadius: BorderRadius.circular(999),
@@ -709,8 +740,11 @@ class _InvestorEliteInvestorConnectScreenState
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        const Icon(LucideIcons.users,
-                            size: 14, color: M4Theme.premiumBlue),
+                        const Icon(
+                          LucideIcons.users,
+                          size: 14,
+                          color: M4Theme.premiumBlue,
+                        ),
                         const SizedBox(width: 8),
                         Flexible(
                           child: Text(
@@ -759,8 +793,11 @@ class _InvestorEliteInvestorConnectScreenState
                         ),
                         Row(
                           children: [
-                            Icon(LucideIcons.checkCircle,
-                                size: 16, color: Colors.green.shade500),
+                            Icon(
+                              LucideIcons.checkCircle,
+                              size: 16,
+                              color: Colors.green.shade500,
+                            ),
                             const SizedBox(width: 6),
                             Text(
                               'FUNDED',
@@ -833,11 +870,15 @@ class _InvestorEliteInvestorConnectScreenState
                           color: onPanel,
                           shape: BoxShape.circle,
                           border: Border.all(
-                              color: onPanel.withValues(alpha: 0.2)),
+                            color: onPanel.withValues(alpha: 0.2),
+                          ),
                         ),
                         alignment: Alignment.center,
-                        child: const Icon(LucideIcons.shieldCheck,
-                            size: 32, color: M4Theme.premiumBlue),
+                        child: const Icon(
+                          LucideIcons.shieldCheck,
+                          size: 32,
+                          color: M4Theme.premiumBlue,
+                        ),
                       ),
                       const SizedBox(width: 20),
                       Expanded(
@@ -877,6 +918,7 @@ class _InvestorEliteInvestorConnectScreenState
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
+                            backgroundColor: Color(0xFFE24B4A),
                             content: Text('Requesting an introduction — demo'),
                           ),
                         );
@@ -938,11 +980,5 @@ class _Deal {
   final String ticket;
   final String roi;
   final String image;
-  const _Deal(
-    this.title,
-    this.syndicate,
-    this.ticket,
-    this.roi,
-    this.image,
-  );
+  const _Deal(this.title, this.syndicate, this.ticket, this.roi, this.image);
 }

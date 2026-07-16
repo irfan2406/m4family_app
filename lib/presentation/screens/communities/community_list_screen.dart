@@ -100,20 +100,21 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'OUR COMMUNITIES',
+                            // Web parity: header reads "M4 FAMILY / DEVELOPMENTS".
+                            'M4 FAMILY',
                             style: GoogleFonts.dmSerifDisplay(
                               color: isDark ? Colors.white : Colors.black,
-                              fontSize: 15,
+                              fontSize: 16,
                               fontWeight: FontWeight.w900,
                               letterSpacing: -0.3,
                             ),
                           ),
                           Text(
-                            'ECOSYSTEMS · LIFESTYLE',
+                            'DEVELOPMENTS',
                             style: GoogleFonts.dmSerifDisplay(
                               color: (isDark ? Colors.white : Colors.black)
-                                  .withOpacity(0.6),
-                              fontSize: 8,
+                                  .withOpacity(0.55),
+                              fontSize: 9,
                               fontWeight: FontWeight.w700,
                               letterSpacing: 3,
                             ),
@@ -136,10 +137,13 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'DISCOVER THE LIFE',
+                    'ABOUT THE COMMUNITIES',
+                    maxLines: 1,
+                    overflow: TextOverflow.visible,
                     style: GoogleFonts.dmSerifDisplay(
-                      fontSize: 30,
-                      fontWeight: FontWeight.w800,
+                      // Web parity: thin elegant serif on one line (not heavy bold).
+                      fontSize: 26,
+                      fontWeight: FontWeight.w400,
                       color: isDark ? Colors.white : Colors.black,
                       letterSpacing: -0.5,
                       height: 1.1,
@@ -157,8 +161,8 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       // muted, text-[13px] font-medium (not serif).
                       style: GoogleFonts.dmSerifDisplay(
                         color: (isDark ? Colors.white : Colors.black)
-                            .withOpacity(0.6),
-                        fontSize: 13,
+                            .withOpacity(0.78),
+                        fontSize: 14.5,
                         height: 1.6,
                         fontWeight: FontWeight.w500,
                       ),
@@ -169,8 +173,8 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       // muted, text-[13px] font-medium (not serif).
                       style: GoogleFonts.dmSerifDisplay(
                         color: (isDark ? Colors.white : Colors.black)
-                            .withOpacity(0.6),
-                        fontSize: 13,
+                            .withOpacity(0.78),
+                        fontSize: 14.5,
                         height: 1.6,
                         fontWeight: FontWeight.w500,
                       ),
@@ -375,10 +379,11 @@ class _CommunityCard extends ConsumerWidget {
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.dmSerifDisplay(
-                            fontSize: 13,
-                            color: Colors.white.withOpacity(0.8),
+                            fontSize: 14,
+                            // Brighter on the dark card = more readable.
+                            color: Colors.white.withOpacity(0.9),
                             height: 1.5,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],

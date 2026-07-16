@@ -48,7 +48,10 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
   void _toast(String msg) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg, style: GoogleFonts.dmSerifDisplay(fontSize: 12))),
+      SnackBar(
+        backgroundColor: const Color(0xFFE24B4A),
+        content: Text(msg, style: GoogleFonts.dmSerifDisplay(fontSize: 12)),
+      ),
     );
   }
 
@@ -196,7 +199,11 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
                     color: _green.withValues(alpha: 0.1),
                     border: Border.all(color: _green.withValues(alpha: 0.2)),
                   ),
-                  child: const Icon(LucideIcons.shield, size: 32, color: _green),
+                  child: const Icon(
+                    LucideIcons.shield,
+                    size: 32,
+                    color: _green,
+                  ),
                 ),
                 Positioned(
                   top: 0,
@@ -381,9 +388,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withValues(alpha: 0.02) : card,
-        border: isLast
-            ? null
-            : Border(bottom: BorderSide(color: border)),
+        border: isLast ? null : Border(bottom: BorderSide(color: border)),
       ),
       child: Row(
         children: [
@@ -417,9 +422,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
             decoration: BoxDecoration(
-              color: isActive
-                  ? _green.withValues(alpha: 0.1)
-                  : card,
+              color: isActive ? _green.withValues(alpha: 0.1) : card,
               borderRadius: BorderRadius.circular(6),
               border: Border.all(
                 color: isActive ? _green.withValues(alpha: 0.2) : border,

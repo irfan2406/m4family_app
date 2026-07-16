@@ -115,9 +115,12 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
       _scrollToBottom();
     } else {
       setState(() => _sending = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Failed to send message')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Color(0xFFE24B4A),
+          content: Text('Failed to send message'),
+        ),
+      );
     }
   }
 

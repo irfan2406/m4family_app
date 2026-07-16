@@ -306,13 +306,13 @@ class ProjectListScreen extends ConsumerWidget {
                             }
                             if (cpCatalogMode) {
                               ref
-                                  .read(cpNavigationIndexProvider.notifier)
-                                  .state = 0;
+                                      .read(cpNavigationIndexProvider.notifier)
+                                      .state =
+                                  0;
                             } else {
                               ref.read(navigationProvider.notifier).state = 0;
-                              ref
-                                  .read(guestNavigationProvider.notifier)
-                                  .state = 0;
+                              ref.read(guestNavigationProvider.notifier).state =
+                                  0;
                             }
                           },
                           borderRadius: BorderRadius.circular(12),

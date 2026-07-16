@@ -40,7 +40,9 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
       if (!mounted) return;
       if (w.statusCode == 200 && w.data['status'] == true) {
         final d = w.data['data'];
-        _wallet = d is Map<String, dynamic> ? d : (d is Map ? Map<String, dynamic>.from(d) : null);
+        _wallet = d is Map<String, dynamic>
+            ? d
+            : (d is Map ? Map<String, dynamic>.from(d) : null);
       }
       if (r.statusCode == 200 && r.data['status'] == true) {
         final d = r.data['data'];
@@ -50,15 +52,20 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
     if (mounted) setState(() => _loading = false);
   }
 
-  num _balance() => (_wallet?['balance'] ?? _wallet?['availableBalance'] ?? 0) as num;
+  num _balance() =>
+      (_wallet?['balance'] ?? _wallet?['availableBalance'] ?? 0) as num;
   num _totalEarned() => (_wallet?['totalEarned'] ?? 0) as num;
 
-  String _leadName(dynamic l) => (l['referralName'] ?? l['clientName'] ?? l['name'] ?? 'Lead').toString();
-  String _leadPhone(dynamic l) => (l['referralPhone'] ?? l['clientPhone'] ?? l['phone'] ?? '').toString();
+  String _leadName(dynamic l) =>
+      (l['referralName'] ?? l['clientName'] ?? l['name'] ?? 'Lead').toString();
+  String _leadPhone(dynamic l) =>
+      (l['referralPhone'] ?? l['clientPhone'] ?? l['phone'] ?? '').toString();
   String _leadProject(dynamic l) {
-    if (l['projectId'] is Map) return (l['projectId']['title'] ?? '').toString();
+    if (l['projectId'] is Map)
+      return (l['projectId']['title'] ?? '').toString();
     return (l['projectName'] ?? 'General').toString();
   }
+
   String _status(dynamic l) => (l['status'] ?? 'Pending').toString();
 
   double _progress(String s) {
@@ -75,28 +82,61 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
       final res = await api.patchCpReferralStatus(id, status);
       if (!mounted) return;
       if (res.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Status updated')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Color(0xFF10B981),
+            content: Text('Status updated'),
+          ),
+        );
         _load();
       }
     } catch (e) {
-      if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+      if (mounted)
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text('$e'),
+          ),
+        );
     }
   }
 
   void _showStatusSheet(String id, String current) {
-    const options = ['NEW', 'VISIT_SCHEDULED', 'VISIT_DONE', 'FOLLOW_UP', 'BOOKING_DONE', 'COMMISSION_ELIGIBLE', 'CLEARED', 'LOST'];
+    const options = [
+      'NEW',
+      'VISIT_SCHEDULED',
+      'VISIT_DONE',
+      'FOLLOW_UP',
+      'BOOKING_DONE',
+      'COMMISSION_ELIGIBLE',
+      'CLEARED',
+      'LOST',
+    ];
     showModalBottomSheet<void>(
       context: context,
       builder: (ctx) => SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Padding(padding: const EdgeInsets.all(16), child: Text('Update status', style: GoogleFonts.dmSerifDisplay(fontWeight: FontWeight.bold))),
-            ...options.map((s) => ListTile(
-              title: Text(s.replaceAll('_', ' ')),
-              trailing: s == current ? const Icon(Icons.check, size: 18) : null,
-              onTap: () { Navigator.pop(ctx); _patchStatus(id, s); },
-            )),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                'Update status',
+                style: GoogleFonts.dmSerifDisplay(fontWeight: FontWeight.bold),
+              ),
+            ),
+            ...options.map(
+              (s) => ListTile(
+                title: Text(s.replaceAll('_', ' ')),
+                trailing: s == current
+                    ? const Icon(Icons.check, size: 18)
+                    : null,
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _patchStatus(id, s);
+                },
+              ),
+            ),
           ],
         ),
       ),
@@ -111,7 +151,9 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
 
     final filtered = _referrals.where((l) {
       final q = _searchQuery.toLowerCase();
-      return q.isEmpty || _leadName(l).toLowerCase().contains(q) || _leadProject(l).toLowerCase().contains(q);
+      return q.isEmpty ||
+          _leadName(l).toLowerCase().contains(q) ||
+          _leadProject(l).toLowerCase().contains(q);
     }).toList();
 
     return Material(
@@ -122,7 +164,9 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
           SliverAppBar(
             pinned: true,
             toolbarHeight: 120,
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor.withOpacity(0.9),
+            backgroundColor: Theme.of(
+              context,
+            ).scaffoldBackgroundColor.withOpacity(0.9),
             automaticallyImplyLeading: false,
             elevation: 0,
             titleSpacing: 0,
@@ -207,65 +251,79 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24),
                       child: Builder(
-                    builder: (context) {
-                      return Stack(
-                        children: [
-                          AspectRatio(
-                            aspectRatio: 4 / 3,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(32),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.15),
-                                    blurRadius: 30,
-                                    offset: const Offset(0, 15),
+                        builder: (context) {
+                          return Stack(
+                            children: [
+                              AspectRatio(
+                                aspectRatio: 4 / 3,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(32),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.15),
+                                        blurRadius: 30,
+                                        offset: const Offset(0, 15),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(32),
-                                child: CachedNetworkImage(
-                                  imageUrl: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80',
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) => Container(color: Colors.black12),
-                                  errorWidget: (context, url, error) => Container(
-                                    color: Colors.white10,
-                                    child: const Center(child: Icon(LucideIcons.image, color: Colors.white24, size: 50)),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(32),
+                                    child: CachedNetworkImage(
+                                      imageUrl:
+                                          'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80',
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) =>
+                                          Container(color: Colors.black12),
+                                      errorWidget: (context, url, error) =>
+                                          Container(
+                                            color: Colors.white10,
+                                            child: const Center(
+                                              child: Icon(
+                                                LucideIcons.image,
+                                                color: Colors.white24,
+                                                size: 50,
+                                              ),
+                                            ),
+                                          ),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ),
-                          
-                          // Artistic Impression Badge
-                          Positioned(
-                            top: 16,
-                            right: 16,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.4),
-                                borderRadius: BorderRadius.circular(4),
-                                border: Border.all(color: Colors.white.withOpacity(0.1)),
-                              ),
-                              child: Text(
-                                'ARTISTIC IMPRESSION',
-                                style: GoogleFonts.dmSerifDisplay(
-                                  color: Colors.white,
-                                  fontSize: 7,
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: 1.5,
+
+                              // Artistic Impression Badge
+                              Positioned(
+                                top: 16,
+                                right: 16,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withOpacity(0.4),
+                                    borderRadius: BorderRadius.circular(4),
+                                    border: Border.all(
+                                      color: Colors.white.withOpacity(0.1),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    'ARTISTIC IMPRESSION',
+                                    style: GoogleFonts.dmSerifDisplay(
+                                      color: Colors.white,
+                                      fontSize: 7,
+                                      fontWeight: FontWeight.w900,
+                                      letterSpacing: 1.5,
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
+                            ],
+                          );
+                        },
+                      ),
+                    ),
                   ),
-                ),
-              ),
                 ],
               ),
             ),
@@ -278,14 +336,19 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   if (_loading)
-                    const Center(child: Padding(padding: EdgeInsets.all(32), child: CircularProgressIndicator()))
+                    const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(32),
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
                   else ...[
                     _commissionVault(scheme),
                     const SizedBox(height: 24),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       child: _sectionLabel(
-                        'M4 PROPERTIES', 
+                        'M4 PROPERTIES',
                         onViewAll: () => context.push('/cp/projects'),
                       ),
                     ),
@@ -299,7 +362,12 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
             ),
           ),
           if (!_loading && filtered.isEmpty)
-            const SliverToBoxAdapter(child: Padding(padding: EdgeInsets.all(32), child: Center(child: Text('No prospects identified.')))),
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.all(32),
+                child: Center(child: Text('No prospects identified.')),
+              ),
+            ),
           if (!_loading && filtered.isNotEmpty)
             SliverList(
               delegate: SliverChildBuilderDelegate(
@@ -313,18 +381,28 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
     );
   }
 
-
   Widget _commissionVault(ColorScheme scheme) {
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(34)),
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.circular(34),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('AVAILABLE COMMISSION', style: GoogleFonts.dmSerifDisplay(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2.5, color: Colors.white70)),
+              Text(
+                'AVAILABLE COMMISSION',
+                style: GoogleFonts.dmSerifDisplay(
+                  fontSize: 9,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 2.5,
+                  color: Colors.white70,
+                ),
+              ),
               const Icon(LucideIcons.wallet, color: Colors.white, size: 24),
             ],
           ),
@@ -333,8 +411,23 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
             children: [
-              Text('AED ', style: GoogleFonts.dmSerifDisplay(fontSize: 16, fontWeight: FontWeight.w900, color: Colors.white54)),
-              Text(_balance().toString(), style: GoogleFonts.dmSerifDisplay(fontSize: 48, fontWeight: FontWeight.w900, color: Colors.white, height: 1)),
+              Text(
+                'AED ',
+                style: GoogleFonts.dmSerifDisplay(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.white54,
+                ),
+              ),
+              Text(
+                _balance().toString(),
+                style: GoogleFonts.dmSerifDisplay(
+                  fontSize: 48,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.white,
+                  height: 1,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 32),
@@ -354,13 +447,31 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(color: Colors.white.withOpacity(0.08), borderRadius: BorderRadius.circular(16)),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.08),
+          borderRadius: BorderRadius.circular(16),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label, style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.w900, color: Colors.white60, letterSpacing: 1)),
+            Text(
+              label,
+              style: GoogleFonts.dmSerifDisplay(
+                fontSize: 8,
+                fontWeight: FontWeight.w900,
+                color: Colors.white60,
+                letterSpacing: 1,
+              ),
+            ),
             const SizedBox(height: 6),
-            Text(val, style: GoogleFonts.dmSerifDisplay(fontSize: 12, fontWeight: FontWeight.w900, color: Colors.white)),
+            Text(
+              val,
+              style: GoogleFonts.dmSerifDisplay(
+                fontSize: 12,
+                fontWeight: FontWeight.w900,
+                color: Colors.white,
+              ),
+            ),
           ],
         ),
       ),
@@ -372,10 +483,10 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
-          title, 
+          title,
           style: GoogleFonts.dmSerifDisplay(
             fontSize: 22,
-            fontWeight: FontWeight.w400, 
+            fontWeight: FontWeight.w400,
             letterSpacing: -0.5,
             color: Theme.of(context).colorScheme.onSurface,
           ),
@@ -384,9 +495,20 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
           onPressed: onViewAll,
           child: Row(
             children: [
-              Text('View all', style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.black)),
+              Text(
+                'View all',
+                style: GoogleFonts.dmSerifDisplay(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black,
+                ),
+              ),
               const SizedBox(width: 4),
-              const Icon(LucideIcons.chevronRight, size: 12, color: Colors.black),
+              const Icon(
+                LucideIcons.chevronRight,
+                size: 12,
+                color: Colors.black,
+              ),
             ],
           ),
         ),
@@ -408,7 +530,9 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
             separatorBuilder: (_, __) => const SizedBox(width: 14),
             itemBuilder: (ctx, i) {
               final p = projects[i];
-              final img = (p['images'] is List && p['images'].isNotEmpty) ? p['images'][0].toString() : (p['heroImage']?.toString() ?? '');
+              final img = (p['images'] is List && p['images'].isNotEmpty)
+                  ? p['images'][0].toString()
+                  : (p['heroImage']?.toString() ?? '');
               return _projectCard(p, img);
             },
           );
@@ -419,20 +543,104 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
 
   Widget _projectCard(dynamic p, String img) {
     return GestureDetector(
-      onTap: () { if (p['_id'] != null) context.push('/cp/projects/${p['_id']}'); },
+      onTap: () {
+        if (p['_id'] != null) context.push('/cp/projects/${p['_id']}');
+      },
       child: Container(
         width: 180,
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(34), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))]),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(34),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(34),
           child: Stack(
             fit: StackFit.expand,
             children: [
-              img.isNotEmpty ? CachedNetworkImage(imageUrl: img, fit: BoxFit.cover) : Container(color: Colors.grey.shade200),
-              Container(decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Colors.transparent, Colors.black.withOpacity(0.8)]))),
-              Positioned(top: 15, left: 15, child: Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4), decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)), child: Text('ONGOING', style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.w900)))),
-              Positioned(left: 15, right: 15, bottom: 20, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(p['title'] ?? '', style: GoogleFonts.dmSerifDisplay(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 16)), const SizedBox(height: 4), Text('FROM 18% YOY', style: GoogleFonts.dmSerifDisplay(color: Colors.white60, fontWeight: FontWeight.w800, fontSize: 8, letterSpacing: 1))])),
-              Positioned(right: 15, bottom: 20, child: Container(width: 32, height: 32, decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), shape: BoxShape.circle), child: const Icon(LucideIcons.arrowUpRight, color: Colors.white, size: 16))),
+              img.isNotEmpty
+                  ? CachedNetworkImage(imageUrl: img, fit: BoxFit.cover)
+                  : Container(color: Colors.grey.shade200),
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 15,
+                left: 15,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    'ONGOING',
+                    style: GoogleFonts.dmSerifDisplay(
+                      fontSize: 8,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 15,
+                right: 15,
+                bottom: 20,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      p['title'] ?? '',
+                      style: GoogleFonts.dmSerifDisplay(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'FROM 18% YOY',
+                      style: GoogleFonts.dmSerifDisplay(
+                        color: Colors.white60,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 8,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                right: 15,
+                bottom: 20,
+                child: Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    LucideIcons.arrowUpRight,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -444,13 +652,39 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text('REGISTERED LEADS', style: GoogleFonts.dmSerifDisplay(fontWeight: FontWeight.w900, letterSpacing: 0.5)),
+        Text(
+          'REGISTERED LEADS',
+          style: GoogleFonts.dmSerifDisplay(
+            fontWeight: FontWeight.w900,
+            letterSpacing: 0.5,
+          ),
+        ),
         GestureDetector(
           onTap: () => setState(() => _showSearch = !_showSearch),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(color: scheme.surfaceContainer, borderRadius: BorderRadius.circular(99)),
-            child: Row(children: [Icon(LucideIcons.search, size: 14, color: scheme.onSurface.withOpacity(0.3)), const SizedBox(width: 8), Text('FILTER', style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1))]),
+            decoration: BoxDecoration(
+              color: scheme.surfaceContainer,
+              borderRadius: BorderRadius.circular(99),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  LucideIcons.search,
+                  size: 14,
+                  color: scheme.onSurface.withOpacity(0.3),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'FILTER',
+                  style: GoogleFonts.dmSerifDisplay(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],
@@ -462,13 +696,24 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: TextField(
         onChanged: (v) => setState(() => _searchQuery = v),
-        style: GoogleFonts.dmSerifDisplay(fontSize: 14, fontWeight: FontWeight.w700),
+        style: GoogleFonts.dmSerifDisplay(
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+        ),
         decoration: InputDecoration(
           hintText: 'SEARCH PROSPECTS...',
-          hintStyle: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.black12, letterSpacing: 2),
+          hintStyle: GoogleFonts.dmSerifDisplay(
+            fontSize: 10,
+            fontWeight: FontWeight.w900,
+            color: Colors.black12,
+            letterSpacing: 2,
+          ),
           filled: true,
           fillColor: scheme.surfaceContainer,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: BorderSide.none,
+          ),
           prefixIcon: const Icon(LucideIcons.search, size: 16),
         ),
       ),
@@ -483,7 +728,17 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       child: Container(
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(34), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 20, offset: const Offset(0, 10))]),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(34),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.04),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
         child: Padding(
           padding: const EdgeInsets.all(26),
           child: Column(
@@ -492,24 +747,180 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(_leadName(lead).toLowerCase(), style: GoogleFonts.dmSerifDisplay(fontSize: 20, fontWeight: FontWeight.w800, letterSpacing: -0.5)), Text(_leadProject(lead).toUpperCase(), style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.black45, letterSpacing: 1.5))]),
-                  Container(padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6), decoration: BoxDecoration(color: const Color(0xFF14B8A6).withOpacity(0.15), borderRadius: BorderRadius.circular(99)), child: Text(status.replaceAll('_', ' ').toUpperCase(), style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.w900, color: const Color(0xFF14B8A6), letterSpacing: 1))),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _leadName(lead).toLowerCase(),
+                        style: GoogleFonts.dmSerifDisplay(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
+                      Text(
+                        _leadProject(lead).toUpperCase(),
+                        style: GoogleFonts.dmSerifDisplay(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.black45,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF14B8A6).withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(99),
+                    ),
+                    child: Text(
+                      status.replaceAll('_', ' ').toUpperCase(),
+                      style: GoogleFonts.dmSerifDisplay(
+                        fontSize: 8,
+                        fontWeight: FontWeight.w900,
+                        color: const Color(0xFF14B8A6),
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 24),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [_traceStep('REG', active: true), _traceStep('VISIT', active: status != 'NEW'), _traceStep('BOOKED', active: status == 'BOOKING_DONE' || status == 'CLEARED'), _traceStep('PAYOUT', active: status == 'CLEARED')]),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _traceStep('REG', active: true),
+                  _traceStep('VISIT', active: status != 'NEW'),
+                  _traceStep(
+                    'BOOKED',
+                    active: status == 'BOOKING_DONE' || status == 'CLEARED',
+                  ),
+                  _traceStep('PAYOUT', active: status == 'CLEARED'),
+                ],
+              ),
               const SizedBox(height: 8),
-              Stack(children: [Container(height: 4, decoration: BoxDecoration(color: scheme.surfaceContainer, borderRadius: BorderRadius.circular(2))), FractionallySizedBox(widthFactor: _progress(status), child: Container(height: 4, decoration: BoxDecoration(color: const Color(0xFF14B8A6), borderRadius: BorderRadius.circular(2))))]),
+              Stack(
+                children: [
+                  Container(
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: scheme.surfaceContainer,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  FractionallySizedBox(
+                    widthFactor: _progress(status),
+                    child: Container(
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF14B8A6),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               const SizedBox(height: 32),
               Row(
                 children: [
-                  Expanded(child: OutlinedButton(onPressed: phone.isEmpty ? null : () => launchUrl(Uri.parse('tel:$phone')), style: OutlinedButton.styleFrom(minimumSize: const Size(0, 56), side: BorderSide(color: Colors.black.withOpacity(0.05)), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28))), child: Text('CALL CLIENT', style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.black, letterSpacing: 1)))),
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: phone.isEmpty
+                          ? null
+                          : () => launchUrl(Uri.parse('tel:$phone')),
+                      style: OutlinedButton.styleFrom(
+                        minimumSize: const Size(0, 56),
+                        side: BorderSide(color: Colors.black.withOpacity(0.05)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(28),
+                        ),
+                      ),
+                      child: Text(
+                        'CALL CLIENT',
+                        style: GoogleFonts.dmSerifDisplay(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.black,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ),
+                  ),
                   const SizedBox(width: 12),
-                  Expanded(child: ElevatedButton(onPressed: id.isEmpty ? null : () => _showStatusSheet(id, status), style: ElevatedButton.styleFrom(backgroundColor: Colors.black, foregroundColor: Colors.white, minimumSize: const Size(0, 56), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28))), child: Text('UPDATE STATUS', style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1)))),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: id.isEmpty
+                          ? null
+                          : () => _showStatusSheet(id, status),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size(0, 56),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(28),
+                        ),
+                      ),
+                      child: Text(
+                        'UPDATE STATUS',
+                        style: GoogleFonts.dmSerifDisplay(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 16),
-              Container(padding: const EdgeInsets.all(20), decoration: BoxDecoration(color: scheme.surfaceContainer.withValues(alpha: 0.3), borderRadius: BorderRadius.circular(24), border: Border.all(color: scheme.surfaceContainer)), child: Row(children: [const Icon(LucideIcons.wallet, size: 16, color: Colors.black54), const SizedBox(width: 12), Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text('PAYMENT JOURNEY', style: GoogleFonts.dmSerifDisplay(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1)), const SizedBox(height: 4), Text('WAITING FOR FIRST PAYMENT\nSCHEDULE...', style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.w700, color: Colors.black45, height: 1.5))]))])),
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: scheme.surfaceContainer.withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: scheme.surfaceContainer),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      LucideIcons.wallet,
+                      size: 16,
+                      color: Colors.black54,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'PAYMENT JOURNEY',
+                            style: GoogleFonts.dmSerifDisplay(
+                              fontSize: 9,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 1,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'WAITING FOR FIRST PAYMENT\nSCHEDULE...',
+                            style: GoogleFonts.dmSerifDisplay(
+                              fontSize: 8,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.black45,
+                              height: 1.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -518,6 +929,14 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
   }
 
   Widget _traceStep(String label, {required bool active}) {
-    return Text(label, style: GoogleFonts.dmSerifDisplay(fontSize: 8, fontWeight: FontWeight.w900, color: active ? Colors.black : Colors.black12, letterSpacing: 1));
+    return Text(
+      label,
+      style: GoogleFonts.dmSerifDisplay(
+        fontSize: 8,
+        fontWeight: FontWeight.w900,
+        color: active ? Colors.black : Colors.black12,
+        letterSpacing: 1,
+      ),
+    );
   }
 }

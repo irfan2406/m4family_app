@@ -39,15 +39,16 @@ class _MainShellState extends ConsumerState<MainShell> {
     CustomViewsScreen(), // 6: Custom Views (Sidebar)
     const MyCustomViewsScreen(), // 7: My Custom Views (Sidebar)
     const SelectionLogsScreen(), // 8: Personalisation Logs
-    Consumer(builder: (context, ref, _) => ContentHubScreen(type: ref.watch(contentHubTypeProvider))), // 9: Content Hub
+    Consumer(
+      builder: (context, ref, _) =>
+          ContentHubScreen(type: ref.watch(contentHubTypeProvider)),
+    ), // 9: Content Hub
   ];
-
-
 
   @override
   Widget build(BuildContext context) {
     final currentIndex = ref.watch(navigationProvider);
-    
+
     return PopScope(
       canPop: currentIndex == 0,
       onPopInvoked: (didPop) {
@@ -66,10 +67,7 @@ class _MainShellState extends ConsumerState<MainShell> {
         },
         body: Stack(
           children: [
-            IndexedStack(
-              index: currentIndex,
-              children: _screens,
-            ),
+            IndexedStack(index: currentIndex, children: _screens),
             if (!_isDrawerOpen)
               Align(
                 alignment: Alignment.bottomCenter,

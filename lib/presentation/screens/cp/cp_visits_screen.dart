@@ -100,6 +100,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
             content: Text(
               ok
                   ? 'Admin notified'
@@ -114,7 +115,10 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to send notification')),
+          const SnackBar(
+            backgroundColor: Color(0xFFE24B4A),
+            content: Text('Failed to send notification'),
+          ),
         );
       }
     }
@@ -128,17 +132,23 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
       final body = res.data;
       if (body is Map && body['status'] == true) {
         if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('Status updated to $status')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: const Color(0xFF10B981),
+              content: Text('Status updated to $status'),
+            ),
+          );
         }
         await _load(page: _page);
       } else {
         final msg = body is Map ? body['message']?.toString() : null;
         if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(msg ?? 'Update failed')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: const Color(0xFFE24B4A),
+              content: Text(msg ?? 'Update failed'),
+            ),
+          );
         }
       }
     } on DioException catch (e) {
@@ -146,9 +156,12 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
           ? (e.response!.data as Map)['message']?.toString()
           : e.message;
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(m ?? 'Error')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text(m ?? 'Error'),
+          ),
+        );
       }
     }
   }
@@ -834,15 +847,21 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
     try {
       final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
       if (!ok && mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('No app found to open $scheme')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text('No app found to open $scheme'),
+          ),
+        );
       }
     } catch (_) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Could not open')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Color(0xFFE24B4A),
+            content: Text('Could not open'),
+          ),
+        );
       }
     }
   }

@@ -13,10 +13,12 @@ class CpEliteInvestorConnectScreen extends ConsumerStatefulWidget {
   const CpEliteInvestorConnectScreen({super.key});
 
   @override
-  ConsumerState<CpEliteInvestorConnectScreen> createState() => _CpEliteInvestorConnectScreenState();
+  ConsumerState<CpEliteInvestorConnectScreen> createState() =>
+      _CpEliteInvestorConnectScreenState();
 }
 
-class _CpEliteInvestorConnectScreenState extends ConsumerState<CpEliteInvestorConnectScreen> {
+class _CpEliteInvestorConnectScreenState
+    extends ConsumerState<CpEliteInvestorConnectScreen> {
   bool _loading = true;
   List<_Stat> _stats = const [];
   List<_Opp> _opps = const [];
@@ -89,7 +91,10 @@ class _CpEliteInvestorConnectScreenState extends ConsumerState<CpEliteInvestorCo
           children: [
             Text(
               'Partner Terminal',
-              style: GoogleFonts.dmSerifDisplay(fontWeight: FontWeight.w900, fontSize: 16),
+              style: GoogleFonts.dmSerifDisplay(
+                fontWeight: FontWeight.w900,
+                fontSize: 16,
+              ),
             ),
             Text(
               'INSTITUTIONAL PORTFOLIO ENGINE',
@@ -104,7 +109,9 @@ class _CpEliteInvestorConnectScreenState extends ConsumerState<CpEliteInvestorCo
         ),
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator(color: M4Theme.premiumBlue))
+          ? const Center(
+              child: CircularProgressIndicator(color: M4Theme.premiumBlue),
+            )
           : RefreshIndicator(
               onRefresh: _load,
               child: ListView(
@@ -124,7 +131,10 @@ class _CpEliteInvestorConnectScreenState extends ConsumerState<CpEliteInvestorCo
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 5,
+                        ),
                         decoration: BoxDecoration(
                           color: scheme.primary.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(999),
@@ -142,7 +152,17 @@ class _CpEliteInvestorConnectScreenState extends ConsumerState<CpEliteInvestorCo
                     ],
                   ),
                   const SizedBox(height: 20),
-                  ..._stats.map((s) => _statCard(s, isDark, textPrimary, muted, card, border, scheme)),
+                  ..._stats.map(
+                    (s) => _statCard(
+                      s,
+                      isDark,
+                      textPrimary,
+                      muted,
+                      card,
+                      border,
+                      scheme,
+                    ),
+                  ),
 
                   const SizedBox(height: 20),
 
@@ -163,12 +183,26 @@ class _CpEliteInvestorConnectScreenState extends ConsumerState<CpEliteInvestorCo
                       child: Center(
                         child: Text(
                           'No ventures available right now',
-                          style: GoogleFonts.dmSerifDisplay(color: muted, fontWeight: FontWeight.w700),
+                          style: GoogleFonts.dmSerifDisplay(
+                            color: muted,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
                       ),
                     )
                   else
-                    ..._opps.map((o) => _oppCard(o, isDark, bg, textPrimary, muted, card, border, scheme)),
+                    ..._opps.map(
+                      (o) => _oppCard(
+                        o,
+                        isDark,
+                        bg,
+                        textPrimary,
+                        muted,
+                        card,
+                        border,
+                        scheme,
+                      ),
+                    ),
 
                   const SizedBox(height: 20),
 
@@ -223,7 +257,9 @@ class _CpEliteInvestorConnectScreenState extends ConsumerState<CpEliteInvestorCo
                   border: Border.all(color: border),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.06),
+                      color: Colors.black.withValues(
+                        alpha: isDark ? 0.4 : 0.06,
+                      ),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -327,7 +363,8 @@ class _CpEliteInvestorConnectScreenState extends ConsumerState<CpEliteInvestorCo
                     CachedNetworkImage(
                       imageUrl: o.image,
                       fit: BoxFit.cover,
-                      placeholder: (_, __) => Container(color: scheme.surfaceContainerHighest),
+                      placeholder: (_, __) =>
+                          Container(color: scheme.surfaceContainerHighest),
                       errorWidget: (_, __, ___) => Container(
                         color: scheme.surfaceContainerHighest,
                         child: Icon(LucideIcons.image, color: muted),
@@ -348,7 +385,10 @@ class _CpEliteInvestorConnectScreenState extends ConsumerState<CpEliteInvestorCo
                       top: 16,
                       right: 16,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
                         decoration: BoxDecoration(
                           color: scheme.primary,
                           borderRadius: BorderRadius.circular(999),
@@ -393,7 +433,11 @@ class _CpEliteInvestorConnectScreenState extends ConsumerState<CpEliteInvestorCo
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        Icon(LucideIcons.globe, size: 16, color: scheme.primary),
+                        Icon(
+                          LucideIcons.globe,
+                          size: 16,
+                          color: scheme.primary,
+                        ),
                         const SizedBox(width: 12),
                         Flexible(
                           child: Text(
@@ -447,7 +491,12 @@ class _CpEliteInvestorConnectScreenState extends ConsumerState<CpEliteInvestorCo
                           isDark: isDark,
                           onTap: () {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Contact your RM for allocation — demo')),
+                              const SnackBar(
+                                backgroundColor: Color(0xFFE24B4A),
+                                content: Text(
+                                  'Contact your RM for allocation — demo',
+                                ),
+                              ),
                             );
                           },
                         ),
@@ -464,7 +513,12 @@ class _CpEliteInvestorConnectScreenState extends ConsumerState<CpEliteInvestorCo
   }
 
   // ── Advisory panel (Wealth Concierge) ──────────────────────────────────────
-  Widget _advisoryPanel(bool isDark, Color bg, Color textPrimary, ColorScheme scheme) {
+  Widget _advisoryPanel(
+    bool isDark,
+    Color bg,
+    Color textPrimary,
+    ColorScheme scheme,
+  ) {
     // Card: bg-foreground text-background — inverted surface.
     final panelBg = textPrimary;
     final onPanel = bg;
@@ -512,7 +566,9 @@ class _CpEliteInvestorConnectScreenState extends ConsumerState<CpEliteInvestorCo
                         decoration: BoxDecoration(
                           color: onPanel,
                           shape: BoxShape.circle,
-                          border: Border.all(color: onPanel.withValues(alpha: 0.2)),
+                          border: Border.all(
+                            color: onPanel.withValues(alpha: 0.2),
+                          ),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withValues(alpha: 0.25),
@@ -522,7 +578,11 @@ class _CpEliteInvestorConnectScreenState extends ConsumerState<CpEliteInvestorCo
                           ],
                         ),
                         alignment: Alignment.center,
-                        child: Icon(LucideIcons.shieldCheck, size: 40, color: scheme.primary),
+                        child: Icon(
+                          LucideIcons.shieldCheck,
+                          size: 40,
+                          color: scheme.primary,
+                        ),
                       ),
                       const SizedBox(width: 24),
                       Expanded(
@@ -561,13 +621,18 @@ class _CpEliteInvestorConnectScreenState extends ConsumerState<CpEliteInvestorCo
                     child: OutlinedButton(
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Scheduling protocol call — demo')),
+                          const SnackBar(
+                            backgroundColor: Color(0xFFE24B4A),
+                            content: Text('Scheduling protocol call — demo'),
+                          ),
                         );
                       },
                       style: OutlinedButton.styleFrom(
                         backgroundColor: onPanel.withValues(alpha: 0.1),
                         side: BorderSide(color: onPanel.withValues(alpha: 0.2)),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(999),
+                        ),
                       ),
                       child: Text(
                         'SCHEDULE PROTOCOL CALL',

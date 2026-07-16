@@ -28,10 +28,7 @@ class CpMainShell extends ConsumerWidget {
 
     return Scaffold(
       drawer: const CpSidebarMenu(),
-      body: IndexedStack(
-        index: idx,
-        children: screens,
-      ),
+      body: IndexedStack(index: idx, children: screens),
       bottomNavigationBar: CpBottomNav(
         currentIndex: idx,
         onTap: (i) => ref.read(cpNavigationIndexProvider.notifier).state = i,

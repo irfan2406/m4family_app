@@ -89,7 +89,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
         behavior: SnackBarBehavior.floating,
         backgroundColor: isError
             ? const Color(0xFFEF4444)
-            : (isDark ? Colors.white : Colors.black),
+            : const Color(0xFF10B981),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         margin: const EdgeInsets.all(16),
         content: Text(

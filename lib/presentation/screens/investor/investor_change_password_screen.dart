@@ -47,8 +47,8 @@ class _InvestorChangePasswordScreenState
   bool get _hasUppercase => RegExp(r'[A-Z]').hasMatch(_newPass.text);
   bool get _hasNumber => RegExp(r'[0-9]').hasMatch(_newPass.text);
   bool get _hasSpecial => RegExp(
-          r'''[!@#$%^&*(),.?":{}|<>_\-\[\]\\/;'`~+=]''')
-      .hasMatch(_newPass.text);
+    r'''[!@#$%^&*(),.?":{}|<>_\-\[\]\\/;'`~+=]''',
+  ).hasMatch(_newPass.text);
 
   /// 0..4 strength score derived from the requirements checklist.
   int get _strength {
@@ -133,7 +133,9 @@ class _InvestorChangePasswordScreenState
 
     setState(() => _submitting = true);
     try {
-      final res = await ref.read(apiClientProvider).changePassword(
+      final res = await ref
+          .read(apiClientProvider)
+          .changePassword(
             currentPassword: _current.text,
             newPassword: _newPass.text,
           );
@@ -148,8 +150,9 @@ class _InvestorChangePasswordScreenState
         if (!mounted) return;
         _back();
       } else {
-        final msg =
-            res.data is Map ? (res.data as Map)['message']?.toString() : null;
+        final msg = res.data is Map
+            ? (res.data as Map)['message']?.toString()
+            : null;
         _snack(msg ?? 'Failed to update password', error: true);
       }
     } on DioException catch (e) {
@@ -416,8 +419,10 @@ class _InvestorChangePasswordScreenState
         filled: true,
         fillColor: card,
         isDense: true,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 16,
+        ),
         prefixIcon: Icon(LucideIcons.lock, size: 16, color: muted),
         suffixIcon: showToggle
             ? IconButton(
@@ -489,8 +494,7 @@ class _InvestorChangePasswordScreenState
   // MATCH FEEDBACK
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   Widget _matchFeedback(Color muted) {
-    final matches =
-        _confirm.text == _newPass.text && _newPass.text.isNotEmpty;
+    final matches = _confirm.text == _newPass.text && _newPass.text.isNotEmpty;
     const green = Color(0xFF10B981);
     const red = Color(0xFFEF4444);
     return Padding(
@@ -539,8 +543,11 @@ class _InvestorChangePasswordScreenState
         children: [
           Row(
             children: [
-              Icon(LucideIcons.alertCircle,
-                  size: 14, color: _gold.withValues(alpha: 0.7)),
+              Icon(
+                LucideIcons.alertCircle,
+                size: 14,
+                color: _gold.withValues(alpha: 0.7),
+              ),
               const SizedBox(width: 8),
               Text(
                 'REQUIREMENTS',
@@ -623,7 +630,9 @@ class _InvestorChangePasswordScreenState
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
-                      strokeWidth: 2, color: Colors.black),
+                    strokeWidth: 2,
+                    color: Colors.black,
+                  ),
                 )
               : Text(
                   'UPDATE PASSWORD',

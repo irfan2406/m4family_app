@@ -11,7 +11,7 @@ class ConditionalDrawer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
-    
+
     final role = authState.user?['role']?.toString().toLowerCase();
     if (role == 'cp') return const CpSidebarMenu();
 

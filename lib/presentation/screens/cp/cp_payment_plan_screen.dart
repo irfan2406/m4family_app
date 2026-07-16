@@ -14,14 +14,11 @@ class CpPaymentPlanScreen extends ConsumerStatefulWidget {
   final String projectId;
   final dynamic project;
 
-  const CpPaymentPlanScreen({
-    super.key,
-    required this.projectId,
-    this.project,
-  });
+  const CpPaymentPlanScreen({super.key, required this.projectId, this.project});
 
   @override
-  ConsumerState<CpPaymentPlanScreen> createState() => _CpPaymentPlanScreenState();
+  ConsumerState<CpPaymentPlanScreen> createState() =>
+      _CpPaymentPlanScreenState();
 }
 
 class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
@@ -95,7 +92,9 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : Colors.white;
     final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.68);
+    final muted = (isDark ? Colors.white : Colors.black).withValues(
+      alpha: 0.68,
+    );
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -111,8 +110,9 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
               child: Row(
                 children: [
                   GestureDetector(
-                    onTap: () =>
-                        context.canPop() ? context.pop() : context.go('/cp/dashboard'),
+                    onTap: () => context.canPop()
+                        ? context.pop()
+                        : context.go('/cp/dashboard'),
                     child: Container(
                       width: 48,
                       height: 48,
@@ -122,7 +122,11 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                         shape: BoxShape.circle,
                         border: Border.all(color: border),
                       ),
-                      child: Icon(LucideIcons.chevronLeft, size: 20, color: textPrimary),
+                      child: Icon(
+                        LucideIcons.chevronLeft,
+                        size: 20,
+                        color: textPrimary,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -158,14 +162,19 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
             Expanded(
               child: _loading
                   ? const Center(
-                      child: CircularProgressIndicator(color: M4Theme.premiumBlue),
+                      child: CircularProgressIndicator(
+                        color: M4Theme.premiumBlue,
+                      ),
                     )
                   : RefreshIndicator(
                       onRefresh: _fetchPlans,
                       color: M4Theme.premiumBlue,
                       child: SingleChildScrollView(
                         physics: const AlwaysScrollableScrollPhysics(),
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 16,
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -173,28 +182,37 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                               final index = entry.key;
                               final plan = entry.value;
                               final isDown =
-                                  (plan['name']?.toString().toLowerCase().contains('down') ??
-                                          false) ||
-                                      plan['popular'] == true;
-                              final icon =
-                                  isDown ? LucideIcons.shieldCheck : LucideIcons.zap;
-                              final accent = isDown ? _gold : M4Theme.premiumBlue;
-                              final benefit = (plan['benefit'] ??
-                                      (isDown ? 'Max Savings' : 'Lower upfront cost'))
-                                  .toString();
+                                  (plan['name']
+                                          ?.toString()
+                                          .toLowerCase()
+                                          .contains('down') ??
+                                      false) ||
+                                  plan['popular'] == true;
+                              final icon = isDown
+                                  ? LucideIcons.shieldCheck
+                                  : LucideIcons.zap;
+                              final accent = isDown
+                                  ? _gold
+                                  : M4Theme.premiumBlue;
+                              final benefit =
+                                  (plan['benefit'] ??
+                                          (isDown
+                                              ? 'Max Savings'
+                                              : 'Lower upfront cost'))
+                                      .toString();
 
                               return Padding(
-                                padding: const EdgeInsets.only(bottom: 20),
-                                child: _PaymentPlanCard(
-                                  plan: plan,
-                                  icon: icon,
-                                  accent: accent,
-                                  benefit: benefit,
-                                  popular: plan['popular'] == true,
-                                  isDark: isDark,
-                                  onTap: () => _selectPlan(plan),
-                                ),
-                              )
+                                    padding: const EdgeInsets.only(bottom: 20),
+                                    child: _PaymentPlanCard(
+                                      plan: plan,
+                                      icon: icon,
+                                      accent: accent,
+                                      benefit: benefit,
+                                      popular: plan['popular'] == true,
+                                      isDark: isDark,
+                                      onTap: () => _selectPlan(plan),
+                                    ),
+                                  )
                                   .animate()
                                   .fadeIn(delay: (index * 100).ms)
                                   .moveX(begin: -20, end: 0);
@@ -206,10 +224,14 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                             Container(
                               padding: const EdgeInsets.all(24),
                               decoration: BoxDecoration(
-                                color: M4Theme.premiumBlue.withValues(alpha: 0.05),
+                                color: M4Theme.premiumBlue.withValues(
+                                  alpha: 0.05,
+                                ),
                                 borderRadius: BorderRadius.circular(32),
                                 border: Border.all(
-                                  color: M4Theme.premiumBlue.withValues(alpha: 0.12),
+                                  color: M4Theme.premiumBlue.withValues(
+                                    alpha: 0.12,
+                                  ),
                                 ),
                               ),
                               child: Row(
@@ -221,13 +243,17 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                                       color: M4Theme.premiumBlue,
                                       borderRadius: BorderRadius.circular(18),
                                     ),
-                                    child: const Icon(LucideIcons.info,
-                                        color: Colors.white, size: 24),
+                                    child: const Icon(
+                                      LucideIcons.info,
+                                      color: Colors.white,
+                                      size: 24,
+                                    ),
                                   ),
                                   const SizedBox(width: 18),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           'COMPARE PLANS',
@@ -263,17 +289,24 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                               onTap: () {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content: Text('Payment plan PDF will be available soon.'),
+                                    backgroundColor: Color(0xFFE24B4A),
+                                    content: Text(
+                                      'Payment plan PDF will be available soon.',
+                                    ),
                                   ),
                                 );
                               },
                               child: Container(
                                 width: double.infinity,
-                                padding: const EdgeInsets.symmetric(vertical: 20),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 20,
+                                ),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(28),
                                   border: Border.all(
-                                    color: M4Theme.premiumBlue.withValues(alpha: 0.15),
+                                    color: M4Theme.premiumBlue.withValues(
+                                      alpha: 0.15,
+                                    ),
                                   ),
                                 ),
                                 child: Center(
@@ -325,13 +358,15 @@ class _PaymentPlanCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.68);
+    final muted = (isDark ? Colors.white : Colors.black).withValues(
+      alpha: 0.68,
+    );
     final cardBg = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     final border = popular
         ? M4Theme.premiumBlue.withValues(alpha: 0.4)
         : (isDark
-            ? Colors.white.withValues(alpha: 0.08)
-            : Colors.black.withValues(alpha: 0.06));
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.black.withValues(alpha: 0.06));
     final desc = (plan['description'] ?? plan['desc'] ?? '').toString();
 
     return GestureDetector(
@@ -359,10 +394,15 @@ class _PaymentPlanCard extends StatelessWidget {
                 top: 0,
                 right: 0,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 18,
+                    vertical: 8,
+                  ),
                   decoration: const BoxDecoration(
                     color: M4Theme.premiumBlue,
-                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(24)),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(24),
+                    ),
                   ),
                   child: Text(
                     'MOST POPULAR',
@@ -427,7 +467,9 @@ class _PaymentPlanCard extends StatelessWidget {
                   const SizedBox(height: 28),
                   Divider(
                     height: 1,
-                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06),
+                    color: (isDark ? Colors.white : Colors.black).withValues(
+                      alpha: 0.06,
+                    ),
                   ),
                   const SizedBox(height: 24),
                   Row(
@@ -456,7 +498,10 @@ class _PaymentPlanCard extends StatelessWidget {
                         ],
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 12,
+                        ),
                         decoration: BoxDecoration(
                           color: (isDark ? Colors.white : Colors.black)
                               .withValues(alpha: isDark ? 0.05 : 0.03),
@@ -474,7 +519,11 @@ class _PaymentPlanCard extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 10),
-                            Icon(LucideIcons.arrowRight, size: 14, color: textPrimary),
+                            Icon(
+                              LucideIcons.arrowRight,
+                              size: 14,
+                              color: textPrimary,
+                            ),
                           ],
                         ),
                       ),

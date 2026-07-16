@@ -16,7 +16,8 @@ class InvestorSidebarMenu extends ConsumerStatefulWidget {
   const InvestorSidebarMenu({super.key});
 
   @override
-  ConsumerState<InvestorSidebarMenu> createState() => _InvestorSidebarMenuState();
+  ConsumerState<InvestorSidebarMenu> createState() =>
+      _InvestorSidebarMenuState();
 }
 
 class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
@@ -52,7 +53,9 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
               child: Container(
-                color: (isDark ? Colors.black : Colors.white).withValues(alpha: 0.6),
+                color: (isDark ? Colors.black : Colors.white).withValues(
+                  alpha: 0.6,
+                ),
               ),
             ),
           ),
@@ -211,8 +214,11 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                         isActive: false,
                         onTap: () {
                           ref
-                              .read(investorNavigationIndexProvider.notifier)
-                              .state = 0;
+                                  .read(
+                                    investorNavigationIndexProvider.notifier,
+                                  )
+                                  .state =
+                              0;
                           ref
                               .read(
                                 investorInquiryScrollTriggerProvider.notifier,
@@ -245,7 +251,10 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
 
                 // Theme Mode Toggle
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 8,
+                  ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -260,14 +269,22 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          ref.read(themeProvider.notifier).setTheme(isDark ? ThemeMode.light : ThemeMode.dark);
+                          ref
+                              .read(themeProvider.notifier)
+                              .setTheme(
+                                isDark ? ThemeMode.light : ThemeMode.dark,
+                              );
                         },
                         child: Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08),
+                            color: (isDark ? Colors.white : Colors.black)
+                                .withValues(alpha: 0.08),
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1)),
+                            border: Border.all(
+                              color: (isDark ? Colors.white : Colors.black)
+                                  .withValues(alpha: 0.1),
+                            ),
                           ),
                           child: Icon(
                             isDark ? LucideIcons.sparkles : LucideIcons.moon,
@@ -298,13 +315,21 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                         color: Colors.white.withValues(alpha: 0.9),
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
-                          BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 4)),
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
                         ],
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(LucideIcons.logOut, size: 18, color: Colors.red),
+                          const Icon(
+                            LucideIcons.logOut,
+                            size: 18,
+                            color: Colors.red,
+                          ),
                           const SizedBox(width: 10),
                           Text(
                             'LOGOUT',
@@ -360,14 +385,18 @@ class _SidebarItem extends StatelessWidget {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                color: (isDark ? Colors.white : Colors.black).withValues(
+                  alpha: 0.05,
+                ),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Center(
                 child: Icon(
                   icon,
                   size: 18,
-                  color: isActive ? gold : (isDark ? Colors.white70 : Colors.black54),
+                  color: isActive
+                      ? gold
+                      : (isDark ? Colors.white70 : Colors.black54),
                 ),
               ),
             ),
@@ -378,7 +407,9 @@ class _SidebarItem extends StatelessWidget {
                 style: GoogleFonts.dmSerifDisplay(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
-                  color: isActive ? gold : (isDark ? Colors.white : const Color(0xFF1E293B)),
+                  color: isActive
+                      ? gold
+                      : (isDark ? Colors.white : const Color(0xFF1E293B)),
                 ),
               ),
             ),
@@ -419,7 +450,9 @@ class _SidebarDropdown extends StatelessWidget {
           onTap: onToggle,
           trailing: Icon(
             isOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown,
-            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.4),
+            color: (isDark ? Colors.white : Colors.black).withValues(
+              alpha: 0.4,
+            ),
             size: 16,
           ),
         ),
@@ -459,7 +492,9 @@ class _SidebarSubItem extends StatelessWidget {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                color: (isDark ? Colors.white : Colors.black).withValues(
+                  alpha: 0.05,
+                ),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Center(

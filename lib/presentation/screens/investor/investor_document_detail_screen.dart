@@ -95,12 +95,15 @@ class _InvestorDocumentDetailScreenState
           content: Text(
             'Secure link not available for this document',
             style: GoogleFonts.dmSerifDisplay(
-                fontWeight: FontWeight.bold, fontSize: 12),
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+            ),
           ),
           backgroundColor: Colors.redAccent,
           behavior: SnackBarBehavior.floating,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       );
       return;
@@ -114,7 +117,9 @@ class _InvestorDocumentDetailScreenState
   String _formatDate(dynamic dateStr) {
     if (dateStr == null) return '—';
     try {
-      return DateFormat('d MMM yyyy').format(DateTime.parse(dateStr.toString()));
+      return DateFormat(
+        'd MMM yyyy',
+      ).format(DateTime.parse(dateStr.toString()));
     } catch (_) {
       return dateStr.toString();
     }
@@ -199,8 +204,9 @@ class _InvestorDocumentDetailScreenState
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Colors.black)
-                  .withValues(alpha: 0.05),
+              color: (isDark ? Colors.white : Colors.black).withValues(
+                alpha: 0.05,
+              ),
               borderRadius: BorderRadius.circular(24),
             ),
             child: Icon(icon, size: 36, color: muted),
@@ -256,8 +262,7 @@ class _InvestorDocumentDetailScreenState
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
 
-    final title =
-        (doc['name'] ?? doc['title'] ?? 'Document').toString();
+    final title = (doc['name'] ?? doc['title'] ?? 'Document').toString();
     final type = (doc['type'] ?? doc['project']?['title'] ?? 'Document')
         .toString();
     final description =
@@ -283,8 +288,9 @@ class _InvestorDocumentDetailScreenState
                     end: Alignment.bottomRight,
                     colors: [
                       _gold.withValues(alpha: 0.18),
-                      (isDark ? Colors.white : Colors.black)
-                          .withValues(alpha: 0.03),
+                      (isDark ? Colors.white : Colors.black).withValues(
+                        alpha: 0.03,
+                      ),
                     ],
                   ),
                   border: Border(bottom: BorderSide(color: border)),
@@ -301,8 +307,9 @@ class _InvestorDocumentDetailScreenState
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: (isDark ? Colors.black : Colors.white)
-                          .withValues(alpha: 0.4),
+                      color: (isDark ? Colors.black : Colors.white).withValues(
+                        alpha: 0.4,
+                      ),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(LucideIcons.x, size: 18, color: textPrimary),
@@ -319,8 +326,10 @@ class _InvestorDocumentDetailScreenState
               children: [
                 // ── Badge + title ─────────────────────────────────────
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: _gold.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(8),
@@ -392,8 +401,10 @@ class _InvestorDocumentDetailScreenState
                 ),
                 const SizedBox(height: 8),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
                     color: _green.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
@@ -402,7 +413,11 @@ class _InvestorDocumentDetailScreenState
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(LucideIcons.shieldCheck, size: 14, color: _green),
+                      const Icon(
+                        LucideIcons.shieldCheck,
+                        size: 14,
+                        color: _green,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         'ENCRYPTED & VERIFIED',

@@ -2219,6 +2219,7 @@ class _ConsultationSection extends ConsumerWidget {
                               phoneController.text.isEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
+                                backgroundColor: Color(0xFFE24B4A),
                                 content: Text('Name and Phone are required'),
                               ),
                             );

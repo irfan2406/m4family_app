@@ -74,6 +74,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
         ..hideCurrentSnackBar()
         ..showSnackBar(
           const SnackBar(
+            backgroundColor: Color(0xFFE24B4A),
             content: Text('Please fill in subject, category and message'),
             behavior: SnackBarBehavior.floating,
             duration: Duration(milliseconds: 1800),
@@ -95,6 +96,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
+            backgroundColor: const Color(0xFF10B981),
             content: Text(
               ok ? 'Ticket raised successfully!' : 'Failed to raise ticket',
             ),
@@ -109,6 +111,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
         ..hideCurrentSnackBar()
         ..showSnackBar(
           const SnackBar(
+            backgroundColor: Color(0xFFE24B4A),
             content: Text('Failed to raise ticket'),
             behavior: SnackBarBehavior.floating,
             duration: Duration(milliseconds: 1800),

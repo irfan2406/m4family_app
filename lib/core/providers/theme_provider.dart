@@ -14,7 +14,7 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
   Future<void> setTheme(ThemeMode mode) async {
     if (state == mode) return;
     state = mode;
-    
+
     final themeStr = mode == ThemeMode.light ? 'light' : 'dark';
     await _storage.write(key: 'app_theme', value: themeStr);
 
@@ -25,7 +25,7 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
 
       final portal = _ref.read(portalProvider);
       final portalKey = _getPortalKey(portal);
-      
+
       await _ref.read(apiClientProvider).updatePreferences({
         portalKey: themeStr,
       });
@@ -36,10 +36,14 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
 
   String _getPortalKey(PortalType portal) {
     switch (portal) {
-      case PortalType.guest: return 'guest_theme';
-      case PortalType.investor: return 'investor_theme';
-      case PortalType.cp: return 'cp_theme';
-      case PortalType.user: return 'user_theme';
+      case PortalType.guest:
+        return 'guest_theme';
+      case PortalType.investor:
+        return 'investor_theme';
+      case PortalType.cp:
+        return 'cp_theme';
+      case PortalType.user:
+        return 'user_theme';
     }
   }
 }

@@ -42,7 +42,10 @@ class ContentNotifier extends StateNotifier<ContentState> {
           isLoading: false,
         );
       } else {
-        state = state.copyWith(isLoading: false, error: 'Failed to load content');
+        state = state.copyWith(
+          isLoading: false,
+          error: 'Failed to load content',
+        );
       }
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
@@ -52,5 +55,5 @@ class ContentNotifier extends StateNotifier<ContentState> {
 
 final contentProvider =
     StateNotifierProvider.family<ContentNotifier, ContentState, String>(
-  (ref, type) => ContentNotifier(ref),
-);
+      (ref, type) => ContentNotifier(ref),
+    );

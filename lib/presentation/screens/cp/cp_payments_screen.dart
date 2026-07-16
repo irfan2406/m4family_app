@@ -89,7 +89,10 @@ class _CpPaymentsScreenState extends ConsumerState<CpPaymentsScreen> {
         ),
         title: Text(
           'Wallet & history',
-          style: GoogleFonts.dmSerifDisplay(fontWeight: FontWeight.w800, fontSize: 16),
+          style: GoogleFonts.dmSerifDisplay(
+            fontWeight: FontWeight.w800,
+            fontSize: 16,
+          ),
         ),
       ),
       body: _loading
@@ -102,11 +105,20 @@ class _CpPaymentsScreenState extends ConsumerState<CpPaymentsScreen> {
                   Row(
                     children: [
                       Expanded(
-                        child: _statTile(context, 'Available balance', 'AED ${_balance()}'),
+                        child: _statTile(
+                          context,
+                          'Available balance',
+                          'AED ${_balance()}',
+                        ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: _statTile(context, 'Total earned', 'AED ${_totalEarned()}', highlight: true),
+                        child: _statTile(
+                          context,
+                          'Total earned',
+                          'AED ${_totalEarned()}',
+                          highlight: true,
+                        ),
                       ),
                     ],
                   ),
@@ -146,7 +158,9 @@ class _CpPaymentsScreenState extends ConsumerState<CpPaymentsScreen> {
                   else
                     ...filtered.map((c) {
                       final id = c['_id']?.toString() ?? '';
-                      final short = id.length > 6 ? id.substring(id.length - 6).toUpperCase() : id.toUpperCase();
+                      final short = id.length > 6
+                          ? id.substring(id.length - 6).toUpperCase()
+                          : id.toUpperCase();
                       final amount = c['amount'];
                       final status = (c['status'] ?? '').toString();
                       final created = c['createdAt']?.toString();
@@ -157,7 +171,8 @@ class _CpPaymentsScreenState extends ConsumerState<CpPaymentsScreen> {
                       final booking = c['bookingId'];
                       String sub = 'Commission';
                       if (booking is Map) {
-                        sub = 'Booking ${booking['bookingId'] ?? booking['_id'] ?? ''}';
+                        sub =
+                            'Booking ${booking['bookingId'] ?? booking['_id'] ?? ''}';
                       }
                       return Card(
                         margin: const EdgeInsets.only(bottom: 10),
@@ -165,19 +180,25 @@ class _CpPaymentsScreenState extends ConsumerState<CpPaymentsScreen> {
                           onTap: id.isEmpty
                               ? null
                               : () => context.push(
-                                    '/cp/payments/$id',
-                                    extra: Map<String, dynamic>.from(c as Map),
-                                  ),
+                                  '/cp/payments/$id',
+                                  extra: Map<String, dynamic>.from(c as Map),
+                                ),
                           leading: const CircleAvatar(
                             child: Icon(LucideIcons.arrowDownLeft, size: 18),
                           ),
                           title: Text('AED ${amount ?? 0} • $short'),
                           subtitle: Text(
                             '${dt != null ? MaterialLocalizations.of(context).formatShortDate(dt) : ''} · $sub',
-                            style: TextStyle(fontSize: 12, color: scheme.outline),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: scheme.outline,
+                            ),
                           ),
                           trailing: Chip(
-                            label: Text(status, style: const TextStyle(fontSize: 10)),
+                            label: Text(
+                              status,
+                              style: const TextStyle(fontSize: 10),
+                            ),
                           ),
                         ),
                       );
@@ -188,7 +209,12 @@ class _CpPaymentsScreenState extends ConsumerState<CpPaymentsScreen> {
     );
   }
 
-  Widget _statTile(BuildContext context, String label, String value, {bool highlight = false}) {
+  Widget _statTile(
+    BuildContext context,
+    String label,
+    String value, {
+    bool highlight = false,
+  }) {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -200,7 +226,11 @@ class _CpPaymentsScreenState extends ConsumerState<CpPaymentsScreen> {
         children: [
           Text(
             label.toUpperCase(),
-            style: GoogleFonts.dmSerifDisplay(fontSize: 9, letterSpacing: 1, color: Theme.of(context).hintColor),
+            style: GoogleFonts.dmSerifDisplay(
+              fontSize: 9,
+              letterSpacing: 1,
+              color: Theme.of(context).hintColor,
+            ),
           ),
           const SizedBox(height: 4),
           Text(

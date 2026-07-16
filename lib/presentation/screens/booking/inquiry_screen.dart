@@ -47,7 +47,10 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
         _phoneController.text.isEmpty ||
         _emailController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all required fields')),
+        const SnackBar(
+          backgroundColor: Color(0xFFE24B4A),
+          content: Text('Please fill in all required fields'),
+        ),
       );
       return;
     }
@@ -72,6 +75,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
             content: Text(res.data['message'] ?? 'Failed to send inquiry'),
           ),
         );
@@ -79,6 +83,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
+          backgroundColor: Color(0xFFE24B4A),
           content: Text('Error sending inquiry. Please try again.'),
         ),
       );

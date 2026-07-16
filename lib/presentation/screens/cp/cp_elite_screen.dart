@@ -22,10 +22,30 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
 
   // Web demo data (parity with page.tsx `documents`).
   static const List<Map<String, dynamic>> _demoDocs = [
-    {'title': 'Booking Confirmation', 'type': 'PDF', 'size': '1.2 MB', 'date': 'Jan 15, 2026'},
-    {'title': 'Payment Receipt #8812', 'type': 'PDF', 'size': '450 KB', 'date': 'Jan 15, 2026'},
-    {'title': 'Project Brochure - M4 Elegance', 'type': 'PDF', 'size': '5.8 MB', 'date': 'Jan 10, 2026'},
-    {'title': 'Legal Terms & Conditions', 'type': 'DOCX', 'size': '2.1 MB', 'date': 'Jan 05, 2026'},
+    {
+      'title': 'Booking Confirmation',
+      'type': 'PDF',
+      'size': '1.2 MB',
+      'date': 'Jan 15, 2026',
+    },
+    {
+      'title': 'Payment Receipt #8812',
+      'type': 'PDF',
+      'size': '450 KB',
+      'date': 'Jan 15, 2026',
+    },
+    {
+      'title': 'Project Brochure - M4 Elegance',
+      'type': 'PDF',
+      'size': '5.8 MB',
+      'date': 'Jan 10, 2026',
+    },
+    {
+      'title': 'Legal Terms & Conditions',
+      'type': 'DOCX',
+      'size': '2.1 MB',
+      'date': 'Jan 05, 2026',
+    },
   ];
 
   @override
@@ -60,7 +80,9 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
     if (!mounted) return;
     // Fall back to demo data so the elite dashboard always renders.
     setState(() {
-      _documents = docs.isNotEmpty ? docs : List<Map<String, dynamic>>.from(_demoDocs);
+      _documents = docs.isNotEmpty
+          ? docs
+          : List<Map<String, dynamic>>.from(_demoDocs);
       _loading = false;
     });
   }
@@ -80,7 +102,10 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
     final api = ref.read(apiClientProvider);
     final resolved = api.resolveUrl(url);
     try {
-      await launchUrl(Uri.parse(resolved), mode: LaunchMode.externalApplication);
+      await launchUrl(
+        Uri.parse(resolved),
+        mode: LaunchMode.externalApplication,
+      );
     } catch (_) {
       _toast('Could not open document');
     }
@@ -94,7 +119,10 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
     final api = ref.read(apiClientProvider);
     final resolved = api.resolveUrl(url);
     try {
-      await launchUrl(Uri.parse(resolved), mode: LaunchMode.externalApplication);
+      await launchUrl(
+        Uri.parse(resolved),
+        mode: LaunchMode.externalApplication,
+      );
     } catch (_) {
       _toast('Could not download document');
     }
@@ -103,7 +131,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
   void _toast(String msg) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg)),
+      SnackBar(backgroundColor: const Color(0xFFE24B4A), content: Text(msg)),
     );
   }
 
@@ -122,7 +150,10 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
             Expanded(
               child: _loading
                   ? const Center(
-                      child: CircularProgressIndicator(color: M4Theme.premiumBlue, strokeWidth: 2),
+                      child: CircularProgressIndicator(
+                        color: M4Theme.premiumBlue,
+                        strokeWidth: 2,
+                      ),
                     )
                   : RefreshIndicator(
                       onRefresh: _load,
@@ -164,7 +195,8 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
       child: Row(
         children: [
           GestureDetector(
-            onTap: () => context.canPop() ? context.pop() : context.go('/cp/dashboard'),
+            onTap: () =>
+                context.canPop() ? context.pop() : context.go('/cp/dashboard'),
             child: Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
@@ -246,7 +278,11 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
                           children: [
                             Row(
                               children: [
-                                const Icon(LucideIcons.crown, size: 18, color: gold),
+                                const Icon(
+                                  LucideIcons.crown,
+                                  size: 18,
+                                  color: gold,
+                                ),
                                 const SizedBox(width: 8),
                                 Text(
                                   'PLATINUM MEMBER',
@@ -273,11 +309,16 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
                       ),
                       // PRO badge
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
                           color: gold.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: gold.withValues(alpha: 0.5)),
+                          border: Border.all(
+                            color: gold.withValues(alpha: 0.5),
+                          ),
                         ),
                         child: Text(
                           'PRO',
@@ -401,7 +442,11 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
         ),
         child: Column(
           children: [
-            Icon(LucideIcons.fileText, size: 48, color: textPrimary.withValues(alpha: 0.12)),
+            Icon(
+              LucideIcons.fileText,
+              size: 48,
+              color: textPrimary.withValues(alpha: 0.12),
+            ),
             const SizedBox(height: 16),
             Text(
               'NO DOCUMENTS YET',
@@ -418,11 +463,17 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
     }
 
     return Column(
-      children: _documents.map((doc) => _buildDocumentCard(doc, isDark, textPrimary)).toList(),
+      children: _documents
+          .map((doc) => _buildDocumentCard(doc, isDark, textPrimary))
+          .toList(),
     );
   }
 
-  Widget _buildDocumentCard(Map<String, dynamic> doc, bool isDark, Color textPrimary) {
+  Widget _buildDocumentCard(
+    Map<String, dynamic> doc,
+    bool isDark,
+    Color textPrimary,
+  ) {
     final muted = textPrimary.withValues(alpha: 0.5);
     final title = (doc['title'] ?? 'Document').toString();
     final type = (doc['type'] ?? '').toString();
@@ -512,7 +563,11 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
           // Action buttons
           _buildIconAction(LucideIcons.eye, muted, () => _openDocument(url)),
           const SizedBox(width: 4),
-          _buildIconAction(LucideIcons.download, muted, () => _downloadDocument(url)),
+          _buildIconAction(
+            LucideIcons.download,
+            muted,
+            () => _downloadDocument(url),
+          ),
         ],
       ),
     );
@@ -573,9 +628,15 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
                   decoration: BoxDecoration(
                     color: textPrimary.withValues(alpha: 0.05),
                     shape: BoxShape.circle,
-                    border: Border.all(color: textPrimary.withValues(alpha: 0.08)),
+                    border: Border.all(
+                      color: textPrimary.withValues(alpha: 0.08),
+                    ),
                   ),
-                  child: Icon(LucideIcons.shieldCheck, size: 18, color: textPrimary.withValues(alpha: 0.6)),
+                  child: Icon(
+                    LucideIcons.shieldCheck,
+                    size: 18,
+                    color: textPrimary.withValues(alpha: 0.6),
+                  ),
                 ),
                 const SizedBox(width: 14),
                 Expanded(

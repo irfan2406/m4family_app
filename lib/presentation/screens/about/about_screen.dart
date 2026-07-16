@@ -1243,155 +1243,187 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           // rounded on all corners — not a full-width bottom sheet.
           return Dialog(
             backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
-            insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 44),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+            insetPadding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 44,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(28),
+            ),
             clipBehavior: Clip.antiAlias,
             child: ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.82),
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.82,
+              ),
               child: SingleChildScrollView(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(24, 28, 24, 28),
                   child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        'CUSTOM PERSONALISATION',
-                        style: GoogleFonts.dmSerifDisplay(
-                          color: isDark ? Colors.white : Colors.black,
-                          fontWeight: FontWeight.w900,
-                          fontSize: 17,
-                          letterSpacing: -0.3,
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        LucideIcons.x,
-                        color: isDark ? Colors.white : Colors.black,
-                        size: 20,
-                      ),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Enter your details to receive our premium personalisation catalog and schedule a consultation.',
-                  style: GoogleFonts.dmSerifDisplay(
-                    // Web parity: muted gray subtitle, not solid black.
-                    color: isDark ? Colors.white54 : const Color(0xFF6B7280),
-                    fontSize: 12,
-                    height: 1.5,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 32),
-
-                _buildFieldLabel('FULL NAME'),
-                _buildTextField(_nameController, 'Your Name', LucideIcons.user),
-                const SizedBox(height: 20),
-
-                _buildFieldLabel('PHONE NUMBER'),
-                _buildTextField(
-                  _phoneController,
-                  'Mobile Number',
-                  LucideIcons.phone,
-                ),
-                const SizedBox(height: 20),
-
-                _buildFieldLabel('EMAIL ADDRESS (OPTIONAL)'),
-                _buildTextField(
-                  _emailController,
-                  'Email Address',
-                  LucideIcons.mail,
-                ),
-                const SizedBox(height: 40),
-
-                SizedBox(
-                  width: double.infinity,
-                  height: 60,
-                  child: ElevatedButton(
-                    onPressed: _isSubmitting
-                        ? null
-                        : () async {
-                            if (_nameController.text.isEmpty ||
-                                _phoneController.text.isEmpty) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'Please fill in required fields',
-                                  ),
-                                ),
-                              );
-                              return;
-                            }
-
-                            setModalState(() => _isSubmitting = true);
-                            try {
-                              final apiClient = ref.read(apiClientProvider);
-                              await apiClient.submitCustomViews({
-                                'name': _nameController.text,
-                                'phone': _phoneController.text,
-                                'email': _emailController.text,
-                                'source': 'App Custom Views Enquiry',
-                              });
-
-                              if (context.mounted) {
-                                Navigator.pop(context);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Enquiry submitted successfully! We will contact you soon.',
-                                    ),
-                                  ),
-                                );
-                                _nameController.clear();
-                                _phoneController.clear();
-                                _emailController.clear();
-                              }
-                            } catch (e) {
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Error: $e')),
-                                );
-                              }
-                            } finally {
-                              if (context.mounted)
-                                setModalState(() => _isSubmitting = false);
-                            }
-                          },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: isDark ? Colors.white : Colors.black,
-                      foregroundColor: isDark ? Colors.black : Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    child: _isSubmitting
-                        ? SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: isDark ? Colors.black : Colors.white,
-                            ),
-                          )
-                        : Text(
-                            'SEND REQUEST',
-                            style: GoogleFonts.dmSerifDisplay(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 12,
-                              letterSpacing: 2,
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'CUSTOM PERSONALISATION',
+                              style: GoogleFonts.dmSerifDisplay(
+                                color: isDark ? Colors.white : Colors.black,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 17,
+                                letterSpacing: -0.3,
+                              ),
                             ),
                           ),
-                  ),
-                ),
-              ],
+                          IconButton(
+                            icon: Icon(
+                              LucideIcons.x,
+                              color: isDark ? Colors.white : Colors.black,
+                              size: 20,
+                            ),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Enter your details to receive our premium personalisation catalog and schedule a consultation.',
+                        style: GoogleFonts.dmSerifDisplay(
+                          // Web parity: muted gray subtitle, not solid black.
+                          color: isDark
+                              ? Colors.white54
+                              : const Color(0xFF6B7280),
+                          fontSize: 12,
+                          height: 1.5,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+
+                      _buildFieldLabel('FULL NAME'),
+                      _buildTextField(
+                        _nameController,
+                        'Your Name',
+                        LucideIcons.user,
+                      ),
+                      const SizedBox(height: 20),
+
+                      _buildFieldLabel('PHONE NUMBER'),
+                      _buildTextField(
+                        _phoneController,
+                        'Mobile Number',
+                        LucideIcons.phone,
+                      ),
+                      const SizedBox(height: 20),
+
+                      _buildFieldLabel('EMAIL ADDRESS (OPTIONAL)'),
+                      _buildTextField(
+                        _emailController,
+                        'Email Address',
+                        LucideIcons.mail,
+                      ),
+                      const SizedBox(height: 40),
+
+                      SizedBox(
+                        width: double.infinity,
+                        height: 60,
+                        child: ElevatedButton(
+                          onPressed: _isSubmitting
+                              ? null
+                              : () async {
+                                  if (_nameController.text.isEmpty ||
+                                      _phoneController.text.isEmpty) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        backgroundColor: Color(0xFFE24B4A),
+                                        content: Text(
+                                          'Please fill in required fields',
+                                        ),
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  setModalState(() => _isSubmitting = true);
+                                  try {
+                                    final apiClient = ref.read(
+                                      apiClientProvider,
+                                    );
+                                    await apiClient.submitCustomViews({
+                                      'name': _nameController.text,
+                                      'phone': _phoneController.text,
+                                      'email': _emailController.text,
+                                      'source': 'App Custom Views Enquiry',
+                                    });
+
+                                    if (context.mounted) {
+                                      Navigator.pop(context);
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        const SnackBar(
+                                          backgroundColor: Color(0xFF10B981),
+                                          content: Text(
+                                            'Enquiry submitted successfully! We will contact you soon.',
+                                          ),
+                                        ),
+                                      );
+                                      _nameController.clear();
+                                      _phoneController.clear();
+                                      _emailController.clear();
+                                    }
+                                  } catch (e) {
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          backgroundColor: const Color(
+                                            0xFFE24B4A,
+                                          ),
+                                          content: Text('Error: $e'),
+                                        ),
+                                      );
+                                    }
+                                  } finally {
+                                    if (context.mounted)
+                                      setModalState(
+                                        () => _isSubmitting = false,
+                                      );
+                                  }
+                                },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: isDark
+                                ? Colors.white
+                                : Colors.black,
+                            foregroundColor: isDark
+                                ? Colors.black
+                                : Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          child: _isSubmitting
+                              ? SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: isDark ? Colors.black : Colors.white,
+                                  ),
+                                )
+                              : Text(
+                                  'SEND REQUEST',
+                                  style: GoogleFonts.dmSerifDisplay(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12,
+                                    letterSpacing: 2,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),

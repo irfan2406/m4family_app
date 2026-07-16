@@ -57,14 +57,20 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
         _password.text.isEmpty ||
         _confirmPassword.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all required fields')),
+        const SnackBar(
+          backgroundColor: Color(0xFFE24B4A),
+          content: Text('Please fill in all required fields'),
+        ),
       );
       return;
     }
     if (_password.text != _confirmPassword.text) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Passwords do not match')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Color(0xFFE24B4A),
+          content: Text('Passwords do not match'),
+        ),
+      );
       return;
     }
 
@@ -87,6 +93,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
       if (res.statusCode == 201 && res.data['status'] == true) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
+            backgroundColor: Color(0xFF10B981),
             content: Text('Registration successful! Please login.'),
           ),
         );
@@ -96,6 +103,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
             content: Text(
               res.data['message']?.toString() ?? 'Registration failed',
             ),
@@ -108,14 +116,20 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
           : null;
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(msg ?? e.message ?? 'Registration failed')),
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text(msg ?? e.message ?? 'Registration failed'),
+          ),
         );
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(e.toString())));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text(e.toString()),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _submitting = false);

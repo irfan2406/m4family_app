@@ -387,7 +387,10 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
     if (!_validateInterest()) return;
     if (!_agreedToTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please agree to the Privacy Policy')),
+        const SnackBar(
+          backgroundColor: Color(0xFFE24B4A),
+          content: Text('Please agree to the Privacy Policy'),
+        ),
       );
       return;
     }
@@ -429,9 +432,12 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
       }
     } catch (e) {
       if (mounted)
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Submission failed: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text('Submission failed: $e'),
+          ),
+        );
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
@@ -1280,130 +1286,137 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         ),
         const SizedBox(height: 40),
 
-        // Main Artistic Card
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 24),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(50),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.2),
-                blurRadius: 40,
-                offset: const Offset(0, 20),
-              ),
-            ],
+        // Main Artistic Card — tapping the image opens the project (web parity).
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => context.push(
+            '/investor/projects/${project['_id']}',
+            extra: project,
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(50),
-            child: Stack(
-              children: [
-                _buildProjectImage(
-                  _pickImage([
-                    project['heroImage'],
-                    project['image'],
-                    project['coverImage'],
-                  ], 'assets/hero_artistic.jpg'),
-                  height: 520,
-                  width: double.infinity,
-                  errorIconSize: 64,
-                  // Bias the crop toward the tower (right side) so the featured
-                  // card frames the building like the web, not just the ocean.
-                  alignment: const Alignment(0.55, 0),
-                ),
-                // Gradient Overlay
-                Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          Colors.black.withValues(alpha: 0.7),
-                        ],
-                        stops: const [0.5, 1.0],
-                      ),
-                    ),
-                  ),
-                ),
-                // Artistic Impression Badge
-                Positioned(
-                  top: 24,
-                  right: 24,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.6),
-                      borderRadius: BorderRadius.circular(4),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.2),
-                      ),
-                    ),
-                    child: Text(
-                      'ARTISTIC IMPRESSION',
-                      style: GoogleFonts.dmSerifDisplay(
-                        color: Colors.white,
-                        fontSize: 7,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 1.5,
-                      ),
-                    ),
-                  ),
-                ),
-                // Content Overlay
-                Positioned(
-                  bottom: 40,
-                  left: 32,
-                  right: 32,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'FEATURED PROPERTY',
-                        style: GoogleFonts.dmSerifDisplay(
-                          color: const Color(0xFFC5A358),
-                          fontSize: 9,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 2.5,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        (project['title'] ?? '').toString(),
-                        style: GoogleFonts.dmSerifDisplay(
-                          color: Colors.black,
-                          fontSize: 44,
-                          fontWeight: FontWeight.w400,
-                          height: 1,
-                          letterSpacing: -1,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        ((project['description'] ?? '')
-                                    .toString()
-                                    .trim()
-                                    .isNotEmpty
-                                ? project['description'].toString()
-                                : 'Live smart at Aura Heights—space-efficient 1 & 2 BHK homes with curated amenities and rare parking solutions.')
-                            .toUpperCase(),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.dmSerifDisplay(
-                          color: Colors.white.withValues(alpha: 0.8),
-                          fontSize: 9,
-                          height: 1.6,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 1.2,
-                        ),
-                      ),
-                    ],
-                  ),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 24),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(50),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 40,
+                  offset: const Offset(0, 20),
                 ),
               ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(50),
+              child: Stack(
+                children: [
+                  _buildProjectImage(
+                    _pickImage([
+                      project['heroImage'],
+                      project['image'],
+                      project['coverImage'],
+                    ], 'assets/hero_artistic.jpg'),
+                    height: 520,
+                    width: double.infinity,
+                    errorIconSize: 64,
+                    // Bias the crop toward the tower (right side) so the featured
+                    // card frames the building like the web, not just the ocean.
+                    alignment: const Alignment(0.55, 0),
+                  ),
+                  // Gradient Overlay
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black.withValues(alpha: 0.7),
+                          ],
+                          stops: const [0.5, 1.0],
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Artistic Impression Badge
+                  Positioned(
+                    top: 24,
+                    right: 24,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.6),
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.2),
+                        ),
+                      ),
+                      child: Text(
+                        'ARTISTIC IMPRESSION',
+                        style: GoogleFonts.dmSerifDisplay(
+                          color: Colors.white,
+                          fontSize: 7,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Content Overlay
+                  Positioned(
+                    bottom: 40,
+                    left: 32,
+                    right: 32,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'FEATURED PROPERTY',
+                          style: GoogleFonts.dmSerifDisplay(
+                            color: const Color(0xFFC5A358),
+                            fontSize: 9,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 2.5,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          (project['title'] ?? '').toString(),
+                          style: GoogleFonts.dmSerifDisplay(
+                            color: Colors.black,
+                            fontSize: 44,
+                            fontWeight: FontWeight.w400,
+                            height: 1,
+                            letterSpacing: -1,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          ((project['description'] ?? '')
+                                      .toString()
+                                      .trim()
+                                      .isNotEmpty
+                                  ? project['description'].toString()
+                                  : 'Live smart at Aura Heights—space-efficient 1 & 2 BHK homes with curated amenities and rare parking solutions.')
+                              .toUpperCase(),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.dmSerifDisplay(
+                            color: Colors.white.withValues(alpha: 0.8),
+                            fontSize: 9,
+                            height: 1.6,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

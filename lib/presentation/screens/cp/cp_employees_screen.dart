@@ -80,7 +80,10 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
   void _toast(String msg) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg, style: GoogleFonts.dmSerifDisplay(fontSize: 12))),
+      SnackBar(
+        backgroundColor: const Color(0xFFE24B4A),
+        content: Text(msg, style: GoogleFonts.dmSerifDisplay(fontSize: 12)),
+      ),
     );
   }
 

@@ -105,7 +105,10 @@ class _BookingConfirmationScreenState
       await Clipboard.setData(ClipboardData(text: content));
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Receipt copied to clipboard')),
+          const SnackBar(
+            backgroundColor: Color(0xFF10B981),
+            content: Text('Receipt copied to clipboard'),
+          ),
         );
       }
     }
@@ -122,7 +125,10 @@ class _BookingConfirmationScreenState
       await Clipboard.setData(ClipboardData(text: text));
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Booking details copied to clipboard')),
+          const SnackBar(
+            backgroundColor: Color(0xFF10B981),
+            content: Text('Booking details copied to clipboard'),
+          ),
         );
       }
     }

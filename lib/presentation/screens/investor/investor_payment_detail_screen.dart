@@ -102,19 +102,28 @@ class _InvestorPaymentDetailScreenState
 
   void _downloadReceipt() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Receipt export is not available yet.')),
+      const SnackBar(
+        backgroundColor: Color(0xFFE24B4A),
+        content: Text('Receipt export is not available yet.'),
+      ),
     );
   }
 
   void _share() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Sharing is not available yet.')),
+      const SnackBar(
+        backgroundColor: Color(0xFFE24B4A),
+        content: Text('Sharing is not available yet.'),
+      ),
     );
   }
 
   void _getHelp() {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Support ticket created')),
+      const SnackBar(
+        backgroundColor: Color(0xFF10B981),
+        content: Text('Support ticket created'),
+      ),
     );
   }
 
@@ -132,7 +141,9 @@ class _InvestorPaymentDetailScreenState
 
   String _amountLabel() {
     final amount = _payment?['amountDue'] ?? _payment?['amount'];
-    final num value = amount is num ? amount : num.tryParse('${amount ?? 0}') ?? 0;
+    final num value = amount is num
+        ? amount
+        : num.tryParse('${amount ?? 0}') ?? 0;
     final formatted = NumberFormat('#,##0', 'en_US').format(value);
     return 'AED $formatted';
   }
@@ -192,12 +203,13 @@ class _InvestorPaymentDetailScreenState
             Expanded(
               child: _loading && _payment == null
                   ? const Center(
-                      child:
-                          CircularProgressIndicator(color: M4Theme.premiumBlue),
+                      child: CircularProgressIndicator(
+                        color: M4Theme.premiumBlue,
+                      ),
                     )
                   : (_error && _payment == null)
-                      ? _errorState(textPrimary, muted)
-                      : _content(isDark, textPrimary, muted),
+                  ? _errorState(textPrimary, muted)
+                  : _content(isDark, textPrimary, muted),
             ),
           ],
         ),
@@ -212,9 +224,8 @@ class _InvestorPaymentDetailScreenState
         children: [
           IconButton(
             icon: Icon(LucideIcons.arrowLeft, color: textPrimary),
-            onPressed: () => context.canPop()
-                ? context.pop()
-                : context.go('/investor/home'),
+            onPressed: () =>
+                context.canPop() ? context.pop() : context.go('/investor/home'),
           ),
           Expanded(
             child: Column(
@@ -247,12 +258,14 @@ class _InvestorPaymentDetailScreenState
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color:
-                    (isDark ? Colors.white : Colors.black).withValues(alpha: 0.04),
+                color: (isDark ? Colors.white : Colors.black).withValues(
+                  alpha: 0.04,
+                ),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Colors.black)
-                      .withValues(alpha: 0.08),
+                  color: (isDark ? Colors.white : Colors.black).withValues(
+                    alpha: 0.08,
+                  ),
                 ),
               ),
               child: Icon(LucideIcons.download, size: 18, color: muted),
@@ -363,8 +376,9 @@ class _InvestorPaymentDetailScreenState
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
-    final divider =
-        (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06);
+    final divider = (isDark ? Colors.white : Colors.black).withValues(
+      alpha: 0.06,
+    );
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -375,7 +389,10 @@ class _InvestorPaymentDetailScreenState
       ),
       child: Column(
         children: [
-          _row(label: 'TYPE', valueWidget: _valueText(_typeLabel(), textPrimary)),
+          _row(
+            label: 'TYPE',
+            valueWidget: _valueText(_typeLabel(), textPrimary),
+          ),
           _hr(divider),
           _row(
             label: 'DATE',
@@ -490,12 +507,14 @@ class _InvestorPaymentDetailScreenState
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black)
-                    .withValues(alpha: 0.04),
+                color: (isDark ? Colors.white : Colors.black).withValues(
+                  alpha: 0.04,
+                ),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Colors.black)
-                      .withValues(alpha: 0.08),
+                  color: (isDark ? Colors.white : Colors.black).withValues(
+                    alpha: 0.08,
+                  ),
                 ),
               ),
               child: Icon(LucideIcons.copy, size: 15, color: muted),
@@ -592,10 +611,11 @@ class _InvestorPaymentDetailScreenState
   }
 
   Widget _row({required String label, required Widget valueWidget}) {
-    final muted = (Theme.of(context).brightness == Brightness.dark
-            ? Colors.white
-            : Colors.black)
-        .withValues(alpha: 0.5);
+    final muted =
+        (Theme.of(context).brightness == Brightness.dark
+                ? Colors.white
+                : Colors.black)
+            .withValues(alpha: 0.5);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -610,7 +630,8 @@ class _InvestorPaymentDetailScreenState
           ),
         ),
         Flexible(
-            child: Align(alignment: Alignment.centerRight, child: valueWidget)),
+          child: Align(alignment: Alignment.centerRight, child: valueWidget),
+        ),
       ],
     );
   }

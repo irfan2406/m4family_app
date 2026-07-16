@@ -26,7 +26,14 @@ class InvestorDocumentsScreen extends ConsumerStatefulWidget {
 class _InvestorDocumentsScreenState
     extends ConsumerState<InvestorDocumentsScreen> {
   static const _gold = Color(0xFFFFD700);
-  static const _filters = ['All', 'Agreement', 'Receipt', 'NOC', 'Plan', 'Booking'];
+  static const _filters = [
+    'All',
+    'Agreement',
+    'Receipt',
+    'NOC',
+    'Plan',
+    'Booking',
+  ];
 
   bool _loading = true;
   String? _error;
@@ -84,7 +91,8 @@ class _InvestorDocumentsScreenState
           final docs = booking['documents'];
           if (docs is! List) continue;
           final project = booking['project'];
-          final projectTitle = (project is Map ? project['title'] : null) ?? 'Property';
+          final projectTitle =
+              (project is Map ? project['title'] : null) ?? 'Property';
           for (final bRaw in docs) {
             if (bRaw is! Map) continue;
             final bDoc = Map<String, dynamic>.from(bRaw);
@@ -142,7 +150,10 @@ class _InvestorDocumentsScreenState
     if (resolved.isEmpty) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Secure link not available for this document')),
+          const SnackBar(
+            backgroundColor: Color(0xFFE24B4A),
+            content: Text('Secure link not available for this document'),
+          ),
         );
       }
       return;
@@ -168,7 +179,9 @@ class _InvestorDocumentsScreenState
             Expanded(
               child: _loading
                   ? const Center(
-                      child: CircularProgressIndicator(color: M4Theme.premiumBlue),
+                      child: CircularProgressIndicator(
+                        color: M4Theme.premiumBlue,
+                      ),
                     )
                   : Column(
                       children: [
@@ -197,9 +210,8 @@ class _InvestorDocumentsScreenState
       child: Row(
         children: [
           GestureDetector(
-            onTap: () => context.canPop()
-                ? context.pop()
-                : context.go('/investor/home'),
+            onTap: () =>
+                context.canPop() ? context.pop() : context.go('/investor/home'),
             child: Container(
               width: 40,
               height: 40,
@@ -208,10 +220,13 @@ class _InvestorDocumentsScreenState
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(color: border),
               ),
-              child: Icon(LucideIcons.arrowLeft,
-                  size: 20,
-                  color: (isDark ? Colors.white : Colors.black)
-                      .withValues(alpha: 0.5)),
+              child: Icon(
+                LucideIcons.arrowLeft,
+                size: 20,
+                color: (isDark ? Colors.white : Colors.black).withValues(
+                  alpha: 0.5,
+                ),
+              ),
             ),
           ),
           const SizedBox(width: 16),
@@ -256,10 +271,13 @@ class _InvestorDocumentsScreenState
               borderRadius: BorderRadius.circular(14),
               border: Border.all(color: border),
             ),
-            child: Icon(LucideIcons.shield,
-                size: 18,
-                color: (isDark ? Colors.white : Colors.black)
-                    .withValues(alpha: 0.5)),
+            child: Icon(
+              LucideIcons.shield,
+              size: 18,
+              color: (isDark ? Colors.white : Colors.black).withValues(
+                alpha: 0.5,
+              ),
+            ),
           ),
         ],
       ),
@@ -287,7 +305,9 @@ class _InvestorDocumentsScreenState
                 decoration: BoxDecoration(
                   color: selected
                       ? textPrimary
-                      : (isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white),
+                      : (isDark
+                            ? Colors.white.withValues(alpha: 0.03)
+                            : Colors.white),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: selected ? textPrimary : border),
                 ),
@@ -299,8 +319,9 @@ class _InvestorDocumentsScreenState
                     letterSpacing: 1.5,
                     color: selected
                         ? (isDark ? Colors.black : Colors.white)
-                        : (isDark ? Colors.white : Colors.black)
-                            .withValues(alpha: 0.5),
+                        : (isDark ? Colors.white : Colors.black).withValues(
+                            alpha: 0.5,
+                          ),
                   ),
                 ),
               ),
@@ -338,7 +359,10 @@ class _InvestorDocumentsScreenState
   }
 
   Widget _buildDocumentCard(
-      Map<String, dynamic> doc, bool isDark, Color textPrimary) {
+    Map<String, dynamic> doc,
+    bool isDark,
+    Color textPrimary,
+  ) {
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
@@ -371,8 +395,9 @@ class _InvestorDocumentsScreenState
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black)
-                    .withValues(alpha: 0.05),
+                color: (isDark ? Colors.white : Colors.black).withValues(
+                  alpha: 0.05,
+                ),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: border),
               ),
@@ -452,7 +477,10 @@ class _InvestorDocumentsScreenState
   }
 
   void _showDocumentDetails(
-      Map<String, dynamic> doc, bool isDark, Color textPrimary) {
+    Map<String, dynamic> doc,
+    bool isDark,
+    Color textPrimary,
+  ) {
     if (kIsWeb) {
       showDialog(
         context: context,
@@ -496,11 +524,16 @@ class _InvestorDocumentsScreenState
           width: 80,
           height: 80,
           decoration: BoxDecoration(
-            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.04),
+            color: (isDark ? Colors.white : Colors.black).withValues(
+              alpha: 0.04,
+            ),
             shape: BoxShape.circle,
           ),
-          child: Icon(LucideIcons.fileSearch,
-              size: 36, color: muted.withValues(alpha: 0.5)),
+          child: Icon(
+            LucideIcons.fileSearch,
+            size: 36,
+            color: muted.withValues(alpha: 0.5),
+          ),
         ),
         const SizedBox(height: 24),
         Text(
@@ -524,8 +557,11 @@ class _InvestorDocumentsScreenState
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(LucideIcons.fileWarning,
-                size: 48, color: muted.withValues(alpha: 0.6)),
+            Icon(
+              LucideIcons.fileWarning,
+              size: 48,
+              color: muted.withValues(alpha: 0.6),
+            ),
             const SizedBox(height: 20),
             Text(
               _error ?? 'Something went wrong',
@@ -540,8 +576,10 @@ class _InvestorDocumentsScreenState
             GestureDetector(
               onTap: _fetchDocuments,
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 28,
+                  vertical: 14,
+                ),
                 decoration: BoxDecoration(
                   color: textPrimary,
                   borderRadius: BorderRadius.circular(14),
@@ -589,10 +627,11 @@ class _SquareIconButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: border),
         ),
-        child: Icon(icon,
-            size: 16,
-            color:
-                (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5)),
+        child: Icon(
+          icon,
+          size: 16,
+          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+        ),
       ),
     );
   }
@@ -649,8 +688,9 @@ class _DocumentDetail extends StatelessWidget {
                   end: Alignment.bottomRight,
                   colors: [
                     _gold.withValues(alpha: 0.18),
-                    (isDark ? Colors.white : Colors.black)
-                        .withValues(alpha: 0.03),
+                    (isDark ? Colors.white : Colors.black).withValues(
+                      alpha: 0.03,
+                    ),
                   ],
                 ),
                 border: Border(bottom: BorderSide(color: border)),
@@ -665,12 +705,13 @@ class _DocumentDetail extends StatelessWidget {
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 6),
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
                     decoration: BoxDecoration(
                       color: _gold.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
-                      border:
-                          Border.all(color: _gold.withValues(alpha: 0.25)),
+                      border: Border.all(color: _gold.withValues(alpha: 0.25)),
                     ),
                     child: Text(
                       'SECURED ${type.toUpperCase()}',
@@ -728,19 +769,24 @@ class _DocumentDetail extends StatelessWidget {
                   const SizedBox(height: 8),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 8),
+                      horizontal: 14,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFF22C55E).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                          color: const Color(0xFF22C55E)
-                              .withValues(alpha: 0.25)),
+                        color: const Color(0xFF22C55E).withValues(alpha: 0.25),
+                      ),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(LucideIcons.shieldCheck,
-                            size: 14, color: Color(0xFF22C55E)),
+                        const Icon(
+                          LucideIcons.shieldCheck,
+                          size: 14,
+                          color: Color(0xFF22C55E),
+                        ),
                         const SizedBox(width: 8),
                         Text(
                           'ENCRYPTED & VERIFIED',
@@ -807,8 +853,7 @@ class _DocumentDetail extends StatelessWidget {
                     ),
                   ),
                   if (!rounded)
-                    SizedBox(
-                        height: MediaQuery.of(context).padding.bottom + 8),
+                    SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
                 ],
               ),
             ),

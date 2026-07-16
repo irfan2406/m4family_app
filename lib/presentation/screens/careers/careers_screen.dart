@@ -374,7 +374,9 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 // Lighter grey logo disc.
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.035),
+                color: (isDark ? Colors.white : Colors.black).withOpacity(
+                  0.035,
+                ),
                 shape: BoxShape.circle,
               ),
               child: Icon(
