@@ -1105,15 +1105,52 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         const SizedBox(height: 13),
                         _sectionTitle('Construction Progress', scheme, accent),
                         const SizedBox(height: 12),
-                        _progressCard(p, overallPct, scheme),
-                        if (_progress.isNotEmpty) ...[
-                          const SizedBox(height: 20),
-                          _progressYearHeader(scheme),
-                          const SizedBox(height: 16),
-                          _progressTimeline(scheme),
-                          const SizedBox(height: 24),
-                          _phaseTrackingSection(scheme),
-                        ],
+                        // Web parity: ONE box + ONE shadow wrapping the progress
+                        // content, the 2026 rail, the phase cards AND phase
+                        // tracking (these used to be separate blocks).
+                        Container(
+                          padding: const EdgeInsets.all(22),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(28),
+                            border: Border.all(
+                              color: scheme.outlineVariant.withValues(
+                                alpha: scheme.brightness == Brightness.light
+                                    ? 0.10
+                                    : 0.35,
+                              ),
+                            ),
+                            color: scheme.brightness == Brightness.light
+                                ? Colors.white
+                                : scheme.surfaceContainerHighest.withValues(
+                                    alpha: 0.4,
+                                  ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(
+                                  alpha: scheme.brightness == Brightness.light
+                                      ? 0.10
+                                      : 0.45,
+                                ),
+                                blurRadius: 28,
+                                offset: const Offset(0, 12),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _progressCard(p, overallPct, scheme),
+                              if (_progress.isNotEmpty) ...[
+                                const SizedBox(height: 20),
+                                _progressYearHeader(scheme),
+                                const SizedBox(height: 16),
+                                _progressTimeline(scheme),
+                                const SizedBox(height: 24),
+                                _phaseTrackingSection(scheme),
+                              ],
+                            ],
+                          ),
+                        ),
                         const SizedBox(height: 26),
                         _sectionTitle('Registration', scheme, accent),
                         const SizedBox(height: 12),
@@ -1509,9 +1546,8 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     // Drop blank entries. The data carried empty amenity slots which rendered as
     // invisible grid cells — that's what left the big empty band under "Lobby".
     final list = rawList.where((e) {
-      final n = (e is String ? e : (e is Map ? e['name'] : e))
-              ?.toString()
-              .trim() ??
+      final n =
+          (e is String ? e : (e is Map ? e['name'] : e))?.toString().trim() ??
           '';
       return n.isNotEmpty;
     }).toList();
@@ -1574,145 +1610,129 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     final est = estRaw.isEmpty ? 'Q1 2028' : estRaw;
     final isLight = scheme.brightness == Brightness.light;
     final accent = isLight ? Colors.black : scheme.primary;
-    return Container(
-      padding: const EdgeInsets.all(22),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(
-          color: scheme.outlineVariant.withValues(alpha: isLight ? 0.10 : 0.35),
+    // Web parity: the box + shadow now live on the SINGLE outer construction
+    // container in build() (which also wraps the year rail, phase cards and
+    // phase tracking), so this returns content only.
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'ESTIMATED\nCOMPLETION\nDATE',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.2,
+                      height: 1.3,
+                      // Was 0.5 — too faint to read.
+                      color: scheme.onSurface.withValues(alpha: 0.72),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    est.replaceAll(' ', '\n'),
+                    style: GoogleFonts.montserrat(
+                      fontSize: 46,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -1.5,
+                      height: 1.02,
+                      color: isLight ? Colors.black : scheme.onSurface,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            SizedBox(
+              width: 126,
+              height: 126,
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: CustomPaint(
+                      painter: _DottedProgressRingPainter(
+                        progress: pct / 100.0,
+                        color: accent,
+                        // Darker unfilled track + thicker, longer dashes so
+                        // the ring reads clearly (was 1.0/5 — too faint).
+                        trackColor: scheme.onSurface.withValues(alpha: 0.22),
+                        dotCount: 46,
+                        dotRadius: 1.7,
+                        dashLength: 7,
+                        margin: 7,
+                      ),
+                    ),
+                  ),
+                  Positioned.fill(
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            '$pct%',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w900,
+                              // Was inheriting the theme's navy — force dark.
+                              color: isLight ? Colors.black : scheme.onSurface,
+                            ),
+                          ),
+                          Text(
+                            'OVERALL',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w800,
+                              color: scheme.onSurface.withValues(alpha: 0.7),
+                              letterSpacing: 1,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
-        color: isLight
-            ? Colors.white
-            : scheme.surfaceContainerHighest.withValues(alpha: 0.4),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isLight ? 0.10 : 0.45),
-            blurRadius: 28,
-            offset: const Offset(0, 12),
+        const SizedBox(height: 20),
+        Text(
+          'As the project progresses, significant milestones are reached, showcasing our team’s dedication and expertise. We are steadily moving closer to our completion goal, ensuring quality and safety at every step. Each phase is handled with precision to meet our luxury standards and timeline.',
+          maxLines: _showFullProgressDesc ? null : 3,
+          overflow: _showFullProgressDesc
+              ? TextOverflow.visible
+              : TextOverflow.ellipsis,
+          style: GoogleFonts.montserrat(
+            // Was 12.5 / 0.55 — small and faint. Bigger + darker for
+            // readability.
+            fontSize: 13.5,
+            fontWeight: FontWeight.w500,
+            color: scheme.onSurface.withValues(alpha: 0.72),
+            height: 1.55,
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'ESTIMATED\nCOMPLETION\nDATE',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 1.2,
-                        height: 1.3,
-                        // Was 0.5 — too faint to read.
-                        color: scheme.onSurface.withValues(alpha: 0.72),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      est.replaceAll(' ', '\n'),
-                      style: GoogleFonts.montserrat(
-                        fontSize: 46,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: -1.5,
-                        height: 1.02,
-                        color: isLight ? Colors.black : scheme.onSurface,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 12),
-              SizedBox(
-                width: 126,
-                height: 126,
-                child: Stack(
-                  children: [
-                    Positioned.fill(
-                      child: CustomPaint(
-                        painter: _DottedProgressRingPainter(
-                          progress: pct / 100.0,
-                          color: accent,
-                          // Darker unfilled track + thicker, longer dashes so
-                          // the ring reads clearly (was 1.0/5 — too faint).
-                          trackColor: scheme.onSurface.withValues(alpha: 0.22),
-                          dotCount: 46,
-                          dotRadius: 1.7,
-                          dashLength: 7,
-                          margin: 7,
-                        ),
-                      ),
-                    ),
-                    Positioned.fill(
-                      child: Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              '$pct%',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w900,
-                                // Was inheriting the theme's navy — force dark.
-                                color: isLight ? Colors.black : scheme.onSurface,
-                              ),
-                            ),
-                            Text(
-                              'OVERALL',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w800,
-                                color: scheme.onSurface.withValues(alpha: 0.7),
-                                letterSpacing: 1,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Text(
-            'As the project progresses, significant milestones are reached, showcasing our team’s dedication and expertise. We are steadily moving closer to our completion goal, ensuring quality and safety at every step. Each phase is handled with precision to meet our luxury standards and timeline.',
-            maxLines: _showFullProgressDesc ? null : 3,
-            overflow: _showFullProgressDesc
-                ? TextOverflow.visible
-                : TextOverflow.ellipsis,
+        ),
+        const SizedBox(height: 10),
+        GestureDetector(
+          onTap: () =>
+              setState(() => _showFullProgressDesc = !_showFullProgressDesc),
+          child: Text(
+            _showFullProgressDesc ? 'Show less' : 'Read more',
             style: GoogleFonts.montserrat(
-              // Was 12.5 / 0.55 — small and faint. Bigger + darker for
-              // readability.
-              fontSize: 13.5,
-              fontWeight: FontWeight.w500,
-              color: scheme.onSurface.withValues(alpha: 0.72),
-              height: 1.55,
+              fontSize: 12.5,
+              fontWeight: FontWeight.w700,
+              color: isLight ? Colors.black : scheme.onSurface,
             ),
           ),
-          const SizedBox(height: 10),
-          GestureDetector(
-            onTap: () =>
-                setState(() => _showFullProgressDesc = !_showFullProgressDesc),
-            child: Text(
-              _showFullProgressDesc ? 'Show less' : 'Read more',
-              style: GoogleFonts.montserrat(
-                fontSize: 12.5,
-                fontWeight: FontWeight.w700,
-                color: isLight ? Colors.black : scheme.onSurface,
-              ),
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -1730,13 +1750,28 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             ),
           );
 
-    return Column(
-      children: [
-        for (int i = 0; i < phases.length; i++) ...[
-          if (i > 0) const SizedBox(height: 16),
-          _phaseCard(phases[i], scheme, isLight, accent),
-        ],
-      ],
+    if (phases.isEmpty) return const SizedBox.shrink();
+
+    // Phase cards swipe HORIZONTALLY, exactly ONE at a time: each card fills
+    // the full width and snaps, so the next card is fully off-screen until you
+    // actually swipe (no peeking card at the right edge), and never stacks
+    // below the first.
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final cardW = constraints.maxWidth;
+        // Image is AspectRatio 16/10 (cardW * 0.625); the footer (padding +
+        // title + 42px ring row) needs ~98.
+        final cardH = cardW * 0.625 + 98;
+        return SizedBox(
+          height: cardH,
+          child: PageView.builder(
+            physics: const BouncingScrollPhysics(),
+            itemCount: phases.length,
+            itemBuilder: (context, i) =>
+                _phaseCard(phases[i], scheme, isLight, accent),
+          ),
+        );
+      },
     );
   }
 
@@ -1778,11 +1813,13 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         color: isLight
             ? Colors.white
             : scheme.surfaceContainerHighest.withValues(alpha: 0.4),
+        // Softer than before — this card is now nested inside the single
+        // shadowed construction box, so a heavy shadow double-stacked.
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: isLight ? 0.13 : 0.45),
-            blurRadius: 26,
-            offset: const Offset(0, 12),
+            color: Colors.black.withValues(alpha: isLight ? 0.07 : 0.35),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
@@ -2045,10 +2082,11 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         const SizedBox(height: 16),
         SizedBox(
           height: 112,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
+          // Exactly ONE full-width card at a time — the next only appears when
+          // you swipe (was a 220-wide list that showed two side by side).
+          child: PageView.builder(
+            physics: const BouncingScrollPhysics(),
             itemCount: phases.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 12),
             itemBuilder: (context, i) {
               final ph = phases[i];
               final status = (ph['status'] ?? 'In Progress').toString();
@@ -2068,7 +2106,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               }
 
               return Container(
-                width: 220,
+                width: double.infinity,
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),

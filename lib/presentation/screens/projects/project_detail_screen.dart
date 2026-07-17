@@ -18,6 +18,7 @@ import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:m4_mobile/presentation/screens/booking/booking_start_screen.dart';
+import 'package:m4_mobile/presentation/widgets/luxury_amenity_icon.dart';
 
 class ProjectDetailScreen extends ConsumerStatefulWidget {
   final dynamic projectData;
@@ -1322,7 +1323,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                   crossAxisCount: 2,
                   mainAxisSpacing: 12,
                   crossAxisSpacing: 12,
-                  childAspectRatio: 2.5,
+                  // Taller cards (was 2.5) so the larger label/value text fits
+                  // without the "BOTTOM OVERFLOWED" warning.
+                  childAspectRatio: 2.1,
                   children: [
                     _OverviewActionCard(
                       label: 'COMPLETION',
@@ -1645,10 +1648,14 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               .toString()
               .trim()
               .toUpperCase(),
+          // Web parity: overview copy capped at 3 lines.
+          maxLines: 3,
+          overflow: TextOverflow.ellipsis,
           style: GoogleFonts.dmSerifDisplay(
-            fontSize: 11,
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
-            height: 1.8,
+            // Was 11 / 60% — small & faint. Bigger + darker.
+            fontSize: 12.5,
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.78),
+            height: 1.7,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.2,
           ),
@@ -1661,15 +1668,20 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
           onView: () => _launchAction('Opening...', project?['flyer']),
           onDownload: () => _launchAction('Downloading...', project?['flyer']),
         ),
+        // Web parity: E-BROCHURE shows only when the project actually has a
+        // brochure (Cledor Mazgaon has one; Cledor Mumbai does not).
+        if (project?['brochure']?.toString().trim().isNotEmpty ?? false) ...[
+          const SizedBox(height: 12),
+          _MultimediaAssetCard(
+            title: 'E-BROCHURE',
+            subtitle: 'FULL SHOWCASE • PDF',
+            icon: LucideIcons.layers,
+            onView: () => _launchAction('Opening...', project?['brochure']),
+            onDownload: () =>
+                _launchAction('Downloading...', project?['brochure']),
+          ),
+        ],
         const SizedBox(height: 12),
-        _MultimediaAssetCard(
-          title: 'E-BROCHURE',
-          subtitle: 'FULL SHOWCASE • PDF',
-          icon: LucideIcons.layers,
-          onView: () => _launchAction('Opening...', project?['brochure']),
-          onDownload: () =>
-              _launchAction('Downloading...', project?['brochure']),
-        ),
         // Web parity: floor plans appear here as resource cards
         // (e.g. "2BHK, MASTER BEDROOM" — CONFIGURATION N/A • AREA N/A).
         ...(((project?['plans'] as List?) ?? []).map((plan) {
@@ -2015,21 +2027,28 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                     ? (amenity['name']?.toString() ?? 'Amenity')
                     : amenity.toString())
                 .toUpperCase();
+        // Web parity: use the shared LuxuryAmenityIcon with the backend-uploaded
+        // (gold-tinted) icon — the "Lobby" concierge glyph is an uploaded asset,
+        // not a Lucide/SVG fallback.
+        final iconRaw = amenity is Map ? amenity['icon']?.toString() : null;
+        final iconUrl = (iconRaw != null && iconRaw.isNotEmpty)
+            ? ref.read(apiClientProvider).resolveUrl(iconRaw)
+            : null;
 
-        // Web parity: unboxed icon + label, gold icon (#dfba6b), dark label.
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _amenityIconWidget(name, size: 30),
+            LuxuryAmenityIcon(name: name, iconUrl: iconUrl, size: 30),
             const SizedBox(height: 10),
             Text(
               name,
               textAlign: TextAlign.center,
+              // Was 8px — too small. Bigger + a touch darker.
               style: GoogleFonts.dmSerifDisplay(
-                fontSize: 8,
-                fontWeight: FontWeight.w600,
+                fontSize: 9.5,
+                fontWeight: FontWeight.w700,
                 color: isDark
-                    ? Colors.white.withOpacity(0.85)
+                    ? Colors.white.withOpacity(0.9)
                     : const Color(0xFF1E293B),
                 letterSpacing: 0.3,
                 height: 1.15,
@@ -2670,16 +2689,17 @@ class _OverviewActionCard extends StatelessWidget {
               children: [
                 Icon(
                   icon,
-                  size: 14,
-                  color: isDark ? Colors.white : Colors.black,
+                  size: 16,
+                  color: isDark ? Colors.white60 : Colors.black54,
                 ),
                 const SizedBox(width: 8),
                 Text(
                   label.toUpperCase(),
+                  // Was 8px / 38% — too small & faint. Bigger + darker.
                   style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 8,
+                    fontSize: 10,
                     fontWeight: FontWeight.w900,
-                    color: isDark ? Colors.white38 : Colors.black38,
+                    color: isDark ? Colors.white70 : Colors.black54,
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -2688,7 +2708,7 @@ class _OverviewActionCard extends StatelessWidget {
             Text(
               value.toUpperCase(),
               style: GoogleFonts.dmSerifDisplay(
-                fontSize: 13,
+                fontSize: 14,
                 fontWeight: FontWeight.w900,
                 color: isDark ? Colors.white : Colors.black,
                 letterSpacing: -0.2,
@@ -3922,19 +3942,20 @@ class _MultimediaAssetCard extends StatelessWidget {
                 Text(
                   title.toUpperCase(),
                   style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 9,
+                    fontSize: 11,
                     fontWeight: FontWeight.w900,
                     color: isDark ? Colors.white : Colors.black,
                     letterSpacing: 0.5,
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 3),
                 Text(
                   subtitle.toUpperCase(),
+                  // Was 7px / 38% — too small & faint. Bigger + darker.
                   style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 7,
+                    fontSize: 9,
                     fontWeight: FontWeight.w700,
-                    color: isDark ? Colors.white38 : Colors.black38,
+                    color: isDark ? Colors.white60 : Colors.black54,
                     letterSpacing: 0.5,
                   ),
                 ),

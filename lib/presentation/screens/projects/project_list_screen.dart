@@ -10,7 +10,6 @@ import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_detail_screen.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
@@ -411,6 +410,32 @@ class ProjectListScreen extends ConsumerWidget {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      // Web parity: filter icon (light rounded square) to the
+                      // left of the view toggle. Opens the REFINE SEARCH sheet.
+                      GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () => _showFilterBottomSheet(context, ref),
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: (isDark ? Colors.white : Colors.black)
+                                .withOpacity(0.05),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: (isDark ? Colors.white : Colors.black)
+                                  .withOpacity(0.08),
+                            ),
+                          ),
+                          child: Icon(
+                            LucideIcons.slidersHorizontal,
+                            color: Theme.of(context).colorScheme.onSurface,
+                            size: 18,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
                       // Web parity: grid / list view segmented toggle
                       // (active button filled black, matching projects/page.tsx).
                       Container(
@@ -451,10 +476,6 @@ class ProjectListScreen extends ConsumerWidget {
                           ],
                         ),
                       ),
-                      const SizedBox(width: 6),
-                      // Canonical side-menu button (same size/colour in every
-                      // portal, light & dark) that opens the sidebar drawer.
-                      const SideMenuButton(),
                     ],
                   ),
                 ],

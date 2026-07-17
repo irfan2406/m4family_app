@@ -17,6 +17,9 @@
 
          This Theme is only used starting with V2 of Flutter's Android embedding. -->
     <style name="NormalTheme" parent="@android:style/Theme.Black.NoTitleBar">
-        <item name="android:windowBackground">@android:color/black</item>
+        <!-- Branded launch screen (black + centred M4 logo) rather than a bare
+             black fill: this window is what the user stares at while the Flutter
+             engine boots, and a flat black made the launch look broken. -->
+        <item name="android:windowBackground">@drawable/launch_background</item>
     </style>
 </resources>

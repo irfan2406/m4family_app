@@ -71,12 +71,16 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
                             fit: BoxFit.contain,
                             color: Colors.white,
                           )
+                          // Was 1500ms — LONGER than the 900ms splash itself, so
+                          // the logo was still faded-out when we navigated away
+                          // and the launch read as a black screen. Now it lands
+                          // almost immediately on the first frame.
                           .animate()
-                          .fadeIn(duration: 1500.ms, curve: Curves.easeOut)
+                          .fadeIn(duration: 350.ms, curve: Curves.easeOut)
                           .moveY(
                             begin: 10,
                             end: 0,
-                            duration: 1500.ms,
+                            duration: 350.ms,
                             curve: Curves.easeOut,
                           ),
                 ),

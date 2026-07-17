@@ -1,5 +1,6 @@
+import 'dart:convert';
 import 'dart:math' as math;
-import 'dart:ui';
+import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,6 +13,12 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/luxury_amenity_icon.dart';
+
+/// Decoded base64 image bytes, keyed by the raw `data:` URI, so a large hero
+/// image (the backend stores heroes as multi-MB base64) is decoded once instead
+/// of on every rebuild.
+final Map<String, Uint8List> _investorDetailB64Cache = {};
 
 /// Investor project detail — mirrors web `/investor/projects/[id]` (ProjectDetailsPage)
 /// and the guest project detail structure, adapted with an investor inquiry flow
@@ -40,8 +47,6 @@ class InvestorProjectDetailScreen extends ConsumerStatefulWidget {
 
 class _InvestorProjectDetailScreenState
     extends ConsumerState<InvestorProjectDetailScreen> {
-  static const _gold = Color(0xFFFFD700);
-
   Map<String, dynamic>? _project;
   List<dynamic> _paymentPlans = [];
   List<dynamic> _progressPhases = [];
@@ -878,6 +883,8 @@ class _InvestorProjectDetailScreenState
             const SizedBox(height: 20),
             _buildMediaThumbs(project, isDark),
             const SizedBox(height: 24),
+            _buildTitleBlock(project, isDark),
+            const SizedBox(height: 24),
             _buildActionCards(project, isDark),
             const SizedBox(height: 32),
             _buildOverviewSection(project, isDark),
@@ -887,8 +894,6 @@ class _InvestorProjectDetailScreenState
             _buildPlansSection(project, isDark),
             const SizedBox(height: 32),
             _buildConstructionSection(project, isDark),
-            const SizedBox(height: 32),
-            _buildPhaseTrackingSection(isDark),
             const SizedBox(height: 32),
             _buildGallerySection(project, isDark),
             const SizedBox(height: 32),
@@ -904,125 +909,92 @@ class _InvestorProjectDetailScreenState
     );
   }
 
+  // Renders a project image that may be a base64 `data:` URI (how the backend
+  // stores hero images — CachedNetworkImage can't decode those, so the hero was
+  // showing an error icon), an http URL, or a relative path.
+  Widget _projectImage(String? src, {BoxFit fit = BoxFit.cover}) {
+    final raw = (src ?? '').trim();
+    if (raw.isEmpty) return Container(color: Colors.black12);
+    if (raw.startsWith('data:')) {
+      try {
+        final bytes = _investorDetailB64Cache.putIfAbsent(
+          raw,
+          () => base64Decode(
+            raw.substring(raw.indexOf(',') + 1).replaceAll(RegExp(r'\s'), ''),
+          ),
+        );
+        return Image.memory(
+          bytes,
+          fit: fit,
+          gaplessPlayback: true,
+          errorBuilder: (_, __, ___) => Container(color: Colors.black12),
+        );
+      } catch (_) {
+        return Container(color: Colors.black12);
+      }
+    }
+    final url = raw.startsWith('http')
+        ? raw
+        : ref.read(apiClientProvider).resolveUrl(raw);
+    return CachedNetworkImage(
+      imageUrl: url,
+      fit: fit,
+      placeholder: (c, u) => Container(color: Colors.black12),
+      errorWidget: (c, u, e) => Container(color: Colors.black12),
+    );
+  }
+
   Widget _buildHero(Map<String, dynamic> project, bool isDark) {
-    final apiClient = ref.read(apiClientProvider);
     final heroList = project['heroImages'] as List?;
     final heroSrc = (heroList != null && heroList.isNotEmpty)
         ? heroList.first.toString()
         : (project['heroImage'] ?? project['coverImage'])?.toString();
-    final heroUrl = apiClient.resolveUrl(heroSrc);
-    final location = _locationLabel(project);
-
     return AspectRatio(
       aspectRatio: 16 / 9,
       child: Stack(
         fit: StackFit.expand,
         children: [
-          CachedNetworkImage(
-            imageUrl: heroUrl,
-            fit: BoxFit.cover,
-            placeholder: (c, u) => Container(color: Colors.black12),
-            errorWidget: (c, u, e) => Container(
-              color: Colors.black12,
-              child: const Icon(Icons.error),
-            ),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.black.withValues(alpha: 0.1),
-                  Colors.transparent,
-                  (isDark ? Colors.black : Colors.white).withValues(alpha: 0.9),
-                  (isDark ? Colors.black : Colors.white),
-                ],
-                stops: const [0.0, 0.4, 0.85, 1.0],
+          _projectImage(heroSrc, fit: BoxFit.cover),
+          // A light top scrim keeps the back/share buttons + status bar legible
+          // over a bright sky. The heavy bottom white fade is gone — the hero is
+          // now a clean, simple image (title/location moved below the thumbs).
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 130,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withValues(alpha: 0.18),
+                    Colors.transparent,
+                  ],
+                ),
               ),
             ),
           ),
+          // ONGOING status badge — bottom-left, over the image (web parity).
           Positioned(
-            bottom: 24,
+            bottom: 16,
             left: 24,
-            right: 24,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    (project['status']?.toString().toUpperCase() ?? 'ONGOING'),
-                    style: GoogleFonts.dmSerifDisplay(
-                      color: Colors.white,
-                      fontSize: 8,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 1,
-                    ),
-                  ),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                (project['status']?.toString().toUpperCase() ?? 'ONGOING'),
+                style: GoogleFonts.dmSerifDisplay(
+                  color: Colors.white,
+                  fontSize: 9,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1,
                 ),
-                const SizedBox(height: 12),
-                Text(
-                  (project['title']?.toString() ?? 'Project Name')
-                      .toUpperCase(),
-                  style: GoogleFonts.dmSerifDisplay(
-                    color: isDark ? Colors.white : Colors.black,
-                    fontSize: 32,
-                    height: 1.0,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -1.5,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                // Web parity: location sits in a bordered rounded pill, not as
-                // plain inline text.
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? Colors.white.withValues(alpha: 0.06)
-                          : Colors.white,
-                      borderRadius: BorderRadius.circular(30),
-                      border: Border.all(
-                        color: (isDark ? Colors.white : Colors.black)
-                            .withValues(alpha: 0.14),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          LucideIcons.mapPin,
-                          color: isDark ? Colors.white : Colors.black,
-                          size: 13,
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          location,
-                          style: GoogleFonts.dmSerifDisplay(
-                            color: isDark ? Colors.white : Colors.black,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.3,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
           Positioned(
@@ -1049,6 +1021,68 @@ class _InvestorProjectDetailScreenState
                   ),
                 ),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ONGOING badge + project title + location pill. Moved out of the hero (was
+  // overlaid on the image) to sit below the media thumbnails, on the page bg.
+  Widget _buildTitleBlock(Map<String, dynamic> project, bool isDark) {
+    final location = _locationLabel(project);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            (project['title']?.toString() ?? 'Project Name').toUpperCase(),
+            style: GoogleFonts.dmSerifDisplay(
+              color: isDark ? Colors.white : Colors.black,
+              fontSize: 32,
+              height: 1.0,
+              fontWeight: FontWeight.w800,
+              letterSpacing: -1.5,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              decoration: BoxDecoration(
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.06)
+                    : const Color(0xFFF1F5F9),
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all(
+                  color: (isDark ? Colors.white : Colors.black).withValues(
+                    alpha: 0.12,
+                  ),
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    LucideIcons.mapPin,
+                    color: isDark ? Colors.white : Colors.black,
+                    size: 13,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    location,
+                    style: GoogleFonts.dmSerifDisplay(
+                      color: isDark ? Colors.white : Colors.black,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -1086,7 +1120,6 @@ class _InvestorProjectDetailScreenState
           // 360 view — web shows threeSixtyUrl reference.
           _IconThumb(
             label: '360° VIEW',
-            icon: LucideIcons.view,
             isDark: isDark,
             onTap: () {
               if (threeSixty != null && threeSixty.isNotEmpty) {
@@ -1165,12 +1198,16 @@ class _InvestorProjectDetailScreenState
                     ? description
                     : 'Experience the pinnacle of luxury living with floor-to-ceiling windows, Italian marble flooring, and smart home automation.')
                 .toUpperCase(),
+            // Web parity: overview copy is capped at 3 lines.
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
             style: GoogleFonts.dmSerifDisplay(
-              fontSize: 11,
-              // Web parity: overview copy is rendered in the brand blue, not black.
-              color: M4Theme.premiumBlue,
-              fontWeight: FontWeight.w900,
-              height: 1.6,
+              // Was the legacy gold accent (low contrast). High-contrast dark,
+              // a touch larger, so the overview copy reads clearly.
+              fontSize: 12.5,
+              color: isDark ? Colors.white : Colors.black,
+              fontWeight: FontWeight.w800,
+              height: 1.65,
               letterSpacing: 0.5,
             ),
           ),
@@ -1180,10 +1217,10 @@ class _InvestorProjectDetailScreenState
             const SizedBox(height: 24),
             Row(
               children: [
-                const Icon(
+                Icon(
                   LucideIcons.indianRupee,
                   size: 16,
-                  color: M4Theme.premiumBlue,
+                  color: isDark ? Colors.white : Colors.black,
                 ),
                 const SizedBox(width: 8),
                 Text(
@@ -1350,10 +1387,10 @@ class _InvestorProjectDetailScreenState
                                 color: isDark
                                     ? Colors.white.withValues(alpha: 0.04)
                                     : const Color(0xFFF4F4F5),
-                                child: const Center(
+                                child: Center(
                                   child: Icon(
                                     LucideIcons.layoutGrid,
-                                    color: M4Theme.premiumBlue,
+                                    color: isDark ? Colors.white : Colors.black,
                                     size: 28,
                                   ),
                                 ),
@@ -1418,8 +1455,10 @@ class _InvestorProjectDetailScreenState
               child: Text(
                 'COMING SOON',
                 style: GoogleFonts.dmSerifDisplay(
-                  fontSize: 12,
-                  color: isDark ? Colors.white38 : Colors.black38,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1,
+                  color: isDark ? Colors.white70 : Colors.black54,
                 ),
               ),
             )
@@ -1442,6 +1481,15 @@ class _InvestorProjectDetailScreenState
                             ? (amenity['name']?.toString() ?? 'Amenity')
                             : amenity.toString())
                         .toUpperCase();
+                // Web parity: use the same LuxuryAmenityIcon as the web/CP so a
+                // backend-uploaded (gold-tinted) icon renders identically — the
+                // "Lobby" desk icon is an uploaded asset, not a Lucide glyph.
+                final iconRaw = amenity is Map
+                    ? amenity['icon']?.toString()
+                    : null;
+                final iconUrl = (iconRaw != null && iconRaw.isNotEmpty)
+                    ? ref.read(apiClientProvider).resolveUrl(iconRaw)
+                    : null;
                 return Container(
                   decoration: BoxDecoration(
                     color: isDark
@@ -1457,7 +1505,7 @@ class _InvestorProjectDetailScreenState
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(_amenityIcon(name), color: _gold, size: 28),
+                      LuxuryAmenityIcon(name: name, iconUrl: iconUrl, size: 30),
                       const SizedBox(height: 16),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -1465,10 +1513,9 @@ class _InvestorProjectDetailScreenState
                           name,
                           textAlign: TextAlign.center,
                           style: GoogleFonts.dmSerifDisplay(
-                            fontSize: 8,
+                            fontSize: 9,
                             fontWeight: FontWeight.w900,
-                            color: (isDark ? Colors.white : Colors.black)
-                                .withValues(alpha: 0.8),
+                            color: isDark ? Colors.white : Colors.black,
                             letterSpacing: 1,
                             height: 1.2,
                           ),
@@ -1485,13 +1532,14 @@ class _InvestorProjectDetailScreenState
   }
 
   Widget _buildConstructionSection(Map<String, dynamic> project, bool isDark) {
-    final apiClient = ref.read(apiClientProvider);
     final completion = (project['completion'] ?? 0);
-    final estimated =
-        (project['estimatedCompletionDate'] ??
-                project['possessionDate'] ??
-                'Q1 2028')
-            .toString();
+    // Treat empty strings as missing (an empty estimatedCompletionDate was
+    // rendering a blank space instead of falling back to Q1 2028).
+    final estRaw =
+        (project['estimatedCompletionDate'] ?? project['possessionDate'] ?? '')
+            .toString()
+            .trim();
+    final estimated = estRaw.isEmpty ? 'Q1 2028' : estRaw;
     final overall = completion is num
         ? completion
         : num.tryParse('$completion') ?? 0;
@@ -1527,21 +1575,24 @@ class _InvestorProjectDetailScreenState
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'ESTIMATED COMPLETION',
+                            'ESTIMATED\nCOMPLETION\nDATE',
                             style: GoogleFonts.dmSerifDisplay(
-                              fontSize: 9,
+                              fontSize: 10,
                               fontWeight: FontWeight.w900,
-                              color: M4Theme.premiumBlue,
+                              color: (isDark ? Colors.white : Colors.black)
+                                  .withValues(alpha: 0.72),
                               letterSpacing: 1,
+                              height: 1.35,
                             ),
                           ),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 10),
                           Text(
-                            estimated.toUpperCase(),
+                            estimated.toUpperCase().replaceAll(' ', '\n'),
                             style: GoogleFonts.dmSerifDisplay(
-                              fontSize: 34,
+                              fontSize: 40,
                               fontWeight: FontWeight.w900,
                               height: 1.0,
+                              letterSpacing: -1,
                               color: isDark ? Colors.white : Colors.black,
                             ),
                           ),
@@ -1553,11 +1604,12 @@ class _InvestorProjectDetailScreenState
                                 ? TextOverflow.visible
                                 : TextOverflow.ellipsis,
                             style: GoogleFonts.dmSerifDisplay(
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
+                              // Was 10 / 50% — too faint. Larger + darker.
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
                               height: 1.6,
                               color: (isDark ? Colors.white : Colors.black)
-                                  .withValues(alpha: 0.5),
+                                  .withValues(alpha: 0.7),
                             ),
                           ),
                           const SizedBox(height: 8),
@@ -1568,9 +1620,10 @@ class _InvestorProjectDetailScreenState
                             child: Text(
                               _showFullProgress ? 'Show less' : 'Read more',
                               style: GoogleFonts.dmSerifDisplay(
-                                fontSize: 10,
+                                fontSize: 11,
                                 fontWeight: FontWeight.w900,
-                                color: M4Theme.premiumBlue,
+                                color: isDark ? Colors.white : Colors.black,
+                                decoration: TextDecoration.underline,
                               ),
                             ),
                           ),
@@ -1590,7 +1643,7 @@ class _InvestorProjectDetailScreenState
                             child: CustomPaint(
                               painter: _DottedProgressRingPainter(
                                 progress: overall.toDouble() / 100,
-                                color: M4Theme.premiumBlue,
+                                color: isDark ? Colors.white : Colors.black,
                                 trackColor:
                                     (isDark ? Colors.white : Colors.black)
                                         .withValues(alpha: 0.22),
@@ -1615,11 +1668,10 @@ class _InvestorProjectDetailScreenState
                               Text(
                                 'OVERALL',
                                 style: GoogleFonts.dmSerifDisplay(
-                                  fontSize: 8,
+                                  fontSize: 9,
                                   fontWeight: FontWeight.w900,
-                                  color: isDark
-                                      ? Colors.white38
-                                      : Colors.black38,
+                                  color: (isDark ? Colors.white : Colors.black)
+                                      .withValues(alpha: 0.6),
                                   letterSpacing: 1,
                                 ),
                               ),
@@ -1631,152 +1683,255 @@ class _InvestorProjectDetailScreenState
                   ],
                 ),
                 if (_progressPhases.isNotEmpty) ...[
-                  const SizedBox(height: 36),
-                  SizedBox(
-                    height: 230,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      padding: EdgeInsets.zero,
-                      itemCount: _progressPhases.length,
-                      itemBuilder: (context, index) {
-                        final phase = _progressPhases[index];
-                        final phaseImages = phase['images'] as List?;
-                        final firstImg =
-                            (phaseImages != null && phaseImages.isNotEmpty)
-                            ? phaseImages[0]
-                            : '';
-                        final imageUrl = apiClient.resolveUrl(
-                          phase['image'] ?? firstImg,
-                        );
-                        final status =
-                            phase['status']?.toString().toUpperCase() ??
-                            'UPCOMING';
-                        final progress =
-                            (phase['progressPercent'] ?? phase['progress'] ?? 0)
-                                .toString();
-                        return GestureDetector(
-                          onTap: () {
-                            if (imageUrl.isNotEmpty) {
-                              _openGallery([
-                                phase['image']?.toString() ??
-                                    firstImg.toString(),
-                              ]);
-                            }
-                          },
-                          child: Container(
-                            width: 230,
-                            margin: const EdgeInsets.only(right: 16),
-                            decoration: BoxDecoration(
-                              color: isDark
-                                  ? Colors.white.withValues(alpha: 0.03)
-                                  : Colors.white,
-                              borderRadius: BorderRadius.circular(24),
-                              border: Border.all(
+                  const SizedBox(height: 32),
+                  // Web parity: "2026" year label + a timeline rail with a dot
+                  // marker, above the phase preview cards.
+                  Row(
+                    children: [
+                      Text(
+                        '2026',
+                        style: GoogleFonts.dmSerifDisplay(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w900,
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Stack(
+                          alignment: Alignment.centerLeft,
+                          children: [
+                            Container(
+                              height: 1,
+                              color: (isDark ? Colors.white : Colors.black)
+                                  .withValues(alpha: 0.25),
+                            ),
+                            Container(
+                              width: 12,
+                              height: 12,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
                                 color: isDark
-                                    ? Colors.white.withValues(alpha: 0.08)
-                                    : Colors.black.withValues(alpha: 0.06),
+                                    ? const Color(0xFF0A0E16)
+                                    : Colors.white,
+                                border: Border.all(
+                                  color: isDark ? Colors.white : Colors.black,
+                                  width: 2,
+                                ),
                               ),
                             ),
-                            clipBehavior: Clip.antiAlias,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Stack(
-                                  children: [
-                                    CachedNetworkImage(
-                                      imageUrl: imageUrl,
-                                      height: 130,
-                                      width: 230,
-                                      fit: BoxFit.cover,
-                                      placeholder: (c, u) => Container(
-                                        height: 130,
-                                        color: Colors.black12,
-                                      ),
-                                      errorWidget: (c, u, e) => Container(
-                                        height: 130,
-                                        color: Colors.black12,
-                                      ),
-                                    ),
-                                    Positioned(
-                                      top: 12,
-                                      left: 12,
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 8,
-                                          vertical: 4,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: status == 'COMPLETED'
-                                              ? Colors.green
-                                              : (status == 'IN PROGRESS'
-                                                    ? M4Theme.premiumBlue
-                                                    : Colors.black54),
-                                          borderRadius: BorderRadius.circular(
-                                            4,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          status,
-                                          style: GoogleFonts.dmSerifDisplay(
-                                            fontSize: 7,
-                                            fontWeight: FontWeight.w900,
-                                            color: Colors.white,
-                                            letterSpacing: 1,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(16),
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        '$progress%',
-                                        style: GoogleFonts.dmSerifDisplay(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w900,
-                                          color: M4Theme.premiumBlue,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      Expanded(
-                                        child: Text(
-                                          (phase['name'] ??
-                                                  phase['phaseName'] ??
-                                                  'PHASE')
-                                              .toString()
-                                              .toUpperCase(),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.dmSerifDisplay(
-                                            fontSize: 9,
-                                            fontWeight: FontWeight.w900,
-                                            color:
-                                                (isDark
-                                                        ? Colors.white
-                                                        : Colors.black)
-                                                    .withValues(alpha: 0.7),
-                                            letterSpacing: 1,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
+                  const SizedBox(height: 20),
+                  // Web parity (matches CP): full-width phase cards — a large
+                  // image, the project title, then a small progress ring beside
+                  // the phase name (was a small horizontal-scroll card).
+                  for (
+                    int index = 0;
+                    index < _progressPhases.length;
+                    index++
+                  ) ...[
+                    if (index > 0) const SizedBox(height: 16),
+                    _buildPhaseImageCard(
+                      _progressPhases[index],
+                      project,
+                      isDark,
+                    ),
+                  ],
+                  // Web parity: PHASE TRACKING lives inside the same construction
+                  // card, right below the phase preview (not a separate section).
+                  const SizedBox(height: 28),
+                  _buildPhaseTrackingSection(isDark),
                 ],
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // Web parity (matches CP): a full-width phase preview card — a large image
+  // with a status badge + gradient, then the project title and a small progress
+  // ring beside the phase name.
+  Widget _buildPhaseImageCard(
+    dynamic phase,
+    Map<String, dynamic> project,
+    bool isDark,
+  ) {
+    final apiClient = ref.read(apiClientProvider);
+    final phaseImages = phase['images'] as List?;
+    final firstImg = (phaseImages != null && phaseImages.isNotEmpty)
+        ? phaseImages[0]
+        : '';
+    final imageUrl = apiClient.resolveUrl(phase['image'] ?? firstImg);
+    final status = phase['status']?.toString().toUpperCase() ?? 'UPCOMING';
+    final pctRaw = phase['progressPercent'] ?? phase['progress'] ?? 0;
+    final pct = (pctRaw is num)
+        ? pctRaw.toInt().clamp(0, 100)
+        : (int.tryParse('$pctRaw') ?? 0).clamp(0, 100);
+    final phaseName = (phase['name'] ?? phase['phaseName'] ?? 'PHASE')
+        .toString();
+    final fg = isDark ? Colors.white : Colors.black;
+
+    return GestureDetector(
+      onTap: () {
+        if (imageUrl.isNotEmpty) {
+          _openGallery([phase['image']?.toString() ?? firstImg.toString()]);
+        }
+      },
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.08)
+                : Colors.black.withValues(alpha: 0.06),
+          ),
+          boxShadow: isDark
+              ? []
+              : [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 22,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            AspectRatio(
+              aspectRatio: 16 / 10,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  CachedNetworkImage(
+                    imageUrl: imageUrl,
+                    fit: BoxFit.cover,
+                    placeholder: (c, u) => Container(color: Colors.black12),
+                    errorWidget: (c, u, e) => Container(color: Colors.black12),
+                  ),
+                  Positioned.fill(
+                    child: IgnorePointer(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Colors.black.withValues(alpha: 0.5),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 12,
+                    left: 12,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: status == 'COMPLETED'
+                            ? Colors.green
+                            : (status == 'IN PROGRESS'
+                                  ? Colors.black87
+                                  : Colors.black54),
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Text(
+                        status,
+                        style: GoogleFonts.dmSerifDisplay(
+                          fontSize: 8,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    (project['title'] ?? '').toString().toUpperCase(),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.dmSerifDisplay(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w900,
+                      color: fg,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 46,
+                        height: 46,
+                        child: Stack(
+                          children: [
+                            Positioned.fill(
+                              child: CircularProgressIndicator(
+                                value: pct / 100.0,
+                                strokeWidth: 3,
+                                color: fg,
+                                backgroundColor: fg.withValues(alpha: 0.12),
+                              ),
+                            ),
+                            Positioned.fill(
+                              child: Center(
+                                child: Text(
+                                  '$pct%',
+                                  style: GoogleFonts.dmSerifDisplay(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w900,
+                                    color: fg,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Text(
+                          phaseName.toUpperCase(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.dmSerifDisplay(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w900,
+                            color: fg.withValues(alpha: 0.75),
+                            letterSpacing: 0.8,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -1792,191 +1947,188 @@ class _InvestorProjectDetailScreenState
         .toList();
     if (phases.isEmpty) return const SizedBox.shrink();
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'PHASE TRACKING',
-                    style: GoogleFonts.dmSerifDisplay(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 2,
-                      color: isDark ? Colors.white : Colors.black,
-                    ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'PHASE TRACKING',
+                  style: GoogleFonts.dmSerifDisplay(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 2,
+                    color: isDark ? Colors.white : Colors.black,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'REAL-TIME DEVELOPMENT STATUS',
-                    style: GoogleFonts.dmSerifDisplay(
-                      fontSize: 8,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 1,
-                      color: isDark ? Colors.white38 : Colors.black38,
-                    ),
-                  ),
-                ],
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
                 ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(999),
-                  border: Border.all(
-                    color: M4Theme.premiumBlue.withValues(alpha: 0.25),
-                  ),
-                  color: M4Theme.premiumBlue.withValues(alpha: 0.06),
-                ),
-                child: Text(
-                  '${phases.length} MILESTONES',
+                const SizedBox(height: 4),
+                Text(
+                  'REAL-TIME DEVELOPMENT STATUS',
                   style: GoogleFonts.dmSerifDisplay(
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1,
-                    color: M4Theme.premiumBlue,
+                    color: isDark ? Colors.white38 : Colors.black38,
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          ...phases.asMap().entries.map((entry) {
-            final i = entry.key;
-            final ph = entry.value;
-            final status = (ph['status'] ?? 'In Progress').toString();
-            final name = (ph['name'] ?? ph['phaseName'] ?? 'Phase').toString();
-            final pctRaw = ph['progressPercent'] ?? ph['progress'] ?? 0;
-            final pct = (pctRaw is num)
-                ? pctRaw.toInt().clamp(0, 100)
-                : (int.tryParse('$pctRaw') ?? 0).clamp(0, 100);
-            final isCompleted = status.toUpperCase() == 'COMPLETED';
-            final statusColor = isCompleted
-                ? Colors.green
-                : M4Theme.premiumBlue;
-            return Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              padding: const EdgeInsets.all(16),
+              ],
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: isDark
-                    ? Colors.white.withValues(alpha: 0.03)
-                    : const Color(0xFFF8FAFC),
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(999),
                 border: Border.all(
-                  color: isDark
-                      ? Colors.white.withValues(alpha: 0.08)
-                      : Colors.black.withValues(alpha: 0.06),
+                  color: (isDark ? Colors.white : Colors.black).withValues(
+                    alpha: 0.25,
+                  ),
+                ),
+                color: (isDark ? Colors.white : Colors.black).withValues(
+                  alpha: 0.06,
                 ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 34,
-                        height: 34,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
+              child: Text(
+                '${phases.length} MILESTONES',
+                style: GoogleFonts.dmSerifDisplay(
+                  fontSize: 8,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1,
+                  color: isDark ? Colors.white : Colors.black,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        ...phases.asMap().entries.map((entry) {
+          final i = entry.key;
+          final ph = entry.value;
+          final status = (ph['status'] ?? 'In Progress').toString();
+          final name = (ph['name'] ?? ph['phaseName'] ?? 'Phase').toString();
+          final pctRaw = ph['progressPercent'] ?? ph['progress'] ?? 0;
+          final pct = (pctRaw is num)
+              ? pctRaw.toInt().clamp(0, 100)
+              : (int.tryParse('$pctRaw') ?? 0).clamp(0, 100);
+          final isCompleted = status.toUpperCase() == 'COMPLETED';
+          final statusColor = isCompleted
+              ? Colors.green
+              : (isDark ? Colors.white : Colors.black);
+          return Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.05)
+                  : Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : Colors.black.withValues(alpha: 0.06),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 34,
+                      height: 34,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: (isDark ? Colors.white : Colors.black)
+                            .withValues(alpha: 0.05),
+                        border: Border.all(
                           color: (isDark ? Colors.white : Colors.black)
-                              .withValues(alpha: 0.05),
-                          border: Border.all(
-                            color: (isDark ? Colors.white : Colors.black)
-                                .withValues(alpha: 0.08),
-                          ),
-                        ),
-                        child: Text(
-                          (i + 1).toString().padLeft(2, '0'),
-                          style: GoogleFonts.dmSerifDisplay(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w900,
-                            color: isDark ? Colors.white54 : Colors.black54,
-                          ),
+                              .withValues(alpha: 0.08),
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              name.toUpperCase(),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.dmSerifDisplay(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: 0.5,
-                                color: isDark ? Colors.white : Colors.black,
-                              ),
-                            ),
-                            const SizedBox(height: 3),
-                            Row(
-                              children: [
-                                Container(
-                                  width: 6,
-                                  height: 6,
-                                  decoration: BoxDecoration(
-                                    color: statusColor,
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  status.toUpperCase(),
-                                  style: GoogleFonts.dmSerifDisplay(
-                                    fontSize: 8,
-                                    fontWeight: FontWeight.w900,
-                                    letterSpacing: 1,
-                                    color: statusColor,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      Text(
-                        '$pct%',
+                      child: Text(
+                        (i + 1).toString().padLeft(2, '0'),
                         style: GoogleFonts.dmSerifDisplay(
-                          fontSize: 16,
+                          fontSize: 11,
                           fontWeight: FontWeight.w900,
-                          color: isDark ? Colors.white : Colors.black,
+                          color: isDark ? Colors.white54 : Colors.black54,
                         ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(999),
-                    child: LinearProgressIndicator(
-                      value: pct / 100,
-                      minHeight: 6,
-                      backgroundColor: (isDark ? Colors.white : Colors.black)
-                          .withValues(alpha: 0.08),
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        isCompleted
-                            ? Colors.green
-                            : (isDark ? Colors.white : Colors.black),
                       ),
                     ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            name.toUpperCase(),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.dmSerifDisplay(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 0.5,
+                              color: isDark ? Colors.white : Colors.black,
+                            ),
+                          ),
+                          const SizedBox(height: 3),
+                          Row(
+                            children: [
+                              Container(
+                                width: 6,
+                                height: 6,
+                                decoration: BoxDecoration(
+                                  color: statusColor,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                status.toUpperCase(),
+                                style: GoogleFonts.dmSerifDisplay(
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 1,
+                                  color: statusColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Text(
+                      '$pct%',
+                      style: GoogleFonts.dmSerifDisplay(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w900,
+                        color: isDark ? Colors.white : Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(999),
+                  child: LinearProgressIndicator(
+                    value: pct / 100,
+                    minHeight: 6,
+                    backgroundColor: (isDark ? Colors.white : Colors.black)
+                        .withValues(alpha: 0.08),
+                    // Bar is always black/white (was green when completed).
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      isDark ? Colors.white : Colors.black,
+                    ),
                   ),
-                ],
-              ),
-            );
-          }),
-        ],
-      ),
+                ),
+              ],
+            ),
+          );
+        }),
+      ],
     );
   }
 
@@ -2104,9 +2256,9 @@ class _InvestorProjectDetailScreenState
                           ),
                         ),
                       ),
-                      const Icon(
+                      Icon(
                         LucideIcons.wallet,
-                        color: M4Theme.premiumBlue,
+                        color: isDark ? Colors.white : Colors.black,
                         size: 16,
                       ),
                     ],
@@ -2121,7 +2273,8 @@ class _InvestorProjectDetailScreenState
                             width: 40,
                             height: 40,
                             decoration: BoxDecoration(
-                              color: M4Theme.premiumBlue.withValues(alpha: 0.1),
+                              color: (isDark ? Colors.white : Colors.black)
+                                  .withValues(alpha: 0.08),
                               shape: BoxShape.circle,
                             ),
                             child: Center(
@@ -2130,7 +2283,7 @@ class _InvestorProjectDetailScreenState
                                 style: GoogleFonts.dmSerifDisplay(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w900,
-                                  color: M4Theme.premiumBlue,
+                                  color: isDark ? Colors.white : Colors.black,
                                 ),
                               ),
                             ),
@@ -2176,7 +2329,8 @@ class _InvestorProjectDetailScreenState
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       decoration: BoxDecoration(
-                        color: M4Theme.premiumBlue.withValues(alpha: 0.1),
+                        color: (isDark ? Colors.white : Colors.black)
+                            .withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: Center(
@@ -2185,7 +2339,7 @@ class _InvestorProjectDetailScreenState
                           style: GoogleFonts.dmSerifDisplay(
                             fontSize: 9,
                             fontWeight: FontWeight.w900,
-                            color: M4Theme.premiumBlue,
+                            color: isDark ? Colors.white : Colors.black,
                             letterSpacing: 1,
                           ),
                         ),
@@ -2369,9 +2523,9 @@ class _InvestorProjectDetailScreenState
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(
+                            Icon(
                               LucideIcons.mapPin,
-                              color: M4Theme.premiumBlue,
+                              color: isDark ? Colors.white : Colors.black,
                               size: 12,
                             ),
                             const SizedBox(width: 8),
@@ -2427,25 +2581,6 @@ class _InvestorProjectDetailScreenState
     if (loc is String && loc.isNotEmpty) return loc;
     return (project['locationName']?.toString() ?? 'N/A');
   }
-
-  IconData _amenityIcon(String? name) {
-    final n = name?.toLowerCase() ?? '';
-    if (n.contains('lounge')) return LucideIcons.armchair;
-    if (n.contains('reading')) return LucideIcons.bookOpen;
-    if (n.contains('gym')) return LucideIcons.dumbbell;
-    if (n.contains('pool')) return LucideIcons.waves;
-    if (n.contains('jogging') || n.contains('track')) return LucideIcons.wind;
-    if (n.contains('garden') || n.contains('park')) return LucideIcons.trees;
-    if (n.contains('fire') || n.contains('pit')) return LucideIcons.flame;
-    if (n.contains('playground') || n.contains('kids')) {
-      return LucideIcons.toyBrick;
-    }
-    if (n.contains('clubhouse')) return LucideIcons.building2;
-    if (n.contains('security')) return LucideIcons.shieldCheck;
-    if (n.contains('parking')) return LucideIcons.car;
-    if (n.contains('sunroof')) return LucideIcons.umbrella;
-    return LucideIcons.sparkles;
-  }
 }
 
 // ─── Small reusable widgets ────────────────────────────────────────────────
@@ -2498,50 +2633,74 @@ class _MediaThumb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-          child: Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: Colors.black.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.2),
-                width: 1.5,
-              ),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                if (imageUrl != null && imageUrl!.isNotEmpty)
-                  CachedNetworkImage(
-                    imageUrl: imageUrl!,
-                    fit: BoxFit.cover,
-                    errorWidget: (c, u, e) => Container(color: Colors.white10),
-                    placeholder: (c, u) => Container(color: Colors.white10),
-                  ),
-                Container(color: Colors.black.withValues(alpha: 0.3)),
-                Center(
-                  child: Text(
-                    label,
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.dmSerifDisplay(
-                      color: Colors.white,
-                      fontSize: 8,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                ),
-              ],
+      child: Container(
+        width: 64,
+        height: 64,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: (isDark ? Colors.white : Colors.black).withValues(
+              alpha: 0.08,
             ),
           ),
+          boxShadow: isDark
+              ? []
+              : [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.06),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            // Web parity: a crisp, bright image (was blurred + darkened by a
+            // heavy flat overlay) with a soft bottom gradient for the label.
+            if (imageUrl != null && imageUrl!.isNotEmpty)
+              CachedNetworkImage(
+                imageUrl: imageUrl!,
+                fit: BoxFit.cover,
+                errorWidget: (c, u, e) => Container(color: Colors.black12),
+                placeholder: (c, u) => Container(color: Colors.black12),
+              )
+            else
+              Container(color: Colors.black12),
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withValues(alpha: 0.6),
+                  ],
+                  stops: const [0.4, 1.0],
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 7),
+                child: Text(
+                  label,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.dmSerifDisplay(
+                    color: Colors.white,
+                    fontSize: 8,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -2550,12 +2709,10 @@ class _MediaThumb extends StatelessWidget {
 
 class _IconThumb extends StatelessWidget {
   final String label;
-  final IconData icon;
   final bool isDark;
   final VoidCallback onTap;
   const _IconThumb({
     required this.label,
-    required this.icon,
     required this.isDark,
     required this.onTap,
   });
@@ -2565,26 +2722,57 @@ class _IconThumb extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 60,
-        height: 60,
+        width: 64,
+        height: 64,
         decoration: BoxDecoration(
           color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isDark
                 ? Colors.white.withValues(alpha: 0.08)
-                : Colors.black.withValues(alpha: 0.06),
+                : Colors.black.withValues(alpha: 0.08),
           ),
+          boxShadow: isDark
+              ? []
+              : [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.06),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 20, color: isDark ? Colors.white : Colors.black),
-            const SizedBox(height: 4),
+            // Web parity: the same /360-vr.png glyph as the guest detail
+            // (inverted in dark mode), instead of a Lucide eye icon.
+            isDark
+                ? ColorFiltered(
+                    colorFilter: const ColorFilter.matrix(<double>[
+                      -1, 0, 0, 0, 255, //
+                      0, -1, 0, 0, 255, //
+                      0, 0, -1, 0, 255, //
+                      0, 0, 0, 1, 0, //
+                    ]),
+                    child: Image.asset(
+                      'assets/360-vr.png',
+                      width: 26,
+                      height: 26,
+                      fit: BoxFit.contain,
+                    ),
+                  )
+                : Image.asset(
+                    'assets/360-vr.png',
+                    width: 26,
+                    height: 26,
+                    fit: BoxFit.contain,
+                  ),
+            const SizedBox(height: 5),
             Text(
               label,
               style: GoogleFonts.dmSerifDisplay(
-                fontSize: 6.5,
+                fontSize: 7.5,
                 fontWeight: FontWeight.w900,
                 color: isDark ? Colors.white : Colors.black,
                 letterSpacing: 0.5,
@@ -2642,7 +2830,8 @@ class _ActionCard extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: isDark ? Colors.white38 : Colors.black38,
+              // Darker so the icon reads clearly (was 38% — too faint).
+              color: isDark ? Colors.white60 : Colors.black54,
               size: 24,
             ),
             Column(
@@ -2650,9 +2839,10 @@ class _ActionCard extends StatelessWidget {
                 Text(
                   label.toUpperCase(),
                   textAlign: TextAlign.center,
+                  // Was 8px / 38% — too small & faint. Larger + darker.
                   style: GoogleFonts.dmSerifDisplay(
-                    color: isDark ? Colors.white38 : Colors.black38,
-                    fontSize: 8,
+                    color: isDark ? Colors.white70 : Colors.black54,
+                    fontSize: 9,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.5,
                   ),
@@ -2720,10 +2910,17 @@ class _AssetCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: M4Theme.premiumBlue.withValues(alpha: 0.1),
+              // Neutral tint + dark icon (was the legacy gold accent).
+              color: (isDark ? Colors.white : Colors.black).withValues(
+                alpha: 0.06,
+              ),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(icon, color: M4Theme.premiumBlue, size: 18),
+            child: Icon(
+              icon,
+              color: isDark ? Colors.white : Colors.black,
+              size: 18,
+            ),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -2735,7 +2932,7 @@ class _AssetCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 10,
+                    fontSize: 11,
                     fontWeight: FontWeight.w900,
                     color: isDark ? Colors.white : Colors.black,
                     letterSpacing: 0.5,
@@ -2744,10 +2941,11 @@ class _AssetCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
+                  // Was fontSize 8 / 38% — too faint. Larger + darker.
                   style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 8,
+                    fontSize: 9.5,
                     fontWeight: FontWeight.w900,
-                    color: isDark ? Colors.white38 : Colors.black38,
+                    color: isDark ? Colors.white60 : Colors.black54,
                     letterSpacing: 1,
                   ),
                 ),
@@ -2846,12 +3044,15 @@ class _WalkthroughCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: M4Theme.premiumBlue.withValues(alpha: 0.1),
+              // Neutral tint + dark icon (was the legacy gold accent).
+              color: (isDark ? Colors.white : Colors.black).withValues(
+                alpha: 0.06,
+              ),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Icon(
               LucideIcons.video,
-              color: M4Theme.premiumBlue,
+              color: isDark ? Colors.white : Colors.black,
               size: 18,
             ),
           ),
@@ -2865,7 +3066,7 @@ class _WalkthroughCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 10,
+                    fontSize: 11,
                     fontWeight: FontWeight.w900,
                     color: isDark ? Colors.white : Colors.black,
                     letterSpacing: 0.5,
@@ -2874,10 +3075,11 @@ class _WalkthroughCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   'CINEMATIC TOUR • 4K',
+                  // Was fontSize 8 / 38% — too faint. Larger + darker.
                   style: GoogleFonts.dmSerifDisplay(
-                    fontSize: 8,
+                    fontSize: 9.5,
                     fontWeight: FontWeight.w900,
-                    color: isDark ? Colors.white38 : Colors.black38,
+                    color: isDark ? Colors.white60 : Colors.black54,
                     letterSpacing: 1,
                   ),
                 ),

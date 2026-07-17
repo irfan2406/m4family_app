@@ -48,14 +48,20 @@ class LuxuryAmenityIcon extends StatelessWidget {
             colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
             child: Image(image: provider, fit: BoxFit.contain),
           ),
+          // On failure (e.g. the /uploads endpoint is down) prefer the
+          // name-mapped luxury SVG — matches web — over a generic Lucide glyph.
           errorWidget: (c, u, e) => fallbackAsset != null
               ? Image.asset(fallbackAsset!, fit: BoxFit.contain)
-              : Icon(_lucideFallback(name), color: color, size: size * 0.9),
+              : _fallbackGlyph(),
         ),
       );
     }
 
-    // 2) Name -> custom luxury SVG.
+    return _fallbackGlyph();
+  }
+
+  // Name -> custom luxury SVG (web parity), else a Lucide fallback.
+  Widget _fallbackGlyph() {
     final key = _luxuryKey(name);
     final svg = key != null ? _svgIcons[key] : null;
     if (svg != null) {
@@ -66,8 +72,6 @@ class LuxuryAmenityIcon extends StatelessWidget {
         theme: SvgTheme(currentColor: color),
       );
     }
-
-    // 3) Lucide fallback.
     return Icon(_lucideFallback(name), color: color, size: size);
   }
 }

@@ -122,7 +122,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:m4_mobile/core/providers/theme_provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 void main() async {
   debugPaintSizeEnabled = false;
@@ -132,20 +131,20 @@ void main() async {
   debugRepaintRainbowEnabled = false;
 
   WidgetsFlutterBinding.ensureInitialized();
+
+  // .env MUST stay awaited: OnboardingScreen.initState reads authProvider,
+  // whose ApiClient calls dotenv.get() — loading it lazily would throw. It is
+  // a small bundled asset (~ms), so it is not what delayed the splash.
   await dotenv.load(fileName: ".env");
 
-  const storage = FlutterSecureStorage();
-  final themeStr = await storage.read(key: 'app_theme');
-  final initialTheme = themeStr == 'light' ? ThemeMode.light : ThemeMode.dark;
-
-  runApp(
-    ProviderScope(
-      overrides: [
-        themeProvider.overrideWith((ref) => ThemeNotifier(ref, initialTheme)),
-      ],
-      child: const M4FamilyApp(),
-    ),
-  );
+  // The saved theme is NO LONGER read here. FlutterSecureStorage.read() spins
+  // up the Android Keystore/EncryptedSharedPreferences on first use (100ms+,
+  // much worse on a cold start), and awaiting it before runApp() held back the
+  // first frame — that was the black screen before the animated splash.
+  // ThemeNotifier now restores the preference asynchronously instead; it starts
+  // on ThemeMode.dark, which already matches the black splash, so there is no
+  // flash while it resolves.
+  runApp(const ProviderScope(child: M4FamilyApp()));
 }
 
 class M4FamilyApp extends ConsumerWidget {

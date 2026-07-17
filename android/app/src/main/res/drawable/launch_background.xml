@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Native launch screen. It must look like the FIRST FRAME of the Flutter
+     splash (OnboardingScreen: white M4 logo centred on pure black) so the
+     native -> Flutter handoff is invisible.
+
+     Was: a "fill" of @drawable/background (a dark-GREY swatch), with NormalTheme
+     a flat black and no logo at all — so the whole engine-init window rendered
+     as an empty black screen. Pure black here matches both the Flutter splash
+     (Colors.black) and the Android 12 windowSplashScreenBackground (#000000). -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@android:color/black"/>
     <item>
-        <bitmap android:gravity="fill" android:src="@drawable/background"/>
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/android12splash"/>
     </item>
 </layer-list>

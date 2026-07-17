@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Keep in sync with drawable/launch_background.xml — pure black + centred M4
+     logo, matching the first frame of the Flutter splash so the native ->
+     Flutter handoff never shows an empty black screen. -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@android:color/black"/>
     <item>
-        <bitmap android:gravity="fill" android:src="@drawable/background"/>
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/android12splash"/>
     </item>
 </layer-list>
