@@ -1,8 +1,22 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+}
+
+// Release signing is read from android/key.properties (kept OUT of git). When
+// that file is absent — a fresh clone, CI without the secret, or a plain
+// `flutter run` — the build transparently falls back to the debug signing
+// config, so NOTHING breaks; only a real release build with key.properties
+// present is signed with the upload key.
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
 android {
@@ -30,11 +44,37 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        create("release") {
+            if (keystorePropertiesFile.exists()) {
+                keyAlias = keystoreProperties["keyAlias"] as String?
+                keyPassword = keystoreProperties["keyPassword"] as String?
+                storeFile = (keystoreProperties["storeFile"] as String?)?.let { file(it) }
+                storePassword = keystoreProperties["storePassword"] as String?
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            // Real upload key when key.properties exists, otherwise the debug
+            // key so a local `flutter build/run --release` still works.
+            signingConfig = if (keystorePropertiesFile.exists()) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
+
+            // R8: shrink + obfuscate the Java/Kotlin (Flutter embedding + native
+            // plugins) for a smaller, harder-to-reverse release. Resource
+            // shrinking is deliberately left OFF to avoid stripping resources
+            // referenced dynamically. Keep rules live in proguard-rules.pro.
+            isMinifyEnabled = true
+            isShrinkResources = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
         }
     }
 }

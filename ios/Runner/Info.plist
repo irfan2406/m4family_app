@@ -68,5 +68,13 @@
 		</array>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<!-- Required by image_picker / file_picker. iOS terminates the app if it
+		     accesses the photo library or camera without these strings. -->
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>M4 Family needs access to your photos so you can upload documents and images for your bookings and enquiries.</string>
+		<key>NSCameraUsageDescription</key>
+		<string>M4 Family needs camera access so you can capture and upload documents and images.</string>
+		<key>NSPhotoLibraryAddUsageDescription</key>
+		<string>M4 Family needs permission to save images to your photo library.</string>
 	</dict>
 </plist>

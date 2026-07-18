@@ -62,10 +62,17 @@ API_DOCUMENTATION.md
 FRONTEND_OVERVIEW.md
 BACKEND_OVERVIEW.md
 
+# Release signing — NEVER commit these (leaking the upload key = app hijack)
+android/key.properties
+**/*.jks
+**/*.keystore
+**/upload-keystore.jks
+
 # OS-specific
 .DS_Store
 .idea/
 .vscode/
 *.swp
-*.lock
 *.log
+# NOTE: `*.lock` was removed on purpose so pubspec.lock / Podfile.lock ARE
+# tracked — apps need them committed for reproducible builds.

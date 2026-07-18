@@ -788,10 +788,12 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         RichText(
           text: TextSpan(
             style: GoogleFonts.dmSerifDisplay(
+              // Was 0.6 — too faint/grey to read. Darker + slightly heavier.
               color: Theme.of(
                 context,
-              ).colorScheme.onSurface.withValues(alpha: 0.6),
+              ).colorScheme.onSurface.withValues(alpha: 0.82),
               fontSize: 14,
+              fontWeight: FontWeight.w500,
               height: 1.8,
             ),
             children: [
@@ -1207,8 +1209,9 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.dmSerifDisplay(
-                          color: Colors.white.withValues(alpha: 0.7),
-                          fontSize: 10,
+                          // Brighter on the dark card = clearly readable.
+                          color: Colors.white.withValues(alpha: 0.92),
+                          fontSize: 10.5,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 0.5,
                           height: 1.4,
@@ -1223,7 +1226,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                             style: GoogleFonts.dmSerifDisplay(
                               color: Colors.white,
                               fontSize: 10,
-                              fontWeight: FontWeight.w400,
+                              fontWeight: FontWeight.w600,
                               letterSpacing: 1.2,
                             ),
                           ),
