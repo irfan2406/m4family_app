@@ -1471,7 +1471,10 @@ class _InvestorProjectDetailScreenState
                 crossAxisCount: 3,
                 mainAxisSpacing: 12,
                 crossAxisSpacing: 12,
-                childAspectRatio: 1.0,
+                // Cap each cell to just the icon + label height. childAspectRatio
+                // 1.0 made tall square cells, so a single amenity ("Lobby") left
+                // a big empty band below it.
+                mainAxisExtent: 100,
               ),
               itemCount: amenities.length,
               itemBuilder: (context, index) {
