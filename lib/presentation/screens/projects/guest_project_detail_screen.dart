@@ -2948,11 +2948,15 @@ class _ConstructionDashboardCard extends ConsumerWidget {
             ),
             const SizedBox(height: 32),
             SizedBox(
-              // Web parity: compact card — image + info row, no dead space.
-              height: 248,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+              // Taller to match the wider (full-width) card below.
+              height: 300,
+              child: PageView.builder(
+                // One card at a time: the card fills the width and snaps, so the
+                // next phase is fully off-screen until you swipe (it used to be
+                // a 240-wide list, which left the next image peeking).
+                controller: PageController(viewportFraction: 1.0),
+                physics: const BouncingScrollPhysics(),
+                padEnds: false,
                 itemCount: phases.length,
                 itemBuilder: (context, index) {
                   final phase = phases[index];
@@ -2968,8 +2972,8 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                       phase['status']?.toString().toUpperCase() ?? 'UPCOMING';
 
                   return Container(
-                    width: 240,
-                    margin: const EdgeInsets.only(right: 16),
+                    // Full width (was a fixed 240) so no neighbouring card peeks.
+                    margin: const EdgeInsets.symmetric(horizontal: 24),
                     decoration: BoxDecoration(
                       color: isDark
                           ? Colors.white.withValues(alpha: 0.03)
@@ -3003,11 +3007,12 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                 ),
                                 child: CachedNetworkImage(
                                   imageUrl: imageUrl,
-                                  height: 140,
-                                  width: 240,
+                                  // Taller + full width now the card is wider.
+                                  height: 180,
+                                  width: double.infinity,
                                   fit: BoxFit.cover,
                                   placeholder: (c, u) => Container(
-                                    height: 140,
+                                    height: 180,
                                     color: isDark
                                         ? const Color(0xFF1E293B)
                                         : const Color(0xFFF1F5F9),
@@ -3031,13 +3036,13 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                           .contains('demolition')
                                       ? Image.asset(
                                           'assets/cledor_phase_demolition.jpg',
-                                          height: 140,
-                                          width: 240,
+                                          height: 180,
+                                          width: double.infinity,
                                           fit: BoxFit.cover,
                                           filterQuality: FilterQuality.high,
                                         )
                                       : Container(
-                                          height: 140,
+                                          height: 180,
                                           color: isDark
                                               ? const Color(0xFF1E293B)
                                               : const Color(0xFFF1F5F9),
@@ -3119,49 +3124,53 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                               const SizedBox(height: 12),
                               Row(
                                 children: [
-                                  Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      // Web parity: progress ring — dark arc
-                                      // reflects the actual percent (20% shows
-                                      // 20%, 100% a full ring).
-                                      SizedBox(
-                                        width: 34,
-                                        height: 34,
-                                        child: CustomPaint(
-                                          painter: _DashedCirclePainter(
-                                            progress:
+                                  // Circular progress ring around the percent —
+                                  // solid black with ROUNDED stroke caps (the
+                                  // old one was a dashed ring), bold number.
+                                  SizedBox(
+                                    width: 54,
+                                    height: 54,
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        SizedBox(
+                                          width: 54,
+                                          height: 54,
+                                          child: CircularProgressIndicator(
+                                            value:
                                                 ((phase['progressPercent'] ??
                                                             phase['progress'] ??
                                                             0)
                                                         as num)
                                                     .toDouble() /
                                                 100,
+                                            strokeWidth: 4,
+                                            strokeCap: StrokeCap.round,
+                                            backgroundColor:
+                                                (isDark
+                                                        ? Colors.white
+                                                        : Colors.black)
+                                                    .withValues(alpha: 0.12),
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                  isDark
+                                                      ? Colors.white
+                                                      : Colors.black,
+                                                ),
+                                          ),
+                                        ),
+                                        Text(
+                                          '${phase['progressPercent'] ?? phase['progress'] ?? 0}%',
+                                          style: GoogleFonts.dmSerifDisplay(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w900,
                                             color: isDark
                                                 ? Colors.white
                                                 : Colors.black,
-                                            backgroundColor: isDark
-                                                ? Colors.white.withValues(
-                                                    alpha: 0.12,
-                                                  )
-                                                : Colors.black.withValues(
-                                                    alpha: 0.12,
-                                                  ),
-                                            strokeWidth: 3,
                                           ),
                                         ),
-                                      ),
-                                      Text(
-                                        '${phase['progressPercent'] ?? phase['progress'] ?? 0}%',
-                                        style: GoogleFonts.dmSerifDisplay(
-                                          fontSize: 7.5,
-                                          fontWeight: FontWeight.w900,
-                                          color: isDark
-                                              ? Colors.white
-                                              : Colors.black,
-                                        ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                   const SizedBox(width: 12),
                                   Expanded(

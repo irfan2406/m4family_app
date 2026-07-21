@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
+import 'package:m4_mobile/core/utils/api_error.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 final apiClientProvider = Provider(
@@ -117,7 +118,15 @@ class AuthNotifier extends StateNotifier<AuthState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(status: AuthStatus.error, error: e.toString());
+      // Was e.toString(), which dumped the raw DioException at the user.
+      state = state.copyWith(
+        status: AuthStatus.error,
+        error: friendlyApiError(
+          e,
+          fallback:
+              'Could not send the code. Please check the number and try again.',
+        ),
+      );
     }
   }
 
@@ -228,7 +237,17 @@ class AuthNotifier extends StateNotifier<AuthState> {
         state.role ?? 'CUSTOMER',
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final token = response.data['data']['accessToken'];
+        // Null-safe: a 200 with an unexpected shape used to throw here and then
+        // surface as another raw exception instead of a readable message.
+        final data = response.data is Map ? response.data['data'] : null;
+        final token = (data is Map ? data['accessToken'] : null)?.toString();
+        if (token == null || token.isEmpty) {
+          state = state.copyWith(
+            status: AuthStatus.error,
+            error: 'Could not complete sign in. Please try again.',
+          );
+          return;
+        }
         await _storage.write(key: 'jwt_token', value: token);
 
         // Fetch user data FIRST
@@ -244,7 +263,16 @@ class AuthNotifier extends StateNotifier<AuthState> {
         state = state.copyWith(status: AuthStatus.error, error: 'Invalid OTP');
       }
     } catch (e) {
-      state = state.copyWith(status: AuthStatus.error, error: e.toString());
+      // Was e.toString(), which dumped the raw DioException at the user. A 400
+      // here means a wrong/expired code; a 403 means the account isn't allowed
+      // in this portal.
+      state = state.copyWith(
+        status: AuthStatus.error,
+        error: friendlyApiError(
+          e,
+          fallback: 'That code is incorrect or has expired. Please try again.',
+        ),
+      );
     }
   }
 

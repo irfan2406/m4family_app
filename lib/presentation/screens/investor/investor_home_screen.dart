@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
+import 'package:m4_mobile/core/utils/api_error.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:m4_mobile/presentation/providers/investor_shell_provider.dart';
@@ -435,7 +436,16 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: const Color(0xFFE24B4A),
-            content: Text('Submission failed: $e'),
+            // Was 'Submission failed: $e', which printed the whole
+            // DioException (status-code explanation, MDN link and all) at the
+            // user. The backend sends an empty error body, so translate it.
+            content: Text(
+              friendlyApiError(
+                e,
+                fallback:
+                    'Could not register your interest. Please check the form and try again.',
+              ),
+            ),
           ),
         );
     } finally {
@@ -1430,14 +1440,12 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            // Web parity: two USPs only, evenly spread (web drops
+            // "Fully Furnished" and reads "20 MIN FROM AIRPORT").
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildFeatureIcon(LucideIcons.building2, 'FULLY\nFURNISHED'),
               _buildFeatureIcon(LucideIcons.mapPin, 'PRIME\nLOCATION'),
-              _buildFeatureIcon(
-                LucideIcons.smartphone,
-                '20 MIN FROM\nSHEIKH ZAYED RD',
-              ),
+              _buildFeatureIcon(LucideIcons.smartphone, '20 MIN FROM\nAIRPORT'),
             ],
           ),
         ),

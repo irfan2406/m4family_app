@@ -75,8 +75,10 @@ class _CpProfileSettingsScreenState
       }
       u ??= ref.read(authProvider).user;
       if (u != null) {
-        _first.text = (u['firstName']?.toString() ?? '').toUpperCase();
-        _last.text = (u['lastName']?.toString() ?? '').toUpperCase();
+        // Show the name exactly as stored (was force-uppercased on load, so a
+        // saved "Abuzar" came back as "ABUZAR").
+        _first.text = u['firstName']?.toString() ?? '';
+        _last.text = u['lastName']?.toString() ?? '';
         _email.text = u['email']?.toString() ?? '';
         _phone.text = u['phone']?.toString() ?? '';
         _company.text = u['companyName']?.toString() ?? '';
@@ -97,8 +99,10 @@ class _CpProfileSettingsScreenState
       debugPrint('CP settings load: $e');
       final u = ref.read(authProvider).user;
       if (u != null) {
-        _first.text = (u['firstName']?.toString() ?? '').toUpperCase();
-        _last.text = (u['lastName']?.toString() ?? '').toUpperCase();
+        // Show the name exactly as stored (was force-uppercased on load, so a
+        // saved "Abuzar" came back as "ABUZAR").
+        _first.text = u['firstName']?.toString() ?? '';
+        _last.text = u['lastName']?.toString() ?? '';
         _email.text = u['email']?.toString() ?? '';
         _phone.text = u['phone']?.toString() ?? '';
         _company.text = u['companyName']?.toString() ?? '';
@@ -1064,10 +1068,10 @@ class _CpProfileSettingsScreenState
                   'FIRST NAME',
                   TextField(
                     controller: _first,
-                    // Names type + display in uppercase (matches how the
-                    // profile renders them); bold and slightly larger.
-                    textCapitalization: TextCapitalization.characters,
-                    inputFormatters: [_UpperCaseTextFormatter()],
+                    // Type the name exactly as the user enters it — the field
+                    // used to force ALL CAPS (keyboard caps-lock + an
+                    // uppercase input formatter), so "Abuzar" became "ABUZAR".
+                    textCapitalization: TextCapitalization.words,
                     style: GoogleFonts.dmSerifDisplay(
                       fontWeight: FontWeight.w800,
                       fontSize: 16,
@@ -1091,8 +1095,7 @@ class _CpProfileSettingsScreenState
                   'LAST NAME',
                   TextField(
                     controller: _last,
-                    textCapitalization: TextCapitalization.characters,
-                    inputFormatters: [_UpperCaseTextFormatter()],
+                    textCapitalization: TextCapitalization.words,
                     style: GoogleFonts.dmSerifDisplay(
                       fontWeight: FontWeight.w800,
                       fontSize: 16,
@@ -1452,16 +1455,5 @@ class _CpProfileSettingsScreenState
               ),
             ),
     );
-  }
-}
-
-/// Forces field text to uppercase as the user types (name fields).
-class _UpperCaseTextFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
-    return newValue.copyWith(text: newValue.text.toUpperCase());
   }
 }

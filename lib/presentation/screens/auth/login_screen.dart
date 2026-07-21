@@ -242,7 +242,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         _LuxuryInputField(
           controller: _phoneController,
           label: 'WHATSAPP NUMBER (WITH COUNTRY CODE)',
-          hint: '+971 50 XXX XXXX',
+          hint: '+91 XXXXX XXXXX',
           icon: LucideIcons.phone,
           keyboardType: TextInputType.phone,
         ),

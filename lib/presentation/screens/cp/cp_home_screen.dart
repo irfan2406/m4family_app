@@ -1356,14 +1356,12 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            // Web parity: two USPs only, evenly spread (web drops
+            // "Fully Furnished" and reads "20 MIN FROM AIRPORT").
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildFeatureIcon(LucideIcons.building2, 'FULLY\nFURNISHED'),
               _buildFeatureIcon(LucideIcons.mapPin, 'PRIME\nLOCATION'),
-              _buildFeatureIcon(
-                LucideIcons.smartphone,
-                '20 MIN FROM\nSHEIKH ZAYED RD',
-              ),
+              _buildFeatureIcon(LucideIcons.smartphone, '20 MIN FROM\nAIRPORT'),
             ],
           ),
         ),

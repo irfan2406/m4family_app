@@ -364,9 +364,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         Text(
           label,
           textAlign: TextAlign.center,
+          // Was 8px / 60% — far too small and faint to read. Bigger + darker.
           style: GoogleFonts.dmSerifDisplay(
-            color: foreground.withOpacity(0.6),
-            fontSize: 8,
+            color: foreground.withOpacity(0.85),
+            fontSize: 10.5,
             fontWeight: FontWeight.w900,
             letterSpacing: 0.5,
             height: 1.4,
@@ -1001,9 +1002,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                       children: [
                                         Text(
                                           'FEATURED PROPERTY',
+                                          // Was 9px — too small to read.
                                           style: GoogleFonts.dmSerifDisplay(
-                                            color: const Color(0xFFC5A358),
-                                            fontSize: 9,
+                                            color: const Color(0xFFD4B871),
+                                            fontSize: 11,
                                             fontWeight: FontWeight.w900,
                                             letterSpacing: 2,
                                           ),
@@ -1023,14 +1025,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                           tagline.toUpperCase(),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
+                                          // Was 10px / 80% — faint on the photo.
+                                          // Bigger, bolder, near-solid white.
                                           style: GoogleFonts.dmSerifDisplay(
                                             color: Colors.white.withOpacity(
-                                              0.8,
+                                              0.95,
                                             ),
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w600,
+                                            fontSize: 11.5,
+                                            fontWeight: FontWeight.w700,
                                             height: 1.5,
-                                            letterSpacing: 1,
+                                            letterSpacing: 0.8,
                                           ),
                                         ),
                                       ],
@@ -1081,13 +1085,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      // Web parity: two USPs only, evenly spread (web drops
+                      // "Fully Furnished" and reads "20 MIN FROM AIRPORT").
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        _buildWebUSP(
-                          context,
-                          LucideIcons.building2,
-                          'FULLY\nFURNISHED',
-                        ),
                         _buildWebUSP(
                           context,
                           LucideIcons.mapPin,
@@ -1096,7 +1097,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         _buildWebUSP(
                           context,
                           LucideIcons.smartphone,
-                          '20 MIN FROM\nSHEIKH ZAYED RD',
+                          '20 MIN FROM\nAIRPORT',
                         ),
                       ],
                     ),
@@ -1174,7 +1175,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                   ? Colors.black
                                   : Colors.white,
                               fontWeight: FontWeight.w900,
-                              fontSize: 11,
+                              fontSize: 13,
                               letterSpacing: 1.5,
                             ),
                           ),
@@ -1339,11 +1340,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   const SizedBox(height: 8),
                   Text(
                     'OFFICIAL INQUIRY FORM',
+                    // Was 10px / 68% — small and washed out.
                     style: TextStyle(
                       color: Theme.of(
                         context,
-                      ).colorScheme.onSurface.withOpacity(0.68),
-                      fontSize: 10,
+                      ).colorScheme.onSurface.withOpacity(0.85),
+                      fontSize: 12,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 2,
                     ),
@@ -1750,22 +1752,24 @@ class _EngageCell extends StatelessWidget {
               title,
               textAlign: TextAlign.center,
               style: GoogleFonts.dmSerifDisplay(
-                fontSize: 12,
+                fontSize: 15,
                 fontWeight: FontWeight.w900,
                 color: scheme.onSurface,
-                letterSpacing: 1,
+                letterSpacing: 0.8,
                 height: 1.2,
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 8),
             Text(
               desc,
               textAlign: TextAlign.center,
+              // Was 10.5px / 65% (then 12 / 82%) — still read as faint grey.
+              // Now near-solid foreground at a proper body size.
               style: GoogleFonts.dmSerifDisplay(
-                fontSize: 10.5,
-                fontWeight: FontWeight.w500,
-                color: scheme.onSurface.withOpacity(0.65),
-                height: 1.35,
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: scheme.onSurface.withOpacity(0.95),
+                height: 1.4,
               ),
             ),
           ],
@@ -2030,22 +2034,23 @@ class _PremiumInputField extends StatelessWidget {
                   cursorColor: Theme.of(context).colorScheme.onSurface,
                   style: GoogleFonts.dmSerifDisplay(
                     color: Theme.of(context).colorScheme.onSurface,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
+                    fontSize: 15.5,
+                    fontWeight: FontWeight.w700,
                   ),
                   // Web parity: a placeholder that disappears on typing (not a
                   // floating label that sits above the typed text).
                   decoration: InputDecoration(
                     isCollapsed: true,
                     hintText: label,
+                    // Was 14px / 68% — the placeholder read as washed out.
                     hintStyle: GoogleFonts.dmSerifDisplay(
                       color: hasError
-                          ? _errorColor.withOpacity(0.75)
+                          ? _errorColor.withOpacity(0.85)
                           : Theme.of(
                               context,
-                            ).colorScheme.onSurface.withOpacity(0.68),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                            ).colorScheme.onSurface.withOpacity(0.82),
+                      fontSize: 14.5,
+                      fontWeight: FontWeight.w600,
                     ),
                     border: InputBorder.none,
                   ),
