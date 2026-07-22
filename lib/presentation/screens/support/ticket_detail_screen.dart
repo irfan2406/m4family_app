@@ -682,7 +682,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                 textInputAction: TextInputAction.send,
                 onSubmitted: (_) => _handleSend(),
                 style: GoogleFonts.dmSerifDisplay(
-                  fontSize: 13,
+                  fontSize: 15,
                   fontWeight: FontWeight.w700,
                   color: textPrimary,
                 ),

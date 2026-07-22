@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,6 +13,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/luxury_amenity_icon.dart';
 
@@ -229,8 +231,16 @@ class _InvestorProjectDetailScreenState
   }) async {
     final name = _nameController.text.trim();
     final phone = _phoneController.text.trim();
-    if (name.isEmpty || phone.isEmpty) {
-      _toast('Please enter your name and phone number');
+    // Format checks (was empty-only): valid name + phone; email only if given
+    // (it's optional in this modal).
+    final err =
+        Validators.nameError(name, field: 'name') ??
+        Validators.phoneError(phone) ??
+        (_emailController.text.trim().isEmpty
+            ? null
+            : Validators.emailError(_emailController.text));
+    if (err != null) {
+      _toast(err);
       return;
     }
     if ((type == 'VC' || type == 'Site Visit') &&
@@ -383,18 +393,24 @@ class _InvestorProjectDetailScreenState
                           hint: 'FULL NAME *',
                           controller: _nameController,
                           icon: LucideIcons.user,
+                          keyboardType: TextInputType.name,
+                          inputFormatters: Validators.nameFormatters,
                         ),
                         const SizedBox(height: 14),
                         _InquiryField(
                           hint: 'EMAIL ADDRESS',
                           controller: _emailController,
                           icon: LucideIcons.mail,
+                          keyboardType: TextInputType.emailAddress,
+                          inputFormatters: Validators.emailFormatters,
                         ),
                         const SizedBox(height: 14),
                         _InquiryField(
                           hint: 'PHONE NUMBER *',
                           controller: _phoneController,
                           icon: LucideIcons.phone,
+                          keyboardType: TextInputType.phone,
+                          inputFormatters: Validators.phoneFormatters,
                         ),
 
                         // Plan select
@@ -639,7 +655,7 @@ class _InvestorProjectDetailScreenState
                             controller: _notesController,
                             maxLines: 3,
                             style: GoogleFonts.dmSerifDisplay(
-                              fontSize: 11,
+                              fontSize: 15,
                               fontWeight: FontWeight.bold,
                               color: isDark ? Colors.white : Colors.black,
                             ),
@@ -3157,10 +3173,14 @@ class _InquiryField extends StatelessWidget {
   final String hint;
   final TextEditingController controller;
   final IconData icon;
+  final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
   const _InquiryField({
     required this.hint,
     required this.controller,
     required this.icon,
+    this.keyboardType,
+    this.inputFormatters,
   });
 
   @override
@@ -3181,8 +3201,10 @@ class _InquiryField extends StatelessWidget {
       ),
       child: TextField(
         controller: controller,
+        keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
         style: GoogleFonts.dmSerifDisplay(
-          fontSize: 12,
+          fontSize: 15,
           fontWeight: FontWeight.bold,
           color: isDark ? Colors.white : Colors.black,
         ),

@@ -291,7 +291,7 @@ class _InvestorPaymentsScreenState
       onChanged: (v) => setState(() => _searchQuery = v),
       style: GoogleFonts.dmSerifDisplay(
         color: textPrimary,
-        fontSize: 13,
+        fontSize: 15,
         fontWeight: FontWeight.w500,
       ),
       decoration: InputDecoration(

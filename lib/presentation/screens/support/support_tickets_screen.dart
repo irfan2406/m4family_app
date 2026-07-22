@@ -374,7 +374,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                 controller: _searchController,
                 onChanged: (_) => setState(() {}),
                 style: GoogleFonts.dmSerifDisplay(
-                  fontSize: 14,
+                  fontSize: 15,
                   fontWeight: FontWeight.w800,
                 ),
                 decoration: InputDecoration(

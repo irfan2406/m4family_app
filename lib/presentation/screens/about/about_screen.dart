@@ -1,6 +1,8 @@
 import 'dart:ui';
 import 'package:m4_mobile/core/theme/app_theme.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -1306,6 +1308,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                         _nameController,
                         'Your Name',
                         LucideIcons.user,
+                        keyboardType: TextInputType.name,
+                        inputFormatters: Validators.nameFormatters,
                       ),
                       const SizedBox(height: 20),
 
@@ -1314,6 +1318,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                         _phoneController,
                         'Mobile Number',
                         LucideIcons.phone,
+                        keyboardType: TextInputType.phone,
+                        inputFormatters: Validators.phoneFormatters,
                       ),
                       const SizedBox(height: 20),
 
@@ -1322,6 +1328,8 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                         _emailController,
                         'Email Address',
                         LucideIcons.mail,
+                        keyboardType: TextInputType.emailAddress,
+                        inputFormatters: Validators.emailFormatters,
                       ),
                       const SizedBox(height: 40),
 
@@ -1332,14 +1340,26 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                           onPressed: _isSubmitting
                               ? null
                               : () async {
-                                  if (_nameController.text.isEmpty ||
-                                      _phoneController.text.isEmpty) {
+                                  final vErr =
+                                      Validators.nameError(
+                                        _nameController.text,
+                                        field: 'name',
+                                      ) ??
+                                      Validators.phoneError(
+                                        _phoneController.text,
+                                      ) ??
+                                      (_emailController.text.trim().isEmpty
+                                          ? null
+                                          : Validators.emailError(
+                                              _emailController.text,
+                                            ));
+                                  if (vErr != null) {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        backgroundColor: Color(0xFFE24B4A),
-                                        content: Text(
-                                          'Please fill in required fields',
+                                      SnackBar(
+                                        backgroundColor: const Color(
+                                          0xFFE24B4A,
                                         ),
+                                        content: Text(vErr),
                                       ),
                                     );
                                     return;
@@ -1454,8 +1474,10 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
   Widget _buildTextField(
     TextEditingController controller,
     String hint,
-    IconData icon,
-  ) {
+    IconData icon, {
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
+  }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     // Web parity: plain light-filled input, no leading icon, and a gold
     // border only while focused (matches the reference popup).
@@ -1468,9 +1490,11 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     const gold = Color(0xFFC5A358);
     return TextField(
       controller: controller,
+      keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
       style: GoogleFonts.dmSerifDisplay(
         color: isDark ? Colors.white : Colors.black,
-        fontSize: 14,
+        fontSize: 15,
         fontWeight: FontWeight.w500,
       ),
       decoration: InputDecoration(

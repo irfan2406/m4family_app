@@ -640,7 +640,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
         controller: controller,
         maxLines: maxLines,
         style: GoogleFonts.dmSerifDisplay(
-          fontSize: 12,
+          fontSize: 15,
           fontWeight: FontWeight.w800,
           color: isDark ? Colors.white : Colors.black,
         ),

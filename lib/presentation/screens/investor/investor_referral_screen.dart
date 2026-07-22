@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
 
@@ -938,7 +939,14 @@ class _InvestorReferralScreenState
 
                     _formLabel("FRIEND'S NAME", textPrimary),
                     const SizedBox(height: 10),
-                    _formField(nameCtrl, 'FULL NAME', isDark, textPrimary),
+                    _formField(
+                      nameCtrl,
+                      'FULL NAME',
+                      isDark,
+                      textPrimary,
+                      type: TextInputType.name,
+                      inputFormatters: Validators.nameFormatters,
+                    ),
                     const SizedBox(height: 20),
 
                     _formLabel('MOBILE NUMBER', textPrimary),
@@ -949,6 +957,7 @@ class _InvestorReferralScreenState
                       isDark,
                       textPrimary,
                       type: TextInputType.phone,
+                      inputFormatters: Validators.phoneFormatters,
                     ),
                     const SizedBox(height: 20),
 
@@ -960,6 +969,7 @@ class _InvestorReferralScreenState
                       isDark,
                       textPrimary,
                       type: TextInputType.emailAddress,
+                      inputFormatters: Validators.emailFormatters,
                     ),
                     const SizedBox(height: 32),
 
@@ -967,11 +977,19 @@ class _InvestorReferralScreenState
                       onTap: submitting
                           ? null
                           : () async {
-                              if (selectedProjectId == null ||
-                                  nameCtrl.text.trim().isEmpty ||
-                                  phoneCtrl.text.trim().isEmpty ||
-                                  emailCtrl.text.trim().isEmpty) {
-                                _toast('Please fill all fields to proceed');
+                              final vErr =
+                                  Validators.nameError(
+                                    nameCtrl.text,
+                                    field: "friend's name",
+                                  ) ??
+                                  Validators.phoneError(phoneCtrl.text) ??
+                                  Validators.emailError(emailCtrl.text);
+                              if (selectedProjectId == null) {
+                                _toast('Please select a project to proceed');
+                                return;
+                              }
+                              if (vErr != null) {
+                                _toast(vErr);
                                 return;
                               }
                               setModalState(() => submitting = true);
@@ -1074,6 +1092,7 @@ class _InvestorReferralScreenState
     bool isDark,
     Color textPrimary, {
     TextInputType type = TextInputType.text,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return Container(
       height: 56,
@@ -1081,8 +1100,9 @@ class _InvestorReferralScreenState
       child: TextField(
         controller: controller,
         keyboardType: type,
+        inputFormatters: inputFormatters,
         style: GoogleFonts.dmSerifDisplay(
-          fontSize: 13,
+          fontSize: 15,
           fontWeight: FontWeight.w700,
           color: textPrimary,
         ),

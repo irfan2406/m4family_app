@@ -353,7 +353,7 @@ class _CpChangePasswordScreenState
       obscureText: obscure,
       onChanged: onChanged,
       style: GoogleFonts.dmSerifDisplay(
-        fontSize: 14,
+        fontSize: 15,
         fontWeight: FontWeight.w600,
         color: textPrimary,
       ),

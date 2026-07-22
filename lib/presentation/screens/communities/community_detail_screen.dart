@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'dart:ui';
 import 'package:m4_mobile/core/theme/app_theme.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_detail_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -87,13 +89,15 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
   }
 
   Future<void> _handleLeadSubmission() async {
-    if (_nameController.text.isEmpty ||
-        _emailController.text.isEmpty ||
-        _phoneController.text.isEmpty) {
+    final validationError =
+        Validators.nameError(_nameController.text, field: 'full name') ??
+        Validators.emailError(_emailController.text) ??
+        Validators.phoneError(_phoneController.text);
+    if (validationError != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
-          content: Text('Please fill all required fields'),
+        SnackBar(
+          backgroundColor: const Color(0xFFE24B4A),
+          content: Text(validationError),
         ),
       );
       return;
@@ -692,7 +696,12 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                         subtitle: 'Initialize your premium experience',
                       ),
                       const SizedBox(height: 30),
-                      _buildInput('Full Name *', _nameController),
+                      _buildInput(
+                        'Full Name *',
+                        _nameController,
+                        keyboardType: TextInputType.name,
+                        inputFormatters: Validators.nameFormatters,
+                      ),
                       const SizedBox(height: 12),
                       Row(
                         children: [
@@ -700,6 +709,8 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                             child: _buildInput(
                               'Email Address *',
                               _emailController,
+                              keyboardType: TextInputType.emailAddress,
+                              inputFormatters: Validators.emailFormatters,
                             ),
                           ),
                           const SizedBox(width: 12),
@@ -707,6 +718,8 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                             child: _buildInput(
                               'Phone Number *',
                               _phoneController,
+                              keyboardType: TextInputType.phone,
+                              inputFormatters: Validators.phoneFormatters,
                             ),
                           ),
                         ],
@@ -877,7 +890,12 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
     );
   }
 
-  Widget _buildInput(String hint, TextEditingController controller) {
+  Widget _buildInput(
+    String hint,
+    TextEditingController controller, {
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
+  }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -890,9 +908,11 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
       ),
       child: TextField(
         controller: controller,
+        keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
         style: GoogleFonts.dmSerifDisplay(
           color: isDark ? Colors.white : Colors.black,
-          fontSize: 13,
+          fontSize: 15,
           fontWeight: FontWeight.bold,
         ),
         decoration: InputDecoration(

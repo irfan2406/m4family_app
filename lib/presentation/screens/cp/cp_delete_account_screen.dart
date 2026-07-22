@@ -546,7 +546,7 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
             obscureText: _obscurePass,
             onChanged: (_) => setState(() {}),
             style: GoogleFonts.dmSerifDisplay(
-              fontSize: 14,
+              fontSize: 15,
               fontWeight: FontWeight.w700,
               color: textPrimary,
             ),

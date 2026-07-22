@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -214,6 +215,18 @@ class _CpProfileSettingsScreenState
   }
 
   Future<void> _save() async {
+    final vErr =
+        Validators.nameError(_first.text, field: 'first name') ??
+        Validators.nameError(_last.text, field: 'last name') ??
+        Validators.phoneError(_phone.text);
+    if (vErr != null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(vErr), backgroundColor: Colors.red.shade700),
+        );
+      }
+      return;
+    }
     setState(() => _saving = true);
     try {
       final res = await ref.read(apiClientProvider).updateMe({
@@ -1072,6 +1085,8 @@ class _CpProfileSettingsScreenState
                     // used to force ALL CAPS (keyboard caps-lock + an
                     // uppercase input formatter), so "Abuzar" became "ABUZAR".
                     textCapitalization: TextCapitalization.words,
+                    keyboardType: TextInputType.name,
+                    inputFormatters: Validators.nameFormatters,
                     style: GoogleFonts.dmSerifDisplay(
                       fontWeight: FontWeight.w800,
                       fontSize: 16,
@@ -1096,6 +1111,8 @@ class _CpProfileSettingsScreenState
                   TextField(
                     controller: _last,
                     textCapitalization: TextCapitalization.words,
+                    keyboardType: TextInputType.name,
+                    inputFormatters: Validators.nameFormatters,
                     style: GoogleFonts.dmSerifDisplay(
                       fontWeight: FontWeight.w800,
                       fontSize: 16,
@@ -1119,7 +1136,7 @@ class _CpProfileSettingsScreenState
                   readOnly: true,
                   style: GoogleFonts.dmSerifDisplay(
                     fontWeight: FontWeight.w600,
-                    fontSize: 14,
+                    fontSize: 15,
                     color: scheme.onSurface.withValues(alpha: 0.92),
                   ),
                   decoration:
@@ -1187,9 +1204,10 @@ class _CpProfileSettingsScreenState
             TextField(
               controller: _phone,
               keyboardType: TextInputType.phone,
+              inputFormatters: Validators.phoneFormatters,
               style: GoogleFonts.dmSerifDisplay(
                 fontWeight: FontWeight.w700,
-                fontSize: 14,
+                fontSize: 15,
                 color: scheme.onSurface.withValues(alpha: 0.92),
               ),
               decoration: _inputDec(
@@ -1214,7 +1232,7 @@ class _CpProfileSettingsScreenState
                     controller: _company,
                     style: GoogleFonts.dmSerifDisplay(
                       fontWeight: FontWeight.w700,
-                      fontSize: 14,
+                      fontSize: 15,
                       color: scheme.onSurface.withValues(alpha: 0.92),
                     ),
                     decoration: _inputDec(scheme),
@@ -1230,7 +1248,7 @@ class _CpProfileSettingsScreenState
                     controller: _rera,
                     style: GoogleFonts.dmSerifDisplay(
                       fontWeight: FontWeight.w700,
-                      fontSize: 14,
+                      fontSize: 15,
                       color: scheme.onSurface.withValues(alpha: 0.92),
                     ),
                     decoration: _inputDec(scheme),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
@@ -52,13 +54,15 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
   }
 
   Future<void> _submitForm() async {
-    if (_nameController.text.trim().isEmpty ||
-        _emailController.text.trim().isEmpty ||
-        _phoneController.text.trim().isEmpty) {
+    final validationError =
+        Validators.nameError(_nameController.text, field: 'full name') ??
+        Validators.emailError(_emailController.text) ??
+        Validators.phoneError(_phoneController.text);
+    if (validationError != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
-          content: Text('Please fill in your name, email and phone'),
+        SnackBar(
+          backgroundColor: const Color(0xFFE24B4A),
+          content: Text(validationError),
         ),
       );
       return;
@@ -360,18 +364,25 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _formField(_nameController, 'Full Name *'),
+        _formField(
+          _nameController,
+          'Full Name *',
+          keyboardType: TextInputType.name,
+          inputFormatters: Validators.nameFormatters,
+        ),
         const SizedBox(height: 16),
         _formField(
           _emailController,
           'Email *',
           keyboardType: TextInputType.emailAddress,
+          inputFormatters: Validators.emailFormatters,
         ),
         const SizedBox(height: 16),
         _formField(
           _phoneController,
           '+91 98653 21250 *',
           keyboardType: TextInputType.phone,
+          inputFormatters: Validators.phoneFormatters,
         ),
         const SizedBox(height: 16),
         _formField(_messageController, 'Message', maxLines: 4),
@@ -425,15 +436,17 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
     String hint, {
     int maxLines = 1,
     TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return TextField(
       controller: controller,
       maxLines: maxLines,
       keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
       style: GoogleFonts.dmSerifDisplay(
         color: isDark ? Colors.white : Colors.black,
-        fontSize: 14,
+        fontSize: 15,
         fontWeight: FontWeight.w500,
       ),
       decoration: InputDecoration(

@@ -1,7 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
@@ -341,6 +342,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
           padding: const EdgeInsets.all(24),
           child: Form(
             key: _formKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -391,7 +393,9 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                   controller: _nameController,
                   hint: 'ENTER NAME',
                   icon: LucideIcons.user,
-                  validator: (v) => v!.isEmpty ? 'Name is required' : null,
+                  keyboardType: TextInputType.name,
+                  inputFormatters: Validators.nameFormatters,
+                  validator: (v) => Validators.nameError(v),
                 ),
                 const SizedBox(height: 24),
 
@@ -402,8 +406,8 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                   hint: '+91 XXXXX XXXXX',
                   icon: LucideIcons.phone,
                   keyboardType: TextInputType.phone,
-                  validator: (v) =>
-                      v!.isEmpty ? 'Phone number is required' : null,
+                  inputFormatters: Validators.phoneFormatters,
+                  validator: (v) => Validators.phoneError(v),
                 ),
                 const SizedBox(height: 24),
 
@@ -473,6 +477,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
     IconData? icon,
     int maxLines = 1,
     TextInputType keyboardType = TextInputType.text,
+    List<TextInputFormatter>? inputFormatters,
     String? Function(String?)? validator,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -500,10 +505,11 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
         controller: controller,
         maxLines: maxLines,
         keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
         validator: validator,
         style: GoogleFonts.dmSerifDisplay(
           color: isDark ? Colors.white : Colors.black,
-          fontSize: 13,
+          fontSize: 15,
           fontWeight: FontWeight.bold,
         ),
         decoration: InputDecoration(

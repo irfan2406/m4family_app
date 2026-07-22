@@ -268,7 +268,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
       validator: validator,
       style: GoogleFonts.dmSerifDisplay(
         color: isDark ? Colors.white : Colors.black,
-        fontSize: 13,
+        fontSize: 15,
         fontWeight: FontWeight.w700,
       ),
       decoration: InputDecoration(

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 
 /// Investor settings — parity with web `app/investor/settings/page.tsx`
@@ -103,6 +105,15 @@ class _InvestorSettingsScreenState
 
   Future<void> _save() async {
     if (_saving) return;
+    final vErr =
+        Validators.nameError(_nameController.text, field: 'full name') ??
+        Validators.phoneError(_phoneController.text);
+    if (vErr != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(vErr), backgroundColor: Colors.red.shade700),
+      );
+      return;
+    }
     setState(() => _saving = true);
     final apiClient = ref.read(apiClientProvider);
     bool ok = true;
@@ -256,6 +267,8 @@ class _InvestorSettingsScreenState
                       label: 'FULL NAME',
                       icon: LucideIcons.user,
                       controller: _nameController,
+                      keyboardType: TextInputType.name,
+                      inputFormatters: Validators.nameFormatters,
                     ),
                     const SizedBox(height: 16),
                     _field(
@@ -277,6 +290,7 @@ class _InvestorSettingsScreenState
                       icon: LucideIcons.phone,
                       controller: _phoneController,
                       keyboardType: TextInputType.phone,
+                      inputFormatters: Validators.phoneFormatters,
                     ),
                     const SizedBox(height: 28),
                     _sectionLabel('SECURITY & ACCESS', muted),
@@ -447,6 +461,7 @@ class _InvestorSettingsScreenState
     bool enabled = true,
     bool verified = false,
     TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     final border = (isDark ? Colors.white : Colors.black).withValues(
@@ -484,8 +499,9 @@ class _InvestorSettingsScreenState
                         controller: controller,
                         enabled: enabled,
                         keyboardType: keyboardType,
+                        inputFormatters: inputFormatters,
                         style: GoogleFonts.dmSerifDisplay(
-                          fontSize: 14,
+                          fontSize: 15,
                           fontWeight: FontWeight.w600,
                           color: fieldColor,
                         ),

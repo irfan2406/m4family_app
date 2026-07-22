@@ -170,7 +170,7 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
         ),
         child: TextField(
           onChanged: (v) => setState(() => _searchQuery = v),
-          style: GoogleFonts.dmSerifDisplay(color: foreground, fontSize: 13),
+          style: GoogleFonts.dmSerifDisplay(color: foreground, fontSize: 15),
           decoration: InputDecoration(
             hintText: 'SEARCH BY ID OR PROJECT...',
             hintStyle: GoogleFonts.dmSerifDisplay(

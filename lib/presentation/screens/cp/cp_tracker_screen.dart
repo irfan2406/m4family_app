@@ -336,7 +336,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                   child: TextField(
                     onChanged: (v) => setState(() => _search = v),
                     style: GoogleFonts.dmSerifDisplay(
-                      fontSize: 12,
+                      fontSize: 15,
                       fontWeight: FontWeight.w700,
                     ),
                     decoration: InputDecoration(

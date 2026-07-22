@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/services.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
+import 'package:m4_mobile/core/utils/project_highlights.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -359,15 +362,14 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
 
   /// Marks the empty required fields red in place. Returns true when valid.
   bool _validateInterest() {
-    final nameErr = _nameController.text.trim().isEmpty
-        ? 'Please enter your full name'
-        : null;
-    final emailErr = _emailController.text.trim().isEmpty
-        ? 'Please enter your email address'
-        : null;
-    final phoneErr = _phoneController.text.trim().isEmpty
-        ? 'Please enter your phone number'
-        : null;
+    // Full validation (was empty-check only): name = letters, email = proper
+    // format, phone = 10-digit. Errors show in red on each field.
+    final nameErr = Validators.nameError(
+      _nameController.text,
+      field: 'full name',
+    );
+    final emailErr = Validators.emailError(_emailController.text);
+    final phoneErr = Validators.phoneError(_phoneController.text);
     setState(() {
       _nameError = nameErr;
       _emailError = emailErr;
@@ -1704,12 +1706,14 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32),
           child: Row(
-            // Web parity: two USPs only, evenly spread (web drops
-            // "Fully Furnished" and reads "20 MIN FROM AIRPORT").
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            // Web parity: USPs come from the featured project's backend
+            // `highlights` (e.g. ["Prime Location", "20 min from Airport"]),
+            // not a hardcoded pair. Each is Expanded so its label wraps.
             children: [
-              _buildFeatureIcon(LucideIcons.mapPin, 'PRIME\nLOCATION'),
-              _buildFeatureIcon(LucideIcons.smartphone, '20 MIN FROM\nAIRPORT'),
+              for (final h in projectHighlights(project).take(3))
+                Expanded(
+                  child: _buildFeatureIcon(highlightIcon(h), h.toUpperCase()),
+                ),
             ],
           ),
         ),
@@ -2017,6 +2021,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           'Full Name *',
           _nameController,
           errorText: _nameError,
+          keyboardType: TextInputType.name,
+          inputFormatters: Validators.nameFormatters,
           // Clear the red state as soon as they start typing.
           onChanged: (v) {
             if (_nameError != null) setState(() => _nameError = null);
@@ -2027,6 +2033,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           'Email *',
           _emailController,
           errorText: _emailError,
+          keyboardType: TextInputType.emailAddress,
+          inputFormatters: Validators.emailFormatters,
           onChanged: (v) {
             if (_emailError != null) setState(() => _emailError = null);
           },
@@ -2036,6 +2044,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           'Phone Number *',
           _phoneController,
           errorText: _phoneError,
+          keyboardType: TextInputType.phone,
+          inputFormatters: Validators.phoneFormatters,
           onChanged: (v) {
             if (_phoneError != null) setState(() => _phoneError = null);
           },
@@ -2104,6 +2114,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     // validation on the field instead of a snackbar over the page.
     String? errorText,
     ValueChanged<String>? onChanged,
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final hasError = errorText != null;
@@ -2134,6 +2146,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           child: TextField(
             controller: controller,
             onChanged: onChanged,
+            keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
             style: TextStyle(color: isDark ? Colors.white : Colors.black),
             maxLines: isLong ? 5 : 1,
             decoration: InputDecoration(

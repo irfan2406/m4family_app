@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
@@ -557,13 +559,18 @@ class _GuestProjectDetailScreenState
   ]) async {
     final name = _nameController.text.trim();
     final phone = _phoneController.text.trim();
-    if (name.isEmpty || phone.isEmpty) {
+    // Format checks (was empty-only): valid name + phone; email only when given.
+    final vErr =
+        Validators.nameError(name, field: 'name') ??
+        Validators.phoneError(phone) ??
+        (_emailController.text.trim().isEmpty
+            ? null
+            : Validators.emailError(_emailController.text));
+    if (vErr != null) {
       if (setModalState != null) {
-        setModalState(
-          () => _modalErrorMessage = 'Please enter your name and phone number',
-        );
+        setModalState(() => _modalErrorMessage = vErr);
       } else {
-        _launchAction('Please enter your name and phone number', null, true);
+        _launchAction(vErr, null, true);
       }
       return;
     }
@@ -833,18 +840,24 @@ class _GuestProjectDetailScreenState
                           'Full Name',
                           _nameController,
                           LucideIcons.user,
+                          keyboardType: TextInputType.name,
+                          inputFormatters: Validators.nameFormatters,
                         ),
                         const SizedBox(height: 16),
                         _buildInquiryField(
                           'Email Address (Optional)',
                           _emailController,
                           LucideIcons.mail,
+                          keyboardType: TextInputType.emailAddress,
+                          inputFormatters: Validators.emailFormatters,
                         ),
                         const SizedBox(height: 16),
                         _buildInquiryField(
                           '+91 98653 21250',
                           _phoneController,
                           LucideIcons.phone,
+                          keyboardType: TextInputType.phone,
+                          inputFormatters: Validators.phoneFormatters,
                         ),
 
                         const SizedBox(height: 28),
@@ -1033,7 +1046,7 @@ class _GuestProjectDetailScreenState
                             controller: _notesController,
                             maxLines: 3,
                             style: GoogleFonts.dmSerifDisplay(
-                              fontSize: 11,
+                              fontSize: 15,
                               fontWeight: FontWeight.bold,
                               color: isDark ? Colors.white : Colors.black,
                             ),
@@ -1079,11 +1092,17 @@ class _GuestProjectDetailScreenState
                           onTap: () {
                             final name = _nameController.text.trim();
                             final phone = _phoneController.text.trim();
-                            if (name.isEmpty || phone.isEmpty) {
-                              setModalState(
-                                () => _modalErrorMessage =
-                                    'Please enter your name and phone number',
-                              );
+                            // Valid name + phone (email only when provided).
+                            final vErr =
+                                Validators.nameError(name, field: 'name') ??
+                                Validators.phoneError(phone) ??
+                                (_emailController.text.trim().isEmpty
+                                    ? null
+                                    : Validators.emailError(
+                                        _emailController.text,
+                                      ));
+                            if (vErr != null) {
+                              setModalState(() => _modalErrorMessage = vErr);
                               return;
                             }
                             if (_leadDate == null || _leadTime == null) {
@@ -1148,8 +1167,10 @@ class _GuestProjectDetailScreenState
   Widget _buildInquiryField(
     String label,
     TextEditingController controller,
-    IconData icon,
-  ) {
+    IconData icon, {
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
+  }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
@@ -1166,8 +1187,10 @@ class _GuestProjectDetailScreenState
       ),
       child: TextField(
         controller: controller,
+        keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
         style: GoogleFonts.dmSerifDisplay(
-          fontSize: 12,
+          fontSize: 15,
           fontWeight: FontWeight.bold,
           color: isDark ? Colors.white : Colors.black,
         ),
@@ -2065,16 +2088,22 @@ class _GuestProjectDetailScreenState
                 _InterestInput(
                   hint: 'FULL NAME *',
                   controller: _nameController,
+                  keyboardType: TextInputType.name,
+                  inputFormatters: Validators.nameFormatters,
                 ),
                 const SizedBox(height: 16),
                 _InterestInput(
                   hint: 'EMAIL ADDRESS',
                   controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  inputFormatters: Validators.emailFormatters,
                 ),
                 const SizedBox(height: 16),
                 _InterestInput(
                   hint: '+91 98653 21250 *',
                   controller: _phoneController,
+                  keyboardType: TextInputType.phone,
+                  inputFormatters: Validators.phoneFormatters,
                 ),
                 const SizedBox(height: 16),
                 _InterestInput(
@@ -2248,10 +2277,14 @@ class _InterestInput extends StatelessWidget {
   final String hint;
   final IconData? icon;
   final TextEditingController controller;
+  final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
   const _InterestInput({
     required this.hint,
     this.icon,
     required this.controller,
+    this.keyboardType,
+    this.inputFormatters,
   });
   @override
   Widget build(BuildContext context) {
@@ -2271,8 +2304,10 @@ class _InterestInput extends StatelessWidget {
       ),
       child: TextField(
         controller: controller,
+        keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
         style: GoogleFonts.dmSerifDisplay(
-          fontSize: 11,
+          fontSize: 15,
           fontWeight: FontWeight.bold,
           color: isDark ? Colors.white : Colors.black,
         ),
@@ -2280,7 +2315,7 @@ class _InterestInput extends StatelessWidget {
           border: InputBorder.none,
           hintText: hint,
           hintStyle: GoogleFonts.dmSerifDisplay(
-            fontSize: 9,
+            fontSize: 12,
             fontWeight: FontWeight.w900,
             color: isDark ? Colors.white38 : Colors.black45,
             letterSpacing: 1,

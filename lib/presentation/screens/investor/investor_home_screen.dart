@@ -9,8 +9,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:flutter/services.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/utils/api_error.dart';
+import 'package:m4_mobile/core/utils/project_highlights.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:m4_mobile/presentation/providers/investor_shell_provider.dart';
@@ -367,15 +370,14 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
 
   /// Marks the empty required fields red in place. Returns true when valid.
   bool _validateInterest() {
-    final nameErr = _nameController.text.trim().isEmpty
-        ? 'Please enter your full name'
-        : null;
-    final emailErr = _emailController.text.trim().isEmpty
-        ? 'Please enter your email address'
-        : null;
-    final phoneErr = _phoneController.text.trim().isEmpty
-        ? 'Please enter your phone number'
-        : null;
+    // Full validation (was empty-check only): name = letters, email = proper
+    // format, phone = 10-digit. Errors show in red on each field.
+    final nameErr = Validators.nameError(
+      _nameController.text,
+      field: 'full name',
+    );
+    final emailErr = Validators.emailError(_emailController.text);
+    final phoneErr = Validators.phoneError(_phoneController.text);
     setState(() {
       _nameError = nameErr;
       _emailError = emailErr;
@@ -1440,12 +1442,14 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32),
           child: Row(
-            // Web parity: two USPs only, evenly spread (web drops
-            // "Fully Furnished" and reads "20 MIN FROM AIRPORT").
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            // Web parity: USPs come from the featured project's backend
+            // `highlights` (e.g. ["Prime Location", "20 min from Airport"]),
+            // not a hardcoded pair. Each is Expanded so its label wraps.
             children: [
-              _buildFeatureIcon(LucideIcons.mapPin, 'PRIME\nLOCATION'),
-              _buildFeatureIcon(LucideIcons.smartphone, '20 MIN FROM\nAIRPORT'),
+              for (final h in projectHighlights(project).take(3))
+                Expanded(
+                  child: _buildFeatureIcon(highlightIcon(h), h.toUpperCase()),
+                ),
             ],
           ),
         ),
@@ -1736,6 +1740,8 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         _buildLuxuryInput(
           'Full Name *',
           _nameController,
+          keyboardType: TextInputType.name,
+          inputFormatters: Validators.nameFormatters,
           errorText: _nameError,
           // Clear the red state as soon as they start typing.
           onChanged: (v) {
@@ -1746,6 +1752,8 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         _buildLuxuryInput(
           'Email *',
           _emailController,
+          keyboardType: TextInputType.emailAddress,
+          inputFormatters: Validators.emailFormatters,
           errorText: _emailError,
           onChanged: (v) {
             if (_emailError != null) setState(() => _emailError = null);
@@ -1756,6 +1764,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
           'Phone Number *',
           _phoneController,
           keyboardType: TextInputType.phone,
+          inputFormatters: Validators.phoneFormatters,
           hint: '+91 98653 21250 *',
           errorText: _phoneError,
           onChanged: (v) {
@@ -1839,6 +1848,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
     TextEditingController controller, {
     bool isLong = false,
     TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
     String? hint,
     // When set, the field turns red and shows the message underneath — keeps
     // validation on the field instead of a snackbar over the page.
@@ -1876,6 +1886,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
           child: TextField(
             controller: controller,
             keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
             onChanged: onChanged,
             style: TextStyle(color: isDark ? Colors.white : Colors.black),
             maxLines: isLong ? 5 : 1,

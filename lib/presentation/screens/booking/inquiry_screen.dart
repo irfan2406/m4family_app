@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
@@ -43,13 +45,15 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
   }
 
   Future<void> _submitInquiry() async {
-    if (_nameController.text.isEmpty ||
-        _phoneController.text.isEmpty ||
-        _emailController.text.isEmpty) {
+    final validationError =
+        Validators.nameError(_nameController.text, field: 'full name') ??
+        Validators.emailError(_emailController.text) ??
+        Validators.phoneError(_phoneController.text);
+    if (validationError != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
-          content: Text('Please fill in all required fields'),
+        SnackBar(
+          backgroundColor: const Color(0xFFE24B4A),
+          content: Text(validationError),
         ),
       );
       return;
@@ -325,6 +329,8 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                   _nameController,
                   LucideIcons.user,
                   'ENTER FULL NAME',
+                  keyboardType: TextInputType.name,
+                  inputFormatters: Validators.nameFormatters,
                 ),
                 const SizedBox(height: 32),
 
@@ -333,6 +339,8 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                   _emailController,
                   LucideIcons.mail,
                   'EMAIL@M4FAMILY.COM',
+                  keyboardType: TextInputType.emailAddress,
+                  inputFormatters: Validators.emailFormatters,
                 ),
                 const SizedBox(height: 32),
 
@@ -341,6 +349,8 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                   _phoneController,
                   LucideIcons.phone,
                   '+91 XXXXX XXXXX',
+                  keyboardType: TextInputType.phone,
+                  inputFormatters: Validators.phoneFormatters,
                 ),
                 const SizedBox(height: 32),
 
@@ -452,6 +462,8 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
     IconData icon,
     String hint, {
     int maxLines = 1,
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
@@ -470,8 +482,10 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
       child: TextField(
         controller: controller,
         maxLines: maxLines,
+        keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
         style: GoogleFonts.dmSerifDisplay(
-          fontSize: 12,
+          fontSize: 15,
           fontWeight: FontWeight.w900,
           color: isDark ? Colors.white : Colors.black,
           letterSpacing: 0.5,

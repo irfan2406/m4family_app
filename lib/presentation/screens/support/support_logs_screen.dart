@@ -200,7 +200,7 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
                           setState(() => _searchQuery = value),
                       style: GoogleFonts.dmSerifDisplay(
                         color: isDark ? Colors.white : Colors.black,
-                        fontSize: 13,
+                        fontSize: 15,
                         fontWeight: FontWeight.w700,
                       ),
                       decoration: InputDecoration(

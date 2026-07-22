@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
@@ -699,12 +700,18 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                     onTap: submitting
                         ? null
                         : () async {
-                            if (nameCtrl.text.trim().isEmpty ||
-                                phoneCtrl.text.trim().isEmpty ||
-                                selectedProjectId == null) {
+                            final vErr =
+                                Validators.nameError(
+                                  nameCtrl.text,
+                                  field: "friend's name",
+                                ) ??
+                                Validators.phoneError(phoneCtrl.text);
+                            if (vErr != null || selectedProjectId == null) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Please fill all fields'),
+                                SnackBar(
+                                  content: Text(
+                                    vErr ?? 'Please select a project',
+                                  ),
                                   backgroundColor: Colors.redAccent,
                                 ),
                               );
@@ -825,9 +832,12 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
       decoration: _inputDecoration(scheme, isDark),
       child: TextField(
         controller: controller,
-        keyboardType: isPhone ? TextInputType.phone : TextInputType.text,
+        keyboardType: isPhone ? TextInputType.phone : TextInputType.name,
+        inputFormatters: isPhone
+            ? Validators.phoneFormatters
+            : Validators.nameFormatters,
         style: GoogleFonts.dmSerifDisplay(
-          fontSize: 12,
+          fontSize: 15,
           fontWeight: FontWeight.w700,
           color: scheme.onSurface,
         ),

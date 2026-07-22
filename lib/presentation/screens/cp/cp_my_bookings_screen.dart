@@ -682,7 +682,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
               controller: _searchController,
               onChanged: (v) => setState(() => _searchQuery = v),
               style: GoogleFonts.dmSerifDisplay(
-                fontSize: 11,
+                fontSize: 15,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 1,
               ),

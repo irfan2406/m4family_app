@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
@@ -120,6 +122,17 @@ class _InvestorProfileDetailsScreenState
   }
 
   Future<void> _save() async {
+    final vErr =
+        Validators.nameError(_name.text, field: 'full name') ??
+        Validators.phoneError(_phone.text);
+    if (vErr != null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(vErr), backgroundColor: Colors.red.shade700),
+        );
+      }
+      return;
+    }
     setState(() => _saving = true);
     try {
       final trimmed = _name.text.trim();
@@ -304,6 +317,8 @@ class _InvestorProfileDetailsScreenState
                       label: 'FULL NAME',
                       controller: _name,
                       icon: LucideIcons.user,
+                      keyboardType: TextInputType.name,
+                      inputFormatters: Validators.nameFormatters,
                       textPrimary: textPrimary,
                       muted: muted,
                       isDark: isDark,
@@ -315,6 +330,7 @@ class _InvestorProfileDetailsScreenState
                       controller: _email,
                       icon: LucideIcons.mail,
                       keyboardType: TextInputType.emailAddress,
+                      inputFormatters: Validators.emailFormatters,
                       textPrimary: textPrimary,
                       muted: muted,
                       isDark: isDark,
@@ -326,6 +342,7 @@ class _InvestorProfileDetailsScreenState
                       controller: _phone,
                       icon: LucideIcons.phone,
                       keyboardType: TextInputType.phone,
+                      inputFormatters: Validators.phoneFormatters,
                       textPrimary: textPrimary,
                       muted: muted,
                       isDark: isDark,
@@ -579,6 +596,7 @@ class _InvestorProfileDetailsScreenState
     required bool isDark,
     required Color border,
     TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
     int maxLines = 1,
   }) {
     final enabled = _editing;
@@ -606,9 +624,10 @@ class _InvestorProfileDetailsScreenState
           controller: controller,
           enabled: enabled,
           keyboardType: keyboardType,
+          inputFormatters: inputFormatters,
           maxLines: maxLines,
           style: GoogleFonts.dmSerifDisplay(
-            fontSize: 14,
+            fontSize: 15,
             fontWeight: FontWeight.w600,
             color: enabled ? textPrimary : textPrimary.withValues(alpha: 0.8),
           ),

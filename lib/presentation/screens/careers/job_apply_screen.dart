@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'package:m4_mobile/core/theme/app_theme.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -52,10 +54,12 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
   }
 
   Future<void> _submitApplication() async {
-    if (_fullNameController.text.trim().isEmpty ||
-        _phoneController.text.trim().isEmpty ||
-        _emailController.text.trim().isEmpty) {
-      _showToast('Please fill in all required fields', isError: true);
+    final validationError =
+        Validators.nameError(_fullNameController.text, field: 'full name') ??
+        Validators.emailError(_emailController.text) ??
+        Validators.phoneError(_phoneController.text);
+    if (validationError != null) {
+      _showToast(validationError, isError: true);
       return;
     }
 
@@ -499,11 +503,16 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
             ? TextInputType.emailAddress
             : isPhone
             ? TextInputType.phone
-            : TextInputType.text,
+            : TextInputType.name,
+        inputFormatters: isEmail
+            ? Validators.emailFormatters
+            : isPhone
+            ? Validators.phoneFormatters
+            : Validators.nameFormatters,
         style: GoogleFonts.dmSerifDisplay(
           color: isDark ? Colors.white : Colors.black,
           fontWeight: FontWeight.bold,
-          fontSize: 13,
+          fontSize: 15,
         ),
         decoration: InputDecoration(
           hintText: hint,

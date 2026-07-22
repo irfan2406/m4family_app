@@ -1,6 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
@@ -78,11 +80,13 @@ class _InvestorRelationsScreenState
       _showToast('Please agree to the Privacy Policy', isError: true);
       return;
     }
-    if (_firstNameController.text.trim().isEmpty ||
-        _lastNameController.text.trim().isEmpty ||
-        _emailController.text.trim().isEmpty ||
-        _phoneController.text.trim().isEmpty) {
-      _showToast('Please fill in all required fields', isError: true);
+    final validationError =
+        Validators.nameError(_firstNameController.text, field: 'first name') ??
+        Validators.nameError(_lastNameController.text, field: 'last name') ??
+        Validators.emailError(_emailController.text) ??
+        Validators.phoneError(_phoneController.text);
+    if (validationError != null) {
+      _showToast(validationError, isError: true);
       return;
     }
 
@@ -586,11 +590,16 @@ class _InvestorRelationsScreenState
           ? TextInputType.emailAddress
           : isPhone
           ? TextInputType.phone
-          : TextInputType.text,
+          : TextInputType.name,
+      inputFormatters: isEmail
+          ? Validators.emailFormatters
+          : isPhone
+          ? Validators.phoneFormatters
+          : Validators.nameFormatters,
       style: GoogleFonts.dmSerifDisplay(
         color: isDark ? Colors.white : Colors.black,
         fontWeight: FontWeight.w500,
-        fontSize: 14,
+        fontSize: 15,
       ),
       decoration: InputDecoration(
         hintText: hint,
@@ -636,7 +645,7 @@ class _InvestorRelationsScreenState
       style: GoogleFonts.dmSerifDisplay(
         color: isDark ? Colors.white : Colors.black,
         fontWeight: FontWeight.w500,
-        fontSize: 14,
+        fontSize: 15,
       ),
       decoration: InputDecoration(
         hintText: 'Message',

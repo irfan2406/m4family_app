@@ -584,7 +584,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
               controller: _searchController,
               onChanged: (val) => setState(() => _searchQuery = val),
               style: GoogleFonts.dmSerifDisplay(
-                fontSize: 11,
+                fontSize: 15,
                 fontWeight: FontWeight.w900,
                 color: textColor,
                 letterSpacing: 1.5,
@@ -968,7 +968,7 @@ class _DialogInput extends StatelessWidget {
         controller: controller,
         onChanged: onChanged,
         style: GoogleFonts.dmSerifDisplay(
-          fontSize: 12,
+          fontSize: 15,
           fontWeight: FontWeight.w800,
           color: isDark ? Colors.white : Colors.black,
         ),

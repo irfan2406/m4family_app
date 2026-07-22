@@ -697,7 +697,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
       child: TextField(
         onChanged: (v) => setState(() => _searchQuery = v),
         style: GoogleFonts.dmSerifDisplay(
-          fontSize: 14,
+          fontSize: 15,
           fontWeight: FontWeight.w700,
         ),
         decoration: InputDecoration(

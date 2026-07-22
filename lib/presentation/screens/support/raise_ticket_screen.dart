@@ -239,7 +239,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                         textCapitalization: TextCapitalization.characters,
                         cursorColor: onSurface,
                         style: GoogleFonts.dmSerifDisplay(
-                          fontSize: 13,
+                          fontSize: 15,
                           fontWeight: FontWeight.w800,
                           color: onSurface,
                         ),
@@ -308,7 +308,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                         maxLines: 6,
                         cursorColor: onSurface,
                         style: GoogleFonts.dmSerifDisplay(
-                          fontSize: 13,
+                          fontSize: 15,
                           fontWeight: FontWeight.w600,
                           color: onSurface,
                         ),

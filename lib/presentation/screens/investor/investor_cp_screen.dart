@@ -258,7 +258,7 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
       child: TextField(
         controller: _search,
         style: GoogleFonts.dmSerifDisplay(
-          fontSize: 13,
+          fontSize: 15,
           fontWeight: FontWeight.w700,
           color: textPrimary,
         ),
@@ -855,7 +855,7 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
         controller: c,
         keyboardType: keyboard,
         style: GoogleFonts.dmSerifDisplay(
-          fontSize: 13,
+          fontSize: 15,
           fontWeight: FontWeight.w700,
           color: textPrimary,
         ),

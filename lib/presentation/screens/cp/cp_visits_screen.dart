@@ -478,7 +478,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
             child: TextField(
               onChanged: (v) => setState(() => _searchQuery = v),
               style: GoogleFonts.dmSerifDisplay(
-                fontSize: 12,
+                fontSize: 15,
                 fontWeight: FontWeight.bold,
               ),
               decoration: InputDecoration(

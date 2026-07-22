@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -245,6 +247,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           hint: '+91 XXXXX XXXXX',
           icon: LucideIcons.phone,
           keyboardType: TextInputType.phone,
+          inputFormatters: Validators.phoneFormatters,
         ),
         const SizedBox(height: 16),
         Text(
@@ -262,9 +265,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           child: ElevatedButton(
             onPressed: authState.status == AuthStatus.loading
                 ? null
-                : () => ref
-                      .read(authProvider.notifier)
-                      .sendOtp(_phoneController.text, _selectedRole),
+                : () {
+                    final pErr = Validators.phoneError(_phoneController.text);
+                    if (pErr != null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(pErr),
+                          backgroundColor: Colors.red.shade700,
+                        ),
+                      );
+                      return;
+                    }
+                    ref
+                        .read(authProvider.notifier)
+                        .sendOtp(_phoneController.text, _selectedRole);
+                  },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
               foregroundColor: Colors.black,
@@ -602,6 +617,7 @@ class _LuxuryInputField extends StatelessWidget {
   final String hint;
   final IconData icon;
   final TextInputType keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
 
   const _LuxuryInputField({
     required this.controller,
@@ -609,6 +625,7 @@ class _LuxuryInputField extends StatelessWidget {
     required this.hint,
     required this.icon,
     required this.keyboardType,
+    this.inputFormatters,
   });
 
   @override
@@ -636,6 +653,7 @@ class _LuxuryInputField extends StatelessWidget {
           child: TextField(
             controller: controller,
             keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
             cursorColor: Colors.white,
             style: const TextStyle(
               color: Colors.white,

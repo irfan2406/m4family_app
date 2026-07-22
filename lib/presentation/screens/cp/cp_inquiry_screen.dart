@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
@@ -43,30 +45,12 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
   }
 
   // Inline field validators (shown as red text under each field).
-  String? _validateName(String? v) {
-    final s = (v ?? '').trim();
-    if (s.isEmpty) return 'Full name is required';
-    if (s.length < 2) return 'Please enter a valid name';
-    return null;
-  }
+  String? _validateName(String? v) =>
+      Validators.nameError(v, field: 'full name');
 
-  String? _validateEmail(String? v) {
-    final s = (v ?? '').trim();
-    if (s.isEmpty) return 'Email is required';
-    if (!RegExp(r'^[\w.+-]+@[\w-]+\.[\w.-]+$').hasMatch(s)) {
-      return 'Enter a valid email address';
-    }
-    return null;
-  }
+  String? _validateEmail(String? v) => Validators.emailError(v);
 
-  String? _validatePhone(String? v) {
-    final s = (v ?? '').trim();
-    if (s.isEmpty) return 'Phone number is required';
-    if (s.replaceAll(RegExp(r'\D'), '').length < 10) {
-      return 'Enter a valid 10-digit phone number';
-    }
-    return null;
-  }
+  String? _validatePhone(String? v) => Validators.phoneError(v);
 
   Future<void> _submit() async {
     final name = _name.text.trim();
@@ -200,6 +184,8 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                     _luxuryInput(
                       'Full Name *',
                       _name,
+                      keyboardType: TextInputType.name,
+                      inputFormatters: Validators.nameFormatters,
                       validator: _validateName,
                     ),
                     const SizedBox(height: 16),
@@ -207,6 +193,7 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                       'Email *',
                       _email,
                       keyboardType: TextInputType.emailAddress,
+                      inputFormatters: Validators.emailFormatters,
                       validator: _validateEmail,
                     ),
                     const SizedBox(height: 16),
@@ -214,6 +201,7 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                       '+91 98653 21250 *',
                       _phone,
                       keyboardType: TextInputType.phone,
+                      inputFormatters: Validators.phoneFormatters,
                       validator: _validatePhone,
                     ),
                     const SizedBox(height: 16),
@@ -312,6 +300,7 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
     TextEditingController controller, {
     bool isLong = false,
     TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
     String? Function(String?)? validator,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -335,6 +324,7 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
       child: TextFormField(
         controller: controller,
         keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
         maxLines: isLong ? 5 : 1,
         validator: validator,
         style: TextStyle(color: isDark ? Colors.white : Colors.black),

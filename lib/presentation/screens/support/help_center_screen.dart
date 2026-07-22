@@ -191,7 +191,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
             setState(() => _searchQuery = value.toLowerCase()),
         style: GoogleFonts.dmSerifDisplay(
           color: scheme.onSurface,
-          fontSize: 12,
+          fontSize: 15,
           fontWeight: FontWeight.bold,
         ),
         decoration: InputDecoration(

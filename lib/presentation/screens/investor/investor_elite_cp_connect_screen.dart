@@ -262,7 +262,7 @@ class _InvestorEliteCpConnectScreenState
       child: TextField(
         controller: _search,
         style: GoogleFonts.dmSerifDisplay(
-          fontSize: 11,
+          fontSize: 15,
           fontWeight: FontWeight.w800,
           letterSpacing: 0.5,
           color: scheme.onSurface,

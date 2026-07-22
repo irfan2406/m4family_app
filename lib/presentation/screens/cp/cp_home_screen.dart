@@ -10,7 +10,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:flutter/services.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
+import 'package:m4_mobile/core/utils/project_highlights.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
@@ -144,23 +147,13 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
   /// Validates in place: every problem is shown ON the field it belongs to
   /// (red border + message) rather than as a toast over the page.
   bool _validateInterest() {
-    final name = _nameController.text.trim();
-    final email = _emailController.text.trim();
-    final phone = _phoneController.text.trim();
-    final phoneDigits = phone.replaceAll(RegExp(r'\D'), '');
-    final emailValid = RegExp(r'^[\w.+-]+@[\w-]+\.[\w.-]+$').hasMatch(email);
-
-    final nameErr = name.isEmpty
-        ? 'Please enter your full name'
-        : (name.length < 2 ? 'Please enter a valid name' : null);
-    final emailErr = email.isEmpty
-        ? 'Please enter your email address'
-        : (!emailValid ? 'Please enter a valid email address' : null);
-    final phoneErr = phone.isEmpty
-        ? 'Please enter your phone number'
-        : (phoneDigits.length < 10
-              ? 'Please enter a valid 10-digit phone number'
-              : null);
+    // Shared rules: name = letters only, email = proper format, phone = 10-digit.
+    final nameErr = Validators.nameError(
+      _nameController.text,
+      field: 'full name',
+    );
+    final emailErr = Validators.emailError(_emailController.text);
+    final phoneErr = Validators.phoneError(_phoneController.text);
 
     setState(() {
       _nameError = nameErr;
@@ -1356,12 +1349,14 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32),
           child: Row(
-            // Web parity: two USPs only, evenly spread (web drops
-            // "Fully Furnished" and reads "20 MIN FROM AIRPORT").
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            // Web parity: USPs come from the featured project's backend
+            // `highlights` (e.g. ["Prime Location", "20 min from Airport"]),
+            // not a hardcoded pair. Each is Expanded so its label wraps.
             children: [
-              _buildFeatureIcon(LucideIcons.mapPin, 'PRIME\nLOCATION'),
-              _buildFeatureIcon(LucideIcons.smartphone, '20 MIN FROM\nAIRPORT'),
+              for (final h in projectHighlights(project).take(3))
+                Expanded(
+                  child: _buildFeatureIcon(highlightIcon(h), h.toUpperCase()),
+                ),
             ],
           ),
         ),
@@ -1655,6 +1650,8 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         _buildLuxuryInput(
           'Full Name *',
           _nameController,
+          keyboardType: TextInputType.name,
+          inputFormatters: Validators.nameFormatters,
           errorText: _nameError,
           // Clear the red state as soon as they start typing.
           onChanged: (v) {
@@ -1665,6 +1662,8 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         _buildLuxuryInput(
           'Email *',
           _emailController,
+          keyboardType: TextInputType.emailAddress,
+          inputFormatters: Validators.emailFormatters,
           errorText: _emailError,
           onChanged: (v) {
             if (_emailError != null) setState(() => _emailError = null);
@@ -1675,6 +1674,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
           'Phone Number *',
           _phoneController,
           keyboardType: TextInputType.phone,
+          inputFormatters: Validators.phoneFormatters,
           hint: '+91',
           errorText: _phoneError,
           onChanged: (v) {
@@ -1753,6 +1753,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
     TextEditingController controller, {
     bool isLong = false,
     TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
     String? hint,
     // When set, the field turns red and shows the message underneath — keeps
     // validation on the field instead of a toast over the page.
@@ -1790,6 +1791,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
           child: TextField(
             controller: controller,
             keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
             onChanged: onChanged,
             style: TextStyle(color: isDark ? Colors.white : Colors.black),
             maxLines: isLong ? 5 : 1,

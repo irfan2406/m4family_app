@@ -536,7 +536,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
           child: TextField(
             onChanged: (v) => setState(() => _historyQuery = v),
             style: GoogleFonts.dmSerifDisplay(
-              fontSize: 10,
+              fontSize: 15,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.5,
               color: fg,

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -346,7 +347,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
             child: TextField(
               onChanged: (v) => setState(() => _search = v),
               style: GoogleFonts.dmSerifDisplay(
-                fontSize: 12,
+                fontSize: 15,
                 fontWeight: FontWeight.w700,
                 color: textPrimary,
               ),
@@ -700,6 +701,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
               TextEditingController c,
               String hint, {
               bool phone = false,
+              bool email = false,
             }) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -720,15 +722,19 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                     controller: c,
                     keyboardType: phone
                         ? TextInputType.phone
-                        : TextInputType.text,
+                        : email
+                        ? TextInputType.emailAddress
+                        : TextInputType.name,
                     inputFormatters: phone
                         ? [
                             FilteringTextInputFormatter.digitsOnly,
                             LengthLimitingTextInputFormatter(10),
                           ]
-                        : null,
+                        : email
+                        ? Validators.emailFormatters
+                        : Validators.nameFormatters,
                     style: GoogleFonts.dmSerifDisplay(
-                      fontSize: 12,
+                      fontSize: 15,
                       fontWeight: FontWeight.w700,
                       color: textPrimary,
                     ),
@@ -787,7 +793,12 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                       phone: true,
                     ),
                     const SizedBox(height: 14),
-                    field('EMAIL ADDRESS', emailCtrl, 'john@example.com'),
+                    field(
+                      'EMAIL ADDRESS',
+                      emailCtrl,
+                      'john@example.com',
+                      email: true,
+                    ),
                   ],
                 ),
               ),
@@ -816,8 +827,14 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                           final name = nameCtrl.text.trim();
                           final phone = phoneCtrl.text.trim();
                           final email = emailCtrl.text.trim();
-                          if (name.isEmpty || phone.isEmpty) {
-                            _toast('Name and Phone are required');
+                          final vErr =
+                              Validators.nameError(name, field: 'full name') ??
+                              Validators.phoneError(phone) ??
+                              (email.isEmpty
+                                  ? null
+                                  : Validators.emailError(email));
+                          if (vErr != null) {
+                            _toast(vErr);
                             return;
                           }
                           setLocal(() => saving = true);

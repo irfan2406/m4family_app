@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:m4_mobile/presentation/widgets/m4_image.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
+import 'package:m4_mobile/core/utils/project_highlights.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -280,15 +283,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   /// which could never pass: the project dropdown isn't part of this form, so
   /// nothing ever set it and every submit failed even when fully filled.)
   bool _validateInquiry() {
-    final nameErr = _nameController.text.trim().isEmpty
-        ? 'Please enter your full name'
-        : null;
-    final emailErr = _emailController.text.trim().isEmpty
-        ? 'Please enter your email address'
-        : null;
-    final phoneErr = _phoneController.text.trim().isEmpty
-        ? 'Please enter your phone number'
-        : null;
+    // Full validation (was empty-check only): name = letters, email = proper
+    // format, phone = 10-digit. Errors show in red on each field.
+    final nameErr = Validators.nameError(
+      _nameController.text,
+      field: 'full name',
+    );
+    final emailErr = Validators.emailError(_emailController.text);
+    final phoneErr = Validators.phoneError(_phoneController.text);
     setState(() {
       _nameError = nameErr;
       _emailError = emailErr;
@@ -1085,20 +1087,21 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Row(
-                      // Web parity: two USPs only, evenly spread (web drops
-                      // "Fully Furnished" and reads "20 MIN FROM AIRPORT").
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      // Web parity: USPs come from the featured project's
+                      // backend `highlights` (e.g. ["Prime Location", "20 min
+                      // from Airport"]), not a hardcoded pair. Each is Expanded
+                      // so its label wraps.
                       children: [
-                        _buildWebUSP(
-                          context,
-                          LucideIcons.mapPin,
-                          'PRIME\nLOCATION',
-                        ),
-                        _buildWebUSP(
-                          context,
-                          LucideIcons.smartphone,
-                          '20 MIN FROM\nAIRPORT',
-                        ),
+                        for (final h in projectHighlights(
+                          _projects.isNotEmpty ? _projects.first : null,
+                        ).take(3))
+                          Expanded(
+                            child: _buildWebUSP(
+                              context,
+                              highlightIcon(h),
+                              h.toUpperCase(),
+                            ),
+                          ),
                       ],
                     ),
                   ),
@@ -1355,6 +1358,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     label: 'Full Name *',
                     controller: _nameController,
                     errorText: _nameError,
+                    keyboardType: TextInputType.name,
+                    inputFormatters: Validators.nameFormatters,
                     // Clear the red state as soon as they start typing.
                     onChanged: (v) {
                       if (_nameError != null) setState(() => _nameError = null);
@@ -1364,6 +1369,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     label: 'Email Address *',
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
+                    inputFormatters: Validators.emailFormatters,
                     errorText: _emailError,
                     onChanged: (v) {
                       if (_emailError != null) {
@@ -1375,6 +1381,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     label: 'Phone Number *',
                     controller: _phoneController,
                     keyboardType: TextInputType.phone,
+                    inputFormatters: Validators.phoneFormatters,
                     errorText: _phoneError,
                     onChanged: (v) {
                       if (_phoneError != null) {
@@ -1975,6 +1982,9 @@ class _PremiumInputField extends StatelessWidget {
   final String? errorText;
   final ValueChanged<String>? onChanged;
 
+  /// Blocks invalid characters as the user types (e.g. digits in a name).
+  final List<TextInputFormatter>? inputFormatters;
+
   const _PremiumInputField({
     required this.label,
     required this.controller,
@@ -1982,6 +1992,7 @@ class _PremiumInputField extends StatelessWidget {
     this.maxLines = 1,
     this.errorText,
     this.onChanged,
+    this.inputFormatters,
   });
 
   static const _errorColor = Color(0xFFE24B4A);
@@ -2031,6 +2042,7 @@ class _PremiumInputField extends StatelessWidget {
                   keyboardType: keyboardType,
                   maxLines: maxLines,
                   onChanged: onChanged,
+                  inputFormatters: inputFormatters,
                   cursorColor: Theme.of(context).colorScheme.onSurface,
                   style: GoogleFonts.dmSerifDisplay(
                     color: Theme.of(context).colorScheme.onSurface,
@@ -2230,7 +2242,7 @@ class _GlassSearchField extends StatelessWidget {
                   onChanged: onChanged,
                   style: GoogleFonts.dmSerifDisplay(
                     color: Colors.black,
-                    fontSize: 14,
+                    fontSize: 15,
                   ),
                   decoration: InputDecoration(
                     hintText: 'Search residences...',

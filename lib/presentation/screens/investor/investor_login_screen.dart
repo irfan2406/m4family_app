@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 
 /// Mirrors web `app/investor/login/page.tsx`: premium gold landing → credentials,
@@ -39,6 +41,16 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
         const SnackBar(
           backgroundColor: Color(0xFFE24B4A),
           content: Text('Please provide your Email and Password'),
+        ),
+      );
+      return;
+    }
+    final emailErr = Validators.emailError(email);
+    if (emailErr != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: const Color(0xFFE24B4A),
+          content: Text(emailErr),
         ),
       );
       return;
@@ -307,6 +319,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
           icon: LucideIcons.mail,
           hint: 'investor@institution.com',
           keyboardType: TextInputType.emailAddress,
+          inputFormatters: Validators.emailFormatters,
         ),
         const SizedBox(height: 24),
         _Field(
@@ -443,6 +456,7 @@ class _Field extends StatelessWidget {
   final String? hint;
   final bool obscure;
   final TextInputType? keyboardType;
+  final List<TextInputFormatter>? inputFormatters;
   final Widget? suffix;
 
   const _Field({
@@ -452,6 +466,7 @@ class _Field extends StatelessWidget {
     this.hint,
     this.obscure = false,
     this.keyboardType,
+    this.inputFormatters,
     this.suffix,
   });
 
@@ -474,6 +489,7 @@ class _Field extends StatelessWidget {
           controller: controller,
           obscureText: obscure,
           keyboardType: keyboardType,
+          inputFormatters: inputFormatters,
           // Field sits on a black background — force a visible amber cursor
           // (default cursor inherits the light-theme primary and is invisible).
           cursorColor: const Color(0xFFF59E0B),

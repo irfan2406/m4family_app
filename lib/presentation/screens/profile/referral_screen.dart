@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/providers/theme_provider.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:flutter/services.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
@@ -846,14 +847,28 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                     onTap: isLoading
                         ? null
                         : () async {
-                            if (nameController.text.isEmpty ||
-                                phoneController.text.isEmpty ||
-                                selectedProjectName.isEmpty) {
+                            final vErr =
+                                Validators.nameError(
+                                  nameController.text,
+                                  field: 'friend name',
+                                ) ??
+                                Validators.phoneError(phoneController.text);
+                            if (selectedProjectName.isEmpty) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text('All fields are required.'),
+                                  content: Text('Please select a project.'),
                                   backgroundColor: Colors.redAccent,
                                   duration: Duration(seconds: 2),
+                                ),
+                              );
+                              return;
+                            }
+                            if (vErr != null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(vErr),
+                                  backgroundColor: Colors.redAccent,
+                                  duration: const Duration(seconds: 2),
                                 ),
                               );
                               return;
@@ -1002,9 +1017,19 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                 child: TextField(
                   controller: controller,
                   readOnly: isDropdown,
+                  keyboardType: isDropdown
+                      ? null
+                      : isPhone
+                      ? TextInputType.phone
+                      : TextInputType.name,
+                  inputFormatters: isDropdown
+                      ? null
+                      : isPhone
+                      ? Validators.phoneFormatters
+                      : Validators.nameFormatters,
                   style: GoogleFonts.dmSerifDisplay(
                     color: foreground,
-                    fontSize: 10,
+                    fontSize: 15,
                     fontWeight: FontWeight.w900,
                   ),
                   decoration: InputDecoration(

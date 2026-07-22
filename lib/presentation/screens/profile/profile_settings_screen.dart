@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:intl/intl.dart';
@@ -210,6 +212,16 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
   }
 
   Future<void> _handleSave() async {
+    final vErr =
+        Validators.nameError(_nameController.text, field: 'full name') ??
+        Validators.emailError(_emailController.text) ??
+        Validators.phoneError(_phoneController.text);
+    if (vErr != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(vErr), backgroundColor: Colors.red.shade700),
+      );
+      return;
+    }
     setState(() => _isSaving = true);
     try {
       final nameParts = _nameController.text.trim().split(" ");
@@ -363,6 +375,8 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                             _nameController,
                             isDark,
                             enabled: _isEditing,
+                            keyboardType: TextInputType.name,
+                            inputFormatters: Validators.nameFormatters,
                           ),
                           const SizedBox(height: 20),
                           _buildField(
@@ -370,6 +384,8 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                             _emailController,
                             isDark,
                             enabled: _isEditing,
+                            keyboardType: TextInputType.emailAddress,
+                            inputFormatters: Validators.emailFormatters,
                           ),
                           const SizedBox(height: 20),
                           _buildField(
@@ -377,6 +393,8 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                             _phoneController,
                             isDark,
                             enabled: _isEditing,
+                            keyboardType: TextInputType.phone,
+                            inputFormatters: Validators.phoneFormatters,
                           ),
                           const SizedBox(height: 20),
                           _buildDateField(
@@ -647,6 +665,8 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
     bool isDark, {
     bool enabled = true,
     TextCapitalization capitalization = TextCapitalization.none,
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -679,9 +699,11 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
             controller: controller,
             enabled: enabled,
             textCapitalization: capitalization,
+            keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
             style: GoogleFonts.dmSerifDisplay(
               textStyle: const TextStyle(inherit: true),
-              fontSize: 13,
+              fontSize: 15,
               fontWeight: FontWeight.w800,
               // Keep values dark/readable even when not editing.
               color: enabled

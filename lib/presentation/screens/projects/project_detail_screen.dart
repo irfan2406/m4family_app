@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -246,13 +248,23 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
         _showMessage('Please select a date & time for your visit');
         return;
       }
-      if (phone.isEmpty) {
-        _showMessage('Please enter your phone number');
+      final pErr = Validators.phoneError(phone);
+      if (pErr != null) {
+        _showMessage(pErr);
         return;
       }
-    } else if (name.isEmpty || phone.isEmpty) {
-      _showMessage('Please enter your name and phone number');
-      return;
+    } else {
+      // Format checks (was empty-only): valid name + phone; email when given.
+      final vErr =
+          Validators.nameError(name, field: 'name') ??
+          Validators.phoneError(phone) ??
+          (_emailController.text.trim().isEmpty
+              ? null
+              : Validators.emailError(_emailController.text));
+      if (vErr != null) {
+        _showMessage(vErr);
+        return;
+      }
     }
 
     setState(() => _isLoading = true);
@@ -806,6 +818,8 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                         'PHONE NUMBER *',
                         _phoneController,
                         LucideIcons.phone,
+                        keyboardType: TextInputType.phone,
+                        inputFormatters: Validators.phoneFormatters,
                       ),
                     ],
 
@@ -818,7 +832,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                       maxLines: 4,
                       textCapitalization: TextCapitalization.characters,
                       style: GoogleFonts.dmSerifDisplay(
-                        fontSize: 11,
+                        fontSize: 15,
                         fontWeight: FontWeight.w700,
                         color: isDark ? Colors.white : Colors.black,
                       ),
@@ -857,18 +871,24 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                       'FULL NAME *',
                       _nameController,
                       LucideIcons.user,
+                      keyboardType: TextInputType.name,
+                      inputFormatters: Validators.nameFormatters,
                     ),
                     const SizedBox(height: 16),
                     _buildInquiryField(
                       'PHONE NUMBER *',
                       _phoneController,
                       LucideIcons.phone,
+                      keyboardType: TextInputType.phone,
+                      inputFormatters: Validators.phoneFormatters,
                     ),
                     const SizedBox(height: 16),
                     _buildInquiryField(
                       'EMAIL (OPTIONAL)',
                       _emailController,
                       LucideIcons.mail,
+                      keyboardType: TextInputType.emailAddress,
+                      inputFormatters: Validators.emailFormatters,
                     ),
                   ],
 
@@ -1052,8 +1072,10 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
   Widget _buildInquiryField(
     String label,
     TextEditingController controller,
-    IconData icon,
-  ) {
+    IconData icon, {
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
+  }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1083,8 +1105,10 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
           ),
           child: TextField(
             controller: controller,
+            keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
             style: GoogleFonts.dmSerifDisplay(
-              fontSize: 13,
+              fontSize: 15,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.white : Colors.black,
             ),

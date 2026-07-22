@@ -1,9 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 
 /// Mirrors web `app/auth/cp/forgot-password/page.tsx`: forgot → OTP → reset.
@@ -46,11 +48,12 @@ class _CpForgotPasswordScreenState
 
   Future<void> _sendEmail() async {
     final email = _emailController.text.trim();
-    if (email.isEmpty) {
+    final emailErr = Validators.emailError(email);
+    if (emailErr != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
-          content: Text('Please enter your email address'),
+        SnackBar(
+          backgroundColor: const Color(0xFFE24B4A),
+          content: Text(emailErr),
         ),
       );
       return;
@@ -279,6 +282,7 @@ class _CpForgotPasswordScreenState
                     TextField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
+                      inputFormatters: Validators.emailFormatters,
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         labelText: 'Email',
