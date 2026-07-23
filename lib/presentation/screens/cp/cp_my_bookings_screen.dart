@@ -162,9 +162,9 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
           decoration: BoxDecoration(
             // Web parity: glass-card is a bright WHITE card in light mode (it
             // pops off the background via the shadow), not a grey tint. In dark
-            // mode the shared elevated card surface (theme darkCard) so every
-            // card across the app reads as one cohesive system.
-            color: isDark ? const Color(0xFF181F2D) : Colors.white,
+            // mode it uses the home page's neutral card colour (0xFF15171C) so
+            // every card across the app reads as one cohesive system.
+            color: isDark ? const Color(0xFF15171C) : Colors.white,
             borderRadius: BorderRadius.circular(40),
             border: Border.all(color: border),
             boxShadow: [
@@ -473,10 +473,12 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                   child: Container(
                     height: 10,
                     // Web parity (bg-black/20): a clearly-visible track so the
-                    // empty bar shows on every card, even at 0%.
+                    // empty bar shows on every card, even at 0%. width:infinity
+                    // guarantees the full-width track renders when the fill is 0.
+                    width: double.infinity,
                     decoration: BoxDecoration(
                       color: (isDark ? Colors.white : Colors.black).withValues(
-                        alpha: isDark ? 0.28 : 0.16,
+                        alpha: isDark ? 0.28 : 0.18,
                       ),
                     ),
                     child: TweenAnimationBuilder<double>(
@@ -778,18 +780,9 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
       body: Stack(
         children: [
           Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    scheme.primary.withValues(alpha: isDark ? 0.08 : 0.05),
-                    scheme.surface,
-                  ],
-                ),
-              ),
-            ),
+            // Flat page base (matches the Performance Tracker / home page): the
+            // old primary tint at the top washed the background to grey.
+            child: ColoredBox(color: scheme.surface),
           ),
           SafeArea(
             child: Column(

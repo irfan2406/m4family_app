@@ -1572,7 +1572,9 @@ class _InvestorProjectDetailScreenState
           const SizedBox(height: 24),
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 36),
+            // Less inner padding (was 28) so the phase image card fills the box
+            // width; the 16:10 image grows taller with the wider card too.
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 36),
             decoration: BoxDecoration(
               color: isDark
                   ? Colors.white.withValues(alpha: 0.03)
@@ -1651,8 +1653,10 @@ class _InvestorProjectDetailScreenState
                     ),
                     const SizedBox(width: 16),
                     SizedBox(
-                      width: 104,
-                      height: 104,
+                      // Same ring size as the CP construction card (was 104),
+                      // so the dashes read at the same scale.
+                      width: 126,
+                      height: 126,
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
@@ -1666,9 +1670,10 @@ class _InvestorProjectDetailScreenState
                                 trackColor:
                                     (isDark ? Colors.white : Colors.black)
                                         .withValues(alpha: 0.22),
+                                // Same dash size as the CP ring — bigger, bolder.
                                 dotCount: 46,
-                                dotRadius: 1.7,
-                                dashLength: 7,
+                                dotRadius: 2.6,
+                                dashLength: 11,
                                 margin: 7,
                               ),
                             ),
@@ -1807,27 +1812,27 @@ class _InvestorProjectDetailScreenState
         decoration: BoxDecoration(
           color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
           borderRadius: BorderRadius.circular(24),
+          // Same card frame as the guest portal phase card.
           border: Border.all(
             color: isDark
-                ? Colors.white.withValues(alpha: 0.08)
-                : Colors.black.withValues(alpha: 0.06),
+                ? Colors.white.withValues(alpha: 0.35)
+                : Colors.black.withValues(alpha: 0.10),
           ),
-          boxShadow: isDark
-              ? []
-              : [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
-                    blurRadius: 22,
-                    offset: const Offset(0, 10),
-                  ),
-                ],
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.07),
+              blurRadius: 14,
+              offset: const Offset(0, 6),
+            ),
+          ],
         ),
         clipBehavior: Clip.antiAlias,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            AspectRatio(
-              aspectRatio: 16 / 10,
+            // Same image size as the guest portal phase card (fixed 220).
+            SizedBox(
+              height: 220,
               child: Stack(
                 fit: StackFit.expand,
                 children: [

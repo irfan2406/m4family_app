@@ -29,8 +29,9 @@ class M4Theme {
   //  • PAGE BASE (#0A0E16) → both `background` AND `surface`, so every screen's
   //    page reads identically whether it uses scaffoldBackgroundColor or
   //    scheme.surface as its backdrop (this was the source of the mismatch).
-  //  • ELEVATED CARD (#181F2D) → surfaceContainerHighest; every card lifts off
-  //    the page by the same amount everywhere. Border is one step lighter again.
+  //  • ELEVATED CARD (#15171C) → surfaceContainerHighest; every card lifts off
+  //    the page by the same amount everywhere (neutral near-black, matching the
+  //    home page cards). Border is one step lighter again.
   static const Color darkBackground = Color(0xFF0A0E16); // page base
   static const Color darkForeground = Color(0xFFF8FAFC); // --foreground
   static const Color darkCard = Color(0xFF0A0E16); // == page base (see note)
@@ -38,8 +39,8 @@ class M4Theme {
   static const Color darkPrimaryFg = Color(0xFF0F172A); // --primary-foreground
   static const Color darkSecondary = Color(0xFF181F2D); // elevated card
   static const Color darkMuted = Color(
-    0xFF181F2D,
-  ); // elevated card (cards use this)
+    0xFF15171C,
+  ); // elevated card — neutral near-black, matches home (cards use this)
   static const Color darkMutedFg = Color(
     0xFFCFD7E2,
   ); // --muted-foreground 215 25% 85%

@@ -457,10 +457,61 @@ class _GuestProjectDetailScreenState
     apiClient
         .getProjectProgress(widget.projectId)
         .then((res) {
-          if (!mounted || res.data['status'] != true) return;
-          setState(() => _progressPhases = res.data['data'] ?? []);
+          if (!mounted) return;
+          final raw = (res.data is Map && res.data['status'] == true)
+              ? res.data['data']
+              : null;
+          final list = raw is List ? List<dynamic>.from(raw) : <dynamic>[];
+          // Fallback: projects with no phase records still render the phase
+          // section (built from their OWN hero image + overall completion) so
+          // the design matches projects that do carry phase data.
+          setState(
+            () => _progressPhases = list.isNotEmpty
+                ? list
+                : _guestFallbackPhases(),
+          );
         })
-        .catchError((_) {});
+        .catchError((_) {
+          if (mounted) {
+            setState(() => _progressPhases = _guestFallbackPhases());
+          }
+        });
+  }
+
+  List<dynamic> _guestFallbackPhases() {
+    final dyn = _fullProject ?? widget.projectData;
+    final project = dyn is Map ? dyn : const <String, dynamic>{};
+    final heroList = project['heroImages'];
+    final hero =
+        (heroList is List && heroList.isNotEmpty
+            ? heroList.first?.toString()
+            : (project['heroImage'] ?? project['coverImage'])?.toString()) ??
+        '';
+    final imgs = hero.isNotEmpty ? <String>[hero] : const <String>[];
+    final rawPct = project['completion'];
+    final pct = rawPct is num
+        ? rawPct.toInt().clamp(0, 100)
+        : (int.tryParse('${rawPct ?? ''}') ?? 0).clamp(0, 100);
+    final done = pct >= 100;
+    final started = pct > 0;
+    return [
+      {
+        'phaseName': 'Foundation',
+        'name': 'Foundation',
+        'status': done ? 'Completed' : (started ? 'In Progress' : 'Upcoming'),
+        'progressPercent': pct,
+        'phaseOrder': 1,
+        'images': imgs,
+      },
+      {
+        'phaseName': 'Structure & Handover',
+        'name': 'Structure & Handover',
+        'status': done ? 'Completed' : 'Upcoming',
+        'progressPercent': done ? 100 : 0,
+        'phaseOrder': 2,
+        'images': imgs,
+      },
+    ];
   }
 
   void _launchAction(
@@ -2822,7 +2873,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 40),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF0B111E) : const Color(0xFFF8FAFC),
         borderRadius: BorderRadius.circular(40),
@@ -2983,8 +3034,8 @@ class _ConstructionDashboardCard extends ConsumerWidget {
             ),
             const SizedBox(height: 32),
             SizedBox(
-              // Taller to match the wider (full-width) card below.
-              height: 300,
+              // Bigger image (220) + footer (~125) now the card fills the box.
+              height: 345,
               child: PageView.builder(
                 // One card at a time: the card fills the width and snaps, so the
                 // next phase is fully off-screen until you swipe (it used to be
@@ -3007,18 +3058,30 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                       phase['status']?.toString().toUpperCase() ?? 'UPCOMING';
 
                   return Container(
-                    // Full width (was a fixed 240) so no neighbouring card peeks.
-                    margin: const EdgeInsets.symmetric(horizontal: 24),
+                    // Near box-width (was margin 24): card fills the construction
+                    // box, matching the reference. Small margin keeps shadow room.
+                    margin: const EdgeInsets.symmetric(horizontal: 8),
                     decoration: BoxDecoration(
                       color: isDark
                           ? Colors.white.withValues(alpha: 0.03)
                           : Colors.white,
-                      borderRadius: BorderRadius.circular(32),
+                      // Match the CP phase card: 24 radius + soft shadow + a
+                      // hairline border (was radius 32 with no shadow).
+                      borderRadius: BorderRadius.circular(24),
                       border: Border.all(
                         color: isDark
-                            ? Colors.white.withValues(alpha: 0.05)
-                            : Colors.black.withValues(alpha: 0.05),
+                            ? Colors.white.withValues(alpha: 0.35)
+                            : Colors.black.withValues(alpha: 0.10),
                       ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(
+                            alpha: isDark ? 0.35 : 0.07,
+                          ),
+                          blurRadius: 14,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -3038,16 +3101,16 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                             children: [
                               ClipRRect(
                                 borderRadius: const BorderRadius.vertical(
-                                  top: Radius.circular(32),
+                                  top: Radius.circular(24),
                                 ),
                                 child: CachedNetworkImage(
                                   imageUrl: imageUrl,
                                   // Taller + full width now the card is wider.
-                                  height: 180,
+                                  height: 220,
                                   width: double.infinity,
                                   fit: BoxFit.cover,
                                   placeholder: (c, u) => Container(
-                                    height: 180,
+                                    height: 220,
                                     color: isDark
                                         ? const Color(0xFF1E293B)
                                         : const Color(0xFFF1F5F9),
@@ -3071,13 +3134,13 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                           .contains('demolition')
                                       ? Image.asset(
                                           'assets/cledor_phase_demolition.jpg',
-                                          height: 180,
+                                          height: 220,
                                           width: double.infinity,
                                           fit: BoxFit.cover,
                                           filterQuality: FilterQuality.high,
                                         )
                                       : Container(
-                                          height: 180,
+                                          height: 220,
                                           color: isDark
                                               ? const Color(0xFF1E293B)
                                               : const Color(0xFFF1F5F9),

@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
@@ -195,12 +194,6 @@ class _InvestorRelationsScreenState
           ),
           onPressed: () => Navigator.pop(context),
         ),
-        actions: [
-          const Padding(
-            padding: EdgeInsets.only(right: 16),
-            child: SideMenuButton(),
-          ),
-        ],
       ),
       drawer: const ConditionalDrawer(),
       body: Container(

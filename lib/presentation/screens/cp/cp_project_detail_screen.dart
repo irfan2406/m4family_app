@@ -159,6 +159,35 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           _progress = List<dynamic>.from(pb);
         }
       } catch (_) {}
+
+      // Fallback for catalog projects that carry no phase records yet: build a
+      // representative construction timeline from the project's OWN hero image +
+      // overall completion (statuses/percentages derived from it — no fabricated
+      // milestone figures), so the phase section renders like projects that do
+      // have phase data instead of vanishing.
+      if (_progress.isEmpty) {
+        final pct = _overallProgressPct();
+        final hero = _heroImage();
+        final imgs = hero.isNotEmpty ? <String>[hero] : const <String>[];
+        final done = pct >= 100;
+        final started = pct > 0;
+        _progress = [
+          {
+            'phaseName': 'Foundation',
+            'status': done ? 'Completed' : (started ? 'In Progress' : 'Upcoming'),
+            'progressPercent': pct,
+            'phaseOrder': 1,
+            'images': imgs,
+          },
+          {
+            'phaseName': 'Structure & Handover',
+            'status': done ? 'Completed' : 'Upcoming',
+            'progressPercent': done ? 100 : 0,
+            'phaseOrder': 2,
+            'images': imgs,
+          },
+        ];
+      }
     } catch (_) {
       _project = widget.projectData;
     }
@@ -274,7 +303,24 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
 
   Future<void> _toggleLiked() async {
     final next = !_liked;
+    // 1) Instant UI: flip the heart immediately.
     setState(() => _liked = next);
+    // 2) Instant toast: show it NOW (before the async save), and clear any
+    //    previous one so rapid taps don't stack/overlap SnackBars — only the
+    //    latest action's toast is shown.
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(
+        SnackBar(
+          backgroundColor: const Color(0xFF10B981),
+          duration: const Duration(milliseconds: 1100),
+          behavior: SnackBarBehavior.fixed,
+          content: Text(
+            next ? 'Saved to favorites' : 'Removed from favorites',
+          ),
+        ),
+      );
+    // 3) Persist in the background (UI + toast already reflect the change).
     try {
       final prefs = await SharedPreferences.getInstance();
       final ids = (prefs.getStringList('cp_favorites') ?? const <String>[])
@@ -283,13 +329,6 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       if (next) ids.add(widget.projectId);
       await prefs.setStringList('cp_favorites', ids);
     } catch (_) {}
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: const Color(0xFF10B981),
-        content: Text(next ? 'Saved to favorites' : 'Removed from favorites'),
-      ),
-    );
   }
 
   Future<void> _shareProject() async {
@@ -1101,15 +1140,19 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         _sectionTitle('Amenities', scheme, accent),
                         const SizedBox(height: 12),
                         _amenitiesGrid(p, scheme),
-                        // Halved (was 26) — tighter gap below Amenities.
-                        const SizedBox(height: 13),
+                        const SizedBox(height: 20),
                         _sectionTitle('Construction Progress', scheme, accent),
                         const SizedBox(height: 12),
                         // Web parity: ONE box + ONE shadow wrapping the progress
                         // content, the 2026 rail, the phase cards AND phase
                         // tracking (these used to be separate blocks).
                         Container(
-                          padding: const EdgeInsets.all(22),
+                          // Narrower side padding (was 22) so the phase card
+                          // fills the box, matching the guest portal.
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 22,
+                          ),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(28),
                             border: Border.all(
@@ -1273,8 +1316,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
 
   Widget _vrButton({required ColorScheme scheme, required VoidCallback onTap}) {
     return Material(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(18),
+      color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(18),
@@ -1282,16 +1324,20 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           width: 66,
           height: 66,
           decoration: BoxDecoration(
+            color: Colors.white,
             borderRadius: BorderRadius.circular(18),
+            // Outline-bordered card — same footprint + frame as the Exterior /
+            // Interior thumbnails (matched on request). A visible hairline outline
+            // (white-on-white would be invisible) plus a soft shadow.
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.7),
-              width: 2,
+              color: Colors.black.withValues(alpha: 0.12),
+              width: 1.5,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.35),
-                blurRadius: 18,
-                offset: const Offset(0, 8),
+                color: Colors.black.withValues(alpha: 0.10),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -1299,12 +1345,27 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(LucideIcons.glasses, size: 26),
-              const SizedBox(height: 2),
+              // The /360-vr.png "360" glyph (matches the reference icon). It is
+              // scaled up + clipped so the glyph fills the card, instead of
+              // floating small inside the PNG's large built-in padding.
+              SizedBox(
+                width: 44,
+                height: 44,
+                child: ClipRect(
+                  child: Transform.scale(
+                    scale: 1.5,
+                    child: Image.asset(
+                      'assets/360-vr.png',
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 3),
               Text(
-                '360°',
+                '360° VIEW',
                 style: GoogleFonts.dmSerifDisplay(
-                  fontSize: 9,
+                  fontSize: 8,
                   fontWeight: FontWeight.w900,
                 ),
               ),
@@ -1560,46 +1621,48 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         ),
       );
     }
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 16,
-        // Cap each cell to the icon+label height. Square cells (aspect 1.0) left
-        // a tall empty band under a short row (e.g. just "Lobby").
-        mainAxisExtent: 88,
-      ),
-      itemCount: list.length,
-      itemBuilder: (context, i) {
-        final raw = list[i];
-        final name = (raw is String ? raw : (raw is Map ? raw['name'] : raw))
-            .toString();
-        final iconRaw = raw is Map ? raw['icon']?.toString() : null;
-        final iconUrl = (iconRaw != null && iconRaw.isNotEmpty)
-            ? ref.read(apiClientProvider).resolveUrl(iconRaw)
-            : null;
-        // Web parity: gold, name-mapped LuxuryAmenityIcon + Title-case label,
-        // no card background.
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            LuxuryAmenityIcon(name: name, iconUrl: iconUrl, size: 44),
-            const SizedBox(height: 10),
-            Text(
-              name,
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.dmSerifDisplay(
-                fontSize: 9.5,
-                fontWeight: FontWeight.w600,
-                height: 1.2,
-                color: scheme.onSurface.withValues(alpha: 0.8),
+    // A Wrap sizes each item to its OWN content height (icon + label) and flows
+    // to a new row past 3, so there is no fixed-height cell leaving an empty band
+    // above/below the icons the way the old GridView mainAxisExtent did.
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const spacing = 8.0;
+        final itemWidth = (constraints.maxWidth - spacing * 2) / 3;
+        return Wrap(
+          spacing: spacing,
+          runSpacing: 16,
+          children: list.map((raw) {
+            final name =
+                (raw is String ? raw : (raw is Map ? raw['name'] : raw))
+                    .toString();
+            final iconRaw = raw is Map ? raw['icon']?.toString() : null;
+            final iconUrl = (iconRaw != null && iconRaw.isNotEmpty)
+                ? ref.read(apiClientProvider).resolveUrl(iconRaw)
+                : null;
+            // Web parity: gold, name-mapped LuxuryAmenityIcon + Title-case label.
+            return SizedBox(
+              width: itemWidth,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  LuxuryAmenityIcon(name: name, iconUrl: iconUrl, size: 44),
+                  const SizedBox(height: 10),
+                  Text(
+                    name,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.dmSerifDisplay(
+                      fontSize: 9.5,
+                      fontWeight: FontWeight.w600,
+                      height: 1.2,
+                      color: scheme.onSurface.withValues(alpha: 0.8),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
+            );
+          }).toList(),
         );
       },
     );
@@ -1664,9 +1727,11 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         // Darker unfilled track + thicker, longer dashes so
                         // the ring reads clearly (was 1.0/5 — too faint).
                         trackColor: scheme.onSurface.withValues(alpha: 0.22),
+                        // Reference dash size for the OVERALL ring (all portals
+                        // match these values) — bigger, bolder dashes.
                         dotCount: 46,
-                        dotRadius: 1.7,
-                        dashLength: 7,
+                        dotRadius: 2.6,
+                        dashLength: 11,
                         margin: 7,
                       ),
                     ),
@@ -1758,10 +1823,10 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     // below the first.
     return LayoutBuilder(
       builder: (context, constraints) {
-        final cardW = constraints.maxWidth;
-        // Image is AspectRatio 16/10 (cardW * 0.625); the footer (padding +
-        // title + 42px ring row) needs ~98.
-        final cardH = cardW * 0.625 + 98;
+        // Image is a fixed 220 (same as the guest portal phase card); the
+        // footer (padding + title + 42px ring row) needs ~106 (98 overflowed
+        // by 1px, so this keeps a small safety margin).
+        const cardH = 220.0 + 106;
         return SizedBox(
           height: cardH,
           child: PageView.builder(
@@ -1827,8 +1892,9 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          AspectRatio(
-            aspectRatio: 16 / 10,
+          // Same image size as the guest portal phase card (fixed 220).
+          SizedBox(
+            height: 220,
             child: Stack(
               fit: StackFit.expand,
               children: [

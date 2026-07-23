@@ -270,16 +270,6 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
             color: selected ? accent : Colors.transparent,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(color: selected ? accent : border),
-            boxShadow: selected
-                ? [
-                    BoxShadow(
-                      color: _gold.withValues(alpha: 0.30),
-                      blurRadius: 16,
-                      spreadRadius: 0,
-                      offset: const Offset(0, 4),
-                    ),
-                  ]
-                : null,
           ),
           child: Text(
             'FY $y',

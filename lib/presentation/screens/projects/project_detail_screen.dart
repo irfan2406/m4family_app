@@ -4095,7 +4095,9 @@ class _ConstructionDashboardCard extends ConsumerWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      // Narrower side padding (was 24) so the phase card fills the box,
+      // matching the guest portal.
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E1F21) : const Color(0xFFF4F4F5),
         borderRadius: BorderRadius.circular(32),
@@ -4247,10 +4249,12 @@ class _ConstructionDashboardCard extends ConsumerWidget {
           const SizedBox(height: 20),
           // Construction Dashboard Cards
           SizedBox(
-            height: 360,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+            // Same as the guest portal: 220 image + ~125 footer.
+            height: 345,
+            child: PageView.builder(
+              controller: PageController(viewportFraction: 1.0),
+              physics: const BouncingScrollPhysics(),
+              padEnds: false,
               itemCount: phases.length,
               itemBuilder: (context, index) {
                 final phase = phases[index];
@@ -4263,8 +4267,9 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   phase['image'] ?? firstPhaseImg,
                 );
                 return Container(
-                  width: 260,
-                  margin: const EdgeInsets.only(right: 16),
+                  // Match the guest portal phase card: full width + shadow
+                  // (was a fixed 260-wide horizontal card).
+                  margin: const EdgeInsets.symmetric(horizontal: 8),
                   decoration: BoxDecoration(
                     color: isDark
                         ? Colors.black.withOpacity(0.2)
@@ -4272,9 +4277,16 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(24),
                     border: Border.all(
                       color: isDark
-                          ? Colors.white.withOpacity(0.05)
-                          : Colors.black.withOpacity(0.05),
+                          ? Colors.white.withOpacity(0.35)
+                          : Colors.black.withOpacity(0.10),
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(isDark ? 0.35 : 0.07),
+                        blurRadius: 14,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -4289,19 +4301,20 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                               ),
                               child: CachedNetworkImage(
                                 imageUrl: imageUrl,
-                                height: 180,
-                                width: 260,
+                                // Same image size as the guest portal (220).
+                                height: 220,
+                                width: double.infinity,
                                 fit: BoxFit.cover,
                                 memCacheWidth: 600,
                                 fadeInDuration: Duration.zero,
                                 placeholder: (context, url) => Container(
-                                  height: 180,
-                                  width: 260,
+                                  height: 220,
+                                  width: double.infinity,
                                   color: Colors.white10,
                                 ),
                                 errorWidget: (context, url, error) => Container(
-                                  height: 180,
-                                  width: 260,
+                                  height: 220,
+                                  width: double.infinity,
                                   color: Colors.white10,
                                 ),
                               ),

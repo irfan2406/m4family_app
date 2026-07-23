@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 
 import 'package:m4_mobile/presentation/widgets/cp_sidebar_menu.dart';
 
@@ -152,7 +153,16 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
           Row(
             children: [
               IconButton(
-                onPressed: () => context.go('/cp/hub'),
+                // Back = go back if pushed, else return to the CP Home tab.
+                // (Was wrongly wired to '/cp/hub', which opened Partner Hub.)
+                onPressed: () {
+                  if (Navigator.of(context).canPop()) {
+                    Navigator.of(context).pop();
+                  } else {
+                    context.go('/home');
+                    ref.read(cpNavigationIndexProvider.notifier).state = 0;
+                  }
+                },
                 icon: const Icon(LucideIcons.arrowLeft, size: 18),
                 style: IconButton.styleFrom(
                   backgroundColor: scheme.onSurface.withValues(alpha: 0.05),

@@ -6,9 +6,10 @@ import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 import 'package:m4_mobile/presentation/widgets/cp_sidebar_menu.dart';
+import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
 
 /// Web `/cp/hub`: cinematic header + welcome card + tool matrix + priority access.
 class CpHubScreen extends ConsumerStatefulWidget {
@@ -120,8 +121,16 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
     final scheme = Theme.of(context).colorScheme;
     final isLight = scheme.brightness == Brightness.light;
     final accent = isLight ? Colors.black : scheme.primary;
+    final cpIdx = ref.watch(cpNavigationIndexProvider);
 
     return Scaffold(
+      bottomNavigationBar: CpBottomNav(
+        currentIndex: cpIdx,
+        onTap: (i) {
+          context.go('/home');
+          ref.read(cpNavigationIndexProvider.notifier).state = i;
+        },
+      ),
       drawer: const CpSidebarMenu(),
       body: Stack(
         children: [
@@ -836,7 +845,15 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
     return Row(
       children: [
         IconButton(
-          onPressed: () => context.pop(),
+          // Back = go back if pushed, else return to the CP Home tab so the
+          // button always works (Partner Hub can be reached via a replace-nav).
+          onPressed: () {
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).pop();
+            } else {
+              context.go('/home');
+            }
+          },
           icon: const Icon(LucideIcons.arrowLeft),
         ),
         const SizedBox(width: 8),
@@ -850,6 +867,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                   fontSize: 18,
                   fontWeight: FontWeight.w900,
                   letterSpacing: -0.2,
+                  color: accent,
                 ),
               ),
               const SizedBox(height: 2),
@@ -865,8 +883,6 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
             ],
           ),
         ),
-        const SideMenuButton(),
-        const SizedBox(width: 6),
         IconButton(
           onPressed: () => context.push('/cp/settings'),
           icon: const Icon(LucideIcons.settings),

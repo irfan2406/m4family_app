@@ -184,83 +184,77 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                           alpha: 0.18,
                         ),
                       ),
-                      child: Stack(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Positioned(
-                            top: -14,
-                            right: -14,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 6,
-                              ),
-                              decoration: const BoxDecoration(
-                                color: purple,
-                                borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(12),
-                                  topRight: Radius.circular(16),
-                                ),
-                              ),
-                              child: Text(
-                                (e['type'] ?? '').toString().toUpperCase(),
-                                style: GoogleFonts.dmSerifDisplay(
-                                  fontSize: 8,
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: 1.2,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Column(
+                          Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                e['title']!.toString(),
-                                style: GoogleFonts.dmSerifDisplay(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w900,
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                '${e['date']} • ${e['location']}',
-                                style: GoogleFonts.dmSerifDisplay(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.w700,
-                                  color: scheme.onSurface.withValues(
-                                    alpha: 0.68,
+                              Expanded(
+                                child: Text(
+                                  e['title']!.toString(),
+                                  style: GoogleFonts.dmSerifDisplay(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w900,
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 10),
-                              FilledButton(
-                                onPressed: () =>
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        backgroundColor: Color(0xFF10B981),
-                                        content: Text('RSVP received'),
-                                      ),
-                                    ),
-                                style: FilledButton.styleFrom(
-                                  backgroundColor:
-                                      scheme.surfaceContainerHighest,
-                                  foregroundColor: scheme.onSurface,
-                                  minimumSize: const Size.fromHeight(36),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 5,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: purple,
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
-                                  'RSVP NOW',
+                                  (e['type'] ?? '').toString().toUpperCase(),
                                   style: GoogleFonts.dmSerifDisplay(
-                                    fontSize: 9,
+                                    fontSize: 8,
                                     fontWeight: FontWeight.w900,
-                                    letterSpacing: 2,
+                                    letterSpacing: 1.2,
+                                    color: Colors.white,
                                   ),
                                 ),
                               ),
                             ],
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            '${e['date']} • ${e['location']}',
+                            style: GoogleFonts.dmSerifDisplay(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              color: scheme.onSurface.withValues(alpha: 0.68),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          FilledButton(
+                            onPressed: () =>
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    backgroundColor: Color(0xFF10B981),
+                                    content: Text('RSVP received'),
+                                  ),
+                                ),
+                            style: FilledButton.styleFrom(
+                              backgroundColor: scheme.surfaceContainerHighest,
+                              foregroundColor: scheme.onSurface,
+                              minimumSize: const Size.fromHeight(36),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: Text(
+                              'RSVP NOW',
+                              style: GoogleFonts.dmSerifDisplay(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 2,
+                              ),
+                            ),
                           ),
                         ],
                       ),

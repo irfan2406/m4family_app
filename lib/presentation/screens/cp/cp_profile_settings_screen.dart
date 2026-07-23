@@ -945,9 +945,11 @@ class _CpProfileSettingsScreenState
         border: Border.all(
           color: scheme.outlineVariant.withValues(alpha: 0.45),
         ),
-        // Web parity: white card in light mode (translucent in dark).
+        // White card in light mode; solid neutral near-black in dark (matches
+        // the Performance Tracker / home cards) — the old translucent fill let
+        // the navy page show through and read as a muddy tint.
         color: Theme.of(context).brightness == Brightness.dark
-            ? scheme.surfaceContainerHighest.withValues(alpha: 0.35)
+            ? const Color(0xFF15171C)
             : Colors.white,
         boxShadow: [
           BoxShadow(

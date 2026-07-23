@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:ui';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
@@ -120,12 +119,6 @@ class _GuestCustomViewsScreenState
                 ),
               ],
             ),
-            actions: [
-              const Padding(
-                padding: EdgeInsets.only(right: 12),
-                child: SideMenuButton(),
-              ),
-            ],
           ),
 
           // 🎭 Hero Section

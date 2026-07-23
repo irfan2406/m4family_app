@@ -1400,7 +1400,10 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                         const SizedBox(height: 12),
                         Text(
                           (project['title'] ?? '').toString(),
-                          style: GoogleFonts.dmSerifDisplay(
+                          // Lighter serif: DM Serif Display ships only weight
+                          // 400, so fontWeight can't thin it. Playfair Display
+                          // at w400 reads noticeably less bold.
+                          style: GoogleFonts.playfairDisplay(
                             color: Colors.black,
                             fontSize: 44,
                             fontWeight: FontWeight.w400,
