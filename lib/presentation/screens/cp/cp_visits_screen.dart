@@ -1,5 +1,9 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -36,16 +40,36 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
   bool _bookingsLoading = false;
   List<dynamic> _bookings = [];
 
+  static const _visitsCacheKey = 'cp_visits_cache';
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // Show the last-loaded visits instantly, then refresh in the background —
+      // so reopening the screen feels fast even when the backend is slow.
+      await _loadCachedVisits();
       _load();
       _loadBookings();
     });
   }
 
-  Future<void> _load({int page = 1}) async {
+  Future<void> _loadCachedVisits() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final cached = prefs.getString(_visitsCacheKey);
+      if (cached == null || !mounted || _visits.isNotEmpty) return;
+      final list = jsonDecode(cached);
+      if (list is List && list.isNotEmpty) {
+        setState(() {
+          _visits = list;
+          _loading = false; // cache is shown; _load() still refreshes in bg
+        });
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _load({int page = 1, bool retried = false}) async {
     setState(() {
       _loading = true;
       _error = null;
@@ -53,7 +77,11 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
     try {
       final res = await ref
           .read(apiClientProvider)
-          .getCpVisits(page: page, limit: 10);
+          .getCpVisits(page: page, limit: 10)
+          // The Dio client's receiveTimeout is 90s — far too long for a small
+          // paginated list. Cap this at 15s so a slow/hung backend shows the
+          // retry state fast instead of spinning "SYNCHRONIZING RECORDS...".
+          .timeout(const Duration(seconds: 15));
       final body = res.data;
       if (body is Map && body['status'] == true && body['data'] is Map) {
         final d = body['data'] as Map;
@@ -61,10 +89,24 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
         _visits = raw is List ? List<dynamic>.from(raw) : [];
         _page = (d['page'] as num?)?.toInt() ?? page;
         _totalPages = (d['totalPages'] as num?)?.toInt() ?? 1;
+        // Cache so the next open shows this list instantly.
+        try {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString(_visitsCacheKey, jsonEncode(_visits));
+        } catch (_) {}
       } else {
         _error = 'Could not load visits';
         _visits = [];
       }
+    } on TimeoutException {
+      // The backend can cold-start: the first request often times out while it
+      // wakes up. Retry once automatically — it is usually warm + fast by now,
+      // so the user doesn't have to tap "Retry".
+      if (!retried) {
+        return _load(page: page, retried: true);
+      }
+      _error = 'Taking longer than usual — please retry.';
+      _visits = [];
     } on DioException catch (e) {
       _error = e.response?.data is Map
           ? (e.response!.data as Map)['message']?.toString()
@@ -80,7 +122,10 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
   Future<void> _loadBookings() async {
     setState(() => _bookingsLoading = true);
     try {
-      final res = await ref.read(apiClientProvider).getCpBookings();
+      final res = await ref
+          .read(apiClientProvider)
+          .getCpBookings()
+          .timeout(const Duration(seconds: 15));
       final body = res.data;
       if (body is Map && body['status'] == true && body['data'] is Map) {
         final raw = (body['data'] as Map)['bookings'];

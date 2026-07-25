@@ -1812,10 +1812,11 @@ class _InvestorProjectDetailScreenState
         decoration: BoxDecoration(
           color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
           borderRadius: BorderRadius.circular(24),
-          // Same card frame as the guest portal phase card.
+          // Same card frame as the guest portal phase card (subtle in dark so
+          // it doesn't show as a bright edge behind the image).
           border: Border.all(
             color: isDark
-                ? Colors.white.withValues(alpha: 0.35)
+                ? Colors.white.withValues(alpha: 0.08)
                 : Colors.black.withValues(alpha: 0.10),
           ),
           boxShadow: [

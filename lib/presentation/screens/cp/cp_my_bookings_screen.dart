@@ -1,7 +1,10 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -90,23 +93,56 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
   static Map<String, dynamic>? _m(dynamic v) =>
       v is Map ? v.cast<String, dynamic>() : null;
 
+  static const _bookingsCacheKey = 'cp_bookings_cache';
+
   @override
   void initState() {
     super.initState();
-    _load();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // Show the last-loaded bookings instantly, then refresh in the background
+      // so reopening feels fast even when the backend is slow.
+      await _loadCachedBookings();
+      _load();
+    });
   }
 
-  Future<void> _load() async {
+  Future<void> _loadCachedBookings() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final cached = prefs.getString(_bookingsCacheKey);
+      if (cached == null || !mounted || _list.isNotEmpty) return;
+      final list = jsonDecode(cached);
+      if (list is List && list.isNotEmpty) {
+        setState(() {
+          _list = List<dynamic>.from(list);
+          _loading = false; // cache shown; _load() still refreshes in bg
+        });
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _load({bool retried = false}) async {
     setState(() => _loading = true);
     try {
-      final res = await ref.read(apiClientProvider).getCpBookings();
+      final res = await ref
+          .read(apiClientProvider)
+          .getCpBookings()
+          // Dio receiveTimeout is 90s — far too long. Cap it, and let a cold-
+          // started backend recover via a single silent auto-retry.
+          .timeout(const Duration(seconds: 15));
       if (!mounted) return;
       if (res.statusCode == 200 && res.data['status'] == true) {
         final d = res.data['data'];
         if (d is Map && d['bookings'] is List) {
           _list = List<dynamic>.from(d['bookings']);
+          try {
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setString(_bookingsCacheKey, jsonEncode(_list));
+          } catch (_) {}
         }
       }
+    } on TimeoutException {
+      if (!retried) return _load(retried: true);
     } catch (_) {}
     if (mounted) setState(() => _loading = false);
   }

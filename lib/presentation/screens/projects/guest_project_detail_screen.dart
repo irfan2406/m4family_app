@@ -711,6 +711,13 @@ class _GuestProjectDetailScreenState
       });
 
       if (res.data['status'] == true) {
+        // Registration succeeded — clear the form so the fields don't keep the
+        // submitted data (the next open starts fresh).
+        _nameController.clear();
+        _emailController.clear();
+        _phoneController.clear();
+        _locationController.clear();
+        _notesController.clear();
         if (mounted) {
           Navigator.pop(context);
           _launchAction(
@@ -3066,11 +3073,12 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                           ? Colors.white.withValues(alpha: 0.03)
                           : Colors.white,
                       // Match the CP phase card: 24 radius + soft shadow + a
-                      // hairline border (was radius 32 with no shadow).
+                      // hairline border (subtle in dark so it doesn't show as a
+                      // bright edge behind the image).
                       borderRadius: BorderRadius.circular(24),
                       border: Border.all(
                         color: isDark
-                            ? Colors.white.withValues(alpha: 0.35)
+                            ? Colors.white.withValues(alpha: 0.08)
                             : Colors.black.withValues(alpha: 0.10),
                       ),
                       boxShadow: [
@@ -3083,6 +3091,9 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                         ),
                       ],
                     ),
+                    // Clip the image + footer to the card's rounded corners so
+                    // nothing peeks behind the image's top corners.
+                    clipBehavior: Clip.antiAlias,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

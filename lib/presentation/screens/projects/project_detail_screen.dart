@@ -4275,9 +4275,11 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                         ? Colors.black.withOpacity(0.2)
                         : Colors.white,
                     borderRadius: BorderRadius.circular(24),
+                    // Subtle in dark so the border doesn't show as a bright edge
+                    // behind the image.
                     border: Border.all(
                       color: isDark
-                          ? Colors.white.withOpacity(0.35)
+                          ? Colors.white.withOpacity(0.08)
                           : Colors.black.withOpacity(0.10),
                     ),
                     boxShadow: [
