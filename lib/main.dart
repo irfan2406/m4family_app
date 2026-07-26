@@ -1,6 +1,8 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
+import 'package:m4_mobile/firebase_options.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/screens/auth/login_screen.dart';
@@ -131,6 +133,10 @@ void main() async {
   debugRepaintRainbowEnabled = false;
 
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   // .env MUST stay awaited: OnboardingScreen.initState reads authProvider,
   // whose ApiClient calls dotenv.get() — loading it lazily would throw. It is

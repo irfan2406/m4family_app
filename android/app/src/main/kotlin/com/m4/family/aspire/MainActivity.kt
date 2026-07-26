@@ -1,4 +1,4 @@
-package com.m4family.m4_mobile
+package com.m4.family.aspire
 
 import android.app.PictureInPictureParams
 import android.os.Build

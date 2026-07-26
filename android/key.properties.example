@@ -1,20 +1,4 @@
-# Release signing template. COPY this file to `android/key.properties` and fill
-# in your real values. NEVER commit the real key.properties or the .jks keystore
-# to git (they are already listed in .gitignore).
-#
-# 1) Generate an upload keystore once (from the `android/app` folder):
-#    keytool -genkey -v -keystore upload-keystore.jks -keyalg RSA -keysize 2048 \
-#            -validity 10000 -alias upload
-#
-# 2) Copy this file:  cp android/key.properties.example android/key.properties
-#
-# 3) Fill in the four values below. `storeFile` is resolved relative to
-#    android/app, so `upload-keystore.jks` means android/app/upload-keystore.jks.
-#
-# When android/key.properties is ABSENT the build automatically falls back to
-# the debug key, so debug/CI builds keep working without this file.
-
-storePassword=YOUR_KEYSTORE_PASSWORD
+storePassword=YOUR_STORE_PASSWORD
 keyPassword=YOUR_KEY_PASSWORD
 keyAlias=upload
-storeFile=upload-keystore.jks
+storeFile=key.jks
