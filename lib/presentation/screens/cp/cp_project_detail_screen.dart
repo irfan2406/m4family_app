@@ -1151,33 +1151,21 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                           // fills the box, matching the guest portal.
                           padding: const EdgeInsets.symmetric(
                             horizontal: 16,
-                            vertical: 22,
+                            vertical: 36,
                           ),
+                          // Investor-parity construction box (master design):
+                          // subtle translucent fill, radius 40, hairline
+                          // border, no shadow.
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(28),
+                            borderRadius: BorderRadius.circular(40),
                             border: Border.all(
-                              color: scheme.outlineVariant.withValues(
-                                alpha: scheme.brightness == Brightness.light
-                                    ? 0.10
-                                    : 0.35,
-                              ),
+                              color: scheme.brightness == Brightness.light
+                                  ? Colors.black.withValues(alpha: 0.06)
+                                  : Colors.white.withValues(alpha: 0.08),
                             ),
                             color: scheme.brightness == Brightness.light
-                                ? Colors.white
-                                : scheme.surfaceContainerHighest.withValues(
-                                    alpha: 0.4,
-                                  ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(
-                                  alpha: scheme.brightness == Brightness.light
-                                      ? 0.10
-                                      : 0.45,
-                                ),
-                                blurRadius: 28,
-                                offset: const Offset(0, 12),
-                              ),
-                            ],
+                                ? const Color(0xFFF8FAFC)
+                                : Colors.white.withValues(alpha: 0.03),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -1715,53 +1703,48 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             ),
             const SizedBox(width: 12),
             SizedBox(
-              width: 126,
-              height: 126,
+              width: 100,
+              height: 100,
               child: Stack(
+                alignment: Alignment.center,
                 children: [
                   Positioned.fill(
+                    // Guest-parity ring: fine tangential tick marks (56 @ 6px),
+                    // same dot size + ring size as every other portal's OVERALL
+                    // ring. Colours stay CP's (accent fill + faded track).
                     child: CustomPaint(
-                      painter: _DottedProgressRingPainter(
+                      painter: _DashedCirclePainter(
                         progress: pct / 100.0,
                         color: accent,
-                        // Darker unfilled track + thicker, longer dashes so
-                        // the ring reads clearly (was 1.0/5 — too faint).
-                        trackColor: scheme.onSurface.withValues(alpha: 0.22),
-                        // Reference dash size for the OVERALL ring (all portals
-                        // match these values) — bigger, bolder dashes.
-                        dotCount: 46,
-                        dotRadius: 2.6,
-                        dashLength: 11,
-                        margin: 7,
+                        backgroundColor: scheme.onSurface.withValues(
+                          alpha: 0.22,
+                        ),
+                        strokeWidth: 6,
                       ),
                     ),
                   ),
-                  Positioned.fill(
-                    child: Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            '$pct%',
-                            style: GoogleFonts.montserrat(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w900,
-                              // Was inheriting the theme's navy — force dark.
-                              color: isLight ? Colors.black : scheme.onSurface,
-                            ),
-                          ),
-                          Text(
-                            'OVERALL',
-                            style: GoogleFonts.montserrat(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w800,
-                              color: scheme.onSurface.withValues(alpha: 0.7),
-                              letterSpacing: 1,
-                            ),
-                          ),
-                        ],
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '$pct%',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w900,
+                          // Was inheriting the theme's navy — force dark.
+                          color: isLight ? Colors.black : scheme.onSurface,
+                        ),
                       ),
-                    ),
+                      Text(
+                        'OVERALL',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 8,
+                          fontWeight: FontWeight.w800,
+                          color: scheme.onSurface.withValues(alpha: 0.7),
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -1873,11 +1856,11 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: scheme.outlineVariant.withValues(alpha: isLight ? 0.10 : 0.35),
+          color: isLight
+              ? Colors.black.withValues(alpha: 0.06)
+              : Colors.white.withValues(alpha: 0.08),
         ),
-        color: isLight
-            ? Colors.white
-            : scheme.surfaceContainerHighest.withValues(alpha: 0.4),
+        color: isLight ? Colors.white : Colors.white.withValues(alpha: 0.03),
         // Softer than before — this card is now nested inside the single
         // shadowed construction box, so a heavy shadow double-stacked.
         boxShadow: [
@@ -1985,8 +1968,8 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 Row(
                   children: [
                     SizedBox(
-                      width: 42,
-                      height: 42,
+                      width: 46,
+                      height: 46,
                       child: Stack(
                         children: [
                           Positioned.fill(
@@ -2004,7 +1987,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                               child: Text(
                                 '$pct%',
                                 style: GoogleFonts.montserrat(
-                                  fontSize: 9,
+                                  fontSize: 10,
                                   fontWeight: FontWeight.w900,
                                   color: scheme.onSurfaceVariant,
                                 ),
@@ -2177,9 +2160,13 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: scheme.outlineVariant.withValues(alpha: 0.3),
+                    color: scheme.brightness == Brightness.light
+                        ? Colors.black.withValues(alpha: 0.06)
+                        : Colors.white.withValues(alpha: 0.08),
                   ),
-                  color: scheme.surfaceContainerHighest.withValues(alpha: 0.14),
+                  color: scheme.brightness == Brightness.light
+                      ? Colors.white
+                      : Colors.white.withValues(alpha: 0.05),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -2263,10 +2250,10 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     ),
                     const SizedBox(height: 10),
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(99),
+                      borderRadius: BorderRadius.circular(999),
                       child: LinearProgressIndicator(
                         value: pct / 100.0,
-                        minHeight: 4,
+                        minHeight: 6,
                         color: accent,
                         backgroundColor: scheme.onSurface.withValues(
                           alpha: 0.08,
@@ -3213,6 +3200,70 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       ),
     );
   }
+}
+
+/// Guest-parity OVERALL ring — fine tangential tick marks (a "watch bezel"),
+/// identical to the guest project detail so every portal's ring matches.
+class _DashedCirclePainter extends CustomPainter {
+  final double progress;
+  final Color color;
+  final Color backgroundColor;
+  final double? strokeWidth;
+
+  _DashedCirclePainter({
+    required this.progress,
+    required this.color,
+    required this.backgroundColor,
+    this.strokeWidth,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+    final actualStrokeWidth = strokeWidth ?? 4.0;
+    const dashCount = 56;
+    const gap = 0.5;
+
+    final bgPaint = Paint()
+      ..color = backgroundColor
+      ..strokeWidth = actualStrokeWidth
+      ..style = PaintingStyle.stroke;
+
+    final progressPaint = Paint()
+      ..color = color
+      ..strokeWidth = actualStrokeWidth
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.butt;
+
+    final dashAngle = (2 * 3.14159) / dashCount;
+
+    for (int i = 0; i < dashCount; i++) {
+      final startAngle = i * dashAngle;
+      final sweepAngle = dashAngle * (1 - gap);
+
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        startAngle,
+        sweepAngle,
+        false,
+        bgPaint,
+      );
+
+      if (i < dashCount * progress) {
+        canvas.drawArc(
+          Rect.fromCircle(center: center, radius: radius),
+          startAngle,
+          sweepAngle,
+          false,
+          progressPaint,
+        );
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
 }
 
 /// Dotted progress ring — matches the web "% OVERALL" circle: evenly-spaced

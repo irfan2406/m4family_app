@@ -1692,28 +1692,22 @@ class _InvestorProjectDetailScreenState
                     ),
                     const SizedBox(width: 16),
                     SizedBox(
-                      // Same ring size as the CP construction card (was 104),
-                      // so the dashes read at the same scale.
-                      width: 126,
-                      height: 126,
+                      // Guest-parity OVERALL ring: same size (100) + dot size as
+                      // the guest project detail so every portal matches.
+                      width: 100,
+                      height: 100,
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          // Web parity (matches the CP properties detail): a
-                          // dotted/dashed ring rather than a solid arc.
                           Positioned.fill(
                             child: CustomPaint(
-                              painter: _DottedProgressRingPainter(
+                              painter: _DashedCirclePainter(
                                 progress: overall.toDouble() / 100,
                                 color: isDark ? Colors.white : Colors.black,
-                                trackColor:
+                                backgroundColor:
                                     (isDark ? Colors.white : Colors.black)
                                         .withValues(alpha: 0.22),
-                                // Same dash size as the CP ring — bigger, bolder.
-                                dotCount: 46,
-                                dotRadius: 2.6,
-                                dashLength: 11,
-                                margin: 7,
+                                strokeWidth: 6,
                               ),
                             ),
                           ),
@@ -1731,7 +1725,7 @@ class _InvestorProjectDetailScreenState
                               Text(
                                 'OVERALL',
                                 style: GoogleFonts.dmSerifDisplay(
-                                  fontSize: 9,
+                                  fontSize: 8,
                                   fontWeight: FontWeight.w900,
                                   color: (isDark ? Colors.white : Colors.black)
                                       .withValues(alpha: 0.6),
@@ -3268,6 +3262,70 @@ class _InquiryField extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Guest-parity OVERALL ring — fine tangential tick marks (a "watch bezel"),
+/// identical to the guest project detail so every portal's ring matches.
+class _DashedCirclePainter extends CustomPainter {
+  final double progress;
+  final Color color;
+  final Color backgroundColor;
+  final double? strokeWidth;
+
+  _DashedCirclePainter({
+    required this.progress,
+    required this.color,
+    required this.backgroundColor,
+    this.strokeWidth,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+    final actualStrokeWidth = strokeWidth ?? 4.0;
+    const dashCount = 56;
+    const gap = 0.5;
+
+    final bgPaint = Paint()
+      ..color = backgroundColor
+      ..strokeWidth = actualStrokeWidth
+      ..style = PaintingStyle.stroke;
+
+    final progressPaint = Paint()
+      ..color = color
+      ..strokeWidth = actualStrokeWidth
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.butt;
+
+    final dashAngle = (2 * 3.14159) / dashCount;
+
+    for (int i = 0; i < dashCount; i++) {
+      final startAngle = i * dashAngle;
+      final sweepAngle = dashAngle * (1 - gap);
+
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        startAngle,
+        sweepAngle,
+        false,
+        bgPaint,
+      );
+
+      if (i < dashCount * progress) {
+        canvas.drawArc(
+          Rect.fromCircle(center: center, radius: radius),
+          startAngle,
+          sweepAngle,
+          false,
+          progressPaint,
+        );
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
 }
 
 // Web parity (shared with the CP properties detail): a ring of short radial

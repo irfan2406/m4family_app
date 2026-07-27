@@ -333,8 +333,10 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Tagline (Living the M4 Life) — script image, not text.
-                Transform.translate(
-                  offset: const Offset(0, -50),
+                // Guest parity: natural flow with a small top gap (no -50
+                // translate), so it never touches the logo or the hero.
+                Padding(
+                  padding: const EdgeInsets.only(top: 12, bottom: 8),
                   child: ColorFiltered(
                     colorFilter: ColorFilter.matrix(
                       Theme.of(context).brightness == Brightness.dark
@@ -356,32 +358,19 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                     child: Image.asset(
                       'assets/living_m4_life.png',
                       width: MediaQuery.of(context).size.width,
-                      height: 200,
+                      height: 120,
                       fit: BoxFit.fitWidth,
                     ),
                   ),
                 ),
 
-                // Hero carousel (4:3, auto-cycle, badge, dots).
-                // The hero is painted 110px up (Transform), leaving dead space at
-                // the bottom of its box. We shrink the box by 60px so the tabs
-                // below can drop their own upward Transform (which made their
-                // buttons un-tappable) while keeping the exact same layout.
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    final heroH = (constraints.maxWidth - 48) * 3 / 4;
-                    return SizedBox(
-                      height: heroH > 60 ? heroH - 60 : heroH,
-                      child: OverflowBox(
-                        minHeight: 0,
-                        maxHeight: double.infinity,
-                        alignment: Alignment.topCenter,
-                        child: Transform.translate(
-                          offset: const Offset(0, -110),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 24),
-                            child: Builder(
-                              builder: (context) {
+                // Hero carousel (4:3, auto-cycle, badge, dots). Guest parity:
+                // natural flow (no OverflowBox / -110 translate / box shrink) so
+                // spacing above (tagline) and below (tabs) matches the guest home.
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Builder(
+                    builder: (context) {
                                 // Web parity: the hero cycles the FEATURED
                                 // project's 3 media slides, not different projects.
                                 final featured = _projects.isNotEmpty
@@ -543,11 +532,6 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                               },
                             ),
                           ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
               ],
             ),
           ),
@@ -556,9 +540,12 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
             sliver: SliverList(
               delegate: SliverChildListDelegate([
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  // Guest parity: 40px top gap so the tabs sit below the hero
+                  // with breathing room (was flush against the image).
+                  padding: const EdgeInsets.fromLTRB(24, 40, 24, 0),
                   child: _buildTabsSection(),
                 ),
+                const SizedBox(height: 48),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: _buildPhilosophy(),

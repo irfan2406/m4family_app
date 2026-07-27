@@ -4113,16 +4113,18 @@ class _ConstructionDashboardCard extends ConsumerWidget {
 
     return Container(
       width: double.infinity,
-      // Narrower side padding (was 24) so the phase card fills the box,
-      // matching the guest portal.
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      // Investor-parity construction box (master design): subtle translucent
+      // fill, radius 40, hairline border, no shadow.
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 36),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1F21) : const Color(0xFFF4F4F5),
-        borderRadius: BorderRadius.circular(32),
+        color: isDark
+            ? Colors.white.withOpacity(0.03)
+            : const Color(0xFFF8FAFC),
+        borderRadius: BorderRadius.circular(40),
         border: Border.all(
           color: isDark
-              ? Colors.white.withOpacity(0.05)
-              : Colors.black.withOpacity(0.05),
+              ? Colors.white.withOpacity(0.08)
+              : Colors.black.withOpacity(0.06),
         ),
       ),
       child: Column(
@@ -4190,10 +4192,12 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   // primary(dark) circle, so dark dots wrap the WHOLE ring — it
                   // reads as a full dense dark dotted circle, not a 15% arc.
                   _DottedProgressRing(
+                    // Guest-parity: same ring size + dot size (100 / 56 @ 6px)
+                    // as the guest project detail so every portal matches.
                     percent: 100,
-                    size: 112,
-                    strokeWidth: 4,
-                    dashCount: 76,
+                    size: 100,
+                    strokeWidth: 6,
+                    dashCount: 56,
                     activeColor: isDark ? Colors.white : Colors.black,
                     trackColor: isDark ? Colors.white : Colors.black,
                   ),
@@ -4203,7 +4207,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                       Text(
                         '${overallProgress.toInt()}%',
                         style: GoogleFonts.dmSerifDisplay(
-                          fontSize: 20,
+                          fontSize: 22,
                           fontWeight: FontWeight.w900,
                           color: isDark ? Colors.white : Colors.black,
                         ),
@@ -4290,7 +4294,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   margin: const EdgeInsets.symmetric(horizontal: 8),
                   decoration: BoxDecoration(
                     color: isDark
-                        ? Colors.black.withOpacity(0.2)
+                        ? Colors.white.withOpacity(0.03)
                         : Colors.white,
                     borderRadius: BorderRadius.circular(24),
                     // Subtle in dark so the border doesn't show as a bright edge
@@ -4415,8 +4419,8 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                   children: [
                                     // Simple solid arc progress ring.
                                     SizedBox(
-                                      width: 40,
-                                      height: 40,
+                                      width: 46,
+                                      height: 46,
                                       child: CircularProgressIndicator(
                                         value:
                                             (phase['progressPercent'] ??
@@ -4441,7 +4445,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                     Text(
                                       '${phase['progressPercent'] ?? phase['progress'] ?? 0}%',
                                       style: GoogleFonts.dmSerifDisplay(
-                                        fontSize: 8,
+                                        fontSize: 10,
                                         fontWeight: FontWeight.w900,
                                         color: isDark
                                             ? Colors.white
@@ -4592,9 +4596,9 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     margin: const EdgeInsets.only(right: 16),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: (isDark ? Colors.white : Colors.black).withOpacity(
-                        0.03,
-                      ),
+                      color: isDark
+                          ? Colors.white.withOpacity(0.05)
+                          : Colors.white,
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: (isDark ? Colors.white : Colors.black)
@@ -4709,10 +4713,10 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                         ),
                         const SizedBox(height: 12),
                         ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
+                          borderRadius: BorderRadius.circular(999),
                           child: LinearProgressIndicator(
                             value: (pct / 100).clamp(0.0, 1.0),
-                            minHeight: 4,
+                            minHeight: 6,
                             backgroundColor:
                                 (isDark ? Colors.white : Colors.black)
                                     .withOpacity(0.08),

@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
+import 'package:m4_mobile/presentation/providers/investor_shell_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -309,9 +310,19 @@ class ProjectListScreen extends ConsumerWidget {
                                       .state =
                                   0;
                             } else {
+                              // Reset whichever shell is actually active back to
+                              // its Home tab. The inactive shells' providers are
+                              // simply ignored, so setting all is safe — and the
+                              // investor one was missing, which broke back on
+                              // the investor Properties tab.
                               ref.read(navigationProvider.notifier).state = 0;
                               ref.read(guestNavigationProvider.notifier).state =
                                   0;
+                              ref
+                                  .read(
+                                    investorNavigationIndexProvider.notifier,
+                                  )
+                                  .state = 0;
                             }
                           },
                           borderRadius: BorderRadius.circular(12),

@@ -1235,6 +1235,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
   }
 
   void _showCustomEnquiryForm(BuildContext context) {
+    String? submitError;
     showDialog(
       context: context,
       barrierColor: Colors.black.withOpacity(0.6),
@@ -1333,6 +1334,44 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                       ),
                       const SizedBox(height: 40),
 
+                      if (submitError != null) ...[
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 12,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE24B4A).withOpacity(0.12),
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: const Color(0xFFE24B4A).withOpacity(0.4),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                LucideIcons.alertCircle,
+                                color: Color(0xFFE24B4A),
+                                size: 18,
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  submitError!,
+                                  style: GoogleFonts.dmSerifDisplay(
+                                    color: const Color(0xFFE24B4A),
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+
                       SizedBox(
                         width: double.infinity,
                         height: 60,
@@ -1365,16 +1404,24 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                                     return;
                                   }
 
-                                  setModalState(() => _isSubmitting = true);
+                                  setModalState(() {
+                                    _isSubmitting = true;
+                                    submitError = null;
+                                  });
                                   try {
                                     final apiClient = ref.read(
                                       apiClientProvider,
                                     );
-                                    await apiClient.submitCustomViews({
-                                      'name': _nameController.text,
-                                      'phone': _phoneController.text,
-                                      'email': _emailController.text,
-                                      'source': 'App Custom Views Enquiry',
+                                    // Web parity: this is a lead enquiry, so it
+                                    // posts to /api/leads (submitLead) with a
+                                    // valid `source` enum — not /api/custom-views
+                                    // (which expects a full customization payload
+                                    // and 400s for a plain enquiry).
+                                    await apiClient.submitLead({
+                                      'name': _nameController.text.trim(),
+                                      'phone': _phoneController.text.trim(),
+                                      'email': _emailController.text.trim(),
+                                      'source': 'online',
                                     });
 
                                     if (context.mounted) {
@@ -1394,18 +1441,13 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                                       _emailController.clear();
                                     }
                                   } catch (e) {
-                                    if (context.mounted) {
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          backgroundColor: const Color(
-                                            0xFFE24B4A,
-                                          ),
-                                          content: Text('Error: $e'),
-                                        ),
-                                      );
-                                    }
+                                    // Show a short, friendly error INSIDE the
+                                    // dialog (on top) instead of dumping the raw
+                                    // DioException in a giant toast behind it.
+                                    setModalState(
+                                      () => submitError =
+                                          'Could not submit right now. Please check your details and try again.',
+                                    );
                                   } finally {
                                     if (context.mounted)
                                       setModalState(

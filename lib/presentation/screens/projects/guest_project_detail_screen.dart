@@ -2880,14 +2880,18 @@ class _ConstructionDashboardCard extends ConsumerWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 40),
+      // Investor-parity construction box (master design): subtle translucent
+      // fill, radius 40, hairline border, no shadow.
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 36),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0B111E) : const Color(0xFFF8FAFC),
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.03)
+            : const Color(0xFFF8FAFC),
         borderRadius: BorderRadius.circular(40),
         border: Border.all(
           color: isDark
-              ? Colors.white.withValues(alpha: 0.05)
-              : Colors.black.withValues(alpha: 0.05),
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.black.withValues(alpha: 0.06),
         ),
       ),
       child: Column(
@@ -3237,14 +3241,14 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                   // solid black with ROUNDED stroke caps (the
                                   // old one was a dashed ring), bold number.
                                   SizedBox(
-                                    width: 54,
-                                    height: 54,
+                                    width: 46,
+                                    height: 46,
                                     child: Stack(
                                       alignment: Alignment.center,
                                       children: [
                                         SizedBox(
-                                          width: 54,
-                                          height: 54,
+                                          width: 46,
+                                          height: 46,
                                           child: CircularProgressIndicator(
                                             value:
                                                 ((phase['progressPercent'] ??
@@ -3253,7 +3257,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                                         as num)
                                                     .toDouble() /
                                                 100,
-                                            strokeWidth: 4,
+                                            strokeWidth: 3,
                                             strokeCap: StrokeCap.round,
                                             backgroundColor:
                                                 (isDark
@@ -3271,7 +3275,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                         Text(
                                           '${phase['progressPercent'] ?? phase['progress'] ?? 0}%',
                                           style: GoogleFonts.dmSerifDisplay(
-                                            fontSize: 13,
+                                            fontSize: 10,
                                             fontWeight: FontWeight.w900,
                                             color: isDark
                                                 ? Colors.white
@@ -3395,9 +3399,9 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: isDark
-                          ? Colors.white.withValues(alpha: 0.03)
+                          ? Colors.white.withValues(alpha: 0.05)
                           : Colors.white,
-                      borderRadius: BorderRadius.circular(24),
+                      borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: isDark
                             ? Colors.white.withValues(alpha: 0.05)
