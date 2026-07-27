@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -59,6 +60,7 @@ class _InvestorProjectDetailScreenState
   bool _hasError = false;
   bool _submitting = false;
   bool _showFullProgress = false;
+  bool _isFavorited = false;
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -179,6 +181,26 @@ class _InvestorProjectDetailScreenState
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
+  }
+
+  // Flip the wishlist heart + show an instant Saved/Removed toast (parity with
+  // the CP and customer detail screens). Clears any prior toast so rapid taps
+  // don't stack.
+  void _toggleFavorite() {
+    final next = !_isFavorited;
+    setState(() => _isFavorited = next);
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(
+        SnackBar(
+          backgroundColor: const Color(0xFF10B981),
+          duration: const Duration(milliseconds: 1100),
+          behavior: SnackBarBehavior.fixed,
+          content: Text(
+            next ? 'Saved to favorites' : 'Removed from favorites',
+          ),
+        ),
+      );
   }
 
   Future<void> _openUrl(String? url) async {
@@ -1030,11 +1052,28 @@ class _InvestorProjectDetailScreenState
                     }
                   },
                 ),
-                _SquareAction(
-                  icon: LucideIcons.share2,
-                  onTap: () => Share.share(
-                    'Check out ${project['title']} on M4 Family!',
-                  ),
+                Row(
+                  children: [
+                    _SquareAction(
+                      icon: LucideIcons.share2,
+                      onTap: () => Share.share(
+                        'Check out ${project['title']} on M4 Family!',
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    _SquareAction(
+                      icon: _isFavorited
+                          ? Icons.favorite
+                          : LucideIcons.heart,
+                      color: _isFavorited ? Colors.red : null,
+                      onTap: _toggleFavorite,
+                    ).animate(key: ValueKey(_isFavorited)).scaleXY(
+                      begin: 0.6,
+                      end: 1.0,
+                      duration: 320.ms,
+                      curve: Curves.elasticOut,
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -2612,7 +2651,8 @@ class _InvestorProjectDetailScreenState
 class _SquareAction extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
-  const _SquareAction({required this.icon, required this.onTap});
+  final Color? color;
+  const _SquareAction({required this.icon, required this.onTap, this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -2642,7 +2682,7 @@ class _SquareAction extends StatelessWidget {
         ),
         child: Icon(
           icon,
-          color: isDark ? Colors.white : Colors.black,
+          color: color ?? (isDark ? Colors.white : Colors.black),
           size: 20,
         ),
       ),

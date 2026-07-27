@@ -80,9 +80,13 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
 
   void _toast(String msg) {
     if (!mounted) return;
+    // Success messages get a green background; errors stay red.
+    final isSuccess = msg.toLowerCase().contains('successful');
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: const Color(0xFFE24B4A),
+        backgroundColor: isSuccess
+            ? const Color(0xFF10B981)
+            : const Color(0xFFE24B4A),
         content: Text(msg, style: GoogleFonts.dmSerifDisplay(fontSize: 12)),
       ),
     );
@@ -376,7 +380,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
     Color muted,
     Color border,
   ) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white;
     final id = emp['_id']?.toString() ?? '';
     final name = (emp['name'] ?? '').toString();
     final phone = (emp['phone'] ?? '').toString();
@@ -387,9 +391,25 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: card,
+        gradient: isDark
+            ? const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFF1C2029), Color(0xFF121419)],
+              )
+            : null,
+        color: isDark ? null : Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: border),
+        border: Border.all(
+          color: isDark ? Colors.white.withValues(alpha: 0.08) : border,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.05),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: Row(
         children: [

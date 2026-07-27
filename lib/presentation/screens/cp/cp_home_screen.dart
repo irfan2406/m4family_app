@@ -1607,7 +1607,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
               style: GoogleFonts.dmSerifDisplay(
                 color: isDark ? Colors.white : Colors.black,
                 fontWeight: FontWeight.w900,
-                fontSize: 10,
+                fontSize: 13,
                 letterSpacing: 1,
               ),
             ),
@@ -1619,7 +1619,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                 color: (isDark ? Colors.white : Colors.black).withValues(
                   alpha: 0.68,
                 ),
-                fontSize: 8,
+                fontSize: 11,
                 fontWeight: FontWeight.w500,
                 height: 1.4,
               ),

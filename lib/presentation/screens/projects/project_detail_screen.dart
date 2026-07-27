@@ -64,6 +64,25 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     _fetchProjectData();
   }
 
+  // Flip the wishlist heart + show an instant Saved/Removed toast (parity with
+  // the CP detail screen). Clears any prior toast so rapid taps don't stack.
+  void _toggleFavorite() {
+    final next = !_isFavorited;
+    setState(() => _isFavorited = next);
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(
+        SnackBar(
+          backgroundColor: const Color(0xFF10B981),
+          duration: const Duration(milliseconds: 1100),
+          behavior: SnackBarBehavior.fixed,
+          content: Text(
+            next ? 'Saved to favorites' : 'Removed from favorites',
+          ),
+        ),
+      );
+  }
+
   Future<void> _fetchProjectData() async {
     try {
       final apiClient = ref.read(apiClientProvider);
@@ -1546,8 +1565,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                           icon: _isFavorited
                               ? Icons.favorite
                               : LucideIcons.heart,
-                          onTap: () =>
-                              setState(() => _isFavorited = !_isFavorited),
+                          onTap: _toggleFavorite,
                           color: _isFavorited ? Colors.red : null,
                         )
                         .animate(key: ValueKey(_isFavorited))

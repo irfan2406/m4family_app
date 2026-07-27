@@ -447,7 +447,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.dmSerifDisplay(
-                          fontSize: 10,
+                          fontSize: 13,
                           fontWeight: FontWeight.w700,
                           color: scheme.primary.withValues(alpha: 0.8),
                           letterSpacing: 1.2,
@@ -459,7 +459,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.dmSerifDisplay(
-                          fontSize: 9,
+                          fontSize: 12,
                           fontWeight: FontWeight.w700,
                           color: scheme.onSurface.withValues(alpha: 0.6),
                           letterSpacing: 0.2,
@@ -493,7 +493,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                               child: Text(
                                 'BORN: $born',
                                 style: GoogleFonts.dmSerifDisplay(
-                                  fontSize: 10,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.w700,
                                   color: scheme.primary,
                                   letterSpacing: 0.8,
@@ -525,7 +525,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
       child: Text(
         text.toUpperCase(),
         style: GoogleFonts.dmSerifDisplay(
-          fontSize: 8,
+          fontSize: 10,
           fontWeight: FontWeight.w900,
           color: scheme.primary,
           letterSpacing: 0.6,

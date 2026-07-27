@@ -887,7 +887,10 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                   ),
                 ),
                 Expanded(
-                  child: _loading
+                  // Only block with the spinner when there's nothing to show;
+                  // if cached bookings are present, keep them visible while the
+                  // background refresh runs.
+                  child: (_loading && _list.isEmpty)
                       ? Center(
                           child: SizedBox(
                             width: 40,

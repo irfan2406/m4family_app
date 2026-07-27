@@ -1982,7 +1982,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               style: GoogleFonts.dmSerifDisplay(
                 color: isDark ? Colors.white : Colors.black,
                 fontWeight: FontWeight.w600,
-                fontSize: 10,
+                fontSize: 13,
                 letterSpacing: 1,
               ),
             ),
@@ -1992,7 +1992,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               textAlign: TextAlign.center,
               style: GoogleFonts.dmSerifDisplay(
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
-                fontSize: 8,
+                fontSize: 11,
                 fontWeight: FontWeight.w500,
                 height: 1.4,
               ),
