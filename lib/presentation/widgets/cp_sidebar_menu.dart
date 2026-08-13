@@ -8,6 +8,7 @@ import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 import 'package:m4_mobile/core/providers/theme_provider.dart';
+import 'package:m4_mobile/core/theme/app_theme.dart';
 
 class CpSidebarMenu extends ConsumerStatefulWidget {
   const CpSidebarMenu({super.key});
@@ -33,9 +34,15 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
   Widget build(BuildContext context) {
     final idx = ref.watch(cpNavigationIndexProvider);
     final themeMode = ref.watch(themeProvider);
-    final isDark = themeMode == ThemeMode.dark;
+    // Match the GUEST drawer: GREEN glass in LIGHT mode, NAVY glass in DARK.
+    // `realIsDark` drives the panel tint; `isDark` (forced true) keeps all
+    // text/icons cream-on-dark for both tints.
+    final realIsDark = themeMode == ThemeMode.dark;
+    const isDark = true;
 
-    return Drawer(
+    return Theme(
+      data: realIsDark ? M4Theme.darkThemeNavy : M4Theme.darkTheme,
+      child: Drawer(
       width: MediaQuery.of(context).size.width * 0.8,
       backgroundColor: Colors.transparent,
       elevation: 0,
@@ -45,7 +52,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
               child: Container(
-                color: (isDark ? const Color(0xFF0B1026) : const Color(0xFFF3EDE0)).withOpacity(0.6),
+                color: (realIsDark ? const Color(0xFF0B1026) : const Color(0xFF0F2A20)).withOpacity(0.6),
               ),
             ),
           ),
@@ -320,6 +327,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
           ),
         ],
       ),
+      ),
     );
   }
 }
@@ -339,7 +347,10 @@ class _SidebarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    // The CP drawer is always the dark (green/navy) glass panel, so items are
+    // always cream-on-dark. (An inner ExpansionTile theme was flipping this to
+    // light for Content Hub, hiding its text.)
+    const isDark = true;
     const purple = Color(0xFFC5A35B); // purple-600
     // Web parity: active → purple icon tile; inactive → slate tile + slate-400
     // icon.
@@ -399,7 +410,7 @@ class _SubItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    const isDark = true; // always dark (green/navy) glass panel
 
     return InkWell(
       onTap: onTap,

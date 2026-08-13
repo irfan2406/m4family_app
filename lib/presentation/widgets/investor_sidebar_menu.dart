@@ -7,6 +7,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/investor_shell_provider.dart';
 import 'package:m4_mobile/core/providers/theme_provider.dart';
+import 'package:m4_mobile/core/theme/app_theme.dart';
 
 /// Investor drawer — mirrors [CpSidebarMenu] with gold accent and investor menu items.
 /// Home/Projects/Support switch shell tabs; the rest route via `context.push`.
@@ -36,9 +37,13 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
   Widget build(BuildContext context) {
     final idx = ref.watch(investorNavigationIndexProvider);
     final themeMode = ref.watch(themeProvider);
-    final isDark = themeMode == ThemeMode.dark;
+    // Match the GUEST drawer: GREEN glass in LIGHT mode, NAVY glass in DARK.
+    final realIsDark = themeMode == ThemeMode.dark;
+    const isDark = true;
 
-    return Drawer(
+    return Theme(
+      data: realIsDark ? M4Theme.darkThemeNavy : M4Theme.darkTheme,
+      child: Drawer(
       width: MediaQuery.of(context).size.width * 0.8,
       backgroundColor: Colors.transparent,
       elevation: 0,
@@ -48,7 +53,7 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
               child: Container(
-                color: (isDark ? const Color(0xFF0B1026) : const Color(0xFFF3EDE0)).withValues(alpha: 0.6),
+                color: (realIsDark ? const Color(0xFF0B1026) : const Color(0xFF0F2A20)).withValues(alpha: 0.6),
               ),
             ),
           ),
@@ -233,6 +238,7 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
           ),
         ],
       ),
+      ),
     );
   }
 }
@@ -252,7 +258,8 @@ class _SidebarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    // Drawer is always the dark (green/navy) glass panel → always white text.
+    const isDark = true;
     const gold = Color(0xFFC5A35B);
 
     return InkWell(

@@ -264,7 +264,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
             style: GoogleFonts.ebGaramond(
               fontSize: 9,
               fontWeight: FontWeight.w900,
-              color: scheme.onSurface.withValues(alpha: 0.6),
+              color: scheme.onSurface.withValues(alpha: 0.82),
               letterSpacing: 1.2,
             ),
           ),
@@ -289,7 +289,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
           style: GoogleFonts.ebGaramond(
             fontSize: 13,
             fontWeight: FontWeight.w600,
-            color: scheme.onSurface.withValues(alpha: 0.68),
+            color: scheme.onSurface.withValues(alpha: 0.85),
             letterSpacing: 0,
           ),
         ),
@@ -369,7 +369,7 @@ class _MatrixItem extends StatelessWidget {
             Text(
               subtitle.toUpperCase(),
               style: GoogleFonts.ebGaramond(
-                color: scheme.onSurface.withValues(alpha: 0.68),
+                color: scheme.onSurface.withValues(alpha: 0.85),
                 fontSize: 8,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 0.8,

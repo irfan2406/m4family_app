@@ -443,23 +443,24 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
         maxLines: maxLines,
         keyboardType: keyboardType,
         style: GoogleFonts.ebGaramond(
-          color: isDark ? Colors.white : Colors.black,
+          color: isDark ? Colors.white : const Color(0xFF15271E),
           fontSize: 13,
           fontWeight: FontWeight.bold,
         ),
         decoration: InputDecoration(
           hintText: hint.toUpperCase(),
           hintStyle: GoogleFonts.ebGaramond(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
+            color: (isDark ? Colors.white : const Color(0xFF15271E))
+                .withOpacity(0.55),
             fontSize: 13,
             fontWeight: FontWeight.bold,
           ),
           prefixIcon: icon != null
               ? Icon(
                   icon,
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(
-                    0.6,
-                  ),
+                  color: isDark
+                      ? Colors.white.withOpacity(0.6)
+                      : const Color(0xFFC5A35B),
                   size: 18,
                 )
               : null,

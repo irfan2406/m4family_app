@@ -78,9 +78,10 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = textPrimary.withValues(alpha: 0.5);
+    // Light mode uses the cream color code (dark mode unchanged).
+    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF15271E);
+    final muted = textPrimary.withValues(alpha: 0.6);
 
     if (_loading) {
       return Scaffold(
@@ -174,7 +175,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
     required dynamic points,
     required String avatarUrl,
   }) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
     final border = (isDark ? Colors.white : Colors.black).withValues(alpha: isDark ? 0.08 : 0.06);
     return Container(
       decoration: BoxDecoration(

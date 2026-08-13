@@ -170,7 +170,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
       decoration: BoxDecoration(
         color: isDark
             ? scheme.surfaceContainerHighest.withValues(alpha: 0.3)
-            : Colors.white,
+            : scheme.surface,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: scheme.outlineVariant.withValues(alpha: 0.22),
@@ -247,7 +247,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
           style: GoogleFonts.ebGaramond(
             fontSize: 9,
             fontWeight: FontWeight.w700,
-            color: scheme.onSurfaceVariant.withValues(alpha: 0.7),
+            color: scheme.onSurface.withValues(alpha: 0.6),
             letterSpacing: 2,
           ),
         ),
@@ -276,7 +276,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
       decoration: BoxDecoration(
         color: isDark
             ? scheme.surfaceContainerHighest.withValues(alpha: 0.3)
-            : Colors.white,
+            : scheme.surface,
         borderRadius: BorderRadius.circular(28),
         border: Border.all(
           color: scheme.outlineVariant.withValues(alpha: 0.22),
@@ -397,7 +397,7 @@ class _FaqCategory extends StatelessWidget {
               style: GoogleFonts.ebGaramond(
                 fontSize: 9,
                 fontWeight: FontWeight.w700,
-                color: scheme.onSurfaceVariant.withValues(alpha: 0.7),
+                color: scheme.onSurface.withValues(alpha: 0.6),
                 letterSpacing: 2,
               ),
             ),
@@ -408,7 +408,7 @@ class _FaqCategory extends StatelessWidget {
           decoration: BoxDecoration(
             color: isDark
                 ? scheme.surfaceContainerHighest.withValues(alpha: 0.3)
-                : Colors.white,
+                : scheme.surface,
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
               color: scheme.outlineVariant.withValues(alpha: 0.22),
