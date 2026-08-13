@@ -22,7 +22,7 @@ class InvestorProfileDetailsScreen extends ConsumerStatefulWidget {
 }
 
 class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDetailsScreen> {
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
 
   final _name = TextEditingController();
   final _email = TextEditingController();
@@ -346,7 +346,7 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
               children: [
                 Text(
                   'MY PROFILE',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 15,
                     fontWeight: FontWeight.w800,
                     letterSpacing: -0.3,
@@ -356,7 +356,7 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
                 const SizedBox(height: 2),
                 Text(
                   'MANAGE YOUR PERSONAL DETAILS',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 8,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
@@ -481,7 +481,7 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
             ),
             child: Text(
               'PLATINUM MEMBER',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 9,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 2,
@@ -516,7 +516,7 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
           padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 9,
               fontWeight: FontWeight.w800,
               letterSpacing: 1.5,
@@ -529,7 +529,7 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
           enabled: enabled,
           keyboardType: keyboardType,
           maxLines: maxLines,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 14,
             fontWeight: FontWeight.w600,
             color: enabled ? textPrimary : textPrimary.withValues(alpha: 0.8),
@@ -584,7 +584,7 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
                 ),
                 child: Text(
                   'CANCEL',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
@@ -614,7 +614,7 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
                       )
                     : Text(
                         'SAVE CHANGES',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 11,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 1.5,

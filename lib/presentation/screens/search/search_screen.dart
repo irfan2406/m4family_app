@@ -266,7 +266,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                           children: [
                             Text(
                               'SEARCH RESULTS',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.ebGaramond(
                                 fontSize: 22,
                                 fontWeight: FontWeight.w900,
                                 color: textPrimary,
@@ -276,7 +276,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                             const SizedBox(height: 4),
                             Text(
                               'FOUND $count PROPERTIES',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.ebGaramond(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w900,
                                 color: muted,
@@ -315,9 +315,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                         if (_query.status.isNotEmpty)
                           _FilterBadge(
                             text: _query.status,
-                            background: const Color(0xFFF59E0B),
+                            background: const Color(0xFFC5A35B),
                             foreground: Colors.black,
-                            border: const Color(0xFFF59E0B),
+                            border: const Color(0xFFC5A35B),
                           ),
                         ...summaryTags.map((tag) => _FilterBadge(
                               text: tag,
@@ -411,7 +411,7 @@ class _FilterBadge extends StatelessWidget {
       ),
       child: Text(
         text.toUpperCase(),
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.ebGaramond(
           fontSize: 10,
           fontWeight: FontWeight.w900,
           color: foreground,
@@ -561,7 +561,7 @@ class _ResultCard extends StatelessWidget {
                       ),
                       child: Text(
                         status.toUpperCase(),
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 9,
                           fontWeight: FontWeight.w900,
                           color: Colors.white,
@@ -588,7 +588,7 @@ class _ResultCard extends StatelessWidget {
                       title.toUpperCase(),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 20,
                         fontWeight: FontWeight.w900,
                         color: Colors.white,
@@ -611,7 +611,7 @@ class _ResultCard extends StatelessWidget {
                                   locationShort.toUpperCase(),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.ebGaramond(
                                     fontSize: 9,
                                     fontWeight: FontWeight.w900,
                                     color: Colors.white.withValues(alpha: 0.7),
@@ -641,7 +641,7 @@ class _ResultCard extends StatelessWidget {
                                 ),
                                 child: Text(
                                   startingPrice,
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.ebGaramond(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w900,
                                     fontStyle: FontStyle.italic,
@@ -709,7 +709,7 @@ class _EmptyState extends StatelessWidget {
           const SizedBox(height: 32),
           Text(
             'NO MATCHES',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 22,
               fontWeight: FontWeight.w900,
               color: textPrimary,
@@ -722,7 +722,7 @@ class _EmptyState extends StatelessWidget {
             child: Text(
               'TRY ADJUSTING YOUR FILTERS TO FIND MORE PROPERTIES.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 9,
                 fontWeight: FontWeight.w900,
                 color: muted,
@@ -745,7 +745,7 @@ class _EmptyState extends StatelessWidget {
               ),
               child: Text(
                 'CHANGE FILTERS',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
                   color: textPrimary,

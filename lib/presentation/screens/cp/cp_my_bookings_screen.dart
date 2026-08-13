@@ -123,7 +123,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
   ) {
     final s = status.toLowerCase();
     if (s.contains('confirmed') || s.contains('allotted')) {
-      const fg = Color(0xFF10B981);
+      const fg = Color(0xFFC5A35B);
       return (
         bg: fg.withValues(alpha: 0.10),
         border: fg.withValues(alpha: 0.20),
@@ -131,7 +131,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
       );
     }
     if (s.contains('pending')) {
-      const fg = Color(0xFF9333EA);
+      const fg = Color(0xFFC5A35B);
       return (
         bg: fg.withValues(alpha: 0.10),
         border: fg.withValues(alpha: 0.20),
@@ -280,7 +280,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                       projectName.toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 14,
                         fontWeight: FontWeight.w900,
                         letterSpacing: -0.2,
@@ -301,7 +301,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                             location,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 10,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 1.2,
@@ -323,7 +323,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                           projectType.toUpperCase(),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 1.2,
@@ -348,7 +348,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                 ),
                 child: Text(
                   status.toUpperCase(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 9,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.8,
@@ -445,7 +445,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                         'MILESTONE PAYMENT PROGRESSION',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 9,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 2.0,
@@ -456,7 +456,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                     const SizedBox(width: 10),
                     Text(
                       '$paymentProgress%',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 16,
                         fontWeight: FontWeight.w900,
                         fontStyle: FontStyle.italic,
@@ -520,7 +520,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
               // client's digits, prefixed 91 when it's a 10-digit number.
               _pillButton(
                 icon: LucideIcons.messageCircle,
-                iconColor: const Color(0xFF10B981),
+                iconColor: const Color(0xFFC5A35B),
                 onTap: (clientPhone.isNotEmpty && clientPhone != 'N/A')
                     ? () {
                         final clean = clientPhone.replaceAll(RegExp(r'\D'), '');
@@ -559,7 +559,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                   ),
                   child: Text(
                     'CP-TRK / ${id.substring(id.length - (id.length >= 8 ? 8 : id.length)).toUpperCase()}',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 8,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1.5,
@@ -590,7 +590,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
 
     final labelW = Text(
       label,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.ebGaramond(
         fontSize: 9,
         fontWeight: FontWeight.w900,
         letterSpacing: 2.4,
@@ -603,7 +603,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
       textAlign: rightAlign ? TextAlign.right : TextAlign.left,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.ebGaramond(
         fontSize: 13,
         fontWeight: FontWeight.w900,
         fontStyle: italic ? FontStyle.italic : FontStyle.normal,
@@ -679,14 +679,14 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
             child: TextField(
               controller: _searchController,
               onChanged: (v) => setState(() => _searchQuery = v),
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 1,
               ),
               decoration: InputDecoration(
                 hintText: 'SEARCH CLIENT, ID...',
-                hintStyle: GoogleFonts.montserrat(
+                hintStyle: GoogleFonts.ebGaramond(
                   fontSize: 9,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 1,
@@ -736,7 +736,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                 size: 16,
                 color: scheme.onSurfaceVariant,
               ),
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 9,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 0.8,
@@ -825,7 +825,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                               children: [
                                 Text(
                                   'CLIENT BOOKINGS',
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.ebGaramond(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w900,
                                     letterSpacing: -0.2,
@@ -835,7 +835,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                                 const SizedBox(height: 4),
                                 Text(
                                   'STATUS: ACTIVE TRACKING',
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.ebGaramond(
                                     fontSize: 9,
                                     fontWeight: FontWeight.w900,
                                     letterSpacing: 2.8,
@@ -893,7 +893,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                                           Text(
                                             'NO ACTIVE BOOKINGS DISCOVERED YET',
                                             textAlign: TextAlign.center,
-                                            style: GoogleFonts.montserrat(
+                                            style: GoogleFonts.ebGaramond(
                                               fontSize: 10,
                                               fontWeight: FontWeight.w900,
                                               letterSpacing: 2.8,
@@ -907,7 +907,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                                                 context.push('/cp/visits'),
                                             child: Text(
                                               'CHECK SCHEDULED VISITS',
-                                              style: GoogleFonts.montserrat(
+                                              style: GoogleFonts.ebGaramond(
                                                 fontSize: 10,
                                                 fontWeight: FontWeight.w900,
                                                 letterSpacing: 2.4,

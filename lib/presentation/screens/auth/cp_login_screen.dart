@@ -82,12 +82,12 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                         child: Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: Colors.purple.withValues(alpha: 0.2),
+                            color: Color(0xFFC5A35B).withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Icon(
                             isDark ? LucideIcons.moon : LucideIcons.sun,
-                            color: Colors.purpleAccent,
+                            color: Color(0xFFC5A35B),
                             size: 22,
                           ),
                         ),
@@ -123,7 +123,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                               const SizedBox(width: 12),
                               Text(
                                 'BACK TO GUEST PORTAL',
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.ebGaramond(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w900,
                                   fontSize: 11,
@@ -139,7 +139,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                   ],
                   Text(
                     'CHANNEL\nPARTNER',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 48,
                       fontWeight: FontWeight.w900,
                       color: Colors.white,
@@ -150,7 +150,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                   const SizedBox(height: 12),
                   Text(
                     'AUTHORIZED PARTNER ACCESS PORTAL',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
                       color: Colors.white54,
@@ -182,7 +182,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                         ),
                         child: Text(
                           'FORGOT PASSWORD?',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 10,
                             fontWeight: FontWeight.w800,
                             color: Colors.white54,
@@ -196,10 +196,10 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                         ),
                         child: Text(
                           'REGISTER NOW',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
-                            color: Colors.purpleAccent,
+                            color: Color(0xFFC5A35B),
                             letterSpacing: 1.5,
                           ),
                         ),
@@ -243,7 +243,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                                   }
                                 },
                           style: FilledButton.styleFrom(
-                            backgroundColor: Colors.purple.shade600,
+                            backgroundColor: Color(0xFFC5A35B),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(32),
                             ),
@@ -264,7 +264,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                                   children: [
                                     Text(
                                       'AUTHORIZE ACCESS',
-                                      style: GoogleFonts.montserrat(
+                                      style: GoogleFonts.ebGaramond(
                                         fontWeight: FontWeight.w900,
                                         fontSize: 13,
                                         letterSpacing: 1.5,
@@ -299,7 +299,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                       ),
                       label: Text(
                         'BACK TO GUEST',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 11,
                           fontWeight: FontWeight.w800,
                           color: Colors.white70,
@@ -312,7 +312,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                   Text(
                     'M4 FAMILY PARTNER NETWORK\nSECURE • VERIFIED • TRUSTED',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 10,
                       fontWeight: FontWeight.w800,
                       color: Colors.white38,
@@ -353,7 +353,7 @@ class _Field extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 9,
             fontWeight: FontWeight.bold,
             color: Colors.white54,
@@ -392,7 +392,7 @@ class _Field extends StatelessWidget {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
               borderSide: BorderSide(
-                color: Colors.purpleAccent.withValues(alpha: 0.6),
+                color: Color(0xFFC5A35B).withValues(alpha: 0.6),
               ),
             ),
           ),

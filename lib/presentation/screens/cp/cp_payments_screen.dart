@@ -89,7 +89,7 @@ class _CpPaymentsScreenState extends ConsumerState<CpPaymentsScreen> {
         ),
         title: Text(
           'Wallet & history',
-          style: GoogleFonts.montserrat(fontWeight: FontWeight.w800, fontSize: 16),
+          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w800, fontSize: 16),
         ),
       ),
       body: _loading
@@ -200,15 +200,15 @@ class _CpPaymentsScreenState extends ConsumerState<CpPaymentsScreen> {
         children: [
           Text(
             label.toUpperCase(),
-            style: GoogleFonts.montserrat(fontSize: 9, letterSpacing: 1, color: Theme.of(context).hintColor),
+            style: GoogleFonts.ebGaramond(fontSize: 9, letterSpacing: 1, color: Theme.of(context).hintColor),
           ),
           const SizedBox(height: 4),
           Text(
             value,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontWeight: FontWeight.w800,
               fontSize: 14,
-              color: highlight ? Colors.greenAccent : null,
+              color: highlight ? Color(0xFFC5A35B) : null,
             ),
           ),
         ],

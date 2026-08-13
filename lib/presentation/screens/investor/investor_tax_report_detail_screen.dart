@@ -83,7 +83,7 @@ class _InvestorTaxReportDetailScreenState
       SnackBar(
         content: Text(
           'Opening $_name...',
-          style: GoogleFonts.montserrat(fontSize: 12),
+          style: GoogleFonts.ebGaramond(fontSize: 12),
         ),
       ),
     );
@@ -95,7 +95,7 @@ class _InvestorTaxReportDetailScreenState
       SnackBar(
         content: Text(
           'Downloading $_name...',
-          style: GoogleFonts.montserrat(fontSize: 12),
+          style: GoogleFonts.ebGaramond(fontSize: 12),
         ),
       ),
     );
@@ -161,7 +161,7 @@ class _InvestorTaxReportDetailScreenState
               children: [
                 Text(
                   'Report Details',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontWeight: FontWeight.w900,
                     fontSize: 16,
                     color: textPrimary,
@@ -172,7 +172,7 @@ class _InvestorTaxReportDetailScreenState
                   _id.toUpperCase(),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 9,
                     letterSpacing: 1.5,
                     fontWeight: FontWeight.w600,
@@ -215,7 +215,7 @@ class _InvestorTaxReportDetailScreenState
             const SizedBox(height: 16),
             Text(
               'Report not found',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 15,
                 fontWeight: FontWeight.w800,
                 color: textPrimary,
@@ -226,7 +226,7 @@ class _InvestorTaxReportDetailScreenState
               'The requested tax report could not be found or you do not '
               'have access to it.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(fontSize: 12, color: muted),
+              style: GoogleFonts.ebGaramond(fontSize: 12, color: muted),
             ),
           ],
         ),
@@ -235,7 +235,7 @@ class _InvestorTaxReportDetailScreenState
   }
 
   Widget _content(bool isDark, Color textPrimary, Color muted) {
-    const red = Color(0xFFEF4444);
+    const red = Color(0xFFC65B46);
 
     return RefreshIndicator(
       color: M4Theme.premiumBlue,
@@ -304,7 +304,7 @@ class _InvestorTaxReportDetailScreenState
               children: [
                 Text(
                   _name,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 17,
                     fontWeight: FontWeight.w900,
                     height: 1.25,
@@ -343,7 +343,7 @@ class _InvestorTaxReportDetailScreenState
       ),
       child: Text(
         label.toUpperCase(),
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.ebGaramond(
           fontSize: 10,
           fontWeight: FontWeight.w700,
           letterSpacing: 0.8,
@@ -354,8 +354,8 @@ class _InvestorTaxReportDetailScreenState
   }
 
   Widget _badgesRow() {
-    const green = Color(0xFF10B981);
-    const gold = Color(0xFFFFD700);
+    const green = Color(0xFFC5A35B);
+    const gold = Color(0xFFC5A35B);
     return Wrap(
       spacing: 10,
       runSpacing: 10,
@@ -381,7 +381,7 @@ class _InvestorTaxReportDetailScreenState
           const SizedBox(width: 6),
           Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 9,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.2,
@@ -394,8 +394,8 @@ class _InvestorTaxReportDetailScreenState
   }
 
   Widget _statusGrid(bool isDark, Color textPrimary, Color muted) {
-    const green = Color(0xFF10B981);
-    const amber = Color(0xFFF59E0B);
+    const green = Color(0xFFC5A35B);
+    const amber = Color(0xFFC5A35B);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -454,7 +454,7 @@ class _InvestorTaxReportDetailScreenState
         children: [
           Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 9,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.2,
@@ -471,7 +471,7 @@ class _InvestorTaxReportDetailScreenState
                   value,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     color: valueColor,
@@ -507,7 +507,7 @@ class _InvestorTaxReportDetailScreenState
               const SizedBox(width: 8),
               Text(
                 'DESCRIPTION',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1.2,
@@ -519,7 +519,7 @@ class _InvestorTaxReportDetailScreenState
           const SizedBox(height: 10),
           Text(
             _description,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 13,
               height: 1.55,
               fontWeight: FontWeight.w400,
@@ -532,7 +532,7 @@ class _InvestorTaxReportDetailScreenState
   }
 
   Widget _secureNote(bool isDark, Color muted) {
-    const gold = Color(0xFFFFD700);
+    const gold = Color(0xFFC5A35B);
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -550,7 +550,7 @@ class _InvestorTaxReportDetailScreenState
               'This document contains sensitive financial information. Please '
               'ensure you are in a secure environment before opening, '
               'downloading or sharing it.',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 11,
                 height: 1.5,
                 fontWeight: FontWeight.w500,
@@ -582,7 +582,7 @@ class _InvestorTaxReportDetailScreenState
         ),
         label: Text(
           'VIEW DOCUMENT',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 12,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.2,
@@ -593,7 +593,7 @@ class _InvestorTaxReportDetailScreenState
   }
 
   Widget _downloadButton() {
-    const gold = Color(0xFFFFD700);
+    const gold = Color(0xFFC5A35B);
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton.icon(
@@ -610,7 +610,7 @@ class _InvestorTaxReportDetailScreenState
         ),
         label: Text(
           'DOWNLOAD DOCUMENT',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 12,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.2,

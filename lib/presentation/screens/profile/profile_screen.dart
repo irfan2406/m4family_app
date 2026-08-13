@@ -29,7 +29,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
 
     return Material(
-      color: isDark ? const Color(0xFF09090B) : const Color(0xFFF8FAFC),
+      color: isDark ? const Color(0xFF0B1026) : const Color(0xFFF4EFE3),
       child: Stack(
         children: [
           SafeArea(
@@ -86,7 +86,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         children: [
           Text(
             'MY PROFILE',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 22,
               fontWeight: FontWeight.w900,
               color: isDark ? Colors.white : Colors.black,
@@ -124,7 +124,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF18181B) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : Colors.white,
         borderRadius: BorderRadius.circular(40),
         boxShadow: [
           BoxShadow(
@@ -174,7 +174,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     children: [
                       Text(
                         fullName.toUpperCase(),
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 20,
                           fontWeight: FontWeight.w900,
                           color: isDark ? Colors.white : Colors.black,
@@ -184,7 +184,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       const SizedBox(height: 4),
                       Text(
                         email,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                           color: isDark ? Colors.white38 : Colors.black45,
@@ -192,7 +192,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       ),
                       Text(
                         phone,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                           color: isDark ? Colors.white38 : Colors.black45,
@@ -226,7 +226,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 address.toUpperCase(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.ebGaramond(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w800,
                                   color: isDark
@@ -251,7 +251,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           const SizedBox(width: 6),
                           Text(
                             'BORN: ${born.toUpperCase()}',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 9,
                               fontWeight: FontWeight.w700,
                               color: isDark ? Colors.white38 : Colors.black45,
@@ -283,7 +283,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               children: [
                 Text(
                   'POINTS',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 12,
                     fontWeight: FontWeight.w900,
                     color: isDark ? Colors.white : Colors.black,
@@ -292,7 +292,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
                 Text(
                   points,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 22,
                     fontWeight: FontWeight.w900,
                     color: isDark ? Colors.white : Colors.black,
@@ -372,14 +372,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(LucideIcons.logOut, color: Colors.redAccent, size: 20),
+            const Icon(LucideIcons.logOut, color: Color(0xFFC5A35B), size: 20),
             const SizedBox(width: 12),
             Text(
               'LOG OUT',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 12,
                 fontWeight: FontWeight.w900,
-                color: Colors.redAccent,
+                color: Color(0xFFC5A35B),
                 letterSpacing: 1,
               ),
             ),
@@ -410,7 +410,7 @@ class _SectionTitle extends StatelessWidget {
       padding: const EdgeInsets.only(left: 8, bottom: 4),
       child: Text(
         title,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.ebGaramond(
           fontSize: 11,
           fontWeight: FontWeight.w900,
           color: isDark
@@ -445,7 +445,7 @@ class _SupportTile extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF18181B) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : Colors.white,
           borderRadius: BorderRadius.circular(32),
           boxShadow: [
             BoxShadow(
@@ -479,7 +479,7 @@ class _SupportTile extends StatelessWidget {
                 children: [
                   Text(
                     label,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 12,
                       fontWeight: FontWeight.w800,
                       color: isDark ? Colors.white : Colors.black,
@@ -488,7 +488,7 @@ class _SupportTile extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 8,
                       fontWeight: FontWeight.w700,
                       color: isDark ? Colors.white24 : Colors.black45,

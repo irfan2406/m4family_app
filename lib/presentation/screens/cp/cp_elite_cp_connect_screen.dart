@@ -89,11 +89,11 @@ class _CpEliteCpConnectScreenState extends ConsumerState<CpEliteCpConnectScreen>
           children: [
             Text(
               'Partners Portal',
-              style: GoogleFonts.montserrat(fontWeight: FontWeight.w800, fontSize: 16, color: scheme.onSurface),
+              style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w800, fontSize: 16, color: scheme.onSurface),
             ),
             Text(
               'INSTITUTIONAL CP NETWORK',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 8,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 2,
@@ -151,7 +151,7 @@ class _CpEliteCpConnectScreenState extends ConsumerState<CpEliteCpConnectScreen>
                   Expanded(
                     child: Text(
                       'VERIFIED NODE MATRIX',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 10,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 2,
@@ -167,7 +167,7 @@ class _CpEliteCpConnectScreenState extends ConsumerState<CpEliteCpConnectScreen>
                     ),
                     child: Text(
                       'TOP TIER',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 8,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1.5,
@@ -200,7 +200,7 @@ class _CpEliteCpConnectScreenState extends ConsumerState<CpEliteCpConnectScreen>
                         const SizedBox(height: 12),
                         Text(
                           'NO MATCHES FOUND',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 10,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 2,
@@ -233,7 +233,7 @@ class _CpEliteCpConnectScreenState extends ConsumerState<CpEliteCpConnectScreen>
       ),
       child: TextField(
         controller: _search,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.ebGaramond(
           fontSize: 11,
           fontWeight: FontWeight.w800,
           letterSpacing: 0.5,
@@ -242,7 +242,7 @@ class _CpEliteCpConnectScreenState extends ConsumerState<CpEliteCpConnectScreen>
         textCapitalization: TextCapitalization.characters,
         decoration: InputDecoration(
           hintText: 'SCAN VERIFIED INSTITUTIONAL PARTNERS…',
-          hintStyle: GoogleFonts.montserrat(
+          hintStyle: GoogleFonts.ebGaramond(
             fontSize: 10,
             fontWeight: FontWeight.w800,
             letterSpacing: 0.5,
@@ -337,7 +337,7 @@ class _StatCardState extends State<_StatCard> {
                   children: [
                     Text(
                       widget.stat.label.toUpperCase(),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 9,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1.5,
@@ -347,7 +347,7 @@ class _StatCardState extends State<_StatCard> {
                     const SizedBox(height: 4),
                     Text(
                       widget.stat.value.toUpperCase(),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
                         color: scheme.onSurface,
@@ -474,7 +474,7 @@ class _PartnerCardState extends State<_PartnerCard> {
                         p.name.toUpperCase(),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 15,
                           fontWeight: FontWeight.w800,
                           color: scheme.onSurface,
@@ -486,7 +486,7 @@ class _PartnerCardState extends State<_PartnerCard> {
                         '${p.expert} • ${p.region}'.toUpperCase(),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
                           color: muted,
@@ -506,7 +506,7 @@ class _PartnerCardState extends State<_PartnerCard> {
                         const SizedBox(width: 3),
                         Text(
                           p.rating,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 12,
                             fontWeight: FontWeight.w800,
                             color: scheme.primary,
@@ -517,7 +517,7 @@ class _PartnerCardState extends State<_PartnerCard> {
                     const SizedBox(height: 2),
                     Text(
                       '${p.activeProjects} OPS',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 9,
                         fontWeight: FontWeight.w700,
                         color: scheme.onSurface.withValues(alpha: 0.68),
@@ -540,7 +540,7 @@ class _PartnerCardState extends State<_PartnerCard> {
                       icon: Icon(LucideIcons.messageCircle, size: 16, color: scheme.primary),
                       label: Text(
                         'TRANSMIT',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 9,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 1.5,
@@ -564,7 +564,7 @@ class _PartnerCardState extends State<_PartnerCard> {
                       icon: Icon(LucideIcons.phone, size: 16, color: scheme.surface),
                       label: Text(
                         'LINK-UP',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 9,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 1.5,
@@ -652,7 +652,7 @@ class _AcceleratorCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           'ACCELERATOR PROTOCOL',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 18,
                             fontWeight: FontWeight.w800,
                             letterSpacing: -0.5,
@@ -667,7 +667,7 @@ class _AcceleratorCard extends StatelessWidget {
                   Text(
                     'Maximize institutional yield with 1.5x commission vectors on all '
                     'Prestige-tier residential clusters in core markets.',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
                       height: 1.6,
@@ -692,7 +692,7 @@ class _AcceleratorCard extends StatelessWidget {
                       ),
                       child: Text(
                         'VIEW YIELD STRUCTURES',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 2,

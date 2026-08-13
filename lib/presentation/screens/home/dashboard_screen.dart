@@ -167,7 +167,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       return Center(
         child: Text(
           'NO MEDIA FOUND',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             color: Colors.white10,
             fontSize: 10,
             fontWeight: FontWeight.w900,
@@ -241,7 +241,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('API Error: $msg'),
-            backgroundColor: Colors.orangeAccent,
+            backgroundColor: Color(0xFFC5A35B),
           ),
         );
       }
@@ -251,7 +251,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to load projects: $e'),
-            backgroundColor: Colors.redAccent,
+            backgroundColor: Color(0xFFC5A35B),
           ),
         );
       }
@@ -292,7 +292,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please fill all required fields (*)'),
-          backgroundColor: Colors.redAccent,
+          backgroundColor: Color(0xFFC5A35B),
         ),
       );
       return;
@@ -329,7 +329,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Submission failed: $e'),
-          backgroundColor: Colors.redAccent,
+          backgroundColor: Color(0xFFC5A35B),
         ),
       );
     } finally {
@@ -346,7 +346,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         Text(
           label,
           textAlign: TextAlign.center,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             color: foreground.withOpacity(0.6),
             fontSize: 8,
             fontWeight: FontWeight.w900,
@@ -464,31 +464,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     ), // 👈 Reduced from -60 to avoid overlap
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 0),
-                      child: ColorFiltered(
-                        colorFilter: ColorFilter.matrix(
-                          Theme.of(context).brightness == Brightness.dark
-                              ? const [
-                                  // Dark Mode: Invert and boost to white
-                                  -5.0, 0, 0, 0, 255,
-                                  0, -5.0, 0, 0, 255,
-                                  0, 0, -5.0, 0, 255,
-                                  0, 0, 0, 1, 0,
-                                ]
-                              : const [
-                                  // Light Mode: Crush to black
-                                  5.0, 0, 0, 0, -150,
-                                  0, 5.0, 0, 0, -150,
-                                  0, 0, 5.0, 0, -150,
-                                  0, 0, 0, 1, 0,
-                                ],
-                        ),
-                        child: Image.asset(
-                          'assets/living_m4_life.png',
-                          width: MediaQuery.of(context).size.width,
-                          height: 140, // 👈 Reduced from 300
-                          fit: BoxFit.fitWidth, // 👈 Force to edges
-                        ),
-                      ),
+                      child: M4Theme.taglineWordmark(context, height: 140),
                     ),
                   ),
 
@@ -583,7 +559,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                   ),
                                   child: Text(
                                     'ARTISTIC IMPRESSION',
-                                    style: GoogleFonts.montserrat(
+                                    style: GoogleFonts.ebGaramond(
                                       color: Colors.white,
                                       fontSize: 7,
                                       fontWeight: FontWeight.w900,
@@ -684,7 +660,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         : _topTabCategory == 'MEDIA'
                         ? 'M4 MEDIA'
                         : 'M4 PROPERTIES',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 32,
                       fontWeight: FontWeight.w400,
                       color: Theme.of(context).colorScheme.onSurface,
@@ -725,7 +701,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                           return Center(
                             child: Text(
                               'NO ITEMS FOUND',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.ebGaramond(
                                 color: Colors.white10,
                                 fontSize: 10,
                                 fontWeight: FontWeight.w900,
@@ -820,7 +796,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 children: <Widget>[
                   Text(
                     'OUR PHILOSOPHY',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 32,
                       fontWeight: FontWeight.w400,
                       color: Theme.of(context).colorScheme.onSurface,
@@ -831,7 +807,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   Text(
                     'To redefine modern luxury living by crafting homes with cutting edge design, enduring quality and thoughtful amenities delivered with trust, transparency, timeliness, and a human touch that creates lasting value for every homeowner.',
                     textAlign: TextAlign.justify,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       color: Theme.of(
                         context,
                       ).colorScheme.onSurface.withOpacity(0.6),
@@ -850,7 +826,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
               child: Text(
                 'FEATURED PROPERTY',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.gelasio(
                   fontSize: 32,
                   fontWeight: FontWeight.w400,
                   color: Theme.of(context).colorScheme.onSurface,
@@ -976,8 +952,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                       children: [
                                         Text(
                                           'FEATURED PROPERTY',
-                                          style: GoogleFonts.montserrat(
-                                            color: const Color(0xFFC5A358),
+                                          style: GoogleFonts.ebGaramond(
+                                            color: const Color(0xFFC5A35B),
                                             fontSize: 9,
                                             fontWeight: FontWeight.w900,
                                             letterSpacing: 2,
@@ -986,7 +962,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                         const SizedBox(height: 8),
                                         Text(
                                           title,
-                                          style: GoogleFonts.dmSerifDisplay(
+                                          style: GoogleFonts.gelasio(
                                             color: Colors.white,
                                             fontSize: 34,
                                             height: 1,
@@ -998,7 +974,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                           tagline.toUpperCase(),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.montserrat(
+                                          style: GoogleFonts.ebGaramond(
                                             color: Colors.white.withOpacity(
                                               0.8,
                                             ),
@@ -1029,7 +1005,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                       ),
                                       child: Text(
                                         'ARTISTIC IMPRESSION',
-                                        style: GoogleFonts.montserrat(
+                                        style: GoogleFonts.ebGaramond(
                                           color: Colors.white,
                                           fontSize: 8,
                                           fontWeight: FontWeight.w900,
@@ -1142,7 +1118,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                           ),
                           child: Text(
                             'READ MORE',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.ebGaramond(
                               color:
                                   Theme.of(context).brightness ==
                                       Brightness.dark
@@ -1194,7 +1170,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 children: <Widget>[
                   Text(
                     'EXPLORE,\nCONNECT AND ENGAGE\nWITH US',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 30,
                       fontWeight: FontWeight.w400,
                       height: 1.15,
@@ -1303,7 +1279,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 children: <Widget>[
                   Text(
                     'REGISTER YOUR\nINTEREST',
-                    style: GoogleFonts.dmSerifDisplay(
+                    style: GoogleFonts.gelasio(
                       fontSize: 32,
                       fontWeight: FontWeight.w400,
                       color: Theme.of(context).colorScheme.onSurface,
@@ -1369,7 +1345,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             )
                           : Text(
                               'SUBMIT INTEREST',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.ebGaramond(
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 3,
                                 fontSize: 12,
@@ -1415,7 +1391,7 @@ class _CategoryChip extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             color: isActive
                 ? (isDark ? Colors.black : Colors.white)
                 : (isDark ? Colors.white38 : Colors.black38),
@@ -1524,7 +1500,7 @@ class _ProjectCard extends StatelessWidget {
                         ),
                         child: Text(
                           displayStatus,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             color: Colors.white,
                             fontSize: 8,
                             fontWeight: FontWeight.w700,
@@ -1551,7 +1527,7 @@ class _ProjectCard extends StatelessWidget {
                         ),
                         child: Text(
                           'ARTISTIC IMPRESSION',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             color: Colors.white,
                             fontSize: 6,
                             fontWeight: FontWeight.w900,
@@ -1573,7 +1549,7 @@ class _ProjectCard extends StatelessWidget {
                       title,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         fontSize: 20,
                         fontWeight: FontWeight.w400,
                         color: scheme.onSurface,
@@ -1594,7 +1570,7 @@ class _ProjectCard extends StatelessWidget {
                             displayLocation,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.ebGaramond(
                               color: scheme.onSurface.withOpacity(0.68),
                               fontSize: 10,
                               fontWeight: FontWeight.w700,
@@ -1618,7 +1594,7 @@ class _ProjectCard extends StatelessWidget {
                         children: [
                           Text(
                             'READ MORE',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.ebGaramond(
                               color: scheme.surface,
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
@@ -1692,7 +1668,7 @@ class _QuickAction extends StatelessWidget {
           const SizedBox(height: 10),
           Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 8,
               fontWeight: FontWeight.w700,
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.68),
@@ -1742,7 +1718,7 @@ class _EngageCell extends StatelessWidget {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 12,
                 fontWeight: FontWeight.w900,
                 color: scheme.onSurface,
@@ -1754,7 +1730,7 @@ class _EngageCell extends StatelessWidget {
             Text(
               desc,
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 10.5,
                 fontWeight: FontWeight.w500,
                 color: scheme.onSurface.withOpacity(0.65),
@@ -1774,7 +1750,7 @@ class _QuickFilterSheet extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF070708) : Colors.white,
+        color: isDark ? const Color(0xFF0B1026) : Colors.white,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(35),
           topRight: Radius.circular(35),
@@ -1801,7 +1777,7 @@ class _QuickFilterSheet extends StatelessWidget {
             children: [
               Text(
                 'QUICK FILTERS',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
                   color: Theme.of(context).colorScheme.onSurface,
@@ -1850,7 +1826,7 @@ class _QuickFilterSheet extends StatelessWidget {
               child: Center(
                 child: Text(
                   'SHOW RESULTS',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     color: isDark ? Colors.black : Colors.white,
                     fontWeight: FontWeight.w900,
                     fontSize: 12,
@@ -1880,7 +1856,7 @@ class _FilterSection extends StatelessWidget {
       children: [
         Text(
           title,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 10,
             fontWeight: FontWeight.w900,
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.68),
@@ -1911,7 +1887,7 @@ class _FilterSection extends StatelessWidget {
                   ),
                   child: Text(
                     opt,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 9,
                       fontWeight: FontWeight.w900,
@@ -1999,7 +1975,7 @@ class _PremiumInputField extends StatelessWidget {
               keyboardType: keyboardType,
               maxLines: maxLines,
               cursorColor: Theme.of(context).colorScheme.onSurface,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
@@ -2009,7 +1985,7 @@ class _PremiumInputField extends StatelessWidget {
               decoration: InputDecoration(
                 isCollapsed: true,
                 hintText: label,
-                hintStyle: GoogleFonts.montserrat(
+                hintStyle: GoogleFonts.ebGaramond(
                   color: Theme.of(
                     context,
                   ).colorScheme.onSurface.withOpacity(0.68),
@@ -2060,8 +2036,8 @@ class _PremiumDropdownField extends StatelessWidget {
             child: DropdownButtonHideUnderline(
               child: DropdownButtonFormField<String>(
                 value: value,
-                dropdownColor: isDark ? const Color(0xFF0F0F11) : Colors.white,
-                style: GoogleFonts.montserrat(
+                dropdownColor: isDark ? const Color(0xFF0B1026) : Colors.white,
+                style: GoogleFonts.ebGaramond(
                   color: Theme.of(context).colorScheme.onSurface,
                   fontSize: 13,
                 ),
@@ -2074,7 +2050,7 @@ class _PremiumDropdownField extends StatelessWidget {
                 ),
                 decoration: InputDecoration(
                   labelText: label,
-                  labelStyle: GoogleFonts.montserrat(
+                  labelStyle: GoogleFonts.ebGaramond(
                     color: Theme.of(
                       context,
                     ).colorScheme.onSurface.withOpacity(0.68),
@@ -2128,7 +2104,7 @@ class _PremiumFormField extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     color: Theme.of(
                       context,
                     ).colorScheme.onSurface.withOpacity(0.68),
@@ -2178,13 +2154,13 @@ class _GlassSearchField extends StatelessWidget {
               Expanded(
                 child: TextField(
                   onChanged: onChanged,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     color: Colors.black,
                     fontSize: 14,
                   ),
                   decoration: InputDecoration(
                     hintText: 'Search residences...',
-                    hintStyle: GoogleFonts.montserrat(
+                    hintStyle: GoogleFonts.ebGaramond(
                       color: Colors.black45,
                       fontSize: 13,
                     ),
@@ -2259,7 +2235,7 @@ class _WebTab extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             color: isActive ? onSurface : onSurface.withOpacity(0.68),
             fontSize: 12, // 👈 Matched with web text-xs
             fontWeight: FontWeight.w900, // 👈 Matched with web font-black
@@ -2336,7 +2312,7 @@ class _UpdateCard extends StatelessWidget {
                   ),
                   child: Text(
                     type,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 7,
                       fontWeight: FontWeight.w900,
                       color: Theme.of(
@@ -2347,7 +2323,7 @@ class _UpdateCard extends StatelessWidget {
                 ),
                 Text(
                   date,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 8,
                     fontWeight: FontWeight.bold,
                     color: Theme.of(
@@ -2360,7 +2336,7 @@ class _UpdateCard extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               title,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 12,
                 fontWeight: FontWeight.w900,
                 color: Theme.of(context).colorScheme.onSurface,
@@ -2372,7 +2348,7 @@ class _UpdateCard extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               snippet,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 9,
                 color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
                 height: 1.4,
@@ -2455,7 +2431,7 @@ class _MediaCard extends StatelessWidget {
                   ),
                   child: Text(
                     'ARTISTIC IMPRESSION',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       color: Colors.white,
                       fontSize: 7,
                       fontWeight: FontWeight.w900,
@@ -2472,7 +2448,7 @@ class _MediaCard extends StatelessWidget {
                   title.toUpperCase(),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.dmSerifDisplay(
+                  style: GoogleFonts.gelasio(
                     color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.w400,
@@ -2549,7 +2525,7 @@ class _CommunityCard extends StatelessWidget {
                   children: [
                     Text(
                       title.toUpperCase(),
-                      style: GoogleFonts.dmSerifDisplay(
+                      style: GoogleFonts.gelasio(
                         color: Colors.white,
                         fontSize: 22,
                         fontWeight: FontWeight.w400,
@@ -2559,7 +2535,7 @@ class _CommunityCard extends StatelessWidget {
                     const SizedBox(height: 6),
                     Text(
                       description,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         color: Colors.white.withOpacity(0.6),
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
@@ -2574,7 +2550,7 @@ class _CommunityCard extends StatelessWidget {
                       children: [
                         Text(
                           'EXPLORE COMMUNITY',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             color: Colors.white.withOpacity(0.8),
                             fontSize: 9,
                             fontWeight: FontWeight.w700,

@@ -172,7 +172,7 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
               // Web parity: "REGISTER INTEREST" serif heading.
               Text(
                 'REGISTER\nINTEREST',
-                style: GoogleFonts.dmSerifDisplay(
+                style: GoogleFonts.gelasio(
                   color: isDark ? Colors.white : Colors.black,
                   fontSize: 34,
                   fontWeight: FontWeight.w400,
@@ -230,7 +230,7 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                       padding: const EdgeInsets.only(top: 12),
                       child: RichText(
                         text: TextSpan(
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             color: isDark ? Colors.white54 : Colors.black54,
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
@@ -240,7 +240,7 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                             const TextSpan(text: "I'VE READ AND AGREE TO THE "),
                             TextSpan(
                               text: 'PRIVACY POLICY',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.ebGaramond(
                                 color: isDark ? Colors.white : Colors.black,
                                 fontSize: 11,
                                 fontWeight: FontWeight.w900,
@@ -281,7 +281,7 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                         )
                       : Text(
                           'SUBMIT INTEREST',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontWeight: FontWeight.w800,
                             fontSize: 13,
                             letterSpacing: 2,
@@ -307,7 +307,7 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? Colors.black : Colors.white,
+        color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.12),
@@ -330,12 +330,12 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
         style: TextStyle(color: isDark ? Colors.white : Colors.black),
         decoration: InputDecoration(
           hintText: label,
-          hintStyle: GoogleFonts.montserrat(
+          hintStyle: GoogleFonts.ebGaramond(
             color: isDark ? Colors.white54 : Colors.black45,
             fontSize: 13,
           ),
-          errorStyle: GoogleFonts.montserrat(
-            color: Colors.redAccent,
+          errorStyle: GoogleFonts.ebGaramond(
+            color: Color(0xFFC5A35B),
             fontSize: 11,
             fontWeight: FontWeight.w600,
           ),

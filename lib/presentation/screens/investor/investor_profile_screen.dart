@@ -18,7 +18,7 @@ class InvestorProfileScreen extends ConsumerStatefulWidget {
 }
 
 class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
 
   bool _loading = true;
   Map<String, dynamic>? _me;
@@ -110,7 +110,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                 children: [
                   Text(
                     'MY PROFILE',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
                       color: textPrimary,
@@ -224,7 +224,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                         name.toUpperCase(),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
                           color: textPrimary,
@@ -236,12 +236,12 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                         email,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w700, color: muted),
+                        style: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.w700, color: muted),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         phone,
-                        style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w700, color: muted, letterSpacing: 0.5),
+                        style: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.w700, color: muted, letterSpacing: 0.5),
                       ),
                       const SizedBox(height: 10),
                       Container(
@@ -261,7 +261,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                                 address.toUpperCase(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: muted, letterSpacing: 1),
+                                style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w900, color: muted, letterSpacing: 1),
                               ),
                             ),
                           ],
@@ -275,7 +275,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                             const SizedBox(width: 6),
                             Text(
                               'BORN: $born',
-                              style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w800, color: _gold, letterSpacing: 0.8),
+                              style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w800, color: _gold, letterSpacing: 0.8),
                             ),
                           ],
                         ),
@@ -297,11 +297,11 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
               children: [
                 Text(
                   'POINTS',
-                  style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: textPrimary, letterSpacing: 2),
+                  style: GoogleFonts.ebGaramond(fontSize: 11, fontWeight: FontWeight.w900, color: textPrimary, letterSpacing: 2),
                 ),
                 Text(
                   '$points',
-                  style: GoogleFonts.montserrat(fontSize: 22, fontWeight: FontWeight.w900, color: _gold, letterSpacing: -0.5),
+                  style: GoogleFonts.ebGaramond(fontSize: 22, fontWeight: FontWeight.w900, color: _gold, letterSpacing: -0.5),
                 ),
               ],
             ),
@@ -314,7 +314,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
   Widget _sectionLabel(String text, Color muted) {
     return Text(
       text,
-      style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: muted, letterSpacing: 2.5),
+      style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w900, color: muted, letterSpacing: 2.5),
     );
   }
 
@@ -360,12 +360,12 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                       title.toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w700, color: textPrimary),
+                      style: GoogleFonts.ebGaramond(fontSize: 12, fontWeight: FontWeight.w700, color: textPrimary),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       subtitle.toUpperCase(),
-                      style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w800, color: muted, letterSpacing: 1),
+                      style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w800, color: muted, letterSpacing: 1),
                     ),
                   ],
                 ),
@@ -386,7 +386,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
           final go = await showDialog<bool>(
             context: context,
             builder: (ctx) => AlertDialog(
-              title: Text('Log out', style: GoogleFonts.montserrat(fontWeight: FontWeight.w700)),
+              title: Text('Log out', style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w700)),
               content: const Text('Sign out of your investor account?'),
               actions: [
                 TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
@@ -420,7 +420,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
               const SizedBox(width: 8),
               Text(
                 'LOG OUT',
-                style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.red, letterSpacing: 2),
+                style: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.red, letterSpacing: 2),
               ),
             ],
           ),

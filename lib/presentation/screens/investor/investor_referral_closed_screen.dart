@@ -21,8 +21,8 @@ class InvestorReferralClosedScreen extends ConsumerStatefulWidget {
 
 class _InvestorReferralClosedScreenState
     extends ConsumerState<InvestorReferralClosedScreen> {
-  static const _gold = Color(0xFFFFD700);
-  static const _emerald = Color(0xFF10B981);
+  static const _gold = Color(0xFFC5A35B);
+  static const _emerald = Color(0xFFC5A35B);
 
   // Statuses considered closed/credited (the only ones shown here).
   static const _closedStatuses = ['CLOSED', 'CREDITED', 'BOOKING_DONE', 'Booked'];
@@ -166,7 +166,7 @@ class _InvestorReferralClosedScreenState
                 Text(
                   'SUCCESS VAULT',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 13,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -177,7 +177,7 @@ class _InvestorReferralClosedScreenState
                 Text(
                   'CLOSED CONVERSIONS',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 3,
@@ -211,7 +211,7 @@ class _InvestorReferralClosedScreenState
               const SizedBox(width: 8),
               Text(
                 '${_referrals.length} CONVERTED',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 9,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2,
@@ -265,7 +265,7 @@ class _InvestorReferralClosedScreenState
                         Flexible(
                           child: Text(
                             name,
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 15,
                               fontWeight: FontWeight.w900,
                               color: textPrimary,
@@ -283,7 +283,7 @@ class _InvestorReferralClosedScreenState
                     const SizedBox(height: 4),
                     Text(
                       project.toUpperCase(),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 9,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1.5,
@@ -314,7 +314,7 @@ class _InvestorReferralClosedScreenState
                         const SizedBox(width: 5),
                         Text(
                           'UNIT CONFIG',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 7,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 1.5,
@@ -326,7 +326,7 @@ class _InvestorReferralClosedScreenState
                     const SizedBox(height: 6),
                     Text(
                       unitConfig.toUpperCase(),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
                         color: textPrimary,
@@ -342,7 +342,7 @@ class _InvestorReferralClosedScreenState
                 children: [
                   Text(
                     'REWARD EARNED',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 7,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1.5,
@@ -352,7 +352,7 @@ class _InvestorReferralClosedScreenState
                   const SizedBox(height: 6),
                   Text(
                     '+${_formatNumber(points)} PTS',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 12,
                       fontWeight: FontWeight.w900,
                       color: _emerald,
@@ -370,7 +370,7 @@ class _InvestorReferralClosedScreenState
                 const SizedBox(width: 6),
                 Text(
                   'CLOSED $date',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.5,
@@ -395,7 +395,7 @@ class _InvestorReferralClosedScreenState
       ),
       child: Text(
         'CONVERTED',
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.ebGaramond(
           fontSize: 8,
           fontWeight: FontWeight.w900,
           letterSpacing: 1,
@@ -423,7 +423,7 @@ class _InvestorReferralClosedScreenState
           Text(
             'NO CLOSED REFERRALS YET',
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 10,
               fontWeight: FontWeight.w900,
               letterSpacing: 2,
@@ -445,7 +445,7 @@ class _InvestorReferralClosedScreenState
           const SizedBox(height: 16),
           Text(
             'COULD NOT LOAD SUCCESS VAULT',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 10,
               fontWeight: FontWeight.w900,
               letterSpacing: 2,
@@ -463,7 +463,7 @@ class _InvestorReferralClosedScreenState
               ),
               child: Text(
                 'RETRY',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2,

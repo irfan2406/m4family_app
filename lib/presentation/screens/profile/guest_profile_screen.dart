@@ -65,7 +65,7 @@ class GuestProfileScreen extends ConsumerWidget {
                       const SizedBox(width: 16),
                       Text(
                         'MY PROFILE',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: textPrimary,
@@ -108,7 +108,7 @@ class GuestProfileScreen extends ConsumerWidget {
                                   shape: BoxShape.circle,
                                   color: isDark
                                       ? Colors.white.withValues(alpha: 0.04)
-                                      : const Color(0xFFF4F4F5),
+                                      : const Color(0xFFF4EFE3),
                                   border: Border.all(
                                     color: borderColor,
                                     width: 2,
@@ -118,7 +118,7 @@ class GuestProfileScreen extends ConsumerWidget {
                                 child: Center(
                                   child: Text(
                                     '?',
-                                    style: GoogleFonts.montserrat(
+                                    style: GoogleFonts.ebGaramond(
                                       fontSize: 30,
                                       fontWeight: FontWeight.bold,
                                       color: textMuted,
@@ -129,7 +129,7 @@ class GuestProfileScreen extends ConsumerWidget {
                               const SizedBox(height: 24),
                               Text(
                                 'GUEST USER',
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.ebGaramond(
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,
                                   color: textPrimary,
@@ -140,7 +140,7 @@ class GuestProfileScreen extends ConsumerWidget {
                               Text(
                                 'SIGN IN TO ACCESS YOUR PERSONALIZED DASHBOARD, DOCUMENTS, AND EXCLUSIVE OFFERS.',
                                 textAlign: TextAlign.center,
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.ebGaramond(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w900,
                                   color: textMuted,
@@ -170,7 +170,7 @@ class GuestProfileScreen extends ConsumerWidget {
                         Center(
                           child: Text(
                             'WHY JOIN M4 FAMILY?',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 10,
                               fontWeight: FontWeight.w700,
                               color: textMuted,
@@ -200,7 +200,7 @@ class GuestProfileScreen extends ConsumerWidget {
                         // Preferences
                         Text(
                           'PREFERENCES',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 9,
                             fontWeight: FontWeight.w700,
                             color: textMuted,
@@ -223,7 +223,7 @@ class GuestProfileScreen extends ConsumerWidget {
                                 decoration: BoxDecoration(
                                   color: isDark
                                       ? Colors.white.withValues(alpha: 0.05)
-                                      : const Color(0xFFF4F4F5),
+                                      : const Color(0xFFF4EFE3),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(color: borderColor),
                                 ),
@@ -240,7 +240,7 @@ class GuestProfileScreen extends ConsumerWidget {
                                   children: [
                                     Text(
                                       'DARK MODE',
-                                      style: GoogleFonts.montserrat(
+                                      style: GoogleFonts.ebGaramond(
                                         fontSize: 12,
                                         fontWeight: FontWeight.bold,
                                         color: textPrimary,
@@ -249,7 +249,7 @@ class GuestProfileScreen extends ConsumerWidget {
                                     const SizedBox(height: 2),
                                     Text(
                                       isDarkMode ? 'ENABLED' : 'DISABLED',
-                                      style: GoogleFonts.montserrat(
+                                      style: GoogleFonts.ebGaramond(
                                         fontSize: 8,
                                         fontWeight: FontWeight.w900,
                                         color: textMuted,
@@ -279,10 +279,10 @@ class GuestProfileScreen extends ConsumerWidget {
                           child: Container(
                             height: 56,
                             decoration: BoxDecoration(
-                              color: const Color(0xFFFFD700).withValues(alpha: 0.08),
+                              color: const Color(0xFFC5A35B).withValues(alpha: 0.08),
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
-                                color: const Color(0xFFFFD700).withValues(alpha: 0.25),
+                                color: const Color(0xFFC5A35B).withValues(alpha: 0.25),
                               ),
                             ),
                             child: Center(
@@ -290,14 +290,14 @@ class GuestProfileScreen extends ConsumerWidget {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   const Icon(LucideIcons.trendingUp,
-                                      size: 16, color: Color(0xFFD4A93B)),
+                                      size: 16, color: Color(0xFFC5A35B)),
                                   const SizedBox(width: 8),
                                   Text(
                                     'INVESTOR LOGIN',
-                                    style: GoogleFonts.montserrat(
+                                    style: GoogleFonts.ebGaramond(
                                       fontSize: 10,
                                       fontWeight: FontWeight.w900,
-                                      color: const Color(0xFFD4A93B),
+                                      color: const Color(0xFFC5A35B),
                                       letterSpacing: 1.5,
                                     ),
                                   ),
@@ -344,7 +344,7 @@ class _InfoTile extends StatelessWidget {
         children: [
           Text(
             title,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 11,
               fontWeight: FontWeight.bold,
               color: textPrimary,
@@ -353,7 +353,7 @@ class _InfoTile extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             body,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 9,
               color: textMuted,
               height: 1.4,
@@ -403,7 +403,7 @@ class _PrimaryButton extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 label,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
                   color: fg,
@@ -433,7 +433,7 @@ class _CircleButton extends StatelessWidget {
         height: 40,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF4F4F5),
+          color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF4EFE3),
           border: Border.all(
             color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06),
           ),

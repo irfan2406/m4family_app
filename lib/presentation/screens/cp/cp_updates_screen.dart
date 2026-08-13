@@ -97,12 +97,12 @@ class _CpUpdatesScreenState extends ConsumerState<CpUpdatesScreen> {
         backgroundColor: scheme.surface,
         elevation: 0,
         leading: IconButton(icon: const Icon(LucideIcons.arrowLeft), onPressed: () => context.pop()),
-        title: Text('UPDATES', style: GoogleFonts.montserrat(fontWeight: FontWeight.w900, letterSpacing: 2)),
+        title: Text('UPDATES', style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w900, letterSpacing: 2)),
       ),
       body: _loading
           ? Center(child: CircularProgressIndicator(color: accent))
           : _error != null
-              ? Center(child: Text(_error!, style: GoogleFonts.montserrat(color: scheme.onSurfaceVariant)))
+              ? Center(child: Text(_error!, style: GoogleFonts.ebGaramond(color: scheme.onSurfaceVariant)))
               : RefreshIndicator(
                   onRefresh: _load,
                   child: ListView.separated(
@@ -181,7 +181,7 @@ class _CpUpdatesScreenState extends ConsumerState<CpUpdatesScreen> {
                                           title.toUpperCase(),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1.2),
+                                          style: GoogleFonts.ebGaramond(fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1.2),
                                         ),
                                       ),
                                       const SizedBox(width: 10),

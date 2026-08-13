@@ -184,14 +184,14 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                     width: 4,
                     height: 4,
                     decoration: const BoxDecoration(
-                      color: Colors.purple,
+                      color: Color(0xFFC5A35B),
                       shape: BoxShape.circle,
                     ),
                   ),
                   const SizedBox(width: 6),
                   Text(
                     'SUCCESS PIPELINE',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 14,
                       fontWeight: FontWeight.w900,
                       color: scheme.onSurface,
@@ -203,7 +203,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
               const SizedBox(height: 2),
               Text(
                 'STATEMENT & PULSE',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 8,
                   fontWeight: FontWeight.w900,
                   color: scheme.onSurface.withValues(alpha: 0.68),
@@ -239,7 +239,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
             LucideIcons.briefcase,
             'BOOKINGS',
             '${s['totalTrackers'] ?? 0}',
-            const Color(0xFF3B82F6),
+            const Color(0xFFC5A35B),
             scheme,
           ),
           const SizedBox(width: 10),
@@ -256,7 +256,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
             LucideIcons.wallet,
             'SETTLED',
             fmt.format(1000),
-            const Color(0xFF10B981),
+            const Color(0xFFC5A35B),
             scheme,
           ),
           const SizedBox(width: 10),
@@ -264,7 +264,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
             LucideIcons.calendar,
             'VISITS',
             '${_meetings.length}',
-            const Color(0xFFF59E0B),
+            const Color(0xFFC5A35B),
             scheme,
           ),
         ],
@@ -302,7 +302,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
           const SizedBox(height: 8),
           Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 7,
               fontWeight: FontWeight.w900,
               color: scheme.onSurface.withValues(alpha: 0.68),
@@ -312,7 +312,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
           const SizedBox(height: 4),
           Text(
             value,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 11,
               fontWeight: FontWeight.w900,
               color: scheme.onSurface,
@@ -348,13 +348,13 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                 Expanded(
                   child: TextField(
                     onChanged: (v) => setState(() => _search = v),
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
                     ),
                     decoration: InputDecoration(
                       hintText: 'SEARCH PROSPECT...',
-                      hintStyle: GoogleFonts.montserrat(
+                      hintStyle: GoogleFonts.ebGaramond(
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
                         color: scheme.onSurface.withValues(alpha: 0.62),
@@ -386,7 +386,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                 padding: EdgeInsets.only(left: 8),
                 child: Icon(LucideIcons.chevronDown, size: 14),
               ),
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 10,
                 fontWeight: FontWeight.w900,
                 color: scheme.onSurface,
@@ -472,7 +472,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                             (t['customerName'] ?? 'UNKNOWN')
                                 .toString()
                                 .toUpperCase(),
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 13,
                               fontWeight: FontWeight.w900,
                               color: scheme.onSurface,
@@ -491,7 +491,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                                 (t['project'] ?? 'PROJECT')
                                     .toString()
                                     .toUpperCase(),
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.ebGaramond(
                                   fontSize: 8,
                                   fontWeight: FontWeight.w900,
                                   color: scheme.onSurface.withValues(
@@ -524,7 +524,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                       ),
                       child: Text(
                         status,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 8,
                           fontWeight: FontWeight.w900,
                           color: isCompleted
@@ -577,7 +577,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                         Expanded(
                           child: _infoCol(
                             'FINANCIAL PULSE',
-                            const Color(0xFF10B981),
+                            const Color(0xFFC5A35B),
                             [('VISITS', _val(t['visits'], '0'))],
                             scheme,
                           ),
@@ -613,7 +613,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                     const SizedBox(width: 8),
                     Text(
                       'VERIFICATION LIFECYCLE',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 8,
                         fontWeight: FontWeight.w900,
                         color: scheme.onSurface.withValues(alpha: 0.62),
@@ -672,7 +672,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
       children: [
         Text(
           title,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 7,
             fontWeight: FontWeight.w900,
             color: titleColor.withValues(alpha: 0.6),
@@ -688,7 +688,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
               children: [
                 Text(
                   r.$1,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 9,
                     fontWeight: FontWeight.w800,
                     color: scheme.onSurface.withValues(alpha: 0.62),
@@ -697,7 +697,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                 const SizedBox(width: 8),
                 Text(
                   r.$2.toUpperCase(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 9,
                     fontWeight: FontWeight.w900,
                     color: scheme.onSurface.withValues(alpha: 0.92),
@@ -719,7 +719,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
     bool highlight,
     ColorScheme scheme,
   ) {
-    const green = Color(0xFF10B981);
+    const green = Color(0xFFC5A35B);
     // Web parity: active (non-highlight) uses text-primary (dark), not purple.
     final dark = scheme.onSurface;
     Color bg;
@@ -750,7 +750,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
       ),
       child: Text(
         label,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.ebGaramond(
           fontSize: 7,
           fontWeight: FontWeight.w900,
           color: fg,
@@ -792,7 +792,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                   const SizedBox(width: 12),
                   Text(
                     DateFormat('MMM yyyy').format(_month).toUpperCase(),
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 11,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 2,
@@ -831,7 +831,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
               .map(
                 (d) => Text(
                   d,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     color: scheme.onSurface.withValues(alpha: 0.62),
@@ -863,11 +863,11 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                 onTap: () => setState(() => _selectedDay = sel ? null : day),
                 child: Text(
                   '$dayNo',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 10,
                     fontWeight: sel ? FontWeight.w900 : FontWeight.w700,
                     color: sel
-                        ? Colors.purple
+                        ? Color(0xFFC5A35B)
                         : scheme.onSurface.withValues(alpha: 0.8),
                   ),
                 ),

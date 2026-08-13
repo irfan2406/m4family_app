@@ -153,7 +153,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: isDark ? Colors.black : Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBodyBehindAppBar: true,
       extendBody: true,
       // Bottom nav — shown only when pushed standalone (from the menu), not
@@ -174,7 +174,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           children: [
             Text(
               'WHO WE ARE',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 color: isDark ? Colors.white : Colors.black,
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
@@ -183,7 +183,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             ),
             Text(
               'M4 FAMILY COLLECTIVE',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 color: isDark ? Colors.white : Colors.black,
                 fontWeight: FontWeight.w400,
                 fontSize: 8,
@@ -270,12 +270,12 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
       drawer: const ConditionalDrawer(),
       body: Container(
         decoration: BoxDecoration(
-          color: isDark ? Colors.black : Colors.white,
+          color: Theme.of(context).scaffoldBackgroundColor,
           gradient: isDark
               ? const RadialGradient(
                   center: Alignment.topCenter,
                   radius: 2.5,
-                  colors: [Color(0xFF0F1115), Colors.black],
+                  colors: [Color(0xFF0F2A20), Colors.black],
                 )
               : null,
         ),
@@ -426,7 +426,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                               step['label'].toString().toUpperCase(),
                               maxLines: 1,
                               softWrap: false,
-                              style: GoogleFonts.inter(
+                              style: GoogleFonts.ebGaramond(
                                 color: isActive
                                     ? (isDark ? Colors.white : Colors.black)
                                     : (isDark
@@ -483,7 +483,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             children: [
               Text(
                 '"M4 Family, with over a decade of excellence in Mumbai’s real estate landscape, has established itself as a trusted name in premium residential development."',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   color: isDark ? Colors.white : Colors.black,
                   fontSize: 13,
                   fontWeight: FontWeight.w400,
@@ -493,7 +493,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
               const SizedBox(height: 20),
               Text(
                 'Renowned for delivering homes that blend contemporary design with enduring quality, we take pride in creating spaces that inspire modern living while retaining timeless value.',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   color: isDark ? Colors.white : Colors.black,
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
@@ -503,7 +503,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
               const SizedBox(height: 20),
               Text(
                 'Every development we undertake reflects meticulous planning, uncompromising quality, and a commitment to delivering on promises. From Aura Heights to our latest offering Ocean View, we continue to redefine what it means to call a place home.',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   color: isDark ? Colors.white : Colors.black,
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
@@ -544,7 +544,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                         height: 24,
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: isDark ? Colors.black : Colors.white,
+                          color: Theme.of(context).scaffoldBackgroundColor,
                           shape: BoxShape.circle,
                           border: Border.all(
                             color: colorScheme.primary,
@@ -591,7 +591,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                         children: [
                           Text(
                             item['year']!,
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.ebGaramond(
                               color: colorScheme.primary,
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
@@ -601,7 +601,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                           const SizedBox(height: 8),
                           Text(
                             item['title']!.toUpperCase(),
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.ebGaramond(
                               color: isDark ? Colors.white : Colors.black,
                               fontSize: 16,
                               fontWeight: FontWeight.w900,
@@ -611,7 +611,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                           const SizedBox(height: 8),
                           Text(
                             (item['desc'] ?? item['content'] ?? '').toString(),
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.ebGaramond(
                               color: isDark ? Colors.white70 : Colors.black54,
                               fontSize: 12,
                               height: 1.6,
@@ -693,7 +693,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   const SizedBox(height: 16),
                   Text(
                     pillar['title'].toString().toUpperCase(),
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.ebGaramond(
                       color: isDark ? Colors.white : Colors.black,
                       fontSize: 11,
                       fontWeight: FontWeight.w900,
@@ -704,7 +704,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   Text(
                     pillar['desc'],
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.ebGaramond(
                       color: (isDark ? Colors.white : Colors.black).withOpacity(
                         0.68,
                       ),
@@ -756,7 +756,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         Text(
           'EXPERIENCE THE FUTURE OF HOME PERSONALISATION. OUR PROPRIETARY CUSTOM VIEWS SUITE ALLOWS YOU TO VISUALISE AND CRAFT YOUR DREAM SPACE BEFORE IT\'S EVEN BUILT.',
           textAlign: TextAlign.center,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
             fontSize: 11,
             fontWeight: FontWeight.w500,
@@ -820,7 +820,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         children: [
           Text(
             'CUSTOMER VIEWS',
-            style: GoogleFonts.inter(
+            style: GoogleFonts.ebGaramond(
               color: colorScheme.primary,
               fontSize: 10,
               fontWeight: FontWeight.w900,
@@ -830,7 +830,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           const SizedBox(height: 16),
           Text(
             '"AT M4 FAMILY, WE BELIEVE THAT LUXURY IS DEEPLY PERSONAL. OUR \'CUSTOMER VIEWS\' PHILOSOPHY ENSURES THAT EVERY RESIDENT\'S PERSPECTIVE IS VALUED, ALLOWING FOR A COLLABORATIVE APPROACH TO CREATING LIVING SPACES THAT REFLECT INDIVIDUAL LIFESTYLES AND ASPIRATIONS. WE INVITE YOU TO EXPLORE OUR BESPOKE PERSONALISATION OPTIONS, WHERE YOUR VISION MEETS OUR ARCHITECTURAL EXCELLENCE."',
-            style: GoogleFonts.inter(
+            style: GoogleFonts.ebGaramond(
               color: (isDark ? Colors.white : Colors.black).withOpacity(0.7),
               fontSize: 11,
               fontWeight: FontWeight.w800,
@@ -882,7 +882,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 children: [
                   Text(
                     'THE COLLECTIVE',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       color: Colors.white60,
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
@@ -892,7 +892,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   const SizedBox(height: 4),
                   Text(
                     'M4 LEGACY',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       color: Colors.white,
                       fontSize: 32,
                       fontWeight: FontWeight.w900,
@@ -940,7 +940,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         const SizedBox(width: 16),
         Text(
           title,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             color: isDark ? Colors.white : Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w900,
@@ -1043,7 +1043,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   children: [
                     Text(
                       section['title'].toString().toUpperCase(),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         color: isDark ? Colors.white : Colors.black,
                         fontSize: 15,
                         fontWeight: FontWeight.w900,
@@ -1067,7 +1067,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           const SizedBox(height: 24),
           Text(
             section['content'].toString().toUpperCase(),
-            style: GoogleFonts.inter(
+            style: GoogleFonts.ebGaramond(
               color: (isDark ? Colors.white : Colors.black).withOpacity(0.7),
               fontSize: 11,
               fontWeight: FontWeight.w800,
@@ -1161,7 +1161,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   const SizedBox(height: 24),
                   Text(
                     'YOUR DESIGN JOURNEY',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       color: Colors.white,
                       fontSize: 22,
                       fontWeight: FontWeight.w900,
@@ -1171,7 +1171,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   const SizedBox(height: 4),
                   Text(
                     'PERSONALISE EVERY DETAIL',
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.ebGaramond(
                       color: Colors.white.withOpacity(0.68),
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
@@ -1182,7 +1182,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   Text(
                     'CHOOSE YOUR MATERIALS, EXPLORE CONFIGURATIONS, AND SEE YOUR VISION COME TO LIFE WITH M4 CUSTOM VIEWS.',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.inter(
+                    style: GoogleFonts.ebGaramond(
                       color: Colors.white.withOpacity(0.7),
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
@@ -1226,7 +1226,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                                     AuthStatus.authenticated
                                 ? 'CUSTOM VIEWS'
                                 : 'ENQUIRE FOR CUSTOM VIEWS',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.ebGaramond(
                               fontWeight: FontWeight.w900,
                               fontSize: 11,
                               letterSpacing: 1,
@@ -1263,7 +1263,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
               top: 40,
             ),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF0F1115) : Colors.white,
+              color: isDark ? const Color(0xFF0B1026) : Colors.white,
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(40),
               ),
@@ -1286,7 +1286,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   children: [
                     Text(
                       'CUSTOM PERSONALISATION',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         color: isDark ? Colors.white : Colors.black,
                         fontWeight: FontWeight.w400,
                         fontSize: 16,
@@ -1305,7 +1305,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 const SizedBox(height: 8),
                 Text(
                   'Enter your details to receive our premium personalisation catalog and schedule a consultation.',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     color: isDark ? Colors.white : Colors.black,
                     fontSize: 10,
                     height: 1.6,
@@ -1405,7 +1405,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                           )
                         : Text(
                             'SEND REQUEST',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.ebGaramond(
                               fontWeight: FontWeight.w400,
                               fontSize: 12,
                               letterSpacing: 2,
@@ -1427,7 +1427,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
       padding: const EdgeInsets.only(left: 4, bottom: 8),
       child: Text(
         label,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.ebGaramond(
           color: isDark ? Colors.white : Colors.black,
           fontSize: 8,
           fontWeight: FontWeight.w400,
@@ -1457,13 +1457,13 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
       ),
       child: TextField(
         controller: controller,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.ebGaramond(
           color: isDark ? Colors.white : Colors.black,
           fontSize: 13,
         ),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: GoogleFonts.montserrat(
+          hintStyle: GoogleFonts.ebGaramond(
             color: isDark ? Colors.white : Colors.black,
             fontSize: 13,
           ),
@@ -1513,7 +1513,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 ),
                 child: Text(
                   'BACK',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     color: isDark ? Colors.white : Colors.black,
                     fontWeight: FontWeight.w900,
                     fontSize: 10,
@@ -1550,7 +1550,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 children: [
                   Text(
                     'NEXT STEP',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontWeight: FontWeight.w900,
                       fontSize: 10,
                       letterSpacing: 2,

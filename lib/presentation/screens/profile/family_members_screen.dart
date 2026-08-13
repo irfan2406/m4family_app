@@ -88,13 +88,13 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
       SnackBar(
         behavior: SnackBarBehavior.floating,
         backgroundColor: isError
-            ? const Color(0xFFEF4444)
+            ? const Color(0xFFC65B46)
             : (isDark ? Colors.white : Colors.black),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         margin: const EdgeInsets.all(16),
         content: Text(
           message,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 11,
             fontWeight: FontWeight.w800,
             color: isError
@@ -117,7 +117,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
         child: Container(
           padding: const EdgeInsets.all(28),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF09090B) : Colors.white,
+            color: isDark ? const Color(0xFF0B1026) : Colors.white,
             borderRadius: BorderRadius.circular(40),
             border: Border.all(
               color: (isDark ? Colors.white : Colors.black).withValues(
@@ -138,7 +138,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
             children: [
               Text(
                 'REMOVE MEMBER',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 13,
                   fontWeight: FontWeight.w900,
                   color: isDark ? Colors.white : Colors.black,
@@ -148,7 +148,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
               const SizedBox(height: 12),
               Text(
                 'Are you sure you want to remove this family member?',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: (isDark ? Colors.white : Colors.black).withValues(
@@ -250,7 +250,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                 builder: (sheetCtx) => Container(
                   height: 350,
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF09090B) : Colors.white,
+                    color: isDark ? const Color(0xFF0B1026) : Colors.white,
                     borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(30),
                     ),
@@ -269,7 +269,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                           children: [
                             Text(
                               'SELECT DATE OF BIRTH',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.ebGaramond(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w800,
                                 letterSpacing: 1,
@@ -291,10 +291,10 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                                 ),
                                 child: Text(
                                   'DONE',
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.ebGaramond(
                                     fontSize: 10,
                                     fontWeight: FontWeight.w900,
-                                    color: Colors.blue,
+                                    color: Color(0xFFC5A35B),
                                   ),
                                 ),
                               ),
@@ -310,7 +310,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                                 ? Brightness.dark
                                 : Brightness.light,
                             textTheme: CupertinoTextThemeData(
-                              dateTimePickerTextStyle: GoogleFonts.montserrat(
+                              dateTimePickerTextStyle: GoogleFonts.ebGaramond(
                                 color: isDark ? Colors.white : Colors.black,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
@@ -344,7 +344,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(32),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF09090B) : Colors.white,
+                    color: isDark ? const Color(0xFF0B1026) : Colors.white,
                     borderRadius: BorderRadius.circular(40),
                     border: Border.all(
                       color: (isDark ? Colors.white : Colors.black).withValues(
@@ -367,7 +367,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                     children: [
                       Text(
                         isEdit ? 'EDIT FAMILY MEMBER' : 'ADD FAMILY MEMBER',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 13,
                           fontWeight: FontWeight.w900,
                           color: isDark ? Colors.white : Colors.black,
@@ -436,7 +436,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                                   dobDisplay.isEmpty
                                       ? 'SELECT DATE'
                                       : dobDisplay,
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.ebGaramond(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w800,
                                     color: dobDisplay.isEmpty
@@ -616,7 +616,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
           Expanded(
             child: Text(
               'FAMILY MEMBERS',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 22,
                 fontWeight: FontWeight.w900,
                 color: textColor,
@@ -668,7 +668,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
             child: TextField(
               controller: _searchController,
               onChanged: (val) => setState(() => _searchQuery = val),
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 11,
                 fontWeight: FontWeight.w900,
                 color: textColor,
@@ -679,7 +679,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                 contentPadding: const EdgeInsets.symmetric(vertical: 16),
                 border: InputBorder.none,
                 hintText: 'SEARCH MEMBERS...',
-                hintStyle: GoogleFonts.montserrat(
+                hintStyle: GoogleFonts.ebGaramond(
                   fontSize: 11,
                   fontWeight: FontWeight.w900,
                   color: (isDark ? Colors.white : Colors.black).withValues(
@@ -722,7 +722,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
           Text(
             'NO FAMILY MEMBERS FOUND',
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 11,
               fontWeight: FontWeight.w900,
               color: muted,
@@ -798,7 +798,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                       child: Text(
                         name.toUpperCase(),
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 13,
                           fontWeight: FontWeight.w900,
                           color: textColor,
@@ -825,7 +825,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                         ),
                         child: Text(
                           relation.toUpperCase(),
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 7,
                             fontWeight: FontWeight.w900,
                             color: (isDark ? Colors.white : Colors.black)
@@ -850,7 +850,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                       const SizedBox(width: 6),
                       Text(
                         dobDisplay.toUpperCase(),
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 9,
                           fontWeight: FontWeight.w700,
                           color: (isDark ? Colors.white : Colors.black)
@@ -940,7 +940,7 @@ class _HeaderIconButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(11),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF18181B) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: (isDark ? Colors.white : Colors.black).withValues(
@@ -1016,7 +1016,7 @@ class _DialogLabel extends StatelessWidget {
       padding: const EdgeInsets.only(left: 4),
       child: Text(
         label,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.ebGaramond(
           fontSize: 8,
           fontWeight: FontWeight.w900,
           color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.45),
@@ -1052,7 +1052,7 @@ class _DialogInput extends StatelessWidget {
       child: TextField(
         controller: controller,
         onChanged: onChanged,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.ebGaramond(
           fontSize: 12,
           fontWeight: FontWeight.w800,
           color: isDark ? Colors.white : Colors.black,
@@ -1065,7 +1065,7 @@ class _DialogInput extends StatelessWidget {
           ),
           border: InputBorder.none,
           hintText: hint,
-          hintStyle: GoogleFonts.montserrat(
+          hintStyle: GoogleFonts.ebGaramond(
             fontSize: 12,
             fontWeight: FontWeight.w600,
             color: (isDark ? Colors.white : Colors.black).withValues(
@@ -1112,7 +1112,7 @@ class _RelationDropdown extends StatelessWidget {
           value: selected,
           hint: Text(
             'Select Relation',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 12,
               fontWeight: FontWeight.w600,
               color: (isDark ? Colors.white : Colors.black).withValues(
@@ -1127,9 +1127,9 @@ class _RelationDropdown extends StatelessWidget {
               alpha: 0.4,
             ),
           ),
-          dropdownColor: isDark ? const Color(0xFF18181B) : Colors.white,
+          dropdownColor: isDark ? const Color(0xFF141B3A) : Colors.white,
           borderRadius: BorderRadius.circular(16),
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 12,
             fontWeight: FontWeight.w800,
             color: isDark ? Colors.white : Colors.black,
@@ -1178,7 +1178,7 @@ class _DialogButton extends StatelessWidget {
     final Color fg;
     if (filled) {
       bg = destructive
-          ? const Color(0xFFEF4444)
+          ? const Color(0xFFC65B46)
           : (isDark ? Colors.white : Colors.black);
       fg = destructive ? Colors.white : (isDark ? Colors.black : Colors.white);
     } else {
@@ -1207,7 +1207,7 @@ class _DialogButton extends StatelessWidget {
           ),
           child: Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 10,
               fontWeight: FontWeight.w900,
               color: fg,

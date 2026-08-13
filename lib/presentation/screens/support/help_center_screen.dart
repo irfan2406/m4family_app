@@ -138,7 +138,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
           children: [
             Text(
               'SUPPORT INDEX',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: scheme.onSurface,
@@ -148,7 +148,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
             const SizedBox(height: 2),
             Text(
               'FAQ & GOVERNANCE',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 9,
                 fontWeight: FontWeight.w700,
                 color: scheme.onSurfaceVariant.withValues(alpha: 0.7),
@@ -189,14 +189,14 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
         controller: _searchController,
         onChanged: (value) =>
             setState(() => _searchQuery = value.toLowerCase()),
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.ebGaramond(
           color: scheme.onSurface,
           fontSize: 12,
           fontWeight: FontWeight.bold,
         ),
         decoration: InputDecoration(
           hintText: 'SEARCH FOR HELP...',
-          hintStyle: GoogleFonts.montserrat(
+          hintStyle: GoogleFonts.ebGaramond(
             color: scheme.onSurface.withValues(alpha: 0.68),
             fontSize: 12,
             fontWeight: FontWeight.w800,
@@ -244,7 +244,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
       children: [
         Text(
           'FREQUENTLY ASKED QUESTIONS',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 9,
             fontWeight: FontWeight.w700,
             color: scheme.onSurfaceVariant.withValues(alpha: 0.7),
@@ -312,7 +312,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
           const SizedBox(height: 24),
           Text(
             'STILL NEED HELP?',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 20,
               fontWeight: FontWeight.w900,
               color: scheme.onSurface,
@@ -322,7 +322,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
           const SizedBox(height: 6),
           Text(
             'OUR TEAM IS AVAILABLE 24/7',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 9,
               fontWeight: FontWeight.w700,
               color: scheme.onSurfaceVariant.withValues(alpha: 0.7),
@@ -352,7 +352,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
               ),
               child: Text(
                 'CONTACT SUPPORT',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontWeight: FontWeight.w900,
                   fontSize: 11,
                   letterSpacing: 1.5,
@@ -394,7 +394,7 @@ class _FaqCategory extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               title,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 9,
                 fontWeight: FontWeight.w700,
                 color: scheme.onSurfaceVariant.withValues(alpha: 0.7),
@@ -485,7 +485,7 @@ class _FaqRowState extends State<_FaqRow> {
                       widget.question.toUpperCase(),
                       // Web parity: text-xs (12px) font-bold text-foreground —
                       // full-strength dark, heavier than the previous 11px/700.
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         color: scheme.onSurface,
                         fontWeight: FontWeight.w800,
                         fontSize: 12,
@@ -508,7 +508,7 @@ class _FaqRowState extends State<_FaqRow> {
                   padding: const EdgeInsets.only(top: 12),
                   child: Text(
                     widget.answer,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       color: scheme.onSurfaceVariant,
                       fontSize: 11,
                       fontWeight: FontWeight.w700,

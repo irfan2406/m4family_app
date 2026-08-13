@@ -55,7 +55,7 @@ class _GuestCustomViewsScreenState
     final isCp = role == 'cp';
 
     return Scaffold(
-      backgroundColor: isDark ? Colors.black : Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       drawer: const ConditionalDrawer(),
       extendBody: true,
       bottomNavigationBar: isCp
@@ -99,7 +99,7 @@ class _GuestCustomViewsScreenState
               children: [
                 Text(
                   'INTERACTIVE LIVING',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     color: isDark ? Colors.white : Colors.black,
                     fontWeight: FontWeight.w900,
                     fontSize: 14,
@@ -108,7 +108,7 @@ class _GuestCustomViewsScreenState
                 ),
                 Text(
                   'M4 CUSTOM SHOWCASE',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     color: (isDark ? Colors.white : Colors.black).withOpacity(
                       0.68,
                     ),
@@ -156,7 +156,7 @@ class _GuestCustomViewsScreenState
                         textAlign: TextAlign.center,
                         // Web parity: font-light serif (elegant, thin
                         // high-contrast), not a heavy slab display face.
-                        style: GoogleFonts.playfairDisplay(
+                        style: GoogleFonts.gelasio(
                           color: isDark ? Colors.white : Colors.black,
                           fontSize: 52,
                           fontWeight: FontWeight.w400,
@@ -179,7 +179,7 @@ class _GuestCustomViewsScreenState
                   Text(
                     'Experience the future of home personalisation. Our proprietary Custom Views suite allows you to visualise and craft your dream space before it\'s even built. Every M4 residence is a bespoke masterpiece, where your vision dictates the architecture of luxury. Beyond standard configurations, we offer a multi-sensory design experience—from haptic material selection to precision spatial planning. Our suite ensures that your digital blueprint translates into a tangible sanctuary of unparalleled refinement.',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       color: (isDark ? Colors.white : Colors.black).withOpacity(
                         0.7,
                       ),
@@ -254,7 +254,7 @@ class _GuestCustomViewsScreenState
                               alignment: Alignment.bottomLeft,
                               child: Text(
                                 cat['title']!,
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.ebGaramond(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w900,
                                   color: Colors.white,

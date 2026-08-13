@@ -143,7 +143,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
             center: Alignment.topLeft,
             radius: 1.5,
             colors: isDark
-                ? [const Color(0xFF1A1A1A), const Color(0xFF0A0A0A)]
+                ? [const Color(0xFF163A2C), const Color(0xFF0F2A20)]
                 : [scheme.surface, scheme.surfaceContainerLowest],
           ),
         ),
@@ -173,7 +173,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                       children: [
                         Text(
                           'M4 FAMILY',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 14,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 2.5,
@@ -182,7 +182,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                         ),
                         Text(
                           'DEVELOPMENTS',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 8,
                             fontWeight: FontWeight.w700,
                             letterSpacing: 3.5,
@@ -207,23 +207,23 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                         Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF60A5FA).withOpacity(0.1),
+                            color: const Color(0xFFC5A35B).withOpacity(0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             _getIcon(),
-                            color: const Color(0xFF60A5FA),
+                            color: const Color(0xFFC5A35B),
                             size: 18,
                           ),
                         ),
                         const SizedBox(width: 15),
                         Text(
                           'CONTENT HUB',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 3,
-                            color: const Color(0xFF60A5FA),
+                            color: const Color(0xFFC5A35B),
                           ),
                         ),
                       ],
@@ -231,7 +231,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                     const SizedBox(height: 20),
                     Text(
                       _getTitle(),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 32,
                         fontWeight: FontWeight.w900,
                         color: scheme.onSurface,
@@ -242,7 +242,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                     const SizedBox(height: 15),
                     Text(
                       _getSubtitle(),
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 14,
                         color: scheme.onSurface.withOpacity(0.68),
                         fontWeight: FontWeight.w500,
@@ -257,7 +257,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                 child: _isLoading
                     ? const Center(
                         child: CircularProgressIndicator(
-                          color: Color(0xFF60A5FA),
+                          color: Color(0xFFC5A35B),
                         ),
                       )
                     : _items.isEmpty
@@ -339,15 +339,15 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
           Container(
             padding: const EdgeInsets.all(30),
             decoration: BoxDecoration(
-              color: const Color(0xFF60A5FA).withOpacity(0.1),
+              color: const Color(0xFFC5A35B).withOpacity(0.1),
               borderRadius: BorderRadius.circular(30),
             ),
-            child: Icon(_getIcon(), size: 40, color: const Color(0xFF60A5FA)),
+            child: Icon(_getIcon(), size: 40, color: const Color(0xFFC5A35B)),
           ),
           const SizedBox(height: 25),
           Text(
             'NO ${widget.contentType.toUpperCase()} POSTS FOUND',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 16,
               fontWeight: FontWeight.w900,
               color: scheme.onSurface,
@@ -359,7 +359,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
             child: Text(
               "We're working on something amazing. Check back soon for fresh updates from our content hub.",
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 13,
                 color: scheme.onSurface.withOpacity(0.68),
                 height: 1.5,
@@ -444,24 +444,24 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF60A5FA).withOpacity(0.1),
+                            color: const Color(0xFFC5A35B).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
                             (item['type'] ?? widget.contentType)
                                 .toString()
                                 .toUpperCase(),
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 7,
                               fontWeight: FontWeight.w900,
-                              color: const Color(0xFF60A5FA),
+                              color: const Color(0xFFC5A35B),
                               letterSpacing: 1,
                             ),
                           ),
                         ),
                         Text(
                           formattedDate,
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 9,
                             fontWeight: FontWeight.bold,
                             color: scheme.onSurface.withOpacity(0.62),
@@ -474,7 +474,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                       item['title'].toString().toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 14,
                         fontWeight: FontWeight.w900,
                         color: scheme.onSurface,
@@ -486,7 +486,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                       item['description'] ?? '',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 10,
                         color: scheme.onSurface.withOpacity(0.68),
                         fontWeight: FontWeight.w500,
@@ -498,17 +498,17 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                       children: [
                         Text(
                           'READ ARTICLE',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
-                            color: const Color(0xFF60A5FA),
+                            color: const Color(0xFFC5A35B),
                             letterSpacing: 1,
                           ),
                         ),
                         const Icon(
                           LucideIcons.arrowRight,
                           size: 14,
-                          color: Color(0xFF60A5FA),
+                          color: Color(0xFFC5A35B),
                         ),
                       ],
                     ),

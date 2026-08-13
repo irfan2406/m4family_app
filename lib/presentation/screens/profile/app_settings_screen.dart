@@ -84,7 +84,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
     _darkMode = themeMode == ThemeMode.dark;
     final isDark = themeMode == ThemeMode.dark;
 
-    final bg = isDark ? const Color(0xFF09090B) : const Color(0xFFF8FAFC);
+    final bg = isDark ? const Color(0xFF0B1026) : const Color(0xFFF4EFE3);
 
     return Scaffold(
       backgroundColor: bg,
@@ -146,7 +146,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
             children: [
               Text(
                 'APP SETTINGS',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 14,
                   fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white : Colors.black,
@@ -156,7 +156,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
               const SizedBox(height: 4),
               Text(
                 'PLATFORM PREFERENCES',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
                   color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
@@ -271,7 +271,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
         children: [
           Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 8,
               fontWeight: FontWeight.w800,
               color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
@@ -326,7 +326,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
                     color: textPrimary,
@@ -335,7 +335,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 8,
                     fontWeight: FontWeight.w700,
                     color: muted,
@@ -370,7 +370,7 @@ class _IconButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF18181B) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05)),
           boxShadow: isDark

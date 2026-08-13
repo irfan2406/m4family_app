@@ -136,7 +136,9 @@ void main() async {
 
   const storage = FlutterSecureStorage();
   final themeStr = await storage.read(key: 'app_theme');
-  final initialTheme = themeStr == 'light' ? ThemeMode.light : ThemeMode.dark;
+  // Default to LIGHT (cream) to match the Figma design. Only a previously
+  // saved 'dark' choice opens the app in dark mode.
+  final initialTheme = themeStr == 'dark' ? ThemeMode.dark : ThemeMode.light;
 
   runApp(
     ProviderScope(
@@ -159,7 +161,7 @@ class M4FamilyApp extends ConsumerWidget {
       title: 'M4 Family',
       debugShowCheckedModeBanner: false,
       theme: M4Theme.lightTheme,
-      darkTheme: M4Theme.darkTheme,
+      darkTheme: M4Theme.darkThemeNavy, // dark mode = deep navy (screenshot)
       themeMode: themeMode,
       routerConfig: _router,
     );

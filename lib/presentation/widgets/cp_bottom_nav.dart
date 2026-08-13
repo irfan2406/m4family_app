@@ -25,12 +25,13 @@ class CpBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    // Frosted glass: translucent deep-green on green screens, translucent
+    // white on cream screens — icons on top stay crisp.
     final surface = isDark
-        ? Colors.white.withValues(alpha: 0.08)
-        : Colors.white.withValues(alpha: 0.95);
-    final border = (isDark ? Colors.white : Colors.black).withValues(
-      alpha: 0.08,
-    );
+        ? const Color(0xFF0B1026).withValues(alpha: 0.5)
+        : Colors.white.withValues(alpha: 0.6);
+    final border = (isDark ? const Color(0xFFF4EFE3) : const Color(0xFF0F2A20))
+        .withValues(alpha: 0.14);
 
     return SafeArea(
       top: false,

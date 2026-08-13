@@ -89,7 +89,7 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
               children: [
                 Text(
                   'M4 FAMILY',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 14,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -98,7 +98,7 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                 ),
                 Text(
                   'DEVELOPMENTS',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 8,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 4,
@@ -162,7 +162,7 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                       const SizedBox(width: 14),
                       Text(
                         'CONTENT HUB',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 3,
@@ -174,7 +174,7 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                   const SizedBox(height: 16),
                   Text(
                     'M4 BLOG',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 32,
                       fontWeight: FontWeight.w900,
                       letterSpacing: -1,
@@ -185,7 +185,7 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                   const SizedBox(height: 16),
                   Text(
                     'Stay updated with our latest insights and news.',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: scheme.onSurface.withOpacity(isLight ? 0.8 : 0.6),
@@ -215,7 +215,7 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                   const SizedBox(height: 16),
                   Text(
                     'No blog posts found',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 18,
                       fontWeight: FontWeight.w900,
                       color: isLight ? Colors.black : Colors.white,
@@ -224,7 +224,7 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                   const SizedBox(height: 8),
                   Text(
                     "Check back soon for fresh updates.",
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       color: scheme.onSurface.withOpacity(isLight ? 0.7 : 0.68),
                       fontWeight: FontWeight.w600,
                     ),
@@ -268,7 +268,7 @@ class _BlogCard extends ConsumerWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 32),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF18181B) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : Colors.white,
         borderRadius: BorderRadius.circular(40),
         border: Border.all(color: scheme.onSurface.withOpacity(0.05)),
         boxShadow: [
@@ -326,7 +326,7 @@ class _BlogCard extends ConsumerWidget {
                     ),
                     child: Text(
                       (item['type'] ?? 'ARTICLE').toString().toUpperCase(),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 8,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 2,
@@ -355,7 +355,7 @@ class _BlogCard extends ConsumerWidget {
                     const SizedBox(width: 6),
                     Text(
                       formattedDate.toUpperCase(),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 9,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1.5,
@@ -380,7 +380,7 @@ class _BlogCard extends ConsumerWidget {
                     const SizedBox(width: 6),
                     Text(
                       'BY M4 TEAM',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 9,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1.5,
@@ -392,7 +392,7 @@ class _BlogCard extends ConsumerWidget {
                 const SizedBox(height: 16),
                 Text(
                   (item['title'] ?? '').toString().toUpperCase(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 20,
                     fontWeight: FontWeight.w900,
                     letterSpacing: -0.5,
@@ -405,7 +405,7 @@ class _BlogCard extends ConsumerWidget {
                 const SizedBox(height: 12),
                 Text(
                   (item['description'] ?? '').toString(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: scheme.onSurface.withOpacity(isLight ? 0.75 : 0.6),
@@ -425,7 +425,7 @@ class _BlogCard extends ConsumerWidget {
                       icon: const Icon(LucideIcons.arrowRight, size: 16),
                       label: Text(
                         'READ MORE',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1.5,

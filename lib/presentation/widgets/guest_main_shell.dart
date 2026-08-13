@@ -1,4 +1,6 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/screens/home/guest_dashboard_screen.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
 import 'package:m4_mobile/presentation/screens/about/about_screen.dart';
@@ -21,13 +23,28 @@ class GuestMainShell extends ConsumerWidget {
     final currentIndex = ref.watch(guestNavigationProvider);
     final isDrawerOpen = ref.watch(drawerOpenProvider);
 
+    final bool appIsDark = Theme.of(context).brightness == Brightness.dark;
+
+    // LIGHT mode: Home (0) & Properties (1) keep the GREEN showcase look
+    // (Figma frames 1 & 4) — unchanged. DARK mode: they inherit the app's
+    // navy theme like every other section, so dark mode is navy everywhere.
+    Widget showcase(Widget child) => appIsDark
+        ? child // dark → inherit the app's navy theme
+        : Theme(data: M4Theme.darkTheme, child: child); // light → green
+
     final List<Widget> screens = [
-      const GuestDashboardScreen(), // 0: Home
-      const ProjectListScreen(),   // 1: Projects
-      const AboutScreen(),         // 2: About
-      const CareersScreen(),       // 3: Careers
-      const ContactScreen(),       // 4: Contact
+      showcase(const GuestDashboardScreen()), // 0: Home     — green / navy
+      showcase(const ProjectListScreen()),    // 1: Projects  — green / navy
+      const AboutScreen(),                    // 2: About     — cream / navy
+      const CareersScreen(),                  // 3: Careers   — cream / navy
+      const ContactScreen(),                  // 4: Contact   — cream / navy
     ];
+
+    // Nav-pill surface: navy in dark mode (all tabs); in light mode green on
+    // the showcase tabs and cream on the info tabs.
+    final ThemeData pillTheme = appIsDark
+        ? M4Theme.darkThemeNavy
+        : (currentIndex <= 1 ? M4Theme.darkTheme : M4Theme.lightTheme);
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -42,9 +59,13 @@ class GuestMainShell extends ConsumerWidget {
           if (!isDrawerOpen)
             Align(
               alignment: Alignment.bottomCenter,
-              child: _GuestNavigationPill(
-                currentIndex: currentIndex,
-                onTap: (index) => ref.read(guestNavigationProvider.notifier).state = index,
+              child: Theme(
+                data: pillTheme,
+                child: _GuestNavigationPill(
+                  currentIndex: currentIndex,
+                  onTap: (index) =>
+                      ref.read(guestNavigationProvider.notifier).state = index,
+                ),
               ),
             ),
         ],
@@ -64,33 +85,53 @@ class _GuestNavigationPill extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.only(bottom: 48),
-      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: isDark ? Colors.black.withOpacity(0.9) : Colors.white.withOpacity(0.9),
         borderRadius: BorderRadius.circular(100),
-        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
         boxShadow: [
           BoxShadow(
-            color: (isDark ? Colors.black : Colors.grey).withValues(alpha: 0.4),
+            color: Colors.black.withOpacity(isDark ? 0.45 : 0.18),
             blurRadius: 40,
-            spreadRadius: 4,
-            offset: const Offset(0, 15),
+            spreadRadius: 2,
+            offset: const Offset(0, 14),
           )
         ],
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _NavIcon(icon: LucideIcons.home, isActive: currentIndex == 0, onTap: () => onTap(0)),
-          const SizedBox(width: 12),
-          _NavIcon(icon: LucideIcons.building2, isActive: currentIndex == 1, onTap: () => onTap(1)),
-          const SizedBox(width: 12),
-          _NavIcon(icon: LucideIcons.info, isActive: currentIndex == 2, onTap: () => onTap(2)),
-          const SizedBox(width: 12),
-          _NavIcon(icon: LucideIcons.briefcase, isActive: currentIndex == 3, onTap: () => onTap(3)),
-          const SizedBox(width: 12),
-          _NavIcon(icon: LucideIcons.headphones, isActive: currentIndex == 4, onTap: () => onTap(4)),
-        ],
+      // Frosted-glass pill: the blur only affects the content BEHIND the bar;
+      // the icons sit on top and stay perfectly crisp.
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(100),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+          child: Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              // Frosted glass follows the surface: green on the green light
+              // screens, navy in dark mode, white on the cream screens.
+              color: isDark
+                  ? Theme.of(context).scaffoldBackgroundColor.withOpacity(0.5)
+                  : Colors.white.withOpacity(0.6),
+              borderRadius: BorderRadius.circular(100),
+              border: Border.all(
+                color: (isDark ? M4Theme.cream : M4Theme.deepGreen)
+                    .withOpacity(0.14),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _NavIcon(icon: LucideIcons.home, isActive: currentIndex == 0, onTap: () => onTap(0)),
+                const SizedBox(width: 12),
+                _NavIcon(icon: LucideIcons.building2, isActive: currentIndex == 1, onTap: () => onTap(1)),
+                const SizedBox(width: 12),
+                _NavIcon(icon: LucideIcons.info, isActive: currentIndex == 2, onTap: () => onTap(2)),
+                const SizedBox(width: 12),
+                _NavIcon(icon: LucideIcons.briefcase, isActive: currentIndex == 3, onTap: () => onTap(3)),
+                const SizedBox(width: 12),
+                _NavIcon(icon: LucideIcons.headphones, isActive: currentIndex == 4, onTap: () => onTap(4)),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -106,21 +147,31 @@ class _NavIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    // Reference: the active tab is a solid green circle on the cream screens
+    // and a solid white circle on the green screens; inactive icons are the
+    // opposite tone, dimmed, but still clearly legible on the frosted glass.
+    final activeCircle = isDark ? M4Theme.cream : M4Theme.midGreen;
+    final activeIcon = isDark ? M4Theme.navyBackground : M4Theme.cream;
+    final inactiveIcon = isDark
+        ? M4Theme.cream.withOpacity(0.75)
+        : M4Theme.deepGreen.withOpacity(0.72);
     return _ScaleButton(
       onTap: onTap,
       child: Container(
         width: 56,
         height: 56,
         decoration: BoxDecoration(
-          color: isActive ? (isDark ? Colors.white : Colors.black) : Colors.transparent,
+          color: isActive ? activeCircle : Colors.transparent,
           shape: BoxShape.circle,
-          boxShadow: isActive ? [BoxShadow(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1), blurRadius: 10)] : [],
+          boxShadow: isActive
+              ? [BoxShadow(color: activeCircle.withOpacity(0.3), blurRadius: 12)]
+              : [],
         ),
         child: Center(
           child: Icon(
-            icon, 
-            color: isActive ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white70 : Colors.black54), 
-            size: 24
+            icon,
+            color: isActive ? activeIcon : inactiveIcon,
+            size: 24,
           ),
         ),
       ),

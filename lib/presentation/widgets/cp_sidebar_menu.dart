@@ -45,7 +45,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
               child: Container(
-                color: (isDark ? Colors.black : Colors.white).withOpacity(0.6),
+                color: (isDark ? const Color(0xFF0B1026) : const Color(0xFFF3EDE0)).withOpacity(0.6),
               ),
             ),
           ),
@@ -61,16 +61,16 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                       const Icon(
                         LucideIcons.sparkles,
                         size: 16,
-                        color: Color(0xFF9333EA),
+                        color: Color(0xFFC5A35B),
                       ),
                       const SizedBox(width: 10),
                       Text(
                         'PARTNER MENU',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 2,
-                          color: isDark ? Colors.white38 : Colors.grey[600],
+                          color: isDark ? Colors.white38 : const Color(0xFF0F2A20).withValues(alpha: 0.55),
                         ),
                       ),
                     ],
@@ -121,8 +121,8 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                           context,
                         ).copyWith(dividerColor: Colors.transparent),
                         child: ExpansionTile(
-                          iconColor: const Color(0xFF9333EA),
-                          collapsedIconColor: const Color(0xFF9333EA),
+                          iconColor: const Color(0xFFC5A35B),
+                          collapsedIconColor: const Color(0xFFC5A35B),
                           onExpansionChanged: (_) {},
                           tilePadding: EdgeInsets.zero,
                           title: _SidebarItem(
@@ -182,11 +182,11 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                         ),
                         child: Text(
                           'QUICK ACTIONS',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 10,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 2,
-                            color: isDark ? Colors.white38 : Colors.grey[600],
+                            color: isDark ? Colors.white38 : const Color(0xFF0F2A20).withValues(alpha: 0.55),
                           ),
                         ),
                       ),
@@ -232,11 +232,11 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                     children: [
                       Text(
                         'THEME MODE',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 2,
-                          color: isDark ? Colors.white38 : Colors.grey[600],
+                          color: isDark ? Colors.white38 : const Color(0xFF0F2A20).withValues(alpha: 0.55),
                         ),
                       ),
                       GestureDetector(
@@ -250,11 +250,11 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                         child: Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: (isDark ? Colors.white : Colors.black)
+                            color: (isDark ? Colors.white : const Color(0xFF0F2A20))
                                 .withOpacity(0.08),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: (isDark ? Colors.white : Colors.black)
+                              color: (isDark ? Colors.white : const Color(0xFF0F2A20))
                                   .withOpacity(0.1),
                             ),
                           ),
@@ -262,7 +262,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                           // (resolvedTheme === "dark" ? Moon : Sparkles).
                           child: Icon(
                             isDark ? LucideIcons.moon : LucideIcons.sparkles,
-                            color: isDark ? Colors.white : Colors.black,
+                            color: isDark ? Colors.white : const Color(0xFF0F2A20),
                             size: 18,
                           ),
                         ),
@@ -289,7 +289,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                         // Web parity: bg-red-50 (light) / red-900/10 (dark).
                         color: isDark
                             ? Colors.red.withOpacity(0.1)
-                            : const Color(0xFFFEF2F2),
+                            : const Color(0xFFC65B46),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Row(
@@ -303,7 +303,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                           const SizedBox(width: 10),
                           Text(
                             'LOGOUT',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 12,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 1.5,
@@ -340,16 +340,16 @@ class _SidebarItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    const purple = Color(0xFF9333EA); // purple-600
+    const purple = Color(0xFFC5A35B); // purple-600
     // Web parity: active → purple icon tile; inactive → slate tile + slate-400
     // icon.
     final iconBg = isActive
         ? (isDark
               ? purple.withOpacity(0.25)
-              : const Color(0xFFF3E8FF)) // purple-100
+              : const Color(0xFFC5A35B)) // purple-100
         : (isDark
-              ? const Color(0xFF1E293B)
-              : const Color(0xFFF8FAFC)); // slate-800 / slate-50
+              ? const Color(0xFF141B3A)
+              : const Color(0xFFF4EFE3)); // slate-800 / slate-50
     final iconColor = isActive ? purple : const Color(0xFF94A3B8); // slate-400
 
     return InkWell(
@@ -374,13 +374,13 @@ class _SidebarItem extends StatelessWidget {
             Expanded(
               child: Text(
                 label,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
                   letterSpacing: -0.2,
                   color: isActive
                       ? purple
-                      : (isDark ? Colors.white70 : const Color(0xFF1E293B)),
+                      : (isDark ? Colors.white70 : const Color(0xFF163A2C)),
                 ),
               ),
             ),
@@ -411,7 +411,7 @@ class _SubItem extends StatelessWidget {
               width: 28,
               height: 28,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                color: (isDark ? Colors.white : const Color(0xFF0F2A20)).withOpacity(0.05),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
@@ -423,10 +423,10 @@ class _SubItem extends StatelessWidget {
             const SizedBox(width: 12),
             Text(
               label,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
-                color: isDark ? Colors.white : Colors.black87,
+                color: isDark ? Colors.white : const Color(0xFF0F2A20),
               ),
             ),
           ],

@@ -23,9 +23,16 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
   @override
   Widget build(BuildContext context) {
     final themeMode = ref.watch(themeProvider);
-    final isDark = themeMode == ThemeMode.dark;
+    // The guest drawer is GREEN glass in LIGHT mode (Figma frame 2 — unchanged)
+    // and NAVY glass in DARK mode, so it darkens with the rest of the app.
+    // `realIsDark` drives the panel tint + theme toggle; `isDark` (forced true)
+    // keeps text/icons cream-on-dark for both tints.
+    final realIsDark = themeMode == ThemeMode.dark;
+    const isDark = true;
 
-    return Drawer(
+    return Theme(
+      data: realIsDark ? M4Theme.darkThemeNavy : M4Theme.darkTheme,
+      child: Drawer(
       backgroundColor: Colors.transparent,
       width: MediaQuery.of(context).size.width * 0.85,
       child: Stack(
@@ -34,15 +41,13 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
             filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
             child: Container(
               decoration: BoxDecoration(
-                color: isDark
-                    ? Colors.black.withOpacity(0.8)
-                    : Colors.white.withOpacity(0.8),
+                // Frosted glass: green tint in LIGHT mode, deep navy tint in
+                // DARK mode.
+                color: realIsDark
+                    ? M4Theme.navyBackground.withOpacity(0.62)
+                    : M4Theme.deepGreen.withOpacity(0.6),
                 border: Border(
-                  right: BorderSide(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(
-                      0.05,
-                    ),
-                  ),
+                  right: BorderSide(color: M4Theme.gold.withOpacity(0.18)),
                 ),
               ),
             ),
@@ -55,8 +60,8 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                   padding: const EdgeInsets.fromLTRB(24, 20, 24, 10),
                   child: Text(
                     'MENU',
-                    style: GoogleFonts.montserrat(
-                      color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    style: GoogleFonts.ebGaramond(
+                      color: (isDark ? Colors.white : M4Theme.deepGreen).withOpacity(
                         0.68,
                       ),
                       fontSize: 10,
@@ -203,8 +208,8 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                         padding: const EdgeInsets.symmetric(horizontal: 14),
                         child: Text(
                           'QUICK ACTIONS',
-                          style: GoogleFonts.montserrat(
-                            color: (isDark ? Colors.white : Colors.black)
+                          style: GoogleFonts.ebGaramond(
+                            color: (isDark ? Colors.white : M4Theme.deepGreen)
                                 .withOpacity(0.6),
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
@@ -250,8 +255,8 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                     children: [
                       Text(
                         'THEME MODE',
-                        style: GoogleFonts.montserrat(
-                          color: isDark ? Colors.white70 : Colors.black87,
+                        style: GoogleFonts.ebGaramond(
+                          color: isDark ? Colors.white70 : M4Theme.deepGreen,
                           fontSize: 11,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1,
@@ -262,23 +267,23 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                           ref
                               .read(themeProvider.notifier)
                               .setTheme(
-                                isDark ? ThemeMode.light : ThemeMode.dark,
+                                realIsDark ? ThemeMode.light : ThemeMode.dark,
                               );
                         },
                         child: Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: (isDark ? Colors.white : Colors.black)
+                            color: (isDark ? Colors.white : M4Theme.deepGreen)
                                 .withOpacity(0.08),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: (isDark ? Colors.white : Colors.black)
+                              color: (isDark ? Colors.white : M4Theme.deepGreen)
                                   .withOpacity(0.1),
                             ),
                           ),
                           child: Icon(
-                            isDark ? LucideIcons.sparkles : LucideIcons.moon,
-                            color: isDark ? Colors.white : Colors.black,
+                            realIsDark ? LucideIcons.sparkles : LucideIcons.moon,
+                            color: Colors.white,
                             size: 18,
                           ),
                         ),
@@ -292,9 +297,9 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                     width: double.infinity,
                     height: 60,
                     decoration: BoxDecoration(
-                      color: Colors.red.withOpacity(0.12),
+                      color: M4Theme.coral.withOpacity(0.14),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.red.withOpacity(0.1)),
+                      border: Border.all(color: M4Theme.coral.withOpacity(0.35)),
                     ),
                     child: InkWell(
                       onTap: () => context.go('/onboarding'),
@@ -304,14 +309,14 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                         children: [
                           const Icon(
                             LucideIcons.logOut,
-                            color: Colors.red,
+                            color: M4Theme.coral,
                             size: 20,
                           ),
                           const SizedBox(width: 12),
                           Text(
                             'EXIT APP',
-                            style: GoogleFonts.montserrat(
-                              color: Colors.red,
+                            style: GoogleFonts.ebGaramond(
+                              color: M4Theme.coral,
                               fontWeight: FontWeight.w900,
                               fontSize: 13,
                               letterSpacing: 1,
@@ -326,6 +331,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
             ),
           ),
         ],
+      ),
       ),
     );
   }
@@ -346,41 +352,56 @@ class _MenuItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return ListTile(
-      onTap: onTap,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
-      leading: Container(
-        width: 44,
-        height: 44,
-        decoration: BoxDecoration(
-          color: isActive
-              ? (isDark ? Colors.white : Colors.black).withOpacity(0.15)
-              : (isDark ? Colors.white : Colors.black).withOpacity(0.08),
-          borderRadius: BorderRadius.circular(12),
+    // Reference: no gold. The active item gets a bright vertical accent bar on
+    // the far left (white on the green theme, deep-green on the cream theme), a
+    // subtly-lifted frosted icon box, and a full-strength icon + label.
+    final accent = isDark ? Colors.white : M4Theme.deepGreen;
+    return Stack(
+      alignment: Alignment.centerLeft,
+      children: [
+        ListTile(
+          onTap: onTap,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 14,
+            vertical: 2,
+          ),
+          leading: Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: accent.withOpacity(isActive ? 0.16 : 0.06),
+              borderRadius: BorderRadius.circular(12),
+              border: isActive
+                  ? Border.all(color: accent.withOpacity(0.25))
+                  : null,
+            ),
+            child: Icon(
+              icon,
+              color: isActive ? accent : accent.withOpacity(0.45),
+              size: 20,
+            ),
+          ),
+          title: Text(
+            label,
+            style: GoogleFonts.ebGaramond(
+              color: isActive ? accent : accent.withOpacity(0.75),
+              fontSize: 15,
+              fontWeight: isActive ? FontWeight.w800 : FontWeight.w700,
+              letterSpacing: -0.2,
+            ),
+          ),
         ),
-        child: Icon(
-          icon,
-          color: isActive
-              ? (isDark ? Colors.white : Colors.black)
-              : (isDark
-                    ? Colors.white.withOpacity(0.4)
-                    : Colors.black.withOpacity(0.5)),
-          size: 20,
-        ),
-      ),
-      title: Text(
-        label,
-        style: GoogleFonts.montserrat(
-          color: isActive
-              ? (isDark ? Colors.white : Colors.black)
-              : (isDark
-                    ? Colors.white.withOpacity(0.7)
-                    : Colors.black.withOpacity(0.8)),
-          fontSize: 15,
-          fontWeight: isActive ? FontWeight.w800 : FontWeight.w700,
-          letterSpacing: -0.2,
-        ),
-      ),
+        // Far-left active accent bar (does not shift the row — overlaid).
+        if (isActive)
+          Container(
+            width: 3,
+            height: 26,
+            decoration: BoxDecoration(
+              color: accent,
+              borderRadius: BorderRadius.circular(3),
+            ),
+          ),
+      ],
     );
   }
 }
@@ -415,24 +436,24 @@ class _DropdownMenuItem extends StatelessWidget {
             height: 44,
             decoration: BoxDecoration(
               color: isOpen
-                  ? (isDark ? Colors.white : Colors.black).withOpacity(0.15)
-                  : (isDark ? Colors.white : Colors.black).withOpacity(0.08),
+                  ? (isDark ? Colors.white : M4Theme.deepGreen).withOpacity(0.15)
+                  : (isDark ? Colors.white : M4Theme.deepGreen).withOpacity(0.08),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
               icon,
               color: isOpen
-                  ? (isDark ? Colors.white : Colors.black)
+                  ? (isDark ? Colors.white : M4Theme.deepGreen)
                   : (isDark
                         ? Colors.white.withOpacity(0.4)
-                        : Colors.black.withOpacity(0.5)),
+                        : M4Theme.deepGreen.withOpacity(0.5)),
               size: 20,
             ),
           ),
           title: Text(
             label,
-            style: GoogleFonts.montserrat(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(
+            style: GoogleFonts.ebGaramond(
+              color: (isDark ? Colors.white : M4Theme.deepGreen).withOpacity(
                 isOpen ? 1.0 : 0.8,
               ),
               fontSize: 15,
@@ -442,7 +463,7 @@ class _DropdownMenuItem extends StatelessWidget {
           ),
           trailing: Icon(
             isOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown,
-            color: isDark ? Colors.white30 : Colors.black26,
+            color: isDark ? Colors.white30 : M4Theme.deepGreen.withOpacity(0.35),
             size: 18,
           ),
         ),
@@ -476,12 +497,12 @@ class _SubItem extends StatelessWidget {
           icon,
           size: 16,
           color:
-              color ?? (isDark ? Colors.white : Colors.black).withOpacity(0.6),
+              color ?? (isDark ? Colors.white : M4Theme.deepGreen).withOpacity(0.6),
         ),
         title: Text(
           label,
-          style: GoogleFonts.montserrat(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.85),
+          style: GoogleFonts.ebGaramond(
+            color: (isDark ? Colors.white : M4Theme.deepGreen).withOpacity(0.85),
             fontSize: 13,
             fontWeight: FontWeight.w700,
           ),
@@ -511,19 +532,19 @@ class _QuickActionItem extends StatelessWidget {
         width: 44,
         height: 44,
         decoration: BoxDecoration(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
+          color: (isDark ? Colors.white : M4Theme.deepGreen).withOpacity(0.08),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Icon(
           icon,
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+          color: (isDark ? Colors.white : M4Theme.deepGreen).withOpacity(0.5),
           size: 18,
         ),
       ),
       title: Text(
         label,
-        style: GoogleFonts.montserrat(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.8),
+        style: GoogleFonts.ebGaramond(
+          color: (isDark ? Colors.white : M4Theme.deepGreen).withOpacity(0.8),
           fontSize: 15,
           fontWeight: FontWeight.w700,
           letterSpacing: -0.2,

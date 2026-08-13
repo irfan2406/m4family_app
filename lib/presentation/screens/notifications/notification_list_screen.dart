@@ -20,14 +20,14 @@ import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
 ({IconData icon, Color fg}) _iconFor(String? type) {
   switch ((type ?? 'default').toLowerCase()) {
     case 'success':
-      return (icon: LucideIcons.checkCircle, fg: const Color(0xFF16A34A));
+      return (icon: LucideIcons.checkCircle, fg: const Color(0xFFC5A35B));
     case 'alert':
-      return (icon: LucideIcons.alertTriangle, fg: const Color(0xFFF59E0B));
+      return (icon: LucideIcons.alertTriangle, fg: const Color(0xFFC5A35B));
     case 'promotion':
-      return (icon: LucideIcons.percent, fg: const Color(0xFF9333EA));
+      return (icon: LucideIcons.percent, fg: const Color(0xFFC5A35B));
     default:
       // Web parity: default type shows a Bell in blue-600 / blue-50 bg.
-      return (icon: LucideIcons.bell, fg: const Color(0xFF2563EB)); // blue-600
+      return (icon: LucideIcons.bell, fg: const Color(0xFFC5A35B)); // blue-600
   }
 }
 
@@ -43,7 +43,7 @@ class NotificationListScreen extends ConsumerWidget {
         .toString()
         .toLowerCase();
     final isCp = role == 'cp';
-    const purple = Color(0xFF9333EA);
+    const purple = Color(0xFFC5A35B);
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -120,7 +120,7 @@ class NotificationListScreen extends ConsumerWidget {
                             Flexible(
                               child: Text(
                                 'NOTIFICATIONS',
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.ebGaramond(
                                   fontSize: 17,
                                   fontWeight: FontWeight.w800,
                                   color: scheme.onSurface,
@@ -134,7 +134,7 @@ class NotificationListScreen extends ConsumerWidget {
                         const SizedBox(height: 2),
                         Text(
                           isCp ? 'PARTNER UPDATES' : 'STAY UPDATED',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 9,
                             fontWeight: FontWeight.w700,
                             color: scheme.onSurfaceVariant.withValues(
@@ -178,7 +178,7 @@ class NotificationListScreen extends ConsumerWidget {
                             const SizedBox(width: 6),
                             Text(
                               'MARK ALL',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.ebGaramond(
                                 fontSize: 9,
                                 fontWeight: FontWeight.w800,
                                 color: isCp ? purple : scheme.onSurface,
@@ -252,7 +252,7 @@ class NotificationListScreen extends ConsumerWidget {
           const SizedBox(height: 24),
           Text(
             'NO NOTIFICATIONS',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 12,
               fontWeight: FontWeight.w900,
               color: scheme.onSurface.withValues(alpha: 0.68),
@@ -262,7 +262,7 @@ class NotificationListScreen extends ConsumerWidget {
           const SizedBox(height: 8),
           Text(
             'We\'ll notify you when something important happens.',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 10,
               color: scheme.onSurface.withValues(alpha: 0.68),
             ),
@@ -283,7 +283,7 @@ class _NotificationItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    const purple = Color(0xFF9333EA);
+    const purple = Color(0xFFC5A35B);
     final accent = isCp ? purple : scheme.primary;
 
     // Web parity: date only — "Mar 14, 2026" uppercased (no time).
@@ -347,7 +347,7 @@ class _NotificationItem extends StatelessWidget {
                           Expanded(
                             child: Text(
                               notification.title.toString().toUpperCase(),
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.ebGaramond(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w800,
                                 color: isRead
@@ -364,7 +364,7 @@ class _NotificationItem extends StatelessWidget {
                             padding: const EdgeInsets.only(top: 2),
                             child: Text(
                               timeStr,
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.ebGaramond(
                                 fontSize: 8,
                                 color: scheme.onSurfaceVariant.withValues(
                                   alpha: 0.7,
@@ -393,7 +393,7 @@ class _NotificationItem extends StatelessWidget {
                         notification.message.toString(),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 11,
                           color: scheme.onSurfaceVariant,
                           height: 1.5,
@@ -419,7 +419,7 @@ class _NotificationItem extends StatelessWidget {
   ) {
     final scheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    const purple = Color(0xFF9333EA);
+    const purple = Color(0xFFC5A35B);
     final accent = isCp ? purple : scheme.primary;
 
     showDialog(
@@ -432,7 +432,7 @@ class _NotificationItem extends StatelessWidget {
             margin: const EdgeInsets.symmetric(horizontal: 32),
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF18181B) : Colors.white,
+              color: isDark ? const Color(0xFF141B3A) : Colors.white,
               borderRadius: BorderRadius.circular(32),
               border: Border.all(
                 color: scheme.outlineVariant.withValues(alpha: 0.2),
@@ -491,7 +491,7 @@ class _NotificationItem extends StatelessWidget {
                         (notification.type ?? 'UPDATE')
                             .toString()
                             .toUpperCase(),
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 8,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1,
@@ -503,7 +503,7 @@ class _NotificationItem extends StatelessWidget {
                     Flexible(
                       child: Text(
                         '• $timeStr',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 8,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1,
@@ -518,7 +518,7 @@ class _NotificationItem extends StatelessWidget {
                 Text(
                   notification.title.toString(),
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 22,
                     fontWeight: FontWeight.w900,
                     color: scheme.onSurface,
@@ -538,7 +538,7 @@ class _NotificationItem extends StatelessWidget {
                   child: Text(
                     notification.message.toString(),
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: scheme.onSurface.withValues(alpha: 0.8),
@@ -562,7 +562,7 @@ class _NotificationItem extends StatelessWidget {
                     ),
                     child: Text(
                       isCp ? 'ACKNOWLEDGE' : 'DONE',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 12,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 2,

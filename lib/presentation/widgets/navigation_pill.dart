@@ -37,10 +37,15 @@ class NavigationPill extends StatelessWidget {
             height: 70,
             padding: const EdgeInsets.symmetric(horizontal: 25),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF000000) : const Color(0xFFEDEDF0),
+              // Frosted glass: translucent deep-green on the green screens,
+              // translucent white on the cream screens. Icons stay crisp.
+              color: isDark
+                  ? M4Theme.navyBackground.withOpacity(0.5)
+                  : Colors.white.withOpacity(0.6),
               borderRadius: BorderRadius.circular(35),
               border: Border.all(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.12),
+                color: (isDark ? M4Theme.cream : M4Theme.deepGreen)
+                    .withOpacity(0.14),
                 width: 1,
               ),
             ),
@@ -94,7 +99,14 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onSurface = Theme.of(context).colorScheme.onSurface;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    // Active: green circle on cream / white circle on green (reference);
+    // inactive: the opposite tone, dimmed but legible on the frosted glass.
+    final activeCircle = isDark ? M4Theme.cream : M4Theme.midGreen;
+    final activeIcon = isDark ? M4Theme.navyBackground : M4Theme.cream;
+    final inactiveIcon = isDark
+        ? M4Theme.cream.withOpacity(0.75)
+        : M4Theme.deepGreen.withOpacity(0.72);
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
@@ -102,33 +114,18 @@ class _NavItem extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Web parity: active icon sits in a highlighted rounded box
-          // (bg-primary/10 + border-primary/20).
           Container(
             padding: const EdgeInsets.all(9),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              color: isActive ? onSurface.withOpacity(0.1) : Colors.transparent,
-              border: isActive
-                  ? Border.all(color: onSurface.withOpacity(0.2))
-                  : null,
+              shape: BoxShape.circle,
+              color: isActive ? activeCircle : Colors.transparent,
             ),
             child: Icon(
               icon,
-              color: isActive ? onSurface : onSurface.withOpacity(0.65),
+              color: isActive ? activeIcon : inactiveIcon,
               size: 22,
             ),
           ),
-          if (isActive)
-            Container(
-              margin: const EdgeInsets.only(top: 4),
-              width: 5,
-              height: 5,
-              decoration: BoxDecoration(
-                color: onSurface,
-                shape: BoxShape.circle,
-              ),
-            ).animate().scale(duration: 200.ms),
         ],
       ),
     );

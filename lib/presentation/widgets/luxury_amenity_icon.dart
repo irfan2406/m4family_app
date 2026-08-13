@@ -8,7 +8,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 ///  1. a backend-uploaded icon image (gold-tinted), when the amenity has one;
 ///  2. otherwise a hand-vectored thin-line luxury SVG mapped from the name;
 ///  3. otherwise a Lucide fallback icon.
-const Color kAmenityGold = Color(0xFFDFBA6B);
+const Color kAmenityGold = Color(0xFFC5A35B);
 
 class LuxuryAmenityIcon extends StatelessWidget {
   final String name;

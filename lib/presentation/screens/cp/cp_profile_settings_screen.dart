@@ -24,8 +24,8 @@ class CpProfileSettingsScreen extends ConsumerStatefulWidget {
 
 class _CpProfileSettingsScreenState
     extends ConsumerState<CpProfileSettingsScreen> {
-  static const _purple = Color(0xFF9333EA);
-  static const _indigo = Color(0xFF4F46E5);
+  static const _purple = Color(0xFFC5A35B);
+  static const _indigo = Color(0xFFC5A35B);
 
   final _first = TextEditingController();
   final _last = TextEditingController();
@@ -254,7 +254,7 @@ class _CpProfileSettingsScreenState
       isScrollControlled: true,
       builder: (sheetCtx) => Container(
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF0B111E) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : Colors.white,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         ),
         padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
@@ -278,7 +278,7 @@ class _CpProfileSettingsScreenState
               alignment: Alignment.centerLeft,
               child: Text(
                 'SELECT DATE',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 15,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 0.5,
@@ -312,7 +312,7 @@ class _CpProfileSettingsScreenState
                     ),
                     child: Text(
                       'CANCEL',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1,
                       ),
@@ -333,7 +333,7 @@ class _CpProfileSettingsScreenState
                     ),
                     child: Text(
                       'CONFIRM',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1,
                       ),
@@ -357,7 +357,7 @@ class _CpProfileSettingsScreenState
       builder: (ctx) => AlertDialog(
         title: Text(
           'Deactivate sessions?',
-          style: GoogleFonts.montserrat(fontWeight: FontWeight.w800),
+          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w800),
         ),
         content: const Text(
           'You will be logged out everywhere, including this device.',
@@ -413,7 +413,7 @@ class _CpProfileSettingsScreenState
       builder: (ctx) => AlertDialog(
         title: Text(
           'Permanent deactivation',
-          style: GoogleFonts.montserrat(fontWeight: FontWeight.w800),
+          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w800),
         ),
         content: const Text(
           'CRITICAL: This will remove your data from M4 Family. Continue?',
@@ -543,7 +543,7 @@ class _CpProfileSettingsScreenState
               ),
               title: Text(
                 'UPDATE SECURITY PASSCODE',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 12,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 1.2,
@@ -556,7 +556,7 @@ class _CpProfileSettingsScreenState
                   children: [
                     Text(
                       'SET A NEW 4–6 DIGIT SECURE ACCESS CODE',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 9,
                         color: Theme.of(ctx).colorScheme.onSurfaceVariant,
                         letterSpacing: 1,
@@ -576,7 +576,7 @@ class _CpProfileSettingsScreenState
                   onPressed: submitting ? null : () => Navigator.pop(ctx),
                   child: Text(
                     'CANCEL',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 9,
                       fontWeight: FontWeight.w800,
                     ),
@@ -601,7 +601,7 @@ class _CpProfileSettingsScreenState
                         )
                       : Text(
                           'CONFIRM',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 9,
                             fontWeight: FontWeight.w800,
                           ),
@@ -621,7 +621,7 @@ class _CpProfileSettingsScreenState
       children: [
         Text(
           label.toUpperCase(),
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 8,
             fontWeight: FontWeight.w800,
             letterSpacing: 1.5,
@@ -633,7 +633,7 @@ class _CpProfileSettingsScreenState
           obscureText: true,
           keyboardType: TextInputType.number,
           textAlign: TextAlign.center,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontWeight: FontWeight.w700,
             letterSpacing: 6,
           ),
@@ -674,7 +674,7 @@ class _CpProfileSettingsScreenState
                   const SizedBox(height: 16),
                   Text(
                     'ESTABLISHING SECURE CONNECTION...',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 3,
@@ -774,7 +774,7 @@ class _CpProfileSettingsScreenState
                 Flexible(
                   child: Text(
                     'CONFIGURATION',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 14,
                       fontWeight: FontWeight.w900,
                       letterSpacing: -0.5,
@@ -818,7 +818,7 @@ class _CpProfileSettingsScreenState
                         )
                       : Text(
                           'SAVE CHANGES',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 9,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 1,
@@ -854,7 +854,7 @@ class _CpProfileSettingsScreenState
         const SizedBox(width: 8),
         Text(
           title,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 10,
             fontWeight: FontWeight.w900,
             letterSpacing: 2.5,
@@ -980,7 +980,7 @@ class _CpProfileSettingsScreenState
                 const SizedBox(height: 10),
                 Text(
                   'ACCOUNT AVATAR',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -989,7 +989,7 @@ class _CpProfileSettingsScreenState
                 const SizedBox(height: 4),
                 Text(
                   'Recommended: square PNG/JPG · max 2MB',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 8,
                     fontWeight: FontWeight.w600,
                     color: scheme.onSurface.withValues(alpha: 0.68),
@@ -1013,7 +1013,7 @@ class _CpProfileSettingsScreenState
                     // profile renders them); bold and slightly larger.
                     textCapitalization: TextCapitalization.characters,
                     inputFormatters: [_UpperCaseTextFormatter()],
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontWeight: FontWeight.w800,
                       fontSize: 16,
                       color: scheme.onSurface,
@@ -1038,7 +1038,7 @@ class _CpProfileSettingsScreenState
                     controller: _last,
                     textCapitalization: TextCapitalization.characters,
                     inputFormatters: [_UpperCaseTextFormatter()],
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontWeight: FontWeight.w800,
                       fontSize: 16,
                       color: scheme.onSurface,
@@ -1059,7 +1059,7 @@ class _CpProfileSettingsScreenState
                 TextField(
                   controller: _email,
                   readOnly: true,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontWeight: FontWeight.w600,
                     fontSize: 14,
                     color: scheme.onSurface.withValues(alpha: 0.92),
@@ -1091,10 +1091,10 @@ class _CpProfileSettingsScreenState
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                      color: const Color(0xFFC5A35B).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(999),
                       border: Border.all(
-                        color: const Color(0xFF10B981).withValues(alpha: 0.25),
+                        color: const Color(0xFFC5A35B).withValues(alpha: 0.25),
                       ),
                     ),
                     child: Row(
@@ -1103,15 +1103,15 @@ class _CpProfileSettingsScreenState
                         const Icon(
                           LucideIcons.check,
                           size: 12,
-                          color: Color(0xFF10B981),
+                          color: Color(0xFFC5A35B),
                         ),
                         const SizedBox(width: 4),
                         Text(
                           'VERIFIED',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 8,
                             fontWeight: FontWeight.w900,
-                            color: const Color(0xFF10B981),
+                            color: const Color(0xFFC5A35B),
                             letterSpacing: 0.5,
                           ),
                         ),
@@ -1129,7 +1129,7 @@ class _CpProfileSettingsScreenState
             TextField(
               controller: _phone,
               keyboardType: TextInputType.phone,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontWeight: FontWeight.w700,
                 fontSize: 14,
                 color: scheme.onSurface.withValues(alpha: 0.92),
@@ -1154,7 +1154,7 @@ class _CpProfileSettingsScreenState
                   'FIRM NAME',
                   TextField(
                     controller: _company,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontWeight: FontWeight.w700,
                       fontSize: 14,
                       color: scheme.onSurface.withValues(alpha: 0.92),
@@ -1170,7 +1170,7 @@ class _CpProfileSettingsScreenState
                   'RERA NUMBER',
                   TextField(
                     controller: _rera,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontWeight: FontWeight.w700,
                       fontSize: 14,
                       color: scheme.onSurface.withValues(alpha: 0.92),
@@ -1218,7 +1218,7 @@ class _CpProfileSettingsScreenState
                               : DateFormat(
                                   'dd-MM-yyyy',
                                 ).format(DateTime.parse(_dobIso!)),
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontWeight: FontWeight.w700,
                             fontSize: 14,
                             color: scheme.onSurface.withValues(
@@ -1285,7 +1285,7 @@ class _CpProfileSettingsScreenState
           padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 9,
               fontWeight: FontWeight.w900,
               letterSpacing: 2,
@@ -1318,7 +1318,7 @@ class _CpProfileSettingsScreenState
             children: [
               Text(
                 'CHANGE ACCESS PASSCODE',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 1.5,
@@ -1363,7 +1363,7 @@ class _CpProfileSettingsScreenState
                 )
               : Text(
                   'SECURITY LOGOUT (ALL DEVICES)',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.5,
@@ -1389,7 +1389,7 @@ class _CpProfileSettingsScreenState
             )
           : Text(
               'DELETE ACCOUNT PERMANENTLY',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 8,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 2.5,

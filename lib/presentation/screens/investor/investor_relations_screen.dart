@@ -121,8 +121,8 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message, style: GoogleFonts.montserrat(fontWeight: FontWeight.bold, fontSize: 12)),
-        backgroundColor: isError ? Colors.redAccent : Colors.teal,
+        content: Text(message, style: GoogleFonts.ebGaramond(fontWeight: FontWeight.bold, fontSize: 12)),
+        backgroundColor: isError ? Color(0xFFC5A35B) : Color(0xFFC5A35B),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
@@ -140,9 +140,9 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('INVESTOR RELATIONS',
-                style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.bold, fontSize: 18, letterSpacing: 1)),
+                style: GoogleFonts.ebGaramond(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.bold, fontSize: 18, letterSpacing: 1)),
             Text('M4 FAMILY DEVELOPMENTS',
-                style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.5), fontWeight: FontWeight.w900, fontSize: 9, letterSpacing: 4)),
+                style: GoogleFonts.ebGaramond(color: (isDark ? Colors.white : Colors.black).withOpacity(0.5), fontWeight: FontWeight.w900, fontSize: 9, letterSpacing: 4)),
           ],
         ),
         backgroundColor: (isDark ? Colors.black : Colors.white).withOpacity(0.8),
@@ -186,7 +186,7 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
             ? const RadialGradient(
                 center: Alignment.topCenter,
                 radius: 2.5,
-                colors: [Color(0xFF0F1115), Colors.black],
+                colors: [Color(0xFF0F2A20), Colors.black],
               )
             : null,
         ),
@@ -225,7 +225,7 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
       children: [
         Text(
           title.toString().toUpperCase(),
-          style: GoogleFonts.playfairDisplay(
+          style: GoogleFonts.gelasio(
             color: isDark ? Colors.white : Colors.black,
             fontSize: 36,
             fontWeight: FontWeight.w300,
@@ -239,7 +239,7 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
                 padding: const EdgeInsets.only(bottom: 16, right: 16),
                 child: Text(
                   paragraph,
-                  style: GoogleFonts.inter(color: (isDark ? Colors.white : Colors.black).withOpacity(0.6), fontSize: 14, fontWeight: FontWeight.w500, height: 1.6),
+                  style: GoogleFonts.ebGaramond(color: (isDark ? Colors.white : Colors.black).withOpacity(0.6), fontSize: 14, fontWeight: FontWeight.w500, height: 1.6),
                 ),
               )),
       ],
@@ -276,7 +276,7 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
       children: [
         Text(
           'STAY IN TOUCH\nWITH US',
-          style: GoogleFonts.playfairDisplay(
+          style: GoogleFonts.gelasio(
             color: isDark ? Colors.white : Colors.black,
             fontSize: 28,
             fontWeight: FontWeight.w300,
@@ -305,7 +305,7 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
         // Preferred Contact Mode
         Text(
           'PREFERRED MODE OF CONTACT:',
-          style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.54), fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2),
+          style: GoogleFonts.ebGaramond(color: (isDark ? Colors.white : Colors.black).withOpacity(0.54), fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2),
         ),
         const SizedBox(height: 16),
         Row(
@@ -345,7 +345,7 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
             ),
             child: _isSubmitting
                 ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: isDark ? Colors.black : Colors.white))
-                : Text('SUBMIT', style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                : Text('SUBMIT', style: GoogleFonts.ebGaramond(fontSize: 14, fontWeight: FontWeight.w900, letterSpacing: 1)),
           ),
         ),
       ],
@@ -363,7 +363,7 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
       children: [
         Text(
           'INVESTOR CONTACT',
-          style: GoogleFonts.playfairDisplay(
+          style: GoogleFonts.gelasio(
             color: isDark ? Colors.white : Colors.black,
             fontSize: 24,
             fontWeight: FontWeight.w300,
@@ -373,7 +373,7 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
         const SizedBox(height: 12),
         Text(
           'FOR ANY INVESTOR RELATION RELATED QUESTIONS OR QUERIES PLEASE CONTACT VIA BELOW EMAIL',
-          style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.38), fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 1.5, height: 1.6),
+          style: GoogleFonts.ebGaramond(color: (isDark ? Colors.white : Colors.black).withOpacity(0.38), fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 1.5, height: 1.6),
         ),
         const SizedBox(height: 24),
 
@@ -428,10 +428,10 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(label.toUpperCase(),
-                          style: GoogleFonts.montserrat(color: (isDark ? Colors.white : Colors.black).withOpacity(0.54), fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2)),
+                          style: GoogleFonts.ebGaramond(color: (isDark ? Colors.white : Colors.black).withOpacity(0.54), fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2)),
                       const SizedBox(height: 4),
                       Text(value.toUpperCase(),
-                          style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 14, fontWeight: FontWeight.w900, letterSpacing: -0.5)),
+                          style: GoogleFonts.ebGaramond(color: isDark ? Colors.white : Colors.black, fontSize: 14, fontWeight: FontWeight.w900, letterSpacing: -0.5)),
                     ],
                   ),
                 ),
@@ -448,10 +448,10 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
     return TextField(
       controller: controller,
       keyboardType: isEmail ? TextInputType.emailAddress : isPhone ? TextInputType.phone : TextInputType.text,
-      style: GoogleFonts.inter(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w500, fontSize: 14),
+      style: GoogleFonts.ebGaramond(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w500, fontSize: 14),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.inter(color: (isDark ? Colors.white : Colors.black).withOpacity(0.24), fontWeight: FontWeight.w500, fontSize: 14),
+        hintStyle: GoogleFonts.ebGaramond(color: (isDark ? Colors.white : Colors.black).withOpacity(0.24), fontWeight: FontWeight.w500, fontSize: 14),
         filled: true,
         fillColor: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
         contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
@@ -467,10 +467,10 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
     return TextField(
       controller: _messageController,
       maxLines: 5,
-      style: GoogleFonts.inter(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w500, fontSize: 14),
+      style: GoogleFonts.ebGaramond(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w500, fontSize: 14),
       decoration: InputDecoration(
         hintText: 'Message',
-        hintStyle: GoogleFonts.inter(color: (isDark ? Colors.white : Colors.black).withOpacity(0.24), fontWeight: FontWeight.w500, fontSize: 14),
+        hintStyle: GoogleFonts.ebGaramond(color: (isDark ? Colors.white : Colors.black).withOpacity(0.24), fontWeight: FontWeight.w500, fontSize: 14),
         filled: true,
         fillColor: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
         contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
@@ -504,7 +504,7 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
           Flexible(
             child: Text(
               label,
-              style: GoogleFonts.inter(color: (isDark ? Colors.white : Colors.black).withOpacity(0.6), fontSize: 13, fontWeight: FontWeight.w500),
+              style: GoogleFonts.ebGaramond(color: (isDark ? Colors.white : Colors.black).withOpacity(0.6), fontSize: 13, fontWeight: FontWeight.w500),
             ),
           ),
         ],

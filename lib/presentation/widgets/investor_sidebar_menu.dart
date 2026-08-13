@@ -18,7 +18,7 @@ class InvestorSidebarMenu extends ConsumerStatefulWidget {
 }
 
 class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
 
   void _close() => Navigator.of(context).pop();
 
@@ -48,7 +48,7 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
               child: Container(
-                color: (isDark ? Colors.black : Colors.white).withValues(alpha: 0.6),
+                color: (isDark ? const Color(0xFF0B1026) : const Color(0xFFF3EDE0)).withValues(alpha: 0.6),
               ),
             ),
           ),
@@ -65,11 +65,11 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                       const SizedBox(width: 10),
                       Text(
                         'INVESTOR MENU',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 2,
-                          color: isDark ? Colors.white38 : Colors.grey[600],
+                          color: isDark ? Colors.white38 : const Color(0xFF0F2A20).withValues(alpha: 0.55),
                         ),
                       ),
                     ],
@@ -159,11 +159,11 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                     children: [
                       Text(
                         'THEME MODE',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 2,
-                          color: isDark ? Colors.white38 : Colors.grey[600],
+                          color: isDark ? Colors.white38 : const Color(0xFF0F2A20).withValues(alpha: 0.55),
                         ),
                       ),
                       GestureDetector(
@@ -173,13 +173,13 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                         child: Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08),
+                            color: (isDark ? Colors.white : const Color(0xFF0F2A20)).withValues(alpha: 0.08),
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1)),
+                            border: Border.all(color: (isDark ? Colors.white : const Color(0xFF0F2A20)).withValues(alpha: 0.1)),
                           ),
                           child: Icon(
                             isDark ? LucideIcons.sparkles : LucideIcons.moon,
-                            color: isDark ? Colors.white : Colors.black,
+                            color: isDark ? Colors.white : const Color(0xFF0F2A20),
                             size: 18,
                           ),
                         ),
@@ -216,7 +216,7 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                           const SizedBox(width: 10),
                           Text(
                             'LOGOUT',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 12,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 1.5,
@@ -253,7 +253,7 @@ class _SidebarItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    const gold = Color(0xFFFFD700);
+    const gold = Color(0xFFC5A35B);
 
     return InkWell(
       onTap: onTap,
@@ -266,7 +266,7 @@ class _SidebarItem extends StatelessWidget {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                color: (isDark ? Colors.white : const Color(0xFF0F2A20)).withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Center(
@@ -281,10 +281,10 @@ class _SidebarItem extends StatelessWidget {
             Expanded(
               child: Text(
                 label,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
-                  color: isActive ? gold : (isDark ? Colors.white : const Color(0xFF1E293B)),
+                  color: isActive ? gold : (isDark ? Colors.white : const Color(0xFF163A2C)),
                 ),
               ),
             ),

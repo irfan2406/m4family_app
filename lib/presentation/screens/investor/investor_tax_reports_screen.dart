@@ -20,7 +20,7 @@ class InvestorTaxReportsScreen extends ConsumerStatefulWidget {
 
 class _InvestorTaxReportsScreenState
     extends ConsumerState<InvestorTaxReportsScreen> {
-  static const Color _gold = Color(0xFFFFD700);
+  static const Color _gold = Color(0xFFC5A35B);
 
   List<dynamic> _rows = [];
   bool _loading = true;
@@ -98,7 +98,7 @@ class _InvestorTaxReportsScreenState
   void _toast(String msg) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg, style: GoogleFonts.montserrat(fontSize: 12))),
+      SnackBar(content: Text(msg, style: GoogleFonts.ebGaramond(fontSize: 12))),
     );
   }
 
@@ -129,7 +129,7 @@ class _InvestorTaxReportsScreenState
           children: [
             Text(
               'Tax Reports',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontWeight: FontWeight.w800,
                 fontSize: 16,
                 color: textPrimary,
@@ -137,7 +137,7 @@ class _InvestorTaxReportsScreenState
             ),
             Text(
               'FISCAL COMPLIANCE',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 9,
                 letterSpacing: 1.5,
                 fontWeight: FontWeight.w600,
@@ -183,7 +183,7 @@ class _InvestorTaxReportsScreenState
             Text(
               'Unable to load tax reports.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: textPrimary,
@@ -202,7 +202,7 @@ class _InvestorTaxReportsScreenState
               ),
               label: Text(
                 'RETRY',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 1,
@@ -252,7 +252,7 @@ class _InvestorTaxReportsScreenState
                   ),
                   child: Text(
                     year.toUpperCase(),
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1,
@@ -307,7 +307,7 @@ class _InvestorTaxReportsScreenState
               children: [
                 Text(
                   'TOTAL TAX DEDUCTED',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 9,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 2,
@@ -320,7 +320,7 @@ class _InvestorTaxReportsScreenState
                   children: [
                     Text(
                       fmt.format(total),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 36,
                         fontWeight: FontWeight.w800,
                         height: 1,
@@ -330,7 +330,7 @@ class _InvestorTaxReportsScreenState
                     ),
                     Text(
                       '.00',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 18,
                         fontWeight: FontWeight.w400,
                         color: muted,
@@ -354,7 +354,7 @@ class _InvestorTaxReportsScreenState
                   ),
                   label: Text(
                     'DOWNLOAD SUMMARY',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 9,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1,
@@ -387,7 +387,7 @@ class _InvestorTaxReportsScreenState
             padding: const EdgeInsets.fromLTRB(4, 8, 4, 12),
             child: Text(
               'AVAILABLE DOCUMENTS',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 2,
@@ -401,7 +401,7 @@ class _InvestorTaxReportsScreenState
               child: Center(
                 child: Text(
                   'No reports found for this year.',
-                  style: GoogleFonts.montserrat(fontSize: 10, color: muted),
+                  style: GoogleFonts.ebGaramond(fontSize: 10, color: muted),
                 ),
               ),
             )
@@ -431,7 +431,7 @@ class _InvestorTaxReportsScreenState
     Color card,
     Color border,
   ) {
-    const red = Color(0xFFEF4444);
+    const red = Color(0xFFC65B46);
     final id = m['id']?.toString() ?? '';
     final name = m['name']?.toString() ?? 'Statement';
     final date = m['date']?.toString() ?? '';
@@ -488,7 +488,7 @@ class _InvestorTaxReportsScreenState
                           name,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: textPrimary,
@@ -502,7 +502,7 @@ class _InvestorTaxReportsScreenState
                                 date.toUpperCase(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.ebGaramond(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w500,
                                   letterSpacing: 1,
@@ -525,7 +525,7 @@ class _InvestorTaxReportsScreenState
                               ),
                               Text(
                                 size.toUpperCase(),
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.ebGaramond(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w500,
                                   letterSpacing: 1,

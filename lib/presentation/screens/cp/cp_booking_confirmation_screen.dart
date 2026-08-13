@@ -132,7 +132,7 @@ class _CpBookingConfirmationScreenState
 
     if (_loading) {
       return Scaffold(
-        backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
+        backgroundColor: isDark ? const Color(0xFF0B1026) : Colors.white,
         body: const Center(
           child: CircularProgressIndicator(color: M4Theme.premiumBlue),
         ),
@@ -140,7 +140,7 @@ class _CpBookingConfirmationScreenState
     }
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF0B1026) : Colors.white,
       body: Stack(
         children: [
           // Decorative background circles
@@ -247,7 +247,7 @@ class _CpBookingConfirmationScreenState
                   Text(
                     'BOOKING\nCONFIRMED!',
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 30,
                       fontWeight: FontWeight.w900,
                       color: textPrimary,
@@ -261,7 +261,7 @@ class _CpBookingConfirmationScreenState
                   // Subtitle with highlighted project title
                   Text.rich(
                     TextSpan(
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 9,
                         fontWeight: FontWeight.w900,
                         color: muted,
@@ -273,7 +273,7 @@ class _CpBookingConfirmationScreenState
                             text: "CONGRATULATIONS! YOU'VE SUCCESSFULLY LOCKED YOUR UNIT IN "),
                         TextSpan(
                           text: _projectTitle.toUpperCase(),
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 9,
                             fontWeight: FontWeight.w900,
                             color: M4Theme.premiumBlue,
@@ -346,7 +346,7 @@ class _CpBookingConfirmationScreenState
                           const SizedBox(width: 14),
                           Text(
                             'BACK TO DASHBOARD',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.ebGaramond(
                               color: isDark ? Colors.black : Colors.white,
                               fontWeight: FontWeight.w900,
                               fontSize: 12,
@@ -369,7 +369,7 @@ class _CpBookingConfirmationScreenState
                     },
                     child: Text(
                       'NEED HELP WITH YOUR BOOKING?',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
                         color: muted,
@@ -427,7 +427,7 @@ class _CpBookingConfirmationScreenState
               children: [
                 Text(
                   'RECEIPT ID',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     color: muted,
@@ -437,7 +437,7 @@ class _CpBookingConfirmationScreenState
                 const SizedBox(height: 6),
                 Text(
                   '#${(_receiptId.isNotEmpty ? _receiptId : _fallbackReceipt).toUpperCase()}',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 14,
                     fontWeight: FontWeight.w900,
                     color: textPrimary,
@@ -453,7 +453,7 @@ class _CpBookingConfirmationScreenState
           // Project
           _DetailRow(label: 'PROJECT', muted: muted, child: Text(
             _projectTitle.toUpperCase(),
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 14,
               fontWeight: FontWeight.w900,
               color: textPrimary,
@@ -473,7 +473,7 @@ class _CpBookingConfirmationScreenState
                   muted: muted,
                   child: Text(
                     '₹$_amount',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 14,
                       fontWeight: FontWeight.w900,
                       color: M4Theme.premiumBlue,
@@ -489,7 +489,7 @@ class _CpBookingConfirmationScreenState
                   children: [
                     Text(
                       'STATUS',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 9,
                         fontWeight: FontWeight.w900,
                         color: muted,
@@ -500,21 +500,21 @@ class _CpBookingConfirmationScreenState
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                        color: const Color(0xFFC5A35B).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           const Icon(LucideIcons.checkCircle2,
-                              color: Color(0xFF10B981), size: 12),
+                              color: Color(0xFFC5A35B), size: 12),
                           const SizedBox(width: 6),
                           Text(
                             'VERIFIED',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 8,
                               fontWeight: FontWeight.w900,
-                              color: const Color(0xFF10B981),
+                              color: const Color(0xFFC5A35B),
                               letterSpacing: 2,
                             ),
                           ),
@@ -546,7 +546,7 @@ class _DetailRow extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 9,
             fontWeight: FontWeight.w900,
             color: muted,
@@ -606,7 +606,7 @@ class _ActionButton extends StatelessWidget {
               child: Text(
                 label,
                 overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 8,
                   fontWeight: FontWeight.w900,
                   color: isDark ? Colors.white : Colors.black,

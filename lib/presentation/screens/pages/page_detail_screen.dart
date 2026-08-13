@@ -59,7 +59,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
       appBar: AppBar(
         title: Text(
           _page?['title']?.toString().toUpperCase() ?? 'PAGE',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             color: isDark ? Colors.white : Colors.black, 
             fontWeight: FontWeight.bold, 
             fontSize: 16, 
@@ -103,11 +103,11 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
       ),
       body: Container(
         decoration: BoxDecoration(
-          color: isDark ? Colors.black : Colors.white,
+          color: Theme.of(context).scaffoldBackgroundColor,
           gradient: isDark ? const RadialGradient(
             center: Alignment.topCenter,
             radius: 2.5,
-            colors: [Color(0xFF0F1115), Colors.black],
+            colors: [Color(0xFF0F2A20), Colors.black],
           ) : null,
         ),
         child: SafeArea(
@@ -120,7 +120,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
                       const SizedBox(height: 16),
                       Text(
                         'SYNCING SECURE CONTENT...',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.ebGaramond(
                           color: (isDark ? Colors.white : Colors.black).withOpacity(0.4),
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
@@ -165,16 +165,16 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
                 color: Colors.red.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(LucideIcons.fileX, color: Colors.redAccent, size: 32),
+              child: const Icon(LucideIcons.fileX, color: Color(0xFFC5A35B), size: 32),
             ),
             const SizedBox(height: 24),
             Text('Page Not Found',
-                style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 24, fontWeight: FontWeight.bold)),
+                style: GoogleFonts.ebGaramond(color: isDark ? Colors.white : Colors.black, fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
             Text(
               'The page /${widget.slug} does not exist or has not been published yet.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(color: isDark ? Colors.white54 : Colors.black54, fontSize: 14),
+              style: GoogleFonts.ebGaramond(color: isDark ? Colors.white54 : Colors.black54, fontSize: 14),
             ),
             const SizedBox(height: 24),
             TextButton.icon(
@@ -204,7 +204,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
       children: [
         Text(
           (_page?['title'] ?? '').toString().toUpperCase(),
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             color: isDark ? Colors.white : Colors.black,
             fontSize: 28,
             fontWeight: FontWeight.w900,
@@ -226,7 +226,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
             ),
             child: Text(
               _page!['subtitle'].toString(),
-              style: GoogleFonts.inter(
+              style: GoogleFonts.ebGaramond(
                 color: isDark ? Colors.white60 : Colors.black54,
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
@@ -243,7 +243,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
               children: [
                 Text(
                   'LAST UPDATE',
-                  style: GoogleFonts.inter(
+                  style: GoogleFonts.ebGaramond(
                     color: (isDark ? Colors.white : Colors.black).withOpacity(0.3),
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
@@ -257,7 +257,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
                     const SizedBox(width: 8),
                     Text(
                       updatedAt ?? 'N/A',
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.ebGaramond(
                         color: isDark ? Colors.white38 : Colors.black38,
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
@@ -293,7 +293,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
           padding: const EdgeInsets.only(bottom: 16),
           child: Text(
             paragraph.trim(),
-            style: GoogleFonts.inter(color: (isDark ? Colors.white : Colors.black).withOpacity(0.75), fontSize: 15, fontWeight: FontWeight.w400, height: 1.7),
+            style: GoogleFonts.ebGaramond(color: (isDark ? Colors.white : Colors.black).withOpacity(0.75), fontSize: 15, fontWeight: FontWeight.w400, height: 1.7),
           ),
         );
       }).toList(),
@@ -338,7 +338,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
                           Expanded(
                             child: Text(
                               (section['title'] ?? '').toString(),
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.ebGaramond(
                                 color: isDark ? Colors.white : Colors.black,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w800,
@@ -353,7 +353,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
                             .toString()
                             .replaceAll(RegExp(r'<[^>]*>'), '')
                             .trim(),
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.ebGaramond(
                           color: (isDark ? Colors.white : Colors.black).withOpacity(0.65),
                           fontSize: 14,
                           fontWeight: FontWeight.w400,

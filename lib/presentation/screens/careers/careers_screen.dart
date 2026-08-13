@@ -86,7 +86,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: isDark ? Colors.black : Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         centerTitle: true,
@@ -95,7 +95,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
           children: [
             Text(
               'CAREERS',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 color: isDark ? Colors.white : Colors.black,
                 fontWeight: FontWeight.w900,
                 fontSize: 17,
@@ -104,7 +104,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
             ),
             Text(
               'JOIN OUR ARCHITECTURAL LEGACY',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
                 fontWeight: FontWeight.w400,
                 fontSize: 8,
@@ -193,12 +193,12 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
       drawer: const ConditionalDrawer(),
       body: Container(
         decoration: BoxDecoration(
-          color: isDark ? Colors.black : Colors.white,
+          color: Theme.of(context).scaffoldBackgroundColor,
           gradient: isDark
               ? const RadialGradient(
                   center: Alignment.topCenter,
                   radius: 2.5,
-                  colors: [Color(0xFF0F1115), Colors.black],
+                  colors: [Color(0xFF0F2A20), Colors.black],
                 )
               : null,
         ),
@@ -259,7 +259,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
       children: [
         Text(
           displayTitle,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             color: isDark ? Colors.white : Colors.black,
             fontSize: 40,
             fontWeight: FontWeight.w900,
@@ -270,7 +270,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
         const SizedBox(height: 16),
         Text(
           displayContent,
-          style: GoogleFonts.inter(
+          style: GoogleFonts.ebGaramond(
             color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
             fontSize: 16,
             fontWeight: FontWeight.w500,
@@ -310,7 +310,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
               alignment: Alignment.center,
               child: Text(
                 cat,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   color: isActive
                       ? (isDark ? Colors.black : Colors.white)
                       : (isDark ? Colors.white60 : Colors.black54),
@@ -370,7 +370,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
             Text(
               'NO ACTIVE VACANCIES CURRENTLY AVAILABLE',
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.3),
                 fontSize: 10,
                 fontWeight: FontWeight.w900,
@@ -424,7 +424,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                   children: [
                     Text(
                       (job['title'] ?? '').toString().toUpperCase(),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         color: isDark ? Colors.white : Colors.black,
                         fontSize: 18,
                         fontWeight: FontWeight.w900,
@@ -441,7 +441,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                       children: [
                         Text(
                           (job['department'] ?? '').toString().toUpperCase(),
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             color: isDark ? Colors.white70 : Colors.black87,
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
@@ -485,7 +485,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                                 (job['location'] ?? 'MUMBAI')
                                     .toString()
                                     .toUpperCase(),
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.ebGaramond(
                                   color: (isDark ? Colors.white : Colors.black)
                                       .withOpacity(0.68),
                                   fontSize: 10,

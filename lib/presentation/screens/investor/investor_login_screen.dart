@@ -16,8 +16,8 @@ class InvestorLoginScreen extends ConsumerStatefulWidget {
 }
 
 class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
-  static const _gold = Color(0xFFFFD700);
-  static const _amber = Color(0xFFF59E0B);
+  static const _gold = Color(0xFFC5A35B);
+  static const _amber = Color(0xFFC5A35B);
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -134,7 +134,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
         Text(
           'INVESTOR',
           textAlign: TextAlign.center,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 38,
             fontWeight: FontWeight.w900,
             color: Colors.white,
@@ -145,7 +145,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
         Text(
           'PORTAL',
           textAlign: TextAlign.center,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 38,
             fontWeight: FontWeight.w900,
             color: _gold,
@@ -157,7 +157,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
         Text(
           'PREMIUM ACCESS • ELITE DASHBOARD',
           textAlign: TextAlign.center,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 10,
             fontWeight: FontWeight.w700,
             color: Colors.white54,
@@ -193,7 +193,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
               children: [
                 Text(
                   'ACCESS INVESTOR HUB',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontWeight: FontWeight.w900,
                     fontSize: 12,
                     letterSpacing: 1.5,
@@ -223,7 +223,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
             const SizedBox(width: 8),
             Text(
               'INSTITUTIONAL GRADE SECURITY',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 9,
                 fontWeight: FontWeight.w800,
                 color: Colors.white38,
@@ -264,7 +264,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
                 children: [
                   Text(
                     'INVESTOR',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 22,
                       fontWeight: FontWeight.w900,
                       color: Colors.white,
@@ -273,7 +273,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
                   ),
                   Text(
                     'CREDENTIALS',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 18,
                       fontWeight: FontWeight.w900,
                       color: _gold,
@@ -288,7 +288,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
         const SizedBox(height: 8),
         Text(
           'SECURE INSTITUTIONAL ACCESS GATEWAY',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 9,
             fontWeight: FontWeight.w700,
             color: Colors.white54,
@@ -346,7 +346,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
                       const SizedBox(width: 12),
                       Text(
                         'AUTHENTICATING',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontWeight: FontWeight.w900,
                           fontSize: 12,
                           letterSpacing: 1.5,
@@ -359,7 +359,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
                     children: [
                       Text(
                         'LOGIN',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontWeight: FontWeight.w900,
                           fontSize: 13,
                           letterSpacing: 1.5,
@@ -382,7 +382,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
           child: Text(
             'INVESTOR PORTAL v3.0\nPOWERED BY M4 FAMILY CAPITAL',
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 9,
               fontWeight: FontWeight.w800,
               color: Colors.white38,
@@ -414,11 +414,11 @@ class _FeaturePill extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: const Color(0xFFF59E0B)),
+          Icon(icon, size: 14, color: const Color(0xFFC5A35B)),
           const SizedBox(width: 8),
           Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 9,
               fontWeight: FontWeight.w700,
               color: Colors.white,
@@ -457,7 +457,7 @@ class _Field extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 9,
             fontWeight: FontWeight.bold,
             color: Colors.white54,
@@ -471,7 +471,7 @@ class _Field extends StatelessWidget {
           keyboardType: keyboardType,
           // Field sits on a black background — force a visible amber cursor
           // (default cursor inherits the light-theme primary and is invisible).
-          cursorColor: const Color(0xFFF59E0B),
+          cursorColor: const Color(0xFFC5A35B),
           cursorWidth: 2,
           cursorRadius: const Radius.circular(2),
           style: const TextStyle(
@@ -500,7 +500,7 @@ class _Field extends StatelessWidget {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
               borderSide: const BorderSide(
-                color: Color(0xFFF59E0B),
+                color: Color(0xFFC5A35B),
                 width: 1.2,
               ),
             ),

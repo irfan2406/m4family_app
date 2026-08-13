@@ -70,7 +70,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
     final scheme = Theme.of(context).colorScheme;
     final isLight = scheme.brightness == Brightness.light;
     final accent = isLight ? Colors.black : scheme.primary;
-    const purple = Color(0xFFA855F7);
+    const purple = Color(0xFFC5A35B);
 
     final rate = _data?['conversionRate']?.toString() ?? '0%';
     final leads = _data?['totalLeads'] ?? 0;
@@ -102,7 +102,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(icon: const Icon(LucideIcons.arrowLeft), onPressed: () => context.pop()),
-        title: Text('Insights', style: GoogleFonts.montserrat(fontWeight: FontWeight.w800)),
+        title: Text('Insights', style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w800)),
       ),
       body: _loading
           ? Center(child: CircularProgressIndicator(color: accent))
@@ -114,7 +114,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(18),
-                    gradient: const LinearGradient(colors: [Color(0xFFA855F7), Color(0xFF7C3AED)]),
+                    gradient: const LinearGradient(colors: [Color(0xFFC5A35B), Color(0xFFC5A35B)]),
                     boxShadow: [BoxShadow(color: purple.withValues(alpha: 0.18), blurRadius: 22, offset: const Offset(0, 14))],
                   ),
                   child: Column(
@@ -127,12 +127,12 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
                           color: Colors.black.withValues(alpha: 0.25),
                           border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
                         ),
-                        child: Text('DAILY PULSE', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.4, color: Colors.white)),
+                        child: Text('DAILY PULSE', style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.4, color: Colors.white)),
                       ),
                       const SizedBox(height: 10),
                       Text(
                         'Conversion rate $rate with $books bookings from $leads leads',
-                        style: GoogleFonts.montserrat(fontSize: 16, fontWeight: FontWeight.w900, color: Colors.white, height: 1.2),
+                        style: GoogleFonts.ebGaramond(fontSize: 16, fontWeight: FontWeight.w900, color: Colors.white, height: 1.2),
                       ),
                       const SizedBox(height: 12),
                       FilledButton(
@@ -145,7 +145,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text('READ REPORT', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2)),
+                            Text('READ REPORT', style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2)),
                             const SizedBox(width: 6),
                             const Icon(LucideIcons.arrowUpRight, size: 14),
                           ],
@@ -159,7 +159,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
                   children: [
                     const Icon(LucideIcons.newspaper, size: 16, color: purple),
                     const SizedBox(width: 8),
-                    Text('Latest Analysis', style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900)),
+                    Text('Latest Analysis', style: GoogleFonts.ebGaramond(fontSize: 12, fontWeight: FontWeight.w900)),
                   ],
                 ),
                 const SizedBox(height: 12),
@@ -219,7 +219,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
                       ),
                       child: Text(
                         category.toUpperCase(),
-                        style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.3, color: const Color(0xFFA855F7)),
+                        style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.3, color: const Color(0xFFC5A35B)),
                       ),
                     ),
                   ),
@@ -230,12 +230,12 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
           const SizedBox(height: 10),
           Text(
             title,
-            style: GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w900, height: 1.2),
+            style: GoogleFonts.ebGaramond(fontSize: 13, fontWeight: FontWeight.w900, height: 1.2),
           ),
           const SizedBox(height: 4),
           Text(
             readTime.isEmpty ? 'READ' : readTime.toUpperCase(),
-            style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 1.4, color: scheme.onSurface.withValues(alpha: 0.68)),
+            style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 1.4, color: scheme.onSurface.withValues(alpha: 0.68)),
           ),
         ],
       ),

@@ -127,7 +127,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
         return Container(
           height: 350,
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF09090B) : Colors.white,
+            color: isDark ? const Color(0xFF0B1026) : Colors.white,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
             border: Border.all(
               color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
@@ -142,7 +142,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                   children: [
                     Text(
                       "SELECT BIRTHDAY",
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 12,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1,
@@ -163,10 +163,10 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                         ),
                         child: Text(
                           "DONE",
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
-                            color: Colors.blue,
+                            color: Color(0xFFC5A35B),
                           ),
                         ),
                       ),
@@ -180,7 +180,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                   data: CupertinoThemeData(
                     brightness: isDark ? Brightness.dark : Brightness.light,
                     textTheme: CupertinoTextThemeData(
-                      dateTimePickerTextStyle: GoogleFonts.montserrat(
+                      dateTimePickerTextStyle: GoogleFonts.ebGaramond(
                         color: isDark ? Colors.white : Colors.black,
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -291,8 +291,8 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
 
     return Scaffold(
       backgroundColor: isDark
-          ? const Color(0xFF09090B)
-          : const Color(0xFFF8FAFC),
+          ? const Color(0xFF0B1026)
+          : const Color(0xFFF4EFE3),
       extendBody: true,
       bottomNavigationBar: NavigationPill(
         currentIndex: -1,
@@ -325,7 +325,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                       padding: const EdgeInsets.only(left: 4, bottom: 16),
                       child: Text(
                         'ACCOUNT DETAILS',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 9,
                           fontWeight: FontWeight.w800,
                           color: isDark ? Colors.white38 : Colors.black38,
@@ -337,7 +337,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                     Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF18181B) : Colors.white,
+                        color: isDark ? const Color(0xFF141B3A) : Colors.white,
                         borderRadius: BorderRadius.circular(32),
                         border: Border.all(
                           color: (isDark ? Colors.white : Colors.black)
@@ -433,7 +433,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF18181B) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : Colors.white,
         borderRadius: BorderRadius.circular(40),
         border: Border.all(
           color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
@@ -515,7 +515,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                         shape: BoxShape.circle,
                         border: Border.all(
                           color: isDark
-                              ? const Color(0xFF18181B)
+                              ? const Color(0xFF141B3A)
                               : Colors.white,
                           width: 3,
                         ),
@@ -534,7 +534,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           Text(
             name.toUpperCase(),
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 18,
               fontWeight: FontWeight.w900,
               color: isDark ? Colors.white : Colors.black,
@@ -545,7 +545,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           Text(
             email.toUpperCase(),
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 9,
               fontWeight: FontWeight.w800,
               color: isDark ? Colors.white38 : Colors.black45,
@@ -563,7 +563,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       child: Center(
         child: Text(
           initial,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             textStyle: const TextStyle(inherit: true),
             fontSize: 32,
             fontWeight: FontWeight.w800,
@@ -588,7 +588,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
             child: Center(
               child: Text(
                 'SETTINGS',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   textStyle: const TextStyle(inherit: true),
                   fontSize: 14,
                   fontWeight: FontWeight.w800,
@@ -626,7 +626,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
               ),
               label: Text(
                 'SAVE',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 1,
@@ -652,7 +652,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               textStyle: const TextStyle(inherit: true),
               fontSize: 8,
               fontWeight: FontWeight.w800,
@@ -666,7 +666,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
             // Flat inset input — the single shadow lives on the outer card.
             color: isDark
                 ? Colors.white.withOpacity(0.03)
-                : const Color(0xFFF8FAFC),
+                : const Color(0xFFF4EFE3),
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: (isDark ? Colors.white : Colors.black).withOpacity(0.06),
@@ -676,7 +676,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
             controller: controller,
             enabled: enabled,
             textCapitalization: capitalization,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               textStyle: const TextStyle(inherit: true),
               fontSize: 13,
               fontWeight: FontWeight.w800,
@@ -710,7 +710,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               textStyle: const TextStyle(inherit: true),
               fontSize: 8,
               fontWeight: FontWeight.w800,
@@ -726,7 +726,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
               // Flat inset input — the single shadow lives on the outer card.
               color: isDark
                   ? Colors.white.withOpacity(0.03)
-                  : const Color(0xFFF8FAFC),
+                  : const Color(0xFFF4EFE3),
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.06),
@@ -742,7 +742,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                     ),
                     child: Text(
                       controller.text.isEmpty ? "SELECT DATE" : controller.text,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         textStyle: const TextStyle(inherit: true),
                         fontSize: 13,
                         fontWeight: FontWeight.w800,
@@ -775,7 +775,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       children: [
         Text(
           "NOTIFICATION PREFERENCES",
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             textStyle: const TextStyle(inherit: true),
             fontSize: 9,
             fontWeight: FontWeight.w800,
@@ -788,7 +788,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF18181B) : Colors.white,
+            color: isDark ? const Color(0xFF141B3A) : Colors.white,
             borderRadius: BorderRadius.circular(32),
             border: Border.all(
               color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
@@ -850,7 +850,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
                     color: isDark ? Colors.white : Colors.black,
@@ -858,7 +858,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                 ),
                 Text(
                   subtitle,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 8,
                     fontWeight: FontWeight.w700,
                     color: isDark ? Colors.white38 : Colors.black38,
@@ -886,7 +886,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       child: TextButton(
         onPressed: () => GoRouter.of(context).push('/profile/deactivate'),
         style: TextButton.styleFrom(
-          foregroundColor: const Color(0xFFEF4444).withOpacity(0.75),
+          foregroundColor: const Color(0xFFC65B46).withOpacity(0.75),
           padding: const EdgeInsets.symmetric(vertical: 18),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -894,7 +894,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
         ),
         child: Text(
           'DEACTIVATE ACCOUNT',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             textStyle: const TextStyle(inherit: true),
             fontSize: 9,
             fontWeight: FontWeight.w900,
@@ -923,7 +923,7 @@ class _IconButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF18181B) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),

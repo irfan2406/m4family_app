@@ -22,7 +22,7 @@ class CpEmployeesScreen extends ConsumerStatefulWidget {
 class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
   // Web parity: the CP accent is purple (only the header dot uses it); the
   // icons/buttons are neutral grey, not gold.
-  static const Color _purple = Color(0xFF9333EA);
+  static const Color _purple = Color(0xFFC5A35B);
 
   bool _loading = true;
   String? _error;
@@ -80,7 +80,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
   void _toast(String msg) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg, style: GoogleFonts.montserrat(fontSize: 12))),
+      SnackBar(content: Text(msg, style: GoogleFonts.ebGaramond(fontSize: 12))),
     );
   }
 
@@ -283,7 +283,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                   const SizedBox(width: 8),
                   Text(
                     'TEAM MANAGEMENT',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 13,
                       fontWeight: FontWeight.w900,
                       color: textPrimary,
@@ -295,7 +295,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
               const SizedBox(height: 2),
               Text(
                 'MANAGE YOUR PORTAL EMPLOYEES',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 8,
                   fontWeight: FontWeight.w900,
                   color: muted,
@@ -342,7 +342,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
           Expanded(
             child: TextField(
               onChanged: (v) => setState(() => _search = v),
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
                 color: textPrimary,
@@ -350,7 +350,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
               decoration: InputDecoration(
                 isCollapsed: true,
                 hintText: 'SEARCH BY NAME OR PHONE...',
-                hintStyle: GoogleFonts.montserrat(
+                hintStyle: GoogleFonts.ebGaramond(
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
                   color: muted.withValues(alpha: 0.6),
@@ -414,7 +414,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                       child: Text(
                         name.toUpperCase(),
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 11,
                           fontWeight: FontWeight.w900,
                           color: textPrimary,
@@ -438,7 +438,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                     const SizedBox(width: 7),
                     Text(
                       phone,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 11,
                         fontWeight: FontWeight.w800,
                         color: textPrimary.withValues(alpha: 0.78),
@@ -461,7 +461,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                         child: Text(
                           email,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 10.5,
                             fontWeight: FontWeight.w600,
                             color: textPrimary.withValues(alpha: 0.65),
@@ -528,7 +528,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
       ),
       child: Text(
         isActive ? 'ACTIVE' : 'INACTIVE',
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.ebGaramond(
           fontSize: 7,
           fontWeight: FontWeight.w900,
           color: color,
@@ -557,7 +557,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
           Text(
             'NO MATCHING TEAM MEMBERS',
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 10,
               fontWeight: FontWeight.w900,
               color: muted,
@@ -581,7 +581,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
             Text(
               _error ?? 'Something went wrong',
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
                 color: textPrimary,
@@ -592,7 +592,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
               onPressed: _load,
               child: Text(
                 'RETRY',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 11,
                   fontWeight: FontWeight.w900,
                 ),
@@ -607,7 +607,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
   void _confirmDelete(String id, String name, Color textPrimary, Color muted) {
     if (id.isEmpty) return;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final dialogBg = isDark ? const Color(0xFF111111) : Colors.white;
+    final dialogBg = isDark ? const Color(0xFF0B1026) : Colors.white;
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -615,7 +615,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         title: Text(
           'DELETE EMPLOYEE',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 13,
             fontWeight: FontWeight.w900,
             color: textPrimary,
@@ -624,7 +624,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
         ),
         content: Text(
           'Are you sure you want to delete ${name.isEmpty ? 'this employee' : name}?',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 12,
             fontWeight: FontWeight.w500,
             color: muted,
@@ -635,7 +635,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
             onPressed: () => Navigator.of(ctx).pop(),
             child: Text(
               'CANCEL',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 11,
                 fontWeight: FontWeight.w900,
                 color: muted,
@@ -650,7 +650,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
             },
             child: Text(
               'DELETE',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 11,
                 fontWeight: FontWeight.w900,
               ),
@@ -664,7 +664,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
   /// Add (existing == null) or edit employee dialog.
   void _openEmployeeDialog({dynamic existing}) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final dialogBg = isDark ? const Color(0xFF111111) : Colors.white;
+    final dialogBg = isDark ? const Color(0xFF0B1026) : Colors.white;
     final textPrimary = isDark ? Colors.white : Colors.black;
     final muted = (isDark ? Colors.white : Colors.black).withValues(
       alpha: 0.62,
@@ -705,7 +705,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                     padding: const EdgeInsets.only(left: 4, bottom: 6),
                     child: Text(
                       label,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 9,
                         fontWeight: FontWeight.w900,
                         color: textPrimary.withValues(alpha: 0.8),
@@ -724,14 +724,14 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                             LengthLimitingTextInputFormatter(10),
                           ]
                         : null,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
                       color: textPrimary,
                     ),
                     decoration: InputDecoration(
                       hintText: hint,
-                      hintStyle: GoogleFonts.montserrat(
+                      hintStyle: GoogleFonts.ebGaramond(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
                         color: muted.withValues(alpha: 0.7),
@@ -764,7 +764,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
               titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
               title: Text(
                 isEdit ? 'EDIT TEAM MEMBER' : 'ADD NEW EMPLOYEE',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 13,
                   fontWeight: FontWeight.w900,
                   color: textPrimary,
@@ -794,7 +794,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                   onPressed: saving ? null : () => Navigator.of(ctx).pop(),
                   child: Text(
                     'CANCEL',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 11,
                       fontWeight: FontWeight.w900,
                       color: muted,
@@ -834,7 +834,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                     saving
                         ? 'SAVING...'
                         : (isEdit ? 'SAVE CHANGES' : 'ADD EMPLOYEE'),
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 11,
                       fontWeight: FontWeight.w900,
                     ),

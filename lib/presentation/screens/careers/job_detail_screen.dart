@@ -22,7 +22,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
     final job = widget.job;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: isDark ? Colors.black : Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         centerTitle: true,
@@ -31,7 +31,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
           children: [
             Text(
               (job['title'] ?? '').toString().toUpperCase(),
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 color: isDark ? Colors.white : Colors.black,
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
@@ -42,7 +42,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
             const SizedBox(height: 2),
             Text(
               (job['department'] ?? '').toString().toUpperCase(),
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
                 fontWeight: FontWeight.w400,
                 fontSize: 8,
@@ -124,12 +124,12 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
       body: Container(
         padding: const EdgeInsets.only(top: 120),
         decoration: BoxDecoration(
-          color: isDark ? Colors.black : Colors.white,
+          color: Theme.of(context).scaffoldBackgroundColor,
           gradient: isDark
               ? const RadialGradient(
                   center: Alignment.topCenter,
                   radius: 2.0,
-                  colors: [Color(0xFF0F1115), Colors.black],
+                  colors: [Color(0xFF0F2A20), Colors.black],
                 )
               : null,
         ),
@@ -158,7 +158,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                       ),
                       child: Text(
                         (job['department'] ?? '').toString().toUpperCase(),
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           color: isDark ? Colors.white70 : Colors.black87,
                           fontSize: 9,
                           fontWeight: FontWeight.w900,
@@ -171,7 +171,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                     // Job Title
                     Text(
                       (job['title'] ?? '').toString().toUpperCase(),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         color: isDark ? Colors.white : Colors.black,
                         fontWeight: FontWeight.w900,
                         fontSize: 32,
@@ -205,7 +205,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                     // Job Description
                     Text(
                       'ROLE OVERVIEW',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         color: (isDark ? Colors.white : Colors.black)
                             .withOpacity(0.6),
                         fontSize: 10,
@@ -216,7 +216,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                     const SizedBox(height: 24),
                     Text(
                       (job['description'] ?? '').toString(),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         color: (isDark ? Colors.white : Colors.black)
                             .withOpacity(0.85),
                         fontSize: 13,
@@ -265,7 +265,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                                 ),
                                 child: Text(
                                   item.toString().toUpperCase(),
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.ebGaramond(
                                     color: isDark ? Colors.black : Colors.white,
                                     fontWeight: FontWeight.w900,
                                     fontSize: 9,
@@ -342,7 +342,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
               children: [
                 Text(
                   'APPLY FOR THIS POSITION',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontWeight: FontWeight.w900,
                     fontSize: 11,
                     letterSpacing: 1.5,
@@ -361,7 +361,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
   Widget _buildSectionHeader(String title, bool isDark) {
     return Text(
       title,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.ebGaramond(
         color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
         fontSize: 10,
         fontWeight: FontWeight.w900,
@@ -396,7 +396,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
           Expanded(
             child: Text(
               text,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.ebGaramond(
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.8),
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -430,7 +430,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
           Expanded(
             child: Text(
               text,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 color: (isDark ? Colors.white : Colors.black).withValues(
                   alpha: 0.8,
                 ),
@@ -474,7 +474,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
           const SizedBox(height: 16),
           Text(
             text.toUpperCase(),
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               color: isDark ? Colors.white : Colors.black,
               fontSize: 10,
               fontWeight: FontWeight.w900,
@@ -508,7 +508,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
               text.toUpperCase(),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 color: isDark ? Colors.white70 : Colors.black54,
                 fontSize: 9,
                 fontWeight: FontWeight.w900,

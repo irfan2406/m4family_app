@@ -183,7 +183,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                               const SizedBox(width: 12),
                               Text(
                                 'BACK TO GUEST PORTAL',
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.ebGaramond(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w900,
                                   fontSize: 11,
@@ -223,15 +223,15 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.purple.withValues(alpha: 0.2),
+                          color: Color(0xFFC5A35B).withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
-                            color: Colors.purple.withValues(alpha: 0.35),
+                            color: Color(0xFFC5A35B).withValues(alpha: 0.35),
                           ),
                         ),
                         child: const Icon(
                           LucideIcons.sparkles,
-                          color: Colors.purpleAccent,
+                          color: Color(0xFFC5A35B),
                           size: 26,
                         ),
                       ),
@@ -240,7 +240,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                   const SizedBox(height: 32),
                   Text(
                     'PARTNER\nREGISTRATION',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 42,
                       fontWeight: FontWeight.w900,
                       color: Colors.white,
@@ -251,7 +251,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                   const SizedBox(height: 12),
                   Text(
                     'JOIN M4 FAMILY CHANNEL PARTNER NETWORK',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
                       color: Colors.white54,
@@ -328,7 +328,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                     child: FilledButton(
                       onPressed: _submitting ? null : _submit,
                       style: FilledButton.styleFrom(
-                        backgroundColor: Colors.purple.shade600,
+                        backgroundColor: Color(0xFFC5A35B),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(32),
                         ),
@@ -347,7 +347,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                               children: [
                                 Text(
                                   'COMPLETE REGISTRATION',
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.ebGaramond(
                                     fontWeight: FontWeight.w900,
                                     fontSize: 13,
                                     letterSpacing: 1.5,
@@ -375,7 +375,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                     ),
                     child: Text(
                       'ALREADY HAVE AN ACCOUNT? LOGIN',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 10,
                         fontWeight: FontWeight.w800,
                         color: Colors.white54,
@@ -397,10 +397,10 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
     padding: const EdgeInsets.only(bottom: 12),
     child: Text(
       t,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.ebGaramond(
         fontSize: 10,
         fontWeight: FontWeight.bold,
-        color: Colors.purpleAccent.withValues(alpha: 0.7),
+        color: Color(0xFFC5A35B).withValues(alpha: 0.7),
         letterSpacing: 2,
       ),
     ),
@@ -433,7 +433,7 @@ class _CpField extends StatelessWidget {
         children: [
           Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 9,
               fontWeight: FontWeight.bold,
               color: Colors.white54,

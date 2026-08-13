@@ -22,7 +22,7 @@ import 'package:m4_mobile/presentation/widgets/cp_sidebar_menu.dart';
 /// (CachedNetworkImage can only fetch network URLs). Used by the project cards.
 Widget _projListImage(String url, {BoxFit fit = BoxFit.cover}) {
   Widget errorBox() => Container(
-    color: const Color(0xFF1A1A1A),
+    color: const Color(0xFF141B3A),
     child: const Center(
       child: Icon(LucideIcons.building2, color: Colors.white24, size: 40),
     ),
@@ -85,7 +85,7 @@ class ProjectListScreen extends ConsumerWidget {
             return Container(
               height: MediaQuery.of(context).size.height * 0.85,
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF111111) : Colors.white,
+                color: isDark ? Theme.of(context).scaffoldBackgroundColor : Colors.white,
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(40),
                 ),
@@ -111,7 +111,7 @@ class ProjectListScreen extends ConsumerWidget {
                       children: [
                         Text(
                           'REFINE SEARCH',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 22,
                             fontWeight: FontWeight.w900,
                             color: Theme.of(context).colorScheme.onSurface,
@@ -249,7 +249,7 @@ class ProjectListScreen extends ConsumerWidget {
                         ),
                         child: Text(
                           'APPLY SEARCH MATRIX',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 12,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 1.5,
@@ -329,7 +329,7 @@ class ProjectListScreen extends ConsumerWidget {
                                   'M4 PROPERTIES',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.ebGaramond(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w900,
                                     color: Theme.of(
@@ -343,7 +343,7 @@ class ProjectListScreen extends ConsumerWidget {
                                   'DISCOVER CURATED LUXURY',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.ebGaramond(
                                     fontSize: 8,
                                     fontWeight: FontWeight.w700,
                                     color: Theme.of(
@@ -357,7 +357,7 @@ class ProjectListScreen extends ConsumerWidget {
                                   'DISCOVER',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.ebGaramond(
                                     fontSize: 8,
                                     fontWeight: FontWeight.w700,
                                     color: Theme.of(
@@ -371,7 +371,7 @@ class ProjectListScreen extends ConsumerWidget {
                                   'M4 PROPERTIES',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.ebGaramond(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w800,
                                     color: Theme.of(
@@ -498,7 +498,7 @@ class ProjectListScreen extends ConsumerWidget {
                         ),
                         child: Text(
                           filter.toUpperCase(),
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 10,
                             fontWeight: isSelected
                                 ? FontWeight.w900
@@ -622,7 +622,7 @@ class ProjectListScreen extends ConsumerWidget {
                                 ? 'TAKING LONGER THAN USUAL'
                                 : "COULDN'T LOAD PROPERTIES",
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 12,
                               fontWeight: FontWeight.w900,
                               color: onSurface,
@@ -635,7 +635,7 @@ class ProjectListScreen extends ConsumerWidget {
                                 ? 'The server may be waking up. Please try again.'
                                 : 'Please check your connection and try again.',
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 11,
                               fontWeight: FontWeight.w500,
                               color: onSurface.withOpacity(0.5),
@@ -656,7 +656,7 @@ class ProjectListScreen extends ConsumerWidget {
                               ),
                               child: Text(
                                 'RETRY',
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.ebGaramond(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w900,
                                   color: isDark ? Colors.black : Colors.white,
@@ -700,7 +700,7 @@ class _ProjectGridItem extends StatelessWidget {
       height:
           200, // Enforce 16:9 aspect ratio parity with web (approx for mobile width)
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF18181B) : Colors.white,
+        color: isDark ? Theme.of(context).colorScheme.surface : Colors.white,
         borderRadius: BorderRadius.circular(40),
         boxShadow: [
           BoxShadow(
@@ -750,7 +750,7 @@ class _ProjectGridItem extends StatelessWidget {
                 ),
                 child: Text(
                   'ARTISTIC IMPRESSION',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 7,
                     fontWeight: FontWeight.w900,
                     color: Colors.white.withOpacity(0.6),
@@ -778,7 +778,7 @@ class _ProjectGridItem extends StatelessWidget {
                         (project['title'] ?? 'M4 PROJECT')
                             .toString()
                             .toUpperCase(),
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 20,
                           fontWeight: FontWeight.w800,
                           color: Colors.white,
@@ -799,7 +799,7 @@ class _ProjectGridItem extends StatelessWidget {
                           Expanded(
                             child: Text(
                               locationLabel.toUpperCase(),
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.ebGaramond(
                                 fontSize: 9,
                                 color: Colors.white70,
                                 fontWeight: FontWeight.w900,
@@ -856,7 +856,7 @@ class _ProjectListRowItem extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF18181B) : Colors.white,
+        color: isDark ? Theme.of(context).colorScheme.surface : Colors.white,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -894,7 +894,7 @@ class _ProjectListRowItem extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   (project['title'] ?? 'M4 PROJECT').toString().toUpperCase(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 16,
                     fontWeight: FontWeight.w900,
                     color: isDark ? Colors.white : Colors.black,
@@ -917,7 +917,7 @@ class _ProjectListRowItem extends StatelessWidget {
                     Expanded(
                       child: Text(
                         project['location']?['name'] ?? 'N/A',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 11,
                           color: Theme.of(
                             context,
@@ -971,7 +971,7 @@ class _Badge extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.ebGaramond(
           fontSize: 8,
           fontWeight: FontWeight.w900,
           color: Theme.of(context).colorScheme.onSurface,
@@ -1002,7 +1002,7 @@ class _FilterSection extends StatelessWidget {
       children: [
         Text(
           title,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 10,
             fontWeight: FontWeight.w900,
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.75),
@@ -1051,7 +1051,7 @@ class _FilterSection extends StatelessWidget {
                 ),
                 child: Text(
                   opt.toUpperCase(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 9,
                     fontWeight: FontWeight.w900,
                     color: isSelected

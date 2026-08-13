@@ -92,7 +92,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                     child: Text(
                       'REFERRAL & REWARDS',
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 16,
                         fontWeight: FontWeight.w900,
                         color: scheme.onSurface,
@@ -133,7 +133,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                             // ─── Active Referrals ────────────────
                             Text(
                               'ACTIVE REFERRALS',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.ebGaramond(
                                 fontSize: 9,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 2,
@@ -164,7 +164,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : Colors.white,
         borderRadius: BorderRadius.circular(40),
         boxShadow: [
           BoxShadow(
@@ -193,7 +193,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                 // Label
                 Text(
                   'WALLET BALANCE',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -209,7 +209,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                   children: [
                     Text(
                       _formatNumber(pts),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 48,
                         fontWeight: FontWeight.w900,
                         color: scheme.onSurface,
@@ -221,7 +221,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                       padding: const EdgeInsets.only(bottom: 4),
                       child: Text(
                         'PTS',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 18,
                           fontWeight: FontWeight.w900,
                           color: scheme.onSurface.withValues(alpha: 0.68),
@@ -237,7 +237,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                 // Value line
                 Text(
                   'VALUE: AED ${_formatNumber(pts)}',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -277,7 +277,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                       children: [
                         Text(
                           'REDEEM NOW',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 11,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 2,
@@ -364,7 +364,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
             const SizedBox(height: 14),
             Text(
               label,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 9,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.5,
@@ -393,7 +393,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
         child: Center(
           child: Text(
             'NO REFERRALS YET',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 10,
               fontWeight: FontWeight.w900,
               letterSpacing: 2,
@@ -443,7 +443,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
               children: [
                 Text(
                   name.toUpperCase(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 13,
                     fontWeight: FontWeight.w800,
                     color: scheme.onSurface,
@@ -453,7 +453,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                   const SizedBox(height: 2),
                   Text(
                     project.toUpperCase(),
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 8,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1.5,
@@ -477,7 +477,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
             ),
             child: Text(
               status.toUpperCase(),
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 8,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1,
@@ -513,7 +513,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                 bottom: MediaQuery.of(ctx).viewInsets.bottom + 32,
               ),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF18181B) : Colors.white,
+                color: isDark ? const Color(0xFF141B3A) : Colors.white,
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
               ),
               child: Column(
@@ -535,7 +535,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                   // Title
                   Text(
                     'NEW\nREFERRAL',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 24,
                       fontWeight: FontWeight.w900,
                       color: scheme.onSurface,
@@ -545,7 +545,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                   const SizedBox(height: 8),
                   Text(
                     'REFER & EARN REWARDS',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 9,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 2,
@@ -578,13 +578,13 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                                 value: selectedProjectId,
                                 hint: Text(
                                   'SELECT PROJECT',
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.ebGaramond(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w800,
                                     color: scheme.onSurface.withValues(alpha: 0.68),
                                   ),
                                 ),
-                                dropdownColor: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+                                dropdownColor: isDark ? const Color(0xFF141B3A) : Colors.white,
                                 icon: Icon(LucideIcons.chevronDown, size: 16, color: scheme.onSurface.withValues(alpha: 0.3)),
                                 items: [
                                   for (final p in projects)
@@ -593,7 +593,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                                         value: p['_id'].toString(),
                                         child: Text(
                                           (p['title'] ?? 'Project').toString().toUpperCase(),
-                                          style: GoogleFonts.montserrat(
+                                          style: GoogleFonts.ebGaramond(
                                             fontSize: 10,
                                             fontWeight: FontWeight.w800,
                                             color: scheme.onSurface,
@@ -637,7 +637,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                         : () async {
                             if (nameCtrl.text.trim().isEmpty || phoneCtrl.text.trim().isEmpty || selectedProjectId == null) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Please fill all fields'), backgroundColor: Colors.redAccent),
+                                const SnackBar(content: Text('Please fill all fields'), backgroundColor: Color(0xFFC5A35B)),
                               );
                               return;
                             }
@@ -684,7 +684,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                           ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: scheme.surface))
                           : Text(
                               'SUBMIT REFERRAL',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.ebGaramond(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 2,
@@ -706,7 +706,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
   Widget _buildFormLabel(String text, ColorScheme scheme) {
     return Text(
       text,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.ebGaramond(
         fontSize: 9,
         fontWeight: FontWeight.w900,
         letterSpacing: 1.5,
@@ -730,14 +730,14 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
       child: TextField(
         controller: controller,
         keyboardType: isPhone ? TextInputType.phone : TextInputType.text,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.ebGaramond(
           fontSize: 12,
           fontWeight: FontWeight.w700,
           color: scheme.onSurface,
         ),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: GoogleFonts.montserrat(
+          hintStyle: GoogleFonts.ebGaramond(
             fontSize: 11,
             fontWeight: FontWeight.w800,
             color: scheme.onSurface.withValues(alpha: 0.62),

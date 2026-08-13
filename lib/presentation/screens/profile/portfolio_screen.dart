@@ -27,7 +27,7 @@ class PortfolioScreen extends ConsumerStatefulWidget {
 }
 
 class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
-  static const Color _gold = Color(0xFFFFD700);
+  static const Color _gold = Color(0xFFC5A35B);
 
   bool _isLoading = true;
   bool _hasError = false;
@@ -143,7 +143,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
             children: [
               Text(
                 'PORTFOLIO',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 20,
                   fontWeight: FontWeight.w800,
                   color: textPrimary,
@@ -154,7 +154,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
               const SizedBox(height: 6),
               Text(
                 'MY INVESTMENTS',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 8,
                   fontWeight: FontWeight.w700,
                   color: M4Theme.premiumBlue.withValues(alpha: 0.6),
@@ -195,7 +195,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
               padding: const EdgeInsets.only(left: 4, bottom: 16),
               child: Text(
                 'CURRENT HOLDINGS',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 9,
                   fontWeight: FontWeight.w700,
                   color: (isDark ? Colors.white : Colors.black)
@@ -250,7 +250,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
               children: [
                 Text(
                   'TOTAL ASSETS',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 9,
                     fontWeight: FontWeight.w700,
                     color: muted,
@@ -261,7 +261,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                 RichText(
                   text: TextSpan(
                     text: count,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 24,
                       fontWeight: FontWeight.w800,
                       color: textPrimary,
@@ -270,7 +270,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                     children: [
                       TextSpan(
                         text: '  PROPERTIES',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
                           color: muted,
@@ -288,7 +288,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
             children: [
               Text(
                 'COMBINED VALUE',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 9,
                   fontWeight: FontWeight.w700,
                   color: muted,
@@ -298,7 +298,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
               const SizedBox(height: 8),
               Text(
                 _formatValue(_combinedValue),
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 20,
                   fontWeight: FontWeight.w800,
                   color: _gold,
@@ -408,7 +408,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                 children: [
                   Text(
                     name.toUpperCase(),
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
                       color: textPrimary,
@@ -424,7 +424,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                       Expanded(
                         child: Text(
                           location.toUpperCase(),
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 9,
                             fontWeight: FontWeight.w700,
                             color: muted,
@@ -480,7 +480,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                         children: [
                           Text(
                             'VIEW SPECIFICATIONS',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 9,
                               fontWeight: FontWeight.w800,
                               color: isDark ? Colors.black : Colors.white,
@@ -545,7 +545,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
 
     final textPrimary = isDark ? Colors.white : Colors.black;
     final muted = textPrimary.withValues(alpha: 0.5);
-    final sheetBg = isDark ? const Color(0xFF0A0A0A) : Colors.white;
+    final sheetBg = isDark ? const Color(0xFF0B1026) : Colors.white;
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -605,7 +605,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                             children: [
                               Text(
                                 name.toUpperCase(),
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.ebGaramond(
                                   fontSize: 22,
                                   fontWeight: FontWeight.w800,
                                   color: textPrimary,
@@ -615,7 +615,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                               const SizedBox(height: 6),
                               Text(
                                 'UNIT $unit SPECIFICATIONS',
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.ebGaramond(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w700,
                                   color: M4Theme.premiumBlue
@@ -701,7 +701,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                                 const SizedBox(width: 8),
                                 Text(
                                   'VERIFIED PROPERTY',
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.ebGaramond(
                                     fontSize: 9,
                                     fontWeight: FontWeight.w800,
                                     color:
@@ -738,7 +738,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
             const SizedBox(height: 20),
             Text(
               'NO HOLDINGS YET',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
                 color: faint,
@@ -748,7 +748,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
             const SizedBox(height: 8),
             Text(
               'Your acquired properties will appear here.',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
                 color: (isDark ? Colors.white : Colors.black)
@@ -775,7 +775,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
             const SizedBox(height: 20),
             Text(
               'UNABLE TO LOAD PORTFOLIO',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
                 color: muted,
@@ -794,7 +794,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                 ),
                 child: Text(
                   'RETRY',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
                     color: isDark ? Colors.black : Colors.white,
@@ -884,7 +884,7 @@ class _Pill extends StatelessWidget {
       ),
       child: Text(
         text.toUpperCase(),
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.ebGaramond(
           fontSize: 8,
           fontWeight: FontWeight.w800,
           color: fg,
@@ -904,7 +904,7 @@ class _StatusPill extends StatelessWidget {
     final ready = status.toLowerCase().contains('ready') ||
         status.toLowerCase().contains('confirmed') ||
         status.toLowerCase().contains('move');
-    final color = ready ? const Color(0xFF22C55E) : const Color(0xFFF59E0B);
+    final color = ready ? const Color(0xFFC5A35B) : const Color(0xFFC5A35B);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
@@ -914,7 +914,7 @@ class _StatusPill extends StatelessWidget {
       ),
       child: Text(
         status.toUpperCase(),
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.ebGaramond(
           fontSize: 8,
           fontWeight: FontWeight.w800,
           color: color,
@@ -947,7 +947,7 @@ class _DetailItem extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 8,
             fontWeight: FontWeight.w700,
             color: muted,
@@ -958,7 +958,7 @@ class _DetailItem extends StatelessWidget {
         Text(
           value.toUpperCase(),
           textAlign: alignEnd ? TextAlign.right : TextAlign.left,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 11,
             fontWeight: FontWeight.w800,
             fontStyle: FontStyle.italic,
@@ -996,7 +996,7 @@ class _SpecItem extends StatelessWidget {
             Expanded(
               child: Text(
                 label,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 8,
                   fontWeight: FontWeight.w700,
                   color: muted,
@@ -1009,7 +1009,7 @@ class _SpecItem extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           value.toUpperCase(),
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 12,
             fontWeight: FontWeight.w800,
             color: textPrimary,

@@ -51,7 +51,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
     final isDark = ref.watch(themeProvider) == ThemeMode.dark;
     
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF09090B) : const Color(0xFFF8FAFC),
+      backgroundColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFF4EFE3),
       body: SafeArea(
         child: Column(
           children: [
@@ -98,7 +98,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
             child: Center(
               child: Text(
                 'MY PROPERTY',
-                style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
+                style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), 
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white : Colors.black,
@@ -120,7 +120,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF18181B) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : Colors.white,
         borderRadius: BorderRadius.circular(32),
         border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
         boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20, offset: const Offset(0, 10))],
@@ -133,7 +133,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
             children: [
               Text(
                 'PORTFOLIO OVERVIEW',
-                style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
+                style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), 
                   fontSize: 8,
                   fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white38 : Colors.black38,
@@ -143,7 +143,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
               const SizedBox(height: 8),
               Text(
                 '$units Units • $visits Visits',
-                style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
+                style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), 
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white : Colors.black,
@@ -156,7 +156,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
             children: [
               Text(
                 'TOTAL VALUE',
-                style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
+                style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), 
                   fontSize: 8,
                   fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white38 : Colors.black38,
@@ -166,10 +166,10 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
               const SizedBox(height: 8),
               Text(
                 '₹${NumberFormat('#,##,###').format(_totalValue)}',
-                style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
+                style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), 
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
-                  color: const Color(0xFF22C55E),
+                  color: const Color(0xFFC5A35B),
                 ),
               ),
             ],
@@ -187,7 +187,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF18181B) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : Colors.white,
         borderRadius: BorderRadius.circular(32),
         border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
         boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20, offset: const Offset(0, 10))],
@@ -214,7 +214,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                     children: [
                       Text(
                         (project['title'] ?? 'Unknown Project').toUpperCase(),
-                        style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
+                        style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), 
                           fontSize: 14,
                           fontWeight: FontWeight.w800,
                           color: isDark ? Colors.white : Colors.black,
@@ -227,7 +227,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                           const SizedBox(width: 4),
                           Text(
                             (project['location']?['name'] ?? 'Developing Area').toUpperCase(),
-                            style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
+                            style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), 
                               fontSize: 9,
                               fontWeight: FontWeight.w700,
                               color: isDark ? Colors.white38 : Colors.black38,
@@ -273,8 +273,8 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('PAYMENT PROGRESS', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white24 : Colors.black26, letterSpacing: 1.5)),
-                        Text('$paymentPercent% PAID', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: const Color(0xFF22C55E))),
+                        Text('PAYMENT PROGRESS', style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white24 : Colors.black26, letterSpacing: 1.5)),
+                        Text('$paymentPercent% PAID', style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w900, color: const Color(0xFFC5A35B))),
                       ],
                     ),
                     const SizedBox(height: 8),
@@ -290,7 +290,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                         widthFactor: (paymentPercent / 100).clamp(0.05, 1.0),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: const Color(0xFF22C55E),
+                            color: const Color(0xFFC5A35B),
                             borderRadius: BorderRadius.circular(3),
                           ),
                         ),
@@ -314,7 +314,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
         const SizedBox(height: 24),
         Text(
           'NO PROPERTY RECORDS FOUND',
-          style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
+          style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), 
             fontSize: 10,
             fontWeight: FontWeight.w800,
             color: (isDark ? Colors.white : Colors.black).withOpacity(0.2),
@@ -332,7 +332,7 @@ class _StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = status.toLowerCase() == 'confirmed' ? const Color(0xFF22C55E) : Colors.blueAccent;
+    final color = status.toLowerCase() == 'confirmed' ? const Color(0xFFC5A35B) : Color(0xFFC5A35B);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
@@ -342,7 +342,7 @@ class _StatusBadge extends StatelessWidget {
       ),
       child: Text(
         status.toUpperCase(),
-        style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: color, letterSpacing: 0.5),
+        style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w900, color: color, letterSpacing: 0.5),
       ),
     );
   }
@@ -360,9 +360,9 @@ class _InfoItem extends StatelessWidget {
     return Column(
       crossAxisAlignment: crossAlign,
       children: [
-        Text(label, style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w800, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1)),
+        Text(label, style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w800, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1)),
         const SizedBox(height: 4),
-        Text(value, style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black)),
+        Text(value, style: GoogleFonts.ebGaramond(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black)),
       ],
     );
   }
@@ -381,7 +381,7 @@ class _IconButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF18181B) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
         ),

@@ -43,7 +43,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
         .toLowerCase();
     final isCp = role == 'cp';
     return Scaffold(
-      backgroundColor: isDark ? Colors.black : Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       drawer: const ConditionalDrawer(),
       extendBody: true,
       bottomNavigationBar: isCp
@@ -100,7 +100,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                         children: [
                           Text(
                             'M4 FAMILY',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.ebGaramond(
                               color: isDark ? Colors.white : Colors.black,
                               fontSize: 18,
                               fontWeight: FontWeight.w900,
@@ -109,7 +109,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                           ),
                           Text(
                             'DEVELOPMENTS',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.ebGaramond(
                               color: (isDark ? Colors.white : Colors.black)
                                   .withOpacity(0.6),
                               fontSize: 8,
@@ -154,7 +154,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                 children: [
                   Text(
                     'ABOUT THE',
-                    style: GoogleFonts.lora(
+                    style: GoogleFonts.gelasio(
                       fontSize: 32,
                       fontWeight: FontWeight.w300,
                       color: (isDark ? Colors.white : Colors.black).withOpacity(
@@ -165,7 +165,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                   ),
                   Text(
                     'COMMUNITIES',
-                    style: GoogleFonts.lora(
+                    style: GoogleFonts.gelasio(
                       fontSize: 32,
                       fontWeight: FontWeight.w300,
                       color: isDark ? Colors.white : Colors.black,
@@ -182,7 +182,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       'At M4 Family Developments, we are dedicated to delivering a luxury experience that goes beyond the ordinary. Our commitment to exquisite living, unparalleled quality, and iconic design is evident in ...',
                       // Web parity: description is sans-serif (font-sans),
                       // muted, text-[13px] font-medium (not serif).
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.ebGaramond(
                         color: (isDark ? Colors.white : Colors.black)
                             .withOpacity(0.6),
                         fontSize: 13,
@@ -194,7 +194,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       'At M4 Family Developments, we are dedicated to delivering a luxury experience that goes beyond the ordinary. Our commitment to exquisite living, unparalleled quality, and iconic design is evident in every community we curate. We believe in creating spaces that faster connection, inspiration, and a sense of belonging for every resident. Our developments are strategically located to offer the best of urban living with a touch of serenity.',
                       // Web parity: description is sans-serif (font-sans),
                       // muted, text-[13px] font-medium (not serif).
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.ebGaramond(
                         color: (isDark ? Colors.white : Colors.black)
                             .withOpacity(0.6),
                         fontSize: 13,
@@ -219,7 +219,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       ),
                       child: Text(
                         _isExpanded ? 'Read less' : 'Read more',
-                        style: GoogleFonts.inter(
+                        style: GoogleFonts.ebGaramond(
                           color: isDark ? Colors.white : Colors.black,
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
@@ -281,7 +281,7 @@ Widget _communityImagePlaceholder() => Container(
     gradient: LinearGradient(
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
-      colors: [Color(0xFFEDEEF1), Color(0xFFD7D9DE)],
+      colors: [Color(0xFFF4EFE3), Color(0xFFD7D9DE)],
     ),
   ),
   child: Center(
@@ -387,7 +387,7 @@ class _CommunityCard extends ConsumerWidget {
                       children: [
                         Text(
                           community['title']?.toString() ?? 'COMMUNITY',
-                          style: GoogleFonts.lora(
+                          style: GoogleFonts.gelasio(
                             fontSize: 28,
                             fontWeight: FontWeight.w400,
                             color: Colors.white,
@@ -401,7 +401,7 @@ class _CommunityCard extends ConsumerWidget {
                               '',
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 13,
                             color: Colors.white.withOpacity(0.8),
                             height: 1.5,

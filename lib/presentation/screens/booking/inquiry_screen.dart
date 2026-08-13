@@ -92,7 +92,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
 
     if (_isSuccess) {
       return Scaffold(
-        backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
+        backgroundColor: isDark ? const Color(0xFF0B1026) : Colors.white,
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(40),
@@ -115,7 +115,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                 const SizedBox(height: 40),
                 Text(
                   'REQUEST REGISTERED',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 24,
                     fontWeight: FontWeight.w900,
                     letterSpacing: -1,
@@ -125,7 +125,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                 Text(
                   'Your inquiry has been secured. Our premium sales associate will contact you shortly with the institutional brochure.',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 10,
                     color: isDark ? Colors.white38 : Colors.black38,
                     fontWeight: FontWeight.w900,
@@ -154,7 +154,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                     child: Center(
                       child: Text(
                         'RETURN TO PROJECT',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           color: isDark ? Colors.black : Colors.white,
                           fontWeight: FontWeight.w900,
                           fontSize: 10,
@@ -172,7 +172,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
     }
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF0B1026) : Colors.white,
       extendBody: true,
       bottomNavigationBar: NavigationPill(
         currentIndex: -1,
@@ -196,7 +196,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
           children: [
             Text(
               'SEND INQUIRY',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 14,
                 fontWeight: FontWeight.w900,
                 color: isDark ? Colors.white : Colors.black,
@@ -204,7 +204,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
             ),
             Text(
               'INSTITUTIONAL PROTOCOL',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 8,
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
                 fontWeight: FontWeight.w900,
@@ -287,7 +287,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                           children: [
                             Text(
                               'PRIORITY INTEREST',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.ebGaramond(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 1.5,
@@ -297,7 +297,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                             const SizedBox(height: 4),
                             Text(
                               'COMPLETE THE PROTOCOL TO UNLOCK THE DETAILED ASSET INVENTORY.',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.ebGaramond(
                                 fontSize: 9,
                                 color: (isDark ? Colors.white : Colors.black)
                                     .withOpacity(0.68),
@@ -380,7 +380,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                               children: [
                                 Text(
                                   'AUTHORIZE INQUIRY',
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.ebGaramond(
                                     color: isDark ? Colors.black : Colors.white,
                                     fontWeight: FontWeight.w900,
                                     fontSize: 11,
@@ -406,7 +406,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                     child: Text(
                       '* BY SUBMITTING, YOU AGREE TO RECEIVE INSTITUTIONAL COMMUNICATIONS REGARDING M4 FAMILY ASSETS.',
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 8,
                         fontWeight: FontWeight.w900,
                         color: isDark ? Colors.white24 : Colors.black26,
@@ -431,7 +431,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
       padding: const EdgeInsets.only(left: 6, bottom: 12),
       child: Text(
         label,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.ebGaramond(
           fontSize: 9,
           fontWeight: FontWeight.w900,
           color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
@@ -464,7 +464,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
       child: TextField(
         controller: controller,
         maxLines: maxLines,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.ebGaramond(
           fontSize: 12,
           fontWeight: FontWeight.w900,
           color: isDark ? Colors.white : Colors.black,
@@ -473,7 +473,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: hint,
-          hintStyle: GoogleFonts.montserrat(
+          hintStyle: GoogleFonts.ebGaramond(
             fontSize: 12,
             color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
             fontWeight: FontWeight.w900,

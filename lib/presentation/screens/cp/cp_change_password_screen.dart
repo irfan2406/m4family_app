@@ -21,8 +21,8 @@ class CpChangePasswordScreen extends ConsumerStatefulWidget {
 
 class _CpChangePasswordScreenState
     extends ConsumerState<CpChangePasswordScreen> {
-  static const _purple = Color(0xFF9333EA);
-  static const _indigo = Color(0xFF4F46E5);
+  static const _purple = Color(0xFFC5A35B);
+  static const _indigo = Color(0xFFC5A35B);
 
   final _current = TextEditingController();
   final _newPass = TextEditingController();
@@ -52,7 +52,7 @@ class _CpChangePasswordScreenState
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(msg),
-        backgroundColor: error ? Colors.redAccent : Colors.green,
+        backgroundColor: error ? Color(0xFFC5A35B) : Colors.green,
       ),
     );
   }
@@ -289,7 +289,7 @@ class _CpChangePasswordScreenState
               children: [
                 Text(
                   'SECURITY SETTINGS',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2.5,
@@ -299,7 +299,7 @@ class _CpChangePasswordScreenState
                 const SizedBox(height: 4),
                 Text(
                   'Change Password',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
                     letterSpacing: -0.3,
@@ -319,7 +319,7 @@ class _CpChangePasswordScreenState
       padding: const EdgeInsets.only(left: 4),
       child: Text(
         label,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.ebGaramond(
           fontSize: 10,
           fontWeight: FontWeight.w800,
           letterSpacing: 2,
@@ -348,14 +348,14 @@ class _CpChangePasswordScreenState
       controller: controller,
       obscureText: obscure,
       onChanged: onChanged,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.ebGaramond(
         fontSize: 14,
         fontWeight: FontWeight.w600,
         color: textPrimary,
       ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.montserrat(
+        hintStyle: GoogleFonts.ebGaramond(
           fontSize: 14,
           fontWeight: FontWeight.w500,
           color: muted,
@@ -419,7 +419,7 @@ class _CpChangePasswordScreenState
               const SizedBox(width: 8),
               Text(
                 'REQUIREMENTS',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 1.5,
@@ -436,7 +436,7 @@ class _CpChangePasswordScreenState
   }
 
   Widget _requirementRow(String label, bool met, Color muted) {
-    const green = Color(0xFF10B981);
+    const green = Color(0xFFC5A35B);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
@@ -459,7 +459,7 @@ class _CpChangePasswordScreenState
           const SizedBox(width: 8),
           Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 10,
               fontWeight: FontWeight.w600,
               color: met ? green : muted,
@@ -502,7 +502,7 @@ class _CpChangePasswordScreenState
                 )
               : Text(
                   'UPDATE PASSWORD',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 12,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,

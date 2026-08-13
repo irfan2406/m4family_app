@@ -145,8 +145,8 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message, style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.bold, color: isError ? Colors.white : Colors.black)),
-        backgroundColor: isError ? const Color(0xFFDC2626) : M4Theme.premiumBlue,
+        content: Text(message, style: GoogleFonts.ebGaramond(fontSize: 12, fontWeight: FontWeight.bold, color: isError ? Colors.white : Colors.black)),
+        backgroundColor: isError ? const Color(0xFFC65B46) : M4Theme.premiumBlue,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
@@ -165,7 +165,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
       builder: (sheetCtx) => Container(
         height: 340,
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF0B111E) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : Colors.white,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         ),
         child: Column(
@@ -177,12 +177,12 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                 children: [
                   TextButton(
                     onPressed: () => Navigator.pop(sheetCtx),
-                    child: Text('CANCEL', style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : Colors.black54, letterSpacing: 1)),
+                    child: Text('CANCEL', style: GoogleFonts.ebGaramond(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : Colors.black54, letterSpacing: 1)),
                   ),
-                  Text('SCHEDULE', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 2)),
+                  Text('SCHEDULE', style: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 2)),
                   TextButton(
                     onPressed: () => Navigator.pop(sheetCtx, temp),
-                    child: Text('DONE', style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 1)),
+                    child: Text('DONE', style: GoogleFonts.ebGaramond(fontSize: 11, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 1)),
                   ),
                 ],
               ),
@@ -193,7 +193,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                 data: CupertinoThemeData(
                   brightness: isDark ? Brightness.dark : Brightness.light,
                   textTheme: CupertinoTextThemeData(
-                    dateTimePickerTextStyle: GoogleFonts.montserrat(fontSize: 17, fontWeight: FontWeight.w700, color: isDark ? Colors.white : Colors.black),
+                    dateTimePickerTextStyle: GoogleFonts.ebGaramond(fontSize: 17, fontWeight: FontWeight.w700, color: isDark ? Colors.white : Colors.black),
                   ),
                 ),
                 child: CupertinoDatePicker(
@@ -362,7 +362,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
         builder: (context, setModalState) => Container(
           padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom + 20),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF0B111E) : Colors.white,
+            color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
           ),
           child: Column(
@@ -391,12 +391,12 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                   children: [
                      Text(
                       _leadType == 'VC' ? 'BOOK A VIDEO CALL' : 'BOOK A SITE VISIT',
-                      style: GoogleFonts.montserrat(fontSize: 26, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, height: 1.1, letterSpacing: -1),
+                      style: GoogleFonts.ebGaramond(fontSize: 26, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, height: 1.1, letterSpacing: -1),
                     ),
                     const SizedBox(height: 16),
                     Text(
                       'A BESPOKE SHOWCASE OF LUXURY AT ${projectTitle.toUpperCase()}.',
-                      style: GoogleFonts.montserrat(fontSize: 9, color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.w900, letterSpacing: 1),
+                      style: GoogleFonts.ebGaramond(fontSize: 9, color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.w900, letterSpacing: 1),
                     ),
                     const SizedBox(height: 40),
                     
@@ -408,7 +408,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                     
                     const SizedBox(height: 28),
                     // Visit Type toggle (web parity)
-                    Text('VISIT TYPE', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : Colors.black54, letterSpacing: 1.5)),
+                    Text('VISIT TYPE', style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : Colors.black54, letterSpacing: 1.5)),
                     const SizedBox(height: 10),
                     Container(
                       padding: const EdgeInsets.all(4),
@@ -432,7 +432,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                                   ),
                                   child: Text(
                                     opt[0].toUpperCase(),
-                                    style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1, color: _leadType == opt[1] ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white54 : Colors.black54)),
+                                    style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1, color: _leadType == opt[1] ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white54 : Colors.black54)),
                                   ),
                                 ),
                               ),
@@ -442,7 +442,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                     ),
                     const SizedBox(height: 20),
                     // Schedule date + time (web parity: IOSDateTimePicker)
-                    Text('SCHEDULE', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : Colors.black54, letterSpacing: 1.5)),
+                    Text('SCHEDULE', style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : Colors.black54, letterSpacing: 1.5)),
                     const SizedBox(height: 10),
                     GestureDetector(
                       onTap: () async {
@@ -458,48 +458,52 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                         }
                       },
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
                         decoration: BoxDecoration(
-                          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF8FAFC),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.08)),
+                          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EEE0),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : const Color(0xFFE6DCC6)),
                         ),
                         child: Row(
                           children: [
-                            const Icon(LucideIcons.calendar, size: 16, color: M4Theme.premiumBlue),
+                            const Icon(LucideIcons.calendar, size: 18, color: M4Theme.premiumBlue),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
                                 _leadDate == null
                                     ? 'SELECT DATE & TIME'
                                     : '${_leadDate!.day}/${_leadDate!.month}/${_leadDate!.year}   ${_leadTime?.format(context) ?? ''}',
-                                style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w800, color: isDark ? Colors.white : Colors.black, letterSpacing: 0.5),
+                                style: GoogleFonts.ebGaramond(fontSize: 12, fontWeight: FontWeight.w800, color: isDark ? Colors.white : const Color(0xFF15271E), letterSpacing: 0.5),
                               ),
                             ),
-                            Icon(LucideIcons.chevronRight, size: 16, color: isDark ? Colors.white38 : Colors.black38),
+                            Icon(LucideIcons.chevronRight, size: 18, color: isDark ? Colors.white38 : M4Theme.premiumBlue),
                           ],
                         ),
                       ),
                     ),
                     const SizedBox(height: 20),
                     // Additional notes (web parity)
-                    Text('ADDITIONAL NOTES', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : Colors.black54, letterSpacing: 1.5)),
+                    Text('ADDITIONAL NOTES', style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : Colors.black54, letterSpacing: 1.5)),
                     const SizedBox(height: 10),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
                       decoration: BoxDecoration(
-                        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF8FAFC),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.08)),
+                        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EEE0),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : const Color(0xFFE6DCC6)),
                       ),
                       child: TextField(
                         controller: _notesController,
                         maxLines: 3,
-                        style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black),
+                        style: GoogleFonts.ebGaramond(fontSize: 13, fontWeight: FontWeight.w600, color: isDark ? Colors.white : const Color(0xFF15271E)),
                         decoration: InputDecoration(
+                          filled: false,
                           border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          isDense: true,
                           hintText: 'SPECIFIC REQUIREMENTS, PICKUP DETAILS, ETC...',
-                          hintStyle: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w800, color: isDark ? Colors.white24 : Colors.black26, letterSpacing: 0.5),
+                          hintStyle: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.w700, color: isDark ? Colors.white24 : const Color(0xFF9A9384), letterSpacing: 0.5),
                         ),
                       ),
                     ),
@@ -510,12 +514,12 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                         width: double.infinity,
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFDC2626),
+                          color: const Color(0xFFC65B46),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
                           _modalErrorMessage!,
-                          style: GoogleFonts.montserrat(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
+                          style: GoogleFonts.ebGaramond(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
                           textAlign: TextAlign.center,
                         ),
                       ),
@@ -546,7 +550,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                         child: Center(
                           child: Text(
                             'CONFIRM BOOKING',
-                            style: GoogleFonts.montserrat(color: isDark ? Colors.black : Colors.white, fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1.5)
+                            style: GoogleFonts.ebGaramond(color: isDark ? Colors.black : Colors.white, fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1.5)
                           )
                         ),
                       ),
@@ -565,21 +569,50 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
   Widget _buildInquiryField(String label, TextEditingController controller, IconData icon) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.08)),
-      ),
-      child: TextField(
-        controller: controller,
-        style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black),
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          hintText: label,
-          hintStyle: GoogleFonts.montserrat(fontSize: 11, color: isDark ? Colors.white24 : Colors.black26),
-          contentPadding: const EdgeInsets.symmetric(vertical: 16),
+        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EEE0),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : const Color(0xFFE6DCC6),
         ),
+      ),
+      child: Row(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 18, right: 12),
+            child: Icon(
+              icon,
+              size: 18,
+              color: isDark ? Colors.white38 : M4Theme.premiumBlue,
+            ),
+          ),
+          Expanded(
+            child: TextField(
+              controller: controller,
+              style: GoogleFonts.ebGaramond(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: isDark ? Colors.white : const Color(0xFF15271E),
+              ),
+              decoration: InputDecoration(
+                filled: false,
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                isDense: true,
+                hintText: label,
+                hintStyle: GoogleFonts.ebGaramond(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: isDark ? Colors.white24 : const Color(0xFF9A9384),
+                ),
+                contentPadding: const EdgeInsets.symmetric(vertical: 18),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -675,7 +708,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                           final page = (pageController.hasClients ? (pageController.page?.round() ?? 0) : 0) + 1;
                           return Text(
                             '$page / ${urls.length}',
-                            style: GoogleFonts.montserrat(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                            style: GoogleFonts.ebGaramond(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
                           );
                         },
                       ),
@@ -697,7 +730,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
 
     if (_isLoading && project == null) {
       return Scaffold(
-        backgroundColor: isDark ? Colors.black : Colors.white,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         body: Center(
           child: CircularProgressIndicator(color: M4Theme.premiumBlue),
         ),
@@ -706,7 +739,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
 
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: isDark ? M4Theme.background : Colors.white,
+      backgroundColor: isDark ? M4Theme.navyBackground : Colors.white,
       drawer: SidebarMenu(),
       body: Stack(
         children: [
@@ -765,8 +798,8 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                     children: [
                       Text(
                         (project?['title']?.toString() ?? 'Project Name').toUpperCase(),
-                        style: GoogleFonts.dmSerifDisplay(
-                          color: isDark ? Colors.white : const Color(0xFF09090B),
+                        style: GoogleFonts.gelasio(
+                          color: isDark ? Colors.white : const Color(0xFF0F2A20),
                           fontSize: 28,
                           height: 1.0,
                           letterSpacing: -0.5,
@@ -787,7 +820,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                             const SizedBox(width: 6),
                             Text(
                               (project?['locationName'] ?? (project?['location'] is Map ? project?['location']?['name'] : project?['location']) ?? 'Mazgaon').toString(),
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.ebGaramond(
                                 color: isDark ? Colors.white : Colors.black,
                                 fontSize: 11,
                                 fontWeight: FontWeight.w800,
@@ -847,7 +880,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
             fit: BoxFit.cover,
             placeholder: (context, url) => Container(color: Colors.black12),
             errorWidget: (context, url, error) => Container(
-              color: const Color(0xFF1A1A1A),
+              color: const Color(0xFF141B3A),
               child: const Center(child: Icon(LucideIcons.building2, color: Colors.white24, size: 40)),
             ),
           ),
@@ -859,8 +892,8 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                 colors: [
                   Colors.black.withValues(alpha: 0.1),
                   Colors.transparent,
-                  (isDark ? M4Theme.background : Colors.white).withValues(alpha: 0.9),
-                  (isDark ? M4Theme.background : Colors.white),
+                  (isDark ? M4Theme.navyBackground : Colors.white).withValues(alpha: 0.9),
+                  (isDark ? M4Theme.navyBackground : Colors.white),
                 ],
                 stops: const [0.0, 0.4, 0.85, 1.0],
               ),
@@ -875,7 +908,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
               decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(4)),
               child: Text(
                 (project?['status']?.toString().toUpperCase() ?? 'ONGOING'),
-                style: GoogleFonts.montserrat(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.5),
+                style: GoogleFonts.ebGaramond(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.5),
               ),
             ),
           ),
@@ -931,7 +964,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
           const SizedBox(height: 24),
           Text(
             'EXPERIENCE THE PINNACLE OF LUXURY LIVING WITH FLOOR-TO-CEILING WINDOWS, ITALIAN MARBLE FLOORING, AND SMART HOME AUTOMATION.',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 11, 
               color: isDark ? Colors.white.withValues(alpha: 0.8) : Colors.black.withValues(alpha: 0.8), 
               fontWeight: FontWeight.w900,
@@ -961,7 +994,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
         const SizedBox(width: 16),
         Text(
           title.toUpperCase(), 
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 12, 
             fontWeight: FontWeight.w900, 
             color: isDark ? Colors.white : Colors.black, 
@@ -1066,7 +1099,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 8.5,
                   fontWeight: FontWeight.w600,
                   color: isDark ? Colors.white.withValues(alpha: 0.8) : Colors.black.withValues(alpha: 0.8),
@@ -1113,7 +1146,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                   child: Center(
                     child: Text(
                       'BOOK NOW',
-                      style: GoogleFonts.montserrat(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 2),
+                      style: GoogleFonts.ebGaramond(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 2),
                     ),
                   ),
                 ),
@@ -1168,7 +1201,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
           Container(
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF0B111E) : Colors.white,
+              color: isDark ? const Color(0xFF141B3A) : Colors.white,
               borderRadius: BorderRadius.circular(24),
               border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
               boxShadow: isDark ? [] : [
@@ -1182,7 +1215,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('INITIALIZE YOUR PREMIUM EXPERIENCE', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 1.5)),
+                Text('INITIALIZE YOUR PREMIUM EXPERIENCE', style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 1.5)),
                 const SizedBox(height: 24),
                 _InterestInput(hint: 'FULL NAME *', controller: _nameController),
                 const SizedBox(height: 16),
@@ -1201,7 +1234,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                       color: isDark ? Colors.white : Colors.black,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Center(child: Text('REGISTER INTEREST', style: GoogleFonts.montserrat(color: isDark ? Colors.black : Colors.white, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2))),
+                    child: Center(child: Text('REGISTER INTEREST', style: GoogleFonts.ebGaramond(color: isDark ? Colors.black : Colors.white, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2))),
                   ),
                 ),
               ],
@@ -1227,7 +1260,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
             margin: const EdgeInsets.only(bottom: 16),
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF1F5F9),
+              color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
               borderRadius: BorderRadius.circular(32),
               border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
             ),
@@ -1237,7 +1270,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(plan['name']?.toString().toUpperCase() ?? 'STANDARD PLAN', style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 0.5)),
+                    Text(plan['name']?.toString().toUpperCase() ?? 'STANDARD PLAN', style: GoogleFonts.ebGaramond(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 0.5)),
                     const Icon(LucideIcons.wallet, color: M4Theme.premiumBlue, size: 16),
                   ],
                 ),
@@ -1250,15 +1283,15 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                         width: 40,
                         height: 40,
                         decoration: BoxDecoration(color: M4Theme.premiumBlue.withValues(alpha: 0.1), shape: BoxShape.circle),
-                        child: Center(child: Text('${item['percentage']}%', style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue))),
+                        child: Center(child: Text('${item['percentage']}%', style: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue))),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(item['description']?.toString().toUpperCase() ?? 'INSTALLMENT', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 0.5)),
-                            Text('INSTALLMENT ${item['installmentNumber'] ?? ''}', style: GoogleFonts.montserrat(fontSize: 8, color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.bold)),
+                            Text(item['description']?.toString().toUpperCase() ?? 'INSTALLMENT', style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 0.5)),
+                            Text('INSTALLMENT ${item['installmentNumber'] ?? ''}', style: GoogleFonts.ebGaramond(fontSize: 8, color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ),
@@ -1291,17 +1324,17 @@ class _InterestInput extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF8FAFC),
+        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.08)),
       ),
       child: TextField(
         controller: controller,
-        style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black),
+        style: GoogleFonts.ebGaramond(fontSize: 11, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black),
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: hint,
-          hintStyle: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: isDark ? Colors.white24 : Colors.black26, letterSpacing: 1),
+          hintStyle: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w900, color: isDark ? Colors.white24 : Colors.black26, letterSpacing: 1),
           icon: icon != null ? Icon(icon, size: 14, color: M4Theme.premiumBlue) : null,
         ),
       ),
@@ -1356,7 +1389,7 @@ class _OverviewActionCard extends StatelessWidget {
               children: [
                 Text(
                   label.toUpperCase(), 
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     color: isDark ? Colors.white38 : Colors.black38, 
                     fontSize: 8, 
                     fontWeight: FontWeight.w900, 
@@ -1367,7 +1400,7 @@ class _OverviewActionCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   value, 
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     color: isDark ? Colors.white : Colors.black, 
                     fontSize: 14, 
                     fontWeight: FontWeight.w900, 
@@ -1427,7 +1460,7 @@ class _BottomIconAction extends StatelessWidget {
         width: 56,
         height: 56,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF4F4F5),
+          color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05)),
         ),
@@ -1488,7 +1521,7 @@ class _HeroMediaThumb extends StatelessWidget {
                           Text(
                             label,
                             textAlign: TextAlign.center,
-                            style: GoogleFonts.montserrat(color: Colors.white, fontSize: 6, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                            style: GoogleFonts.ebGaramond(color: Colors.white, fontSize: 6, fontWeight: FontWeight.w900, letterSpacing: 0.5),
                           ),
                         ],
                       ),
@@ -1507,7 +1540,7 @@ class _HeroMediaThumb extends StatelessWidget {
                     child: Text(
                       label,
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.montserrat(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                      style: GoogleFonts.ebGaramond(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 0.5),
                     ),
                   ),
                 ],
@@ -1553,7 +1586,7 @@ class _SectionHeader extends StatelessWidget {
   const _SectionHeader({required this.title});
   @override
   Widget build(BuildContext context) {
-    return Text(title.toUpperCase(), style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 2));
+    return Text(title.toUpperCase(), style: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 2));
   }
 }
 
@@ -1563,7 +1596,7 @@ class _EmptyTabContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Center(child: Text(message.toUpperCase(), textAlign: TextAlign.center, style: GoogleFonts.montserrat(fontSize: 12, color: isDark ? Colors.white38 : Colors.black38)));
+    return Center(child: Text(message.toUpperCase(), textAlign: TextAlign.center, style: GoogleFonts.ebGaramond(fontSize: 12, color: isDark ? Colors.white38 : Colors.black38)));
   }
 }
 
@@ -1620,9 +1653,9 @@ class _MultimediaAssetCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title.toUpperCase(), style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 0.5)),
+                    Text(title.toUpperCase(), style: GoogleFonts.ebGaramond(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 0.5)),
                     const SizedBox(height: 4),
-                    Text(subtitle.replaceFirst('•', ' • ').toUpperCase(), style: GoogleFonts.montserrat(fontSize: 8, color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                    Text(subtitle.replaceFirst('•', ' • ').toUpperCase(), style: GoogleFonts.ebGaramond(fontSize: 8, color: isDark ? Colors.white38 : Colors.black38, fontWeight: FontWeight.w900, letterSpacing: 1)),
                   ],
                 ),
               ),
@@ -1657,7 +1690,7 @@ class _AssetButton extends StatelessWidget {
           color: isOutline ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white : Colors.black),
           borderRadius: BorderRadius.circular(10),
         ),
-        child: Text(label, style: GoogleFonts.montserrat(fontSize: 7.5, fontWeight: FontWeight.w900, color: isDark ? Colors.black : Colors.white, letterSpacing: 1.0)),
+        child: Text(label, style: GoogleFonts.ebGaramond(fontSize: 7.5, fontWeight: FontWeight.w900, color: isDark ? Colors.black : Colors.white, letterSpacing: 1.0)),
       ),
     );
   }
@@ -1691,7 +1724,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0B111E) : const Color(0xFFF8FAFC),
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(40),
         border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
       ),
@@ -1704,9 +1737,9 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('ESTIMATED COMPLETION DATE', style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 1)),
+                    Text('ESTIMATED COMPLETION DATE', style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 1)),
                     const SizedBox(height: 12),
-                    Text(estimatedCompletion, style: GoogleFonts.dmSerifDisplay(fontSize: 42, color: isDark ? Colors.white : Colors.black, height: 1)),
+                    Text(estimatedCompletion, style: GoogleFonts.gelasio(fontSize: 42, color: isDark ? Colors.white : Colors.black, height: 1)),
                     const SizedBox(height: 24),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1715,7 +1748,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                           'As the project progresses, significant milestones are reached, showcasing our team\'s dedication and expertise. We are steadily moving closer to our completion goal, ensuring quality and safety at every step. Each phase is handled with precision to meet our luxury standards and timeline.',
                           maxLines: showFullProgress ? null : 3,
                           overflow: showFullProgress ? TextOverflow.visible : TextOverflow.ellipsis,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 11, 
                             color: isDark ? Colors.white54 : Colors.black54, 
                             height: 1.6, 
@@ -1727,7 +1760,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                           onTap: onToggleReadMore,
                           child: Text(
                             showFullProgress ? 'Show less' : 'Read more',
-                            style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue),
+                            style: GoogleFonts.ebGaramond(fontSize: 11, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue),
                           ),
                         ),
                       ],
@@ -1753,8 +1786,8 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('${overallProgress.toInt()}%', style: GoogleFonts.montserrat(fontSize: 22, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black)),
-                      Text('OVERALL', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1)),
+                      Text('${overallProgress.toInt()}%', style: GoogleFonts.ebGaramond(fontSize: 22, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black)),
+                      Text('OVERALL', style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1)),
                     ],
                   ),
                 ],
@@ -1766,7 +1799,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
             // Timeline Slider
             Row(
               children: [
-                Text('2026', style: GoogleFonts.montserrat(fontSize: 18, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue)),
+                Text('2026', style: GoogleFonts.ebGaramond(fontSize: 18, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue)),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Stack(
@@ -1777,7 +1810,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                         width: 12,
                         height: 12,
                         decoration: BoxDecoration(
-                          color: isDark ? Colors.black : Colors.white,
+                          color: Theme.of(context).scaffoldBackgroundColor,
                           shape: BoxShape.circle,
                           border: Border.all(color: M4Theme.premiumBlue, width: 2),
                         ),
@@ -1825,7 +1858,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                   fit: BoxFit.cover, 
                                   placeholder: (c, u) => Container(
                                     height: 140, 
-                                    color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
+                                    color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
                                     child: Icon(
                                       LucideIcons.image,
                                       color: isDark ? Colors.white24 : Colors.black26,
@@ -1834,7 +1867,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                   ),
                                   errorWidget: (c, e, s) => Container(
                                     height: 140, 
-                                    color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF1F5F9),
+                                    color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
                                     child: Icon(
                                       LucideIcons.image,
                                       color: isDark ? Colors.white24 : Colors.black26,
@@ -1852,7 +1885,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                     color: status == 'COMPLETED' ? Colors.green : (status == 'IN PROGRESS' ? M4Theme.premiumBlue : Colors.black54),
                                     borderRadius: BorderRadius.circular(4),
                                   ),
-                                  child: Text(status, style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1)),
+                                  child: Text(status, style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1)),
                                 ),
                               ),
                             ],
@@ -1863,7 +1896,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(projectName.toUpperCase(), style: GoogleFonts.dmSerifDisplay(fontSize: 10, fontWeight: FontWeight.bold, color: isDark ? Colors.white : const Color(0xFF0F172A), letterSpacing: 1)),
+                              Text(projectName.toUpperCase(), style: GoogleFonts.gelasio(fontSize: 10, fontWeight: FontWeight.bold, color: isDark ? Colors.white : const Color(0xFF0F2A20), letterSpacing: 1)),
                               const SizedBox(height: 12),
                               Row(
                                 children: [
@@ -1882,11 +1915,11 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                           ),
                                         ),
                                       ),
-                                      Text('${phase['progressPercent'] ?? phase['progress'] ?? 0}%', style: GoogleFonts.montserrat(fontSize: 7, fontWeight: FontWeight.w900)),
+                                      Text('${phase['progressPercent'] ?? phase['progress'] ?? 0}%', style: GoogleFonts.ebGaramond(fontSize: 7, fontWeight: FontWeight.w900)),
                                     ],
                                   ),
                                   const SizedBox(width: 12),
-                                  Expanded(child: Text((phase['name'] ?? phase['phaseName'] ?? 'PHASE').toString().toUpperCase(), style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: isDark ? Colors.white.withValues(alpha: 0.7) : Colors.black.withValues(alpha: 0.7), letterSpacing: 1.2))),
+                                  Expanded(child: Text((phase['name'] ?? phase['phaseName'] ?? 'PHASE').toString().toUpperCase(), style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w900, color: isDark ? Colors.white.withValues(alpha: 0.7) : Colors.black.withValues(alpha: 0.7), letterSpacing: 1.2))),
                                 ],
                               ),
                             ],
@@ -1906,14 +1939,14 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('PHASE TRACKING', style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 2)),
-                    Text('REAL-TIME DEVELOPMENT STATUS', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.bold, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 0.5)),
+                    Text('PHASE TRACKING', style: GoogleFonts.ebGaramond(fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 2)),
+                    Text('REAL-TIME DEVELOPMENT STATUS', style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.bold, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 0.5)),
                   ],
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(color: M4Theme.premiumBlue.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(8)),
-                  child: Text('${phases.length} MILESTONES', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue)),
+                  child: Text('${phases.length} MILESTONES', style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue)),
                 ),
               ],
             ),
@@ -1947,26 +1980,26 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                             Container(
                               width: 36,
                               height: 36,
-                              decoration: BoxDecoration(color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(10)),
-                              child: Center(child: Text((index + 1).toString().padLeft(2, '0'), style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black38))),
+                              decoration: BoxDecoration(color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF4EFE3), borderRadius: BorderRadius.circular(10)),
+                              child: Center(child: Text((index + 1).toString().padLeft(2, '0'), style: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black38))),
                             ),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text((phase['name'] ?? phase['phaseName'] ?? 'PHASE').toString().toUpperCase(), style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white : const Color(0xFF1E293B))),
+                                  Text((phase['name'] ?? phase['phaseName'] ?? 'PHASE').toString().toUpperCase(), style: GoogleFonts.ebGaramond(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white : const Color(0xFF163A2C))),
                                   Row(
                                     children: [
                                       Container(width: 6, height: 6, decoration: BoxDecoration(color: progress >= 100 ? Colors.green : (progress > 0 ? M4Theme.premiumBlue : Colors.grey), shape: BoxShape.circle)),
                                       const SizedBox(width: 6),
-                                      Text(status, style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.bold, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 0.5)),
+                                      Text(status, style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.bold, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 0.5)),
                                     ],
                                   ),
                                 ],
                               ),
                             ),
-                            Text('${progress.toInt()}%', style: GoogleFonts.montserrat(fontSize: 16, fontWeight: FontWeight.w900, color: isDark ? Colors.white : const Color(0xFF0F172A))),
+                            Text('${progress.toInt()}%', style: GoogleFonts.ebGaramond(fontSize: 16, fontWeight: FontWeight.w900, color: isDark ? Colors.white : const Color(0xFF0F2A20))),
                           ],
                         ),
                         const SizedBox(height: 12),
@@ -1975,7 +2008,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                             Container(
                               height: 6,
                               width: double.infinity,
-                              decoration: BoxDecoration(color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF1F5F9), borderRadius: BorderRadius.circular(10)),
+                              decoration: BoxDecoration(color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF4EFE3), borderRadius: BorderRadius.circular(10)),
                             ),
                             TweenAnimationBuilder<double>(
                               duration: const Duration(milliseconds: 1500),
@@ -1986,7 +2019,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                 child: Container(
                                   height: 6,
                                   decoration: BoxDecoration(
-                                    gradient: const LinearGradient(colors: [M4Theme.premiumBlue, Color(0xFF6366F1)]),
+                                    gradient: const LinearGradient(colors: [M4Theme.premiumBlue, Color(0xFFC5A35B)]),
                                     borderRadius: BorderRadius.circular(10),
                                     boxShadow: [BoxShadow(color: M4Theme.premiumBlue.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 2))],
                                   ),
@@ -2028,7 +2061,7 @@ class _FilterChip extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 9,
             fontWeight: FontWeight.w900,
             color: isActive ? Colors.white : Colors.black.withValues(alpha: 0.4),
@@ -2090,7 +2123,7 @@ class _LocationMapState extends State<_LocationMap> {
     super.initState();
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0xFF0B111E));
+      ..setBackgroundColor(const Color(0xFF163A2C));
 
     final locEncoded = Uri.encodeComponent(widget.location);
     final htmlContent = '''
@@ -2126,10 +2159,10 @@ class _LocationMapState extends State<_LocationMap> {
     return Container(
       height: 280,
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0B111E) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : Colors.white,
         borderRadius: BorderRadius.circular(40),
         border: Border.all(
-          color: isDark ? const Color(0xFF0B111E) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : Colors.white,
           width: 4,
         ),
         boxShadow: [
@@ -2153,7 +2186,7 @@ class _LocationMapState extends State<_LocationMap> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF0B111E) : Colors.white.withValues(alpha: 0.95),
+                  color: isDark ? const Color(0xFF141B3A) : Colors.white.withValues(alpha: 0.95),
                   borderRadius: BorderRadius.circular(30),
                   border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.08)),
                   boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.15), blurRadius: 10)],
@@ -2163,7 +2196,7 @@ class _LocationMapState extends State<_LocationMap> {
                   children: [
                     const Icon(LucideIcons.mapPin, color: M4Theme.premiumBlue, size: 12),
                     const SizedBox(width: 6),
-                    Text('VIEW ON MAPS', style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 1)),
+                    Text('VIEW ON MAPS', style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 1)),
                   ],
                 ),
               ),
@@ -2373,7 +2406,7 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
                           onTap: () => setState(() => _currentStep--),
                           child: Text(
                             'BACK',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.ebGaramond(
                               color: Colors.white.withOpacity(0.6),
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
@@ -2401,7 +2434,7 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
                           ),
                           child: Text(
                             _currentStep == 3 ? 'CLOSE EXPLORER' : 'CONTINUE',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.ebGaramond(
                               color: Colors.black,
                               fontSize: 9,
                               fontWeight: FontWeight.w900,
@@ -2457,7 +2490,7 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: GoogleFonts.dmSerifDisplay(
+            style: GoogleFonts.gelasio(
               color: Colors.white,
               fontSize: 36,
               height: 1.1,
@@ -2469,7 +2502,7 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
           const SizedBox(height: 16),
           Text(
             'DISCOVER THE UNSEEN',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               color: Colors.white70,
               fontSize: 9,
               fontWeight: FontWeight.w900,
@@ -2499,7 +2532,7 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
           children: [
             Text(
               'THE VISION',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 color: M4Theme.premiumBlue,
                 fontSize: 10,
                 fontWeight: FontWeight.w900,
@@ -2509,7 +2542,7 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
             const SizedBox(height: 16),
             Text(
               description,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 color: Colors.white.withOpacity(0.85),
                 fontSize: 13,
                 height: 1.6,
@@ -2531,7 +2564,7 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
         children: [
           Text(
             'VISUAL DISCOVERY',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               color: Colors.white,
               fontSize: 12,
               fontWeight: FontWeight.w900,
@@ -2541,7 +2574,7 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
           const SizedBox(height: 6),
           Text(
             'Swipe to explore design details.',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               color: Colors.white38,
               fontSize: 10,
               fontWeight: FontWeight.w600,
@@ -2620,7 +2653,7 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
           Text(
             'YOUR JOURNEY STARTS HERE',
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               color: Colors.white,
               fontSize: 16,
               fontWeight: FontWeight.w900,
@@ -2631,7 +2664,7 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
           Text(
             'Select a booking mode to interact with our developers.',
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               color: Colors.white38,
               fontSize: 10,
               fontWeight: FontWeight.w600,
@@ -2652,7 +2685,7 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
               ),
               child: Text(
                 'BOOK VIDEO CALL',
-                style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 2),
+                style: GoogleFonts.ebGaramond(fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 2),
               ),
             ),
           ),
@@ -2669,7 +2702,7 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
               ),
               child: Text(
                 'CONTINUE TO SITE VISIT',
-                style: GoogleFonts.montserrat(fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 2),
+                style: GoogleFonts.ebGaramond(fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 2),
               ),
             ),
           ),

@@ -143,7 +143,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
               // header — just the title.
               Text(
                 'SUPPORT HUB',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
                   color: scheme.onSurface,
@@ -164,7 +164,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
       children: [
         Text(
           'SUPPORT MATRIX',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 9,
             fontWeight: FontWeight.w900,
             color: scheme.onSurface,
@@ -239,7 +239,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
           children: [
             Text(
               'OPERATIONAL LOGS',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 10,
                 fontWeight: FontWeight.w900,
                 color: scheme.onSurface,
@@ -261,7 +261,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
           },
           child: Text(
             'VIEW ALL LOGS',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 9,
               fontWeight: FontWeight.w900,
               color: scheme.onSurface.withValues(alpha: 0.6),
@@ -286,7 +286,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
       child: Center(
         child: Text(
           'No active tickets.',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 13,
             fontWeight: FontWeight.w600,
             color: scheme.onSurface.withValues(alpha: 0.68),
@@ -358,7 +358,7 @@ class _MatrixItem extends StatelessWidget {
             const Spacer(),
             Text(
               title,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 color: scheme.onSurface,
                 fontWeight: FontWeight.w800,
                 fontSize: 14,
@@ -368,7 +368,7 @@ class _MatrixItem extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               subtitle.toUpperCase(),
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 color: scheme.onSurface.withValues(alpha: 0.68),
                 fontSize: 8,
                 fontWeight: FontWeight.w800,
@@ -396,9 +396,9 @@ class _TicketPreviewItem extends StatelessWidget {
     final isOpen =
         status.toLowerCase() == 'open' || status.toLowerCase() == 'in progress';
     final badgeBg = isOpen
-        ? Colors.blueAccent.withOpacity(0.1)
-        : Colors.greenAccent.withOpacity(0.12);
-    final badgeFg = isOpen ? Colors.blueAccent : Colors.greenAccent;
+        ? Color(0xFFC5A35B).withOpacity(0.1)
+        : Color(0xFFC5A35B).withOpacity(0.12);
+    final badgeFg = isOpen ? Color(0xFFC5A35B) : Color(0xFFC5A35B);
     return ClipRRect(
       borderRadius: BorderRadius.circular(24),
       child: BackdropFilter(
@@ -408,7 +408,7 @@ class _TicketPreviewItem extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: isDark
-                ? const Color(0xFF18181B).withOpacity(0.8)
+                ? const Color(0xFF141B3A).withOpacity(0.8)
                 : Colors.white.withOpacity(0.6),
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
@@ -431,15 +431,15 @@ class _TicketPreviewItem extends StatelessWidget {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.blueAccent.withOpacity(0.1),
+                            color: Color(0xFFC5A35B).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
                             id.isEmpty
                                 ? '—'
                                 : id.substring(0, id.length.clamp(0, 8)),
-                            style: GoogleFonts.montserrat(
-                              color: Colors.blueAccent,
+                            style: GoogleFonts.ebGaramond(
+                              color: Color(0xFFC5A35B),
                               fontSize: 8,
                               fontWeight: FontWeight.w900,
                             ),
@@ -449,7 +449,7 @@ class _TicketPreviewItem extends StatelessWidget {
                         Expanded(
                           child: Text(
                             title.toUpperCase(),
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.ebGaramond(
                               color: Theme.of(context).colorScheme.onSurface,
                               fontWeight: FontWeight.w700,
                               fontSize: 13,
@@ -476,7 +476,7 @@ class _TicketPreviewItem extends StatelessWidget {
                           DateFormat(
                             'MMM d',
                           ).format(ticket.createdAt).toUpperCase(),
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             color: Theme.of(
                               context,
                             ).colorScheme.onSurface.withOpacity(0.62),
@@ -500,7 +500,7 @@ class _TicketPreviewItem extends StatelessWidget {
                 ),
                 child: Text(
                   status.toUpperCase(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     color: badgeFg,
                     fontSize: 8,
                     fontWeight: FontWeight.w900,

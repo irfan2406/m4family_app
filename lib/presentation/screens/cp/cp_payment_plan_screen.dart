@@ -25,7 +25,7 @@ class CpPaymentPlanScreen extends ConsumerStatefulWidget {
 }
 
 class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
-  static const Color _gold = Color(0xFFFFD700);
+  static const Color _gold = Color(0xFFC5A35B);
 
   List<dynamic> _plans = [];
   bool _loading = true;
@@ -131,7 +131,7 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                     children: [
                       Text(
                         'CHOOSE PLAN',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 22,
                           fontWeight: FontWeight.w900,
                           letterSpacing: -0.5,
@@ -141,7 +141,7 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                       const SizedBox(height: 2),
                       Text(
                         'SELECT YOUR PREFERRED SCHEDULE',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 8,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 2,
@@ -231,7 +231,7 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                                       children: [
                                         Text(
                                           'COMPARE PLANS',
-                                          style: GoogleFonts.montserrat(
+                                          style: GoogleFonts.ebGaramond(
                                             fontSize: 11,
                                             fontWeight: FontWeight.w900,
                                             letterSpacing: 1.5,
@@ -241,7 +241,7 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                                         const SizedBox(height: 4),
                                         Text(
                                           'NEED HELP DECIDING? CONTACT YOUR RELATIONSHIP MANAGER FOR A DETAILED COMPARISON SHEET.',
-                                          style: GoogleFonts.montserrat(
+                                          style: GoogleFonts.ebGaramond(
                                             fontSize: 8,
                                             fontWeight: FontWeight.bold,
                                             height: 1.5,
@@ -279,7 +279,7 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                                 child: Center(
                                   child: Text(
                                     'DOWNLOAD ALL PAYMENT PLANS (PDF)',
-                                    style: GoogleFonts.montserrat(
+                                    style: GoogleFonts.ebGaramond(
                                       fontSize: 9,
                                       fontWeight: FontWeight.w900,
                                       letterSpacing: 2,
@@ -366,7 +366,7 @@ class _PaymentPlanCard extends StatelessWidget {
                   ),
                   child: Text(
                     'MOST POPULAR',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 8,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 2,
@@ -389,7 +389,7 @@ class _PaymentPlanCard extends StatelessWidget {
                           children: [
                             Text(
                               (plan['name'] ?? 'Plan').toString().toUpperCase(),
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.ebGaramond(
                                 fontSize: 22,
                                 fontWeight: FontWeight.w900,
                                 height: 1.1,
@@ -401,7 +401,7 @@ class _PaymentPlanCard extends StatelessWidget {
                               const SizedBox(height: 8),
                               Text(
                                 desc,
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.ebGaramond(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w500,
                                   height: 1.4,
@@ -446,7 +446,7 @@ class _PaymentPlanCard extends StatelessWidget {
                           const SizedBox(width: 12),
                           Text(
                             benefit.toUpperCase(),
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 9,
                               fontWeight: FontWeight.w900,
                               letterSpacing: 1,
@@ -466,7 +466,7 @@ class _PaymentPlanCard extends StatelessWidget {
                           children: [
                             Text(
                               'SELECT PLAN',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.ebGaramond(
                                 fontSize: 9,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 1,

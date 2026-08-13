@@ -61,7 +61,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
       isScrollControlled: true,
       builder: (sheetCtx) => Container(
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF0B111E) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : Colors.white,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         ),
         padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
@@ -85,7 +85,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
               alignment: Alignment.centerLeft,
               child: Text(
                 'SELECT DATE & TIME',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 15,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 0.5,
@@ -119,7 +119,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                     ),
                     child: Text(
                       'CANCEL',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1,
                       ),
@@ -140,7 +140,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                     ),
                     child: Text(
                       'CONFIRM',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1,
                       ),
@@ -215,7 +215,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
 
     if (_isSuccess) {
       return Scaffold(
-        backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
+        backgroundColor: isDark ? const Color(0xFF0B1026) : Colors.white,
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(40),
@@ -238,7 +238,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                 const SizedBox(height: 40),
                 Text(
                   'SUBMITTED',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 24,
                     fontWeight: FontWeight.w900,
                     letterSpacing: -1,
@@ -248,7 +248,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                 Text(
                   'Your request has been registered. Our team will contact you shortly.',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 10,
                     color: isDark ? Colors.white38 : Colors.black38,
                     fontWeight: FontWeight.w900,
@@ -277,7 +277,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                     child: Center(
                       child: Text(
                         'BACK TO PROJECT',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           color: isDark ? Colors.black : Colors.white,
                           fontWeight: FontWeight.w900,
                           fontSize: 10,
@@ -295,7 +295,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
     }
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF0B1026) : Colors.white,
       extendBody: true,
       bottomNavigationBar: NavigationPill(
         currentIndex: -1,
@@ -319,7 +319,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
           children: [
             Text(
               'SCHEDULE VISIT',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 14,
                 fontWeight: FontWeight.w900,
                 color: isDark ? Colors.white : Colors.black,
@@ -327,7 +327,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
             ),
             Text(
               'PREMIUM PROTOCOL',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 8,
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
                 fontWeight: FontWeight.w900,
@@ -383,7 +383,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                   Expanded(
                     child: Text(
                       'NOTE: OUR RELATIONSHIP MANAGER WILL CONTACT YOU WITHIN 2 HOURS TO CONFIRM YOUR SCHEDULE.',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 9,
                         fontWeight: FontWeight.w900,
                         color: (isDark ? Colors.white : Colors.black)
@@ -431,7 +431,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                             size: 18,
                           ),
                           dropdownColor: isDark
-                              ? const Color(0xFF1C1C1E)
+                              ? const Color(0xFF141B3A)
                               : Colors.white,
                           items: projects.map((p) {
                             return DropdownMenuItem<String>(
@@ -440,7 +440,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                                 (p['title'] ?? 'PROJECT')
                                     .toString()
                                     .toUpperCase(),
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.ebGaramond(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w900,
                                   color: isDark ? Colors.white : Colors.black,
@@ -458,7 +458,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                       const Center(child: CupertinoActivityIndicator()),
                   error: (e, s) => Text(
                     'Error loading projects',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 10,
                       color: Colors.red,
                     ),
@@ -498,7 +498,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                       _selectedDate == null
                           ? 'SELECT DATE & TIME'
                           : '${DateFormat('dd MMM yyyy').format(_selectedDate!)} @ ${_selectedTime!.format(context)}',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 11,
                         fontWeight: FontWeight.w900,
                         color: _selectedDate == null
@@ -558,7 +558,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                           children: [
                             Text(
                               'SECURE BOOKING',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.ebGaramond(
                                 color: isDark ? Colors.black : Colors.white,
                                 fontWeight: FontWeight.w900,
                                 fontSize: 10,
@@ -580,7 +580,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
             Center(
               child: Text(
                 '* PICK-UP AND DROP FACILITY INCLUDED FOR PREMIUM TIER MEMBERS.',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 8,
                   fontWeight: FontWeight.w900,
                   color: isDark ? Colors.white24 : Colors.black26,
@@ -601,7 +601,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
       padding: const EdgeInsets.only(left: 4, bottom: 12),
       child: Text(
         label,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.ebGaramond(
           fontSize: 9,
           fontWeight: FontWeight.w900,
           color: (isDark ? Colors.white : Colors.black).withOpacity(0.75),
@@ -634,7 +634,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
       child: TextField(
         controller: controller,
         maxLines: maxLines,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.ebGaramond(
           fontSize: 12,
           fontWeight: FontWeight.w800,
           color: isDark ? Colors.white : Colors.black,
@@ -642,7 +642,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: hint,
-          hintStyle: GoogleFonts.montserrat(
+          hintStyle: GoogleFonts.ebGaramond(
             fontSize: 12,
             color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
             fontWeight: FontWeight.bold,

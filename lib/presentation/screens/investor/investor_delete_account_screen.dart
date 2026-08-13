@@ -28,8 +28,8 @@ class InvestorDeleteAccountScreen extends ConsumerStatefulWidget {
 
 class _InvestorDeleteAccountScreenState
     extends ConsumerState<InvestorDeleteAccountScreen> {
-  static const Color _danger = Color(0xFFEF4444);
-  static const Color _dangerDeep = Color(0xFFDC2626);
+  static const Color _danger = Color(0xFFC65B46);
+  static const Color _dangerDeep = Color(0xFFC65B46);
   static const String _confirmWord = 'DELETE';
 
   final TextEditingController _confirmCtrl = TextEditingController();
@@ -85,7 +85,7 @@ class _InvestorDeleteAccountScreenState
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content:
-            Text(msg, style: GoogleFonts.montserrat(fontWeight: FontWeight.w600)),
+            Text(msg, style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w600)),
         backgroundColor: error ? _dangerDeep : Colors.green,
       ),
     );
@@ -99,11 +99,11 @@ class _InvestorDeleteAccountScreenState
       builder: (ctx) {
         final isDark = Theme.of(ctx).brightness == Brightness.dark;
         return AlertDialog(
-          backgroundColor: isDark ? Colors.black : Colors.white,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
           title: Text(
             'FINAL CONFIRMATION',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 13,
               fontWeight: FontWeight.w900,
               letterSpacing: 1.2,
@@ -113,7 +113,7 @@ class _InvestorDeleteAccountScreenState
           content: Text(
             'This permanently purges your investor account and your entire '
             'digital legacy within M4. This action cannot be undone.',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 12,
               fontWeight: FontWeight.w500,
               color:
@@ -125,7 +125,7 @@ class _InvestorDeleteAccountScreenState
               onPressed: () => Navigator.pop(ctx, false),
               child: Text(
                 'CANCEL',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
                   color: (isDark ? Colors.white : Colors.black)
@@ -142,7 +142,7 @@ class _InvestorDeleteAccountScreenState
               ),
               child: Text(
                 'EXECUTE PURGE',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 1,
@@ -285,7 +285,7 @@ class _InvestorDeleteAccountScreenState
                 Text(
                   'DEACTIVATE',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 16,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.5,
@@ -296,7 +296,7 @@ class _InvestorDeleteAccountScreenState
                 Text(
                   'PURGE PROTOCOL',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -339,7 +339,7 @@ class _InvestorDeleteAccountScreenState
               Expanded(
                 child: Text(
                   'CRITICAL WARNING',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 12,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.5,
@@ -354,7 +354,7 @@ class _InvestorDeleteAccountScreenState
             'Final action. All institutional ties, documents, and historical '
             'data will be permanently purged. This cannot be reversed and you '
             'will be signed out of every device.',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 12,
               height: 1.55,
               fontWeight: FontWeight.w500,
@@ -370,7 +370,7 @@ class _InvestorDeleteAccountScreenState
   Widget _sectionLabel(String text, Color muted) {
     return Text(
       text,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.ebGaramond(
         fontSize: 9,
         fontWeight: FontWeight.w900,
         letterSpacing: 2,
@@ -414,7 +414,7 @@ class _InvestorDeleteAccountScreenState
                       children: [
                         Text(
                           _purgeScope[i]['title'] as String,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 12,
                             fontWeight: FontWeight.w800,
                             color: textPrimary,
@@ -423,7 +423,7 @@ class _InvestorDeleteAccountScreenState
                         const SizedBox(height: 3),
                         Text(
                           _purgeScope[i]['subtitle'] as String,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 10,
                             fontWeight: FontWeight.w500,
                             height: 1.3,
@@ -457,7 +457,7 @@ class _InvestorDeleteAccountScreenState
           padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: Text(
             'TYPE "$_confirmWord" TO CONFIRM',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 9,
               fontWeight: FontWeight.w800,
               letterSpacing: 1.5,
@@ -480,7 +480,7 @@ class _InvestorDeleteAccountScreenState
             controller: _confirmCtrl,
             onChanged: (_) => setState(() {}),
             textCapitalization: TextCapitalization.characters,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 16,
               fontWeight: FontWeight.w800,
               letterSpacing: 3,
@@ -488,7 +488,7 @@ class _InvestorDeleteAccountScreenState
             ),
             decoration: InputDecoration(
               hintText: _confirmWord,
-              hintStyle: GoogleFonts.montserrat(
+              hintStyle: GoogleFonts.ebGaramond(
                 fontSize: 16,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 3,
@@ -521,7 +521,7 @@ class _InvestorDeleteAccountScreenState
           padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: Text(
             'CREDENTIAL AUTHORIZATION',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 9,
               fontWeight: FontWeight.w800,
               letterSpacing: 1.5,
@@ -539,14 +539,14 @@ class _InvestorDeleteAccountScreenState
             controller: _passCtrl,
             obscureText: _obscurePass,
             onChanged: (_) => setState(() {}),
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 14,
               fontWeight: FontWeight.w700,
               color: textPrimary,
             ),
             decoration: InputDecoration(
               hintText: '••••••••',
-              hintStyle: GoogleFonts.montserrat(
+              hintStyle: GoogleFonts.ebGaramond(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
                 color: muted.withValues(alpha: 0.4),
@@ -608,7 +608,7 @@ class _InvestorDeleteAccountScreenState
               child: Text(
                 'I acknowledge that this protocol will erase my entire digital '
                 'legacy within M4. Final & irreversible.',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 11,
                   height: 1.5,
                   fontWeight: FontWeight.w500,
@@ -660,7 +660,7 @@ class _InvestorDeleteAccountScreenState
                     const SizedBox(width: 12),
                     Text(
                       'EXECUTE PURGE',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 11,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1.5,
@@ -689,7 +689,7 @@ class _InvestorDeleteAccountScreenState
               },
         child: Text(
           'ABORT PROTOCOL',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 10,
             fontWeight: FontWeight.w900,
             letterSpacing: 2,

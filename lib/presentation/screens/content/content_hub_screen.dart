@@ -146,7 +146,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
             center: Alignment.topLeft,
             radius: 1.5,
             colors: isDark
-                ? [const Color(0xFF1A1A1A), const Color(0xFF0A0A0A)]
+                ? [const Color(0xFF163A2C), const Color(0xFF0F2A20)]
                 : [scheme.surface, scheme.surfaceContainerLowest],
           ),
         ),
@@ -172,7 +172,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                       children: [
                         Text(
                           'M4 FAMILY',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 14,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 2.5,
@@ -181,7 +181,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                         ),
                         Text(
                           'DEVELOPMENTS',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 8,
                             fontWeight: FontWeight.w700,
                             letterSpacing: 3.5,
@@ -229,7 +229,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                         const SizedBox(width: 15),
                         Text(
                           'CONTENT HUB',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 3,
@@ -241,7 +241,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                     const SizedBox(height: 20),
                     Text(
                       _getTitle(),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 32,
                         fontWeight: FontWeight.w900,
                         color: scheme.onSurface,
@@ -252,7 +252,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                     const SizedBox(height: 15),
                     Text(
                       _getSubtitle(),
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 14,
                         color: scheme.onSurface.withOpacity(0.68),
                         fontWeight: FontWeight.w500,
@@ -359,7 +359,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
           const SizedBox(height: 25),
           Text(
             'NO ${widget.type.toUpperCase()} POSTS FOUND',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 16,
               fontWeight: FontWeight.w900,
               color: scheme.onSurface,
@@ -371,7 +371,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
             child: Text(
               "We're working on something amazing. Check back soon for fresh updates from our content hub.",
               textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 13,
                 color: scheme.onSurface.withOpacity(0.68),
                 height: 1.5,
@@ -462,7 +462,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                           ),
                           child: Text(
                             item['type'].toString().toUpperCase(),
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 7,
                               fontWeight: FontWeight.w900,
                               color: scheme.onSurface.withOpacity(0.6),
@@ -472,7 +472,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                         ),
                         Text(
                           formattedDate,
-                          style: GoogleFonts.inter(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 9,
                             fontWeight: FontWeight.bold,
                             color: scheme.onSurface.withOpacity(0.62),
@@ -485,7 +485,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                       item['title'].toString().toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 14,
                         fontWeight: FontWeight.w900,
                         color: scheme.onSurface,
@@ -497,7 +497,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                       item['description'] ?? '',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.inter(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 10,
                         color: scheme.onSurface.withOpacity(0.68),
                         fontWeight: FontWeight.w500,
@@ -509,7 +509,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                       children: [
                         Text(
                           'READ ARTICLE',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                             color: scheme.onSurface,

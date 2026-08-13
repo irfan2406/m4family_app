@@ -55,7 +55,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
           children: [
             Text(
               'CONTACT US',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.bold,
                 fontSize: 20,
@@ -64,7 +64,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
             ),
             Text(
               'INSTITUTIONAL SUPPORT',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 color: Theme.of(
                   context,
                 ).colorScheme.onSurface.withOpacity(0.68),
@@ -132,7 +132,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
         Center(
           child: Text(
             'GLOBAL HEADQUARTERS',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.68),
               fontSize: 9,
               fontWeight: FontWeight.w900,
@@ -204,7 +204,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
                           const SizedBox(width: 12),
                           Text(
                             'OPEN MAP',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.ebGaramond(
                               color: Colors.white,
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
@@ -312,7 +312,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
                       children: [
                         Text(
                           title.toUpperCase(),
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             color: Theme.of(context).colorScheme.onSurface,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -322,7 +322,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
                         const SizedBox(height: 12),
                         Text(
                           address,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             color: Theme.of(
                               context,
                             ).colorScheme.onSurface.withOpacity(0.68),
@@ -357,7 +357,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        textStyle: GoogleFonts.montserrat(
+                        textStyle: GoogleFonts.ebGaramond(
                           fontSize: 9,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 2,
@@ -386,7 +386,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         elevation: 0,
-                        textStyle: GoogleFonts.montserrat(
+                        textStyle: GoogleFonts.ebGaramond(
                           fontSize: 9,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 2,
@@ -414,7 +414,7 @@ class _ContactSupportScreenState extends ConsumerState<ContactSupportScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 8),
           child: Text(
             'GET IN TOUCH',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.68),
               fontSize: 9,
               fontWeight: FontWeight.bold,
@@ -518,7 +518,7 @@ class _ContactRowItem extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -527,7 +527,7 @@ class _ContactRowItem extends StatelessWidget {
                   const SizedBox(height: 6),
                   Text(
                     subtitle,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       color: Theme.of(
                         context,
                       ).colorScheme.onSurface.withOpacity(0.68),

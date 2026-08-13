@@ -31,8 +31,8 @@ class InvestorPaymentDetailScreen extends ConsumerStatefulWidget {
 
 class _InvestorPaymentDetailScreenState
     extends ConsumerState<InvestorPaymentDetailScreen> {
-  static const _gold = Color(0xFFFFD700);
-  static const _green = Color(0xFF10B981);
+  static const _gold = Color(0xFFC5A35B);
+  static const _green = Color(0xFFC5A35B);
 
   Map<String, dynamic>? _payment;
   bool _loading = true;
@@ -222,7 +222,7 @@ class _InvestorPaymentDetailScreenState
               children: [
                 Text(
                   'Transaction details',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontWeight: FontWeight.w900,
                     fontSize: 16,
                     color: textPrimary,
@@ -231,7 +231,7 @@ class _InvestorPaymentDetailScreenState
                 const SizedBox(height: 2),
                 Text(
                   _shortId,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 1,
@@ -274,7 +274,7 @@ class _InvestorPaymentDetailScreenState
             const SizedBox(height: 16),
             Text(
               'Transaction not found',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 15,
                 fontWeight: FontWeight.w800,
                 color: textPrimary,
@@ -284,7 +284,7 @@ class _InvestorPaymentDetailScreenState
             Text(
               'The requested transaction could not be found.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(fontSize: 12, color: muted),
+              style: GoogleFonts.ebGaramond(fontSize: 12, color: muted),
             ),
           ],
         ),
@@ -327,7 +327,7 @@ class _InvestorPaymentDetailScreenState
             const SizedBox(height: 16),
             Text(
               '${credit ? '+' : '-'}${_amountLabel()}',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 30,
                 fontWeight: FontWeight.w900,
                 letterSpacing: -0.5,
@@ -337,7 +337,7 @@ class _InvestorPaymentDetailScreenState
             const SizedBox(height: 6),
             Text(
               status.isEmpty ? '—' : status.toUpperCase(),
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 10,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.5,
@@ -421,7 +421,7 @@ class _InvestorPaymentDetailScreenState
         children: [
           Text(
             'DESCRIPTION',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 10,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.2,
@@ -431,7 +431,7 @@ class _InvestorPaymentDetailScreenState
           const SizedBox(height: 8),
           Text(
             _descriptionLabel(),
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 13,
               fontWeight: FontWeight.w500,
               height: 1.5,
@@ -464,7 +464,7 @@ class _InvestorPaymentDetailScreenState
               children: [
                 Text(
                   'REFERENCE ID',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.2,
@@ -561,7 +561,7 @@ class _InvestorPaymentDetailScreenState
             const SizedBox(width: 8),
             Text(
               label,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.2,
@@ -582,7 +582,7 @@ class _InvestorPaymentDetailScreenState
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         textAlign: TextAlign.right,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.ebGaramond(
           fontSize: 12,
           fontWeight: FontWeight.w500,
           color: textPrimary,
@@ -602,7 +602,7 @@ class _InvestorPaymentDetailScreenState
       children: [
         Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 10,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.2,
@@ -618,7 +618,7 @@ class _InvestorPaymentDetailScreenState
   Widget _valueText(String text, Color textPrimary) {
     return Text(
       text,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.ebGaramond(
         fontSize: 12,
         fontWeight: FontWeight.w500,
         color: textPrimary,

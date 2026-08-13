@@ -131,7 +131,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
               Expanded(
                 child: Text(
                   name,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 12,
                     fontWeight: FontWeight.w900,
                     color: isDark ? Colors.white : Colors.black,
@@ -167,7 +167,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
 
   Widget _buildSuccessScreen(bool isDark) {
     return Scaffold(
-      backgroundColor: isDark ? Colors.black : Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: GestureDetector(
         onTap: () => context.go('/cp/dashboard'),
         behavior: HitTestBehavior.opaque,
@@ -189,7 +189,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                 const SizedBox(height: 32),
                 Text(
                   'PAYMENT SUCCESSFUL',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 22,
                     fontWeight: FontWeight.w900,
                     color: isDark ? Colors.white : Colors.black,
@@ -200,7 +200,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                 Text(
                   'Your token reservation of ₹$_tokenAmount has been received. Our team will verify the booking and contact you for the next steps.',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 10,
                     color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.68),
                     fontWeight: FontWeight.w900,
@@ -219,7 +219,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                   child: Center(
                     child: Text(
                       'GO TO DASHBOARD',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         color: isDark ? Colors.black : Colors.white,
                         fontWeight: FontWeight.w900,
                         fontSize: 11,
@@ -258,7 +258,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
         ),
         title: Text(
           'SECURE PAYMENT',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 14,
             fontWeight: FontWeight.w900,
             color: textPrimary,
@@ -306,7 +306,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                       children: [
                         Text(
                           'TOKEN AMOUNT',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                             color: Colors.white.withValues(alpha: 0.68),
@@ -316,7 +316,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                         const SizedBox(height: 12),
                         Text(
                           '₹$_tokenAmount',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 36,
                             fontWeight: FontWeight.w900,
                             color: Colors.white,
@@ -338,16 +338,16 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                             children: [
                               const Icon(
                                 LucideIcons.shieldCheck,
-                                color: Color(0xFFFFD700),
+                                color: Color(0xFFC5A35B),
                                 size: 14,
                               ),
                               const SizedBox(width: 8),
                               Text(
                                 '100% REFUNDABLE',
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.ebGaramond(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w900,
-                                  color: const Color(0xFFFFD700),
+                                  color: const Color(0xFFC5A35B),
                                   letterSpacing: 1,
                                 ),
                               ),
@@ -365,7 +365,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
               const SizedBox(height: 16),
               Text(
                 _projectName.toUpperCase(),
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
                   color: muted,
@@ -378,7 +378,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
             const SizedBox(height: 48),
             Text(
               'PAYMENT METHOD',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 10,
                 fontWeight: FontWeight.w900,
                 color: muted,
@@ -420,7 +420,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                     Expanded(
                       child: Text(
                         'I AGREE TO THE BOOKING TERMS AND UNDERSTAND THAT THIS TOKEN AMOUNT IS FULLY REFUNDABLE WITHIN 7 DAYS OF PAYMENT.',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 9,
                           color: muted,
                           fontWeight: FontWeight.w900,
@@ -461,7 +461,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                         children: [
                           Text(
                             'PAY ₹$_tokenAmount',
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 14,
                               fontWeight: FontWeight.w900,
                               letterSpacing: 1,
@@ -484,7 +484,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                   const SizedBox(width: 10),
                   Text(
                     'PCI-DSS COMPLIANT • 256-BIT SSL ENCRYPTION',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 8,
                       fontWeight: FontWeight.w900,
                       color: muted,

@@ -70,7 +70,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
     final isLoading = ref.watch(supportProvider).isLoading;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF09090B) : const Color(0xFFF8FAFC),
+      backgroundColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFF4EFE3),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -96,7 +96,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
           children: [
             Text(
               'NEW TICKET',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 16,
                 fontWeight: FontWeight.w900,
                 color: isDark ? Colors.white : Colors.black,
@@ -105,7 +105,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
             ),
             Text(
               'INITIATE SERVICE REQUEST',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 8,
                 fontWeight: FontWeight.w700,
                 color: isDark ? Colors.white38 : Colors.black54,
@@ -190,7 +190,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                     Expanded(
                       child: Text(
                         'OUR CONCIERGE TEAM TYPICALLY RESPONDS WITHIN 24-48 BUSINESS HOURS. FOR URGENT MATTERS, PLEASE CALL THE DIRECT SERVICE LINE.',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           color: isDark ? Colors.white38 : Colors.black54,
                           fontSize: 9,
                           fontWeight: FontWeight.w700,
@@ -216,7 +216,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
   Widget _buildLabel(String label, bool isDark) {
     return Text(
       label,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.ebGaramond(
         fontSize: 10,
         fontWeight: FontWeight.w900,
         color: isDark ? Colors.white24 : Colors.black45,
@@ -236,12 +236,12 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
       controller: controller,
       maxLines: maxLines,
       validator: validator,
-      style: GoogleFonts.montserrat(color: isDark ? Colors.white : Colors.black, fontSize: 13, fontWeight: FontWeight.w700),
+      style: GoogleFonts.ebGaramond(color: isDark ? Colors.white : Colors.black, fontSize: 13, fontWeight: FontWeight.w700),
       decoration: InputDecoration(
         filled: true,
         fillColor: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
         hintText: hint,
-        hintStyle: GoogleFonts.montserrat(color: isDark ? Colors.white24 : Colors.black26, fontSize: 12, fontWeight: FontWeight.w700),
+        hintStyle: GoogleFonts.ebGaramond(color: isDark ? Colors.white24 : Colors.black26, fontSize: 12, fontWeight: FontWeight.w700),
         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
@@ -253,9 +253,9 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Color(0xFF3B82F6), width: 1.5),
+          borderSide: const BorderSide(color: Color(0xFFC5A35B), width: 1.5),
         ),
-        errorStyle: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w700),
+        errorStyle: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.w700),
       ),
     ).animate().fadeIn(delay: 100.ms);
   }
@@ -275,7 +275,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
               color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: _isCategoryOpen ? const Color(0xFF3B82F6) : (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                color: _isCategoryOpen ? const Color(0xFFC5A35B) : (isDark ? Colors.white : Colors.black).withOpacity(0.05),
               ),
             ),
             child: Row(
@@ -284,7 +284,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                 Expanded(
                   child: Text(
                     _selectedCategory.toUpperCase(),
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       color: isDark ? Colors.white : Colors.black,
                       fontSize: 11,
                       fontWeight: FontWeight.w800,
@@ -313,7 +313,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF111111) : Colors.white,
+                  color: isDark ? const Color(0xFF0B1026) : Colors.white,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
                   boxShadow: [
@@ -339,13 +339,13 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                         width: double.infinity,
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                         decoration: BoxDecoration(
-                          color: isSelected ? const Color(0xFF3B82F6).withOpacity(0.1) : Colors.transparent,
+                          color: isSelected ? const Color(0xFFC5A35B).withOpacity(0.1) : Colors.transparent,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
                           category.toUpperCase(),
-                          style: GoogleFonts.montserrat(
-                            color: isSelected ? const Color(0xFF3B82F6) : (isDark ? Colors.white38 : Colors.black54),
+                          style: GoogleFonts.ebGaramond(
+                            color: isSelected ? const Color(0xFFC5A35B) : (isDark ? Colors.white38 : Colors.black54),
                             fontSize: 10,
                             fontWeight: isSelected ? FontWeight.w900 : FontWeight.w700,
                             letterSpacing: 0.5,
@@ -377,7 +377,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
               color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
-                color: _isPriorityOpen ? const Color(0xFF3B82F6) : (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                color: _isPriorityOpen ? const Color(0xFFC5A35B) : (isDark ? Colors.white : Colors.black).withOpacity(0.05),
               ),
             ),
             child: Row(
@@ -386,7 +386,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                 Expanded(
                   child: Text(
                     _selectedPriority.toUpperCase(),
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       color: isDark ? Colors.white : Colors.black,
                       fontSize: 11,
                       fontWeight: FontWeight.w800,
@@ -415,7 +415,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF111111) : Colors.white,
+                  color: isDark ? const Color(0xFF0B1026) : Colors.white,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
                   boxShadow: [
@@ -441,13 +441,13 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                         width: double.infinity,
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                         decoration: BoxDecoration(
-                          color: isSelected ? const Color(0xFF3B82F6).withOpacity(0.1) : Colors.transparent,
+                          color: isSelected ? const Color(0xFFC5A35B).withOpacity(0.1) : Colors.transparent,
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: Text(
                           priority.toUpperCase(),
-                          style: GoogleFonts.montserrat(
-                            color: isSelected ? const Color(0xFF3B82F6) : (isDark ? Colors.white38 : Colors.black54),
+                          style: GoogleFonts.ebGaramond(
+                            color: isSelected ? const Color(0xFFC5A35B) : (isDark ? Colors.white38 : Colors.black54),
                             fontSize: 10,
                             fontWeight: isSelected ? FontWeight.w900 : FontWeight.w700,
                             letterSpacing: 0.5,
@@ -504,7 +504,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                 const SizedBox(height: 16),
                 Text(
                   'ADD FILES (PDF, JPG)',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     color: isDark ? Colors.white24 : Colors.black26,
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
@@ -537,7 +537,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                   Expanded(
                     child: Text(
                       fileName,
-                      style: GoogleFonts.inter(color: isDark ? Colors.white70 : Colors.black87, fontSize: 12, fontWeight: FontWeight.w600),
+                      style: GoogleFonts.ebGaramond(color: isDark ? Colors.white70 : Colors.black87, fontSize: 12, fontWeight: FontWeight.w600),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -594,7 +594,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                 children: [
                   Text(
                     'SUBMIT TICKET REQUEST',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontWeight: FontWeight.w900,
                       fontSize: 12,
                       letterSpacing: 0.5,

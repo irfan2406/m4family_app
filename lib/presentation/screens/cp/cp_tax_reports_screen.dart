@@ -80,7 +80,7 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
   void _toast(String msg) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg, style: GoogleFonts.montserrat(fontSize: 12))),
+      SnackBar(content: Text(msg, style: GoogleFonts.ebGaramond(fontSize: 12))),
     );
   }
 
@@ -110,7 +110,7 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
           children: [
             Text(
               'Tax Reports',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontWeight: FontWeight.w800,
                 fontSize: 16,
                 color: textPrimary,
@@ -118,7 +118,7 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
             ),
             Text(
               'FISCAL COMPLIANCE',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 9,
                 letterSpacing: 1.5,
                 fontWeight: FontWeight.w600,
@@ -168,15 +168,15 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
                   duration: const Duration(milliseconds: 200),
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   decoration: BoxDecoration(
-                    color: selected ? const Color(0xFF8B5CF6) : card,
+                    color: selected ? const Color(0xFFC5A35B) : card,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: selected ? const Color(0xFF8B5CF6) : border,
+                      color: selected ? const Color(0xFFC5A35B) : border,
                     ),
                     boxShadow: selected
                         ? [
                             BoxShadow(
-                              color: const Color(0xFF8B5CF6).withValues(alpha: 0.3),
+                              color: const Color(0xFFC5A35B).withValues(alpha: 0.3),
                               blurRadius: 15,
                             ),
                           ]
@@ -184,7 +184,7 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
                   ),
                   child: Text(
                     year.toUpperCase(),
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1,
@@ -238,7 +238,7 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
               children: [
                 Text(
                   'TOTAL TAX DEDUCTED',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 9,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 2,
@@ -251,7 +251,7 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
                   children: [
                     Text(
                       fmt.format(total),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 36,
                         fontWeight: FontWeight.w800,
                         height: 1,
@@ -261,7 +261,7 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
                     ),
                     Text(
                       '.00',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 18,
                         fontWeight: FontWeight.w400,
                         color: muted,
@@ -284,7 +284,7 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
                   ),
                   label: Text(
                     'DOWNLOAD SUMMARY',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 9,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1,
@@ -317,7 +317,7 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
             padding: const EdgeInsets.fromLTRB(4, 8, 4, 12),
             child: Text(
               'AVAILABLE DOCUMENTS',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 2,
@@ -331,7 +331,7 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
               child: Center(
                 child: Text(
                   'No reports found for this year.',
-                  style: GoogleFonts.montserrat(fontSize: 10, color: muted),
+                  style: GoogleFonts.ebGaramond(fontSize: 10, color: muted),
                 ),
               ),
             )
@@ -361,7 +361,7 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
     Color card,
     Color border,
   ) {
-    const red = Color(0xFFEF4444);
+    const red = Color(0xFFC65B46);
     final id = m['id']?.toString() ?? '';
     final name = m['name']?.toString() ?? 'Statement';
     final date = m['date']?.toString() ?? '';
@@ -418,7 +418,7 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
                           name,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: textPrimary,
@@ -432,7 +432,7 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
                                 date.toUpperCase(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.ebGaramond(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w500,
                                   letterSpacing: 1,
@@ -454,7 +454,7 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
                               ),
                               Text(
                                 size.toUpperCase(),
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.ebGaramond(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w500,
                                   letterSpacing: 1,

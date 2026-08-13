@@ -59,7 +59,7 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
           'description': 'Construction linked payment schedule.',
           'benefit': 'Lower upfront cost',
           'icon': LucideIcons.zap,
-          'color': const Color(0xFF3B82F6),
+          'color': const Color(0xFFC5A35B),
         },
       ];
       _isLoading = false;
@@ -71,7 +71,7 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF0B1026) : Colors.white,
       extendBody: true,
       bottomNavigationBar: NavigationPill(
         currentIndex: -1,
@@ -95,7 +95,7 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
           children: [
             Text(
               'CHOOSE PLAN',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 17,
                 fontWeight: FontWeight.w900,
                 color: isDark ? Colors.white : Colors.black,
@@ -104,7 +104,7 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
             ),
             Text(
               'SELECT YOUR PREFERRED SCHEDULE',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 8,
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
                 fontWeight: FontWeight.w900,
@@ -128,8 +128,8 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
                         ? LucideIcons.zap
                         : LucideIcons.shieldCheck;
                     final color = isZap
-                        ? const Color(0xFF3B82F6)
-                        : const Color(0xFFF59E0B);
+                        ? const Color(0xFFC5A35B)
+                        : const Color(0xFFC5A35B);
                     final benefit =
                         plan['name']?.toString().contains('Down') == true
                         ? 'MAX SAVINGS'
@@ -197,7 +197,7 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
                             children: [
                               Text(
                                 'COMPARE PLANS',
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.ebGaramond(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w900,
                                   letterSpacing: 1.5,
@@ -207,7 +207,7 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
                               const SizedBox(height: 4),
                               Text(
                                 'VIEW A DETAILED SIDE-BY-SIDE COMPARISON OF ALL AVAILABLE PAYMENT SCHEDULES.',
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.ebGaramond(
                                   fontSize: 8,
                                   color: (isDark ? Colors.white : Colors.black)
                                       .withOpacity(0.68),
@@ -238,7 +238,7 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
                     child: Center(
                       child: Text(
                         'DOWNLOAD ALL PAYMENT PLANS (PDF)',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 9,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1,
@@ -308,7 +308,7 @@ class _PaymentPlanCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       (plan['name'] ?? 'Plan').toString().toUpperCase(),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 26,
                         fontWeight: FontWeight.w900,
                         color: isDark ? Colors.white : Colors.black,
@@ -355,7 +355,7 @@ class _PaymentPlanCard extends StatelessWidget {
                             benefit,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.ebGaramond(
                               fontSize: 9,
                               fontWeight: FontWeight.w900,
                               color: isDark ? Colors.white : Colors.black,
@@ -382,7 +382,7 @@ class _PaymentPlanCard extends StatelessWidget {
                       children: [
                         Text(
                           'SELECT PLAN',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 9,
                             fontWeight: FontWeight.w900,
                             color: isDark ? Colors.white : Colors.black,

@@ -26,9 +26,9 @@ class InvestorPurgeCacheScreen extends ConsumerStatefulWidget {
 
 class _InvestorPurgeCacheScreenState
     extends ConsumerState<InvestorPurgeCacheScreen> {
-  static const _red = Color(0xFFEF4444);
-  static const _green = Color(0xFF10B981);
-  static const _gold = Color(0xFFFFD700);
+  static const _red = Color(0xFFC65B46);
+  static const _green = Color(0xFFC5A35B);
+  static const _gold = Color(0xFFC5A35B);
 
   bool _purging = false;
   bool _done = false;
@@ -143,7 +143,7 @@ class _InvestorPurgeCacheScreenState
           backgroundColor: _green,
           content: Text(
             'Cache purged successfully! The app cache has been rebuilt.',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 12,
               fontWeight: FontWeight.w600,
               color: Colors.white,
@@ -157,7 +157,7 @@ class _InvestorPurgeCacheScreenState
         SnackBar(
           content: Text(
             'Failed to purge cache: $e',
-            style: GoogleFonts.montserrat(fontSize: 12),
+            style: GoogleFonts.ebGaramond(fontSize: 12),
           ),
         ),
       );
@@ -200,7 +200,7 @@ class _InvestorPurgeCacheScreenState
           children: [
             Text(
               'Purge Data',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontWeight: FontWeight.w800,
                 fontSize: 16,
                 color: textPrimary,
@@ -208,7 +208,7 @@ class _InvestorPurgeCacheScreenState
             ),
             Text(
               'RESET PLATFORM STATE',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 9,
                 letterSpacing: 1.5,
                 fontWeight: FontWeight.w600,
@@ -242,7 +242,7 @@ class _InvestorPurgeCacheScreenState
           Center(
             child: Text(
               'M4 FAMILY PRIVATE OFFICE',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 8,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 4,
@@ -291,7 +291,7 @@ class _InvestorPurgeCacheScreenState
               children: [
                 Text(
                   'NOTICE',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 11,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.5,
@@ -304,7 +304,7 @@ class _InvestorPurgeCacheScreenState
                   'cached media, transient session artifacts and offline render '
                   'buffers. Your account and saved data are not affected, but the '
                   'platform will rebuild its caches on next load.',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 11,
                     height: 1.5,
                     fontWeight: FontWeight.w500,
@@ -356,7 +356,7 @@ class _InvestorPurgeCacheScreenState
               children: [
                 Text(
                   'ESTIMATED CACHE SIZE',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 9,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1.5,
@@ -366,7 +366,7 @@ class _InvestorPurgeCacheScreenState
                 const SizedBox(height: 4),
                 Text(
                   _formatBytes(_cacheBytes),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 22,
                     fontWeight: FontWeight.w900,
                     letterSpacing: -0.5,
@@ -376,7 +376,7 @@ class _InvestorPurgeCacheScreenState
                 const SizedBox(height: 2),
                 Text(
                   '$_cacheCount cached item${_cacheCount == 1 ? '' : 's'}',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                     color: muted,
@@ -431,7 +431,7 @@ class _InvestorPurgeCacheScreenState
                 children: [
                   Text(
                     s.title,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                       color: textPrimary,
@@ -440,7 +440,7 @@ class _InvestorPurgeCacheScreenState
                   const SizedBox(height: 2),
                   Text(
                     s.subtitle,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
                       height: 1.4,
@@ -493,7 +493,7 @@ class _InvestorPurgeCacheScreenState
                 Expanded(
                   child: Text(
                     item,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: textPrimary.withValues(alpha: 0.8),
@@ -560,7 +560,7 @@ class _InvestorPurgeCacheScreenState
                 Expanded(
                   child: Text(
                     e.key,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: checked
@@ -614,7 +614,7 @@ class _InvestorPurgeCacheScreenState
                   const SizedBox(width: 10),
                   Text(
                     allDone ? 'CORE PURGE COMPLETE' : 'INITIATE FULL RESET',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 12,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1.5,
@@ -641,7 +641,7 @@ class _InvestorPurgeCacheScreenState
         const SizedBox(width: 8),
         Text(
           text,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 10,
             fontWeight: FontWeight.w900,
             letterSpacing: 2,

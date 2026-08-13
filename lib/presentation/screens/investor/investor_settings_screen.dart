@@ -17,7 +17,7 @@ class InvestorSettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen> {
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
 
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
@@ -124,7 +124,7 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
         backgroundColor: ok ? _gold : Colors.red,
         content: Text(
           ok ? 'Preferences updated securely' : 'Could not save changes. Try again.',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 12,
             fontWeight: FontWeight.w700,
             color: Colors.black,
@@ -138,7 +138,7 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
     final go = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Sign out everywhere', style: GoogleFonts.montserrat(fontWeight: FontWeight.w700)),
+        title: Text('Sign out everywhere', style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w700)),
         content: const Text('Sign out of your investor account on all devices?'),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
@@ -189,14 +189,14 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
                   Text(
                     _error!,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.montserrat(fontSize: 13, fontWeight: FontWeight.w600, color: muted),
+                    style: GoogleFonts.ebGaramond(fontSize: 13, fontWeight: FontWeight.w600, color: muted),
                   ),
                   const SizedBox(height: 20),
                   TextButton(
                     onPressed: _fetchUser,
                     child: Text(
                       'RETRY',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 11,
                         fontWeight: FontWeight.w800,
                         color: M4Theme.premiumBlue,
@@ -329,7 +329,7 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
               children: [
                 Text(
                   'CONFIGURATION',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 14,
                     fontWeight: FontWeight.w800,
                     color: textPrimary,
@@ -339,7 +339,7 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
                 const SizedBox(height: 4),
                 Text(
                   'PRIVATE OFFICE SETTINGS',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 9,
                     fontWeight: FontWeight.w800,
                     color: muted,
@@ -365,7 +365,7 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
                       child: Text(
                         'SAVE',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 9,
                           fontWeight: FontWeight.w800,
                           color: Colors.black,
@@ -383,7 +383,7 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
   Widget _sectionLabel(String text, Color muted) {
     return Text(
       text,
-      style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w900, color: muted, letterSpacing: 2.5),
+      style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w900, color: muted, letterSpacing: 2.5),
     );
   }
 
@@ -408,7 +408,7 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
       children: [
         Text(
           label,
-          style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w800, color: muted, letterSpacing: 1.5),
+          style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w800, color: muted, letterSpacing: 1.5),
         ),
         const SizedBox(height: 6),
         Container(
@@ -428,7 +428,7 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
                         controller: controller,
                         enabled: enabled,
                         keyboardType: keyboardType,
-                        style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w600, color: fieldColor),
+                        style: GoogleFonts.ebGaramond(fontSize: 14, fontWeight: FontWeight.w600, color: fieldColor),
                         decoration: const InputDecoration(
                           border: InputBorder.none,
                           isDense: true,
@@ -441,7 +441,7 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
                           value ?? '',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w600, color: fieldColor),
+                          style: GoogleFonts.ebGaramond(fontSize: 14, fontWeight: FontWeight.w600, color: fieldColor),
                         ),
                       ),
               ),
@@ -455,7 +455,7 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
                   ),
                   child: Text(
                     'VERIFIED',
-                    style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w800, color: _gold, letterSpacing: 1),
+                    style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w800, color: _gold, letterSpacing: 1),
                   ),
                 ),
               ],
@@ -506,12 +506,12 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w700, color: textPrimary),
+                  style: GoogleFonts.ebGaramond(fontSize: 12, fontWeight: FontWeight.w700, color: textPrimary),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w800, color: muted, letterSpacing: 1),
+                  style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w800, color: muted, letterSpacing: 1),
                 ),
               ],
             ),
@@ -548,7 +548,7 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
               const SizedBox(width: 8),
               Text(
                 'SIGN OUT ON ALL DEVICES',
-                style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w800, color: Colors.red, letterSpacing: 2),
+                style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w800, color: Colors.red, letterSpacing: 2),
               ),
             ],
           ),

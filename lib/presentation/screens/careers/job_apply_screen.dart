@@ -121,12 +121,12 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
       SnackBar(
         content: Text(
           message,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontWeight: FontWeight.bold,
             fontSize: 12,
           ),
         ),
-        backgroundColor: isError ? Colors.redAccent : Colors.teal,
+        backgroundColor: isError ? Color(0xFFC5A35B) : Color(0xFFC5A35B),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
@@ -137,7 +137,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: isDark ? Colors.black : Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         centerTitle: true,
@@ -146,7 +146,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
           children: [
             Text(
               (widget.job['title'] ?? '').toString().toUpperCase(),
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 color: isDark ? Colors.white : Colors.black,
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
@@ -157,7 +157,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
             const SizedBox(height: 2),
             Text(
               (widget.job['department'] ?? '').toString().toUpperCase(),
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
                 fontWeight: FontWeight.w400,
                 fontSize: 8,
@@ -239,12 +239,12 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
       body: Container(
         padding: const EdgeInsets.only(top: 120),
         decoration: BoxDecoration(
-          color: isDark ? Colors.black : Colors.white,
+          color: Theme.of(context).scaffoldBackgroundColor,
           gradient: isDark
               ? const RadialGradient(
                   center: Alignment.topCenter,
                   radius: 2.5,
-                  colors: [Color(0xFF111319), Colors.black],
+                  colors: [Color(0xFF163A2C), Colors.black],
                 )
               : null,
         ),
@@ -268,7 +268,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                       ),
                       child: Text(
                         'APPLYING FOR',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           color: (isDark ? Colors.white : Colors.black)
                               .withOpacity(0.6),
                           fontSize: 8,
@@ -281,7 +281,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                     Text(
                       (widget.job['title'] ?? '').toString().toUpperCase(),
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         color: isDark ? Colors.white : Colors.black,
                         fontWeight: FontWeight.w900,
                         fontSize: 22,
@@ -294,7 +294,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                       (widget.job['location'] ?? 'MUMBAI')
                           .toString()
                           .toUpperCase(),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         color: (isDark ? Colors.white : Colors.black)
                             .withOpacity(0.68),
                         fontSize: 10,
@@ -397,7 +397,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                         _resumeFile != null
                             ? _resumeFile!.path.split('/').last.toUpperCase()
                             : 'SELECT PDF DOCUMENT',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           color: isDark ? Colors.white : Colors.black,
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
@@ -430,7 +430,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                         )
                       : Text(
                           'SUBMIT APPLICATION',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 12,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 2,
@@ -451,7 +451,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
       padding: const EdgeInsets.only(left: 8),
       child: Text(
         text,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.ebGaramond(
           color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
           fontSize: 10,
           fontWeight: FontWeight.w900,
@@ -475,22 +475,22 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
           : isPhone
           ? TextInputType.phone
           : TextInputType.text,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.ebGaramond(
         color: isDark ? Colors.white : Colors.black,
         fontWeight: FontWeight.bold,
         fontSize: 13,
       ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.montserrat(
+        hintStyle: GoogleFonts.ebGaramond(
           color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
           fontWeight: FontWeight.bold,
           fontSize: 13,
         ),
         filled: true,
         fillColor: isDark
-            ? const Color(0xFF0F1219)
-            : const Color(0xFFF8F8F8), // Neutral grey instead of blue-grey
+            ? const Color(0xFF0B1026)
+            : const Color(0xFFF4EFE3), // Neutral grey instead of blue-grey
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 24,
           vertical: 24,

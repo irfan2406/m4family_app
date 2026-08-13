@@ -22,7 +22,7 @@ class InvestorInstallmentsScreen extends ConsumerStatefulWidget {
 
 class _InvestorInstallmentsScreenState
     extends ConsumerState<InvestorInstallmentsScreen> {
-  static const Color _gold = Color(0xFFFFD700);
+  static const Color _gold = Color(0xFFC5A35B);
 
   bool _loading = true;
   bool _error = false;
@@ -142,11 +142,11 @@ class _InvestorInstallmentsScreenState
   Color _statusColor(String status) {
     switch (status) {
       case 'PAID':
-        return const Color(0xFF34D399); // green
+        return const Color(0xFFC5A35B); // green
       case 'OVERDUE':
-        return const Color(0xFFF87171); // red
+        return const Color(0xFFC65B46); // red
       default:
-        return const Color(0xFFFBBF24); // amber
+        return const Color(0xFFC5A35B); // amber
     }
   }
 
@@ -229,7 +229,7 @@ class _InvestorInstallmentsScreenState
                       children: [
                         Text(
                           'INSTALLMENT SCHEDULE',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 20,
                             fontWeight: FontWeight.w900,
                             letterSpacing: -0.5,
@@ -239,7 +239,7 @@ class _InvestorInstallmentsScreenState
                         const SizedBox(height: 2),
                         Text(
                           'PAYMENT PLAN',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 8,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 2,
@@ -349,7 +349,7 @@ class _InvestorInstallmentsScreenState
             child: _statTile(
               label: 'PAID',
               value: _formatAmount(totalPaid),
-              color: const Color(0xFF34D399),
+              color: const Color(0xFFC5A35B),
               muted: muted,
             ),
           ),
@@ -363,7 +363,7 @@ class _InvestorInstallmentsScreenState
             child: _statTile(
               label: 'DUE / REMAINING',
               value: _formatAmount(totalDue),
-              color: const Color(0xFFFBBF24),
+              color: const Color(0xFFC5A35B),
               muted: muted,
             ),
           ),
@@ -383,7 +383,7 @@ class _InvestorInstallmentsScreenState
       children: [
         Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 8,
             fontWeight: FontWeight.w900,
             letterSpacing: 1.5,
@@ -393,7 +393,7 @@ class _InvestorInstallmentsScreenState
         const SizedBox(height: 6),
         Text(
           value,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 15,
             fontWeight: FontWeight.w900,
             color: color,
@@ -419,7 +419,7 @@ class _InvestorInstallmentsScreenState
         runSpacing: 8,
         children: _filters.map((f) {
           final active = _activeFilter == f;
-          const activeColor = Color(0xFFFBBF24);
+          const activeColor = Color(0xFFC5A35B);
           return GestureDetector(
             onTap: () => setState(() => _activeFilter = f),
             child: Container(
@@ -438,7 +438,7 @@ class _InvestorInstallmentsScreenState
               ),
               child: Text(
                 (f == 'All' ? 'All' : _statusLabel(f)).toUpperCase(),
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 9,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 1,
@@ -504,7 +504,7 @@ class _InvestorInstallmentsScreenState
                   item.milestoneName,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                     color: textPrimary,
@@ -515,7 +515,7 @@ class _InvestorInstallmentsScreenState
                   item.projectTitle,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 9,
                     fontWeight: FontWeight.w500,
                     color: muted,
@@ -530,7 +530,7 @@ class _InvestorInstallmentsScreenState
                     const SizedBox(width: 4),
                     Text(
                       item.dueDate,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 9,
                         fontWeight: FontWeight.w500,
                         color: muted,
@@ -548,7 +548,7 @@ class _InvestorInstallmentsScreenState
             children: [
               Text(
                 _formatAmount(item.amount),
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 14,
                   fontWeight: FontWeight.w900,
                   color: textPrimary,
@@ -565,7 +565,7 @@ class _InvestorInstallmentsScreenState
                 ),
                 child: Text(
                   _statusLabel(item.status).toUpperCase(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 0.8,
@@ -594,7 +594,7 @@ class _InvestorInstallmentsScreenState
             Text(
               'NO INSTALLMENTS FOUND',
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 11,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.5,
@@ -605,7 +605,7 @@ class _InvestorInstallmentsScreenState
             Text(
               'Your payment schedule will appear here once an investment is confirmed.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 10,
                 fontWeight: FontWeight.w500,
                 height: 1.5,
@@ -632,7 +632,7 @@ class _InvestorInstallmentsScreenState
             Text(
               'COULD NOT LOAD SCHEDULE',
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 11,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.5,
@@ -643,7 +643,7 @@ class _InvestorInstallmentsScreenState
             Text(
               'Please check your connection and try again.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 10,
                 fontWeight: FontWeight.w500,
                 color: muted,
@@ -661,7 +661,7 @@ class _InvestorInstallmentsScreenState
                 ),
                 child: Text(
                   'RETRY',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.5,

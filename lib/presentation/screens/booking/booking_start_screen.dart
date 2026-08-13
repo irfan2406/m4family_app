@@ -28,26 +28,26 @@ class BookingStartScreen extends ConsumerWidget {
         'title': 'SEND INQUIRY',
         'desc': 'Get detailed brochure and pricing via email/WhatsApp.',
         'icon': LucideIcons.messageSquare,
-        'color': const Color(0xFF3B82F6),
+        'color': const Color(0xFFC5A35B),
       },
       {
         'id': 'site-visit',
         'title': 'SCHEDULE SITE VISIT',
         'desc': 'Book a personalized tour with our project manager.',
         'icon': LucideIcons.calendar,
-        'color': const Color(0xFF10B981),
+        'color': const Color(0xFFC5A35B),
       },
       {
         'id': 'token',
         'title': 'TOKEN BOOKING',
         'desc': 'Lock your preferred unit with a refundable token amount.',
         'icon': LucideIcons.creditCard,
-        'color': const Color(0xFFF59E0B),
+        'color': const Color(0xFFC5A35B),
       },
     ];
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF0B1026) : Colors.white,
       extendBody: true,
       bottomNavigationBar: NavigationPill(
         currentIndex: -1,
@@ -117,7 +117,7 @@ class BookingStartScreen extends ConsumerWidget {
                   // Header
                   Text(
                     'HOW CAN\nWE HELP?',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 36,
                       fontWeight: FontWeight.w900,
                       color: isDark ? Colors.white : Colors.black,
@@ -130,7 +130,7 @@ class BookingStartScreen extends ConsumerWidget {
 
                   Text(
                     'INTERESTED IN ${projectTitle.toUpperCase()}?\nCHOOSE HOW YOU\'D LIKE TO PROCEED.',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 10,
                       color: (isDark ? Colors.white : Colors.black).withOpacity(
                         0.6,
@@ -236,7 +236,7 @@ class BookingStartScreen extends ConsumerWidget {
                                 children: [
                                   Text(
                                     'M4 FAMILY MEMBERS GET PRIORITY SITE VISITS AND EXCLUSIVE UNIT SELECTION WINDOWS.',
-                                    style: GoogleFonts.montserrat(
+                                    style: GoogleFonts.ebGaramond(
                                       fontSize: 9,
                                       fontWeight: FontWeight.w900,
                                       color:
@@ -257,7 +257,7 @@ class BookingStartScreen extends ConsumerWidget {
                                     ),
                                     child: Text(
                                       'LEARN MORE',
-                                      style: GoogleFonts.montserrat(
+                                      style: GoogleFonts.ebGaramond(
                                         fontSize: 10,
                                         fontWeight: FontWeight.w900,
                                         color: isDark
@@ -349,7 +349,7 @@ class _BookingOptionCard extends StatelessWidget {
                 children: [
                   Text(
                     opt['title'],
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 12,
                       fontWeight: FontWeight.w900,
                       color: isDark ? Colors.white : Colors.black,
@@ -359,7 +359,7 @@ class _BookingOptionCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     opt['desc'],
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 9,
                       color: (isDark ? Colors.white : Colors.black).withOpacity(
                         0.68,

@@ -56,7 +56,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
     final isDark = ref.watch(themeProvider) == ThemeMode.dark;
     
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF09090B) : const Color(0xFFF8FAFC),
+      backgroundColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFF4EFE3),
       body: SafeArea(
         child: Column(
           children: [
@@ -105,7 +105,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
             child: Center(
               child: Text(
                 'LEGAL VAULT',
-                style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
+                style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), 
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white : Colors.black,
@@ -132,7 +132,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
       margin: const EdgeInsets.all(24),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF18181B) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : Colors.white,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
         boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20, offset: const Offset(0, 10))],
@@ -155,7 +155,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
               children: [
                 Text(
                   'ENCRYPTED STORAGE',
-                  style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
+                  style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), 
                     fontSize: 8,
                     fontWeight: FontWeight.w800,
                     color: isDark ? Colors.white38 : Colors.black38,
@@ -164,7 +164,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
                 ),
                 Text(
                   'SECURE DOCUMENT REPOSITORY',
-                  style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
+                  style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), 
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
                     color: isDark ? Colors.white : Colors.black,
@@ -192,13 +192,13 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
             onSelected: (selected) {
               if (selected) setState(() => _selectedFilter = f);
             },
-            labelStyle: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
+            labelStyle: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), 
               fontSize: 9,
               fontWeight: FontWeight.w800,
               color: _selectedFilter == f ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white54 : Colors.black54),
             ),
             selectedColor: isDark ? Colors.white : Colors.black,
-            backgroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
+            backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
@@ -214,7 +214,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF18181B) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : Colors.white,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
         boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))],
@@ -232,16 +232,16 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
         ),
         title: Text(
           (doc['name'] ?? 'DOCUMENT').toUpperCase(),
-          style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w800, color: isDark ? Colors.white : Colors.black),
+          style: GoogleFonts.ebGaramond(fontSize: 12, fontWeight: FontWeight.w800, color: isDark ? Colors.white : Colors.black),
           overflow: TextOverflow.ellipsis,
         ),
         subtitle: Row(
           children: [
-            Text((project['title'] ?? 'GENERAL').toUpperCase(), style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w700, color: isDark ? Colors.white38 : Colors.black38)),
+            Text((project['title'] ?? 'GENERAL').toUpperCase(), style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w700, color: isDark ? Colors.white38 : Colors.black38)),
             const SizedBox(width: 8),
             Container(width: 3, height: 3, decoration: BoxDecoration(color: (isDark ? Colors.white : Colors.black).withOpacity(0.2), shape: BoxShape.circle)),
             const SizedBox(width: 8),
-            Text(date, style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w700, color: isDark ? Colors.white38 : Colors.black38)),
+            Text(date, style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w700, color: isDark ? Colors.white38 : Colors.black38)),
           ],
         ),
         trailing: Icon(LucideIcons.chevronRight, size: 16, color: (isDark ? Colors.white : Colors.black).withOpacity(0.2)),
@@ -276,7 +276,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
         const SizedBox(height: 24),
         Text(
           'NO DOCUMENTS FOUND',
-          style: GoogleFonts.montserrat(textStyle: const TextStyle(inherit: true), 
+          style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), 
             fontSize: 10,
             fontWeight: FontWeight.w800,
             color: (isDark ? Colors.white : Colors.black).withOpacity(0.2),
@@ -297,7 +297,7 @@ class _DocumentDetailSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF18181B) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : Colors.white,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
       ),
       padding: const EdgeInsets.all(32),
@@ -318,19 +318,19 @@ class _DocumentDetailSheet extends StatelessWidget {
           Text(
             (doc['name'] ?? 'DOCUMENT').toUpperCase(),
             textAlign: TextAlign.center,
-            style: GoogleFonts.montserrat(fontSize: 18, fontWeight: FontWeight.w800, color: isDark ? Colors.white : Colors.black),
+            style: GoogleFonts.ebGaramond(fontSize: 18, fontWeight: FontWeight.w800, color: isDark ? Colors.white : Colors.black),
           ),
           const SizedBox(height: 8),
           Text(
             'SECURE DOCUMENT ACCESS',
-            style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w800, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 2),
+            style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w800, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 2),
           ),
           const SizedBox(height: 32),
           _DetailRow(label: 'ADDED ON', value: DateFormat('d MMM yyyy').format(DateTime.parse(doc['createdAt'])).toUpperCase(), isDark: isDark, icon: LucideIcons.calendar),
           const SizedBox(height: 12),
           _DetailRow(label: 'PROJECT', value: (doc['project']?['title'] ?? 'GENERAL').toUpperCase(), isDark: isDark, icon: LucideIcons.tag),
           const SizedBox(height: 12),
-          _DetailRow(label: 'SECURITY', value: 'VERIFIED', isDark: isDark, icon: LucideIcons.shieldCheck, color: const Color(0xFF22C55E)),
+          _DetailRow(label: 'SECURITY', value: 'VERIFIED', isDark: isDark, icon: LucideIcons.shieldCheck, color: const Color(0xFFC5A35B)),
           const SizedBox(height: 40),
           Row(
             children: [
@@ -383,10 +383,10 @@ class _DetailRow extends StatelessWidget {
             children: [
               Icon(icon, size: 16, color: color ?? (isDark ? Colors.white24 : Colors.black26)),
               const SizedBox(width: 12),
-              Text(label, style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w800, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1)),
+              Text(label, style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w800, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1)),
             ],
           ),
-          Text(value, style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w800, color: color ?? (isDark ? Colors.white : Colors.black))),
+          Text(value, style: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.w800, color: color ?? (isDark ? Colors.white : Colors.black))),
         ],
       ),
     );
@@ -408,9 +408,9 @@ class _ActionButton extends StatelessWidget {
       child: ElevatedButton.icon(
         onPressed: onTap,
         icon: Icon(icon, size: 18),
-        label: Text(label, style: GoogleFonts.montserrat(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
+        label: Text(label, style: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
         style: ElevatedButton.styleFrom(
-          backgroundColor: isPrimary ? (isDark ? Colors.white : Colors.black) : (isDark ? const Color(0xFF18181B) : Colors.white),
+          backgroundColor: isPrimary ? (isDark ? Colors.white : Colors.black) : (isDark ? const Color(0xFF141B3A) : Colors.white),
           foregroundColor: isPrimary ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white54 : Colors.black54),
           elevation: isPrimary ? 8 : 0,
           shape: RoundedRectangleBorder(
@@ -436,7 +436,7 @@ class _IconButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF18181B) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
         ),

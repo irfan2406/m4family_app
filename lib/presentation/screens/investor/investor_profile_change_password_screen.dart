@@ -26,7 +26,7 @@ class InvestorProfileChangePasswordScreen extends ConsumerStatefulWidget {
 
 class _InvestorProfileChangePasswordScreenState
     extends ConsumerState<InvestorProfileChangePasswordScreen> {
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
 
   final _current = TextEditingController();
   final _newPass = TextEditingController();
@@ -56,7 +56,7 @@ class _InvestorProfileChangePasswordScreenState
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(msg),
-        backgroundColor: error ? Colors.redAccent : Colors.green,
+        backgroundColor: error ? Color(0xFFC5A35B) : Colors.green,
       ),
     );
   }
@@ -294,7 +294,7 @@ class _InvestorProfileChangePasswordScreenState
               children: [
                 Text(
                   'CREDENTIAL UPDATE',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2.5,
@@ -304,7 +304,7 @@ class _InvestorProfileChangePasswordScreenState
                 const SizedBox(height: 4),
                 Text(
                   'Security',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
                     letterSpacing: -0.3,
@@ -324,7 +324,7 @@ class _InvestorProfileChangePasswordScreenState
       padding: const EdgeInsets.only(left: 4),
       child: Text(
         label,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.ebGaramond(
           fontSize: 10,
           fontWeight: FontWeight.w800,
           letterSpacing: 2,
@@ -353,14 +353,14 @@ class _InvestorProfileChangePasswordScreenState
       controller: controller,
       obscureText: obscure,
       onChanged: onChanged,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.ebGaramond(
         fontSize: 14,
         fontWeight: FontWeight.w600,
         color: textPrimary,
       ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.montserrat(
+        hintStyle: GoogleFonts.ebGaramond(
           fontSize: 14,
           fontWeight: FontWeight.w500,
           color: muted,
@@ -424,7 +424,7 @@ class _InvestorProfileChangePasswordScreenState
               const SizedBox(width: 8),
               Text(
                 'REQUIREMENTS',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 1.5,
@@ -441,7 +441,7 @@ class _InvestorProfileChangePasswordScreenState
   }
 
   Widget _requirementRow(String label, bool met, Color muted) {
-    const green = Color(0xFF10B981);
+    const green = Color(0xFFC5A35B);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
@@ -464,7 +464,7 @@ class _InvestorProfileChangePasswordScreenState
           const SizedBox(width: 8),
           Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 10,
               fontWeight: FontWeight.w600,
               color: met ? green : muted,
@@ -487,7 +487,7 @@ class _InvestorProfileChangePasswordScreenState
           width: double.infinity,
           height: 54,
           decoration: BoxDecoration(
-            gradient: const LinearGradient(colors: [_gold, Color(0xFFE6B800)]),
+            gradient: const LinearGradient(colors: [_gold, Color(0xFFC5A35B)]),
             borderRadius: BorderRadius.circular(14),
             boxShadow: [
               BoxShadow(
@@ -507,7 +507,7 @@ class _InvestorProfileChangePasswordScreenState
                 )
               : Text(
                   'SECURE UPDATE',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 12,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,

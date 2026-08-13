@@ -54,7 +54,7 @@ class _CpResidentialConnectScreenState
           children: [
             Text(
               'Residence Suite',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontWeight: FontWeight.w800,
                 fontSize: 16,
                 color: scheme.onSurface,
@@ -62,7 +62,7 @@ class _CpResidentialConnectScreenState
             ),
             Text(
               'INSTITUTIONAL CONCIERGE',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 8,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 2,
@@ -180,7 +180,7 @@ class _SectionHeader extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Text(
         label,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.ebGaramond(
           fontSize: 10,
           fontWeight: FontWeight.w800,
           letterSpacing: 3,
@@ -263,7 +263,7 @@ class _PropertyCardState extends State<_PropertyCard> {
                           'CROWN RESIDENCES',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 18,
                             fontWeight: FontWeight.w800,
                             color: scheme.onSurface,
@@ -275,7 +275,7 @@ class _PropertyCardState extends State<_PropertyCard> {
                           'TOWER A • SUITE 4802',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 10,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 1.2,
@@ -296,7 +296,7 @@ class _PropertyCardState extends State<_PropertyCard> {
                     ),
                     child: Text(
                       'VERIFIED',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 8,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1.5,
@@ -313,7 +313,7 @@ class _PropertyCardState extends State<_PropertyCard> {
                 children: [
                   Text(
                     'ASSET UTILIZATION',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 10,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 2,
@@ -322,7 +322,7 @@ class _PropertyCardState extends State<_PropertyCard> {
                   ),
                   Text(
                     '85% ACTIVE',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 10,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 2,
@@ -417,7 +417,7 @@ class _ServiceCardState extends State<_ServiceCard> {
                     widget.service.name.toUpperCase(),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 13,
                       fontWeight: FontWeight.w800,
                       color: scheme.onSurface,
@@ -429,7 +429,7 @@ class _ServiceCardState extends State<_ServiceCard> {
                     widget.service.status.toUpperCase(),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 9,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 1.2,
@@ -519,7 +519,7 @@ class _AlertItemState extends State<_AlertItem> {
                       widget.alert.title.toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 13,
                         fontWeight: FontWeight.w800,
                         color: scheme.onSurface,
@@ -531,7 +531,7 @@ class _AlertItemState extends State<_AlertItem> {
                       widget.alert.date.toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 9,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1.2,
@@ -630,7 +630,7 @@ class _CommunityChatCard extends StatelessWidget {
                           children: [
                             Text(
                               'GLOBAL LOUNGE',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.ebGaramond(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w800,
                                 letterSpacing: 3,
@@ -641,7 +641,7 @@ class _CommunityChatCard extends StatelessWidget {
                             const SizedBox(height: 6),
                             Text(
                               'RESIDENT LINK',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.ebGaramond(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w800,
                                 letterSpacing: -0.5,
@@ -674,7 +674,7 @@ class _CommunityChatCard extends StatelessWidget {
                       ),
                       child: Text(
                         'INITIATE SECURE LINK',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 11,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 3,

@@ -111,13 +111,18 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBody: true,
-      bottomNavigationBar: NavigationPill(
-        currentIndex: -1,
-        onTap: (i) {
-          ref.read(navigationProvider.notifier).state = i;
-          Navigator.of(context).popUntil((r) => r.isFirst);
-        },
-      ),
+      // Bottom nav — shown only when pushed standalone (from the menu), not
+      // when embedded as a shell tab (the shell provides its own nav, so
+      // rendering this one too would stack two nav bars).
+      bottomNavigationBar: Navigator.of(context).canPop()
+          ? NavigationPill(
+              currentIndex: -1,
+              onTap: (i) {
+                ref.read(navigationProvider.notifier).state = i;
+                Navigator.of(context).popUntil((r) => r.isFirst);
+              },
+            )
+          : null,
       body: _isLoading
           ? Center(
               child: CircularProgressIndicator(
@@ -196,7 +201,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
           children: [
             Text(
               'CONTACT US',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
                 color: isDark ? Colors.white : Colors.black,
@@ -206,7 +211,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
             const SizedBox(height: 2),
             Text(
               'INSTITUTIONAL SUPPORT',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 9,
                 fontWeight: FontWeight.w800,
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
@@ -224,7 +229,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
       padding: const EdgeInsets.only(left: 8),
       child: Text(
         text,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.ebGaramond(
           fontSize: 9,
           fontWeight: FontWeight.w800,
           color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
@@ -301,7 +306,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                   children: [
                     Text(
                       title.toUpperCase(),
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 17,
                         fontWeight: FontWeight.w800,
                         color: isDark ? Colors.white : Colors.black,
@@ -312,7 +317,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                     const SizedBox(height: 12),
                     Text(
                       address,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
                         color: (isDark ? Colors.white : Colors.black)
@@ -356,7 +361,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                         const SizedBox(width: 8),
                         Text(
                           'DIRECTIONS',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 9,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 1.5,
@@ -391,7 +396,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                         const SizedBox(width: 8),
                         Text(
                           'CALL NOW',
-                          style: GoogleFonts.montserrat(
+                          style: GoogleFonts.ebGaramond(
                             fontSize: 9,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 1.5,
@@ -459,7 +464,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                   children: [
                     Text(
                       'Open in Maps',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         color: isDark ? Colors.white : Colors.black,
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
@@ -511,7 +516,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                       const SizedBox(width: 8),
                       Text(
                         'OPEN MAP',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           color: isDark ? Colors.white : Colors.black,
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
@@ -625,7 +630,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                   children: [
                     Text(
                       value,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 15,
                         fontWeight: FontWeight.w800,
                         color: isDark ? Colors.white : Colors.black,
@@ -635,7 +640,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                     const SizedBox(height: 3),
                     Text(
                       label,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 9,
                         fontWeight: FontWeight.w800,
                         color: (isDark ? Colors.white : Colors.black)

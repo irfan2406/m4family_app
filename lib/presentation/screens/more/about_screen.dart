@@ -27,7 +27,7 @@ class _AboutScreenState extends State<AboutScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F1115) : const Color(0xFFF9FAFB),
+      backgroundColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFF4EFE3),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -39,11 +39,11 @@ class _AboutScreenState extends State<AboutScreen> {
           children: [
             Text(
               'WHO WE ARE',
-              style: GoogleFonts.montserrat(fontSize: 14, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 1),
+              style: GoogleFonts.ebGaramond(fontSize: 14, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 1),
             ),
             Text(
               'M4 FAMILY COLLECTIVE',
-              style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 1.5),
+              style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 1.5),
             ),
           ],
         ),
@@ -91,7 +91,7 @@ class _AboutScreenState extends State<AboutScreen> {
                           const SizedBox(height: 8),
                           Text(
                             _tabs[index]['name'],
-                            style: GoogleFonts.montserrat(fontSize: 7, fontWeight: FontWeight.w900, color: isActive ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white24 : Colors.black26), letterSpacing: 1),
+                            style: GoogleFonts.ebGaramond(fontSize: 7, fontWeight: FontWeight.w900, color: isActive ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white24 : Colors.black26), letterSpacing: 1),
                           ),
                         ],
                       ),
@@ -133,11 +133,11 @@ class _AboutScreenState extends State<AboutScreen> {
                     children: [
                       Text(
                         'THE COLLECTIVE',
-                        style: GoogleFonts.montserrat(fontSize: 12, fontWeight: FontWeight.w900, color: Colors.white70, letterSpacing: 2),
+                        style: GoogleFonts.ebGaramond(fontSize: 12, fontWeight: FontWeight.w900, color: Colors.white70, letterSpacing: 2),
                       ),
                       Text(
                         'M4 LEGACY',
-                        style: GoogleFonts.montserrat(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: -1, height: 1),
+                        style: GoogleFonts.ebGaramond(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: -1, height: 1),
                       ),
                     ],
                   ),
@@ -165,7 +165,7 @@ class _AboutScreenState extends State<AboutScreen> {
                   const SizedBox(width: 20),
                   Text(
                     'OUR STORY',
-                    style: GoogleFonts.montserrat(fontSize: 16, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: -0.5),
+                    style: GoogleFonts.ebGaramond(fontSize: 16, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: -0.5),
                   ),
                 ],
               ),
@@ -186,12 +186,12 @@ class _AboutScreenState extends State<AboutScreen> {
                   children: [
                     Text(
                       '"M4 Family, with over a decade of excellence in Mumbai\'s real estate landscape, has established itself as a trusted name in premium residential development."',
-                      style: GoogleFonts.montserrat(fontSize: 14, color: isDark ? Colors.white70 : Colors.black87, height: 1.8, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500),
+                      style: GoogleFonts.ebGaramond(fontSize: 14, color: isDark ? Colors.white70 : Colors.black87, height: 1.8, fontStyle: FontStyle.italic, fontWeight: FontWeight.w500),
                     ),
                     const SizedBox(height: 24),
                     Text(
                       'Renowned for delivering homes that blend contemporary design with timeless aesthetics, every development we undertake is a testament to our commitment to quality and institutional standards.',
-                      style: GoogleFonts.montserrat(fontSize: 13, color: isDark ? Colors.white38 : Colors.black45, height: 1.8, fontWeight: FontWeight.w600),
+                      style: GoogleFonts.ebGaramond(fontSize: 13, color: isDark ? Colors.white38 : Colors.black45, height: 1.8, fontWeight: FontWeight.w600),
                     ),
                   ],
                 ),

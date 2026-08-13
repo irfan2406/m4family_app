@@ -235,7 +235,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
       decoration: BoxDecoration(
-        color: isDark ? Colors.black : Colors.white,
+        color: Theme.of(context).scaffoldBackgroundColor,
         border: Border(bottom: BorderSide(color: border)),
       ),
       child: Row(
@@ -274,7 +274,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                   subject,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 14,
                     fontWeight: FontWeight.w900,
                     color: textPrimary,
@@ -288,14 +288,14 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                       width: 6,
                       height: 6,
                       decoration: const BoxDecoration(
-                        color: Color(0xFF22C55E),
+                        color: Color(0xFFC5A35B),
                         shape: BoxShape.circle,
                       ),
                     ),
                     const SizedBox(width: 6),
                     Text(
                       'SUPPORT AGENT ONLINE',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 8,
                         fontWeight: FontWeight.w900,
                         color: muted,
@@ -311,17 +311,17 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: (_isOpen ? Colors.blue : const Color(0xFF22C55E))
+              color: (_isOpen ? Color(0xFFC5A35B) : const Color(0xFFC5A35B))
                   .withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: border),
             ),
             child: Text(
               _statusLabel,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 8,
                 fontWeight: FontWeight.w900,
-                color: _isOpen ? Colors.blue : const Color(0xFF22C55E),
+                color: _isOpen ? Color(0xFFC5A35B) : const Color(0xFFC5A35B),
                 letterSpacing: 2,
               ),
             ),
@@ -342,7 +342,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
             const SizedBox(height: 20),
             Text(
               'UNABLE TO LOAD TICKET',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 13,
                 fontWeight: FontWeight.w900,
                 color: textPrimary,
@@ -369,7 +369,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                 ),
                 child: Text(
                   'RETRY',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     color: textPrimary == Colors.white
@@ -401,7 +401,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
             const SizedBox(height: 20),
             Text(
               'NO MESSAGES YET',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 12,
                 fontWeight: FontWeight.w900,
                 color: textPrimary,
@@ -411,7 +411,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
             const SizedBox(height: 8),
             Text(
               'START THE CONVERSATION BELOW',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 9,
                 fontWeight: FontWeight.w900,
                 color: muted,
@@ -441,7 +441,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
             ),
             child: Text(
               DateFormat('EEEE, MMM d').format(DateTime.now()).toUpperCase(),
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 8,
                 fontWeight: FontWeight.w900,
                 color: muted,
@@ -467,7 +467,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                 const SizedBox(width: 8),
                 Text(
                   'SECURE CONSULTATION',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     color: muted,
@@ -536,7 +536,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                   if (text.isNotEmpty)
                     Text(
                       text,
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
                         color: bubbleTextColor,
@@ -564,7 +564,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
               children: [
                 Text(
                   time,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     color: muted,
@@ -608,7 +608,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
               const SizedBox(width: 6),
               Text(
                 'VIEW ATTACHMENT',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 9,
                   fontWeight: FontWeight.w900,
                   color: textColor,
@@ -633,7 +633,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
           const SizedBox(width: 6),
           Text(
             'VIEW ATTACHMENT',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 9,
               fontWeight: FontWeight.w900,
               color: textColor,
@@ -660,7 +660,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
         12 + MediaQuery.of(context).viewPadding.bottom,
       ),
       decoration: BoxDecoration(
-        color: isDark ? Colors.black : Colors.white,
+        color: Theme.of(context).scaffoldBackgroundColor,
         border: Border(top: BorderSide(color: border)),
       ),
       child: Row(
@@ -678,14 +678,14 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                 maxLines: 4,
                 textInputAction: TextInputAction.send,
                 onSubmitted: (_) => _handleSend(),
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                   color: textPrimary,
                 ),
                 decoration: InputDecoration(
                   hintText: 'TYPE MESSAGE...',
-                  hintStyle: GoogleFonts.montserrat(
+                  hintStyle: GoogleFonts.ebGaramond(
                     fontSize: 11,
                     fontWeight: FontWeight.w800,
                     color: muted.withValues(alpha: 0.6),

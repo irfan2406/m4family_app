@@ -16,9 +16,9 @@ class CpSecurityScreen extends ConsumerStatefulWidget {
 }
 
 class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
-  static const _green = Color(0xFF22C55E);
-  static const _blue = Color(0xFF3B82F6);
-  static const _purple = Color(0xFF8B5CF6);
+  static const _green = Color(0xFFC5A35B);
+  static const _blue = Color(0xFFC5A35B);
+  static const _purple = Color(0xFFC5A35B);
 
   bool _biometricEnabled = true;
   bool _twoFactorEnabled = true;
@@ -48,7 +48,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
   void _toast(String msg) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg, style: GoogleFonts.montserrat(fontSize: 12))),
+      SnackBar(content: Text(msg, style: GoogleFonts.ebGaramond(fontSize: 12))),
     );
   }
 
@@ -91,7 +91,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
                 const SizedBox(width: 8),
                 Text(
                   'Security & Privacy',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontWeight: FontWeight.w800,
                     fontSize: 16,
                     color: textPrimary,
@@ -103,7 +103,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
               padding: const EdgeInsets.only(left: 14, top: 1),
               child: Text(
                 'ACCOUNT PROTECTION',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 9,
                   letterSpacing: 1.5,
                   fontWeight: FontWeight.w600,
@@ -225,7 +225,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
           const SizedBox(height: 16),
           Text(
             'Account Protected',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 18,
               fontWeight: FontWeight.w700,
               color: textPrimary,
@@ -237,7 +237,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
             child: Text(
               'Your account is secured with military-grade encryption and 2FA.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
                 height: 1.4,
@@ -253,7 +253,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
   Widget _sectionLabel(String label, Color muted) {
     return Text(
       label,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.ebGaramond(
         fontSize: 10,
         fontWeight: FontWeight.bold,
         letterSpacing: 2,
@@ -302,7 +302,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
                       color: textPrimary,
@@ -311,7 +311,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 10,
                       fontWeight: FontWeight.w500,
                       color: muted,
@@ -395,7 +395,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
               children: [
                 Text(
                   login['device'] ?? '',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                     color: textPrimary,
@@ -404,7 +404,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
                 const SizedBox(height: 2),
                 Text(
                   '${login['location'] ?? ''} • ${login['time'] ?? ''}',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 9,
                     fontWeight: FontWeight.w500,
                     color: muted,
@@ -427,7 +427,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
             ),
             child: Text(
               (login['status'] ?? '').toUpperCase(),
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 8,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1,
@@ -452,7 +452,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
           ),
           child: Text(
             'SIGN OUT OF ALL DEVICES',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 10,
               fontWeight: FontWeight.bold,
               letterSpacing: 2,

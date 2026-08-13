@@ -45,5 +45,7 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
 }
 
 final themeProvider = StateNotifierProvider<ThemeNotifier, ThemeMode>((ref) {
-  return ThemeNotifier(ref, ThemeMode.dark);
+  // Default to the LIGHT (cream) theme — matches the Figma "M4 Web Screen"
+  // home design. The moon toggle still switches to the deep-green dark theme.
+  return ThemeNotifier(ref, ThemeMode.light);
 });

@@ -20,7 +20,7 @@ class InvestorReferralScreen extends ConsumerStatefulWidget {
 }
 
 class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen> {
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
   static const _closedStatuses = {'CLOSED', 'CREDITED', 'BOOKING_DONE', 'Booked'};
 
   Map<String, dynamic>? _wallet;
@@ -113,7 +113,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                       : RefreshIndicator(
                           onRefresh: _load,
                           color: M4Theme.premiumBlue,
-                          backgroundColor: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+                          backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
                           child: SingleChildScrollView(
                             physics: const AlwaysScrollableScrollPhysics(),
                             padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -170,7 +170,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
             child: Text(
               'REFERRAL & REWARDS',
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 16,
                 fontWeight: FontWeight.w900,
                 color: textPrimary,
@@ -209,7 +209,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
         children: [
           Text(
             'MY REFERRAL IDENTITY CODE',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 9,
               fontWeight: FontWeight.w900,
               letterSpacing: 2,
@@ -229,7 +229,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
               children: [
                 Text(
                   code,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 3,
@@ -280,7 +280,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
         children: [
           Text(
             label,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 8,
               fontWeight: FontWeight.w900,
               letterSpacing: 1.5,
@@ -290,7 +290,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
           const SizedBox(height: 10),
           Text(
             value,
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 24,
               fontWeight: FontWeight.w900,
               color: textPrimary,
@@ -328,7 +328,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
           children: [
             Text(
               'REDEEM REWARDS',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 11,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 2,
@@ -402,7 +402,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
             const SizedBox(height: 14),
             Text(
               label,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 9,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.5,
@@ -421,7 +421,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
       children: [
         Text(
           title,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 9,
             fontWeight: FontWeight.w900,
             letterSpacing: 2,
@@ -479,7 +479,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
               children: [
                 Text(
                   name.toUpperCase(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 13,
                     fontWeight: FontWeight.w800,
                     color: textPrimary,
@@ -488,7 +488,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                 const SizedBox(height: 2),
                 Text(
                   project.toUpperCase(),
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.5,
@@ -499,7 +499,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                   const SizedBox(height: 2),
                   Text(
                     code,
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 9,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 1,
@@ -519,7 +519,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
             ),
             child: Text(
               status.toUpperCase(),
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 8,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1,
@@ -570,7 +570,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     color: textPrimary,
@@ -579,7 +579,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                 const SizedBox(height: 2),
                 Text(
                   date,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 8,
                     fontWeight: FontWeight.w700,
                     color: textPrimary.withValues(alpha: 0.4),
@@ -593,16 +593,16 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
             children: [
               Text(
                 '${isDebit ? '-' : '+'}$amount',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 12,
                   fontWeight: FontWeight.w900,
-                  color: isDebit ? Colors.redAccent : const Color(0xFF10B981),
+                  color: isDebit ? Color(0xFFC5A35B) : const Color(0xFFC5A35B),
                 ),
               ),
               if (status.isNotEmpty)
                 Text(
                   'STATUS: ${status.toUpperCase()}',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 7,
                     fontWeight: FontWeight.w900,
                     color: textPrimary.withValues(alpha: 0.35),
@@ -629,7 +629,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
       child: Center(
         child: Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 10,
             fontWeight: FontWeight.w900,
             letterSpacing: 2,
@@ -652,7 +652,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
             Text(
               'FAILED TO LOAD REWARD HUB',
               textAlign: TextAlign.center,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 11,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.5,
@@ -670,7 +670,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                 ),
                 child: Text(
                   'RETRY',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -712,7 +712,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                 bottom: MediaQuery.of(ctx).viewInsets.bottom + 32,
               ),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF18181B) : Colors.white,
+                color: isDark ? const Color(0xFF141B3A) : Colors.white,
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
                 border: Border.all(color: border),
               ),
@@ -734,7 +734,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                     const SizedBox(height: 28),
                     Text(
                       'NEW\nREFERRAL',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 24,
                         fontWeight: FontWeight.w900,
                         color: textPrimary,
@@ -744,7 +744,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                     const SizedBox(height: 8),
                     Text(
                       'REFER & EARN REWARDS',
-                      style: GoogleFonts.montserrat(
+                      style: GoogleFonts.ebGaramond(
                         fontSize: 9,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 2,
@@ -778,7 +778,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                             decoration: _inputBox(isDark, textPrimary),
                             child: Text(
                               'COULD NOT LOAD PROJECTS',
-                              style: GoogleFonts.montserrat(
+                              style: GoogleFonts.ebGaramond(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w800,
                                 color: textPrimary.withValues(alpha: 0.4),
@@ -795,13 +795,13 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                                 value: selectedProjectId,
                                 hint: Text(
                                   'SELECT PROJECT',
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.ebGaramond(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w800,
                                     color: textPrimary.withValues(alpha: 0.3),
                                   ),
                                 ),
-                                dropdownColor: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+                                dropdownColor: isDark ? const Color(0xFF141B3A) : Colors.white,
                                 icon: Icon(LucideIcons.chevronDown, size: 16, color: textPrimary.withValues(alpha: 0.3)),
                                 items: [
                                   for (final p in projects)
@@ -810,7 +810,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                                         value: p['_id'].toString(),
                                         child: Text(
                                           (p['title'] ?? p['name'] ?? 'PROJECT').toString().toUpperCase(),
-                                          style: GoogleFonts.montserrat(
+                                          style: GoogleFonts.ebGaramond(
                                             fontSize: 10,
                                             fontWeight: FontWeight.w800,
                                             color: textPrimary,
@@ -902,7 +902,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                               )
                             : Text(
                                 'SUBMIT REFERRAL',
-                                style: GoogleFonts.montserrat(
+                                style: GoogleFonts.ebGaramond(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w900,
                                   letterSpacing: 2,
@@ -925,7 +925,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
   Widget _formLabel(String text, Color textPrimary) {
     return Text(
       text,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.ebGaramond(
         fontSize: 9,
         fontWeight: FontWeight.w900,
         letterSpacing: 1.5,
@@ -950,14 +950,14 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
       child: TextField(
         controller: controller,
         keyboardType: type,
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.ebGaramond(
           fontSize: 13,
           fontWeight: FontWeight.w700,
           color: textPrimary,
         ),
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: GoogleFonts.montserrat(
+          hintStyle: GoogleFonts.ebGaramond(
             fontSize: 12,
             fontWeight: FontWeight.w700,
             color: textPrimary.withValues(alpha: 0.25),
@@ -984,7 +984,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: success ? Colors.green : Colors.redAccent,
+        backgroundColor: success ? Colors.green : Color(0xFFC5A35B),
         duration: const Duration(seconds: 2),
       ),
     );

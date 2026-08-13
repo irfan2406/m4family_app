@@ -72,7 +72,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           ..showSnackBar(
             SnackBar(
               content: Text(next.error ?? 'Error occurred'),
-              backgroundColor: Colors.redAccent,
+              backgroundColor: Color(0xFFC5A35B),
               duration: const Duration(milliseconds: 1500),
               behavior: SnackBarBehavior.floating,
             ),
@@ -159,14 +159,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         _PremiumButton(
           label: 'CHANNEL PARTNER',
           icon: LucideIcons.sparkles,
-          iconColor: Colors.purpleAccent,
+          iconColor: Color(0xFFC5A35B),
           onTap: () => context.push('/auth/cp/login'),
         ),
         const SizedBox(height: 12),
         _PremiumButton(
           label: 'INVESTOR PORTAL',
           icon: LucideIcons.trendingUp,
-          iconColor: Colors.amber,
+          iconColor: Color(0xFFC5A35B),
           onTap: () => setState(() {
             _selectedRole = 'INVESTOR';
             _step = 1;
@@ -202,7 +202,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   const SizedBox(width: 16),
                   Text(
                     'BACK TO GUEST PORTAL',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       color: Colors.white,
                       fontWeight: FontWeight.w900,
                       fontSize: 12,
@@ -220,7 +220,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           children: [
             Text(
               'PHONE GATEWAY',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -229,7 +229,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             ),
             Text(
               'SECURE MULTI-FACTOR AUTHENTICATION',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
                 color: Colors.white54,
@@ -249,7 +249,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         const SizedBox(height: 16),
         Text(
           'A secure one-time access token will be dispatched via WhatsApp for identity validation.',
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 10,
             color: Colors.white38,
             height: 1.5,
@@ -287,7 +287,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     children: [
                       Text(
                         'REQUEST TOKEN',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontWeight: FontWeight.w900,
                           fontSize: 13,
                           letterSpacing: 1,
@@ -328,7 +328,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   const SizedBox(width: 8),
                   Text(
                     'BACK',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       color: Colors.white70,
                       fontWeight: FontWeight.w700,
                       fontSize: 9,
@@ -346,7 +346,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           children: [
             Text(
               'FINAL CHECK',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -356,7 +356,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             Text(
               'WHATSAPP CODE SENT TO ${authState.identifier}',
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
                 color: Colors.white54,
@@ -371,9 +371,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.amber.withOpacity(0.1),
+              color: Color(0xFFC5A35B).withOpacity(0.1),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.amber.withOpacity(0.3)),
+              border: Border.all(color: Color(0xFFC5A35B).withOpacity(0.3)),
             ),
             child: Row(
               children: [
@@ -384,7 +384,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       const Text(
                         '⚡ DEV MODE — SIMULATED OTP',
                         style: TextStyle(
-                          color: Colors.amber,
+                          color: Color(0xFFC5A35B),
                           fontSize: 8,
                           fontWeight: FontWeight.bold,
                         ),
@@ -392,10 +392,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       const SizedBox(height: 4),
                       Text(
                         authState.devOtp!,
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.amber,
+                          color: Color(0xFFC5A35B),
                           letterSpacing: 4,
                         ),
                       ),
@@ -411,12 +411,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     }
                   },
                   style: TextButton.styleFrom(
-                    backgroundColor: Colors.amber.withOpacity(0.2),
+                    backgroundColor: Color(0xFFC5A35B).withOpacity(0.2),
                   ),
                   child: const Text(
                     'AUTO-FILL',
                     style: TextStyle(
-                      color: Colors.amber,
+                      color: Color(0xFFC5A35B),
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
                     ),
@@ -490,7 +490,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ? const CircularProgressIndicator(color: Colors.black)
                 : Text(
                     'AUTHENTICATE TOKEN',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontWeight: FontWeight.bold,
                       letterSpacing: 2,
                     ),
@@ -504,7 +504,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               .sendOtp(_phoneController.text, _selectedRole),
           child: Text(
             'RESEND CODE',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 10,
               fontWeight: FontWeight.bold,
               color: Colors.white54,
@@ -523,7 +523,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         children: [
           Text(
             'M4 FAMILY SECURE ACCESS',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 9,
               fontWeight: FontWeight.bold,
               color: Colors.white,
@@ -533,7 +533,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           const SizedBox(height: 4),
           Text(
             'V2.4.0 • ENCRYPTED',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 8,
               color: Colors.white,
               letterSpacing: 1.5,
@@ -582,7 +582,7 @@ class _PremiumButton extends StatelessWidget {
             const SizedBox(width: 16),
             Text(
               label,
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
                 color: isPrimary ? Colors.black : Colors.white,
@@ -618,7 +618,7 @@ class _LuxuryInputField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 9,
             fontWeight: FontWeight.bold,
             color: Colors.white54,

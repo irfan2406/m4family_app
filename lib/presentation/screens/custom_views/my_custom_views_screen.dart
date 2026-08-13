@@ -89,7 +89,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
           // subtitle with a paint-bucket icon.
           Text(
             'PERSONALISATION SUITE',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 14,
               fontWeight: FontWeight.w900,
               letterSpacing: -0.5,
@@ -106,7 +106,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
               const SizedBox(width: 5),
               Text(
                 'PORTFOLIO DASHBOARD',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 8,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 2,
@@ -161,7 +161,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                   // Web parity: dark `text-foreground`; MY (light) + PORTFOLIO (bold).
                   TextSpan(
                     text: 'MY ',
-                    style: GoogleFonts.lora(
+                    style: GoogleFonts.gelasio(
                       color: Colors.black,
                       fontSize: 30,
                       fontWeight: FontWeight.w300,
@@ -170,7 +170,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                   ),
                   TextSpan(
                     text: 'PORTFOLIO',
-                    style: GoogleFonts.lora(
+                    style: GoogleFonts.gelasio(
                       color: Colors.black,
                       fontSize: 30,
                       fontWeight: FontWeight.w700,
@@ -182,7 +182,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
             ).animate().fadeIn(duration: 800.ms).slideY(begin: 0.2, end: 0),
             Text(
               'PERSONALISATION SUITE',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 // Web parity: dark `text-primary`, readable on the light fade.
                 color: Colors.black,
                 fontSize: 10,
@@ -206,7 +206,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
           const SizedBox(height: 12),
           Text(
             'Automatic reflection of your purchased units from the M4 Admin Panel. Select a unit below to start or manage your bespoke interior customizations.',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 13,
               height: 1.6,
               fontWeight: FontWeight.w500,
@@ -245,7 +245,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                   alignment: Alignment.center,
                   child: Text(
                     'SELECTION',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1,
@@ -272,7 +272,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                   alignment: Alignment.center,
                   child: Text(
                     'HISTORY',
-                    style: GoogleFonts.montserrat(
+                    style: GoogleFonts.ebGaramond(
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1,
@@ -303,7 +303,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
         child: Center(
           child: Text(
             'NO UNITS FOUND',
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 10,
               fontWeight: FontWeight.w800,
               color: Colors.grey,
@@ -329,7 +329,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                 const SizedBox(width: 12),
                 Text(
                   'SELECT UNIT TO CUSTOMIZE',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -384,7 +384,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
             child: Center(
               child: Text(
                 'NO HISTORY FOUND',
-                style: GoogleFonts.montserrat(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2,
@@ -418,7 +418,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                 const SizedBox(width: 12),
                 Text(
                   'SELECTION HISTORY',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -429,7 +429,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
             ),
             Text(
               '$count LOGS',
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 8,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.5,
@@ -448,7 +448,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
           ),
           child: TextField(
             onChanged: (v) => setState(() => _historyQuery = v),
-            style: GoogleFonts.montserrat(
+            style: GoogleFonts.ebGaramond(
               fontSize: 10,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.5,
@@ -464,7 +464,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                 color: fg.withOpacity(0.4),
               ),
               hintText: 'SEARCH BY PROJECT OR ID...',
-              hintStyle: GoogleFonts.montserrat(
+              hintStyle: GoogleFonts.ebGaramond(
                 fontSize: 10,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.5,
@@ -492,7 +492,7 @@ class _UnitCard extends ConsumerWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF18181B) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : Colors.white,
         borderRadius: BorderRadius.circular(32),
         border: Border.all(
           color: isDark
@@ -528,7 +528,7 @@ class _UnitCard extends ConsumerWidget {
                                 )
                                 .toUpperCase() ??
                             'UNIT',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 7,
                           fontWeight: FontWeight.w900,
                           color: foreground.withOpacity(0.68),
@@ -538,7 +538,7 @@ class _UnitCard extends ConsumerWidget {
                       Text(
                         unit['projectName']?.toString().toUpperCase() ??
                             'M4 PROJECT',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 13,
                           fontWeight: FontWeight.w900,
                           color: foreground,
@@ -626,7 +626,7 @@ class _UnitCard extends ConsumerWidget {
                         content: Text(
                           'Maximum modification limit reached (2 revisions).',
                         ),
-                        backgroundColor: Colors.redAccent,
+                        backgroundColor: Color(0xFFC5A35B),
                       ),
                     );
                     return;
@@ -637,7 +637,7 @@ class _UnitCard extends ConsumerWidget {
                         content: Text(
                           'The 30-day modification window has expired.',
                         ),
-                        backgroundColor: Colors.redAccent,
+                        backgroundColor: Color(0xFFC5A35B),
                       ),
                     );
                     return;
@@ -677,7 +677,7 @@ class _UnitCard extends ConsumerWidget {
                         status == 'NOT_STARTED'
                             ? 'START PERSONALISATION'
                             : 'MANAGE SELECTION',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           color: isDark ? Colors.black : Colors.white,
                           fontSize: 11,
                           fontWeight: FontWeight.w900,
@@ -742,7 +742,7 @@ class _HistoryCard extends StatelessWidget {
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: isDark
-              ? const Color(0xFF18181B).withOpacity(0.4)
+              ? const Color(0xFF141B3A).withOpacity(0.4)
               : Colors.white,
           borderRadius: BorderRadius.circular(28),
           border: Border.all(
@@ -786,7 +786,7 @@ class _HistoryCard extends StatelessWidget {
                       Text(
                         req['project']?['title']?.toString().toUpperCase() ??
                             'STANDARD UNIT',
-                        style: GoogleFonts.montserrat(
+                        style: GoogleFonts.ebGaramond(
                           fontSize: 13,
                           fontWeight: FontWeight.w900,
                           color: foreground,
@@ -865,7 +865,7 @@ class _HistoryMeta extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 8,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
@@ -876,7 +876,7 @@ class _HistoryMeta extends StatelessWidget {
         Text(
           value,
           textAlign: alignEnd ? TextAlign.right : TextAlign.left,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 10,
             fontWeight: FontWeight.w700,
             color: foreground,
@@ -950,7 +950,7 @@ class _DetailDialog {
                                 Text(
                                   req['project']?['title'] ??
                                       'Standard Selection',
-                                  style: GoogleFonts.montserrat(
+                                  style: GoogleFonts.ebGaramond(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w900,
                                     letterSpacing: -0.5,
@@ -978,7 +978,7 @@ class _DetailDialog {
                                                 ?.toString()
                                                 .toUpperCase() ??
                                             'FULL UNIT',
-                                        style: GoogleFonts.montserrat(
+                                        style: GoogleFonts.ebGaramond(
                                           fontSize: 9,
                                           fontWeight: FontWeight.w800,
                                           letterSpacing: 1.2,
@@ -1052,7 +1052,7 @@ class _DetailDialog {
                                                   maxLines: 1,
                                                   overflow:
                                                       TextOverflow.ellipsis,
-                                                  style: GoogleFonts.montserrat(
+                                                  style: GoogleFonts.ebGaramond(
                                                     fontSize: 7,
                                                     fontWeight: FontWeight.w900,
                                                     letterSpacing: 1.0,
@@ -1066,7 +1066,7 @@ class _DetailDialog {
                                                   maxLines: 1,
                                                   overflow:
                                                       TextOverflow.ellipsis,
-                                                  style: GoogleFonts.montserrat(
+                                                  style: GoogleFonts.ebGaramond(
                                                     fontSize: 11,
                                                     fontWeight: FontWeight.w900,
                                                     letterSpacing: 0.5,
@@ -1137,8 +1137,8 @@ class _DetailDialog {
                                 child: Text(
                                   errorMessage!.toUpperCase(),
                                   textAlign: TextAlign.center,
-                                  style: GoogleFonts.montserrat(
-                                    color: Colors.redAccent,
+                                  style: GoogleFonts.ebGaramond(
+                                    color: Color(0xFFC5A35B),
                                     fontSize: 9,
                                     fontWeight: FontWeight.w800,
                                     letterSpacing: 1.0,
@@ -1291,7 +1291,7 @@ class _DetailDialog {
                                           child: Text(
                                             'MODIFY SELECTIONS',
                                             textAlign: TextAlign.center,
-                                            style: GoogleFonts.montserrat(
+                                            style: GoogleFonts.ebGaramond(
                                               color: Colors.white,
                                               fontSize: 10,
                                               fontWeight: FontWeight.w900,
@@ -1333,7 +1333,7 @@ class _DetailDialog {
                                         child: Text(
                                           'CLOSE VIEW',
                                           textAlign: TextAlign.center,
-                                          style: GoogleFonts.montserrat(
+                                          style: GoogleFonts.ebGaramond(
                                             color: Theme.of(context)
                                                 .colorScheme
                                                 .onSurface
@@ -1398,7 +1398,7 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title,
-      style: GoogleFonts.montserrat(
+      style: GoogleFonts.ebGaramond(
         fontSize: 8,
         fontWeight: FontWeight.w900,
         letterSpacing: 2,
@@ -1431,7 +1431,7 @@ class _StatusBadge extends StatelessWidget {
       child: Text(
         // Web parity: "NOT STARTED" (space, not underscore).
         status.replaceAll('_', ' ').toUpperCase(),
-        style: GoogleFonts.montserrat(
+        style: GoogleFonts.ebGaramond(
           color: color,
           fontSize: 8,
           fontWeight: FontWeight.w900,
@@ -1447,17 +1447,17 @@ class _StatusBadge extends StatelessWidget {
     switch (status.toLowerCase()) {
       case 'approved':
       case 'closed':
-        return const Color(0xFF22C55E); // green-500
+        return const Color(0xFFC5A35B); // green-500
       case 'completed':
       case 'reviewed':
       case 'contacted':
-        return const Color(0xFF3B82F6); // blue-500
+        return const Color(0xFFC5A35B); // blue-500
       case 'rejected':
-        return const Color(0xFFEF4444); // red-500
+        return const Color(0xFFC65B46); // red-500
       case 'requested':
       case 'pending':
       case 'submitted':
-        return const Color(0xFFF59E0B); // amber-500
+        return const Color(0xFFC5A35B); // amber-500
       default:
         return Colors.grey;
     }
@@ -1512,7 +1512,7 @@ class _DetailItem extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 8,
             fontWeight: FontWeight.w900,
             color: foreground.withOpacity(0.68),
@@ -1522,7 +1522,7 @@ class _DetailItem extends StatelessWidget {
         const SizedBox(height: 6),
         Text(
           value.toUpperCase(),
-          style: GoogleFonts.montserrat(
+          style: GoogleFonts.ebGaramond(
             fontSize: 11,
             fontWeight: FontWeight.w900,
             color: isPrimary

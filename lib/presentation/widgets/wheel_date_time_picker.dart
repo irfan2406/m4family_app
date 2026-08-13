@@ -268,7 +268,7 @@ class _WheelDateTimePickerState extends State<WheelDateTimePicker> {
           (i) => Center(
             child: Text(
               label(i),
-              style: GoogleFonts.montserrat(
+              style: GoogleFonts.ebGaramond(
                 fontSize: 14,
                 fontWeight: FontWeight.w800,
                 color: isDark ? Colors.white : Colors.black,
@@ -347,7 +347,7 @@ class _WheelDateTimePickerState extends State<WheelDateTimePicker> {
                 ),
                 Text(
                   ':',
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 16,
                     fontWeight: FontWeight.w800,
                     color: (isDark ? Colors.white : Colors.black).withValues(
