@@ -629,23 +629,23 @@ class _LuxuryInputField extends StatelessWidget {
         Container(
           height: 64,
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.05),
+            color: const Color(0xFFF4EEE0),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.white.withOpacity(0.1)),
+            border: Border.all(color: const Color(0xFFC5A35B).withOpacity(0.6)),
           ),
           child: TextField(
             controller: controller,
             keyboardType: keyboardType,
-            cursorColor: Colors.white,
+            cursorColor: const Color(0xFF0F2A20),
             style: const TextStyle(
-              color: Colors.white,
+              color: Color(0xFF0F2A20),
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
             decoration: InputDecoration(
               hintText: hint,
-              hintStyle: TextStyle(color: Colors.white.withOpacity(0.62)),
-              prefixIcon: Icon(icon, color: Colors.white54, size: 20),
+              hintStyle: TextStyle(color: const Color(0xFF0F2A20).withOpacity(0.5)),
+              prefixIcon: Icon(icon, color: const Color(0xFFC5A35B), size: 20),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 20,

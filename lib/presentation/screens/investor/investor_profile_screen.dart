@@ -80,8 +80,8 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     // Light mode uses the cream color code (dark mode unchanged).
     final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
-    final textPrimary = isDark ? Colors.white : const Color(0xFF15271E);
-    final muted = textPrimary.withValues(alpha: 0.6);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
+    final muted = textPrimary.withValues(alpha: 0.78);
 
     if (_loading) {
       return Scaffold(
