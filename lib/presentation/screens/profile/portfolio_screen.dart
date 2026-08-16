@@ -91,7 +91,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
+    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
 
     return Scaffold(
       backgroundColor: bg,
@@ -108,7 +108,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
 
   // ─── Header ────────────────────────────────────────────────────────────────
   Widget _buildHeader(bool isDark) {
-    final textPrimary = isDark ? Colors.white : Colors.black;
+    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -216,9 +216,9 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
 
   // ─── Summary card ────────────────────────────────────────────────────────────
   Widget _buildSummaryCard(bool isDark) {
-    final textPrimary = isDark ? Colors.white : Colors.black;
+    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
     final muted = textPrimary.withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -314,9 +314,9 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
 
   // ─── Holding card ────────────────────────────────────────────────────────────
   Widget _buildHoldingCard(dynamic holding, bool isDark) {
-    final textPrimary = isDark ? Colors.white : Colors.black;
+    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
     final muted = textPrimary.withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -543,9 +543,9 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
         (holding['possession'] ?? project['possession'] ?? '—').toString();
     final imageUrl = _firstImage(project);
 
-    final textPrimary = isDark ? Colors.white : Colors.black;
+    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
     final muted = textPrimary.withValues(alpha: 0.5);
-    final sheetBg = isDark ? const Color(0xFF0B1026) : Colors.white;
+    final sheetBg = isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -728,7 +728,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
 
   // ─── Empty / error states ────────────────────────────────────────────────────
   Widget _buildEmptyState(bool isDark) {
-    final faint = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.2);
+    final faint = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.2);
     return Padding(
       padding: const EdgeInsets.only(top: 48),
       child: Center(
@@ -762,7 +762,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
   }
 
   Widget _buildErrorState(bool isDark) {
-    final textPrimary = isDark ? Colors.white : Colors.black;
+    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
     final muted = textPrimary.withValues(alpha: 0.5);
     return Center(
       child: Padding(

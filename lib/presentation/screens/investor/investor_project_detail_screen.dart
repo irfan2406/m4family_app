@@ -270,7 +270,7 @@ class _InvestorProjectDetailScreenState
             constraints: BoxConstraints(
                 maxHeight: MediaQuery.of(sheetContext).size.height * 0.9),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF0B1026) : Colors.white,
+              color: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(40)),
             ),
@@ -684,7 +684,7 @@ class _InvestorProjectDetailScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
+    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
 
     if (_isLoading) {
       return Scaffold(
@@ -1710,7 +1710,7 @@ class _InvestorProjectDetailScreenState
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color:
-                  isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+                  isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF),
               borderRadius: BorderRadius.circular(28),
               border: Border.all(
                   color: isDark
@@ -2025,7 +2025,7 @@ class _IconThumb extends StatelessWidget {
         width: 60,
         height: 60,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
               color: isDark
@@ -2072,7 +2072,7 @@ class _ActionCard extends StatelessWidget {
         height: 140,
         padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF),
           borderRadius: BorderRadius.circular(32),
           border: Border.all(
               color: isDark
@@ -2138,7 +2138,7 @@ class _AssetCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
             color: isDark

@@ -82,7 +82,7 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(msg, style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w600)),
-        backgroundColor: error ? _dangerDeep : Colors.green,
+        backgroundColor: error ? const Color(0xFFD32F2F) : Colors.green,
       ),
     );
   }
@@ -112,7 +112,7 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
             style: GoogleFonts.ebGaramond(
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.7),
+              color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.7),
             ),
           ),
           actions: [
@@ -123,7 +123,7 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
                 style: GoogleFonts.ebGaramond(
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
-                  color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.6),
+                  color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.6),
                 ),
               ),
             ),
@@ -180,10 +180,10 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);

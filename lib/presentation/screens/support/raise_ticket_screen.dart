@@ -122,11 +122,11 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final onSurface = isDark ? Colors.white : Colors.black;
+    final onSurface = isDark ? Colors.white : const Color(0xFF163A2C);
     const amber = Color(0xFFC5A35B);
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0B1026) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
       extendBody: true,
       // Web parity: persistent bottom nav (this screen is pushed over the shell,
       // so a tab tap returns to the shell and selects that tab).

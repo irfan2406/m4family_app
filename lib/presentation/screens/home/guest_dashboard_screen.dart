@@ -104,20 +104,51 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     super.dispose();
   }
 
+  // Fetch one catalog list, returning [] on any error instead of throwing —
+  // so a single slow/failed request can't wipe out the others.
+  Future<List<dynamic>> _safeList(
+    Future Function() call, {
+    int retries = 2,
+  }) async {
+    for (int attempt = 0; attempt <= retries; attempt++) {
+      try {
+        final res = await call();
+        final data = res.data;
+        if (data is Map && data['data'] is List) return data['data'] as List;
+        if (data is List) return data;
+        return [];
+      } catch (_) {
+        // Transient connection/DNS blips are common on mobile; retry with a
+        // short backoff so a single failed request doesn't leave the section
+        // permanently empty until the user reloads.
+        if (attempt == retries) return [];
+        await Future.delayed(Duration(milliseconds: 700 * (attempt + 1)));
+      }
+    }
+    return [];
+  }
+
   Future<void> _fetchData() async {
     try {
       final apiClient = ref.read(apiClientProvider);
+      // Independent requests: previously a single Future.wait meant that if
+      // ANY one of projects/communities/media failed or timed out, all three
+      // came back empty — which is why Communities showed nothing on slower
+      // connections. Now each populates on its own.
       final results = await Future.wait([
-        apiClient.getProjects(),
-        apiClient.getCommunities(),
-        apiClient.getContent('media'),
+        _safeList(apiClient.getProjects),
+        _safeList(apiClient.getCommunities),
+        _safeList(() => apiClient.getContent('media')),
       ]);
 
       if (mounted) {
         setState(() {
-          _projects = results[0].data['data'] ?? [];
-          _communities = results[1].data['data'] ?? [];
-          _media = results[2].data['data'] ?? [];
+          // Keep the last good data if a refresh comes back empty (e.g. a
+          // dropped/failed request) instead of blanking a section that
+          // previously had content.
+          if (results[0].isNotEmpty) _projects = results[0];
+          if (results[1].isNotEmpty) _communities = results[1];
+          if (results[2].isNotEmpty) _media = results[2];
 
           // 💡 Add dummy content if media is empty to fill blank space
           if (_media.isEmpty) {
@@ -153,11 +184,18 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           _loading = false;
         });
         // Cache the fresh payload so the next guest-home mount is instant.
-        ref.read(guestHomeCacheProvider.notifier).state = GuestHomeData(
-          projects: _projects,
-          communities: _communities,
-          media: _media,
-        );
+        // Only cache when we actually have content, so a failed/offline load
+        // never poisons the cache with an empty payload that would then show
+        // empty on the next open.
+        if (_projects.isNotEmpty ||
+            _communities.isNotEmpty ||
+            _media.isNotEmpty) {
+          ref.read(guestHomeCacheProvider.notifier).state = GuestHomeData(
+            projects: _projects,
+            communities: _communities,
+            media: _media,
+          );
+        }
       }
     } catch (e) {
       if (mounted) setState(() => _loading = false);
@@ -334,7 +372,13 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-              child: Column(
+              // The tagline + hero image are painted upward via Transform, but
+              // still reserve their full height. heightFactor trims the empty
+              // reserved space at the bottom so the tabs sit closer (no big gap).
+              child: Align(
+                alignment: Alignment.topCenter,
+                heightFactor: 0.82,
+                child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   // ⭐️ Tagline (Living the M4 Life)
@@ -375,13 +419,6 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(32),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.15),
-                                        blurRadius: 30,
-                                        offset: const Offset(0, 15),
-                                      ),
-                                    ],
                                   ),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(32),
@@ -478,6 +515,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                     ),
                   ),
                 ],
+              ),
               ),
             ),
           ),
@@ -636,21 +674,43 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           ],
         ),
         const SizedBox(height: 32),
-        SizedBox(
-          height: 360,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            physics: const BouncingScrollPhysics(),
-            itemCount: _activeTab == 'Communities'
-                ? _communities.length
-                : (_activeTab == 'Media' ? _media.length : _projects.length),
-            itemBuilder: (context, index) {
-              final item = _activeTab == 'Communities'
-                  ? _communities[index]
-                  : (_activeTab == 'Media' ? _media[index] : _projects[index]);
-              return _buildTabCard(item);
-            },
-          ),
+        Builder(
+          builder: (context) {
+            final List<dynamic> items = _activeTab == 'Communities'
+                ? _communities
+                : (_activeTab == 'Media' ? _media : _projects);
+            // While the payload is still loading, show a spinner instead of a
+            // blank 360px gap (which looked like nothing was there); once
+            // loaded, show a subtle message if the list is genuinely empty.
+            if (items.isEmpty) {
+              return SizedBox(
+                height: 360,
+                child: Center(
+                  child: _loading
+                      ? const CircularProgressIndicator(
+                          color: Color(0xFFC5A35B),
+                          strokeWidth: 2,
+                        )
+                      : Text(
+                          'No ${_activeTab.toLowerCase()} available yet.',
+                          style: GoogleFonts.ebGaramond(
+                            color: Colors.white.withOpacity(0.6),
+                            fontSize: 13,
+                          ),
+                        ),
+                ),
+              );
+            }
+            return SizedBox(
+              height: 360,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                itemCount: items.length,
+                itemBuilder: (context, index) => _buildTabCard(items[index]),
+              ),
+            );
+          },
         ),
       ],
     );
@@ -664,9 +724,11 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                 ? (item['image'] ??
                       'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80')
                 : (isMedia
-                      ? (item['thumbnail'] ??
-                            item['image'] ??
-                            'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80')
+                      ? ((item['thumbnail']?.toString().isNotEmpty ?? false)
+                            ? item['thumbnail']
+                            : (item['image']?.toString().isNotEmpty ?? false)
+                            ? item['image']
+                            : 'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80')
                       : (item['heroImage'] ??
                             'https://images.unsplash.com/photo-1613545325278-f24b0cae1224?auto=format&fit=crop&q=80')))
             .toString();
@@ -686,13 +748,6 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         margin: const EdgeInsets.only(right: 20, bottom: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(40),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.15),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
-            ),
-          ],
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(40),
@@ -802,6 +857,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                     Text(
                       (isCommunity
                               ? (item['overview'] ?? item['description'] ?? '')
+                              : isMedia
+                              ? (item['description'] ?? item['type'] ?? 'MEDIA')
                               : (item['location'] is Map
                                     ? item['location']['name']
                                     : item['location'] ?? 'MAZGAON'))
@@ -956,13 +1013,6 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           margin: const EdgeInsets.symmetric(horizontal: 24),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(50),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                blurRadius: 40,
-                offset: const Offset(0, 20),
-              ),
-            ],
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(50),
@@ -1140,13 +1190,6 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                     decoration: BoxDecoration(
                       color: isDark ? Colors.white : Colors.black,
                       borderRadius: BorderRadius.circular(14),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
                     ),
                     child: Center(
                       child: Text(
@@ -1265,13 +1308,6 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             border: Border.all(
               color: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.03),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
-              ),
-            ],
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(32),
@@ -1493,9 +1529,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 24,
-            vertical: 20,
+            vertical: 12,
           ),
-          border: InputBorder.none,
+          filled: false, border: InputBorder.none, enabledBorder: InputBorder.none, focusedBorder: InputBorder.none,
         ),
       ),
     );

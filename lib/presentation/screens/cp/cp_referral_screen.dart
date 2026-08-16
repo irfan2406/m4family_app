@@ -164,7 +164,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
         borderRadius: BorderRadius.circular(40),
         boxShadow: [
           BoxShadow(
@@ -513,7 +513,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                 bottom: MediaQuery.of(ctx).viewInsets.bottom + 32,
               ),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF141B3A) : Colors.white,
+                color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
               ),
               child: Column(
@@ -584,7 +584,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                                     color: scheme.onSurface.withValues(alpha: 0.68),
                                   ),
                                 ),
-                                dropdownColor: isDark ? const Color(0xFF141B3A) : Colors.white,
+                                dropdownColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
                                 icon: Icon(LucideIcons.chevronDown, size: 16, color: scheme.onSurface.withValues(alpha: 0.3)),
                                 items: [
                                   for (final p in projects)

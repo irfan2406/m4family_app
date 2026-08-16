@@ -601,7 +601,7 @@ class ProjectListScreen extends ConsumerWidget {
                 error: (e, s) {
                   final isDark =
                       Theme.of(context).brightness == Brightness.dark;
-                  final onSurface = isDark ? Colors.white : Colors.black;
+                  final onSurface = isDark ? Colors.white : const Color(0xFF163A2C);
                   final msg = e.toString().toLowerCase();
                   final isTimeout =
                       msg.contains('timeout') || msg.contains('connection');

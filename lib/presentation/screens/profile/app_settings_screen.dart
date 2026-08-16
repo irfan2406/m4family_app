@@ -123,7 +123,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06),
+            color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.06),
           ),
         ),
       ),
@@ -159,7 +159,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
                 style: GoogleFonts.ebGaramond(
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
-                  color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+                  color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5),
                   letterSpacing: 2,
                 ),
               ),
@@ -252,7 +252,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
   // ─── Reusable building blocks ───────────────────────────────────────────
 
   Widget _buildCard(bool isDark, {required String label, required List<Widget> children}) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
     final border = isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06);
 
     return Container(
@@ -274,7 +274,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
             style: GoogleFonts.ebGaramond(
               fontSize: 8,
               fontWeight: FontWeight.w800,
-              color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+              color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5),
               letterSpacing: 3.2,
             ),
           ),
@@ -293,12 +293,12 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
     required bool value,
     required ValueChanged<bool> onChanged,
   }) {
-    final tileBg = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final tileBg = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
     final tileBorder = isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06);
     final iconBg = isDark ? M4Theme.premiumBlue.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05);
-    final iconColor = isDark ? Colors.white : Colors.black;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final iconColor = isDark ? Colors.white : const Color(0xFF163A2C);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -370,9 +370,9 @@ class _IconButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05)),
+          border: Border.all(color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.05)),
           boxShadow: isDark
               ? []
               : [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 4))],

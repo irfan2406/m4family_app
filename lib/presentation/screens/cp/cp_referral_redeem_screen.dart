@@ -123,7 +123,7 @@ class _CpReferralRedeemScreenState extends ConsumerState<CpReferralRedeemScreen>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(msg),
-        backgroundColor: error ? Color(0xFFC5A35B) : Colors.green,
+        backgroundColor: error ? const Color(0xFFD32F2F) : Colors.green,
       ),
     );
   }
@@ -248,7 +248,7 @@ class _CpReferralRedeemScreenState extends ConsumerState<CpReferralRedeemScreen>
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
         borderRadius: BorderRadius.circular(40),
         boxShadow: [
           BoxShadow(

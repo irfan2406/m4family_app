@@ -127,7 +127,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
         return Container(
           height: 350,
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF0B1026) : Colors.white,
+            color: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
             border: Border.all(
               color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
@@ -337,7 +337,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                     Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF141B3A) : Colors.white,
+                        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
                         borderRadius: BorderRadius.circular(32),
                         border: Border.all(
                           color: (isDark ? Colors.white : Colors.black)
@@ -433,7 +433,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
         borderRadius: BorderRadius.circular(40),
         border: Border.all(
           color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
@@ -788,7 +788,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF141B3A) : Colors.white,
+            color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
             borderRadius: BorderRadius.circular(32),
             border: Border.all(
               color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
@@ -923,7 +923,7 @@ class _IconButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),

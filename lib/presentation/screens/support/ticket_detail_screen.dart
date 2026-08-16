@@ -189,9 +189,9 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(
+    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
       alpha: 0.68,
     );
     final border = isDark
@@ -502,7 +502,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     // User bubble: solid (foreground/background inversion). Support: card style.
     final bubbleColor = isUser
         ? textPrimary
-        : (isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white);
+        : (isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF));
     final bubbleTextColor = isUser
         ? (isDark ? Colors.black : Colors.white)
         : textPrimary;
@@ -651,7 +651,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     Color muted,
     Color border,
   ) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
     return Container(
       padding: EdgeInsets.fromLTRB(
         16,

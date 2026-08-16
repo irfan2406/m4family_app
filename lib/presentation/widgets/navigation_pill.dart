@@ -41,11 +41,11 @@ class NavigationPill extends StatelessWidget {
               // translucent white on the cream screens. Icons stay crisp.
               color: isDark
                   ? M4Theme.navyBackground.withOpacity(0.5)
-                  : Colors.white.withOpacity(0.6),
+                  : Colors.white.withOpacity(0.92),
               borderRadius: BorderRadius.circular(35),
               border: Border.all(
                 color: (isDark ? M4Theme.cream : M4Theme.deepGreen)
-                    .withOpacity(0.14),
+                    .withOpacity(isDark ? 0.14 : 0.28),
                 width: 1,
               ),
             ),
@@ -106,7 +106,7 @@ class _NavItem extends StatelessWidget {
     final activeIcon = isDark ? M4Theme.navyBackground : M4Theme.cream;
     final inactiveIcon = isDark
         ? M4Theme.cream.withOpacity(0.75)
-        : M4Theme.deepGreen.withOpacity(0.72);
+        : M4Theme.deepGreen.withOpacity(0.9);
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,

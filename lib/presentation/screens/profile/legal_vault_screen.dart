@@ -132,7 +132,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
       margin: const EdgeInsets.all(24),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
         boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20, offset: const Offset(0, 10))],
@@ -198,7 +198,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
               color: _selectedFilter == f ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white54 : Colors.black54),
             ),
             selectedColor: isDark ? Colors.white : Colors.black,
-            backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
+            backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
@@ -214,7 +214,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
         boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))],
@@ -297,7 +297,7 @@ class _DocumentDetailSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
       ),
       padding: const EdgeInsets.all(32),
@@ -410,7 +410,7 @@ class _ActionButton extends StatelessWidget {
         icon: Icon(icon, size: 18),
         label: Text(label, style: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
         style: ElevatedButton.styleFrom(
-          backgroundColor: isPrimary ? (isDark ? Colors.white : Colors.black) : (isDark ? const Color(0xFF141B3A) : Colors.white),
+          backgroundColor: isPrimary ? (isDark ? Colors.white : Colors.black) : (isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF)),
           foregroundColor: isPrimary ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white54 : Colors.black54),
           elevation: isPrimary ? 8 : 0,
           shape: RoundedRectangleBorder(
@@ -436,7 +436,7 @@ class _IconButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
         ),

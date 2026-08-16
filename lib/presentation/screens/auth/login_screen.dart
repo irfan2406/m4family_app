@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/core/utils/app_toast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -67,28 +68,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (next.status == AuthStatus.authenticated) {
         context.go('/home');
       } else if (next.status == AuthStatus.error) {
-        ScaffoldMessenger.of(context)
-          ..hideCurrentSnackBar()
-          ..showSnackBar(
-            SnackBar(
-              content: Text(next.error ?? 'Error occurred'),
-              backgroundColor: Color(0xFFC5A35B),
-              duration: const Duration(milliseconds: 1500),
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
+        AppToast.error(next.error);
       } else if (next.status == AuthStatus.otpSent) {
         setState(() => _step = 2);
       }
     });
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xFF0F2A20),
       body: Stack(
         fit: StackFit.expand,
         children: [
-          // Solid black background (no photo).
-          const Positioned.fill(child: ColoredBox(color: Colors.black)),
+          // Solid deep-green background (brand colour, no photo).
+          const Positioned.fill(child: ColoredBox(color: Color(0xFF0F2A20))),
 
           // Main Content
           SafeArea(
@@ -159,14 +151,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         _PremiumButton(
           label: 'CHANNEL PARTNER',
           icon: LucideIcons.sparkles,
-          iconColor: Color(0xFFC5A35B),
+          iconColor: Colors.white,
           onTap: () => context.push('/auth/cp/login'),
         ),
         const SizedBox(height: 12),
         _PremiumButton(
           label: 'INVESTOR PORTAL',
           icon: LucideIcons.trendingUp,
-          iconColor: Color(0xFFC5A35B),
+          iconColor: Colors.white,
           onTap: () => setState(() {
             _selectedRole = 'INVESTOR';
             _step = 1;
@@ -267,7 +259,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       .sendOtp(_phoneController.text, _selectedRole),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
+              foregroundColor: const Color(0xFF0F2A20),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(32),
               ),
@@ -278,7 +270,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     width: 24,
                     height: 24,
                     child: CircularProgressIndicator(
-                      color: Colors.black,
+                      color: Color(0xFF0F2A20),
                       strokeWidth: 2,
                     ),
                   )
@@ -371,9 +363,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Color(0xFFC5A35B).withOpacity(0.1),
+              color: Colors.white.withOpacity(0.1),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Color(0xFFC5A35B).withOpacity(0.3)),
+              border: Border.all(color: Colors.white.withOpacity(0.3)),
             ),
             child: Row(
               children: [
@@ -384,7 +376,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       const Text(
                         '⚡ DEV MODE — SIMULATED OTP',
                         style: TextStyle(
-                          color: Color(0xFFC5A35B),
+                          color: Colors.white,
                           fontSize: 8,
                           fontWeight: FontWeight.bold,
                         ),
@@ -395,7 +387,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         style: GoogleFonts.ebGaramond(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFFC5A35B),
+                          color: Colors.white,
                           letterSpacing: 4,
                         ),
                       ),
@@ -411,12 +403,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     }
                   },
                   style: TextButton.styleFrom(
-                    backgroundColor: Color(0xFFC5A35B).withOpacity(0.2),
+                    backgroundColor: Colors.white.withOpacity(0.2),
                   ),
                   child: const Text(
                     'AUTO-FILL',
                     style: TextStyle(
-                      color: Color(0xFFC5A35B),
+                      color: Colors.white,
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
                     ),
@@ -481,13 +473,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
-              foregroundColor: Colors.black,
+              foregroundColor: const Color(0xFF0F2A20),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
             ),
             child: authState.status == AuthStatus.loading
-                ? const CircularProgressIndicator(color: Colors.black)
+                ? const CircularProgressIndicator(color: Color(0xFF0F2A20))
                 : Text(
                     'AUTHENTICATE TOKEN',
                     style: GoogleFonts.ebGaramond(
@@ -568,15 +560,19 @@ class _PremiumButton extends StatelessWidget {
         height: 64,
         padding: const EdgeInsets.symmetric(horizontal: 24),
         decoration: BoxDecoration(
-          color: isPrimary ? Colors.white : Colors.black.withOpacity(0.4),
+          color: isPrimary
+              ? Colors.white
+              : Colors.white.withOpacity(0.06),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withOpacity(0.1)),
+          border: Border.all(color: Colors.white.withOpacity(0.2)),
         ),
         child: Row(
           children: [
             Icon(
               icon,
-              color: isPrimary ? Colors.black : (iconColor ?? Colors.white54),
+              color: isPrimary
+                  ? const Color(0xFF0F2A20)
+                  : (iconColor ?? Colors.white54),
               size: 20,
             ),
             const SizedBox(width: 16),
@@ -585,7 +581,7 @@ class _PremiumButton extends StatelessWidget {
               style: GoogleFonts.ebGaramond(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
-                color: isPrimary ? Colors.black : Colors.white,
+                color: isPrimary ? const Color(0xFF0F2A20) : Colors.white,
                 letterSpacing: 2,
               ),
             ),
@@ -631,7 +627,7 @@ class _LuxuryInputField extends StatelessWidget {
           decoration: BoxDecoration(
             color: const Color(0xFFF4EEE0),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFC5A35B).withOpacity(0.6)),
+            border: Border.all(color: Colors.white),
           ),
           child: TextField(
             controller: controller,
@@ -645,7 +641,7 @@ class _LuxuryInputField extends StatelessWidget {
             decoration: InputDecoration(
               hintText: hint,
               hintStyle: TextStyle(color: const Color(0xFF0F2A20).withOpacity(0.5)),
-              prefixIcon: Icon(icon, color: const Color(0xFFC5A35B), size: 20),
+              prefixIcon: Icon(icon, color: const Color(0xFF0F2A20), size: 20),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 20,

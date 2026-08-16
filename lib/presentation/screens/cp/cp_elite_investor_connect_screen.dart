@@ -72,10 +72,10 @@ class _CpEliteInvestorConnectScreenState extends ConsumerState<CpEliteInvestorCo
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final scheme = Theme.of(context).colorScheme;
 
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
     final border = scheme.outlineVariant.withValues(alpha: 0.5);
 
     return Scaffold(

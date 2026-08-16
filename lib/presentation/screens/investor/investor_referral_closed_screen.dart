@@ -104,9 +104,9 @@ class _InvestorReferralClosedScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -195,7 +195,7 @@ class _InvestorReferralClosedScreenState
 
   // ─── List ────────────────────────────────────────────────────────────────
   Widget _buildList(bool isDark, Color textPrimary, Color muted, Color border) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
 
     return RefreshIndicator(
       onRefresh: _load,

@@ -39,8 +39,9 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Only the Visit Tracking data is needed for the initial view; bookings
+      // load lazily when the Payment Tracker tab is opened (faster first paint).
       _load();
-      _loadBookings();
     });
   }
 
@@ -340,7 +341,14 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
       final active = _activeTab == key;
       return Expanded(
         child: GestureDetector(
-          onTap: () => setState(() => _activeTab = key),
+          onTap: () {
+            setState(() => _activeTab = key);
+            // Lazy-load bookings only when the Payment Tracker tab is first
+            // opened — keeps the initial Visit Tracking view fast.
+            if (key == 'payments' && _bookings.isEmpty && !_bookingsLoading) {
+              _loadBookings();
+            }
+          },
           child: Container(
             height: 40,
             alignment: Alignment.center,

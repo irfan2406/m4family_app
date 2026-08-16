@@ -120,33 +120,48 @@ import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import 'package:m4_mobile/core/providers/theme_provider.dart';
+import 'package:m4_mobile/core/utils/app_toast.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:async';
 
-void main() async {
-  debugPaintSizeEnabled = false;
-  debugPaintBaselinesEnabled = false;
-  debugPaintPointersEnabled = false;
-  debugPaintLayerBordersEnabled = false;
-  debugRepaintRainbowEnabled = false;
+void main() {
+  // Run inside a guarded zone so ANY uncaught / unexpected async exception
+  // surfaces a consistent red error toast instead of failing silently.
+  runZonedGuarded(
+    () async {
+      debugPaintSizeEnabled = false;
+      debugPaintBaselinesEnabled = false;
+      debugPaintPointersEnabled = false;
+      debugPaintLayerBordersEnabled = false;
+      debugRepaintRainbowEnabled = false;
 
-  WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
+      WidgetsFlutterBinding.ensureInitialized();
+      await dotenv.load(fileName: ".env");
 
-  const storage = FlutterSecureStorage();
-  final themeStr = await storage.read(key: 'app_theme');
-  // Default to LIGHT (cream) to match the Figma design. Only a previously
-  // saved 'dark' choice opens the app in dark mode.
-  final initialTheme = themeStr == 'dark' ? ThemeMode.dark : ThemeMode.light;
+      // Framework-level (build/layout/widget) errors → red toast, while still
+      // printing the error to the console as before.
+      final previousOnError = FlutterError.onError;
+      FlutterError.onError = (details) {
+        previousOnError?.call(details);
+        AppToast.error('Something went wrong. Please try again.');
+      };
 
-  runApp(
-    ProviderScope(
-      overrides: [
-        themeProvider.overrideWith((ref) => ThemeNotifier(ref, initialTheme)),
-      ],
-      child: const M4FamilyApp(),
-    ),
+      // The saved light/dark theme is restored asynchronously inside
+      // ThemeNotifier (off the startup critical path) — no blocking
+      // secure-storage read before runApp(), which previously cold-initialised
+      // the Android Keystore (100ms+).
+      runApp(
+        const ProviderScope(
+          child: M4FamilyApp(),
+        ),
+      );
+    },
+    (error, stack) {
+      // Uncaught async errors anywhere in the app.
+      AppToast.error('Something went wrong. Please try again.');
+    },
   );
 }
 
@@ -160,6 +175,7 @@ class M4FamilyApp extends ConsumerWidget {
     return MaterialApp.router(
       title: 'M4 Family',
       debugShowCheckedModeBanner: false,
+      scaffoldMessengerKey: rootScaffoldMessengerKey,
       theme: M4Theme.lightTheme,
       darkTheme: M4Theme.darkThemeNavy, // dark mode = deep navy (screenshot)
       themeMode: themeMode,

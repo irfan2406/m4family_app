@@ -354,7 +354,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
       );
     }
 
-    final foreground = isDark ? Colors.white : Colors.black;
+    final foreground = isDark ? Colors.white : const Color(0xFF163A2C);
     final q = _historyQuery.trim().toLowerCase();
     // Web parity: filter by project title or log id.
     final filtered = state.history.where((req) {
@@ -487,12 +487,12 @@ class _UnitCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final status = unit['customizationStatus'] ?? 'NOT_STARTED';
-    final foreground = isDark ? Colors.white : Colors.black;
+    final foreground = isDark ? Colors.white : const Color(0xFF163A2C);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
         borderRadius: BorderRadius.circular(32),
         border: Border.all(
           color: isDark
@@ -724,7 +724,7 @@ class _HistoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final foreground = isDark ? Colors.white : Colors.black;
+    final foreground = isDark ? Colors.white : const Color(0xFF163A2C);
     final id =
         req['_id']
             ?.toString()
@@ -1506,7 +1506,7 @@ class _DetailItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final foreground = isDark ? Colors.white : Colors.black;
+    final foreground = isDark ? Colors.white : const Color(0xFF163A2C);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

@@ -151,12 +151,12 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                   height: 40,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: (isDark ? Colors.white : Colors.black).withValues(
+                    color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
                       alpha: 0.05,
                     ),
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: (isDark ? Colors.white : Colors.black).withValues(
+                      color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
                         alpha: 0.1,
                       ),
                     ),
@@ -310,7 +310,7 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.12),
+          color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.12),
         ),
         boxShadow: isDark
             ? null

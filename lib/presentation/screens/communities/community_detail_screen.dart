@@ -908,7 +908,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
 
   Widget _buildProjectDropdown() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : Colors.black;
+    final textColor = isDark ? Colors.white : const Color(0xFF163A2C);
     return Container(
       height: 56,
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -926,7 +926,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
             color: textColor.withValues(alpha: 0.4),
             size: 18,
           ),
-          dropdownColor: isDark ? const Color(0xFF0B1026) : Colors.white,
+          dropdownColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
           borderRadius: BorderRadius.circular(20),
           style: GoogleFonts.ebGaramond(
             color: textColor,

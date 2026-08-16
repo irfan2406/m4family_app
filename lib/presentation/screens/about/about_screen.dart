@@ -192,9 +192,11 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             ),
           ],
         ),
-        backgroundColor: (isDark ? Colors.black : Colors.white).withOpacity(
-          0.8,
-        ),
+        backgroundColor:
+            (isDark
+                    ? Colors.black
+                    : Theme.of(context).scaffoldBackgroundColor)
+                .withOpacity(0.8),
         flexibleSpace: ClipRRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
@@ -319,7 +321,9 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.black : Colors.white).withOpacity(0.3),
+        color: isDark
+            ? Colors.black.withOpacity(0.3)
+            : Theme.of(context).scaffoldBackgroundColor,
         border: Border(
           bottom: BorderSide(color: Colors.white.withOpacity(0.05)),
         ),
@@ -1263,7 +1267,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
               top: 40,
             ),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF0B1026) : Colors.white,
+              color: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(40),
               ),

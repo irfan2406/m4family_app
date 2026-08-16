@@ -268,7 +268,7 @@ class _BlogCard extends ConsumerWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 32),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
         borderRadius: BorderRadius.circular(40),
         border: Border.all(color: scheme.onSurface.withOpacity(0.05)),
         boxShadow: [

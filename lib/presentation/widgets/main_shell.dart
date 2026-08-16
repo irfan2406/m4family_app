@@ -12,6 +12,7 @@ import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
 import 'package:m4_mobile/presentation/widgets/sidebar_menu.dart';
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:m4_mobile/presentation/screens/content/content_hub_screen.dart';
+import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final navigationProvider = StateProvider<int>((ref) => 0);
@@ -47,7 +48,19 @@ class _MainShellState extends ConsumerState<MainShell> {
   @override
   Widget build(BuildContext context) {
     final currentIndex = ref.watch(navigationProvider);
-    
+    final bool appIsDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Match the Investor/Guest portals: Home (0) & Projects (1) are deep-green
+    // "showcase" screens in LIGHT mode (navy in dark); other tabs stay cream.
+    Widget showcase(int i, Widget child) => (i <= 1 && !appIsDark)
+        ? Theme(data: M4Theme.darkTheme, child: child)
+        : child;
+
+    // Nav pill: navy in dark; green on the showcase tabs, cream on the rest.
+    final ThemeData navTheme = appIsDark
+        ? M4Theme.darkThemeNavy
+        : (currentIndex <= 1 ? M4Theme.darkTheme : M4Theme.lightTheme);
+
     return PopScope(
       canPop: currentIndex == 0,
       onPopInvoked: (didPop) {
@@ -68,16 +81,22 @@ class _MainShellState extends ConsumerState<MainShell> {
           children: [
             IndexedStack(
               index: currentIndex,
-              children: _screens,
+              children: [
+                for (int i = 0; i < _screens.length; i++)
+                  showcase(i, _screens[i]),
+              ],
             ),
             if (!_isDrawerOpen)
               Align(
                 alignment: Alignment.bottomCenter,
-                child: NavigationPill(
-                  currentIndex: currentIndex,
-                  onTap: (index) {
-                    ref.read(navigationProvider.notifier).state = index;
-                  },
+                child: Theme(
+                  data: navTheme,
+                  child: NavigationPill(
+                    currentIndex: currentIndex,
+                    onTap: (index) {
+                      ref.read(navigationProvider.notifier).state = index;
+                    },
+                  ),
                 ),
               ),
           ],

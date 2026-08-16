@@ -61,7 +61,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
       isScrollControlled: true,
       builder: (sheetCtx) => Container(
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         ),
         padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
@@ -215,7 +215,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
 
     if (_isSuccess) {
       return Scaffold(
-        backgroundColor: isDark ? const Color(0xFF0B1026) : Colors.white,
+        backgroundColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(40),
@@ -295,7 +295,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
     }
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0B1026) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
       extendBody: true,
       bottomNavigationBar: NavigationPill(
         currentIndex: -1,

@@ -1041,7 +1041,7 @@ class _UnitDetailFieldState extends ConsumerState<_UnitDetailField> {
         Container(
           height: 44,
           decoration: BoxDecoration(
-            color: (isDark ? Colors.white : Colors.black).withValues(
+            color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
               alpha: 0.03,
             ),
             borderRadius: BorderRadius.circular(12),

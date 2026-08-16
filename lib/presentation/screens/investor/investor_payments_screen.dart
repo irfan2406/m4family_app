@@ -121,9 +121,9 @@ class _InvestorPaymentsScreenState extends ConsumerState<InvestorPaymentsScreen>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
     final border = isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06);
 
     return Scaffold(
@@ -174,7 +174,7 @@ class _InvestorPaymentsScreenState extends ConsumerState<InvestorPaymentsScreen>
   }
 
   Widget _buildStats(bool isDark, Color textPrimary, Color muted, Color border) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 16),
       decoration: BoxDecoration(
@@ -213,7 +213,7 @@ class _InvestorPaymentsScreenState extends ConsumerState<InvestorPaymentsScreen>
   }
 
   Widget _buildSearch(bool isDark, Color textPrimary, Color muted, Color border) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
     return TextField(
       onChanged: (v) => setState(() => _searchQuery = v),
       style: GoogleFonts.ebGaramond(color: textPrimary, fontSize: 13, fontWeight: FontWeight.w500),
@@ -233,7 +233,7 @@ class _InvestorPaymentsScreenState extends ConsumerState<InvestorPaymentsScreen>
   }
 
   Widget _buildFilters(bool isDark, Color muted, Color border) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
     return Wrap(
       spacing: 8,
       runSpacing: 8,
@@ -272,7 +272,7 @@ class _InvestorPaymentsScreenState extends ConsumerState<InvestorPaymentsScreen>
   }
 
   Widget _buildRow(Map<String, dynamic> t, bool isDark, Color textPrimary, Color muted, Color border) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
     final isIn = t['direction'] == 'in';
     final status = (t['status'] ?? '').toString();
     final statusUpper = status.toUpperCase();

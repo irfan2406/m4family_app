@@ -220,8 +220,8 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
   Widget _buildPaymentMethod(String name, IconData icon, bool isDark) {
     final id = name.split(' ')[0].toLowerCase();
     final isActive = _selectedMethod == id;
-    final onSurface = isDark ? Colors.white : Colors.black;
-    final surface = isDark ? Colors.black : Colors.white;
+    final onSurface = isDark ? Colors.white : const Color(0xFF163A2C);
+    final surface = isDark ? Colors.black : const Color(0xFFF3EDE0);
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: GestureDetector(
@@ -316,7 +316,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
 
     if (_isSuccess) {
       return Scaffold(
-        backgroundColor: isDark ? const Color(0xFF0B1026) : Colors.white,
+        backgroundColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(40),

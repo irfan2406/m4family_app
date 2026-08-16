@@ -220,7 +220,10 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
                   },
                 )
               : null,
+          filled: false,
           border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(vertical: 16),
         ),
       ),

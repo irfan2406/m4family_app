@@ -85,16 +85,8 @@ class _GuestNavigationPill extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.only(bottom: 48),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(100),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.45 : 0.18),
-            blurRadius: 40,
-            spreadRadius: 2,
-            offset: const Offset(0, 14),
-          )
-        ],
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(100)),
       ),
       // Frosted-glass pill: the blur only affects the content BEHIND the bar;
       // the icons sit on top and stay perfectly crisp.

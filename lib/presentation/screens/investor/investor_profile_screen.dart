@@ -176,7 +176,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
     required String avatarUrl,
   }) {
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
-    final border = (isDark ? Colors.white : Colors.black).withValues(alpha: isDark ? 0.08 : 0.06);
+    final border = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: isDark ? 0.08 : 0.06);
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32),
@@ -328,7 +328,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
     required IconData icon,
     required VoidCallback onTap,
   }) {
-    final border = (isDark ? Colors.white : Colors.black).withValues(alpha: isDark ? 0.08 : 0.06);
+    final border = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: isDark ? 0.08 : 0.06);
     return Material(
       color: textPrimary.withValues(alpha: 0.03),
       borderRadius: BorderRadius.circular(24),

@@ -156,8 +156,8 @@ class _InvestorDocumentsScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
+    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
 
     return Scaffold(
       backgroundColor: bg,
@@ -184,7 +184,7 @@ class _InvestorDocumentsScreenState
   }
 
   Widget _buildHeader(bool isDark, Color textPrimary) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -287,7 +287,7 @@ class _InvestorDocumentsScreenState
                 decoration: BoxDecoration(
                   color: selected
                       ? textPrimary
-                      : (isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white),
+                      : (isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF)),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: selected ? textPrimary : border),
                 ),
@@ -339,11 +339,11 @@ class _InvestorDocumentsScreenState
 
   Widget _buildDocumentCard(
       Map<String, dynamic> doc, bool isDark, Color textPrimary) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -489,14 +489,14 @@ class _InvestorDocumentsScreenState
   }
 
   Widget _buildEmptyState(bool isDark) {
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
     return Column(
       children: [
         Container(
           width: 80,
           height: 80,
           decoration: BoxDecoration(
-            color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.04),
+            color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.04),
             shape: BoxShape.circle,
           ),
           child: Icon(LucideIcons.fileSearch,
@@ -517,7 +517,7 @@ class _InvestorDocumentsScreenState
   }
 
   Widget _buildErrorState(bool isDark, Color textPrimary) {
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -585,14 +585,14 @@ class _SquareIconButton extends StatelessWidget {
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: border),
         ),
         child: Icon(icon,
             size: 16,
             color:
-                (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5)),
+                (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5)),
       ),
     );
   }
@@ -616,9 +616,9 @@ class _DocumentDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -835,9 +835,9 @@ class _MetaTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);

@@ -178,9 +178,9 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(
+    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
       alpha: 0.62,
     );
     final border = isDark
@@ -249,7 +249,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
     Color muted,
     Color border,
   ) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
       child: Row(
@@ -326,7 +326,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
     Color muted,
     Color border,
   ) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
     return Container(
       height: 50,
       decoration: BoxDecoration(
@@ -356,7 +356,10 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                   color: muted.withValues(alpha: 0.6),
                   letterSpacing: 1.2,
                 ),
+                filled: false,
                 border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
               ),
             ),
           ),
@@ -372,7 +375,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
     Color muted,
     Color border,
   ) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
     final id = emp['_id']?.toString() ?? '';
     final name = (emp['name'] ?? '').toString();
     final phone = (emp['phone'] ?? '').toString();
@@ -607,7 +610,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
   void _confirmDelete(String id, String name, Color textPrimary, Color muted) {
     if (id.isEmpty) return;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final dialogBg = isDark ? const Color(0xFF0B1026) : Colors.white;
+    final dialogBg = isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF);
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -664,15 +667,15 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
   /// Add (existing == null) or edit employee dialog.
   void _openEmployeeDialog({dynamic existing}) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final dialogBg = isDark ? const Color(0xFF0B1026) : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(
+    final dialogBg = isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
       alpha: 0.62,
     );
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
 
     final isEdit = existing != null;
     final nameCtrl = TextEditingController(

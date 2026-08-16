@@ -146,7 +146,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message, style: GoogleFonts.ebGaramond(fontSize: 12, fontWeight: FontWeight.bold, color: isError ? Colors.white : Colors.black)),
-        backgroundColor: isError ? const Color(0xFFC65B46) : M4Theme.premiumBlue,
+        backgroundColor: isError ? const Color(0xFFD32F2F) : M4Theme.premiumBlue,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
@@ -165,7 +165,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
       builder: (sheetCtx) => Container(
         height: 340,
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         ),
         child: Column(
@@ -1201,7 +1201,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
           Container(
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF141B3A) : Colors.white,
+              color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
               borderRadius: BorderRadius.circular(24),
               border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
               boxShadow: isDark ? [] : [
@@ -1367,7 +1367,7 @@ class _OverviewActionCard extends StatelessWidget {
         height: 140,
         padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.white,
+          color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFFBF7EF),
           borderRadius: BorderRadius.circular(32),
           border: Border.all(
             color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05),
@@ -1627,7 +1627,7 @@ class _MultimediaAssetCard extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
           decoration: BoxDecoration(
-            color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+            color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF),
             borderRadius: BorderRadius.circular(40),
             border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05)),
             boxShadow: isDark ? [] : [
@@ -1838,7 +1838,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     width: 240,
                     margin: const EdgeInsets.only(right: 16),
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+                      color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF),
                       borderRadius: BorderRadius.circular(32),
                       border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
                     ),
@@ -1967,7 +1967,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     margin: const EdgeInsets.only(right: 16),
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+                      color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF),
                       borderRadius: BorderRadius.circular(24),
                       border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.black.withValues(alpha: 0.05)),
                       boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 15, offset: const Offset(0, 6))],
@@ -2091,7 +2091,7 @@ class _SquareAction extends StatelessWidget {
         decoration: BoxDecoration(
           color: color ?? (isDark ? Colors.white.withValues(alpha: 0.1) : Colors.white),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05)),
+          border: Border.all(color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.05)),
           boxShadow: isDark ? [] : [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.05),
@@ -2159,10 +2159,10 @@ class _LocationMapState extends State<_LocationMap> {
     return Container(
       height: 280,
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
         borderRadius: BorderRadius.circular(40),
         border: Border.all(
-          color: isDark ? const Color(0xFF141B3A) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
           width: 4,
         ),
         boxShadow: [
@@ -2186,7 +2186,7 @@ class _LocationMapState extends State<_LocationMap> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF141B3A) : Colors.white.withValues(alpha: 0.95),
+                  color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF).withValues(alpha: 0.95),
                   borderRadius: BorderRadius.circular(30),
                   border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.08)),
                   boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.15), blurRadius: 10)],

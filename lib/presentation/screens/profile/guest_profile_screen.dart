@@ -17,12 +17,12 @@ class GuestProfileScreen extends ConsumerWidget {
     final themeMode = ref.watch(themeProvider);
     final bool isDarkMode = themeMode == ThemeMode.dark;
 
-    final Color bg = isDark ? Colors.black : Colors.white;
-    final Color textPrimary = isDark ? Colors.white : Colors.black;
+    final Color bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
+    final Color textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
     final Color textMuted =
         isDark ? Colors.white.withValues(alpha: 0.5) : Colors.black.withValues(alpha: 0.5);
     final Color cardColor =
-        isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+        isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
     final Color borderColor =
         isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06);
 
@@ -39,7 +39,7 @@ class GuestProfileScreen extends ConsumerWidget {
               height: 220,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.04),
+                color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.04),
               ),
             ),
           ),
@@ -327,13 +327,13 @@ class _InfoTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final Color textPrimary = isDark ? Colors.white : Colors.black;
+    final Color textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
     final Color textMuted =
         isDark ? Colors.white.withValues(alpha: 0.5) : Colors.black.withValues(alpha: 0.5);
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.03),
+        color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06),

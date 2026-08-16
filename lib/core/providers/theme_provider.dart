@@ -9,7 +9,24 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
   static const _storage = FlutterSecureStorage();
   final Ref _ref;
 
-  ThemeNotifier(this._ref, ThemeMode state) : super(state);
+  ThemeNotifier(this._ref, ThemeMode state) : super(state) {
+    _restoreSavedTheme();
+  }
+
+  /// Restores the saved light/dark preference OFF the startup critical path.
+  /// The first FlutterSecureStorage read cold-initialises the Android Keystore
+  /// (100ms+), so instead of awaiting it in main() before runApp() we start
+  /// from the default (light) and flip async — resolving during the splash.
+  Future<void> _restoreSavedTheme() async {
+    try {
+      final themeStr = await _storage.read(key: 'app_theme');
+      if (themeStr == null || !mounted) return;
+      final saved = themeStr == 'dark' ? ThemeMode.dark : ThemeMode.light;
+      if (state != saved) state = saved;
+    } catch (_) {
+      // Storage unavailable — keep the default rather than fail the launch.
+    }
+  }
 
   Future<void> setTheme(ThemeMode mode) async {
     if (state == mode) return;

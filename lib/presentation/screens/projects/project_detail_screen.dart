@@ -239,7 +239,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       builder: (context) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF0B1026) : Colors.white,
+          color: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
           border: Border.all(
             color: isDark
@@ -377,7 +377,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: isDark
@@ -477,7 +477,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       barrierColor: Colors.black.withOpacity(0.55),
       builder: (context) => StatefulBuilder(
         builder: (context, setModalState) => Dialog(
-          backgroundColor: isDark ? const Color(0xFF0B1026) : Colors.white,
+          backgroundColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
           insetPadding: const EdgeInsets.symmetric(
             horizontal: 20,
             vertical: 40,
@@ -856,7 +856,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       context: context,
       barrierColor: Colors.black.withOpacity(0.55),
       builder: (dCtx) => Dialog(
-        backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
+        backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
         insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         child: Padding(
@@ -1201,7 +1201,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     }
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0B1026) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -1291,7 +1291,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
   // Web parity: the project title + location pill sit BELOW the hero, in large
   // dark serif on the page background (not overlaid on the image).
   Widget _buildTitleSection(dynamic project, bool isDark) {
-    final onSurface = isDark ? Colors.white : Colors.black;
+    final onSurface = isDark ? Colors.white : const Color(0xFF163A2C);
     final locName =
         ((project?['location'] is Map
                 ? project?['location']?['name']
@@ -3487,7 +3487,7 @@ class _LocationMapState extends State<_LocationMap> {
                     vertical: 9,
                   ),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF141B3A) : Colors.white,
+                    color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
                     borderRadius: BorderRadius.circular(30),
                     boxShadow: [
                       BoxShadow(
@@ -3630,7 +3630,7 @@ class _HeroMediaThumb extends StatelessWidget {
         width: 68,
         height: 68,
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
             color: isDark
@@ -3652,7 +3652,7 @@ class _HeroMediaThumb extends StatelessWidget {
           children: [
             if (isVR)
               Container(
-                color: isDark ? const Color(0xFF141B3A) : Colors.white,
+                color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
                 child: Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -4066,7 +4066,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     height: 12,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: isDark ? const Color(0xFF141B3A) : Colors.white,
+                      color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
                       border: Border.all(
                         color: isDark ? Colors.white : Colors.black,
                         width: 2,

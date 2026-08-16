@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/core/utils/app_toast.dart';
 
 /// Mirrors web `app/investor/login/page.tsx`: premium gold landing → credentials,
 /// `POST /api/investor/login`, role must be INVESTOR. Follows [CpLoginScreen] pattern.
@@ -16,8 +17,9 @@ class InvestorLoginScreen extends ConsumerStatefulWidget {
 }
 
 class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
-  static const _gold = Color(0xFFC5A35B);
-  static const _amber = Color(0xFFC5A35B);
+  static const _gold = Colors.white;
+  static const _amber = Colors.white;
+  static const _deepGreen = Color(0xFF0F2A20);
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -35,9 +37,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
     final email = _emailController.text.trim();
     final pw = _passwordController.text;
     if (email.isEmpty || pw.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please provide your Email and Password')),
-      );
+      AppToast.error('Please provide your Email and Password');
       return;
     }
     final err = await ref
@@ -45,7 +45,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
         .loginInvestorWithPassword(email, pw);
     if (!mounted) return;
     if (err != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err)));
+      AppToast.error(err);
     }
   }
 
@@ -62,7 +62,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
     );
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: _deepGreen,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 28),
@@ -183,7 +183,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
             onPressed: () => setState(() => _step = 1),
             style: FilledButton.styleFrom(
               backgroundColor: _amber,
-              foregroundColor: Colors.black,
+              foregroundColor: _deepGreen,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -202,7 +202,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
                 Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.1),
+                    color: _deepGreen.withValues(alpha: 0.12),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(LucideIcons.arrowRight, size: 18),
@@ -326,7 +326,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
             onPressed: loading ? null : _submit,
             style: FilledButton.styleFrom(
               backgroundColor: _amber,
-              foregroundColor: Colors.black,
+              foregroundColor: _deepGreen,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -340,7 +340,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
                         height: 18,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: Colors.black,
+                          color: _deepGreen,
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -368,7 +368,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
                       Container(
                         padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.1),
+                          color: _deepGreen.withValues(alpha: 0.12),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(LucideIcons.arrowRight, size: 18),
@@ -407,14 +407,14 @@ class _FeaturePill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.4),
+        color: Colors.white.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(100),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: const Color(0xFFC5A35B)),
+          Icon(icon, size: 14, color: Colors.white),
           const SizedBox(width: 8),
           Text(
             label,
@@ -471,7 +471,7 @@ class _Field extends StatelessWidget {
           keyboardType: keyboardType,
           // Field sits on a black background — force a visible amber cursor
           // (default cursor inherits the light-theme primary and is invisible).
-          cursorColor: const Color(0xFFC5A35B),
+          cursorColor: Colors.white,
           cursorWidth: 2,
           cursorRadius: const Radius.circular(2),
           style: const TextStyle(
@@ -484,23 +484,23 @@ class _Field extends StatelessWidget {
             prefixIcon: Icon(icon, color: Colors.white54),
             suffixIcon: suffix,
             filled: true,
-            fillColor: Colors.black.withValues(alpha: 0.4),
+            fillColor: Colors.white.withValues(alpha: 0.06),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
               borderSide: BorderSide(
-                color: Colors.white.withValues(alpha: 0.12),
+                color: Colors.white.withValues(alpha: 0.25),
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
               borderSide: BorderSide(
-                color: Colors.white.withValues(alpha: 0.12),
+                color: Colors.white.withValues(alpha: 0.25),
               ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
               borderSide: const BorderSide(
-                color: Color(0xFFC5A35B),
+                color: Colors.white,
                 width: 1.2,
               ),
             ),

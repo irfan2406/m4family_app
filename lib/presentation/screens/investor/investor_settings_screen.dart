@@ -163,8 +163,8 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
+    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
     final muted = textPrimary.withValues(alpha: 0.5);
 
     if (_loading) {
@@ -292,7 +292,7 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
   }
 
   Widget _buildHeader(bool isDark, Color textPrimary, Color muted) {
-    final border = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06);
+    final border = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.06);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(
@@ -399,8 +399,8 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
     bool verified = false,
     TextInputType? keyboardType,
   }) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
-    final border = (isDark ? Colors.white : Colors.black).withValues(alpha: isDark ? 0.08 : 0.06);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
+    final border = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: isDark ? 0.08 : 0.06);
     final fieldColor = enabled ? textPrimary : muted;
 
     return Column(
@@ -476,8 +476,8 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
     required bool value,
     required ValueChanged<bool> onChanged,
   }) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
-    final border = (isDark ? Colors.white : Colors.black).withValues(alpha: isDark ? 0.08 : 0.06);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
+    final border = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: isDark ? 0.08 : 0.06);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),

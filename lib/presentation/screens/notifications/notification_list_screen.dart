@@ -432,7 +432,7 @@ class _NotificationItem extends StatelessWidget {
             margin: const EdgeInsets.symmetric(horizontal: 32),
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF141B3A) : Colors.white,
+              color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
               borderRadius: BorderRadius.circular(32),
               border: Border.all(
                 color: scheme.outlineVariant.withValues(alpha: 0.2),

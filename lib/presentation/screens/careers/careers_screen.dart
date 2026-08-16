@@ -113,9 +113,11 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
             ),
           ],
         ),
-        backgroundColor: (isDark ? Colors.black : Colors.white).withOpacity(
-          0.8,
-        ),
+        backgroundColor:
+            (isDark
+                    ? Colors.black
+                    : Theme.of(context).scaffoldBackgroundColor)
+                .withOpacity(0.8),
         flexibleSpace: ClipRRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),

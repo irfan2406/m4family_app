@@ -68,10 +68,10 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -647,9 +647,9 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
   @override
   Widget build(BuildContext context) {
     final isDark = widget.isDark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
     final card = isDark
         ? Colors.white.withValues(alpha: 0.05)
         : Colors.black.withValues(alpha: 0.03);
@@ -730,7 +730,7 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
                 child: DropdownButton<String>(
                   value: _project,
                   isExpanded: true,
-                  dropdownColor: isDark ? const Color(0xFF0B1026) : Colors.white,
+                  dropdownColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
                   icon: Icon(LucideIcons.chevronDown, size: 18, color: muted),
                   style: GoogleFonts.ebGaramond(
                     fontSize: 13,

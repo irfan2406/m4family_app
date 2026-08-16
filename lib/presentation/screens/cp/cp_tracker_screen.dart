@@ -204,7 +204,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
               Text(
                 'STATEMENT & PULSE',
                 style: GoogleFonts.ebGaramond(
-                  fontSize: 8,
+                  fontSize: 10,
                   fontWeight: FontWeight.w900,
                   color: scheme.onSurface.withValues(alpha: 0.68),
                   letterSpacing: 2,
@@ -303,7 +303,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
           Text(
             label,
             style: GoogleFonts.ebGaramond(
-              fontSize: 7,
+              fontSize: 9,
               fontWeight: FontWeight.w900,
               color: scheme.onSurface.withValues(alpha: 0.68),
               letterSpacing: 1,
@@ -355,12 +355,16 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                     decoration: InputDecoration(
                       hintText: 'SEARCH PROSPECT...',
                       hintStyle: GoogleFonts.ebGaramond(
-                        fontSize: 10,
+                        fontSize: 12,
                         fontWeight: FontWeight.w900,
                         color: scheme.onSurface.withValues(alpha: 0.62),
                         letterSpacing: 1.5,
                       ),
+                      filled: false,
+                      isDense: true,
                       border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
                     ),
                   ),
                 ),
@@ -387,7 +391,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                 child: Icon(LucideIcons.chevronDown, size: 14),
               ),
               style: GoogleFonts.ebGaramond(
-                fontSize: 10,
+                fontSize: 12,
                 fontWeight: FontWeight.w900,
                 color: scheme.onSurface,
                 letterSpacing: 1,
@@ -492,7 +496,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                                     .toString()
                                     .toUpperCase(),
                                 style: GoogleFonts.ebGaramond(
-                                  fontSize: 8,
+                                  fontSize: 10,
                                   fontWeight: FontWeight.w900,
                                   color: scheme.onSurface.withValues(
                                     alpha: 0.62,
@@ -525,7 +529,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                       child: Text(
                         status,
                         style: GoogleFonts.ebGaramond(
-                          fontSize: 8,
+                          fontSize: 10,
                           fontWeight: FontWeight.w900,
                           color: isCompleted
                               ? Colors.green[700]
@@ -614,7 +618,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                     Text(
                       'VERIFICATION LIFECYCLE',
                       style: GoogleFonts.ebGaramond(
-                        fontSize: 8,
+                        fontSize: 10,
                         fontWeight: FontWeight.w900,
                         color: scheme.onSurface.withValues(alpha: 0.62),
                         letterSpacing: 1.5,
@@ -673,7 +677,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
         Text(
           title,
           style: GoogleFonts.ebGaramond(
-            fontSize: 7,
+            fontSize: 9,
             fontWeight: FontWeight.w900,
             color: titleColor.withValues(alpha: 0.6),
             letterSpacing: 1.2,
@@ -689,7 +693,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                 Text(
                   r.$1,
                   style: GoogleFonts.ebGaramond(
-                    fontSize: 9,
+                    fontSize: 11,
                     fontWeight: FontWeight.w800,
                     color: scheme.onSurface.withValues(alpha: 0.62),
                   ),
@@ -698,7 +702,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                 Text(
                   r.$2.toUpperCase(),
                   style: GoogleFonts.ebGaramond(
-                    fontSize: 9,
+                    fontSize: 11,
                     fontWeight: FontWeight.w900,
                     color: scheme.onSurface.withValues(alpha: 0.92),
                   ),
@@ -751,7 +755,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
       child: Text(
         label,
         style: GoogleFonts.ebGaramond(
-          fontSize: 7,
+          fontSize: 9,
           fontWeight: FontWeight.w900,
           color: fg,
           letterSpacing: 1.2,
@@ -832,7 +836,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                 (d) => Text(
                   d,
                   style: GoogleFonts.ebGaramond(
-                    fontSize: 8,
+                    fontSize: 10,
                     fontWeight: FontWeight.w900,
                     color: scheme.onSurface.withValues(alpha: 0.62),
                   ),
@@ -864,7 +868,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                 child: Text(
                   '$dayNo',
                   style: GoogleFonts.ebGaramond(
-                    fontSize: 10,
+                    fontSize: 12,
                     fontWeight: sel ? FontWeight.w900 : FontWeight.w700,
                     color: sel
                         ? Color(0xFFC5A35B)

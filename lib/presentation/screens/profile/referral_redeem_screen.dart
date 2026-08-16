@@ -115,7 +115,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(30),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0B1026) : Colors.white,
+        color: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
         borderRadius: BorderRadius.circular(30),
         border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
         boxShadow: isDark ? null : [
@@ -190,7 +190,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
         margin: const EdgeInsets.only(bottom: 15),
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF0B1026) : Colors.white,
+          color: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
           borderRadius: BorderRadius.circular(25),
           border: Border.all(
             color: isSelected ? (isDark ? Colors.white : Colors.black) : (isDark ? Colors.white : Colors.black).withOpacity(0.05),
@@ -261,7 +261,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
         ),
         Container(
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF0B1026) : Colors.white,
+            color: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
           ),

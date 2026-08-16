@@ -126,7 +126,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
             fontSize: 12,
           ),
         ),
-        backgroundColor: isError ? Color(0xFFC5A35B) : Color(0xFFC5A35B),
+        backgroundColor: isError ? const Color(0xFFD32F2F) : const Color(0xFFC5A35B),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),

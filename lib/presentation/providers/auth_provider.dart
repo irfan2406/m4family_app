@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -242,11 +243,16 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   Future<void> logout() async {
-    await _storage.delete(key: 'jwt_token');
+    // Flip to the guest state FIRST so the UI switches to the guest shell
+    // instantly — the token is then cleared in the background. Awaiting the
+    // secure-storage (Android Keystore) delete before updating state stalls
+    // logout by 100ms+ on real devices, which is the lag users noticed.
+    //
     // Keep bootstrapped=true so `/home` resolves straight to the guest shell.
     // A fresh AuthState() defaults bootstrapped=false, which would trap
     // post-logout navigation on the cold-start SplashScreen.
     state = AuthState(status: AuthStatus.initial, bootstrapped: true);
+    unawaited(_storage.delete(key: 'jwt_token'));
   }
 
   void reset() {

@@ -95,7 +95,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
 
   Widget _buildPaymentMethod(String id, String name, IconData icon, bool isDark) {
     final isActive = _selectedMethod == id;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -108,7 +108,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
           decoration: BoxDecoration(
             color: isActive
                 ? M4Theme.premiumBlue.withValues(alpha: 0.06)
-                : (isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white),
+                : (isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF)),
             borderRadius: BorderRadius.circular(24),
             border: Border.all(color: isActive ? M4Theme.premiumBlue : border),
           ),
@@ -202,7 +202,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                   textAlign: TextAlign.center,
                   style: GoogleFonts.ebGaramond(
                     fontSize: 10,
-                    color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.68),
+                    color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.68),
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.2,
                     height: 1.8,
@@ -239,9 +239,9 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
 
     if (_isSuccess) {
       return _buildSuccessScreen(isDark);

@@ -150,7 +150,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
     required bool isDark,
     EdgeInsets padding = const EdgeInsets.all(22),
   }) {
-    final border = (isDark ? Colors.white : Colors.black).withValues(
+    final border = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
       alpha: 0.08,
     );
     return ClipRRect(
@@ -162,7 +162,9 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
           decoration: BoxDecoration(
             // Web parity: glass-card is a bright WHITE card in light mode (it
             // pops off the background via the shadow), not a grey tint.
-            color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.06)
+                : const Color(0xFFFBF7EF),
             borderRadius: BorderRadius.circular(40),
             border: Border.all(color: border),
             boxShadow: [
@@ -186,7 +188,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
     required bool isDark,
     Color? iconColor,
   }) {
-    final border = (isDark ? Colors.white : Colors.black).withValues(
+    final border = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
       alpha: 0.08,
     );
     return InkWell(
@@ -421,7 +423,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
               color: onSurf.withValues(alpha: isDark ? 0.06 : 0.035),
               borderRadius: BorderRadius.circular(22),
               border: Border.all(
-                color: (isDark ? Colors.white : Colors.black).withValues(
+                color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
                   alpha: 0.06,
                 ),
               ),
@@ -473,7 +475,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                     // Web parity (bg-black/20): a clearly-visible track so the
                     // empty bar shows on every card, even at 0%.
                     decoration: BoxDecoration(
-                      color: (isDark ? Colors.white : Colors.black).withValues(
+                      color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
                         alpha: isDark ? 0.28 : 0.16,
                       ),
                     ),
@@ -552,7 +554,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                     color: onSurf.withValues(alpha: 0.03),
                     borderRadius: BorderRadius.circular(999),
                     border: Border.all(
-                      color: (isDark ? Colors.white : Colors.black).withValues(
+                      color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
                         alpha: 0.06,
                       ),
                     ),
@@ -658,7 +660,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
   // Web parity: a real-time search field + project filter dropdown, sitting
   // as a second row under the header.
   Widget _buildSearchAndFilter(ColorScheme scheme, bool isDark) {
-    final border = (isDark ? Colors.white : Colors.black).withValues(
+    final border = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
       alpha: 0.08,
     );
     final fill = scheme.surface.withValues(alpha: isDark ? 0.06 : 0.5);
@@ -710,7 +712,11 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                         },
                       )
                     : null,
+                filled: false,
+                isDense: true,
                 border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(vertical: 12),
               ),
             ),
@@ -781,10 +787,15 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    scheme.primary.withValues(alpha: isDark ? 0.08 : 0.05),
-                    scheme.surface,
-                  ],
+                  colors: isDark
+                      ? [
+                          scheme.primary.withValues(alpha: 0.08),
+                          scheme.surface,
+                        ]
+                      : const [
+                          Color(0xFFF3EDE0),
+                          Color(0xFFFBF7EF),
+                        ],
                 ),
               ),
             ),
@@ -825,9 +836,9 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                               children: [
                                 Text(
                                   'CLIENT BOOKINGS',
-                                  style: GoogleFonts.ebGaramond(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w900,
+                                  style: GoogleFonts.gelasio(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
                                     letterSpacing: -0.2,
                                     color: scheme.onSurface,
                                   ),

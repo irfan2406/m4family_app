@@ -51,9 +51,11 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
             ),
           ],
         ),
-        backgroundColor: (isDark ? Colors.black : Colors.white).withOpacity(
-          0.8,
-        ),
+        backgroundColor:
+            (isDark
+                    ? Colors.black
+                    : Theme.of(context).scaffoldBackgroundColor)
+                .withOpacity(0.8),
         flexibleSpace: ClipRRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
@@ -421,7 +423,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
             width: 6,
             height: 6,
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Colors.black).withValues(
+              color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
                 alpha: 0.5,
               ),
               shape: BoxShape.circle,
@@ -431,7 +433,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
             child: Text(
               text,
               style: GoogleFonts.ebGaramond(
-                color: (isDark ? Colors.white : Colors.black).withValues(
+                color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
                   alpha: 0.8,
                 ),
                 fontSize: 13,

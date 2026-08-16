@@ -313,7 +313,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF0B1026) : Colors.white,
+                  color: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
                   boxShadow: [
@@ -415,7 +415,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF0B1026) : Colors.white,
+                  color: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
                   boxShadow: [

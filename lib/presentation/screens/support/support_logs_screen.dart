@@ -279,7 +279,7 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
   void _showCategoryFilter(bool isDark) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: isDark ? const Color(0xFF0B1026) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -594,7 +594,7 @@ class _TicketDetailSheet extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0B1026) : Colors.white,
+        color: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
       ),
       padding: const EdgeInsets.all(32),

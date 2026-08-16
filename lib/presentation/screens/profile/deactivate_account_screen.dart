@@ -75,7 +75,7 @@ class _DeactivateAccountScreenState extends ConsumerState<DeactivateAccountScree
             icon: Icon(LucideIcons.arrowLeft, color: isDark ? Colors.white54 : Colors.black54),
             onPressed: () => context.pop(),
             style: IconButton.styleFrom(
-              backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
+              backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               side: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
             ),
@@ -145,7 +145,7 @@ class _DeactivateAccountScreenState extends ConsumerState<DeactivateAccountScree
               width: double.infinity,
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF141B3A) : Colors.white,
+                color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
               ),
@@ -189,7 +189,7 @@ class _DeactivateAccountScreenState extends ConsumerState<DeactivateAccountScree
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF141B3A) : Colors.white,
+                color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
               ),

@@ -1750,7 +1750,7 @@ class _QuickFilterSheet extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0B1026) : Colors.white,
+        color: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(35),
           topRight: Radius.circular(35),
@@ -1911,7 +1911,7 @@ class _SliderNavButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final foreground = isDark ? Colors.white : Colors.black;
+    final foreground = isDark ? Colors.white : const Color(0xFF163A2C);
 
     return GestureDetector(
       onTap: onTap,
@@ -1952,7 +1952,7 @@ class _PremiumInputField extends StatelessWidget {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 8),
             decoration: BoxDecoration(
               // Web parity: white field with a soft shadow.
               color: isDark ? Colors.white.withOpacity(0.04) : Colors.white,
@@ -1992,7 +1992,7 @@ class _PremiumInputField extends StatelessWidget {
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
                 ),
-                border: InputBorder.none,
+                filled: false, border: InputBorder.none, enabledBorder: InputBorder.none, focusedBorder: InputBorder.none,
               ),
             ),
           ),
@@ -2036,7 +2036,7 @@ class _PremiumDropdownField extends StatelessWidget {
             child: DropdownButtonHideUnderline(
               child: DropdownButtonFormField<String>(
                 value: value,
-                dropdownColor: isDark ? const Color(0xFF0B1026) : Colors.white,
+                dropdownColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
                 style: GoogleFonts.ebGaramond(
                   color: Theme.of(context).colorScheme.onSurface,
                   fontSize: 13,
@@ -2056,7 +2056,7 @@ class _PremiumDropdownField extends StatelessWidget {
                     ).colorScheme.onSurface.withOpacity(0.68),
                     fontSize: 13,
                   ),
-                  border: InputBorder.none,
+                  filled: false, border: InputBorder.none, enabledBorder: InputBorder.none, focusedBorder: InputBorder.none,
                   contentPadding: EdgeInsets.zero,
                 ),
                 items: options
@@ -2164,7 +2164,7 @@ class _GlassSearchField extends StatelessWidget {
                       color: Colors.black45,
                       fontSize: 13,
                     ),
-                    border: InputBorder.none,
+                    filled: false, border: InputBorder.none, enabledBorder: InputBorder.none, focusedBorder: InputBorder.none,
                   ),
                 ),
               ),

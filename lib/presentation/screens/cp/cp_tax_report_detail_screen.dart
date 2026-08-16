@@ -104,9 +104,9 @@ class _CpTaxReportDetailScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
 
     return Scaffold(
       backgroundColor: bg,
@@ -172,7 +172,7 @@ class _CpTaxReportDetailScreenState
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color:
-                    (isDark ? Colors.white : Colors.black).withValues(alpha: 0.04),
+                    (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.04),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
                   color: (isDark ? Colors.white : Colors.black)
@@ -297,11 +297,11 @@ class _CpTaxReportDetailScreenState
   }
 
   Widget _metaCard(bool isDark, Color textPrimary, Color muted) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
-    final divider = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.06);
+    final divider = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.06);
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -386,7 +386,7 @@ class _CpTaxReportDetailScreenState
   }
 
   Widget _descriptionCard(bool isDark, Color textPrimary, Color muted) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);

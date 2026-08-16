@@ -645,7 +645,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: isDark

@@ -1094,7 +1094,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                     color: Colors.transparent,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: (isDark ? Colors.white : Colors.black).withValues(
+                      color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
                         alpha: 0.1,
                       ),
                     ),
@@ -1153,7 +1153,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                     color: Colors.transparent,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: (isDark ? Colors.white : Colors.black).withValues(
+                      color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
                         alpha: 0.1,
                       ),
                     ),
@@ -1218,7 +1218,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                 : Colors.black.withValues(alpha: 0.02),
             borderRadius: BorderRadius.circular(32),
             border: Border.all(
-              color: (isDark ? Colors.white : Colors.black).withValues(
+              color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
                 alpha: 0.08,
               ),
             ),
@@ -1295,12 +1295,12 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withValues(
+                color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
                   alpha: 0.05,
                 ),
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: (isDark ? Colors.white : Colors.black).withValues(
+                  color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
                     alpha: 0.1,
                   ),
                 ),
@@ -1327,7 +1327,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
               desc,
               textAlign: TextAlign.center,
               style: GoogleFonts.ebGaramond(
-                color: (isDark ? Colors.white : Colors.black).withValues(
+                color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
                   alpha: 0.5,
                 ),
                 fontSize: 8,
@@ -1437,7 +1437,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.12),
+          color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.12),
         ),
         boxShadow: isDark
             ? []

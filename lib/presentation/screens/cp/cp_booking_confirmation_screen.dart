@@ -127,12 +127,12 @@ class _CpBookingConfirmationScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.68);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.68);
 
     if (_loading) {
       return Scaffold(
-        backgroundColor: isDark ? const Color(0xFF0B1026) : Colors.white,
+        backgroundColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
         body: const Center(
           child: CircularProgressIndicator(color: M4Theme.premiumBlue),
         ),
@@ -140,7 +140,7 @@ class _CpBookingConfirmationScreenState
     }
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0B1026) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
       body: Stack(
         children: [
           // Decorative background circles
@@ -184,7 +184,7 @@ class _CpBookingConfirmationScreenState
                         width: 56,
                         height: 56,
                         decoration: BoxDecoration(
-                          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.white,
+                          color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFFBF7EF),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
                             color: isDark
@@ -213,7 +213,7 @@ class _CpBookingConfirmationScreenState
                     width: 96,
                     height: 96,
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.white,
+                      color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFFBF7EF),
                       borderRadius: BorderRadius.circular(32),
                       border: Border.all(
                         color: isDark
@@ -399,7 +399,7 @@ class _CpBookingConfirmationScreenState
       width: double.infinity,
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.02) : Colors.white,
+        color: isDark ? Colors.white.withValues(alpha: 0.02) : const Color(0xFFFBF7EF),
         borderRadius: BorderRadius.circular(40),
         border: Border.all(
           color: isDark
@@ -580,7 +580,7 @@ class _ActionButton extends StatelessWidget {
       child: Container(
         height: 56,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: isDark

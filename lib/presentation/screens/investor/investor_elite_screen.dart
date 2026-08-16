@@ -114,8 +114,8 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
+    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
 
     return Scaffold(
       backgroundColor: bg,
@@ -398,7 +398,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 40),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: textPrimary.withValues(alpha: 0.06)),
         ),
@@ -439,7 +439,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: textPrimary.withValues(alpha: 0.06)),
         boxShadow: isDark

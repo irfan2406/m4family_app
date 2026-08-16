@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/providers/theme_provider.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/core/utils/app_toast.dart';
 
 /// Mirrors web `app/auth/cp/login/page.tsx`: CP ID + password → `POST /auth/login`, role must be CP.
 class CpLoginScreen extends ConsumerStatefulWidget {
@@ -38,11 +39,11 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
     });
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xFF0F2A20),
       body: Stack(
         fit: StackFit.expand,
         children: [
-          const Positioned.fill(child: ColoredBox(color: Colors.black)),
+          const Positioned.fill(child: ColoredBox(color: Color(0xFF0F2A20))),
           SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -82,12 +83,12 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                         child: Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: Color(0xFFC5A35B).withValues(alpha: 0.2),
+                            color: Colors.white.withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Icon(
                             isDark ? LucideIcons.moon : LucideIcons.sun,
-                            color: Color(0xFFC5A35B),
+                            color: Colors.white,
                             size: 22,
                           ),
                         ),
@@ -199,7 +200,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                           style: GoogleFonts.ebGaramond(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
-                            color: Color(0xFFC5A35B),
+                            color: Colors.white,
                             letterSpacing: 1.5,
                           ),
                         ),
@@ -223,12 +224,8 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                                   final id = _cpIdController.text.trim();
                                   final pw = _passwordController.text;
                                   if (id.isEmpty || pw.isEmpty) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                          'Please enter both CP ID and password',
-                                        ),
-                                      ),
+                                    AppToast.error(
+                                      'Please enter both CP ID and password',
                                     );
                                     return;
                                   }
@@ -237,13 +234,12 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                                       .loginCpWithPassword(id, pw);
                                   if (!context.mounted) return;
                                   if (err != null) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text(err)),
-                                    );
+                                    AppToast.error(err);
                                   }
                                 },
                           style: FilledButton.styleFrom(
-                            backgroundColor: Color(0xFFC5A35B),
+                            backgroundColor: Colors.white,
+                            foregroundColor: const Color(0xFF0F2A20),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(32),
                             ),
@@ -273,7 +269,9 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                                     Container(
                                       padding: const EdgeInsets.all(6),
                                       decoration: BoxDecoration(
-                                        color: Colors.white.withOpacity(0.2),
+                                        color: const Color(
+                                          0xFF0F2A20,
+                                        ).withOpacity(0.12),
                                         shape: BoxShape.circle,
                                       ),
                                       child: const Icon(
@@ -376,23 +374,23 @@ class _Field extends StatelessWidget {
             hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.68)),
             prefixIcon: Icon(icon, color: Colors.white54),
             filled: true,
-            fillColor: Colors.black.withValues(alpha: 0.4),
+            fillColor: Colors.white.withValues(alpha: 0.06),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
               borderSide: BorderSide(
-                color: Colors.white.withValues(alpha: 0.12),
+                color: Colors.white.withValues(alpha: 0.25),
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
               borderSide: BorderSide(
-                color: Colors.white.withValues(alpha: 0.12),
+                color: Colors.white.withValues(alpha: 0.25),
               ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
               borderSide: BorderSide(
-                color: Color(0xFFC5A35B).withValues(alpha: 0.6),
+                color: Colors.white.withValues(alpha: 0.9),
               ),
             ),
           ),

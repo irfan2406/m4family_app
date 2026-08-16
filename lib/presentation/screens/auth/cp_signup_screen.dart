@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/core/utils/app_toast.dart';
 
 /// Mirrors web `app/auth/cp/signup/page.tsx`: `POST /auth/register` with `role: CP` and CP fields.
 class CpSignupScreen extends ConsumerStatefulWidget {
@@ -56,15 +57,11 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
         _cpId.text.trim().isEmpty ||
         _password.text.isEmpty ||
         _confirmPassword.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all required fields')),
-      );
+      AppToast.error('Please fill in all required fields');
       return;
     }
     if (_password.text != _confirmPassword.text) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Passwords do not match')));
+      AppToast.error('Passwords do not match');
       return;
     }
 
@@ -94,12 +91,8 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
             GoRouterState.of(context).uri.queryParameters['from'] == 'guest';
         context.go('/auth/cp/login${fromGuest ? '?from=guest' : ''}');
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              res.data['message']?.toString() ?? 'Registration failed',
-            ),
-          ),
+        AppToast.error(
+          res.data['message']?.toString() ?? 'Registration failed',
         );
       }
     } on DioException catch (e) {
@@ -107,15 +100,11 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
           ? (e.response?.data['message']?.toString())
           : null;
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(msg ?? e.message ?? 'Registration failed')),
-        );
+        AppToast.error(msg ?? e.message ?? 'Registration failed');
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(e.toString())));
+        AppToast.error(e.toString());
       }
     } finally {
       if (mounted) setState(() => _submitting = false);
@@ -128,26 +117,11 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
         GoRouterState.of(context).uri.queryParameters['from'] == 'guest';
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xFF0F2A20),
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Positioned.fill(
-            child: Image.asset('assets/login-bg.png', fit: BoxFit.cover),
-          ),
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.black.withValues(alpha: 0.55),
-                  Colors.black.withValues(alpha: 0.85),
-                  Colors.black,
-                ],
-              ),
-            ),
-          ),
+          const Positioned.fill(child: ColoredBox(color: Color(0xFF0F2A20))),
           SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -223,15 +197,15 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Color(0xFFC5A35B).withValues(alpha: 0.2),
+                          color: Colors.white.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
-                            color: Color(0xFFC5A35B).withValues(alpha: 0.35),
+                            color: Colors.white.withValues(alpha: 0.25),
                           ),
                         ),
                         child: const Icon(
                           LucideIcons.sparkles,
-                          color: Color(0xFFC5A35B),
+                          color: Colors.white,
                           size: 26,
                         ),
                       ),
@@ -328,7 +302,8 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                     child: FilledButton(
                       onPressed: _submitting ? null : _submit,
                       style: FilledButton.styleFrom(
-                        backgroundColor: Color(0xFFC5A35B),
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color(0xFF0F2A20),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(32),
                         ),
@@ -356,7 +331,9 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                                 Container(
                                   padding: const EdgeInsets.all(6),
                                   decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.2),
+                                    color: const Color(
+                                      0xFF0F2A20,
+                                    ).withOpacity(0.12),
                                     shape: BoxShape.circle,
                                   ),
                                   child: const Icon(
@@ -400,7 +377,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
       style: GoogleFonts.ebGaramond(
         fontSize: 10,
         fontWeight: FontWeight.bold,
-        color: Color(0xFFC5A35B).withValues(alpha: 0.7),
+        color: Colors.white.withValues(alpha: 0.85),
         letterSpacing: 2,
       ),
     ),
@@ -455,14 +432,23 @@ class _CpField extends StatelessWidget {
               hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.68)),
               prefixIcon: Icon(icon, color: Colors.white54, size: 20),
               filled: true,
-              fillColor: Colors.black.withValues(alpha: 0.4),
+              fillColor: Colors.white.withValues(alpha: 0.06),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
+                borderSide: BorderSide(
+                  color: Colors.white.withValues(alpha: 0.25),
+                ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
                 borderSide: BorderSide(
-                  color: Colors.white.withValues(alpha: 0.12),
+                  color: Colors.white.withValues(alpha: 0.25),
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: BorderSide(
+                  color: Colors.white.withValues(alpha: 0.9),
                 ),
               ),
             ),

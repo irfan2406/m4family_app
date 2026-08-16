@@ -96,8 +96,8 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
+    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
 
     return Scaffold(
       backgroundColor: bg,
@@ -113,7 +113,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                       : RefreshIndicator(
                           onRefresh: _load,
                           color: M4Theme.premiumBlue,
-                          backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
+                          backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
                           child: SingleChildScrollView(
                             physics: const AlwaysScrollableScrollPhysics(),
                             padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -187,7 +187,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
   // ─── Referral Code Card ────────────────────────────────────────
   Widget _buildCodeCard(bool isDark, Color textPrimary) {
     final code = _referralCode();
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
     final border = isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06);
 
     return Container(
@@ -267,7 +267,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
   }
 
   Widget _statCard(String label, String value, bool isDark, Color textPrimary) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
     final border = isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06);
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 22),
@@ -376,7 +376,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
   }
 
   Widget _actionCard(IconData icon, String label, bool isDark, Color textPrimary, VoidCallback onTap) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
     final border = isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06);
     return GestureDetector(
       onTap: onTap,
@@ -446,7 +446,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
   }
 
   Widget _referralCard(dynamic r, bool isDark, Color textPrimary) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
     final border = isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06);
     final name = _refName(r);
     final project = _refProject(r);
@@ -557,7 +557,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: border),
       ),
@@ -622,7 +622,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 40),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: border),
       ),
@@ -712,7 +712,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                 bottom: MediaQuery.of(ctx).viewInsets.bottom + 32,
               ),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF141B3A) : Colors.white,
+                color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
                 border: Border.all(color: border),
               ),
@@ -801,7 +801,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                                     color: textPrimary.withValues(alpha: 0.3),
                                   ),
                                 ),
-                                dropdownColor: isDark ? const Color(0xFF141B3A) : Colors.white,
+                                dropdownColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
                                 icon: Icon(LucideIcons.chevronDown, size: 16, color: textPrimary.withValues(alpha: 0.3)),
                                 items: [
                                   for (final p in projects)
@@ -984,7 +984,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: success ? Colors.green : Color(0xFFC5A35B),
+        backgroundColor: success ? Colors.green : const Color(0xFFD32F2F),
         duration: const Duration(seconds: 2),
       ),
     );

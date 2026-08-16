@@ -17,8 +17,8 @@ class CpBookingStartScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
+    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
 
     final projectTitle = (project is Map ? project['title'] : null)?.toString() ?? 'Project';
 
@@ -86,7 +86,7 @@ class CpBookingStartScreen extends ConsumerWidget {
                       width: 56,
                       height: 56,
                       decoration: BoxDecoration(
-                        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+                        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color: isDark
@@ -249,7 +249,7 @@ class _BookingOptionCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
+          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: isDark
@@ -296,7 +296,7 @@ class _BookingOptionCard extends StatelessWidget {
                     opt['desc'] as String,
                     style: GoogleFonts.ebGaramond(
                       fontSize: 9,
-                      color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.68),
+                      color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.68),
                       fontWeight: FontWeight.bold,
                       height: 1.4,
                     ),
@@ -309,12 +309,12 @@ class _BookingOptionCard extends StatelessWidget {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+                color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.05),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 LucideIcons.chevronRight,
-                color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
+                color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5),
                 size: 16,
               ),
             ),
