@@ -128,14 +128,14 @@ class M4Theme {
     BoxFit fit = BoxFit.fitWidth,
   }) {
     // Text-rendered "Living the M4 Life" wordmark (replaces the old bitmap
-    // asset): flowing script for "Living the" / "Life", serif for "M4". The
-    // `height`/`width` params are kept so every existing caller works unchanged;
-    // the wordmark is centred inside the same reserved height the bitmap used,
-    // so no hero layout shifts and it stays consistent across every portal.
+    // asset): "Living the" regular + "M4 Life" bold, in the Georgia face.
+    // It hugs its own text height instead of reserving the old bitmap's box
+    // (which left ~45px of dead space above and below the line). The
+    // `height`/`width` params are kept so every existing caller compiles
+    // unchanged; `height` now only caps the line, it no longer pads it out.
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final fg = isDark ? cream : lightForeground;
     return SizedBox(
-      height: height,
       width: double.infinity,
       child: Center(
         child: FittedBox(
