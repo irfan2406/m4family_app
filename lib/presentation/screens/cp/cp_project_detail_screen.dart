@@ -582,7 +582,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Colors.black).withValues(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                     alpha: 0.15,
                   ),
                   borderRadius: BorderRadius.circular(99),
@@ -598,7 +598,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                   fontSize: 15,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 0.5,
-                  color: isDark ? Colors.white : Colors.black,
+                  color: isDark ? Colors.white : Color(0xFF163A2C),
                 ),
               ),
             ),
@@ -625,10 +625,10 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         borderRadius: BorderRadius.circular(16),
                       ),
                       side: BorderSide(
-                        color: (isDark ? Colors.white : Colors.black)
+                        color: (isDark ? Colors.white : Color(0xFF163A2C))
                             .withValues(alpha: 0.2),
                       ),
-                      foregroundColor: isDark ? Colors.white : Colors.black,
+                      foregroundColor: isDark ? Colors.white : Color(0xFF163A2C),
                     ),
                     child: Text(
                       'CANCEL',
@@ -644,7 +644,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                   child: FilledButton(
                     onPressed: () => Navigator.pop(sheetCtx, temp),
                     style: FilledButton.styleFrom(
-                      backgroundColor: isDark ? Colors.white : Colors.black,
+                      backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
                       foregroundColor: isDark ? Colors.black : Colors.white,
                       minimumSize: const Size.fromHeight(52),
                       shape: RoundedRectangleBorder(

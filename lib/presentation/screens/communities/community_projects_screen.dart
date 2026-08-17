@@ -96,8 +96,8 @@ class _CommunityProjectsListScreenState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     final apiClient = ref.watch(apiClientProvider);
 
     return Scaffold(
@@ -132,7 +132,7 @@ class _CommunityProjectsListScreenState
                         decoration: BoxDecoration(
                           border: Border(
                             left: BorderSide(
-                              color: (isDark ? Colors.white : Colors.black)
+                              color: (isDark ? Colors.white : Color(0xFF163A2C))
                                   .withValues(alpha: isDark ? 0.3 : 0.2),
                               width: 4,
                             ),
@@ -251,7 +251,7 @@ class _GlassHeaderDelegate extends SliverPersistentHeaderDelegate {
             color: bg.withValues(alpha: 0.8),
             border: Border(
               bottom: BorderSide(
-                color: (isDark ? Colors.white : Colors.black).withValues(
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                   alpha: 0.08,
                 ),
               ),
@@ -612,7 +612,7 @@ class _EmptyState extends StatelessWidget {
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 18),
               side: BorderSide(
-                color: (isDark ? Colors.white : Colors.black).withValues(
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                   alpha: 0.2,
                 ),
               ),
@@ -625,7 +625,7 @@ class _EmptyState extends StatelessWidget {
               style: GoogleFonts.gelasio(
                 fontSize: 10,
                 fontWeight: FontWeight.w900,
-                color: isDark ? Colors.white : Colors.black,
+                color: isDark ? Colors.white : Color(0xFF163A2C),
                 letterSpacing: 2,
               ),
             ),
@@ -651,7 +651,7 @@ class _ErrorState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 28),
@@ -670,7 +670,7 @@ class _ErrorState extends StatelessWidget {
               style: GoogleFonts.gelasio(
                 fontSize: 12,
                 fontWeight: FontWeight.w900,
-                color: isDark ? Colors.white : Colors.black,
+                color: isDark ? Colors.white : Color(0xFF163A2C),
                 letterSpacing: 2,
               ),
             ),
@@ -695,7 +695,7 @@ class _ErrorState extends StatelessWidget {
                   vertical: 18,
                 ),
                 side: BorderSide(
-                  color: (isDark ? Colors.white : Colors.black).withValues(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                     alpha: 0.2,
                   ),
                 ),
@@ -708,7 +708,7 @@ class _ErrorState extends StatelessWidget {
                 style: GoogleFonts.gelasio(
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
-                  color: isDark ? Colors.white : Colors.black,
+                  color: isDark ? Colors.white : Color(0xFF163A2C),
                   letterSpacing: 2,
                 ),
               ),

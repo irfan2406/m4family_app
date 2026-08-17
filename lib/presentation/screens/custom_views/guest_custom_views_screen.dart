@@ -105,7 +105,7 @@ class _GuestCustomViewsScreenState
                 Text(
                   'INTERACTIVE LIVING',
                   style: GoogleFonts.ebGaramond(
-                    color: isDark ? Colors.white : Colors.black,
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
                     fontWeight: FontWeight.w900,
                     fontSize: 14,
                     letterSpacing: 0.5,
@@ -114,7 +114,7 @@ class _GuestCustomViewsScreenState
                 Text(
                   'M4 CUSTOM SHOWCASE',
                   style: GoogleFonts.gelasio(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                       0.68,
                     ),
                     fontWeight: FontWeight.w900,
@@ -138,7 +138,7 @@ class _GuestCustomViewsScreenState
                         // Web parity: font-light serif (elegant, thin
                         // high-contrast), not a heavy slab display face.
                         style: GoogleFonts.gelasio(
-                          color: isDark ? Colors.white : Colors.black,
+                          color: isDark ? Colors.white : Color(0xFF163A2C),
                           fontSize: 52,
                           fontWeight: FontWeight.w400,
                           height: 1.1,
@@ -152,7 +152,7 @@ class _GuestCustomViewsScreenState
                   Container(
                     width: 50,
                     height: 1.5,
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                       0.2,
                     ),
                   ),
@@ -161,7 +161,7 @@ class _GuestCustomViewsScreenState
                     'Experience the future of home personalisation. Our proprietary Custom Views suite allows you to visualise and craft your dream space before it\'s even built. Every M4 residence is a bespoke masterpiece, where your vision dictates the architecture of luxury. Beyond standard configurations, we offer a multi-sensory design experience—from haptic material selection to precision spatial planning. Our suite ensures that your digital blueprint translates into a tangible sanctuary of unparalleled refinement.',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.ebGaramond(
-                      color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                         0.7,
                       ),
                       fontSize: 14,
@@ -194,7 +194,7 @@ class _GuestCustomViewsScreenState
                         borderRadius: BorderRadius.circular(44),
                         boxShadow: [
                           BoxShadow(
-                            color: (isDark ? Colors.white : Colors.black)
+                            color: (isDark ? Colors.white : Color(0xFF163A2C))
                                 .withOpacity(0.08),
                             blurRadius: 25,
                             offset: const Offset(0, 10),
@@ -283,7 +283,7 @@ class _HeaderCircleAction extends StatelessWidget {
           color: isDark ? Colors.white.withOpacity(0.1) : Colors.white,
           shape: BoxShape.circle,
           border: Border.all(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
           ),
           boxShadow: [
             BoxShadow(
@@ -295,7 +295,7 @@ class _HeaderCircleAction extends StatelessWidget {
         ),
         child: Icon(
           icon,
-          color: isDark ? Colors.white : Colors.black,
+          color: isDark ? Colors.white : Color(0xFF163A2C),
           size: 18,
         ),
       ),

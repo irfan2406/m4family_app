@@ -111,8 +111,8 @@ class _InvestorTaxReportsScreenState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
@@ -304,7 +304,7 @@ class _InvestorTaxReportsScreenState
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
+              (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.05),
               Colors.transparent,
             ],
           ),

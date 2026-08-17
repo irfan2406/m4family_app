@@ -245,7 +245,7 @@ class ProjectListScreen extends ConsumerWidget {
                       child: ElevatedButton(
                         onPressed: () => Navigator.pop(context),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: isDark ? Colors.white : Colors.black,
+                          backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
                           foregroundColor: isDark ? Colors.black : Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
@@ -333,11 +333,11 @@ class ProjectListScreen extends ConsumerWidget {
                             height: 40,
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
-                              color: (isDark ? Colors.white : Colors.black)
+                              color: (isDark ? Colors.white : Color(0xFF163A2C))
                                   .withOpacity(0.05),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                color: (isDark ? Colors.white : Colors.black)
+                                color: (isDark ? Colors.white : Color(0xFF163A2C))
                                     .withOpacity(0.08),
                               ),
                             ),
@@ -431,11 +431,11 @@ class ProjectListScreen extends ConsumerWidget {
                           height: 40,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: (isDark ? Colors.white : Colors.black)
+                            color: (isDark ? Colors.white : Color(0xFF163A2C))
                                 .withOpacity(0.05),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: (isDark ? Colors.white : Colors.black)
+                              color: (isDark ? Colors.white : Color(0xFF163A2C))
                                   .withOpacity(0.08),
                             ),
                           ),
@@ -452,11 +452,11 @@ class ProjectListScreen extends ConsumerWidget {
                       Container(
                         padding: const EdgeInsets.all(3),
                         decoration: BoxDecoration(
-                          color: (isDark ? Colors.white : Colors.black)
+                          color: (isDark ? Colors.white : Color(0xFF163A2C))
                               .withOpacity(0.05),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: (isDark ? Colors.white : Colors.black)
+                            color: (isDark ? Colors.white : Color(0xFF163A2C))
                                 .withOpacity(0.08),
                           ),
                         ),
@@ -631,7 +631,7 @@ class ProjectListScreen extends ConsumerWidget {
                 error: (e, s) {
                   final isDark =
                       Theme.of(context).brightness == Brightness.dark;
-                  final onSurface = isDark ? Colors.white : Colors.black;
+                  final onSurface = isDark ? Colors.white : Color(0xFF163A2C);
                   final msg = e.toString().toLowerCase();
                   final isTimeout =
                       msg.contains('timeout') || msg.contains('connection');
@@ -734,7 +734,7 @@ class _ProjectGridItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(40),
         boxShadow: [
           BoxShadow(
-            color: (isDark ? Colors.black : Colors.black).withOpacity(
+            color: (isDark ? Colors.black : Color(0xFF163A2C)).withOpacity(
               isDark ? 0.3 : 0.05,
             ),
             blurRadius: 20,
@@ -890,7 +890,7 @@ class _ProjectListRowItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: (isDark ? Colors.black : Colors.black).withOpacity(
+            color: (isDark ? Colors.black : Color(0xFF163A2C)).withOpacity(
               isDark ? 0.3 : 0.04,
             ),
             blurRadius: 20,
@@ -898,7 +898,7 @@ class _ProjectListRowItem extends StatelessWidget {
           ),
         ],
         border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
         ),
       ),
       child: Row(
@@ -927,7 +927,7 @@ class _ProjectListRowItem extends StatelessWidget {
                   style: GoogleFonts.ebGaramond(
                     fontSize: 16,
                     fontWeight: FontWeight.w900,
-                    color: isDark ? Colors.white : Colors.black,
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
                     letterSpacing: -0.5,
                   ),
                   maxLines: 1,
@@ -1122,7 +1122,7 @@ class _ViewToggleButton extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: active
-              ? (isDark ? Colors.white : Colors.black)
+              ? (isDark ? Colors.white : Color(0xFF163A2C))
               : Colors.transparent,
           borderRadius: BorderRadius.circular(9),
         ),
@@ -1131,7 +1131,7 @@ class _ViewToggleButton extends StatelessWidget {
           size: 15,
           color: active
               ? (isDark ? Colors.black : Colors.white)
-              : (isDark ? Colors.white : Colors.black).withOpacity(0.4),
+              : (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.4),
         ),
       ),
     );

@@ -132,7 +132,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
             color: isDark ? const Color(0xFF09090B) : Colors.white,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
             border: Border.all(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
             ),
           ),
           child: Column(
@@ -183,7 +183,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                     brightness: isDark ? Brightness.dark : Brightness.light,
                     textTheme: CupertinoTextThemeData(
                       dateTimePickerTextStyle: GoogleFonts.gelasio(
-                        color: isDark ? Colors.white : Colors.black,
+                        color: isDark ? Colors.white : Color(0xFF163A2C),
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                       ),
@@ -343,7 +343,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                         style: GoogleFonts.gelasio(
                           fontSize: 9,
                           fontWeight: FontWeight.w800,
-                          color: isDark ? Colors.white38 : Colors.black38,
+                          color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                           letterSpacing: 2,
                         ),
                       ),
@@ -355,7 +355,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                         color: isDark ? const Color(0xFF18181B) : Colors.white,
                         borderRadius: BorderRadius.circular(32),
                         border: Border.all(
-                          color: (isDark ? Colors.white : Colors.black)
+                          color: (isDark ? Colors.white : Color(0xFF163A2C))
                               .withOpacity(0.05),
                         ),
                         boxShadow: isDark
@@ -457,7 +457,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
         color: isDark ? const Color(0xFF18181B) : Colors.white,
         borderRadius: BorderRadius.circular(40),
         border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
         ),
         boxShadow: isDark
             ? []
@@ -479,7 +479,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                       0.1,
                     ),
                     width: 2,
@@ -499,7 +499,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                       ? Container(
                           color: isDark
                               ? Colors.white10
-                              : Colors.black.withOpacity(0.05),
+                              : Color(0xFF163A2C).withOpacity(0.05),
                           child: const Center(
                             child: CircularProgressIndicator(strokeWidth: 2),
                           ),
@@ -511,7 +511,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                           placeholder: (context, url) => Container(
                             color: isDark
                                 ? Colors.white10
-                                : Colors.black.withOpacity(0.05),
+                                : Color(0xFF163A2C).withOpacity(0.05),
                             child: const Center(
                               child: CircularProgressIndicator(strokeWidth: 2),
                             ),
@@ -532,7 +532,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         // Web parity: bg-primary (dark) badge, not blue.
-                        color: isDark ? Colors.white : Colors.black,
+                        color: isDark ? Colors.white : Color(0xFF163A2C),
                         shape: BoxShape.circle,
                         border: Border.all(
                           color: isDark
@@ -558,7 +558,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
             style: GoogleFonts.gelasio(
               fontSize: 18,
               fontWeight: FontWeight.w900,
-              color: isDark ? Colors.white : Colors.black,
+              color: isDark ? Colors.white : Color(0xFF163A2C),
               letterSpacing: -0.3,
             ),
           ),
@@ -580,7 +580,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
 
   Widget _buildAvatarPlaceholder(bool isDark, String initial) {
     return Container(
-      color: isDark ? Colors.white10 : Colors.black.withOpacity(0.05),
+      color: isDark ? Colors.white10 : Color(0xFF163A2C).withOpacity(0.05),
       child: Center(
         child: Text(
           initial,
@@ -588,7 +588,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
             textStyle: const TextStyle(inherit: true),
             fontSize: 32,
             fontWeight: FontWeight.w800,
-            color: isDark ? Colors.white38 : Colors.black38,
+            color: isDark ? Colors.white38 : Color(0xFF5E6B60),
           ),
         ),
       ),
@@ -613,7 +613,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                   textStyle: const TextStyle(inherit: true),
                   fontSize: 14,
                   fontWeight: FontWeight.w800,
-                  color: isDark ? Colors.white : Colors.black,
+                  color: isDark ? Colors.white : Color(0xFF163A2C),
                   letterSpacing: 2,
                 ),
               ),
@@ -635,7 +635,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                 color: isDark ? Colors.black : Colors.white,
               ),
               style: TextButton.styleFrom(
-                backgroundColor: isDark ? Colors.white : Colors.black,
+                backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
                 foregroundColor: isDark ? Colors.black : Colors.white,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 18,
@@ -679,7 +679,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
               textStyle: const TextStyle(inherit: true),
               fontSize: 8,
               fontWeight: FontWeight.w800,
-              color: isDark ? Colors.white38 : Colors.black38,
+              color: isDark ? Colors.white38 : Color(0xFF5E6B60),
               letterSpacing: 1,
             ),
           ),
@@ -692,7 +692,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                 : const Color(0xFFF8FAFC),
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.06),
+              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.06),
             ),
           ),
           child: TextField(
@@ -707,8 +707,8 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
               fontWeight: FontWeight.w800,
               // Keep values dark/readable even when not editing.
               color: enabled
-                  ? (isDark ? Colors.white : Colors.black)
-                  : (isDark ? Colors.white70 : Colors.black87),
+                  ? (isDark ? Colors.white : Color(0xFF163A2C))
+                  : (isDark ? Colors.white70 : Color(0xFF163A2C)),
             ),
             decoration: const InputDecoration(
               border: InputBorder.none,
@@ -739,7 +739,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
               textStyle: const TextStyle(inherit: true),
               fontSize: 8,
               fontWeight: FontWeight.w800,
-              color: isDark ? Colors.white38 : Colors.black38,
+              color: isDark ? Colors.white38 : Color(0xFF5E6B60),
               letterSpacing: 1,
             ),
           ),
@@ -754,7 +754,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                   : const Color(0xFFF8FAFC),
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.06),
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.06),
               ),
             ),
             child: Row(
@@ -772,8 +772,8 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                         fontSize: 13,
                         fontWeight: FontWeight.w800,
                         color: _isEditing
-                            ? (isDark ? Colors.white : Colors.black)
-                            : (isDark ? Colors.white70 : Colors.black87),
+                            ? (isDark ? Colors.white : Color(0xFF163A2C))
+                            : (isDark ? Colors.white70 : Color(0xFF163A2C)),
                       ),
                     ),
                   ),
@@ -782,7 +782,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                   padding: const EdgeInsets.only(right: 20),
                   child: Icon(
                     LucideIcons.calendar,
-                    color: isDark ? Colors.white38 : Colors.black38,
+                    color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                     size: 16,
                   ),
                 ),
@@ -804,7 +804,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
             textStyle: const TextStyle(inherit: true),
             fontSize: 9,
             fontWeight: FontWeight.w800,
-            color: isDark ? Colors.white38 : Colors.black38,
+            color: isDark ? Colors.white38 : Color(0xFF5E6B60),
             letterSpacing: 1.5,
           ),
         ),
@@ -816,7 +816,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
             color: isDark ? const Color(0xFF18181B) : Colors.white,
             borderRadius: BorderRadius.circular(32),
             border: Border.all(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
             ),
             boxShadow: isDark
                 ? []
@@ -878,7 +878,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                   style: GoogleFonts.ebGaramond(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
-                    color: isDark ? Colors.white : Colors.black,
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
                   ),
                 ),
                 Text(
@@ -886,7 +886,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                   style: GoogleFonts.ebGaramond(
                     fontSize: 8,
                     fontWeight: FontWeight.w700,
-                    color: isDark ? Colors.white38 : Colors.black38,
+                    color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                   ),
                 ),
               ],
@@ -895,7 +895,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           Switch(
             value: value,
             onChanged: _isEditing ? onChanged : null,
-            activeColor: isDark ? Colors.white : Colors.black,
+            activeColor: isDark ? Colors.white : Color(0xFF163A2C),
             activeTrackColor: isDark ? Colors.white24 : Colors.black12,
           ),
         ],
@@ -951,12 +951,12 @@ class _IconButton extends StatelessWidget {
           color: isDark ? const Color(0xFF18181B) : Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
           ),
         ),
         child: Icon(
           icon,
-          color: isDark ? Colors.white54 : Colors.black54,
+          color: isDark ? Colors.white54 : Color(0xFF5E6B60),
           size: 20,
         ),
       ),

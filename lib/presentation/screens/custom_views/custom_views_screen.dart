@@ -874,14 +874,14 @@ class _ProjectSelectionStep extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: isSelected
                       ? Theme.of(context).colorScheme.onBackground
-                      : (isDark ? Colors.white : Colors.black).withOpacity(
+                      : (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                           0.04,
                         ),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: isSelected
                         ? Theme.of(context).colorScheme.onBackground
-                        : (isDark ? Colors.white : Colors.black).withOpacity(
+                        : (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                             0.1,
                           ),
                   ),
@@ -1021,7 +1021,7 @@ class _UnitDetailFieldState extends ConsumerState<_UnitDetailField> {
         Container(
           height: 44,
           decoration: BoxDecoration(
-            color: (isDark ? Colors.white : Colors.black).withValues(
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
               alpha: 0.03,
             ),
             borderRadius: BorderRadius.circular(12),
@@ -1159,7 +1159,7 @@ class _SpaceSelectionStep extends ConsumerWidget {
                     border: Border.all(
                       color: isSelected
                           ? scheme.onSurface
-                          : (isDark ? Colors.white : Colors.black).withOpacity(
+                          : (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                               0.1,
                             ),
                     ),
@@ -1942,7 +1942,7 @@ class _SummaryRow extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(
           top: BorderSide(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.09),
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.09),
           ),
         ),
       ),

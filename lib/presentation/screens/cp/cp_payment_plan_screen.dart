@@ -91,8 +91,8 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: 0.68,
     );
     final border = isDark
@@ -117,7 +117,7 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: (isDark ? Colors.white : Colors.black)
+                        color: (isDark ? Colors.white : Color(0xFF163A2C))
                             .withValues(alpha: 0.04),
                         shape: BoxShape.circle,
                         border: Border.all(color: border),
@@ -357,8 +357,8 @@ class _PaymentPlanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: 0.68,
     );
     final cardBg = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
@@ -467,7 +467,7 @@ class _PaymentPlanCard extends StatelessWidget {
                   const SizedBox(height: 28),
                   Divider(
                     height: 1,
-                    color: (isDark ? Colors.white : Colors.black).withValues(
+                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                       alpha: 0.06,
                     ),
                   ),
@@ -503,7 +503,7 @@ class _PaymentPlanCard extends StatelessWidget {
                           vertical: 12,
                         ),
                         decoration: BoxDecoration(
-                          color: (isDark ? Colors.white : Colors.black)
+                          color: (isDark ? Colors.white : Color(0xFF163A2C))
                               .withValues(alpha: isDark ? 0.05 : 0.03),
                           borderRadius: BorderRadius.circular(999),
                         ),

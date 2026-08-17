@@ -187,8 +187,8 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: 0.62,
     );
     final border = isDark
@@ -689,8 +689,8 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
   void _openEmployeeDialog({dynamic existing}) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final dialogBg = isDark ? const Color(0xFF111111) : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: 0.62,
     );
     final border = isDark
@@ -838,7 +838,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                 FilledButton(
                   // Web parity: black save button (white in dark mode).
                   style: FilledButton.styleFrom(
-                    backgroundColor: isDark ? Colors.white : Colors.black,
+                    backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
                     foregroundColor: isDark ? Colors.black : Colors.white,
                   ),
                   onPressed: saving

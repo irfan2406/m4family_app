@@ -343,7 +343,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                             Text(
                               'THEME MODE',
                               style: GoogleFonts.gelasio(
-                                color: isDark ? Colors.white70 : Colors.black87,
+                                color: isDark ? Colors.white70 : Color(0xFF163A2C),
                                 fontSize: 10,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 2,
@@ -360,12 +360,12 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                               child: Container(
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: (isDark ? Colors.white : Colors.black)
+                                  color: (isDark ? Colors.white : Color(0xFF163A2C))
                                       .withOpacity(0.08),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
                                     color:
-                                        (isDark ? Colors.white : Colors.black)
+                                        (isDark ? Colors.white : Color(0xFF163A2C))
                                             .withOpacity(0.1),
                                   ),
                                 ),
@@ -373,7 +373,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                                   isDark
                                       ? LucideIcons.moon
                                       : LucideIcons.sparkles,
-                                  color: isDark ? Colors.white : Colors.black,
+                                  color: isDark ? Colors.white : Color(0xFF163A2C),
                                   size: 18,
                                 ),
                               ),

@@ -152,7 +152,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
             Text(
               (widget.job['title'] ?? '').toString().toUpperCase(),
               style: GoogleFonts.ebGaramond(
-                color: isDark ? Colors.white : Colors.black,
+                color: isDark ? Colors.white : Color(0xFF163A2C),
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
                 letterSpacing: 0.5,
@@ -163,7 +163,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
             Text(
               (widget.job['department'] ?? '').toString().toUpperCase(),
               style: GoogleFonts.ebGaramond(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.68),
                 fontWeight: FontWeight.w400,
                 fontSize: 8,
                 letterSpacing: 2,
@@ -193,19 +193,19 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                 height: 36,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                     0.05,
                   ),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                       0.08,
                     ),
                   ),
                 ),
                 child: Icon(
                   LucideIcons.arrowLeft,
-                  color: isDark ? Colors.white : Colors.black,
+                  color: isDark ? Colors.white : Color(0xFF163A2C),
                   size: 16,
                 ),
               ),
@@ -257,7 +257,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                       child: Text(
                         'APPLYING FOR',
                         style: GoogleFonts.ebGaramond(
-                          color: (isDark ? Colors.white : Colors.black)
+                          color: (isDark ? Colors.white : Color(0xFF163A2C))
                               .withOpacity(0.6),
                           fontSize: 8,
                           fontWeight: FontWeight.w900,
@@ -270,7 +270,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                       (widget.job['title'] ?? '').toString().toUpperCase(),
                       textAlign: TextAlign.center,
                       style: GoogleFonts.gelasio(
-                        color: isDark ? Colors.white : Colors.black,
+                        color: isDark ? Colors.white : Color(0xFF163A2C),
                         fontWeight: FontWeight.w900,
                         fontSize: 22,
                         letterSpacing: -1,
@@ -345,8 +345,8 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                   // (foregroundPainter) so the full stroke is visible.
                   foregroundPainter: _DashedRRectPainter(
                     color: _resumeFile != null
-                        ? (isDark ? Colors.white : Colors.black)
-                        : (isDark ? Colors.white : Colors.black).withOpacity(
+                        ? (isDark ? Colors.white : Color(0xFF163A2C))
+                        : (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                             0.28,
                           ),
                     radius: 40,
@@ -377,7 +377,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                           decoration: BoxDecoration(
                             color: _resumeFile != null
                                 ? Colors.black
-                                : (isDark ? Colors.white : Colors.black),
+                                : (isDark ? Colors.white : Color(0xFF163A2C)),
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
@@ -411,7 +411,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                             overflow: TextOverflow.ellipsis,
                             textAlign: TextAlign.center,
                             style: GoogleFonts.gelasio(
-                              color: isDark ? Colors.white : Colors.black,
+                              color: isDark ? Colors.white : Color(0xFF163A2C),
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
                               letterSpacing: 2,
@@ -432,7 +432,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                 child: ElevatedButton(
                   onPressed: _isSubmitting ? null : _submitApplication,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isDark ? Colors.white : Colors.black,
+                    backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
                     foregroundColor: isDark ? Colors.black : Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(24),
@@ -467,7 +467,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
       child: Text(
         text,
         style: GoogleFonts.ebGaramond(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
+          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.6),
           fontSize: 10,
           fontWeight: FontWeight.w900,
           letterSpacing: 1,
@@ -510,14 +510,14 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
             ? Validators.phoneFormatters
             : Validators.nameFormatters,
         style: GoogleFonts.ebGaramond(
-          color: isDark ? Colors.white : Colors.black,
+          color: isDark ? Colors.white : Color(0xFF163A2C),
           fontWeight: FontWeight.bold,
           fontSize: 15,
         ),
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: GoogleFonts.ebGaramond(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.4),
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.4),
             fontWeight: FontWeight.bold,
             fontSize: 13,
           ),
@@ -530,7 +530,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20),
             borderSide: BorderSide(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.06),
+              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.06),
             ),
           ),
           focusedBorder: OutlineInputBorder(

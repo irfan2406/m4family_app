@@ -36,7 +36,7 @@ class _AboutScreenState extends State<AboutScreen> {
         leading: IconButton(
           icon: Icon(
             LucideIcons.chevronLeft,
-            color: isDark ? Colors.white : Colors.black,
+            color: isDark ? Colors.white : Color(0xFF163A2C),
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -47,7 +47,7 @@ class _AboutScreenState extends State<AboutScreen> {
               style: GoogleFonts.ebGaramond(
                 fontSize: 14,
                 fontWeight: FontWeight.w900,
-                color: isDark ? Colors.white : Colors.black,
+                color: isDark ? Colors.white : Color(0xFF163A2C),
                 letterSpacing: 1,
               ),
             ),
@@ -112,7 +112,7 @@ class _AboutScreenState extends State<AboutScreen> {
                                     ? Colors.black
                                     : (isDark
                                           ? Colors.white10
-                                          : Colors.black.withOpacity(0.05)),
+                                          : Color(0xFF163A2C).withOpacity(0.05)),
                               ),
                               boxShadow: isActive
                                   ? [
@@ -128,7 +128,7 @@ class _AboutScreenState extends State<AboutScreen> {
                               _tabs[index]['icon'],
                               color: isActive
                                   ? Colors.white
-                                  : (isDark ? Colors.white38 : Colors.black38),
+                                  : (isDark ? Colors.white38 : Color(0xFF5E6B60)),
                               size: 20,
                             ),
                           ),
@@ -139,7 +139,7 @@ class _AboutScreenState extends State<AboutScreen> {
                               fontSize: 7,
                               fontWeight: FontWeight.w900,
                               color: isActive
-                                  ? (isDark ? Colors.white : Colors.black)
+                                  ? (isDark ? Colors.white : Color(0xFF163A2C))
                                   : (isDark ? Colors.white24 : Colors.black26),
                               letterSpacing: 1,
                             ),
@@ -236,7 +236,7 @@ class _AboutScreenState extends State<AboutScreen> {
                       border: Border.all(
                         color: isDark
                             ? Colors.white10
-                            : Colors.black.withOpacity(0.05),
+                            : Color(0xFF163A2C).withOpacity(0.05),
                       ),
                     ),
                     child: const Icon(LucideIcons.briefcase, size: 20),
@@ -247,7 +247,7 @@ class _AboutScreenState extends State<AboutScreen> {
                     style: GoogleFonts.ebGaramond(
                       fontSize: 16,
                       fontWeight: FontWeight.w900,
-                      color: isDark ? Colors.white : Colors.black,
+                      color: isDark ? Colors.white : Color(0xFF163A2C),
                       letterSpacing: -0.5,
                     ),
                   ),
@@ -267,7 +267,7 @@ class _AboutScreenState extends State<AboutScreen> {
                   border: Border.all(
                     color: isDark
                         ? Colors.white10
-                        : Colors.black.withOpacity(0.05),
+                        : Color(0xFF163A2C).withOpacity(0.05),
                   ),
                 ),
                 child: Column(
@@ -276,7 +276,7 @@ class _AboutScreenState extends State<AboutScreen> {
                       '"M4 Family, with over a decade of excellence in Mumbai\'s real estate landscape, has established itself as a trusted name in premium residential development."',
                       style: GoogleFonts.ebGaramond(
                         fontSize: 14,
-                        color: isDark ? Colors.white70 : Colors.black87,
+                        color: isDark ? Colors.white70 : Color(0xFF163A2C),
                         height: 1.8,
                         fontStyle: FontStyle.italic,
                         fontWeight: FontWeight.w500,

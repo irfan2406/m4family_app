@@ -69,7 +69,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
         title: Text(
           _page?['title']?.toString().toUpperCase() ?? 'PAGE',
           style: GoogleFonts.ebGaramond(
-            color: isDark ? Colors.white : Colors.black,
+            color: isDark ? Colors.white : Color(0xFF163A2C),
             fontWeight: FontWeight.bold,
             fontSize: 16,
             letterSpacing: 1,
@@ -88,7 +88,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
         leading: IconButton(
           icon: Icon(
             LucideIcons.arrowLeft,
-            color: isDark ? Colors.white70 : Colors.black54,
+            color: isDark ? Colors.white70 : Color(0xFF5E6B60),
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -121,7 +121,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
                       Text(
                         'SYNCING SECURE CONTENT...',
                         style: GoogleFonts.gelasio(
-                          color: (isDark ? Colors.white : Colors.black)
+                          color: (isDark ? Colors.white : Color(0xFF163A2C))
                               .withOpacity(0.4),
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
@@ -179,7 +179,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
             Text(
               'Page Not Found',
               style: GoogleFonts.gelasio(
-                color: isDark ? Colors.white : Colors.black,
+                color: isDark ? Colors.white : Color(0xFF163A2C),
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
@@ -189,7 +189,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
               'The page /${widget.slug} does not exist or has not been published yet.',
               textAlign: TextAlign.center,
               style: GoogleFonts.ebGaramond(
-                color: isDark ? Colors.white54 : Colors.black54,
+                color: isDark ? Colors.white54 : Color(0xFF5E6B60),
                 fontSize: 14,
               ),
             ),
@@ -199,7 +199,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
               icon: const Icon(LucideIcons.arrowLeft, size: 16),
               label: const Text('Back to Pages'),
               style: TextButton.styleFrom(
-                foregroundColor: isDark ? Colors.white : Colors.black,
+                foregroundColor: isDark ? Colors.white : Color(0xFF163A2C),
               ),
             ),
           ],
@@ -224,7 +224,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
         Text(
           (_page?['title'] ?? '').toString().toUpperCase(),
           style: GoogleFonts.gelasio(
-            color: isDark ? Colors.white : Colors.black,
+            color: isDark ? Colors.white : Color(0xFF163A2C),
             fontSize: 28,
             fontWeight: FontWeight.w900,
             letterSpacing: -1,
@@ -239,7 +239,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
             decoration: BoxDecoration(
               border: Border(
                 left: BorderSide(
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                     0.2,
                   ),
                   width: 2,
@@ -249,7 +249,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
             child: Text(
               _page!['subtitle'].toString(),
               style: GoogleFonts.ebGaramond(
-                color: isDark ? Colors.white60 : Colors.black54,
+                color: isDark ? Colors.white60 : Color(0xFF5E6B60),
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
                 height: 1.5,
@@ -266,7 +266,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
                 Text(
                   'LAST UPDATE',
                   style: GoogleFonts.gelasio(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                       0.3,
                     ),
                     fontSize: 8,
@@ -279,7 +279,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
                   children: [
                     Icon(
                       LucideIcons.calendar,
-                      color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                         0.3,
                       ),
                       size: 14,
@@ -288,7 +288,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
                     Text(
                       updatedAt ?? 'N/A',
                       style: GoogleFonts.ebGaramond(
-                        color: isDark ? Colors.white38 : Colors.black38,
+                        color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
                       ),
@@ -326,7 +326,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
           child: Text(
             paragraph.trim(),
             style: GoogleFonts.ebGaramond(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.75),
+              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.75),
               fontSize: 15,
               fontWeight: FontWeight.w400,
               height: 1.7,
@@ -359,12 +359,12 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                       isDark ? 0.04 : 0.03,
                     ),
                     borderRadius: BorderRadius.circular(24),
                     border: Border.all(
-                      color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                         0.05,
                       ),
                     ),
@@ -386,7 +386,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
                             child: Text(
                               (section['title'] ?? '').toString(),
                               style: GoogleFonts.gelasio(
-                                color: isDark ? Colors.white : Colors.black,
+                                color: isDark ? Colors.white : Color(0xFF163A2C),
                                 fontSize: 18,
                                 fontWeight: FontWeight.w800,
                               ),
@@ -401,7 +401,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
                             .replaceAll(RegExp(r'<[^>]*>'), '')
                             .trim(),
                         style: GoogleFonts.ebGaramond(
-                          color: (isDark ? Colors.white : Colors.black)
+                          color: (isDark ? Colors.white : Color(0xFF163A2C))
                               .withOpacity(0.65),
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
@@ -421,7 +421,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
 
   Widget _buildSectionIcon(String iconStr) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final color = isDark ? Colors.white54 : Colors.black38;
+    final color = isDark ? Colors.white54 : Color(0xFF5E6B60);
 
     // Check if it's a known Lucide icon name
     IconData? iconData;

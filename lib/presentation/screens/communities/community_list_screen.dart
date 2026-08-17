@@ -81,16 +81,16 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                           height: 45,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: (isDark ? Colors.white : Colors.black)
+                            color: (isDark ? Colors.white : Color(0xFF163A2C))
                                 .withOpacity(0.05),
                             border: Border.all(
-                              color: (isDark ? Colors.white : Colors.black)
+                              color: (isDark ? Colors.white : Color(0xFF163A2C))
                                   .withOpacity(0.1),
                             ),
                           ),
                           child: Icon(
                             LucideIcons.chevronLeft,
-                            color: isDark ? Colors.white : Colors.black,
+                            color: isDark ? Colors.white : Color(0xFF163A2C),
                             size: 20,
                           ),
                         ),
@@ -103,7 +103,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                             // Web parity: header reads "M4 FAMILY / DEVELOPMENTS".
                             'M4 FAMILY',
                             style: GoogleFonts.ebGaramond(
-                              color: isDark ? Colors.white : Colors.black,
+                              color: isDark ? Colors.white : Color(0xFF163A2C),
                               fontSize: 16,
                               fontWeight: FontWeight.w900,
                               letterSpacing: -0.3,
@@ -112,7 +112,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                           Text(
                             'DEVELOPMENTS',
                             style: GoogleFonts.gelasio(
-                              color: (isDark ? Colors.white : Colors.black)
+                              color: (isDark ? Colors.white : Color(0xFF163A2C))
                                   .withOpacity(0.55),
                               fontSize: 9,
                               fontWeight: FontWeight.w700,
@@ -144,7 +144,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       // Web parity: thin elegant serif on one line (not heavy bold).
                       fontSize: 26,
                       fontWeight: FontWeight.w400,
-                      color: isDark ? Colors.white : Colors.black,
+                      color: isDark ? Colors.white : Color(0xFF163A2C),
                       letterSpacing: -0.5,
                       height: 1.1,
                     ),
@@ -160,7 +160,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       // Web parity: description is sans-serif (font-sans),
                       // muted, text-[13px] font-medium (not serif).
                       style: GoogleFonts.ebGaramond(
-                        color: (isDark ? Colors.white : Colors.black)
+                        color: (isDark ? Colors.white : Color(0xFF163A2C))
                             .withOpacity(0.78),
                         fontSize: 14.5,
                         height: 1.6,
@@ -172,7 +172,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       // Web parity: description is sans-serif (font-sans),
                       // muted, text-[13px] font-medium (not serif).
                       style: GoogleFonts.ebGaramond(
-                        color: (isDark ? Colors.white : Colors.black)
+                        color: (isDark ? Colors.white : Color(0xFF163A2C))
                             .withOpacity(0.78),
                         fontSize: 14.5,
                         height: 1.6,
@@ -188,7 +188,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       decoration: BoxDecoration(
                         border: Border(
                           bottom: BorderSide(
-                            color: (isDark ? Colors.white : Colors.black)
+                            color: (isDark ? Colors.white : Color(0xFF163A2C))
                                 .withOpacity(0.3),
                             width: 1,
                           ),
@@ -197,7 +197,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       child: Text(
                         _isExpanded ? 'Read less' : 'Read more',
                         style: GoogleFonts.ebGaramond(
-                          color: isDark ? Colors.white : Colors.black,
+                          color: isDark ? Colors.white : Color(0xFF163A2C),
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
                         ),
@@ -216,7 +216,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                 child: Padding(
                   padding: EdgeInsets.all(100.0),
                   child: CircularProgressIndicator(
-                    color: isDark ? Colors.white : Colors.black,
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
                   ),
                 ),
               ),
@@ -229,7 +229,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                   child: Text(
                     state.error!,
                     style: TextStyle(
-                      color: isDark ? Colors.white38 : Colors.black38,
+                      color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                     ),
                   ),
                 ),
@@ -394,7 +394,7 @@ class _CommunityCard extends ConsumerWidget {
                     width: 55,
                     height: 55,
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Colors.black,
+                      color: isDark ? Colors.white : Color(0xFF163A2C),
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(

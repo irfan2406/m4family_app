@@ -186,7 +186,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
     required bool isDark,
     EdgeInsets padding = const EdgeInsets.all(22),
   }) {
-    final border = (isDark ? Colors.white : Colors.black).withValues(
+    final border = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: 0.08,
     );
     return ClipRRect(
@@ -224,7 +224,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
     required bool isDark,
     Color? iconColor,
   }) {
-    final border = (isDark ? Colors.white : Colors.black).withValues(
+    final border = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: 0.08,
     );
     return InkWell(
@@ -459,7 +459,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
               color: onSurf.withValues(alpha: isDark ? 0.06 : 0.035),
               borderRadius: BorderRadius.circular(22),
               border: Border.all(
-                color: (isDark ? Colors.white : Colors.black).withValues(
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                   alpha: 0.06,
                 ),
               ),
@@ -513,7 +513,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                     // guarantees the full-width track renders when the fill is 0.
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: (isDark ? Colors.white : Colors.black).withValues(
+                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                         alpha: isDark ? 0.28 : 0.18,
                       ),
                     ),
@@ -592,7 +592,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                     color: onSurf.withValues(alpha: 0.03),
                     borderRadius: BorderRadius.circular(999),
                     border: Border.all(
-                      color: (isDark ? Colors.white : Colors.black).withValues(
+                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                         alpha: 0.06,
                       ),
                     ),
@@ -698,7 +698,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
   // Web parity: a real-time search field + project filter dropdown, sitting
   // as a second row under the header.
   Widget _buildSearchAndFilter(ColorScheme scheme, bool isDark) {
-    final border = (isDark ? Colors.white : Colors.black).withValues(
+    final border = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: 0.08,
     );
     final fill = scheme.surface.withValues(alpha: isDark ? 0.06 : 0.5);
@@ -839,7 +839,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                                 color: scheme.surface,
                                 borderRadius: BorderRadius.circular(16),
                                 border: Border.all(
-                                  color: (isDark ? Colors.white : Colors.black)
+                                  color: (isDark ? Colors.white : Color(0xFF163A2C))
                                       .withValues(alpha: 0.10),
                                 ),
                               ),

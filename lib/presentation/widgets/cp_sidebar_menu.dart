@@ -369,11 +369,11 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                         child: Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: (isDark ? Colors.white : Colors.black)
+                            color: (isDark ? Colors.white : Color(0xFF163A2C))
                                 .withOpacity(0.08),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: (isDark ? Colors.white : Colors.black)
+                              color: (isDark ? Colors.white : Color(0xFF163A2C))
                                   .withOpacity(0.1),
                             ),
                           ),
@@ -381,7 +381,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                           // (resolvedTheme === "dark" ? Moon : Sparkles).
                           child: Icon(
                             isDark ? LucideIcons.moon : LucideIcons.sparkles,
-                            color: isDark ? Colors.white : Colors.black,
+                            color: isDark ? Colors.white : Color(0xFF163A2C),
                             size: 18,
                           ),
                         ),
@@ -524,13 +524,13 @@ class _SubItem extends StatelessWidget {
               width: 28,
               height: 28,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
                 LucideIcons.logIn,
                 size: 14,
-                color: isDark ? Colors.white70 : Colors.black54,
+                color: isDark ? Colors.white70 : Color(0xFF5E6B60),
               ),
             ),
             const SizedBox(width: 12),
@@ -539,7 +539,7 @@ class _SubItem extends StatelessWidget {
               style: GoogleFonts.ebGaramond(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
-                color: isDark ? Colors.white : Colors.black87,
+                color: isDark ? Colors.white : Color(0xFF163A2C),
               ),
             ),
           ],

@@ -271,7 +271,7 @@ class _WheelDateTimePickerState extends State<WheelDateTimePicker> {
               style: GoogleFonts.ebGaramond(
                 fontSize: 14,
                 fontWeight: FontWeight.w800,
-                color: isDark ? Colors.white : Colors.black,
+                color: isDark ? Colors.white : Color(0xFF163A2C),
               ),
             ),
           ),
@@ -291,9 +291,9 @@ class _WheelDateTimePickerState extends State<WheelDateTimePicker> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.08),
+          color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.08),
         ),
-        color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.02),
+        color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.02),
       ),
       child: Stack(
         alignment: Alignment.center,
@@ -304,7 +304,7 @@ class _WheelDateTimePickerState extends State<WheelDateTimePicker> {
               decoration: BoxDecoration(
                 border: Border.symmetric(
                   horizontal: BorderSide(
-                    color: (isDark ? Colors.white : Colors.black).withValues(
+                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                       alpha: 0.1,
                     ),
                   ),
@@ -350,7 +350,7 @@ class _WheelDateTimePickerState extends State<WheelDateTimePicker> {
                   style: GoogleFonts.ebGaramond(
                     fontSize: 16,
                     fontWeight: FontWeight.w800,
-                    color: (isDark ? Colors.white : Colors.black).withValues(
+                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                       alpha: 0.68,
                     ),
                   ),

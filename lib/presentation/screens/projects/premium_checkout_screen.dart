@@ -85,7 +85,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? const Color(0xFF141B3A) : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
 
     return Scaffold(
       backgroundColor: bg,
@@ -118,8 +118,8 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
 
   // ─────────────────────────── STEP 1 · DETAILS ───────────────────────────
   Widget _buildDetails(bool isDark) {
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
@@ -469,8 +469,8 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
 
   // ────────────────────────── STEP 2 · PROCESSING ─────────────────────────
   Widget _buildProcessing(bool isDark) {
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
 
     return Center(
           child: Column(
@@ -526,8 +526,8 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
 
   // ─────────────────────────── STEP 3 · SUCCESS ───────────────────────────
   Widget _buildSuccess(bool isDark) {
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -627,7 +627,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                       width: double.infinity,
                       height: 52,
                       decoration: BoxDecoration(
-                        color: isDark ? Colors.white : Colors.black,
+                        color: isDark ? Colors.white : Color(0xFF163A2C),
                         borderRadius: BorderRadius.circular(18),
                       ),
                       child: Center(

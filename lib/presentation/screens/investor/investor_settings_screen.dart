@@ -191,7 +191,7 @@ class _InvestorSettingsScreenState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
     final muted = textPrimary.withValues(alpha: 0.5);
 
     if (_loading) {
@@ -340,7 +340,7 @@ class _InvestorSettingsScreenState
   }
 
   Widget _buildHeader(bool isDark, Color textPrimary, Color muted) {
-    final border = (isDark ? Colors.white : Colors.black).withValues(
+    final border = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: 0.06,
     );
     return Container(
@@ -464,7 +464,7 @@ class _InvestorSettingsScreenState
     List<TextInputFormatter>? inputFormatters,
   }) {
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
-    final border = (isDark ? Colors.white : Colors.black).withValues(
+    final border = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: isDark ? 0.08 : 0.06,
     );
     final fieldColor = enabled ? textPrimary : muted;
@@ -565,7 +565,7 @@ class _InvestorSettingsScreenState
     required ValueChanged<bool> onChanged,
   }) {
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
-    final border = (isDark ? Colors.white : Colors.black).withValues(
+    final border = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: isDark ? 0.08 : 0.06,
     );
 

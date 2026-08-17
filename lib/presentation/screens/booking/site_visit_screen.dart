@@ -73,7 +73,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                     0.15,
                   ),
                   borderRadius: BorderRadius.circular(99),
@@ -89,7 +89,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                   fontSize: 15,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 0.5,
-                  color: isDark ? Colors.white : Colors.black,
+                  color: isDark ? Colors.white : Color(0xFF163A2C),
                 ),
               ),
             ),
@@ -112,10 +112,10 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                         borderRadius: BorderRadius.circular(16),
                       ),
                       side: BorderSide(
-                        color: (isDark ? Colors.white : Colors.black)
+                        color: (isDark ? Colors.white : Color(0xFF163A2C))
                             .withOpacity(0.2),
                       ),
-                      foregroundColor: isDark ? Colors.white : Colors.black,
+                      foregroundColor: isDark ? Colors.white : Color(0xFF163A2C),
                     ),
                     child: Text(
                       'CANCEL',
@@ -131,7 +131,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                   child: FilledButton(
                     onPressed: () => Navigator.pop(sheetCtx, temp),
                     style: FilledButton.styleFrom(
-                      backgroundColor: isDark ? Colors.white : Colors.black,
+                      backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
                       foregroundColor: isDark ? Colors.black : Colors.white,
                       minimumSize: const Size.fromHeight(52),
                       shape: RoundedRectangleBorder(
@@ -231,7 +231,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                   width: 100,
                   height: 100,
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.white : Colors.black,
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: Icon(
@@ -255,7 +255,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                   textAlign: TextAlign.center,
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    color: isDark ? Colors.white38 : Colors.black38,
+                    color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.5,
                     height: 1.8,
@@ -268,11 +268,11 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                     width: double.infinity,
                     height: 64,
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Colors.black,
+                      color: isDark ? Colors.white : Color(0xFF163A2C),
                       borderRadius: BorderRadius.circular(32),
                       boxShadow: [
                         BoxShadow(
-                          color: (isDark ? Colors.white : Colors.black)
+                          color: (isDark ? Colors.white : Color(0xFF163A2C))
                               .withOpacity(0.1),
                           blurRadius: 20,
                           offset: const Offset(0, 10),
@@ -315,7 +315,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
         leading: IconButton(
           icon: Icon(
             LucideIcons.chevronLeft,
-            color: isDark ? Colors.white : Colors.black,
+            color: isDark ? Colors.white : Color(0xFF163A2C),
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -327,14 +327,14 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
               style: GoogleFonts.ebGaramond(
                 fontSize: 14,
                 fontWeight: FontWeight.w900,
-                color: isDark ? Colors.white : Colors.black,
+                color: isDark ? Colors.white : Color(0xFF163A2C),
               ),
             ),
             Text(
               'PREMIUM PROTOCOL',
               style: GoogleFonts.ebGaramond(
                 fontSize: 8,
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.68),
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1,
               ),
@@ -352,10 +352,10 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
               decoration: BoxDecoration(
                 // Web parity: bg-primary/5 + border-primary/10 + shadow-sm —
                 // a light tinted card with a soft shadow (not a solid black box).
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.04),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                     0.08,
                   ),
                 ),
@@ -375,7 +375,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                     width: 40,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Colors.black,
+                      color: isDark ? Colors.white : Color(0xFF163A2C),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
@@ -391,7 +391,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                       style: GoogleFonts.ebGaramond(
                         fontSize: 9,
                         fontWeight: FontWeight.w900,
-                        color: (isDark ? Colors.white : Colors.black)
+                        color: (isDark ? Colors.white : Color(0xFF163A2C))
                             .withOpacity(0.7),
                         letterSpacing: 0.5,
                         height: 1.5,
@@ -448,7 +448,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                                 style: GoogleFonts.ebGaramond(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w900,
-                                  color: isDark ? Colors.white : Colors.black,
+                                  color: isDark ? Colors.white : Color(0xFF163A2C),
                                 ),
                               ),
                             );
@@ -495,7 +495,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                   children: [
                     Icon(
                       LucideIcons.calendar,
-                      color: isDark ? Colors.white38 : Colors.black38,
+                      color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                       size: 18,
                     ),
                     const SizedBox(width: 16),
@@ -508,7 +508,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                         fontWeight: FontWeight.w900,
                         color: _selectedDate == null
                             ? (isDark ? Colors.white24 : Colors.black26)
-                            : (isDark ? Colors.white : Colors.black),
+                            : (isDark ? Colors.white : Color(0xFF163A2C)),
                       ),
                     ),
                     const Spacer(),
@@ -536,11 +536,11 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                 width: double.infinity,
                 height: 64,
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.white : Colors.black,
+                  color: isDark ? Colors.white : Color(0xFF163A2C),
                   borderRadius: BorderRadius.circular(32),
                   boxShadow: [
                     BoxShadow(
-                      color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                         0.1,
                       ),
                       blurRadius: 20,
@@ -609,7 +609,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
         style: GoogleFonts.gelasio(
           fontSize: 9,
           fontWeight: FontWeight.w900,
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.75),
+          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.75),
           letterSpacing: 1.5,
         ),
       ),
@@ -642,20 +642,20 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
         style: GoogleFonts.ebGaramond(
           fontSize: 15,
           fontWeight: FontWeight.w800,
-          color: isDark ? Colors.white : Colors.black,
+          color: isDark ? Colors.white : Color(0xFF163A2C),
         ),
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: hint,
           hintStyle: GoogleFonts.ebGaramond(
             fontSize: 12,
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.68),
             fontWeight: FontWeight.bold,
           ),
           icon: maxLines == 1
               ? Icon(
                   icon,
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                     0.4,
                   ),
                   size: 18,

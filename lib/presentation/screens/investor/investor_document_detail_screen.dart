@@ -193,8 +193,8 @@ class _InvestorDocumentDetailScreenState
     required String subtitle,
     bool showRetry = false,
   }) {
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 48),
       child: Column(
@@ -204,7 +204,7 @@ class _InvestorDocumentDetailScreenState
             width: 80,
             height: 80,
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Colors.black).withValues(
+              color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                 alpha: 0.05,
               ),
               borderRadius: BorderRadius.circular(24),
@@ -255,8 +255,8 @@ class _InvestorDocumentDetailScreenState
 
   Widget _buildDocumentDetail(bool isDark) {
     final doc = _doc!;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
@@ -288,7 +288,7 @@ class _InvestorDocumentDetailScreenState
                     end: Alignment.bottomRight,
                     colors: [
                       _gold.withValues(alpha: 0.18),
-                      (isDark ? Colors.white : Colors.black).withValues(
+                      (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                         alpha: 0.03,
                       ),
                     ],
@@ -565,7 +565,7 @@ class _PrimaryButton extends StatelessWidget {
           ),
         ),
         style: ElevatedButton.styleFrom(
-          backgroundColor: isDark ? Colors.white : Colors.black,
+          backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
           foregroundColor: isDark ? Colors.black : Colors.white,
           elevation: 0,
           shape: RoundedRectangleBorder(

@@ -139,7 +139,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
 
     return Scaffold(
       backgroundColor: bg,

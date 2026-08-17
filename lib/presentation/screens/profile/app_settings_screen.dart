@@ -125,7 +125,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: (isDark ? Colors.white : Colors.black).withValues(
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
               alpha: 0.06,
             ),
           ),
@@ -153,7 +153,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
                 style: GoogleFonts.gelasio(
                   fontSize: 14,
                   fontWeight: FontWeight.w800,
-                  color: isDark ? Colors.white : Colors.black,
+                  color: isDark ? Colors.white : Color(0xFF163A2C),
                   letterSpacing: 2,
                 ),
               ),
@@ -163,7 +163,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
                 style: GoogleFonts.gelasio(
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
-                  color: (isDark ? Colors.white : Colors.black).withValues(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                     alpha: 0.5,
                   ),
                   letterSpacing: 2,
@@ -292,7 +292,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
             style: GoogleFonts.gelasio(
               fontSize: 8,
               fontWeight: FontWeight.w800,
-              color: (isDark ? Colors.white : Colors.black).withValues(
+              color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                 alpha: 0.5,
               ),
               letterSpacing: 3.2,
@@ -320,9 +320,9 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
     final iconBg = isDark
         ? M4Theme.premiumBlue.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.05);
-    final iconColor = isDark ? Colors.white : Colors.black;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final iconColor = isDark ? Colors.white : Color(0xFF163A2C);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -372,7 +372,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: isDark ? Colors.white : Colors.black,
+            activeColor: isDark ? Colors.white : Color(0xFF163A2C),
             activeTrackColor: isDark ? Colors.white24 : Colors.black12,
           ),
         ],
@@ -401,7 +401,7 @@ class _IconButton extends StatelessWidget {
           color: isDark ? const Color(0xFF18181B) : Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: (isDark ? Colors.white : Colors.black).withValues(
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
               alpha: 0.05,
             ),
           ),
@@ -417,7 +417,7 @@ class _IconButton extends StatelessWidget {
         ),
         child: Icon(
           icon,
-          color: isDark ? Colors.white54 : Colors.black54,
+          color: isDark ? Colors.white54 : Color(0xFF5E6B60),
           size: 20,
         ),
       ),

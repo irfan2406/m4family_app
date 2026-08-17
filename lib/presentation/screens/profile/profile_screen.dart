@@ -89,7 +89,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             style: GoogleFonts.gelasio(
               fontSize: 22,
               fontWeight: FontWeight.w900,
-              color: isDark ? Colors.white : Colors.black,
+              color: isDark ? Colors.white : Color(0xFF163A2C),
               letterSpacing: -0.5,
             ),
           ),
@@ -148,7 +148,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   decoration: BoxDecoration(
                     color: isDark
                         ? Colors.white10
-                        : Colors.black.withOpacity(0.05),
+                        : Color(0xFF163A2C).withOpacity(0.05),
                     borderRadius: BorderRadius.circular(24),
                     image: avatarUrl != null
                         ? DecorationImage(
@@ -162,7 +162,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   child: avatarUrl == null
                       ? Icon(
                           LucideIcons.user,
-                          color: isDark ? Colors.white38 : Colors.black38,
+                          color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                           size: 32,
                         )
                       : null,
@@ -177,7 +177,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         style: GoogleFonts.gelasio(
                           fontSize: 20,
                           fontWeight: FontWeight.w900,
-                          color: isDark ? Colors.white : Colors.black,
+                          color: isDark ? Colors.white : Color(0xFF163A2C),
                           letterSpacing: -0.5,
                         ),
                       ),
@@ -217,7 +217,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             Icon(
                               LucideIcons.mapPin,
                               size: 12,
-                              color: isDark ? Colors.white54 : Colors.black54,
+                              color: isDark ? Colors.white54 : Color(0xFF5E6B60),
                             ),
                             const SizedBox(width: 6),
                             ConstrainedBox(
@@ -231,7 +231,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                   fontWeight: FontWeight.w800,
                                   color: isDark
                                       ? Colors.white70
-                                      : Colors.black87,
+                                      : Color(0xFF163A2C),
                                   letterSpacing: 1,
                                 ),
                               ),
@@ -246,7 +246,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           Icon(
                             LucideIcons.calendar,
                             size: 12,
-                            color: isDark ? Colors.white38 : Colors.black38,
+                            color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                           ),
                           const SizedBox(width: 6),
                           Text(
@@ -286,7 +286,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   style: GoogleFonts.gelasio(
                     fontSize: 12,
                     fontWeight: FontWeight.w900,
-                    color: isDark ? Colors.white : Colors.black,
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
                     letterSpacing: 1.5,
                   ),
                 ),
@@ -295,7 +295,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   style: GoogleFonts.gelasio(
                     fontSize: 22,
                     fontWeight: FontWeight.w900,
-                    color: isDark ? Colors.white : Colors.black,
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
                   ),
                 ),
               ],
@@ -482,7 +482,7 @@ class _SupportTile extends StatelessWidget {
                     style: GoogleFonts.ebGaramond(
                       fontSize: 12,
                       fontWeight: FontWeight.w800,
-                      color: isDark ? Colors.white : Colors.black,
+                      color: isDark ? Colors.white : Color(0xFF163A2C),
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -548,7 +548,7 @@ class _IconButton extends StatelessWidget {
         child: Icon(
           icon,
           size: 20,
-          color: isDark ? Colors.white : Colors.black,
+          color: isDark ? Colors.white : Color(0xFF163A2C),
         ),
       ),
     );

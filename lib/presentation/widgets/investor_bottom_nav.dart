@@ -28,7 +28,7 @@ class InvestorBottomNav extends StatelessWidget {
     final surface = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.white.withValues(alpha: 0.95);
-    final border = (isDark ? Colors.white : Colors.black).withValues(
+    final border = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: 0.08,
     );
 

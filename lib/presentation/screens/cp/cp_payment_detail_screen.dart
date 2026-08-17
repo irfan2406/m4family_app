@@ -121,8 +121,8 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
 
     return Scaffold(
       backgroundColor: bg,
@@ -188,12 +188,12 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withValues(
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                   alpha: 0.04,
                 ),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Colors.black).withValues(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                     alpha: 0.08,
                   ),
                 ),
@@ -295,7 +295,7 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
-    final divider = (isDark ? Colors.white : Colors.black).withValues(
+    final divider = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: 0.06,
     );
 
@@ -394,12 +394,12 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withValues(
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                   alpha: 0.04,
                 ),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Colors.black).withValues(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                     alpha: 0.08,
                   ),
                 ),

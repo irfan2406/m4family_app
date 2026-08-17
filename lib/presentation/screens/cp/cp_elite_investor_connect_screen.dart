@@ -75,8 +75,8 @@ class _CpEliteInvestorConnectScreenState
     final scheme = Theme.of(context).colorScheme;
 
     final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     final border = scheme.outlineVariant.withValues(alpha: 0.5);
 
@@ -671,7 +671,7 @@ class _CommitButtonState extends State<_CommitButton> {
 
   @override
   Widget build(BuildContext context) {
-    final fg = widget.isDark ? Colors.white : Colors.black; // foreground
+    final fg = widget.isDark ? Colors.white : Color(0xFF163A2C); // foreground
     final bg = widget.isDark ? Colors.black : Colors.white; // background
     return GestureDetector(
       onTapDown: (_) => setState(() => _pressed = true),

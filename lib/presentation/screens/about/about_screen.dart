@@ -178,7 +178,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             Text(
               'WHO WE ARE',
               style: GoogleFonts.gelasio(
-                color: isDark ? Colors.white : Colors.black,
+                color: isDark ? Colors.white : Color(0xFF163A2C),
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
                 letterSpacing: 2,
@@ -187,7 +187,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             Text(
               'M4 FAMILY COLLECTIVE',
               style: GoogleFonts.ebGaramond(
-                color: isDark ? Colors.white : Colors.black,
+                color: isDark ? Colors.white : Color(0xFF163A2C),
                 fontWeight: FontWeight.w400,
                 fontSize: 8,
                 letterSpacing: 2,
@@ -223,19 +223,19 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 height: 36,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                     0.05,
                   ),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                       0.08,
                     ),
                   ),
                 ),
                 child: Icon(
                   LucideIcons.arrowLeft,
-                  color: isDark ? Colors.white : Colors.black,
+                  color: isDark ? Colors.white : Color(0xFF163A2C),
                   size: 16,
                 ),
               ),
@@ -325,7 +325,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 right: stepWidth / 2,
                 child: Container(
                   height: 2,
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                     0.05,
                   ),
                 ),
@@ -399,7 +399,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                                   ? (isDark ? Colors.black : Colors.white)
                                   : isCompleted
                                   ? colorScheme.primary
-                                  : (isDark ? Colors.white60 : Colors.black38),
+                                  : (isDark ? Colors.white60 : Color(0xFF5E6B60)),
                               size: 16,
                             ),
                           ),
@@ -414,10 +414,10 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                               softWrap: false,
                               style: GoogleFonts.ebGaramond(
                                 color: isActive
-                                    ? (isDark ? Colors.white : Colors.black)
+                                    ? (isDark ? Colors.white : Color(0xFF163A2C))
                                     : (isDark
                                           ? Colors.white60
-                                          : Colors.black54),
+                                          : Color(0xFF5E6B60)),
                                 fontSize: 10,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: -0.3,
@@ -470,7 +470,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
               Text(
                 '"M4 Family, with over a decade of excellence in Mumbai’s real estate landscape, has established itself as a trusted name in premium residential development."',
                 style: GoogleFonts.ebGaramond(
-                  color: isDark ? Colors.white : Colors.black,
+                  color: isDark ? Colors.white : Color(0xFF163A2C),
                   fontSize: 13,
                   fontWeight: FontWeight.w400,
                   height: 1.8,
@@ -480,7 +480,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
               Text(
                 'Renowned for delivering homes that blend contemporary design with enduring quality, we take pride in creating spaces that inspire modern living while retaining timeless value.',
                 style: GoogleFonts.ebGaramond(
-                  color: isDark ? Colors.white : Colors.black,
+                  color: isDark ? Colors.white : Color(0xFF163A2C),
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                   height: 1.8,
@@ -490,7 +490,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
               Text(
                 'Every development we undertake reflects meticulous planning, uncompromising quality, and a commitment to delivering on promises. From Aura Heights to our latest offering Ocean View, we continue to redefine what it means to call a place home.',
                 style: GoogleFonts.ebGaramond(
-                  color: isDark ? Colors.white : Colors.black,
+                  color: isDark ? Colors.white : Color(0xFF163A2C),
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                   height: 1.8,
@@ -588,7 +588,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                           Text(
                             item['title']!.toUpperCase(),
                             style: GoogleFonts.ebGaramond(
-                              color: isDark ? Colors.white : Colors.black,
+                              color: isDark ? Colors.white : Color(0xFF163A2C),
                               fontSize: 16,
                               fontWeight: FontWeight.w900,
                               letterSpacing: -0.5,
@@ -598,7 +598,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                           Text(
                             (item['desc'] ?? item['content'] ?? '').toString(),
                             style: GoogleFonts.ebGaramond(
-                              color: isDark ? Colors.white70 : Colors.black54,
+                              color: isDark ? Colors.white70 : Color(0xFF5E6B60),
                               fontSize: 12,
                               height: 1.6,
                               fontWeight: FontWeight.w500,
@@ -680,7 +680,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   Text(
                     pillar['title'].toString().toUpperCase(),
                     style: GoogleFonts.gelasio(
-                      color: isDark ? Colors.white : Colors.black,
+                      color: isDark ? Colors.white : Color(0xFF163A2C),
                       fontSize: 11,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 2,
@@ -691,7 +691,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                     pillar['desc'],
                     textAlign: TextAlign.center,
                     style: GoogleFonts.ebGaramond(
-                      color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                         0.68,
                       ),
                       fontSize: 9,
@@ -743,7 +743,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           'EXPERIENCE THE FUTURE OF HOME PERSONALISATION. OUR PROPRIETARY CUSTOM VIEWS SUITE ALLOWS YOU TO VISUALISE AND CRAFT YOUR DREAM SPACE BEFORE IT\'S EVEN BUILT.',
           textAlign: TextAlign.center,
           style: GoogleFonts.ebGaramond(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.6),
             fontSize: 11,
             fontWeight: FontWeight.w500,
             height: 1.8,
@@ -789,7 +789,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         color: isDark ? Colors.white.withOpacity(0.04) : Colors.white,
         borderRadius: BorderRadius.circular(40),
         border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
         ),
         boxShadow: isDark
             ? null
@@ -817,7 +817,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           Text(
             '"AT M4 FAMILY, WE BELIEVE THAT LUXURY IS DEEPLY PERSONAL. OUR \'CUSTOMER VIEWS\' PHILOSOPHY ENSURES THAT EVERY RESIDENT\'S PERSPECTIVE IS VALUED, ALLOWING FOR A COLLABORATIVE APPROACH TO CREATING LIVING SPACES THAT REFLECT INDIVIDUAL LIFESTYLES AND ASPIRATIONS. WE INVITE YOU TO EXPLORE OUR BESPOKE PERSONALISATION OPTIONS, WHERE YOUR VISION MEETS OUR ARCHITECTURAL EXCELLENCE."',
             style: GoogleFonts.ebGaramond(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.7),
+              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.7),
               fontSize: 11,
               fontWeight: FontWeight.w800,
               height: 1.7,
@@ -907,7 +907,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             color: (isDark ? Colors.black : Colors.white).withOpacity(0.8),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
             ),
             boxShadow: [
               BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10),
@@ -927,7 +927,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         Text(
           title,
           style: GoogleFonts.gelasio(
-            color: isDark ? Colors.white : Colors.black,
+            color: isDark ? Colors.white : Color(0xFF163A2C),
             fontSize: 18,
             fontWeight: FontWeight.w900,
             letterSpacing: -1,
@@ -1030,7 +1030,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                     Text(
                       section['title'].toString().toUpperCase(),
                       style: GoogleFonts.ebGaramond(
-                        color: isDark ? Colors.white : Colors.black,
+                        color: isDark ? Colors.white : Color(0xFF163A2C),
                         fontSize: 15,
                         fontWeight: FontWeight.w900,
                         letterSpacing: -0.5,
@@ -1055,7 +1055,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             section['content'].toString().toUpperCase(),
             // Web parity: lighter, less heavy body copy inside the card.
             style: GoogleFonts.ebGaramond(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.5),
               fontSize: 11,
               fontWeight: FontWeight.w600,
               height: 1.6,
@@ -1272,7 +1272,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                             child: Text(
                               'CUSTOM PERSONALISATION',
                               style: GoogleFonts.ebGaramond(
-                                color: isDark ? Colors.white : Colors.black,
+                                color: isDark ? Colors.white : Color(0xFF163A2C),
                                 fontWeight: FontWeight.w900,
                                 fontSize: 17,
                                 letterSpacing: -0.3,
@@ -1282,7 +1282,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                           IconButton(
                             icon: Icon(
                               LucideIcons.x,
-                              color: isDark ? Colors.white : Colors.black,
+                              color: isDark ? Colors.white : Color(0xFF163A2C),
                               size: 20,
                             ),
                             onPressed: () => Navigator.pop(context),
@@ -1458,7 +1458,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: isDark
                                 ? Colors.white
-                                : Colors.black,
+                                : Color(0xFF163A2C),
                             foregroundColor: isDark
                                 ? Colors.black
                                 : Colors.white,
@@ -1535,7 +1535,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
       style: GoogleFonts.ebGaramond(
-        color: isDark ? Colors.white : Colors.black,
+        color: isDark ? Colors.white : Color(0xFF163A2C),
         fontSize: 15,
         fontWeight: FontWeight.w500,
       ),
@@ -1596,7 +1596,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 child: Text(
                   'BACK',
                   style: GoogleFonts.gelasio(
-                    color: isDark ? Colors.white : Colors.black,
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
                     fontWeight: FontWeight.w900,
                     fontSize: 10,
                     letterSpacing: 2,
@@ -1620,7 +1620,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 }
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: isDark ? Colors.white : Colors.black,
+                backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
                 foregroundColor: isDark ? Colors.black : Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 18),
                 shape: RoundedRectangleBorder(

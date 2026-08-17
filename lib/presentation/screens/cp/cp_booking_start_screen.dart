@@ -18,7 +18,7 @@ class CpBookingStartScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
 
     final projectTitle =
         (project is Map ? project['title'] : null)?.toString() ?? 'Project';
@@ -310,7 +310,7 @@ class _BookingOptionCard extends StatelessWidget {
                     style: GoogleFonts.ebGaramond(
                       fontSize: 12,
                       fontWeight: FontWeight.w900,
-                      color: isDark ? Colors.white : Colors.black,
+                      color: isDark ? Colors.white : Color(0xFF163A2C),
                       letterSpacing: 0.5,
                     ),
                   ),
@@ -319,7 +319,7 @@ class _BookingOptionCard extends StatelessWidget {
                     opt['desc'] as String,
                     style: GoogleFonts.ebGaramond(
                       fontSize: 9,
-                      color: (isDark ? Colors.white : Colors.black).withValues(
+                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                         alpha: 0.68,
                       ),
                       fontWeight: FontWeight.bold,
@@ -334,14 +334,14 @@ class _BookingOptionCard extends StatelessWidget {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withValues(
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                   alpha: 0.05,
                 ),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 LucideIcons.chevronRight,
-                color: (isDark ? Colors.white : Colors.black).withValues(
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                   alpha: 0.5,
                 ),
                 size: 16,

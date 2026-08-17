@@ -403,17 +403,17 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                         child: Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: (isDark ? Colors.white : Colors.black)
+                            color: (isDark ? Colors.white : Color(0xFF163A2C))
                                 .withValues(alpha: 0.08),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: (isDark ? Colors.white : Colors.black)
+                              color: (isDark ? Colors.white : Color(0xFF163A2C))
                                   .withValues(alpha: 0.1),
                             ),
                           ),
                           child: Icon(
                             isDark ? LucideIcons.sparkles : LucideIcons.moon,
-                            color: isDark ? Colors.white : Colors.black,
+                            color: isDark ? Colors.white : Color(0xFF163A2C),
                             size: 18,
                           ),
                         ),
@@ -504,7 +504,7 @@ class _SidebarItem extends StatelessWidget {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withValues(
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                   alpha: 0.05,
                 ),
                 borderRadius: BorderRadius.circular(12),
@@ -515,7 +515,7 @@ class _SidebarItem extends StatelessWidget {
                   size: 18,
                   color: isActive
                       ? gold
-                      : (isDark ? Colors.white70 : Colors.black54),
+                      : (isDark ? Colors.white70 : Color(0xFF5E6B60)),
                 ),
               ),
             ),
@@ -569,7 +569,7 @@ class _SidebarDropdown extends StatelessWidget {
           onTap: onToggle,
           trailing: Icon(
             isOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown,
-            color: (isDark ? Colors.white : Colors.black).withValues(
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
               alpha: 0.4,
             ),
             size: 16,
@@ -611,7 +611,7 @@ class _SidebarSubItem extends StatelessWidget {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withValues(
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                   alpha: 0.05,
                 ),
                 borderRadius: BorderRadius.circular(8),

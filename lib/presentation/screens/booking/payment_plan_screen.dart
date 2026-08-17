@@ -86,7 +86,7 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
         leading: IconButton(
           icon: Icon(
             LucideIcons.chevronLeft,
-            color: isDark ? Colors.white : Colors.black,
+            color: isDark ? Colors.white : Color(0xFF163A2C),
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -98,7 +98,7 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
               style: GoogleFonts.ebGaramond(
                 fontSize: 17,
                 fontWeight: FontWeight.w900,
-                color: isDark ? Colors.white : Colors.black,
+                color: isDark ? Colors.white : Color(0xFF163A2C),
                 letterSpacing: -0.5,
               ),
             ),
@@ -106,7 +106,7 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
               'SELECT YOUR PREFERRED SCHEDULE',
               style: GoogleFonts.ebGaramond(
                 fontSize: 8,
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.68),
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1,
               ),
@@ -181,7 +181,7 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
                           width: 56,
                           height: 56,
                           decoration: BoxDecoration(
-                            color: isDark ? Colors.white : Colors.black,
+                            color: isDark ? Colors.white : Color(0xFF163A2C),
                             borderRadius: BorderRadius.circular(16),
                           ),
                           child: Icon(
@@ -201,7 +201,7 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
                                   fontSize: 10,
                                   fontWeight: FontWeight.w900,
                                   letterSpacing: 1.5,
-                                  color: isDark ? Colors.white : Colors.black,
+                                  color: isDark ? Colors.white : Color(0xFF163A2C),
                                 ),
                               ),
                               const SizedBox(height: 4),
@@ -209,7 +209,7 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
                                 'VIEW A DETAILED SIDE-BY-SIDE COMPARISON OF ALL AVAILABLE PAYMENT SCHEDULES.',
                                 style: GoogleFonts.ebGaramond(
                                   fontSize: 8,
-                                  color: (isDark ? Colors.white : Colors.black)
+                                  color: (isDark ? Colors.white : Color(0xFF163A2C))
                                       .withOpacity(0.68),
                                   fontWeight: FontWeight.bold,
                                   height: 1.4,
@@ -242,7 +242,7 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
                           fontSize: 9,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1,
-                          color: isDark ? Colors.white : Colors.black,
+                          color: isDark ? Colors.white : Color(0xFF163A2C),
                         ),
                       ),
                     ),
@@ -311,7 +311,7 @@ class _PaymentPlanCard extends StatelessWidget {
                       style: GoogleFonts.gelasio(
                         fontSize: 26,
                         fontWeight: FontWeight.w900,
-                        color: isDark ? Colors.white : Colors.black,
+                        color: isDark ? Colors.white : Color(0xFF163A2C),
                         height: 1.1,
                         letterSpacing: -0.5,
                       ),
@@ -333,7 +333,7 @@ class _PaymentPlanCard extends StatelessWidget {
               // Web parity: divider between the plan title and the benefit row.
               Divider(
                 height: 1,
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.08),
               ),
               const SizedBox(height: 30),
               Row(
@@ -345,7 +345,7 @@ class _PaymentPlanCard extends StatelessWidget {
                           width: 6,
                           height: 6,
                           decoration: BoxDecoration(
-                            color: isDark ? Colors.white : Colors.black,
+                            color: isDark ? Colors.white : Color(0xFF163A2C),
                             shape: BoxShape.circle,
                           ),
                         ),
@@ -358,7 +358,7 @@ class _PaymentPlanCard extends StatelessWidget {
                             style: GoogleFonts.ebGaramond(
                               fontSize: 9,
                               fontWeight: FontWeight.w900,
-                              color: isDark ? Colors.white : Colors.black,
+                              color: isDark ? Colors.white : Color(0xFF163A2C),
                               letterSpacing: 1,
                             ),
                           ),
@@ -385,14 +385,14 @@ class _PaymentPlanCard extends StatelessWidget {
                           style: GoogleFonts.ebGaramond(
                             fontSize: 9,
                             fontWeight: FontWeight.w900,
-                            color: isDark ? Colors.white : Colors.black,
+                            color: isDark ? Colors.white : Color(0xFF163A2C),
                             letterSpacing: 1,
                           ),
                         ),
                         const SizedBox(width: 10),
                         Icon(
                           LucideIcons.arrowRight,
-                          color: isDark ? Colors.white : Colors.black,
+                          color: isDark ? Colors.white : Color(0xFF163A2C),
                           size: 14,
                         ),
                       ],

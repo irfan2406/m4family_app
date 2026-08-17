@@ -1429,13 +1429,13 @@ class _CategoryChip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
         decoration: BoxDecoration(
           color: isActive
-              ? (isDark ? Colors.white : Colors.black)
+              ? (isDark ? Colors.white : Color(0xFF163A2C))
               : (isDark
                     ? Colors.white.withOpacity(0.05)
                     : Colors.black.withOpacity(0.05)),
           borderRadius: BorderRadius.circular(30),
           border: Border.all(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.1),
           ),
         ),
         child: Text(
@@ -1443,7 +1443,7 @@ class _CategoryChip extends StatelessWidget {
           style: GoogleFonts.gelasio(
             color: isActive
                 ? (isDark ? Colors.black : Colors.white)
-                : (isDark ? Colors.white38 : Colors.black38),
+                : (isDark ? Colors.white38 : Color(0xFF5E6B60)),
             fontSize: 10,
             fontWeight: FontWeight.bold,
             letterSpacing: 2,
@@ -1677,12 +1677,12 @@ class _QuickAction extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                     0.05,
                   ),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                       0.08,
                     ),
                   ),
@@ -1822,7 +1822,7 @@ class _QuickFilterSheet extends StatelessWidget {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                       0.1,
                     ),
                   ),
@@ -1852,7 +1852,7 @@ class _QuickFilterSheet extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.symmetric(vertical: 20),
               decoration: BoxDecoration(
-                color: isDark ? Colors.white : Colors.black,
+                color: isDark ? Colors.white : Color(0xFF163A2C),
                 borderRadius: BorderRadius.circular(35),
               ),
               child: Center(
@@ -1907,12 +1907,12 @@ class _FilterSection extends StatelessWidget {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                       0.05,
                     ),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
-                      color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                         0.05,
                       ),
                     ),
@@ -1943,7 +1943,7 @@ class _SliderNavButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final foreground = isDark ? Colors.white : Colors.black;
+    final foreground = isDark ? Colors.white : Color(0xFF163A2C);
 
     return GestureDetector(
       onTap: onTap,
@@ -2012,7 +2012,7 @@ class _PremiumInputField extends StatelessWidget {
                   border: Border.all(
                     color: hasError
                         ? _errorColor
-                        : (isDark ? Colors.white : Colors.black).withOpacity(
+                        : (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                             0.08,
                           ),
                     width: hasError ? 1.5 : 1,
@@ -2103,10 +2103,10 @@ class _PremiumDropdownField extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
+              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.03),
               borderRadius: BorderRadius.circular(15),
               border: Border.all(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
               ),
             ),
             child: DropdownButtonHideUnderline(
@@ -2169,10 +2169,10 @@ class _PremiumFormField extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
             decoration: BoxDecoration(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
+              color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.03),
               borderRadius: BorderRadius.circular(15),
               border: Border.all(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
               ),
             ),
             child: Row(
@@ -2349,10 +2349,10 @@ class _UpdateCard extends StatelessWidget {
         width: 280,
         margin: const EdgeInsets.only(left: 20, right: 10),
         decoration: BoxDecoration(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
+          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.04),
           borderRadius: BorderRadius.circular(35),
           border: Border.all(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
           ),
         ),
         padding: const EdgeInsets.all(16),

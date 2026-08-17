@@ -311,7 +311,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
       );
     }
     if (state.units.isEmpty) {
-      final foreground = isDark ? Colors.white : Colors.black;
+      final foreground = isDark ? Colors.white : Color(0xFF163A2C);
       // Web parity: styled empty-state card (orange icon box + heading + copy)
       // under the "ASSET CUSTOMIZATION STATUS" header, not bare text.
       return SliverToBoxAdapter(
@@ -441,7 +441,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
       );
     }
 
-    final foreground = isDark ? Colors.white : Colors.black;
+    final foreground = isDark ? Colors.white : Color(0xFF163A2C);
     final q = _historyQuery.trim().toLowerCase();
     // Web parity: filter by project title or log id.
     final filtered = state.history.where((req) {
@@ -574,7 +574,7 @@ class _UnitCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final status = unit['customizationStatus'] ?? 'NOT_STARTED';
-    final foreground = isDark ? Colors.white : Colors.black;
+    final foreground = isDark ? Colors.white : Color(0xFF163A2C);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
@@ -811,7 +811,7 @@ class _HistoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final foreground = isDark ? Colors.white : Colors.black;
+    final foreground = isDark ? Colors.white : Color(0xFF163A2C);
     final id =
         req['_id']
             ?.toString()
@@ -1577,7 +1577,7 @@ class _IconBox extends StatelessWidget {
       child: Icon(
         icon,
         size: 20,
-        color: color ?? (isDark ? Colors.white : Colors.black),
+        color: color ?? (isDark ? Colors.white : Color(0xFF163A2C)),
       ),
     );
   }
@@ -1597,7 +1597,7 @@ class _DetailItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final foreground = isDark ? Colors.white : Colors.black;
+    final foreground = isDark ? Colors.white : Color(0xFF163A2C);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

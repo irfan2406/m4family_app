@@ -189,8 +189,8 @@ class _InvestorInstallmentsScreenState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -224,7 +224,7 @@ class _InvestorInstallmentsScreenState
                       width: 48,
                       height: 48,
                       decoration: BoxDecoration(
-                        color: (isDark ? Colors.white : Colors.black)
+                        color: (isDark ? Colors.white : Color(0xFF163A2C))
                             .withValues(alpha: 0.04),
                         shape: BoxShape.circle,
                         border: Border.all(color: border),
@@ -360,7 +360,7 @@ class _InvestorInstallmentsScreenState
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.02),
+        color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.02),
         border: Border(bottom: BorderSide(color: border)),
       ),
       child: Row(
@@ -443,7 +443,7 @@ class _InvestorInstallmentsScreenState
               decoration: BoxDecoration(
                 color: active
                     ? activeColor.withValues(alpha: 0.1)
-                    : (isDark ? Colors.white : Colors.black).withValues(
+                    : (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                         alpha: 0.03,
                       ),
                 borderRadius: BorderRadius.circular(8),

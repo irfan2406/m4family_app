@@ -620,7 +620,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         color = const Color(0xFFFFD700);
         break;
       case 'ENDED':
-        color = isDark ? Colors.white38 : Colors.black38;
+        color = isDark ? Colors.white38 : Color(0xFF5E6B60);
         break;
       case 'CANCELLED':
         color = const Color(0xFFEF4444);
@@ -705,7 +705,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 style: GoogleFonts.gelasio(
                   fontSize: 8,
                   fontWeight: FontWeight.w900,
-                  color: isDark ? Colors.white38 : Colors.black38,
+                  color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                   letterSpacing: 1.5,
                 ),
               ),
@@ -715,7 +715,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 style: GoogleFonts.ebGaramond(
                   fontSize: 12,
                   fontWeight: FontWeight.w900,
-                  color: isDark ? Colors.white : Colors.black,
+                  color: isDark ? Colors.white : Color(0xFF163A2C),
                   letterSpacing: -0.2,
                 ),
               ),
@@ -789,7 +789,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     style: GoogleFonts.gelasio(
                       fontSize: 8,
                       fontWeight: FontWeight.w900,
-                      color: isDark ? Colors.white38 : Colors.black38,
+                      color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                       letterSpacing: 1.5,
                     ),
                   ),
@@ -799,7 +799,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                     style: GoogleFonts.ebGaramond(
                       fontSize: 12,
                       fontWeight: FontWeight.w900,
-                      color: isDark ? Colors.white : Colors.black,
+                      color: isDark ? Colors.white : Color(0xFF163A2C),
                       letterSpacing: -0.2,
                     ),
                   ),
@@ -849,7 +849,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 style: GoogleFonts.ebGaramond(
                   fontSize: 11,
                   fontWeight: FontWeight.w900,
-                  color: isDark ? Colors.white : Colors.black,
+                  color: isDark ? Colors.white : Color(0xFF163A2C),
                   letterSpacing: 1,
                 ),
               ),

@@ -137,8 +137,8 @@ class _BookingConfirmationScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: 0.68,
     );
 
@@ -365,7 +365,7 @@ class _BookingConfirmationScreenState
                       width: double.infinity,
                       height: 64,
                       decoration: BoxDecoration(
-                        color: isDark ? Colors.white : Colors.black,
+                        color: isDark ? Colors.white : Color(0xFF163A2C),
                         borderRadius: BorderRadius.circular(32),
                       ),
                       child: Row(
@@ -656,7 +656,7 @@ class _ActionButton extends StatelessWidget {
                 style: GoogleFonts.gelasio(
                   fontSize: 8,
                   fontWeight: FontWeight.w900,
-                  color: isDark ? Colors.white : Colors.black,
+                  color: isDark ? Colors.white : Color(0xFF163A2C),
                   letterSpacing: 1.5,
                 ),
               ),

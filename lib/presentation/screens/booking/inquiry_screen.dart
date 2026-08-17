@@ -113,7 +113,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                   width: 100,
                   height: 100,
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.white : Colors.black,
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: Icon(
@@ -137,7 +137,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                   textAlign: TextAlign.center,
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
-                    color: isDark ? Colors.white38 : Colors.black38,
+                    color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.5,
                     height: 1.8,
@@ -150,11 +150,11 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                     width: double.infinity,
                     height: 64,
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Colors.black,
+                      color: isDark ? Colors.white : Color(0xFF163A2C),
                       borderRadius: BorderRadius.circular(32),
                       boxShadow: [
                         BoxShadow(
-                          color: (isDark ? Colors.white : Colors.black)
+                          color: (isDark ? Colors.white : Color(0xFF163A2C))
                               .withOpacity(0.1),
                           blurRadius: 20,
                           offset: const Offset(0, 10),
@@ -197,7 +197,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
         leading: IconButton(
           icon: Icon(
             LucideIcons.chevronLeft,
-            color: isDark ? Colors.white : Colors.black,
+            color: isDark ? Colors.white : Color(0xFF163A2C),
           ),
           onPressed: () => Navigator.pop(context),
         ),
@@ -209,14 +209,14 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
               style: GoogleFonts.ebGaramond(
                 fontSize: 14,
                 fontWeight: FontWeight.w900,
-                color: isDark ? Colors.white : Colors.black,
+                color: isDark ? Colors.white : Color(0xFF163A2C),
               ),
             ),
             Text(
               'INSTITUTIONAL PROTOCOL',
               style: GoogleFonts.gelasio(
                 fontSize: 8,
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.68),
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.5,
               ),
@@ -234,7 +234,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
               width: 300,
               height: 300,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.02),
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.02),
                 shape: BoxShape.circle,
               ),
             ),
@@ -274,7 +274,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                         width: 56,
                         height: 56,
                         decoration: BoxDecoration(
-                          color: isDark ? Colors.white : Colors.black,
+                          color: isDark ? Colors.white : Color(0xFF163A2C),
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
@@ -301,7 +301,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                                 fontSize: 10,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 1.5,
-                                color: isDark ? Colors.white : Colors.black,
+                                color: isDark ? Colors.white : Color(0xFF163A2C),
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -309,7 +309,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                               'COMPLETE THE PROTOCOL TO UNLOCK THE DETAILED ASSET INVENTORY.',
                               style: GoogleFonts.ebGaramond(
                                 fontSize: 9,
-                                color: (isDark ? Colors.white : Colors.black)
+                                color: (isDark ? Colors.white : Color(0xFF163A2C))
                                     .withOpacity(0.68),
                                 fontWeight: FontWeight.bold,
                                 height: 1.4,
@@ -370,11 +370,11 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                     width: double.infinity,
                     height: 72,
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Colors.black,
+                      color: isDark ? Colors.white : Color(0xFF163A2C),
                       borderRadius: BorderRadius.circular(36),
                       boxShadow: [
                         BoxShadow(
-                          color: (isDark ? Colors.white : Colors.black)
+                          color: (isDark ? Colors.white : Color(0xFF163A2C))
                               .withOpacity(0.2),
                           blurRadius: 30,
                           offset: const Offset(0, 15),
@@ -450,7 +450,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
         style: GoogleFonts.gelasio(
           fontSize: 9,
           fontWeight: FontWeight.w900,
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
+          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.6),
           letterSpacing: 2,
         ),
       ),
@@ -487,7 +487,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
         style: GoogleFonts.ebGaramond(
           fontSize: 15,
           fontWeight: FontWeight.w900,
-          color: isDark ? Colors.white : Colors.black,
+          color: isDark ? Colors.white : Color(0xFF163A2C),
           letterSpacing: 0.5,
         ),
         decoration: InputDecoration(
@@ -495,13 +495,13 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
           hintText: hint,
           hintStyle: GoogleFonts.ebGaramond(
             fontSize: 12,
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.68),
             fontWeight: FontWeight.w900,
           ),
           icon: maxLines == 1
               ? Icon(
                   icon,
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                     0.4,
                   ),
                   size: 20,

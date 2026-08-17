@@ -106,7 +106,7 @@ class _InvestorReferralScreenState
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
 
     return Scaffold(
       backgroundColor: bg,
@@ -118,14 +118,14 @@ class _InvestorReferralScreenState
               child: _loading
                   ? Center(
                       child: CircularProgressIndicator(
-                        color: isDark ? Colors.white : Colors.black,
+                        color: isDark ? Colors.white : Color(0xFF163A2C),
                       ),
                     )
                   : _error && _wallet == null && _referrals.isEmpty
                   ? _buildErrorState(isDark, textPrimary)
                   : RefreshIndicator(
                       onRefresh: _load,
-                      color: isDark ? Colors.white : Colors.black,
+                      color: isDark ? Colors.white : Color(0xFF163A2C),
                       backgroundColor: isDark
                           ? const Color(0xFF1C1C1E)
                           : Colors.white,
@@ -263,7 +263,7 @@ class _InvestorReferralScreenState
                     letterSpacing: 3,
                     // Was the gold accent — plain ink now (white on dark, since
                     // black there would be unreadable).
-                    color: isDark ? Colors.white : Colors.black,
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -566,7 +566,7 @@ class _InvestorReferralScreenState
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.5,
                     // Was the gold accent — plain ink now.
-                    color: isDark ? Colors.white : Colors.black,
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
                   ),
                 ),
                 if (code != null && code.isNotEmpty) ...[
@@ -579,7 +579,7 @@ class _InvestorReferralScreenState
                       letterSpacing: 1,
                       // Was _gold — slightly muted ink so it still reads as
                       // secondary next to the name above it.
-                      color: (isDark ? Colors.white : Colors.black).withValues(
+                      color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                         alpha: 0.65,
                       ),
                     ),
@@ -759,7 +759,7 @@ class _InvestorReferralScreenState
                 ),
                 decoration: BoxDecoration(
                   // Was the gold accent — matches the app's black CTA style.
-                  color: isDark ? Colors.white : Colors.black,
+                  color: isDark ? Colors.white : Color(0xFF163A2C),
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Text(
@@ -867,7 +867,7 @@ class _InvestorReferralScreenState
                                 height: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  color: isDark ? Colors.white : Colors.black,
+                                  color: isDark ? Colors.white : Color(0xFF163A2C),
                                 ),
                               ),
                             ),

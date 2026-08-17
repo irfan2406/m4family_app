@@ -173,7 +173,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
             : Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
+          color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.1),
         ),
         boxShadow: isDark
             ? null
@@ -279,7 +279,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
             : Colors.white,
         borderRadius: BorderRadius.circular(28),
         border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
+          color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.1),
         ),
         boxShadow: isDark
             ? null
@@ -343,7 +343,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: isDark ? Colors.white : Colors.black,
+                backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
                 foregroundColor: isDark ? Colors.black : Colors.white,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
@@ -413,7 +413,7 @@ class _FaqCategory extends StatelessWidget {
             // Web parity: a clean, visible thin outline border — the FAQ groups
             // read as outlined cards, not soft-shadow "floating" cards.
             border: Border.all(
-              color: (isDark ? Colors.white : Colors.black).withValues(
+              color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                 alpha: 0.1,
               ),
             ),
@@ -435,7 +435,7 @@ class _FaqCategory extends StatelessWidget {
                   Divider(
                     height: 1,
                     thickness: 1,
-                    color: (isDark ? Colors.white : Colors.black).withValues(
+                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                       alpha: 0.07,
                     ),
                   ),

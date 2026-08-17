@@ -249,12 +249,12 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                  color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                     0.03,
                   ),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                       0.05,
                     ),
                   ),
@@ -382,7 +382,7 @@ class _LogCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: (isDark ? const Color(0xFF0F172A) : Colors.black).withOpacity(
+        color: (isDark ? const Color(0xFF0F172A) : Color(0xFF163A2C)).withOpacity(
           isDark ? 0.4 : 0.05,
         ),
         borderRadius: BorderRadius.circular(24),

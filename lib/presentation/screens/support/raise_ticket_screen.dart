@@ -125,7 +125,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final onSurface = isDark ? Colors.white : Colors.black;
+    final onSurface = isDark ? Colors.white : Color(0xFF163A2C);
     const amber = Color(0xFFF59E0B);
 
     return Scaffold(

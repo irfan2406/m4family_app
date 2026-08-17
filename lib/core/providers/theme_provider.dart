@@ -25,7 +25,8 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
     try {
       final themeStr = await _storage.read(key: 'app_theme');
       if (themeStr == null || !mounted) return;
-      final saved = themeStr == 'light' ? ThemeMode.light : ThemeMode.dark;
+      // Only an explicit saved 'dark' switches away from the light default.
+      final saved = themeStr == 'dark' ? ThemeMode.dark : ThemeMode.light;
       if (state != saved) state = saved;
     } catch (_) {
       // Storage unavailable — keep the default rather than fail the launch.
@@ -70,5 +71,7 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
 }
 
 final themeProvider = StateNotifierProvider<ThemeNotifier, ThemeMode>((ref) {
-  return ThemeNotifier(ref, ThemeMode.dark);
+  // The app launches in LIGHT mode (green showcase + cream info screens); a
+  // saved preference still wins, restored asynchronously in _restoreSavedTheme.
+  return ThemeNotifier(ref, ThemeMode.light);
 });

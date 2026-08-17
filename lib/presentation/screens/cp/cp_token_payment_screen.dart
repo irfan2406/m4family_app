@@ -107,7 +107,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
     bool isDark,
   ) {
     final isActive = _selectedMethod == id;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -152,7 +152,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                   style: GoogleFonts.ebGaramond(
                     fontSize: 12,
                     fontWeight: FontWeight.w900,
-                    color: isDark ? Colors.white : Colors.black,
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -218,7 +218,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                   style: GoogleFonts.gelasio(
                     fontSize: 22,
                     fontWeight: FontWeight.w900,
-                    color: isDark ? Colors.white : Colors.black,
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -228,7 +228,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                   textAlign: TextAlign.center,
                   style: GoogleFonts.ebGaramond(
                     fontSize: 10,
-                    color: (isDark ? Colors.white : Colors.black).withValues(
+                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                       alpha: 0.68,
                     ),
                     fontWeight: FontWeight.w900,
@@ -241,7 +241,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                   width: double.infinity,
                   height: 64,
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.white : Colors.black,
+                    color: isDark ? Colors.white : Color(0xFF163A2C),
                     borderRadius: BorderRadius.circular(32),
                   ),
                   child: Center(
@@ -268,8 +268,8 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? Colors.black : Colors.white;
-    final textPrimary = isDark ? Colors.white : Colors.black;
-    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
+    final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
 
     if (_isSuccess) {
       return _buildSuccessScreen(isDark);

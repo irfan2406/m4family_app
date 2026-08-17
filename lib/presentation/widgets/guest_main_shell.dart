@@ -178,13 +178,13 @@ class _NavIcon extends StatelessWidget {
         height: 56,
         decoration: BoxDecoration(
           color: isActive
-              ? (isDark ? Colors.white : Colors.black)
+              ? (isDark ? Colors.white : Color(0xFF163A2C))
               : Colors.transparent,
           shape: BoxShape.circle,
           boxShadow: isActive
               ? [
                   BoxShadow(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
                       0.1,
                     ),
                     blurRadius: 10,
@@ -197,7 +197,7 @@ class _NavIcon extends StatelessWidget {
             icon,
             color: isActive
                 ? (isDark ? Colors.black : Colors.white)
-                : (isDark ? Colors.white70 : Colors.black54),
+                : (isDark ? Colors.white70 : Color(0xFF5E6B60)),
             size: 24,
           ),
         ),

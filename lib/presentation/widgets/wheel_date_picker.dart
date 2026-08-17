@@ -88,7 +88,7 @@ class _WheelDatePickerSheetState extends State<_WheelDatePickerSheet> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final fg = isDark ? Colors.white : Colors.black;
+    final fg = isDark ? Colors.white : Color(0xFF163A2C);
     final years = List<int>.generate(
       _maxYear - widget.minYear + 1,
       (i) => widget.minYear + i,
