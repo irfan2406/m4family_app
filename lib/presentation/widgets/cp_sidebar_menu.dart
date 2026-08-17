@@ -41,7 +41,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
         child: Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF15171C) : Colors.white,
+            color: isDark ? const Color(0xFF15171C) : const Color(0xFF0F2A20).withValues(alpha: 0.72),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: isDark
@@ -71,7 +71,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                 style: GoogleFonts.gelasio(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : const Color(0xFF111827),
+                  color: isDark ? Colors.white : const Color(0xFFF4EFE3),
                 ),
               ),
               const SizedBox(height: 8),
@@ -369,11 +369,11 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                         child: Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: (isDark ? Colors.white : Color(0xFF163A2C))
+                            color: (isDark ? Colors.white : const Color(0xFFF4EFE3))
                                 .withOpacity(0.08),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: (isDark ? Colors.white : Color(0xFF163A2C))
+                              color: (isDark ? Colors.white : const Color(0xFFF4EFE3))
                                   .withOpacity(0.1),
                             ),
                           ),
@@ -381,7 +381,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                           // (resolvedTheme === "dark" ? Moon : Sparkles).
                           child: Icon(
                             isDark ? LucideIcons.moon : LucideIcons.sparkles,
-                            color: isDark ? Colors.white : Color(0xFF163A2C),
+                            color: isDark ? Colors.white : const Color(0xFFF4EFE3),
                             size: 18,
                           ),
                         ),
@@ -524,7 +524,7 @@ class _SubItem extends StatelessWidget {
               width: 28,
               height: 28,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
+                color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(0.05),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
@@ -539,7 +539,7 @@ class _SubItem extends StatelessWidget {
               style: GoogleFonts.ebGaramond(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
-                color: isDark ? Colors.white : Color(0xFF163A2C),
+                color: isDark ? Colors.white : const Color(0xFFF4EFE3),
               ),
             ),
           ],

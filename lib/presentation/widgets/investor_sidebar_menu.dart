@@ -49,7 +49,7 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
         child: Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF15171C) : Colors.white,
+            color: isDark ? const Color(0xFF15171C) : const Color(0xFF0F2A20).withValues(alpha: 0.72),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: isDark
@@ -79,7 +79,7 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                 style: GoogleFonts.gelasio(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
-                  color: isDark ? Colors.white : const Color(0xFF111827),
+                  color: isDark ? Colors.white : const Color(0xFFF4EFE3),
                 ),
               ),
               const SizedBox(height: 8),
@@ -403,17 +403,17 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                         child: Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: (isDark ? Colors.white : Color(0xFF163A2C))
+                            color: (isDark ? Colors.white : const Color(0xFFF4EFE3))
                                 .withValues(alpha: 0.08),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: (isDark ? Colors.white : Color(0xFF163A2C))
+                              color: (isDark ? Colors.white : const Color(0xFFF4EFE3))
                                   .withValues(alpha: 0.1),
                             ),
                           ),
                           child: Icon(
                             isDark ? LucideIcons.sparkles : LucideIcons.moon,
-                            color: isDark ? Colors.white : Color(0xFF163A2C),
+                            color: isDark ? Colors.white : const Color(0xFFF4EFE3),
                             size: 18,
                           ),
                         ),
@@ -504,7 +504,7 @@ class _SidebarItem extends StatelessWidget {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+                color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withValues(
                   alpha: 0.05,
                 ),
                 borderRadius: BorderRadius.circular(12),
@@ -569,7 +569,7 @@ class _SidebarDropdown extends StatelessWidget {
           onTap: onToggle,
           trailing: Icon(
             isOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown,
-            color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+            color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withValues(
               alpha: 0.4,
             ),
             size: 16,
@@ -611,7 +611,7 @@ class _SidebarSubItem extends StatelessWidget {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
+                color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withValues(
                   alpha: 0.05,
                 ),
                 borderRadius: BorderRadius.circular(8),

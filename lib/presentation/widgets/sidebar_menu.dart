@@ -71,7 +71,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
               decoration: BoxDecoration(
                 color: Theme.of(context).brightness == Brightness.dark
                     ? Colors.black.withOpacity(0.4)
-                    : Colors.white.withOpacity(0.4),
+                    : const Color(0xFF0F2A20).withValues(alpha: 0.72),
                 border: Border(
                   right: BorderSide(
                     color:
@@ -343,7 +343,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                             Text(
                               'THEME MODE',
                               style: GoogleFonts.gelasio(
-                                color: isDark ? Colors.white70 : Color(0xFF163A2C),
+                                color: isDark ? Colors.white70 : const Color(0xFFF4EFE3),
                                 fontSize: 10,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 2,
@@ -360,12 +360,12 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                               child: Container(
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: (isDark ? Colors.white : Color(0xFF163A2C))
+                                  color: (isDark ? Colors.white : const Color(0xFFF4EFE3))
                                       .withOpacity(0.08),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
                                     color:
-                                        (isDark ? Colors.white : Color(0xFF163A2C))
+                                        (isDark ? Colors.white : const Color(0xFFF4EFE3))
                                             .withOpacity(0.1),
                                   ),
                                 ),
@@ -373,7 +373,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                                   isDark
                                       ? LucideIcons.moon
                                       : LucideIcons.sparkles,
-                                  color: isDark ? Colors.white : Color(0xFF163A2C),
+                                  color: isDark ? Colors.white : const Color(0xFFF4EFE3),
                                   size: 18,
                                 ),
                               ),
