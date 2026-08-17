@@ -156,7 +156,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: isDark ? Colors.black : Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBodyBehindAppBar: true,
       extendBody: true,
       // Bottom nav — shown only when pushed standalone (from the menu), not
@@ -195,7 +195,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             ),
           ],
         ),
-        backgroundColor: (isDark ? Colors.black : Colors.white).withOpacity(
+        backgroundColor: (isDark ? Colors.black : Theme.of(context).scaffoldBackgroundColor).withOpacity(
           0.8,
         ),
         flexibleSpace: ClipRRect(
@@ -256,7 +256,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
       drawer: const ConditionalDrawer(),
       body: Container(
         decoration: BoxDecoration(
-          color: isDark ? Colors.black : Colors.white,
+          color: Theme.of(context).scaffoldBackgroundColor,
           gradient: isDark
               ? const RadialGradient(
                   center: Alignment.topCenter,
@@ -305,7 +305,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.black : Colors.white).withOpacity(0.3),
+        color: isDark ? Colors.black.withOpacity(0.3) : Theme.of(context).scaffoldBackgroundColor,
         border: Border(
           bottom: BorderSide(color: Colors.white.withOpacity(0.05)),
         ),
@@ -530,7 +530,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                         height: 24,
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: isDark ? Colors.black : Colors.white,
+                          color: Theme.of(context).scaffoldBackgroundColor,
                           shape: BoxShape.circle,
                           border: Border.all(
                             color: colorScheme.primary,
@@ -1472,7 +1472,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                                   height: 20,
                                   child: CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    color: isDark ? Colors.black : Colors.white,
+                                    color: Theme.of(context).scaffoldBackgroundColor,
                                   ),
                                 )
                               : Text(
@@ -1642,7 +1642,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   Icon(
                     LucideIcons.chevronRight,
                     size: 14,
-                    color: isDark ? Colors.black : Colors.white,
+                    color: Theme.of(context).scaffoldBackgroundColor,
                   ),
                 ],
               ),

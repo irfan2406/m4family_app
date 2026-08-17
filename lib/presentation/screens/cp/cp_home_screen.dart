@@ -333,31 +333,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                 // translate), so it never touches the logo or the hero.
                 Padding(
                   padding: const EdgeInsets.only(top: 12, bottom: 8),
-                  child: ColorFiltered(
-                    colorFilter: ColorFilter.matrix(
-                      Theme.of(context).brightness == Brightness.dark
-                          ? const [
-                              // Dark Mode: Invert and boost to white
-                              -5.0, 0, 0, 0, 255,
-                              0, -5.0, 0, 0, 255,
-                              0, -5.0, 0, 0, 255,
-                              0, 0, 0, 1, 0,
-                            ]
-                          : const [
-                              // Light Mode: Crush to black
-                              5.0, 0, 0, 0, -150,
-                              0, 5.0, 0, 0, -150,
-                              0, 0, 5.0, 0, -150,
-                              0, 0, 0, 1, 0,
-                            ],
-                    ),
-                    child: Image.asset(
-                      'assets/living_m4_life.png',
-                      width: MediaQuery.of(context).size.width,
-                      height: 120,
-                      fit: BoxFit.fitWidth,
-                    ),
-                  ),
+                  child: M4Theme.taglineWordmark(context, height: 120),
                 ),
 
                 // Hero carousel (4:3, auto-cycle, badge, dots). Guest parity:

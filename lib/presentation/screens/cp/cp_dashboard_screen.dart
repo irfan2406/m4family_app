@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -145,6 +146,18 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // CP "Dashboard landing" is a green showcase screen (same rule as CP Home /
+    // Projects): deep-green surface + white typography in light mode, navy in
+    // dark. It is reached as a standalone route, so it wraps itself in the
+    // showcase theme instead of inheriting the shell's.
+    final bool appIsDark = Theme.of(context).brightness == Brightness.dark;
+    return Theme(
+      data: appIsDark ? M4Theme.darkThemeNavy : M4Theme.darkTheme,
+      child: Builder(builder: _buildBody),
+    );
+  }
+
+  Widget _buildBody(BuildContext context) {
     final user = ref.watch(authProvider).user;
     final projectsAsync = ref.watch(projectsProvider);
     final scheme = Theme.of(context).colorScheme;
@@ -217,31 +230,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                     offset: const Offset(0, -60),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 0),
-                      child: ColorFiltered(
-                        colorFilter: ColorFilter.matrix(
-                          Theme.of(context).brightness == Brightness.dark
-                              ? const [
-                                  // Dark Mode: Invert and boost to white
-                                  -5.0, 0, 0, 0, 255,
-                                  0, -5.0, 0, 0, 255,
-                                  0, 0, -5.0, 0, 255,
-                                  0, 0, 0, 1, 0,
-                                ]
-                              : const [
-                                  // Light Mode: Crush to black
-                                  5.0, 0, 0, 0, -150,
-                                  0, 5.0, 0, 0, -150,
-                                  0, 0, 5.0, 0, -150,
-                                  0, 0, 0, 1, 0,
-                                ],
-                        ),
-                        child: Image.asset(
-                          'assets/living_m4_life.png',
-                          width: MediaQuery.of(context).size.width,
-                          height: 300,
-                          fit: BoxFit.fitWidth,
-                        ),
-                      ),
+                      child: M4Theme.taglineWordmark(context, height: 300),
                     ),
                   ),
 

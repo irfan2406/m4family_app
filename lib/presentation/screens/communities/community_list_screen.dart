@@ -44,7 +44,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
         .toLowerCase();
     final isCp = role == 'cp';
     return Scaffold(
-      backgroundColor: isDark ? Colors.black : Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       drawer: const ConditionalDrawer(),
       extendBody: true,
       bottomNavigationBar: isCp
@@ -405,7 +405,7 @@ class _CommunityCard extends ConsumerWidget {
                     ),
                     child: Icon(
                       LucideIcons.arrowRight,
-                      color: isDark ? Colors.black : Colors.white,
+                      color: Theme.of(context).scaffoldBackgroundColor,
                       size: 24,
                     ),
                   ),

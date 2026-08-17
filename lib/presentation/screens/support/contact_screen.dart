@@ -407,7 +407,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                     height: 20,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: isDark ? Colors.black : Colors.white,
+                      color: Theme.of(context).scaffoldBackgroundColor,
                     ),
                   )
                 : Row(
@@ -501,7 +501,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                 ? Icon(
                     LucideIcons.check,
                     size: 14,
-                    color: isDark ? Colors.black : Colors.white,
+                    color: Theme.of(context).scaffoldBackgroundColor,
                   )
                 : null,
           ),
@@ -613,7 +613,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
             ),
             child: Icon(
               icon,
-              color: isDark ? Colors.black : Colors.white,
+              color: Theme.of(context).scaffoldBackgroundColor,
               size: 20,
             ),
           ),
@@ -836,7 +836,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                         Icon(
                           LucideIcons.phone,
                           size: 15,
-                          color: isDark ? Colors.black : Colors.white,
+                          color: Theme.of(context).scaffoldBackgroundColor,
                         ),
                         const SizedBox(width: 8),
                         Text(
@@ -845,7 +845,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                             fontSize: 9,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 1.5,
-                            color: isDark ? Colors.black : Colors.white,
+                            color: Theme.of(context).scaffoldBackgroundColor,
                           ),
                         ),
                       ],

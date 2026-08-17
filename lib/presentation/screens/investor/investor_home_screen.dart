@@ -575,31 +575,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                 // Tagline (Living the M4 Life) — script image, not text.
                 Transform.translate(
                   offset: const Offset(0, -50),
-                  child: ColorFiltered(
-                    colorFilter: ColorFilter.matrix(
-                      Theme.of(context).brightness == Brightness.dark
-                          ? const [
-                              // Dark Mode: Invert and boost to white
-                              -5.0, 0, 0, 0, 255,
-                              0, -5.0, 0, 0, 255,
-                              0, -5.0, 0, 0, 255,
-                              0, 0, 0, 1, 0,
-                            ]
-                          : const [
-                              // Light Mode: Crush to black
-                              5.0, 0, 0, 0, -150,
-                              0, 5.0, 0, 0, -150,
-                              0, 0, 5.0, 0, -150,
-                              0, 0, 0, 1, 0,
-                            ],
-                    ),
-                    child: Image.asset(
-                      'assets/living_m4_life.png',
-                      width: MediaQuery.of(context).size.width,
-                      height: 200,
-                      fit: BoxFit.fitWidth,
-                    ),
-                  ),
+                  child: M4Theme.taglineWordmark(context, height: 200),
                 ),
 
                 // Hero carousel (4:3, auto-cycle, badge, dots).

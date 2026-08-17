@@ -87,7 +87,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: isDark ? Colors.black : Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         centerTitle: true,
@@ -114,7 +114,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
             ),
           ],
         ),
-        backgroundColor: (isDark ? Colors.black : Colors.white).withOpacity(
+        backgroundColor: (isDark ? Colors.black : Theme.of(context).scaffoldBackgroundColor).withOpacity(
           0.8,
         ),
         flexibleSpace: ClipRRect(
@@ -177,7 +177,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
       drawer: const ConditionalDrawer(),
       body: Container(
         decoration: BoxDecoration(
-          color: isDark ? Colors.black : Colors.white,
+          color: Theme.of(context).scaffoldBackgroundColor,
           gradient: isDark
               ? const RadialGradient(
                   center: Alignment.topCenter,

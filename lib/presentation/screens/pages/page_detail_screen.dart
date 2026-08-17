@@ -75,7 +75,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
             letterSpacing: 1,
           ),
         ),
-        backgroundColor: (isDark ? Colors.black : Colors.white).withOpacity(
+        backgroundColor: (isDark ? Colors.black : Theme.of(context).scaffoldBackgroundColor).withOpacity(
           0.8,
         ),
         flexibleSpace: ClipRRect(
@@ -101,7 +101,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
       ),
       body: Container(
         decoration: BoxDecoration(
-          color: isDark ? Colors.black : Colors.white,
+          color: Theme.of(context).scaffoldBackgroundColor,
           gradient: isDark
               ? const RadialGradient(
                   center: Alignment.topCenter,

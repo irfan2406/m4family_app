@@ -161,7 +161,7 @@ class M4FamilyApp extends ConsumerWidget {
       title: 'M4 Family',
       debugShowCheckedModeBanner: false,
       theme: M4Theme.lightTheme,
-      darkTheme: M4Theme.darkTheme,
+      darkTheme: M4Theme.darkThemeNavy, // dark mode = deep navy (#0B1026)
       themeMode: themeMode,
       // Instant theme switch — disable MaterialApp's ~200ms cross-fade so the
       // WHOLE app (screens + menu) flips light/dark together, with zero delay.

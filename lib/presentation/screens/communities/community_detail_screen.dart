@@ -182,7 +182,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
           ];
 
     return Scaffold(
-      backgroundColor: isDark ? Colors.black : Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       drawer: const ConditionalDrawer(),
       bottomNavigationBar: isCp
           ? CpBottomNav(
@@ -365,7 +365,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                             ),
                             child: Icon(
                               LucideIcons.mapPin,
-                              color: isDark ? Colors.black : Colors.white,
+                              color: Theme.of(context).scaffoldBackgroundColor,
                               size: 18,
                             ),
                           ),
@@ -752,7 +752,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                           ),
                           child: _isSubmitting
                               ? CircularProgressIndicator(
-                                  color: isDark ? Colors.black : Colors.white,
+                                  color: Theme.of(context).scaffoldBackgroundColor,
                                 )
                               : Text(
                                   'REGISTER INTEREST',

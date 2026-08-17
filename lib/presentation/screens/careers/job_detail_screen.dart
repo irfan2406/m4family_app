@@ -24,7 +24,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
     final job = widget.job;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: isDark ? Colors.black : Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         centerTitle: true,
@@ -53,7 +53,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
             ),
           ],
         ),
-        backgroundColor: (isDark ? Colors.black : Colors.white).withOpacity(
+        backgroundColor: (isDark ? Colors.black : Theme.of(context).scaffoldBackgroundColor).withOpacity(
           0.8,
         ),
         flexibleSpace: ClipRRect(
@@ -109,7 +109,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
       body: Container(
         padding: const EdgeInsets.only(top: 120),
         decoration: BoxDecoration(
-          color: isDark ? Colors.black : Colors.white,
+          color: Theme.of(context).scaffoldBackgroundColor,
           gradient: isDark
               ? const RadialGradient(
                   center: Alignment.topCenter,
@@ -292,7 +292,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                                 child: Text(
                                   item.toString().toUpperCase(),
                                   style: GoogleFonts.gelasio(
-                                    color: isDark ? Colors.black : Colors.white,
+                                    color: Theme.of(context).scaffoldBackgroundColor,
                                     fontWeight: FontWeight.w900,
                                     fontSize: 9,
                                     letterSpacing: 1.5,
@@ -340,7 +340,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
         ),
       ),
       bottomSheet: Container(
-        color: isDark ? Colors.black : Colors.white,
+        color: Theme.of(context).scaffoldBackgroundColor,
         padding: const EdgeInsets.fromLTRB(24, 16, 24, 40),
         child: SizedBox(
           width: double.infinity,

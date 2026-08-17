@@ -142,7 +142,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: isDark ? Colors.black : Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         centerTitle: true,
@@ -171,7 +171,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
             ),
           ],
         ),
-        backgroundColor: (isDark ? Colors.black : Colors.white).withOpacity(
+        backgroundColor: (isDark ? Colors.black : Theme.of(context).scaffoldBackgroundColor).withOpacity(
           0.8,
         ),
         flexibleSpace: ClipRRect(
@@ -227,7 +227,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
       body: Container(
         padding: const EdgeInsets.only(top: 120),
         decoration: BoxDecoration(
-          color: isDark ? Colors.black : Colors.white,
+          color: Theme.of(context).scaffoldBackgroundColor,
           gradient: isDark
               ? const RadialGradient(
                   center: Alignment.topCenter,
@@ -441,7 +441,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                   ),
                   child: _isSubmitting
                       ? CircularProgressIndicator(
-                          color: isDark ? Colors.black : Colors.white,
+                          color: Theme.of(context).scaffoldBackgroundColor,
                         )
                       : Text(
                           'SUBMIT APPLICATION',
