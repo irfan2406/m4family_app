@@ -1,6 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -14,10 +16,12 @@ class InvestorRelationsScreen extends ConsumerStatefulWidget {
   const InvestorRelationsScreen({super.key});
 
   @override
-  ConsumerState<InvestorRelationsScreen> createState() => _InvestorRelationsScreenState();
+  ConsumerState<InvestorRelationsScreen> createState() =>
+      _InvestorRelationsScreenState();
 }
 
-class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScreen> {
+class _InvestorRelationsScreenState
+    extends ConsumerState<InvestorRelationsScreen> {
   bool _isLoading = true;
   bool _isSubmitting = false;
   Map<String, dynamic>? _pageData;
@@ -75,11 +79,13 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
       _showToast('Please agree to the Privacy Policy', isError: true);
       return;
     }
-    if (_firstNameController.text.trim().isEmpty ||
-        _lastNameController.text.trim().isEmpty ||
-        _emailController.text.trim().isEmpty ||
-        _phoneController.text.trim().isEmpty) {
-      _showToast('Please fill in all required fields', isError: true);
+    final validationError =
+        Validators.nameError(_firstNameController.text, field: 'first name') ??
+        Validators.nameError(_lastNameController.text, field: 'last name') ??
+        Validators.emailError(_emailController.text) ??
+        Validators.phoneError(_phoneController.text);
+    if (validationError != null) {
+      _showToast(validationError, isError: true);
       return;
     }
 
@@ -87,11 +93,14 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
     try {
       final apiClient = ref.read(apiClientProvider);
       final response = await apiClient.submitLead({
-        'name': '${_firstNameController.text.trim()} ${_lastNameController.text.trim()}',
+        'name':
+            '${_firstNameController.text.trim()} ${_lastNameController.text.trim()}',
         'email': _emailController.text.trim(),
         'phone': _phoneController.text.trim(),
         'message': _messageController.text.trim(),
-        'interest': 'Investing',
+        // Server-side enum — 'Investing' isn't valid and was rejected with a
+        // 400. Valid: Buying | Selling | Site Visit | Video Call.
+        'interest': 'Buying',
         'source': 'online',
         'notes': 'Submitted via Investor Relations Page',
       });
@@ -108,7 +117,10 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
           _agreedNews = false;
         });
       } else {
-        _showToast(response.data['message'] ?? 'Submission failed', isError: true);
+        _showToast(
+          response.data['message'] ?? 'Submission failed',
+          isError: true,
+        );
       }
     } catch (_) {
       _showToast('Submission failed. Please try again.', isError: true);
@@ -121,8 +133,14 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message, style: GoogleFonts.ebGaramond(fontWeight: FontWeight.bold, fontSize: 12)),
-        backgroundColor: isError ? const Color(0xFFD32F2F) : const Color(0xFFC5A35B),
+        content: Text(
+          message,
+          style: GoogleFonts.ebGaramond(
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+          ),
+        ),
+        backgroundColor: isError ? Colors.redAccent : const Color(0xFF10B981),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
@@ -139,13 +157,29 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('INVESTOR RELATIONS',
-                style: GoogleFonts.gelasio(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.bold, fontSize: 18, letterSpacing: 1)),
-            Text('M4 FAMILY DEVELOPMENTS',
-                style: GoogleFonts.gelasio(color: (isDark ? Colors.white : Colors.black).withOpacity(0.5), fontWeight: FontWeight.w900, fontSize: 9, letterSpacing: 4)),
+            Text(
+              'INVESTOR RELATIONS',
+              style: GoogleFonts.gelasio(
+                color: isDark ? Colors.white : Colors.black,
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+                letterSpacing: 1,
+              ),
+            ),
+            Text(
+              'M4 FAMILY DEVELOPMENTS',
+              style: GoogleFonts.gelasio(
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
+                fontWeight: FontWeight.w900,
+                fontSize: 9,
+                letterSpacing: 4,
+              ),
+            ),
           ],
         ),
-        backgroundColor: (isDark ? Colors.black : Colors.white).withOpacity(0.8),
+        backgroundColor: (isDark ? Colors.black : Colors.white).withOpacity(
+          0.8,
+        ),
         flexibleSpace: ClipRRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
@@ -154,47 +188,37 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
         ),
         elevation: 0,
         leading: IconButton(
-          icon: Icon(LucideIcons.arrowLeft, color: isDark ? Colors.white70 : Colors.black54),
+          icon: Icon(
+            LucideIcons.arrowLeft,
+            color: isDark ? Colors.white70 : Colors.black54,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
-        actions: [
-          Builder(
-            builder: (context) => GestureDetector(
-              onTap: () => Scaffold.of(context).openDrawer(),
-              child: Container(
-                margin: const EdgeInsets.only(right: 16, top: 12, bottom: 12),
-                padding: const EdgeInsets.symmetric(horizontal: 14),
-                decoration: BoxDecoration(
-                  color: Colors.transparent,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Icon(
-                  LucideIcons.menu, 
-                  color: Theme.of(context).colorScheme.onSurface, 
-                  size: 20
-                ),
-              ),
-            ),
-          ),
-        ],
       ),
       drawer: const ConditionalDrawer(),
       body: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
-          gradient: isDark 
-            ? const RadialGradient(
-                center: Alignment.topCenter,
-                radius: 2.5,
-                colors: [Color(0xFF0F2A20), Colors.black],
-              )
-            : null,
+          gradient: isDark
+              ? const RadialGradient(
+                  center: Alignment.topCenter,
+                  radius: 2.5,
+                  colors: [Color(0xFF0F1115), Colors.black],
+                )
+              : null,
         ),
         child: SafeArea(
           child: _isLoading
-              ? Center(child: CircularProgressIndicator(color: isDark ? Colors.white24 : Colors.black12))
+              ? Center(
+                  child: CircularProgressIndicator(
+                    color: isDark ? Colors.white24 : Colors.black12,
+                  ),
+                )
               : SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 24,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -235,13 +259,25 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
         ),
         const SizedBox(height: 28),
         if (content.toString().isNotEmpty)
-          ...content.toString().split('\n\n').map((paragraph) => Padding(
-                padding: const EdgeInsets.only(bottom: 16, right: 16),
-                child: Text(
-                  paragraph,
-                  style: GoogleFonts.ebGaramond(color: (isDark ? Colors.white : Colors.black).withOpacity(0.6), fontSize: 14, fontWeight: FontWeight.w500, height: 1.6),
+          ...content
+              .toString()
+              .split('\n\n')
+              .map(
+                (paragraph) => Padding(
+                  padding: const EdgeInsets.only(bottom: 16, right: 16),
+                  child: Text(
+                    paragraph,
+                    style: GoogleFonts.ebGaramond(
+                      color: (isDark ? Colors.white : Colors.black).withOpacity(
+                        0.6,
+                      ),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      height: 1.6,
+                    ),
+                  ),
                 ),
-              )),
+              ),
       ],
     ).animate().fadeIn().slideY(begin: 0.1);
   }
@@ -254,14 +290,23 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
       child: AspectRatio(
         aspectRatio: 4 / 3,
         child: CachedNetworkImage(
-          imageUrl: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80',
+          imageUrl:
+              'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80',
           fit: BoxFit.cover,
           color: isDark ? Colors.white : null,
           colorBlendMode: isDark ? BlendMode.saturation : null,
-          placeholder: (_, __) => Container(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+          placeholder: (_, __) => Container(
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+          ),
           errorWidget: (_, __, ___) => Container(
             color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
-            child: Center(child: Icon(LucideIcons.image, color: (isDark ? Colors.white : Colors.black).withOpacity(0.24), size: 40)),
+            child: Center(
+              child: Icon(
+                LucideIcons.image,
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.24),
+                size: 40,
+              ),
+            ),
           ),
         ),
       ),
@@ -289,15 +334,33 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
         // First Name / Last Name Row
         Row(
           children: [
-            Expanded(child: _buildInputField(controller: _firstNameController, hint: 'First Name *')),
+            Expanded(
+              child: _buildInputField(
+                controller: _firstNameController,
+                hint: 'First Name *',
+              ),
+            ),
             const SizedBox(width: 12),
-            Expanded(child: _buildInputField(controller: _lastNameController, hint: 'Last Name *')),
+            Expanded(
+              child: _buildInputField(
+                controller: _lastNameController,
+                hint: 'Last Name *',
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 12),
-        _buildInputField(controller: _emailController, hint: 'Email *', isEmail: true),
+        _buildInputField(
+          controller: _emailController,
+          hint: 'Email *',
+          isEmail: true,
+        ),
         const SizedBox(height: 12),
-        _buildInputField(controller: _phoneController, hint: 'Phone Number *', isPhone: true),
+        _buildInputField(
+          controller: _phoneController,
+          hint: 'Phone Number *',
+          isPhone: true,
+        ),
         const SizedBox(height: 12),
         _buildMessageField(),
         const SizedBox(height: 28),
@@ -305,14 +368,27 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
         // Preferred Contact Mode
         Text(
           'PREFERRED MODE OF CONTACT:',
-          style: GoogleFonts.gelasio(color: (isDark ? Colors.white : Colors.black).withOpacity(0.54), fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2),
+          style: GoogleFonts.gelasio(
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.54),
+            fontSize: 9,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 2,
+          ),
         ),
         const SizedBox(height: 16),
         Row(
           children: [
-            _buildCheckOption('Phone', _prefPhone, (v) => setState(() => _prefPhone = v)),
+            _buildCheckOption(
+              'Phone',
+              _prefPhone,
+              (v) => setState(() => _prefPhone = v),
+            ),
             const SizedBox(width: 32),
-            _buildCheckOption('Email', _prefEmail, (v) => setState(() => _prefEmail = v)),
+            _buildCheckOption(
+              'Email',
+              _prefEmail,
+              (v) => setState(() => _prefEmail = v),
+            ),
           ],
         ),
         const SizedBox(height: 24),
@@ -340,12 +416,28 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
             style: ElevatedButton.styleFrom(
               backgroundColor: isDark ? Colors.white : Colors.black,
               foregroundColor: isDark ? Colors.black : Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
               elevation: 0,
             ),
             child: _isSubmitting
-                ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: isDark ? Colors.black : Colors.white))
-                : Text('SUBMIT', style: GoogleFonts.ebGaramond(fontSize: 14, fontWeight: FontWeight.w900, letterSpacing: 1)),
+                ? SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: isDark ? Colors.black : Colors.white,
+                    ),
+                  )
+                : Text(
+                    'SUBMIT',
+                    style: GoogleFonts.ebGaramond(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1,
+                    ),
+                  ),
           ),
         ),
       ],
@@ -373,7 +465,13 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
         const SizedBox(height: 12),
         Text(
           'FOR ANY INVESTOR RELATION RELATED QUESTIONS OR QUERIES PLEASE CONTACT VIA BELOW EMAIL',
-          style: GoogleFonts.gelasio(color: (isDark ? Colors.white : Colors.black).withOpacity(0.38), fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 1.5, height: 1.6),
+          style: GoogleFonts.gelasio(
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.38),
+            fontSize: 9,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 1.5,
+            height: 1.6,
+          ),
         ),
         const SizedBox(height: 24),
 
@@ -398,7 +496,12 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
   }
 
   // ─── Helper Widgets ───────────────────────────────────────
-  Widget _buildContactCard({required IconData icon, required String label, required String value, required VoidCallback onTap}) {
+  Widget _buildContactCard({
+    required IconData icon,
+    required String label,
+    required String value,
+    required VoidCallback onTap,
+  }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return InkWell(
       onTap: onTap,
@@ -412,26 +515,50 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
             decoration: BoxDecoration(
               color: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
               borderRadius: BorderRadius.circular(28),
-              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+              border: Border.all(
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+              ),
             ),
             child: Row(
               children: [
                 Container(
                   width: 56,
                   height: 56,
-                  decoration: BoxDecoration(color: isDark ? Colors.white : Colors.black, shape: BoxShape.circle),
-                  child: Icon(icon, color: isDark ? Colors.black : Colors.white, size: 24),
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.white : Colors.black,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    icon,
+                    color: isDark ? Colors.black : Colors.white,
+                    size: 24,
+                  ),
                 ),
                 const SizedBox(width: 20),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(label.toUpperCase(),
-                          style: GoogleFonts.gelasio(color: (isDark ? Colors.white : Colors.black).withOpacity(0.54), fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2)),
+                      Text(
+                        label.toUpperCase(),
+                        style: GoogleFonts.gelasio(
+                          color: (isDark ? Colors.white : Colors.black)
+                              .withOpacity(0.54),
+                          fontSize: 9,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 2,
+                        ),
+                      ),
                       const SizedBox(height: 4),
-                      Text(value.toUpperCase(),
-                          style: GoogleFonts.ebGaramond(color: isDark ? Colors.white : Colors.black, fontSize: 14, fontWeight: FontWeight.w900, letterSpacing: -0.5)),
+                      Text(
+                        value.toUpperCase(),
+                        style: GoogleFonts.ebGaramond(
+                          color: isDark ? Colors.white : Colors.black,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -443,21 +570,62 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
     );
   }
 
-  Widget _buildInputField({required TextEditingController controller, required String hint, bool isEmail = false, bool isPhone = false}) {
+  Widget _buildInputField({
+    required TextEditingController controller,
+    required String hint,
+    bool isEmail = false,
+    bool isPhone = false,
+  }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return TextField(
       controller: controller,
-      keyboardType: isEmail ? TextInputType.emailAddress : isPhone ? TextInputType.phone : TextInputType.text,
-      style: GoogleFonts.ebGaramond(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w500, fontSize: 14),
+      keyboardType: isEmail
+          ? TextInputType.emailAddress
+          : isPhone
+          ? TextInputType.phone
+          : TextInputType.name,
+      inputFormatters: isEmail
+          ? Validators.emailFormatters
+          : isPhone
+          ? Validators.phoneFormatters
+          : Validators.nameFormatters,
+      style: GoogleFonts.ebGaramond(
+        color: isDark ? Colors.white : Colors.black,
+        fontWeight: FontWeight.w500,
+        fontSize: 15,
+      ),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: GoogleFonts.ebGaramond(color: (isDark ? Colors.white : Colors.black).withOpacity(0.24), fontWeight: FontWeight.w500, fontSize: 14),
+        hintStyle: GoogleFonts.ebGaramond(
+          color: (isDark ? Colors.white : Colors.black).withOpacity(0.24),
+          fontWeight: FontWeight.w500,
+          fontSize: 14,
+        ),
         filled: true,
         fillColor: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1))),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1))),
-        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: isDark ? Colors.white : Colors.black, width: 1.5)),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 24,
+          vertical: 20,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(
+            color: isDark ? Colors.white : Colors.black,
+            width: 1.5,
+          ),
+        ),
       ),
     );
   }
@@ -467,21 +635,52 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
     return TextField(
       controller: _messageController,
       maxLines: 5,
-      style: GoogleFonts.ebGaramond(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.w500, fontSize: 14),
+      style: GoogleFonts.ebGaramond(
+        color: isDark ? Colors.white : Colors.black,
+        fontWeight: FontWeight.w500,
+        fontSize: 15,
+      ),
       decoration: InputDecoration(
         hintText: 'Message',
-        hintStyle: GoogleFonts.ebGaramond(color: (isDark ? Colors.white : Colors.black).withOpacity(0.24), fontWeight: FontWeight.w500, fontSize: 14),
+        hintStyle: GoogleFonts.ebGaramond(
+          color: (isDark ? Colors.white : Colors.black).withOpacity(0.24),
+          fontWeight: FontWeight.w500,
+          fontSize: 14,
+        ),
         filled: true,
         fillColor: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1))),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1))),
-        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide(color: isDark ? Colors.white : Colors.black, width: 1.5)),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 24,
+          vertical: 20,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide(
+            color: isDark ? Colors.white : Colors.black,
+            width: 1.5,
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildCheckOption(String label, bool value, ValueChanged<bool> onChanged) {
+  Widget _buildCheckOption(
+    String label,
+    bool value,
+    ValueChanged<bool> onChanged,
+  ) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return InkWell(
       onTap: () => onChanged(!value),
@@ -494,17 +693,31 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
             height: 20,
             margin: const EdgeInsets.only(top: 2),
             decoration: BoxDecoration(
-              color: value ? (isDark ? Colors.white : Colors.black) : Colors.transparent,
-              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.3)),
+              color: value
+                  ? (isDark ? Colors.white : Colors.black)
+                  : Colors.transparent,
+              border: Border.all(
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.3),
+              ),
               borderRadius: BorderRadius.circular(6),
             ),
-            child: value ? Icon(LucideIcons.check, color: isDark ? Colors.black : Colors.white, size: 14) : null,
+            child: value
+                ? Icon(
+                    LucideIcons.check,
+                    color: isDark ? Colors.black : Colors.white,
+                    size: 14,
+                  )
+                : null,
           ),
           const SizedBox(width: 12),
           Flexible(
             child: Text(
               label,
-              style: GoogleFonts.ebGaramond(color: (isDark ? Colors.white : Colors.black).withOpacity(0.6), fontSize: 13, fontWeight: FontWeight.w500),
+              style: GoogleFonts.ebGaramond(
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ],
@@ -512,4 +725,3 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
     );
   }
 }
-

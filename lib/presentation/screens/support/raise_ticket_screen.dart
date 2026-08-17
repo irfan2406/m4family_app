@@ -74,6 +74,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
         ..hideCurrentSnackBar()
         ..showSnackBar(
           const SnackBar(
+            backgroundColor: Color(0xFFE24B4A),
             content: Text('Please fill in subject, category and message'),
             behavior: SnackBarBehavior.floating,
             duration: Duration(milliseconds: 1800),
@@ -95,6 +96,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
+            backgroundColor: const Color(0xFF10B981),
             content: Text(
               ok ? 'Ticket raised successfully!' : 'Failed to raise ticket',
             ),
@@ -109,6 +111,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
         ..hideCurrentSnackBar()
         ..showSnackBar(
           const SnackBar(
+            backgroundColor: Color(0xFFE24B4A),
             content: Text('Failed to raise ticket'),
             behavior: SnackBarBehavior.floating,
             duration: Duration(milliseconds: 1800),
@@ -122,11 +125,11 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final onSurface = isDark ? Colors.white : const Color(0xFF163A2C);
-    const amber = Color(0xFFC5A35B);
+    final onSurface = isDark ? Colors.white : Colors.black;
+    const amber = Color(0xFFF59E0B);
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
+      backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
       extendBody: true,
       // Web parity: persistent bottom nav (this screen is pushed over the shell,
       // so a tab tap returns to the shell and selects that tab).
@@ -236,7 +239,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                         textCapitalization: TextCapitalization.characters,
                         cursorColor: onSurface,
                         style: GoogleFonts.ebGaramond(
-                          fontSize: 13,
+                          fontSize: 15,
                           fontWeight: FontWeight.w800,
                           color: onSurface,
                         ),
@@ -271,7 +274,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                             size: 18,
                           ),
                           dropdownColor: isDark
-                              ? const Color(0xFF141B3A)
+                              ? const Color(0xFF1A1A1A)
                               : Colors.white,
                           borderRadius: BorderRadius.circular(16),
                           items: _categories.entries
@@ -305,7 +308,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                         maxLines: 6,
                         cursorColor: onSurface,
                         style: GoogleFonts.ebGaramond(
-                          fontSize: 13,
+                          fontSize: 15,
                           fontWeight: FontWeight.w600,
                           color: onSurface,
                         ),

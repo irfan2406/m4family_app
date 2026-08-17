@@ -15,21 +15,42 @@ class InvestorEliteScreen extends ConsumerStatefulWidget {
   const InvestorEliteScreen({super.key});
 
   @override
-  ConsumerState<InvestorEliteScreen> createState() => _InvestorEliteScreenState();
+  ConsumerState<InvestorEliteScreen> createState() =>
+      _InvestorEliteScreenState();
 }
 
 class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
-  static const _gold = Color(0xFFC5A35B);
+  static const _gold = Color(0xFFFFD700);
 
   bool _loading = true;
   List<Map<String, dynamic>> _documents = [];
 
   // Web demo data (parity with investor/elite/page.tsx `documents`).
   static const List<Map<String, dynamic>> _demoDocs = [
-    {'title': 'Booking Confirmation', 'type': 'PDF', 'size': '1.2 MB', 'date': 'Jan 15, 2026'},
-    {'title': 'Payment Receipt #8812', 'type': 'PDF', 'size': '450 KB', 'date': 'Jan 15, 2026'},
-    {'title': 'Project Brochure - M4 Elegance', 'type': 'PDF', 'size': '5.8 MB', 'date': 'Jan 10, 2026'},
-    {'title': 'Legal Terms & Conditions', 'type': 'DOCX', 'size': '2.1 MB', 'date': 'Jan 05, 2026'},
+    {
+      'title': 'Booking Confirmation',
+      'type': 'PDF',
+      'size': '1.2 MB',
+      'date': 'Jan 15, 2026',
+    },
+    {
+      'title': 'Payment Receipt #8812',
+      'type': 'PDF',
+      'size': '450 KB',
+      'date': 'Jan 15, 2026',
+    },
+    {
+      'title': 'Project Brochure - M4 Elegance',
+      'type': 'PDF',
+      'size': '5.8 MB',
+      'date': 'Jan 10, 2026',
+    },
+    {
+      'title': 'Legal Terms & Conditions',
+      'type': 'DOCX',
+      'size': '2.1 MB',
+      'date': 'Jan 05, 2026',
+    },
   ];
 
   @override
@@ -64,7 +85,9 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
     if (!mounted) return;
     // Fall back to demo data so the elite dashboard always renders.
     setState(() {
-      _documents = docs.isNotEmpty ? docs : List<Map<String, dynamic>>.from(_demoDocs);
+      _documents = docs.isNotEmpty
+          ? docs
+          : List<Map<String, dynamic>>.from(_demoDocs);
       _loading = false;
     });
   }
@@ -84,7 +107,10 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
     final api = ref.read(apiClientProvider);
     final resolved = api.resolveUrl(url);
     try {
-      await launchUrl(Uri.parse(resolved), mode: LaunchMode.externalApplication);
+      await launchUrl(
+        Uri.parse(resolved),
+        mode: LaunchMode.externalApplication,
+      );
     } catch (_) {
       _toast('Could not open document');
     }
@@ -98,7 +124,10 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
     final api = ref.read(apiClientProvider);
     final resolved = api.resolveUrl(url);
     try {
-      await launchUrl(Uri.parse(resolved), mode: LaunchMode.externalApplication);
+      await launchUrl(
+        Uri.parse(resolved),
+        mode: LaunchMode.externalApplication,
+      );
     } catch (_) {
       _toast('Could not download document');
     }
@@ -107,15 +136,15 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
   void _toast(String msg) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg)),
+      SnackBar(backgroundColor: const Color(0xFFE24B4A), content: Text(msg)),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
+    final bg = isDark ? Colors.black : Colors.white;
+    final textPrimary = isDark ? Colors.white : Colors.black;
 
     return Scaffold(
       backgroundColor: bg,
@@ -126,7 +155,10 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
             Expanded(
               child: _loading
                   ? const Center(
-                      child: CircularProgressIndicator(color: M4Theme.premiumBlue, strokeWidth: 2),
+                      child: CircularProgressIndicator(
+                        color: M4Theme.premiumBlue,
+                        strokeWidth: 2,
+                      ),
                     )
                   : RefreshIndicator(
                       onRefresh: _load,
@@ -168,7 +200,8 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
       child: Row(
         children: [
           GestureDetector(
-            onTap: () => context.canPop() ? context.pop() : context.go('/investor/home'),
+            onTap: () =>
+                context.canPop() ? context.pop() : context.go('/investor/home'),
             child: Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
@@ -207,7 +240,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF163A2C), Color(0xFF163A2C), Colors.black],
+          colors: [Color(0xFF27272A), Color(0xFF18181B), Colors.black],
         ),
         borderRadius: BorderRadius.circular(32),
         boxShadow: [
@@ -249,7 +282,11 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                           children: [
                             Row(
                               children: [
-                                const Icon(LucideIcons.crown, size: 18, color: _gold),
+                                const Icon(
+                                  LucideIcons.crown,
+                                  size: 18,
+                                  color: _gold,
+                                ),
                                 const SizedBox(width: 8),
                                 Text(
                                   'PLATINUM MEMBER',
@@ -276,11 +313,16 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                       ),
                       // PRO badge
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
                           color: _gold.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: _gold.withValues(alpha: 0.5)),
+                          border: Border.all(
+                            color: _gold.withValues(alpha: 0.5),
+                          ),
                         ),
                         child: Text(
                           'PRO',
@@ -398,13 +440,17 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 40),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF),
+          color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: textPrimary.withValues(alpha: 0.06)),
         ),
         child: Column(
           children: [
-            Icon(LucideIcons.fileText, size: 48, color: textPrimary.withValues(alpha: 0.12)),
+            Icon(
+              LucideIcons.fileText,
+              size: 48,
+              color: textPrimary.withValues(alpha: 0.12),
+            ),
             const SizedBox(height: 16),
             Text(
               'NO DOCUMENTS YET',
@@ -421,11 +467,17 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
     }
 
     return Column(
-      children: _documents.map((doc) => _buildDocumentCard(doc, isDark, textPrimary)).toList(),
+      children: _documents
+          .map((doc) => _buildDocumentCard(doc, isDark, textPrimary))
+          .toList(),
     );
   }
 
-  Widget _buildDocumentCard(Map<String, dynamic> doc, bool isDark, Color textPrimary) {
+  Widget _buildDocumentCard(
+    Map<String, dynamic> doc,
+    bool isDark,
+    Color textPrimary,
+  ) {
     final muted = textPrimary.withValues(alpha: 0.5);
     final title = (doc['title'] ?? 'Document').toString();
     final type = (doc['type'] ?? '').toString();
@@ -439,7 +491,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF),
+        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: textPrimary.withValues(alpha: 0.06)),
         boxShadow: isDark
@@ -515,7 +567,11 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
           // Action buttons
           _buildIconAction(LucideIcons.eye, muted, () => _openDocument(url)),
           const SizedBox(width: 4),
-          _buildIconAction(LucideIcons.download, muted, () => _downloadDocument(url)),
+          _buildIconAction(
+            LucideIcons.download,
+            muted,
+            () => _downloadDocument(url),
+          ),
         ],
       ),
     );
@@ -576,9 +632,15 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                   decoration: BoxDecoration(
                     color: textPrimary.withValues(alpha: 0.05),
                     shape: BoxShape.circle,
-                    border: Border.all(color: textPrimary.withValues(alpha: 0.08)),
+                    border: Border.all(
+                      color: textPrimary.withValues(alpha: 0.08),
+                    ),
                   ),
-                  child: Icon(LucideIcons.shieldCheck, size: 18, color: textPrimary.withValues(alpha: 0.6)),
+                  child: Icon(
+                    LucideIcons.shieldCheck,
+                    size: 18,
+                    color: textPrimary.withValues(alpha: 0.6),
+                  ),
                 ),
                 const SizedBox(width: 14),
                 Expanded(

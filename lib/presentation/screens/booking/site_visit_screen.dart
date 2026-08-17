@@ -61,7 +61,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
       isScrollControlled: true,
       builder: (sheetCtx) => Container(
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+          color: isDark ? const Color(0xFF0B111E) : Colors.white,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         ),
         padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
@@ -164,7 +164,10 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
   Future<void> _submitBooking() async {
     if (_selectedDate == null || _selectedTime == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a date and time')),
+        const SnackBar(
+          backgroundColor: Color(0xFFE24B4A),
+          content: Text('Please select a date and time'),
+        ),
       );
       return;
     }
@@ -194,6 +197,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
             content: Text(res.data['message'] ?? 'Failed to schedule visit'),
           ),
         );
@@ -201,6 +205,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
+          backgroundColor: Color(0xFFE24B4A),
           content: Text('Error scheduling visit. Please try again.'),
         ),
       );
@@ -215,7 +220,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
 
     if (_isSuccess) {
       return Scaffold(
-        backgroundColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
+        backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(40),
@@ -295,7 +300,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
     }
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
+      backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
       extendBody: true,
       bottomNavigationBar: NavigationPill(
         currentIndex: -1,
@@ -431,7 +436,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                             size: 18,
                           ),
                           dropdownColor: isDark
-                              ? const Color(0xFF141B3A)
+                              ? const Color(0xFF1C1C1E)
                               : Colors.white,
                           items: projects.map((p) {
                             return DropdownMenuItem<String>(
@@ -635,7 +640,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
         controller: controller,
         maxLines: maxLines,
         style: GoogleFonts.ebGaramond(
-          fontSize: 12,
+          fontSize: 15,
           fontWeight: FontWeight.w800,
           color: isDark ? Colors.white : Colors.black,
         ),

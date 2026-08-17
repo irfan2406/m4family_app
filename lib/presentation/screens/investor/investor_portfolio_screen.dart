@@ -34,9 +34,9 @@ class InvestorPortfolioScreen extends ConsumerStatefulWidget {
 
 class _InvestorPortfolioScreenState
     extends ConsumerState<InvestorPortfolioScreen> {
-  static const Color _gold = Color(0xFFC5A35B);
-  static const Color _green = Color(0xFFC5A35B);
-  static const Color _amber = Color(0xFFC5A35B);
+  static const Color _gold = Color(0xFFFFD700);
+  static const Color _green = Color(0xFF22C55E);
+  static const Color _amber = Color(0xFFF59E0B);
 
   bool _isLoading = true;
   bool _hasError = false;
@@ -73,7 +73,8 @@ class _InvestorPortfolioScreenState
           holdings = data;
         } else if (data is Map) {
           summary = Map<String, dynamic>.from(data);
-          final dynamic list = data['holdings'] ??
+          final dynamic list =
+              data['holdings'] ??
               data['investments'] ??
               data['items'] ??
               data['portfolio'];
@@ -81,23 +82,35 @@ class _InvestorPortfolioScreenState
         }
 
         final invested = holdings.fold<double>(
-            0, (sum, h) => sum + _num(h, ['investedAmount', 'invested', 'amount', 'investment']));
+          0,
+          (sum, h) =>
+              sum +
+              _num(h, ['investedAmount', 'invested', 'amount', 'investment']),
+        );
         final current = holdings.fold<double>(
-            0,
-            (sum, h) => sum +
-                _num(h, ['currentValue', 'marketValue', 'valuation', 'value']));
+          0,
+          (sum, h) =>
+              sum +
+              _num(h, ['currentValue', 'marketValue', 'valuation', 'value']),
+        );
 
         if (mounted) {
           setState(() {
             _holdings = holdings;
             _summary = summary;
             _invested = _summary != null
-                ? _summaryNum(['totalInvested', 'invested', 'capitalDeployed'],
-                    fallback: invested)
+                ? _summaryNum([
+                    'totalInvested',
+                    'invested',
+                    'capitalDeployed',
+                  ], fallback: invested)
                 : invested;
             _currentValue = _summary != null
-                ? _summaryNum(['currentValue', 'totalValue', 'valuation'],
-                    fallback: current > 0 ? current : invested)
+                ? _summaryNum([
+                    'currentValue',
+                    'totalValue',
+                    'valuation',
+                  ], fallback: current > 0 ? current : invested)
                 : (current > 0 ? current : invested);
           });
         }
@@ -122,13 +135,12 @@ class _InvestorPortfolioScreenState
 
   // ─── Derived metrics ──────────────────────────────────────────────────────
   double get _gains => _currentValue - _invested;
-  double get _roiPct =>
-      _invested <= 0 ? 0 : (_gains / _invested) * 100;
+  double get _roiPct => _invested <= 0 ? 0 : (_gains / _invested) * 100;
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
+    final bg = isDark ? Colors.black : Colors.white;
 
     return Scaffold(
       backgroundColor: bg,
@@ -145,7 +157,7 @@ class _InvestorPortfolioScreenState
 
   // ─── Header ────────────────────────────────────────────────────────────────
   Widget _buildHeader(bool isDark) {
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
+    final textPrimary = isDark ? Colors.white : Colors.black;
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -163,13 +175,17 @@ class _InvestorPortfolioScreenState
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color:
-                    isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF),
+                color: isDark
+                    ? Colors.white.withValues(alpha: 0.03)
+                    : Colors.white,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(color: border),
               ),
-              child: Icon(LucideIcons.arrowLeft,
-                  size: 20, color: textPrimary.withValues(alpha: 0.6)),
+              child: Icon(
+                LucideIcons.arrowLeft,
+                size: 20,
+                color: textPrimary.withValues(alpha: 0.6),
+              ),
             ),
           ),
           const SizedBox(width: 16),
@@ -219,7 +235,8 @@ class _InvestorPortfolioScreenState
       onRefresh: _fetchPortfolio,
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(
-            parent: BouncingScrollPhysics()),
+          parent: BouncingScrollPhysics(),
+        ),
         padding: const EdgeInsets.fromLTRB(24, 24, 24, 120),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -254,7 +271,7 @@ class _InvestorPortfolioScreenState
         style: GoogleFonts.gelasio(
           fontSize: 9,
           fontWeight: FontWeight.w700,
-          color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5),
+          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5),
           letterSpacing: 3,
         ),
       ),
@@ -263,7 +280,7 @@ class _InvestorPortfolioScreenState
 
   // ─── Summary card ────────────────────────────────────────────────────────────
   Widget _buildSummaryCard(bool isDark) {
-    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
 
     final count = _holdings.length.toString().padLeft(2, '0');
 
@@ -274,7 +291,7 @@ class _InvestorPortfolioScreenState
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF163A2C), Color(0xFF0F2A20)],
+          colors: [Color(0xFF1A1A1A), Color(0xFF0A0A0A)],
         ),
         border: Border.all(color: _gold.withValues(alpha: 0.25)),
         boxShadow: [
@@ -323,22 +340,26 @@ class _InvestorPortfolioScreenState
               Padding(
                 padding: const EdgeInsets.only(bottom: 4),
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
-                    color: (_gains >= 0 ? _green : _amber)
-                        .withValues(alpha: 0.15),
+                    color: (_gains >= 0 ? _green : _amber).withValues(
+                      alpha: 0.15,
+                    ),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
-                          _gains >= 0
-                              ? LucideIcons.trendingUp
-                              : LucideIcons.trendingDown,
-                          size: 12,
-                          color: _gains >= 0 ? _green : _amber),
+                        _gains >= 0
+                            ? LucideIcons.trendingUp
+                            : LucideIcons.trendingDown,
+                        size: 12,
+                        color: _gains >= 0 ? _green : _amber,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         '${_roiPct >= 0 ? '+' : ''}${_roiPct.toStringAsFixed(1)}%',
@@ -369,11 +390,16 @@ class _InvestorPortfolioScreenState
             children: [
               Expanded(
                 child: _summaryStat(
-                    'CAPITAL DEPLOYED', _formatValue(_invested),
-                    valueColor: Colors.white),
+                  'CAPITAL DEPLOYED',
+                  _formatValue(_invested),
+                  valueColor: Colors.white,
+                ),
               ),
               Container(
-                  width: 1, height: 36, color: Colors.white.withValues(alpha: 0.1)),
+                width: 1,
+                height: 36,
+                color: Colors.white.withValues(alpha: 0.1),
+              ),
               Expanded(
                 child: _summaryStat(
                   'ACTIVE HOLDINGS',
@@ -389,8 +415,12 @@ class _InvestorPortfolioScreenState
     );
   }
 
-  Widget _summaryStat(String label, String value,
-      {required Color valueColor, Color? muted}) {
+  Widget _summaryStat(
+    String label,
+    String value, {
+    required Color valueColor,
+    Color? muted,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -418,10 +448,11 @@ class _InvestorPortfolioScreenState
 
   // ─── Performance strip ───────────────────────────────────────────────────────
   Widget _buildPerformanceStrip(bool isDark) {
-    final avgYield = (_summary?['avgYield'] ??
-            _summary?['averageYield'] ??
-            (_invested > 0 ? '${(_roiPct).toStringAsFixed(1)}%' : '0.0%'))
-        .toString();
+    final avgYield =
+        (_summary?['avgYield'] ??
+                _summary?['averageYield'] ??
+                (_invested > 0 ? '${(_roiPct).toStringAsFixed(1)}%' : '0.0%'))
+            .toString();
 
     return Row(
       children: [
@@ -450,14 +481,16 @@ class _InvestorPortfolioScreenState
     );
   }
 
-  Widget _metricTile(bool isDark,
-      {required IconData icon,
-      required String label,
-      required String value,
-      required Color accent}) {
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
+  Widget _metricTile(
+    bool isDark, {
+    required IconData icon,
+    required String label,
+    required String value,
+    required Color accent,
+  }) {
+    final textPrimary = isDark ? Colors.white : Colors.black;
     final muted = textPrimary.withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -519,21 +552,20 @@ class _InvestorPortfolioScreenState
 
   // ─── Allocation breakdown ────────────────────────────────────────────────────
   Widget _buildAllocationCard(bool isDark) {
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
+    final textPrimary = isDark ? Colors.white : Colors.black;
     final muted = textPrimary.withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
 
-    final total = _holdings.fold<double>(
-        0, (sum, h) => sum + _holdingValue(h));
+    final total = _holdings.fold<double>(0, (sum, h) => sum + _holdingValue(h));
     final palette = [
       _gold,
       M4Theme.premiumBlue,
       _green,
-      const Color(0xFFC5A35B),
-      const Color(0xFFC5A35B),
+      const Color(0xFF8B5CF6),
+      const Color(0xFFEC4899),
       _amber,
     ];
 
@@ -565,13 +597,13 @@ class _InvestorPortfolioScreenState
                 children: [
                   for (var i = 0; i < _holdings.length; i++)
                     Expanded(
-                      flex: ((_holdingValue(_holdings[i]) /
-                                  (total <= 0 ? 1 : total)) *
-                              1000)
-                          .round()
-                          .clamp(1, 1000),
-                      child: Container(
-                          color: palette[i % palette.length]),
+                      flex:
+                          ((_holdingValue(_holdings[i]) /
+                                      (total <= 0 ? 1 : total)) *
+                                  1000)
+                              .round()
+                              .clamp(1, 1000),
+                      child: Container(color: palette[i % palette.length]),
                     ),
                 ],
               ),
@@ -593,8 +625,13 @@ class _InvestorPortfolioScreenState
     );
   }
 
-  Widget _allocationRow(dynamic h, Color color, double total, Color textPrimary,
-      Color muted) {
+  Widget _allocationRow(
+    dynamic h,
+    Color color,
+    double total,
+    Color textPrimary,
+    Color muted,
+  ) {
     final name = _projectName(h);
     final value = _holdingValue(h);
     final pct = total <= 0 ? 0.0 : (value / total) * 100;
@@ -635,9 +672,9 @@ class _InvestorPortfolioScreenState
 
   // ─── Holding card ────────────────────────────────────────────────────────────
   Widget _buildHoldingCard(dynamic holding, bool isDark) {
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
+    final textPrimary = isDark ? Colors.white : Colors.black;
     final muted = textPrimary.withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -648,8 +685,7 @@ class _InvestorPortfolioScreenState
     final shortId = id.length > 8 ? id.substring(id.length - 8) : id;
     final status = (holding['status'] ?? 'Active').toString();
     final invested = _num(holding, ['investedAmount', 'invested', 'amount']);
-    final current =
-        _holdingValue(holding);
+    final current = _holdingValue(holding);
     final roi = invested <= 0 ? 0.0 : ((current - invested) / invested) * 100;
     final imageUrl = _firstImage(holding);
 
@@ -693,8 +729,9 @@ class _InvestorPortfolioScreenState
                           end: Alignment.bottomCenter,
                           colors: [
                             Colors.transparent,
-                            (isDark ? Colors.black : Colors.white)
-                                .withValues(alpha: 0.9),
+                            (isDark ? Colors.black : Colors.white).withValues(
+                              alpha: 0.9,
+                            ),
                           ],
                         ),
                       ),
@@ -736,9 +773,11 @@ class _InvestorPortfolioScreenState
                   const SizedBox(height: 6),
                   Row(
                     children: [
-                      Icon(LucideIcons.mapPin,
-                          size: 12,
-                          color: M4Theme.premiumBlue.withValues(alpha: 0.6)),
+                      Icon(
+                        LucideIcons.mapPin,
+                        size: 12,
+                        color: M4Theme.premiumBlue.withValues(alpha: 0.6),
+                      ),
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
@@ -790,12 +829,10 @@ class _InvestorPortfolioScreenState
                       _RoiBadge(roi: roi),
                       const Spacer(),
                       _PressableScale(
-                        onTap: () =>
-                            _showPerformance(holding, isDark),
+                        onTap: () => _showPerformance(holding, isDark),
                         child: Container(
                           height: 44,
-                          padding:
-                              const EdgeInsets.symmetric(horizontal: 18),
+                          padding: const EdgeInsets.symmetric(horizontal: 18),
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: textPrimary,
@@ -809,16 +846,16 @@ class _InvestorPortfolioScreenState
                                 style: GoogleFonts.gelasio(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w800,
-                                  color:
-                                      isDark ? Colors.black : Colors.white,
+                                  color: isDark ? Colors.black : Colors.white,
                                   letterSpacing: 1.5,
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              Icon(LucideIcons.maximize2,
-                                  size: 13,
-                                  color:
-                                      isDark ? Colors.black : Colors.white),
+                              Icon(
+                                LucideIcons.maximize2,
+                                size: 13,
+                                color: isDark ? Colors.black : Colors.white,
+                              ),
                             ],
                           ),
                         ),
@@ -835,15 +872,17 @@ class _InvestorPortfolioScreenState
   }
 
   Widget _buildImage(String? url, bool isDark) {
-    final placeholderBg =
-        (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.05);
+    final placeholderBg = (isDark ? Colors.white : Colors.black).withValues(
+      alpha: 0.05,
+    );
     if (url == null || url.isEmpty) {
       return Container(
         color: placeholderBg,
-        child: Icon(LucideIcons.building2,
-            size: 48,
-            color:
-                (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.15)),
+        child: Icon(
+          LucideIcons.building2,
+          size: 48,
+          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.15),
+        ),
       );
     }
     final apiClient = ref.read(apiClientProvider);
@@ -853,10 +892,11 @@ class _InvestorPortfolioScreenState
       placeholder: (context, _) => Container(color: placeholderBg),
       errorWidget: (context, _, __) => Container(
         color: placeholderBg,
-        child: Icon(LucideIcons.building2,
-            size: 48,
-            color:
-                (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.15)),
+        child: Icon(
+          LucideIcons.building2,
+          size: 48,
+          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.15),
+        ),
       ),
     );
   }
@@ -869,21 +909,23 @@ class _InvestorPortfolioScreenState
     final current = _holdingValue(holding);
     final gains = current - invested;
     final roi = invested <= 0 ? 0.0 : (gains / invested) * 100;
-    final units = (holding['units'] ??
-            holding['unitNumber'] ??
-            holding['quantity'] ??
-            '—')
-        .toString();
-    final yieldVal = (holding['yield'] ??
-            holding['rentalYield'] ??
-            holding['annualYield'] ??
-            '—')
-        .toString();
+    final units =
+        (holding['units'] ??
+                holding['unitNumber'] ??
+                holding['quantity'] ??
+                '—')
+            .toString();
+    final yieldVal =
+        (holding['yield'] ??
+                holding['rentalYield'] ??
+                holding['annualYield'] ??
+                '—')
+            .toString();
     final imageUrl = _firstImage(holding);
 
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
+    final textPrimary = isDark ? Colors.white : Colors.black;
     final muted = textPrimary.withValues(alpha: 0.5);
-    final sheetBg = isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF);
+    final sheetBg = isDark ? const Color(0xFF0A0A0A) : Colors.white;
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -903,8 +945,7 @@ class _InvestorPortfolioScreenState
             border: Border.all(color: border),
           ),
           child: ClipRRect(
-            borderRadius:
-                const BorderRadius.vertical(top: Radius.circular(36)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -953,10 +994,13 @@ class _InvestorPortfolioScreenState
                               const SizedBox(height: 6),
                               Row(
                                 children: [
-                                  Icon(LucideIcons.mapPin,
-                                      size: 11,
-                                      color: M4Theme.premiumBlue
-                                          .withValues(alpha: 0.7)),
+                                  Icon(
+                                    LucideIcons.mapPin,
+                                    size: 11,
+                                    color: M4Theme.premiumBlue.withValues(
+                                      alpha: 0.7,
+                                    ),
+                                  ),
                                   const SizedBox(width: 6),
                                   Expanded(
                                     child: Text(
@@ -966,8 +1010,9 @@ class _InvestorPortfolioScreenState
                                       style: GoogleFonts.gelasio(
                                         fontSize: 9,
                                         fontWeight: FontWeight.w700,
-                                        color: M4Theme.premiumBlue
-                                            .withValues(alpha: 0.7),
+                                        color: M4Theme.premiumBlue.withValues(
+                                          alpha: 0.7,
+                                        ),
                                         letterSpacing: 2,
                                       ),
                                     ),
@@ -989,26 +1034,29 @@ class _InvestorPortfolioScreenState
                         Container(
                           padding: const EdgeInsets.all(18),
                           decoration: BoxDecoration(
-                            color: (gains >= 0 ? _green : _amber)
-                                .withValues(alpha: 0.1),
+                            color: (gains >= 0 ? _green : _amber).withValues(
+                              alpha: 0.1,
+                            ),
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                                color: (gains >= 0 ? _green : _amber)
-                                    .withValues(alpha: 0.25)),
+                              color: (gains >= 0 ? _green : _amber).withValues(
+                                alpha: 0.25,
+                              ),
+                            ),
                           ),
                           child: Row(
                             children: [
                               Icon(
-                                  gains >= 0
-                                      ? LucideIcons.trendingUp
-                                      : LucideIcons.trendingDown,
-                                  size: 22,
-                                  color: gains >= 0 ? _green : _amber),
+                                gains >= 0
+                                    ? LucideIcons.trendingUp
+                                    : LucideIcons.trendingDown,
+                                size: 22,
+                                color: gains >= 0 ? _green : _amber,
+                              ),
                               const SizedBox(width: 14),
                               Expanded(
                                 child: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       'NET RETURN',
@@ -1103,18 +1151,18 @@ class _InvestorPortfolioScreenState
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(LucideIcons.shieldCheck,
-                                    size: 16,
-                                    color:
-                                        isDark ? Colors.black : Colors.white),
+                                Icon(
+                                  LucideIcons.shieldCheck,
+                                  size: 16,
+                                  color: isDark ? Colors.black : Colors.white,
+                                ),
                                 const SizedBox(width: 8),
                                 Text(
                                   'VERIFIED INVESTMENT',
                                   style: GoogleFonts.gelasio(
                                     fontSize: 9,
                                     fontWeight: FontWeight.w800,
-                                    color:
-                                        isDark ? Colors.black : Colors.white,
+                                    color: isDark ? Colors.black : Colors.white,
                                     letterSpacing: 2,
                                   ),
                                 ),
@@ -1137,7 +1185,7 @@ class _InvestorPortfolioScreenState
 
   // ─── Empty / error states ────────────────────────────────────────────────────
   Widget _buildEmptyState(bool isDark) {
-    final faint = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.2);
+    final faint = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.2);
     return Padding(
       padding: const EdgeInsets.only(top: 32),
       child: Center(
@@ -1161,16 +1209,19 @@ class _InvestorPortfolioScreenState
               style: GoogleFonts.ebGaramond(
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
-                color:
-                    (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.35),
+                color: (isDark ? Colors.white : Colors.black).withValues(
+                  alpha: 0.35,
+                ),
               ),
             ),
             const SizedBox(height: 20),
             _PressableScale(
               onTap: () => context.go('/investor/projects'),
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   color: isDark ? Colors.white : Colors.black,
                   borderRadius: BorderRadius.circular(14),
@@ -1193,7 +1244,7 @@ class _InvestorPortfolioScreenState
   }
 
   Widget _buildErrorState(bool isDark) {
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
+    final textPrimary = isDark ? Colors.white : Colors.black;
     final muted = textPrimary.withValues(alpha: 0.5);
     return Center(
       child: Padding(
@@ -1216,8 +1267,10 @@ class _InvestorPortfolioScreenState
             _PressableScale(
               onTap: _fetchPortfolio,
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   color: textPrimary,
                   borderRadius: BorderRadius.circular(14),
@@ -1263,8 +1316,12 @@ class _InvestorPortfolioScreenState
 
   /// Best-effort "current value" of a holding, falling back to invested amount.
   double _holdingValue(dynamic h) {
-    final current =
-        _num(h, ['currentValue', 'marketValue', 'valuation', 'value']);
+    final current = _num(h, [
+      'currentValue',
+      'marketValue',
+      'valuation',
+      'value',
+    ]);
     if (current > 0) return current;
     return _num(h, ['investedAmount', 'invested', 'amount', 'investment']);
   }
@@ -1277,7 +1334,8 @@ class _InvestorPortfolioScreenState
       if (t != null && t.toString().isNotEmpty) return t.toString();
     }
     final direct = h['projectName'] ?? h['title'] ?? h['name'];
-    if (direct != null && direct.toString().isNotEmpty) return direct.toString();
+    if (direct != null && direct.toString().isNotEmpty)
+      return direct.toString();
     return 'Investment';
   }
 
@@ -1404,12 +1462,12 @@ class _StatusPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = status.toLowerCase();
-    final positive = s.contains('active') ||
+    final positive =
+        s.contains('active') ||
         s.contains('ready') ||
         s.contains('confirmed') ||
         s.contains('completed');
-    final color =
-        positive ? const Color(0xFFC5A35B) : const Color(0xFFC5A35B);
+    final color = positive ? const Color(0xFF22C55E) : const Color(0xFFF59E0B);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
@@ -1437,7 +1495,7 @@ class _RoiBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final positive = roi >= 0;
-    final color = positive ? const Color(0xFFC5A35B) : const Color(0xFFC5A35B);
+    final color = positive ? const Color(0xFF22C55E) : const Color(0xFFF59E0B);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
@@ -1449,11 +1507,10 @@ class _RoiBadge extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
-              positive
-                  ? LucideIcons.trendingUp
-                  : LucideIcons.trendingDown,
-              size: 13,
-              color: color),
+            positive ? LucideIcons.trendingUp : LucideIcons.trendingDown,
+            size: 13,
+            color: color,
+          ),
           const SizedBox(width: 6),
           Text(
             '${positive ? '+' : ''}${roi.toStringAsFixed(1)}% ROI',
@@ -1487,8 +1544,9 @@ class _DetailItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment:
-          alignEnd ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      crossAxisAlignment: alignEnd
+          ? CrossAxisAlignment.end
+          : CrossAxisAlignment.start,
       children: [
         Text(
           label,

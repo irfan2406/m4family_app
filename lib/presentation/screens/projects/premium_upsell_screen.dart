@@ -19,7 +19,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
     this.featureTitle = 'Immersive VR Tour',
   });
 
-  static const _gold = Color(0xFFC5A35B);
+  static const _gold = Color(0xFFFFD700);
 
   void _back(BuildContext context) {
     if (Navigator.of(context).canPop()) {
@@ -34,7 +34,10 @@ class PremiumUpsellScreen extends ConsumerWidget {
       SnackBar(
         content: Text(
           'Checkout coming soon',
-          style: GoogleFonts.ebGaramond(fontSize: 12, fontWeight: FontWeight.bold),
+          style: GoogleFonts.ebGaramond(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         backgroundColor: M4Theme.premiumBlue,
         behavior: SnackBarBehavior.floating,
@@ -46,13 +49,17 @@ class PremiumUpsellScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final bg = isDark ? Colors.black : Colors.white;
+    final textPrimary = isDark ? Colors.white : Colors.black;
+    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
     const subtle = Color(0xFF666666);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
-    final border = isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06);
-    final iconCircleBg = isDark ? Colors.white.withValues(alpha: 0.06) : Colors.black.withValues(alpha: 0.04);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final border = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.black.withValues(alpha: 0.06);
+    final iconCircleBg = isDark
+        ? Colors.white.withValues(alpha: 0.06)
+        : Colors.black.withValues(alpha: 0.04);
 
     final benefits = <_Benefit>[
       const _Benefit(
@@ -103,14 +110,18 @@ class PremiumUpsellScreen extends ConsumerWidget {
                         Column(
                           children: [
                             Container(
-                              padding: const EdgeInsets.all(14),
-                              decoration: BoxDecoration(
-                                color: card,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: border),
-                              ),
-                              child: Icon(LucideIcons.glasses, size: 26, color: textPrimary),
-                            )
+                                  padding: const EdgeInsets.all(14),
+                                  decoration: BoxDecoration(
+                                    color: card,
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(color: border),
+                                  ),
+                                  child: Icon(
+                                    LucideIcons.glasses,
+                                    size: 26,
+                                    color: textPrimary,
+                                  ),
+                                )
                                 .animate()
                                 .scale(
                                   begin: const Offset(0.8, 0.8),
@@ -121,35 +132,49 @@ class PremiumUpsellScreen extends ConsumerWidget {
                                 .fadeIn(duration: 400.ms),
                             const SizedBox(height: 14),
                             Text(
-                              'UNLOCK ${featureTitle.toUpperCase()}',
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.gelasio(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: textPrimary,
-                                letterSpacing: 1.5,
-                              ),
-                            )
+                                  'UNLOCK ${featureTitle.toUpperCase()}',
+                                  textAlign: TextAlign.center,
+                                  style: GoogleFonts.gelasio(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: textPrimary,
+                                    letterSpacing: 1.5,
+                                  ),
+                                )
                                 .animate()
-                                .moveY(begin: 20, end: 0, duration: 400.ms, curve: Curves.easeOut)
+                                .moveY(
+                                  begin: 20,
+                                  end: 0,
+                                  duration: 400.ms,
+                                  curve: Curves.easeOut,
+                                )
                                 .fadeIn(duration: 400.ms),
                             const SizedBox(height: 12),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 20),
-                              child: Text(
-                                'EXPERIENCE YOUR FUTURE HOME LIKE NEVER BEFORE. EXCLUSIVE ACCESS FOR M4 ELITE MEMBERS ONLY.',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.ebGaramond(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold,
-                                  color: subtle,
-                                  letterSpacing: 0.8,
-                                  height: 1.6,
-                                ),
-                              )
-                                  .animate()
-                                  .moveY(begin: 20, end: 0, delay: 100.ms, duration: 400.ms, curve: Curves.easeOut)
-                                  .fadeIn(delay: 100.ms, duration: 400.ms),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                              ),
+                              child:
+                                  Text(
+                                        'EXPERIENCE YOUR FUTURE HOME LIKE NEVER BEFORE. EXCLUSIVE ACCESS FOR M4 ELITE MEMBERS ONLY.',
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.ebGaramond(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.bold,
+                                          color: subtle,
+                                          letterSpacing: 0.8,
+                                          height: 1.6,
+                                        ),
+                                      )
+                                      .animate()
+                                      .moveY(
+                                        begin: 20,
+                                        end: 0,
+                                        delay: 100.ms,
+                                        duration: 400.ms,
+                                        curve: Curves.easeOut,
+                                      )
+                                      .fadeIn(delay: 100.ms, duration: 400.ms),
                             ),
                           ],
                         ),
@@ -170,66 +195,77 @@ class PremiumUpsellScreen extends ConsumerWidget {
                         ...List.generate(benefits.length, (i) {
                           final b = benefits[i];
                           return Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: Container(
-                              padding: const EdgeInsets.all(14),
-                              decoration: BoxDecoration(
-                                color: card,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: border),
-                              ),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 36,
-                                    height: 36,
-                                    decoration: BoxDecoration(
-                                      color: iconCircleBg,
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Icon(b.icon, size: 16, color: textPrimary),
+                                padding: const EdgeInsets.only(bottom: 12),
+                                child: Container(
+                                  padding: const EdgeInsets.all(14),
+                                  decoration: BoxDecoration(
+                                    color: card,
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(color: border),
                                   ),
-                                  const SizedBox(width: 16),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          b.title.toUpperCase(),
-                                          style: GoogleFonts.ebGaramond(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.bold,
-                                            color: textPrimary,
-                                            letterSpacing: -0.2,
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        width: 36,
+                                        height: 36,
+                                        decoration: BoxDecoration(
+                                          color: iconCircleBg,
+                                          borderRadius: BorderRadius.circular(
+                                            12,
                                           ),
                                         ),
-                                        const SizedBox(height: 2),
-                                        Text(
-                                          b.desc.toUpperCase(),
-                                          style: GoogleFonts.ebGaramond(
-                                            fontSize: 9,
-                                            fontWeight: FontWeight.bold,
-                                            color: subtle,
-                                            letterSpacing: -0.4,
-                                          ),
+                                        child: Icon(
+                                          b.icon,
+                                          size: 16,
+                                          color: textPrimary,
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                      const SizedBox(width: 16),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              b.title.toUpperCase(),
+                                              style: GoogleFonts.ebGaramond(
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.bold,
+                                                color: textPrimary,
+                                                letterSpacing: -0.2,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 2),
+                                            Text(
+                                              b.desc.toUpperCase(),
+                                              style: GoogleFonts.ebGaramond(
+                                                fontSize: 9,
+                                                fontWeight: FontWeight.bold,
+                                                color: subtle,
+                                                letterSpacing: -0.4,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Container(
+                                        width: 20,
+                                        height: 20,
+                                        decoration: const BoxDecoration(
+                                          color: _gold,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Icon(
+                                          LucideIcons.check,
+                                          size: 12,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  const SizedBox(width: 12),
-                                  Container(
-                                    width: 20,
-                                    height: 20,
-                                    decoration: const BoxDecoration(
-                                      color: _gold,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Icon(LucideIcons.check, size: 12, color: Colors.black),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
+                                ),
+                              )
                               .animate()
                               .moveX(
                                 begin: -20,
@@ -238,127 +274,148 @@ class PremiumUpsellScreen extends ConsumerWidget {
                                 duration: 400.ms,
                                 curve: Curves.easeOut,
                               )
-                              .fadeIn(delay: (200 + i * 100).ms, duration: 400.ms);
+                              .fadeIn(
+                                delay: (200 + i * 100).ms,
+                                duration: 400.ms,
+                              );
                         }),
                         const SizedBox(height: 36),
 
                         // Pricing Card + Maybe Later
                         Column(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(24),
-                              decoration: BoxDecoration(
-                                color: textPrimary, // foreground container (inverted)
-                                borderRadius: BorderRadius.circular(32),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.15),
-                                    blurRadius: 30,
-                                    offset: const Offset(0, 15),
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(24),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        textPrimary, // foreground container (inverted)
+                                    borderRadius: BorderRadius.circular(32),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withValues(
+                                          alpha: 0.15,
+                                        ),
+                                        blurRadius: 30,
+                                        offset: const Offset(0, 15),
+                                      ),
+                                    ],
                                   ),
-                                ],
-                              ),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    'LIFETIME PASS',
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        'LIFETIME PASS',
+                                        style: GoogleFonts.gelasio(
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.bold,
+                                          color: subtle,
+                                          letterSpacing: 2,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            '₹4,999',
+                                            style: GoogleFonts.gelasio(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color:
+                                                  bg, // contrasts with foreground container
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              top: 4,
+                                            ),
+                                            child: Text(
+                                              '/one-time',
+                                              style: GoogleFonts.ebGaramond(
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.bold,
+                                                color: subtle,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 20),
+                                      _ScaleButton(
+                                        onTap: () => _handleUpgrade(context),
+                                        child: Container(
+                                          width: double.infinity,
+                                          height: 48,
+                                          alignment: Alignment.center,
+                                          decoration: BoxDecoration(
+                                            color: Colors.black,
+                                            borderRadius: BorderRadius.circular(
+                                              16,
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black.withValues(
+                                                  alpha: 0.2,
+                                                ),
+                                                blurRadius: 20,
+                                                offset: const Offset(0, 8),
+                                              ),
+                                            ],
+                                          ),
+                                          child: Text(
+                                            'UPGRADE TO ELITE',
+                                            style: GoogleFonts.gelasio(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                              letterSpacing: 2,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 20),
+                                      Text(
+                                        '*GET INSTANT ACCESS TO ALL PREMIUM FEATURES AND PROPERTY TOURS',
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.ebGaramond(
+                                          fontSize: 8,
+                                          fontWeight: FontWeight.bold,
+                                          fontStyle: FontStyle.italic,
+                                          color: subtle,
+                                          letterSpacing: -0.2,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+                                GestureDetector(
+                                  onTap: () => _back(context),
+                                  behavior: HitTestBehavior.opaque,
+                                  child: Text(
+                                    'MAYBE LATER',
+                                    textAlign: TextAlign.center,
                                     style: GoogleFonts.gelasio(
-                                      fontSize: 9,
+                                      fontSize: 10,
                                       fontWeight: FontWeight.bold,
                                       color: subtle,
                                       letterSpacing: 2,
                                     ),
                                   ),
-                                  const SizedBox(height: 4),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        '₹4,999',
-                                        style: GoogleFonts.gelasio(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          color: bg, // contrasts with foreground container
-                                        ),
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Padding(
-                                        padding: const EdgeInsets.only(top: 4),
-                                        child: Text(
-                                          '/one-time',
-                                          style: GoogleFonts.ebGaramond(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.bold,
-                                            color: subtle,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 20),
-                                  _ScaleButton(
-                                    onTap: () => _handleUpgrade(context),
-                                    child: Container(
-                                      width: double.infinity,
-                                      height: 48,
-                                      alignment: Alignment.center,
-                                      decoration: BoxDecoration(
-                                        color: Colors.black,
-                                        borderRadius: BorderRadius.circular(16),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withValues(alpha: 0.2),
-                                            blurRadius: 20,
-                                            offset: const Offset(0, 8),
-                                          ),
-                                        ],
-                                      ),
-                                      child: Text(
-                                        'UPGRADE TO ELITE',
-                                        style: GoogleFonts.gelasio(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                          letterSpacing: 2,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 20),
-                                  Text(
-                                    '*GET INSTANT ACCESS TO ALL PREMIUM FEATURES AND PROPERTY TOURS',
-                                    textAlign: TextAlign.center,
-                                    style: GoogleFonts.ebGaramond(
-                                      fontSize: 8,
-                                      fontWeight: FontWeight.bold,
-                                      fontStyle: FontStyle.italic,
-                                      color: subtle,
-                                      letterSpacing: -0.2,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            GestureDetector(
-                              onTap: () => _back(context),
-                              behavior: HitTestBehavior.opaque,
-                              child: Text(
-                                'MAYBE LATER',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.gelasio(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
-                                  color: subtle,
-                                  letterSpacing: 2,
                                 ),
-                              ),
-                            ),
-                          ],
-                        )
+                              ],
+                            )
                             .animate()
-                            .moveY(begin: 20, end: 0, delay: 600.ms, duration: 400.ms, curve: Curves.easeOut)
+                            .moveY(
+                              begin: 20,
+                              end: 0,
+                              delay: 600.ms,
+                              duration: 400.ms,
+                              curve: Curves.easeOut,
+                            )
                             .fadeIn(delay: 600.ms, duration: 400.ms),
                       ],
                     ),
@@ -433,9 +490,17 @@ class _CircleAction extends StatelessWidget {
               offset: const Offset(0, 4),
             ),
           ],
-          border: Border.all(color: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05)),
+          border: Border.all(
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.1)
+                : Colors.black.withValues(alpha: 0.05),
+          ),
         ),
-        child: Icon(icon, size: 20, color: isDark ? Colors.white : Colors.black),
+        child: Icon(
+          icon,
+          size: 20,
+          color: isDark ? Colors.white : Colors.black,
+        ),
       ),
     );
   }

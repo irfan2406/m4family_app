@@ -98,19 +98,24 @@ dev_dependencies:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path: "assets/m4_family_logo.png"
+  image_path: "assets/app_icon.png"
   remove_alpha_ios: true
   background_color_ios: "#FFFFFF"
   adaptive_icon_background: "#FFFFFF"
-  adaptive_icon_foreground: "assets/m4_family_logo.png"
+  adaptive_icon_foreground: "assets/app_icon_foreground.png"
 
-# Native boot splash — M4 logo on white (replaces the default Flutter splash).
+# Native boot splash — INTENTIONALLY BLANK (solid black, NO logo/icon). The
+# native window only bridges process start until Flutter's first frame; keeping
+# it plain black (matching OnboardingScreen's black background) makes it
+# invisible, so the app appears to launch straight into the Flutter animated
+# splash (OnboardingScreen). On Android 12+ the launcher icon that the OS would
+# otherwise draw is suppressed by pointing the splash icon at a fully
+# transparent image.
 flutter_native_splash:
-  color: "#FFFFFF"
-  image: assets/m4_family_logo.png
+  color: "#000000"
   android_12:
-    color: "#FFFFFF"
-    image: assets/m4_family_logo.png
+    color: "#000000"
+    image: "assets/splash_transparent.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -125,6 +130,9 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    # Whole-directory entry: picks up any image dropped into assets/ (e.g. the
+    # cledor_exterior/interior thumb photos) without further pubspec edits.
+    - assets/
     - assets/m4-logo-gold.png
     - assets/m4_logo.png
     - assets/m4_family_logo.png
@@ -132,6 +140,8 @@ flutter:
     - assets/login-bg.png
     - assets/360-vr.png
     - assets/custom_view_1.png
+    - assets/community_skyline.png
+    - assets/community_luxury.png
     - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see

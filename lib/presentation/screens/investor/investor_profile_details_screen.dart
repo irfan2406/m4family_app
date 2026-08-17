@@ -6,10 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
+import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/widgets/wheel_date_picker.dart';
 
 /// Investor profile details — parity with web `app/investor/profile/details/page.tsx`.
 /// Edit mode for name, email, phone, address, bio + avatar upload (camera button).
@@ -18,17 +22,20 @@ class InvestorProfileDetailsScreen extends ConsumerStatefulWidget {
   const InvestorProfileDetailsScreen({super.key});
 
   @override
-  ConsumerState<InvestorProfileDetailsScreen> createState() => _InvestorProfileDetailsScreenState();
+  ConsumerState<InvestorProfileDetailsScreen> createState() =>
+      _InvestorProfileDetailsScreenState();
 }
 
-class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDetailsScreen> {
-  static const _gold = Color(0xFFC5A35B);
+class _InvestorProfileDetailsScreenState
+    extends ConsumerState<InvestorProfileDetailsScreen> {
+  static const _gold = Color(0xFFFFD700);
 
   final _name = TextEditingController();
   final _email = TextEditingController();
   final _phone = TextEditingController();
   final _address = TextEditingController();
   final _bio = TextEditingController();
+  String _dob = ''; // yyyy-MM-dd
 
   bool _loading = true;
   bool _editing = false;
@@ -42,6 +49,7 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
   String _snapPhone = '';
   String _snapAddress = '';
   String _snapBio = '';
+  String _snapDob = '';
 
   @override
   void initState() {
@@ -69,6 +77,7 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
     _phone.text = u['phone']?.toString() ?? '';
     _address.text = u['address']?.toString() ?? '';
     _bio.text = u['bio']?.toString() ?? '';
+    _dob = u['dob']?.toString() ?? '';
     final av = u['avatarUrl'] ?? u['avatar'];
     _avatarUrl = av?.toString();
   }
@@ -98,6 +107,7 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
     _snapPhone = _phone.text;
     _snapAddress = _address.text;
     _snapBio = _bio.text;
+    _snapDob = _dob;
     setState(() => _editing = true);
   }
 
@@ -107,10 +117,22 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
     _phone.text = _snapPhone;
     _address.text = _snapAddress;
     _bio.text = _snapBio;
+    _dob = _snapDob;
     setState(() => _editing = false);
   }
 
   Future<void> _save() async {
+    final vErr =
+        Validators.nameError(_name.text, field: 'full name') ??
+        Validators.phoneError(_phone.text);
+    if (vErr != null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(vErr), backgroundColor: Colors.red.shade700),
+        );
+      }
+      return;
+    }
     setState(() => _saving = true);
     try {
       final trimmed = _name.text.trim();
@@ -127,6 +149,7 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
         'phone': _phone.text.trim(),
         'address': _address.text.trim(),
         'bio': _bio.text.trim(),
+        if (_dob.isNotEmpty) 'dob': _dob,
       });
       if (!mounted) return;
       final ok = res.data is Map && (res.data as Map)['status'] == true;
@@ -135,17 +158,34 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
         if (mounted) {
           setState(() => _editing = false);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Profile updated successfully')),
+            const SnackBar(
+              backgroundColor: Color(0xFF10B981),
+              content: Text('Profile updated successfully'),
+            ),
           );
         }
       } else {
-        final msg = res.data is Map ? (res.data as Map)['message']?.toString() : null;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg ?? 'Update failed')));
+        final msg = res.data is Map
+            ? (res.data as Map)['message']?.toString()
+            : null;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text(msg ?? 'Update failed'),
+          ),
+        );
       }
     } on DioException catch (e) {
       if (mounted) {
-        final m = e.response?.data is Map ? (e.response!.data as Map)['message']?.toString() : null;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m ?? e.message ?? 'Network error')));
+        final m = e.response?.data is Map
+            ? (e.response!.data as Map)['message']?.toString()
+            : null;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text(m ?? e.message ?? 'Network error'),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -165,7 +205,10 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
     if (len > 2 * 1024 * 1024) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('File too large (max 2MB)')),
+          const SnackBar(
+            backgroundColor: Color(0xFFE24B4A),
+            content: Text('File too large (max 2MB)'),
+          ),
         );
       }
       return;
@@ -182,31 +225,53 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
       if (newUrl == null || newUrl.isEmpty) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Upload failed')),
+            const SnackBar(
+              backgroundColor: Color(0xFFE24B4A),
+              content: Text('Upload failed'),
+            ),
           );
         }
         return;
       }
-      final patch = await ref.read(apiClientProvider).updateMe({'avatarUrl': newUrl});
+      final patch = await ref.read(apiClientProvider).updateMe({
+        'avatarUrl': newUrl,
+      });
       final ok = patch.data is Map && (patch.data as Map)['status'] == true;
       if (ok) {
         setState(() => _avatarUrl = newUrl);
         await ref.read(authProvider.notifier).fetchMe();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Profile photo updated')),
+            const SnackBar(
+              backgroundColor: Color(0xFF10B981),
+              content: Text('Profile photo updated'),
+            ),
           );
         }
       } else {
-        final msg = patch.data is Map ? (patch.data as Map)['message']?.toString() : null;
+        final msg = patch.data is Map
+            ? (patch.data as Map)['message']?.toString()
+            : null;
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg ?? 'Update failed')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: const Color(0xFFE24B4A),
+              content: Text(msg ?? 'Update failed'),
+            ),
+          );
         }
       }
     } on DioException catch (e) {
       if (mounted) {
-        final m = e.response?.data is Map ? (e.response!.data as Map)['message']?.toString() : null;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m ?? 'Upload failed')));
+        final m = e.response?.data is Map
+            ? (e.response!.data as Map)['message']?.toString()
+            : null;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text(m ?? 'Upload failed'),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _uploadingAvatar = false);
@@ -216,11 +281,13 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
-    final border = isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06);
+    final bg = isDark ? Colors.black : Colors.white;
+    final textPrimary = isDark ? Colors.white : Colors.black;
+    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final border = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.black.withValues(alpha: 0.06);
 
     if (_loading) {
       return Scaffold(
@@ -250,6 +317,8 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
                       label: 'FULL NAME',
                       controller: _name,
                       icon: LucideIcons.user,
+                      keyboardType: TextInputType.name,
+                      inputFormatters: Validators.nameFormatters,
                       textPrimary: textPrimary,
                       muted: muted,
                       isDark: isDark,
@@ -261,6 +330,7 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
                       controller: _email,
                       icon: LucideIcons.mail,
                       keyboardType: TextInputType.emailAddress,
+                      inputFormatters: Validators.emailFormatters,
                       textPrimary: textPrimary,
                       muted: muted,
                       isDark: isDark,
@@ -272,11 +342,14 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
                       controller: _phone,
                       icon: LucideIcons.phone,
                       keyboardType: TextInputType.phone,
+                      inputFormatters: Validators.phoneFormatters,
                       textPrimary: textPrimary,
                       muted: muted,
                       isDark: isDark,
                       border: border,
                     ),
+                    const SizedBox(height: 16),
+                    _dobField(textPrimary, muted, isDark, border),
                     const SizedBox(height: 16),
                     _field(
                       label: 'MAILING ADDRESS',
@@ -325,7 +398,9 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
             color: card,
             borderRadius: BorderRadius.circular(10),
             child: InkWell(
-              onTap: () => context.canPop() ? context.pop() : context.go('/investor/home'),
+              onTap: () => context.canPop()
+                  ? context.pop()
+                  : context.go('/investor/home'),
               borderRadius: BorderRadius.circular(10),
               child: Container(
                 width: 38,
@@ -335,7 +410,11 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(color: border),
                 ),
-                child: Icon(LucideIcons.arrowLeft, size: 18, color: textPrimary),
+                child: Icon(
+                  LucideIcons.arrowLeft,
+                  size: 18,
+                  color: textPrimary,
+                ),
               ),
             ),
           ),
@@ -423,16 +502,23 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
                   borderRadius: BorderRadius.circular(23),
                   child: _avatarUrl != null && _avatarUrl!.isNotEmpty
                       ? CachedNetworkImage(
-                          imageUrl: ref.read(apiClientProvider).resolveUrl(_avatarUrl!),
+                          imageUrl: ref
+                              .read(apiClientProvider)
+                              .resolveUrl(_avatarUrl!),
                           fit: BoxFit.cover,
                           alignment: Alignment.center,
                           memCacheWidth: 192,
                           memCacheHeight: 192,
                           fadeInDuration: Duration.zero,
-                          errorWidget: (_, __, ___) =>
-                              const Icon(LucideIcons.user, size: 40, color: _gold),
+                          errorWidget: (_, __, ___) => const Icon(
+                            LucideIcons.user,
+                            size: 40,
+                            color: _gold,
+                          ),
                         )
-                      : const Center(child: Icon(LucideIcons.user, size: 40, color: _gold)),
+                      : const Center(
+                          child: Icon(LucideIcons.user, size: 40, color: _gold),
+                        ),
                 ),
               ),
               if (_uploadingAvatar)
@@ -446,7 +532,10 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
                       child: SizedBox(
                         width: 26,
                         height: 26,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
@@ -464,7 +553,11 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
                       onTap: _uploadingAvatar ? null : _pickAndUploadAvatar,
                       child: const Padding(
                         padding: EdgeInsets.all(9),
-                        child: Icon(LucideIcons.camera, size: 16, color: Colors.black),
+                        child: Icon(
+                          LucideIcons.camera,
+                          size: 16,
+                          color: Colors.black,
+                        ),
                       ),
                     ),
                   ),
@@ -503,10 +596,13 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
     required bool isDark,
     required Color border,
     TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
     int maxLines = 1,
   }) {
     final enabled = _editing;
-    final fillColor = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.black.withValues(alpha: 0.02);
+    final fillColor = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : Colors.black.withValues(alpha: 0.02);
     final borderColor = enabled ? _gold.withValues(alpha: 0.5) : border;
 
     return Column(
@@ -528,20 +624,31 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
           controller: controller,
           enabled: enabled,
           keyboardType: keyboardType,
+          inputFormatters: inputFormatters,
           maxLines: maxLines,
           style: GoogleFonts.ebGaramond(
-            fontSize: 14,
+            fontSize: 15,
             fontWeight: FontWeight.w600,
             color: enabled ? textPrimary : textPrimary.withValues(alpha: 0.8),
           ),
           decoration: InputDecoration(
             isDense: true,
             prefixIcon: Padding(
-              padding: EdgeInsets.only(left: 12, right: 8, bottom: maxLines > 1 ? (maxLines - 1) * 18.0 : 0),
+              padding: EdgeInsets.only(
+                left: 12,
+                right: 8,
+                bottom: maxLines > 1 ? (maxLines - 1) * 18.0 : 0,
+              ),
               child: Icon(icon, size: 16, color: muted),
             ),
-            prefixIconConstraints: const BoxConstraints(minWidth: 36, minHeight: 20),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
+            prefixIconConstraints: const BoxConstraints(
+              minWidth: 36,
+              minHeight: 20,
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 8,
+              vertical: 14,
+            ),
             filled: true,
             fillColor: fillColor,
             border: OutlineInputBorder(
@@ -564,6 +671,81 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
         ),
       ],
     );
+  }
+
+  // Tappable Date of Birth field — opens the wheel picker (web parity).
+  Widget _dobField(Color textPrimary, Color muted, bool isDark, Color border) {
+    final enabled = _editing;
+    final fillColor = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : Colors.black.withValues(alpha: 0.02);
+    final borderColor = enabled ? _gold.withValues(alpha: 0.5) : border;
+    String display = 'SELECT DATE';
+    if (_dob.isNotEmpty) {
+      try {
+        display = DateFormat('d MMM y').format(DateTime.parse(_dob));
+      } catch (_) {}
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 4, bottom: 8),
+          child: Text(
+            'DATE OF BIRTH',
+            style: GoogleFonts.gelasio(
+              fontSize: 9,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 1.5,
+              color: muted,
+            ),
+          ),
+        ),
+        GestureDetector(
+          onTap: enabled ? _pickDob : null,
+          child: Container(
+            height: 50,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: BoxDecoration(
+              color: fillColor,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: borderColor),
+            ),
+            child: Row(
+              children: [
+                Icon(LucideIcons.calendar, size: 16, color: muted),
+                const SizedBox(width: 12),
+                Text(
+                  display,
+                  style: GoogleFonts.ebGaramond(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: _dob.isEmpty
+                        ? muted
+                        : (enabled
+                              ? textPrimary
+                              : textPrimary.withValues(alpha: 0.8)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _pickDob() async {
+    DateTime initial;
+    try {
+      initial = _dob.isNotEmpty ? DateTime.parse(_dob) : DateTime(2000);
+    } catch (_) {
+      initial = DateTime(2000);
+    }
+    final picked = await showWheelDatePicker(context, initial: initial);
+    if (picked != null) {
+      setState(() => _dob = DateFormat('yyyy-MM-dd').format(picked));
+    }
   }
 
   Widget _actionRow(Color textPrimary, Color border) {
@@ -610,7 +792,10 @@ class _InvestorProfileDetailsScreenState extends ConsumerState<InvestorProfileDe
                     ? const SizedBox(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.black,
+                        ),
                       )
                     : Text(
                         'SAVE CHANGES',

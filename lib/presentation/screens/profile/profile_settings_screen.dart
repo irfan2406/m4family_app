@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:intl/intl.dart';
@@ -127,7 +129,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
         return Container(
           height: 350,
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
+            color: isDark ? const Color(0xFF09090B) : Colors.white,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
             border: Border.all(
               color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
@@ -166,7 +168,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                           style: GoogleFonts.ebGaramond(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
-                            color: Color(0xFFC5A35B),
+                            color: Colors.blue,
                           ),
                         ),
                       ),
@@ -210,6 +212,16 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
   }
 
   Future<void> _handleSave() async {
+    final vErr =
+        Validators.nameError(_nameController.text, field: 'full name') ??
+        Validators.emailError(_emailController.text) ??
+        Validators.phoneError(_phoneController.text);
+    if (vErr != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(vErr), backgroundColor: Colors.red.shade700),
+      );
+      return;
+    }
     setState(() => _isSaving = true);
     try {
       final nameParts = _nameController.text.trim().split(" ");
@@ -276,7 +288,10 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to upload profile picture')),
+          const SnackBar(
+            backgroundColor: Color(0xFFE24B4A),
+            content: Text('Failed to upload profile picture'),
+          ),
         );
       }
     } finally {
@@ -291,8 +306,8 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
 
     return Scaffold(
       backgroundColor: isDark
-          ? const Color(0xFF0B1026)
-          : const Color(0xFFF4EFE3),
+          ? const Color(0xFF09090B)
+          : const Color(0xFFF8FAFC),
       extendBody: true,
       bottomNavigationBar: NavigationPill(
         currentIndex: -1,
@@ -337,7 +352,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                     Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+                        color: isDark ? const Color(0xFF18181B) : Colors.white,
                         borderRadius: BorderRadius.circular(32),
                         border: Border.all(
                           color: (isDark ? Colors.white : Colors.black)
@@ -360,6 +375,8 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                             _nameController,
                             isDark,
                             enabled: _isEditing,
+                            keyboardType: TextInputType.name,
+                            inputFormatters: Validators.nameFormatters,
                           ),
                           const SizedBox(height: 20),
                           _buildField(
@@ -367,6 +384,8 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                             _emailController,
                             isDark,
                             enabled: _isEditing,
+                            keyboardType: TextInputType.emailAddress,
+                            inputFormatters: Validators.emailFormatters,
                           ),
                           const SizedBox(height: 20),
                           _buildField(
@@ -374,6 +393,8 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                             _phoneController,
                             isDark,
                             enabled: _isEditing,
+                            keyboardType: TextInputType.phone,
+                            inputFormatters: Validators.phoneFormatters,
                           ),
                           const SizedBox(height: 20),
                           _buildDateField(
@@ -433,7 +454,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+        color: isDark ? const Color(0xFF18181B) : Colors.white,
         borderRadius: BorderRadius.circular(40),
         border: Border.all(
           color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
@@ -515,7 +536,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                         shape: BoxShape.circle,
                         border: Border.all(
                           color: isDark
-                              ? const Color(0xFF141B3A)
+                              ? const Color(0xFF18181B)
                               : Colors.white,
                           width: 3,
                         ),
@@ -644,6 +665,8 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
     bool isDark, {
     bool enabled = true,
     TextCapitalization capitalization = TextCapitalization.none,
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -666,7 +689,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
             // Flat inset input — the single shadow lives on the outer card.
             color: isDark
                 ? Colors.white.withOpacity(0.03)
-                : const Color(0xFFF4EFE3),
+                : const Color(0xFFF8FAFC),
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: (isDark ? Colors.white : Colors.black).withOpacity(0.06),
@@ -676,9 +699,11 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
             controller: controller,
             enabled: enabled,
             textCapitalization: capitalization,
+            keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
             style: GoogleFonts.ebGaramond(
               textStyle: const TextStyle(inherit: true),
-              fontSize: 13,
+              fontSize: 15,
               fontWeight: FontWeight.w800,
               // Keep values dark/readable even when not editing.
               color: enabled
@@ -726,7 +751,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
               // Flat inset input — the single shadow lives on the outer card.
               color: isDark
                   ? Colors.white.withOpacity(0.03)
-                  : const Color(0xFFF4EFE3),
+                  : const Color(0xFFF8FAFC),
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.06),
@@ -788,7 +813,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+            color: isDark ? const Color(0xFF18181B) : Colors.white,
             borderRadius: BorderRadius.circular(32),
             border: Border.all(
               color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
@@ -886,7 +911,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       child: TextButton(
         onPressed: () => GoRouter.of(context).push('/profile/deactivate'),
         style: TextButton.styleFrom(
-          foregroundColor: const Color(0xFFC65B46).withOpacity(0.75),
+          foregroundColor: const Color(0xFFEF4444).withOpacity(0.75),
           padding: const EdgeInsets.symmetric(vertical: 18),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -923,7 +948,7 @@ class _IconButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+          color: isDark ? const Color(0xFF18181B) : Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),

@@ -24,7 +24,7 @@ class InvestorChangePasswordScreen extends ConsumerStatefulWidget {
 
 class _InvestorChangePasswordScreenState
     extends ConsumerState<InvestorChangePasswordScreen> {
-  static const _gold = Color(0xFFC5A35B);
+  static const _gold = Color(0xFFFFD700);
 
   final _current = TextEditingController();
   final _newPass = TextEditingController();
@@ -47,8 +47,8 @@ class _InvestorChangePasswordScreenState
   bool get _hasUppercase => RegExp(r'[A-Z]').hasMatch(_newPass.text);
   bool get _hasNumber => RegExp(r'[0-9]').hasMatch(_newPass.text);
   bool get _hasSpecial => RegExp(
-          r'''[!@#$%^&*(),.?":{}|<>_\-\[\]\\/;'`~+=]''')
-      .hasMatch(_newPass.text);
+    r'''[!@#$%^&*(),.?":{}|<>_\-\[\]\\/;'`~+=]''',
+  ).hasMatch(_newPass.text);
 
   /// 0..4 strength score derived from the requirements checklist.
   int get _strength {
@@ -78,11 +78,11 @@ class _InvestorChangePasswordScreenState
     switch (_strength) {
       case 0:
       case 1:
-        return const Color(0xFFC65B46);
+        return const Color(0xFFEF4444);
       case 2:
-        return const Color(0xFFC5A35B);
+        return const Color(0xFFF59E0B);
       case 3:
-        return const Color(0xFFC5A35B);
+        return const Color(0xFF10B981);
       default:
         return _gold;
     }
@@ -93,7 +93,7 @@ class _InvestorChangePasswordScreenState
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(msg),
-        backgroundColor: error ? const Color(0xFFD32F2F) : Colors.green,
+        backgroundColor: error ? Colors.redAccent : Colors.green,
       ),
     );
   }
@@ -133,7 +133,9 @@ class _InvestorChangePasswordScreenState
 
     setState(() => _submitting = true);
     try {
-      final res = await ref.read(apiClientProvider).changePassword(
+      final res = await ref
+          .read(apiClientProvider)
+          .changePassword(
             currentPassword: _current.text,
             newPassword: _newPass.text,
           );
@@ -148,8 +150,9 @@ class _InvestorChangePasswordScreenState
         if (!mounted) return;
         _back();
       } else {
-        final msg =
-            res.data is Map ? (res.data as Map)['message']?.toString() : null;
+        final msg = res.data is Map
+            ? (res.data as Map)['message']?.toString()
+            : null;
         _snack(msg ?? 'Failed to update password', error: true);
       }
     } on DioException catch (e) {
@@ -167,10 +170,10 @@ class _InvestorChangePasswordScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
+    final bg = isDark ? Colors.black : Colors.white;
+    final textPrimary = isDark ? Colors.white : Colors.black;
+    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -402,7 +405,7 @@ class _InvestorChangePasswordScreenState
       obscureText: obscure,
       onChanged: onChanged,
       style: GoogleFonts.ebGaramond(
-        fontSize: 14,
+        fontSize: 15,
         fontWeight: FontWeight.w600,
         color: textPrimary,
       ),
@@ -416,8 +419,10 @@ class _InvestorChangePasswordScreenState
         filled: true,
         fillColor: card,
         isDense: true,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 16,
+        ),
         prefixIcon: Icon(LucideIcons.lock, size: 16, color: muted),
         suffixIcon: showToggle
             ? IconButton(
@@ -489,10 +494,9 @@ class _InvestorChangePasswordScreenState
   // MATCH FEEDBACK
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   Widget _matchFeedback(Color muted) {
-    final matches =
-        _confirm.text == _newPass.text && _newPass.text.isNotEmpty;
-    const green = Color(0xFFC5A35B);
-    const red = Color(0xFFC65B46);
+    final matches = _confirm.text == _newPass.text && _newPass.text.isNotEmpty;
+    const green = Color(0xFF10B981);
+    const red = Color(0xFFEF4444);
     return Padding(
       padding: const EdgeInsets.only(left: 4),
       child: Row(
@@ -539,8 +543,11 @@ class _InvestorChangePasswordScreenState
         children: [
           Row(
             children: [
-              Icon(LucideIcons.alertCircle,
-                  size: 14, color: _gold.withValues(alpha: 0.7)),
+              Icon(
+                LucideIcons.alertCircle,
+                size: 14,
+                color: _gold.withValues(alpha: 0.7),
+              ),
               const SizedBox(width: 8),
               Text(
                 'REQUIREMENTS',
@@ -561,7 +568,7 @@ class _InvestorChangePasswordScreenState
   }
 
   Widget _requirementRow(String label, bool met, Color muted) {
-    const green = Color(0xFFC5A35B);
+    const green = Color(0xFF10B981);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
@@ -623,7 +630,9 @@ class _InvestorChangePasswordScreenState
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
-                      strokeWidth: 2, color: Colors.black),
+                    strokeWidth: 2,
+                    color: Colors.black,
+                  ),
                 )
               : Text(
                   'UPDATE PASSWORD',

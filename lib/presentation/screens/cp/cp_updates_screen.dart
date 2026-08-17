@@ -53,7 +53,9 @@ class _CpUpdatesScreenState extends ConsumerState<CpUpdatesScreen> {
   }
 
   String? _video(dynamic it) {
-    return _stringUrl(it['videoUrl']) ?? _stringUrl(it['video']) ?? _stringUrl(it['url']);
+    return _stringUrl(it['videoUrl']) ??
+        _stringUrl(it['video']) ??
+        _stringUrl(it['url']);
   }
 
   Future<void> _openExternal(String url) async {
@@ -77,7 +79,9 @@ class _CpUpdatesScreenState extends ConsumerState<CpUpdatesScreen> {
         _items = const [];
       }
     } on DioException catch (e) {
-      _error = e.response?.data is Map ? (e.response!.data as Map)['message']?.toString() : e.message;
+      _error = e.response?.data is Map
+          ? (e.response!.data as Map)['message']?.toString()
+          : e.message;
     } catch (e) {
       _error = e.toString();
     } finally {
@@ -96,108 +100,160 @@ class _CpUpdatesScreenState extends ConsumerState<CpUpdatesScreen> {
       appBar: AppBar(
         backgroundColor: scheme.surface,
         elevation: 0,
-        leading: IconButton(icon: const Icon(LucideIcons.arrowLeft), onPressed: () => context.pop()),
-        title: Text('UPDATES', style: GoogleFonts.gelasio(fontWeight: FontWeight.w900, letterSpacing: 2)),
+        leading: IconButton(
+          icon: const Icon(LucideIcons.arrowLeft),
+          onPressed: () => context.pop(),
+        ),
+        title: Text(
+          'UPDATES',
+          style: GoogleFonts.gelasio(
+            fontWeight: FontWeight.w900,
+            letterSpacing: 2,
+          ),
+        ),
       ),
       body: _loading
           ? Center(child: CircularProgressIndicator(color: accent))
           : _error != null
-              ? Center(child: Text(_error!, style: GoogleFonts.ebGaramond(color: scheme.onSurfaceVariant)))
-              : RefreshIndicator(
-                  onRefresh: _load,
-                  child: ListView.separated(
-                    padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
-                    itemCount: _items.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 12),
-                    itemBuilder: (context, i) {
-                      final it = _items[i];
-                      if (it is! Map) return const SizedBox.shrink();
-                      final m = Map<String, dynamic>.from(it);
-                      final title = (m['title'] ?? m['name'] ?? 'Update').toString();
-                      final thumb = _thumb(m);
-                      final video = _video(m);
-                      final projectId = (m['project']?['_id'] ?? m['projectId'] ?? '').toString();
+          ? Center(
+              child: Text(
+                _error!,
+                style: GoogleFonts.ebGaramond(
+                  color: scheme.onSurfaceVariant,
+                ),
+              ),
+            )
+          : RefreshIndicator(
+              onRefresh: _load,
+              child: ListView.separated(
+                padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
+                itemCount: _items.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                itemBuilder: (context, i) {
+                  final it = _items[i];
+                  if (it is! Map) return const SizedBox.shrink();
+                  final m = Map<String, dynamic>.from(it);
+                  final title = (m['title'] ?? m['name'] ?? 'Update')
+                      .toString();
+                  final thumb = _thumb(m);
+                  final video = _video(m);
+                  final projectId =
+                      (m['project']?['_id'] ?? m['projectId'] ?? '').toString();
 
-                      return Material(
-                        color: scheme.surfaceContainerHighest.withValues(alpha: 0.18),
-                        borderRadius: BorderRadius.circular(22),
-                        child: InkWell(
+                  return Material(
+                    color: scheme.surfaceContainerHighest.withValues(
+                      alpha: 0.18,
+                    ),
+                    borderRadius: BorderRadius.circular(22),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(22),
+                      onTap: () async {
+                        if (projectId.isNotEmpty) {
+                          context.push('/cp/projects/$projectId');
+                          return;
+                        }
+                        if (video != null && video.isNotEmpty) {
+                          await _openExternal(video);
+                        }
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(22),
-                          onTap: () async {
-                            if (projectId.isNotEmpty) {
-                              context.push('/cp/projects/$projectId');
-                              return;
-                            }
-                            if (video != null && video.isNotEmpty) {
-                              await _openExternal(video);
-                            }
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(22),
-                              border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.4)),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                AspectRatio(
-                                  aspectRatio: 16 / 9,
-                                  child: ClipRRect(
-                                    borderRadius: const BorderRadius.vertical(top: Radius.circular(22)),
-                                    child: Stack(
-                                      fit: StackFit.expand,
-                                      children: [
-                                        if (thumb != null && thumb.isNotEmpty)
-                                          CachedNetworkImage(
-                                            imageUrl: ref.read(apiClientProvider).resolveUrl(thumb),
-                                            fit: BoxFit.cover,
-                                            errorWidget: (_, __, ___) => Container(color: scheme.surfaceContainerHighest),
-                                          )
-                                        else
-                                          Container(color: scheme.surfaceContainerHighest),
-                                        Container(color: Colors.black.withValues(alpha: 0.25)),
-                                        Center(
-                                          child: Container(
-                                            width: 56,
-                                            height: 56,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: Colors.white.withValues(alpha: 0.15),
-                                              border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
-                                            ),
-                                            child: const Icon(LucideIcons.play, color: Colors.white, size: 24),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(14),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          title.toUpperCase(),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: GoogleFonts.ebGaramond(fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1.2),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      Icon(LucideIcons.chevronRight, color: scheme.onSurfaceVariant.withValues(alpha: 0.7)),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
+                          border: Border.all(
+                            color: scheme.outlineVariant.withValues(alpha: 0.4),
                           ),
                         ),
-                      );
-                    },
-                  ),
-                ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            AspectRatio(
+                              aspectRatio: 16 / 9,
+                              child: ClipRRect(
+                                borderRadius: const BorderRadius.vertical(
+                                  top: Radius.circular(22),
+                                ),
+                                child: Stack(
+                                  fit: StackFit.expand,
+                                  children: [
+                                    if (thumb != null && thumb.isNotEmpty)
+                                      CachedNetworkImage(
+                                        imageUrl: ref
+                                            .read(apiClientProvider)
+                                            .resolveUrl(thumb),
+                                        fit: BoxFit.cover,
+                                        errorWidget: (_, __, ___) => Container(
+                                          color: scheme.surfaceContainerHighest,
+                                        ),
+                                      )
+                                    else
+                                      Container(
+                                        color: scheme.surfaceContainerHighest,
+                                      ),
+                                    Container(
+                                      color: Colors.black.withValues(
+                                        alpha: 0.25,
+                                      ),
+                                    ),
+                                    Center(
+                                      child: Container(
+                                        width: 56,
+                                        height: 56,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: Colors.white.withValues(
+                                            alpha: 0.15,
+                                          ),
+                                          border: Border.all(
+                                            color: Colors.white.withValues(
+                                              alpha: 0.25,
+                                            ),
+                                          ),
+                                        ),
+                                        child: const Icon(
+                                          LucideIcons.play,
+                                          color: Colors.white,
+                                          size: 24,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(14),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      title.toUpperCase(),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.ebGaramond(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w900,
+                                        letterSpacing: 1.2,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Icon(
+                                    LucideIcons.chevronRight,
+                                    color: scheme.onSurfaceVariant.withValues(
+                                      alpha: 0.7,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
     );
   }
 }
-

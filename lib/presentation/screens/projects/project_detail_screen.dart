@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -18,6 +20,7 @@ import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:m4_mobile/presentation/screens/booking/booking_start_screen.dart';
+import 'package:m4_mobile/presentation/widgets/luxury_amenity_icon.dart';
 
 class ProjectDetailScreen extends ConsumerStatefulWidget {
   final dynamic projectData;
@@ -59,6 +62,25 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
   void initState() {
     super.initState();
     _fetchProjectData();
+  }
+
+  // Flip the wishlist heart + show an instant Saved/Removed toast (parity with
+  // the CP detail screen). Clears any prior toast so rapid taps don't stack.
+  void _toggleFavorite() {
+    final next = !_isFavorited;
+    setState(() => _isFavorited = next);
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(
+        SnackBar(
+          backgroundColor: const Color(0xFF10B981),
+          duration: const Duration(milliseconds: 1100),
+          behavior: SnackBarBehavior.fixed,
+          content: Text(
+            next ? 'Saved to favorites' : 'Removed from favorites',
+          ),
+        ),
+      );
   }
 
   Future<void> _fetchProjectData() async {
@@ -134,7 +156,80 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       } catch (e) {
         debugPrint('Error launching URL: $e');
       }
+      return;
     }
+
+    // No URL: the call is purely user feedback (validation errors, submit
+    // results). This method used to surface the message ONLY as a side-effect
+    // of opening a url — so every `_launchAction(msg, null)` silently did
+    // nothing and submitting the form looked completely unresponsive.
+    _showMessage(message);
+  }
+
+  /// Toast feedback — green on success, red on failure.
+  ///
+  /// Rendered in the ROOT overlay so it floats ABOVE the booking sheet, and
+  /// sits just above the submit button — right where the user is looking. A
+  /// normal SnackBar renders inside the Scaffold *under* the modal route, which
+  /// pushed it to the very bottom of the screen, below the form.
+  void _showMessage(String message, {bool success = false}) {
+    if (!mounted) return;
+    final overlay = Overlay.of(context, rootOverlay: true);
+    late final OverlayEntry entry;
+    entry = OverlayEntry(
+      builder: (ctx) => Positioned(
+        // Above the submit button; lifts with the keyboard when it's open.
+        bottom: MediaQuery.of(ctx).viewInsets.bottom + 120,
+        left: 16,
+        right: 16,
+        child: IgnorePointer(
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              decoration: BoxDecoration(
+                color: success
+                    ? const Color(0xFF10B981)
+                    : const Color(0xFFE24B4A),
+                borderRadius: BorderRadius.circular(14),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.25),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    success ? LucideIcons.checkCircle : LucideIcons.alertCircle,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      message,
+                      style: GoogleFonts.ebGaramond(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                        height: 1.35,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    overlay.insert(entry);
+    Future.delayed(const Duration(seconds: 3), () {
+      if (entry.mounted) entry.remove();
+    });
   }
 
   @override
@@ -158,18 +253,37 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               authUser?['username']?.toString() ??
               'App User')
         : _nameController.text.trim();
+    // `phone` is REQUIRED by the API. For visits it comes from the profile, but
+    // that can be blank — in which case the sheet shows a phone field and we
+    // fall back to it. Submitting blank used to reach the server and come back
+    // as a 400, which surfaced as a misleading "Connection error".
+    final authPhone = (authUser?['phone']?.toString() ?? '').trim();
     final phone = isVisit
-        ? (authUser?['phone']?.toString() ?? '')
+        ? (authPhone.isNotEmpty ? authPhone : _phoneController.text.trim())
         : _phoneController.text.trim();
 
     if (isVisit) {
       if (_inquiryDateTime == null) {
-        _launchAction('Please select a date & time for your visit', null);
+        _showMessage('Please select a date & time for your visit');
         return;
       }
-    } else if (name.isEmpty || phone.isEmpty) {
-      _launchAction('Please enter your name and phone number', null);
-      return;
+      final pErr = Validators.phoneError(phone);
+      if (pErr != null) {
+        _showMessage(pErr);
+        return;
+      }
+    } else {
+      // Format checks (was empty-only): valid name + phone; email when given.
+      final vErr =
+          Validators.nameError(name, field: 'name') ??
+          Validators.phoneError(phone) ??
+          (_emailController.text.trim().isEmpty
+              ? null
+              : Validators.emailError(_emailController.text));
+      if (vErr != null) {
+        _showMessage(vErr);
+        return;
+      }
     }
 
     setState(() => _isLoading = true);
@@ -192,8 +306,11 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
             ? 'Site Visit'
             : 'Buying',
         'configuration': _selectedConfig,
-        'source': 'mobile_app',
-        'projectId': widget.projectId,
+        // Server-side enum: source = online | cp | walk-in | referral | other.
+        'source': 'online',
+        // Only ever send a real ObjectId — widget.projectId can be a route slug,
+        // which makes the API reject the whole lead (CastToObjectId/BSONError).
+        if (widget.projectId.length == 24) 'projectId': widget.projectId,
         'project': project?['title'] ?? 'General',
         if (isVisit && dt != null)
           'visitDate': '${dt.year}-${two(dt.month)}-${two(dt.day)}',
@@ -211,19 +328,20 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
 
       if (res.data['status'] == true) {
         if (mounted) {
+          // Close the sheet FIRST so the confirmation isn't hidden behind it.
           Navigator.pop(context);
-          _launchAction(
+          _showMessage(
             type == 'General'
                 ? 'Inquiry submitted! Our advisor will contact you shortly.'
                 : 'Booking request received! Our team will call you to confirm the time.',
-            null,
+            success: true,
           );
         }
       } else {
-        _launchAction(res.data['message'] ?? 'Failed to submit inquiry', null);
+        _showMessage(res.data['message'] ?? 'Failed to submit inquiry');
       }
     } catch (e) {
-      _launchAction('Connection error. Please try again.', null);
+      _showMessage('Connection error. Please try again.');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -239,7 +357,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       builder: (context) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
+          color: isDark ? const Color(0xFF0F1115) : Colors.white,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
           border: Border.all(
             color: isDark
@@ -289,7 +407,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               icon: LucideIcons.messageSquare,
               title: 'SEND INQUIRY',
               desc: 'Get detailed brochure and pricing via email/WhatsApp.',
-              color: const Color(0xFFC5A35B),
+              color: const Color(0xFF3B82F6),
               onTap: () {
                 Navigator.pop(context);
                 _showRequestDetailsDialog(project, null, 'General');
@@ -300,7 +418,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               icon: LucideIcons.calendar,
               title: 'SCHEDULE SITE VISIT',
               desc: 'Book a personalized tour with our project manager.',
-              color: const Color(0xFFC5A35B),
+              color: const Color(0xFF10B981),
               onTap: () {
                 Navigator.pop(context);
                 _showRequestDetailsDialog(project, null, 'Site Visit');
@@ -311,7 +429,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               icon: LucideIcons.creditCard,
               title: 'TOKEN BOOKING',
               desc: 'Lock your preferred unit with a refundable token amount.',
-              color: const Color(0xFFC5A35B),
+              color: const Color(0xFFF59E0B),
               onTap: () {
                 Navigator.pop(context);
                 _showRequestDetailsDialog(project, 'TOKEN BOOKING', 'General');
@@ -377,7 +495,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+          color: isDark ? const Color(0xFF1E1F21) : Colors.white,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: isDark
@@ -477,7 +595,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       barrierColor: Colors.black.withOpacity(0.55),
       builder: (context) => StatefulBuilder(
         builder: (context, setModalState) => Dialog(
-          backgroundColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
+          backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
           insetPadding: const EdgeInsets.symmetric(
             horizontal: 20,
             vertical: 40,
@@ -708,6 +826,22 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                         ),
                       ),
                     ),
+                    // The API requires a phone. Visits normally take it from
+                    // the profile — ask for it here when that's blank, instead
+                    // of submitting empty and failing with a 400.
+                    if ((authUser?['phone']?.toString() ?? '')
+                        .trim()
+                        .isEmpty) ...[
+                      const SizedBox(height: 24),
+                      _buildInquiryField(
+                        'PHONE NUMBER *',
+                        _phoneController,
+                        LucideIcons.phone,
+                        keyboardType: TextInputType.phone,
+                        inputFormatters: Validators.phoneFormatters,
+                      ),
+                    ],
+
                     // ADDITIONAL NOTES
                     const SizedBox(height: 24),
                     _inquiryLabel('ADDITIONAL NOTES', isDark),
@@ -717,7 +851,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                       maxLines: 4,
                       textCapitalization: TextCapitalization.characters,
                       style: GoogleFonts.ebGaramond(
-                        fontSize: 11,
+                        fontSize: 15,
                         fontWeight: FontWeight.w700,
                         color: isDark ? Colors.white : Colors.black,
                       ),
@@ -756,18 +890,24 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                       'FULL NAME *',
                       _nameController,
                       LucideIcons.user,
+                      keyboardType: TextInputType.name,
+                      inputFormatters: Validators.nameFormatters,
                     ),
                     const SizedBox(height: 16),
                     _buildInquiryField(
                       'PHONE NUMBER *',
                       _phoneController,
                       LucideIcons.phone,
+                      keyboardType: TextInputType.phone,
+                      inputFormatters: Validators.phoneFormatters,
                     ),
                     const SizedBox(height: 16),
                     _buildInquiryField(
                       'EMAIL (OPTIONAL)',
                       _emailController,
                       LucideIcons.mail,
+                      keyboardType: TextInputType.emailAddress,
+                      inputFormatters: Validators.emailFormatters,
                     ),
                   ],
 
@@ -856,7 +996,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       context: context,
       barrierColor: Colors.black.withOpacity(0.55),
       builder: (dCtx) => Dialog(
-        backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+        backgroundColor: isDark ? const Color(0xFF0B111E) : Colors.white,
         insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         child: Padding(
@@ -951,8 +1091,10 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
   Widget _buildInquiryField(
     String label,
     TextEditingController controller,
-    IconData icon,
-  ) {
+    IconData icon, {
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
+  }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -982,8 +1124,10 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
           ),
           child: TextField(
             controller: controller,
+            keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
             style: GoogleFonts.ebGaramond(
-              fontSize: 13,
+              fontSize: 15,
               fontWeight: FontWeight.bold,
               color: isDark ? Colors.white : Colors.black,
             ),
@@ -1201,7 +1345,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     }
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
+      backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -1222,7 +1366,9 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                   crossAxisCount: 2,
                   mainAxisSpacing: 12,
                   crossAxisSpacing: 12,
-                  childAspectRatio: 2.5,
+                  // Taller cards (was 2.5) so the larger label/value text fits
+                  // without the "BOTTOM OVERFLOWED" warning.
+                  childAspectRatio: 2.1,
                   children: [
                     _OverviewActionCard(
                       label: 'COMPLETION',
@@ -1291,7 +1437,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
   // Web parity: the project title + location pill sit BELOW the hero, in large
   // dark serif on the page background (not overlaid on the image).
   Widget _buildTitleSection(dynamic project, bool isDark) {
-    final onSurface = isDark ? Colors.white : const Color(0xFF163A2C);
+    final onSurface = isDark ? Colors.white : Colors.black;
     final locName =
         ((project?['location'] is Map
                 ? project?['location']?['name']
@@ -1366,6 +1512,10 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
             child: CachedNetworkImage(
               imageUrl: heroUrl,
               fit: BoxFit.cover,
+              // Decode at roughly display size and skip the default 500ms
+              // fade — full-res decodes are what make the hero appear late.
+              memCacheWidth: 1080,
+              fadeInDuration: Duration.zero,
               placeholder: (context, url) => Container(
                 color: isDark ? Colors.white10 : Colors.black.withOpacity(0.1),
               ),
@@ -1415,8 +1565,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                           icon: _isFavorited
                               ? Icons.favorite
                               : LucideIcons.heart,
-                          onTap: () =>
-                              setState(() => _isFavorited = !_isFavorited),
+                          onTap: _toggleFavorite,
                           color: _isFavorited ? Colors.red : null,
                         )
                         .animate(key: ValueKey(_isFavorited))
@@ -1541,10 +1690,14 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               .toString()
               .trim()
               .toUpperCase(),
+          // Web parity: overview copy capped at 3 lines.
+          maxLines: 3,
+          overflow: TextOverflow.ellipsis,
           style: GoogleFonts.ebGaramond(
-            fontSize: 11,
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
-            height: 1.8,
+            // Was 11 / 60% — small & faint. Bigger + darker.
+            fontSize: 12.5,
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.78),
+            height: 1.7,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.2,
           ),
@@ -1557,15 +1710,20 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
           onView: () => _launchAction('Opening...', project?['flyer']),
           onDownload: () => _launchAction('Downloading...', project?['flyer']),
         ),
+        // Web parity: E-BROCHURE shows only when the project actually has a
+        // brochure (Cledor Mazgaon has one; Cledor Mumbai does not).
+        if (project?['brochure']?.toString().trim().isNotEmpty ?? false) ...[
+          const SizedBox(height: 12),
+          _MultimediaAssetCard(
+            title: 'E-BROCHURE',
+            subtitle: 'FULL SHOWCASE • PDF',
+            icon: LucideIcons.layers,
+            onView: () => _launchAction('Opening...', project?['brochure']),
+            onDownload: () =>
+                _launchAction('Downloading...', project?['brochure']),
+          ),
+        ],
         const SizedBox(height: 12),
-        _MultimediaAssetCard(
-          title: 'E-BROCHURE',
-          subtitle: 'FULL SHOWCASE • PDF',
-          icon: LucideIcons.layers,
-          onView: () => _launchAction('Opening...', project?['brochure']),
-          onDownload: () =>
-              _launchAction('Downloading...', project?['brochure']),
-        ),
         // Web parity: floor plans appear here as resource cards
         // (e.g. "2BHK, MASTER BEDROOM" — CONFIGURATION N/A • AREA N/A).
         ...(((project?['plans'] as List?) ?? []).map((plan) {
@@ -1911,22 +2069,29 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                     ? (amenity['name']?.toString() ?? 'Amenity')
                     : amenity.toString())
                 .toUpperCase();
+        // Web parity: use the shared LuxuryAmenityIcon with the backend-uploaded
+        // (gold-tinted) icon — the "Lobby" concierge glyph is an uploaded asset,
+        // not a Lucide/SVG fallback.
+        final iconRaw = amenity is Map ? amenity['icon']?.toString() : null;
+        final iconUrl = (iconRaw != null && iconRaw.isNotEmpty)
+            ? ref.read(apiClientProvider).resolveUrl(iconRaw)
+            : null;
 
-        // Web parity: unboxed icon + label, gold icon (#dfba6b), dark label.
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _amenityIconWidget(name, size: 30),
+            LuxuryAmenityIcon(name: name, iconUrl: iconUrl, size: 30),
             const SizedBox(height: 10),
             Text(
               name,
               textAlign: TextAlign.center,
+              // Was 8px — too small. Bigger + a touch darker.
               style: GoogleFonts.ebGaramond(
-                fontSize: 8,
-                fontWeight: FontWeight.w600,
+                fontSize: 9.5,
+                fontWeight: FontWeight.w700,
                 color: isDark
-                    ? Colors.white.withOpacity(0.85)
-                    : const Color(0xFF163A2C),
+                    ? Colors.white.withOpacity(0.9)
+                    : const Color(0xFF1E293B),
                 letterSpacing: 0.3,
                 height: 1.15,
               ),
@@ -2130,6 +2295,10 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                       CachedNetworkImage(
                         imageUrl: url,
                         fit: BoxFit.cover,
+                        // Thumbnails render ~90dp wide — decoding the full-res
+                        // source here was the main cost on this row.
+                        memCacheWidth: 300,
+                        fadeInDuration: Duration.zero,
                         placeholder: (context, url) => Container(
                           color: isDark
                               ? Colors.white10
@@ -2497,7 +2666,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     }
     return Icon(
       _getAmenityIcon(name),
-      color: const Color(0xFFC5A35B),
+      color: const Color(0xFFDFBA6B),
       size: size,
     );
   }
@@ -2546,7 +2715,7 @@ class _OverviewActionCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+          color: isDark ? const Color(0xFF1E1F21) : const Color(0xFFF8F9FA),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isDark
@@ -2562,16 +2731,17 @@ class _OverviewActionCard extends StatelessWidget {
               children: [
                 Icon(
                   icon,
-                  size: 14,
-                  color: isDark ? Colors.white : Colors.black,
+                  size: 16,
+                  color: isDark ? Colors.white60 : Colors.black54,
                 ),
                 const SizedBox(width: 8),
                 Text(
                   label.toUpperCase(),
+                  // Was 8px / 38% — too small & faint. Bigger + darker.
                   style: GoogleFonts.ebGaramond(
-                    fontSize: 8,
+                    fontSize: 10,
                     fontWeight: FontWeight.w900,
-                    color: isDark ? Colors.white38 : Colors.black38,
+                    color: isDark ? Colors.white70 : Colors.black54,
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -2580,7 +2750,7 @@ class _OverviewActionCard extends StatelessWidget {
             Text(
               value.toUpperCase(),
               style: GoogleFonts.ebGaramond(
-                fontSize: 13,
+                fontSize: 14,
                 fontWeight: FontWeight.w900,
                 color: isDark ? Colors.white : Colors.black,
                 letterSpacing: -0.2,
@@ -2804,7 +2974,7 @@ class _FloorPlanItem extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: isDark
-            ? const Color(0xFF141B3A)
+            ? const Color(0xFF1E1F21)
             : Colors.black.withOpacity(0.04),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
@@ -2825,6 +2995,8 @@ class _FloorPlanItem extends StatelessWidget {
                 fit: BoxFit.cover,
                 height: 200,
                 width: double.infinity,
+                memCacheWidth: 900,
+                fadeInDuration: Duration.zero,
                 placeholder: (context, url) =>
                     Container(height: 200, color: Colors.black12),
                 errorWidget: (context, url, error) => Container(
@@ -2927,7 +3099,7 @@ class _InventoryItem extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: isDark
-              ? const Color(0xFF141B3A)
+              ? const Color(0xFF1E1F21)
               : Colors.white.withOpacity(0.6),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
@@ -3057,6 +3229,8 @@ class _ConstructionUpdateCard extends StatelessWidget {
                   height: 180,
                   width: double.infinity,
                   fit: BoxFit.cover,
+                  memCacheWidth: 900,
+                  fadeInDuration: Duration.zero,
                   placeholder: (context, url) =>
                       Container(height: 180, color: Colors.black12),
                   errorWidget: (context, url, error) => Container(
@@ -3461,14 +3635,14 @@ class _LocationMapState extends State<_LocationMap> {
                         style: GoogleFonts.ebGaramond(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
-                          color: const Color(0xFFC5A35B),
+                          color: const Color(0xFF2563EB),
                         ),
                       ),
                       const SizedBox(width: 4),
                       const Icon(
                         LucideIcons.externalLink,
                         size: 12,
-                        color: Color(0xFFC5A35B),
+                        color: Color(0xFF2563EB),
                       ),
                     ],
                   ),
@@ -3487,7 +3661,7 @@ class _LocationMapState extends State<_LocationMap> {
                     vertical: 9,
                   ),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+                    color: isDark ? const Color(0xFF1E1F21) : Colors.white,
                     borderRadius: BorderRadius.circular(30),
                     boxShadow: [
                       BoxShadow(
@@ -3630,7 +3804,7 @@ class _HeroMediaThumb extends StatelessWidget {
         width: 68,
         height: 68,
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+          color: isDark ? const Color(0xFF1E1F21) : Colors.white,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
             color: isDark
@@ -3652,7 +3826,7 @@ class _HeroMediaThumb extends StatelessWidget {
           children: [
             if (isVR)
               Container(
-                color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+                color: isDark ? const Color(0xFF1E1F21) : Colors.white,
                 child: Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -3697,6 +3871,8 @@ class _HeroMediaThumb extends StatelessWidget {
               CachedNetworkImage(
                 imageUrl: imageUrl!,
                 fit: BoxFit.cover,
+                memCacheWidth: 900,
+                fadeInDuration: Duration.zero,
                 placeholder: (context, url) => Container(
                   color: isDark
                       ? Colors.white10
@@ -3773,7 +3949,7 @@ class _MultimediaAssetCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
+        color: isDark ? const Color(0xFF1E1F21) : const Color(0xFFF4F4F5),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: isDark
@@ -3808,19 +3984,20 @@ class _MultimediaAssetCard extends StatelessWidget {
                 Text(
                   title.toUpperCase(),
                   style: GoogleFonts.ebGaramond(
-                    fontSize: 9,
+                    fontSize: 11,
                     fontWeight: FontWeight.w900,
                     color: isDark ? Colors.white : Colors.black,
                     letterSpacing: 0.5,
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 3),
                 Text(
                   subtitle.toUpperCase(),
+                  // Was 7px / 38% — too small & faint. Bigger + darker.
                   style: GoogleFonts.ebGaramond(
-                    fontSize: 7,
+                    fontSize: 9,
                     fontWeight: FontWeight.w700,
-                    color: isDark ? Colors.white38 : Colors.black38,
+                    color: isDark ? Colors.white60 : Colors.black54,
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -3936,14 +4113,18 @@ class _ConstructionDashboardCard extends ConsumerWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24),
+      // Investor-parity construction box (master design): subtle translucent
+      // fill, radius 40, hairline border, no shadow.
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 36),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
-        borderRadius: BorderRadius.circular(32),
+        color: isDark
+            ? Colors.white.withOpacity(0.03)
+            : const Color(0xFFF8FAFC),
+        borderRadius: BorderRadius.circular(40),
         border: Border.all(
           color: isDark
-              ? Colors.white.withOpacity(0.05)
-              : Colors.black.withOpacity(0.05),
+              ? Colors.white.withOpacity(0.08)
+              : Colors.black.withOpacity(0.06),
         ),
       ),
       child: Column(
@@ -4011,10 +4192,12 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   // primary(dark) circle, so dark dots wrap the WHOLE ring — it
                   // reads as a full dense dark dotted circle, not a 15% arc.
                   _DottedProgressRing(
+                    // Guest-parity: same ring size + dot size (100 / 56 @ 6px)
+                    // as the guest project detail so every portal matches.
                     percent: 100,
-                    size: 112,
-                    strokeWidth: 4,
-                    dashCount: 76,
+                    size: 100,
+                    strokeWidth: 6,
+                    dashCount: 56,
                     activeColor: isDark ? Colors.white : Colors.black,
                     trackColor: isDark ? Colors.white : Colors.black,
                   ),
@@ -4024,7 +4207,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                       Text(
                         '${overallProgress.toInt()}%',
                         style: GoogleFonts.gelasio(
-                          fontSize: 20,
+                          fontSize: 22,
                           fontWeight: FontWeight.w900,
                           color: isDark ? Colors.white : Colors.black,
                         ),
@@ -4066,7 +4249,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     height: 12,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+                      color: isDark ? const Color(0xFF1E1F21) : Colors.white,
                       border: Border.all(
                         color: isDark ? Colors.white : Colors.black,
                         width: 2,
@@ -4088,10 +4271,12 @@ class _ConstructionDashboardCard extends ConsumerWidget {
           const SizedBox(height: 20),
           // Construction Dashboard Cards
           SizedBox(
-            height: 360,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+            // Same as the guest portal: 220 image + ~125 footer.
+            height: 345,
+            child: PageView.builder(
+              controller: PageController(viewportFraction: 1.0),
+              physics: const BouncingScrollPhysics(),
+              padEnds: false,
               itemCount: phases.length,
               itemBuilder: (context, index) {
                 final phase = phases[index];
@@ -4104,18 +4289,28 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   phase['image'] ?? firstPhaseImg,
                 );
                 return Container(
-                  width: 260,
-                  margin: const EdgeInsets.only(right: 16),
+                  // Match the guest portal phase card: full width + shadow
+                  // (was a fixed 260-wide horizontal card).
+                  margin: const EdgeInsets.symmetric(horizontal: 8),
                   decoration: BoxDecoration(
                     color: isDark
-                        ? Colors.black.withOpacity(0.2)
+                        ? Colors.white.withOpacity(0.03)
                         : Colors.white,
                     borderRadius: BorderRadius.circular(24),
+                    // Subtle in dark so the border doesn't show as a bright edge
+                    // behind the image.
                     border: Border.all(
                       color: isDark
-                          ? Colors.white.withOpacity(0.05)
-                          : Colors.black.withOpacity(0.05),
+                          ? Colors.white.withOpacity(0.08)
+                          : Colors.black.withOpacity(0.10),
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(isDark ? 0.35 : 0.07),
+                        blurRadius: 14,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -4130,17 +4325,20 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                               ),
                               child: CachedNetworkImage(
                                 imageUrl: imageUrl,
-                                height: 180,
-                                width: 260,
+                                // Same image size as the guest portal (220).
+                                height: 220,
+                                width: double.infinity,
                                 fit: BoxFit.cover,
+                                memCacheWidth: 600,
+                                fadeInDuration: Duration.zero,
                                 placeholder: (context, url) => Container(
-                                  height: 180,
-                                  width: 260,
+                                  height: 220,
+                                  width: double.infinity,
                                   color: Colors.white10,
                                 ),
                                 errorWidget: (context, url, error) => Container(
-                                  height: 180,
-                                  width: 260,
+                                  height: 220,
+                                  width: double.infinity,
                                   color: Colors.white10,
                                 ),
                               ),
@@ -4157,7 +4355,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                       'Upcoming');
                                   final s = status.toLowerCase();
                                   final bg = s == 'completed'
-                                      ? const Color(0xFFC5A35B)
+                                      ? const Color(0xFF22C55E)
                                       : s == 'in progress'
                                       ? (isDark ? Colors.white : Colors.black)
                                       : (isDark
@@ -4208,7 +4406,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                 fontWeight: FontWeight.w900,
                                 color: isDark
                                     ? Colors.white
-                                    : const Color(0xFF0F2A20),
+                                    : const Color(0xFF0F172A),
                                 letterSpacing: 1,
                               ),
                             ),
@@ -4221,8 +4419,8 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                   children: [
                                     // Simple solid arc progress ring.
                                     SizedBox(
-                                      width: 40,
-                                      height: 40,
+                                      width: 46,
+                                      height: 46,
                                       child: CircularProgressIndicator(
                                         value:
                                             (phase['progressPercent'] ??
@@ -4247,7 +4445,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                     Text(
                                       '${phase['progressPercent'] ?? phase['progress'] ?? 0}%',
                                       style: GoogleFonts.ebGaramond(
-                                        fontSize: 8,
+                                        fontSize: 10,
                                         fontWeight: FontWeight.w900,
                                         color: isDark
                                             ? Colors.white
@@ -4389,7 +4587,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   final status = phase['status']?.toString() ?? 'Upcoming';
                   final s = status.toLowerCase();
                   final dotColor = s == 'completed'
-                      ? const Color(0xFFC5A35B)
+                      ? const Color(0xFF22C55E)
                       : s == 'in progress'
                       ? (isDark ? Colors.white : Colors.black)
                       : (isDark ? Colors.white38 : Colors.black26);
@@ -4398,9 +4596,9 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     margin: const EdgeInsets.only(right: 16),
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: (isDark ? Colors.white : Colors.black).withOpacity(
-                        0.03,
-                      ),
+                      color: isDark
+                          ? Colors.white.withOpacity(0.05)
+                          : Colors.white,
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: (isDark ? Colors.white : Colors.black)
@@ -4515,10 +4713,10 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                         ),
                         const SizedBox(height: 12),
                         ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
+                          borderRadius: BorderRadius.circular(999),
                           child: LinearProgressIndicator(
                             value: (pct / 100).clamp(0.0, 1.0),
-                            minHeight: 4,
+                            minHeight: 6,
                             backgroundColor:
                                 (isDark ? Colors.white : Colors.black)
                                     .withOpacity(0.08),
@@ -4607,6 +4805,8 @@ class _MediaFloatThumbnail extends StatelessWidget {
                     fit: BoxFit.cover,
                     width: double.infinity,
                     height: double.infinity,
+                    memCacheWidth: 1080,
+                    fadeInDuration: Duration.zero,
                     placeholder: (context, url) =>
                         Container(color: Colors.black12),
                     errorWidget: (context, url, error) =>

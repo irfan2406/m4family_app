@@ -13,10 +13,12 @@ class CpReferralRedeemScreen extends ConsumerStatefulWidget {
   const CpReferralRedeemScreen({super.key});
 
   @override
-  ConsumerState<CpReferralRedeemScreen> createState() => _CpReferralRedeemScreenState();
+  ConsumerState<CpReferralRedeemScreen> createState() =>
+      _CpReferralRedeemScreenState();
 }
 
-class _CpReferralRedeemScreenState extends ConsumerState<CpReferralRedeemScreen> {
+class _CpReferralRedeemScreenState
+    extends ConsumerState<CpReferralRedeemScreen> {
   final TextEditingController _amountController = TextEditingController();
 
   String? _selectedOption;
@@ -123,7 +125,7 @@ class _CpReferralRedeemScreenState extends ConsumerState<CpReferralRedeemScreen>
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(msg),
-        backgroundColor: error ? const Color(0xFFD32F2F) : Colors.green,
+        backgroundColor: error ? Colors.redAccent : Colors.green,
       ),
     );
   }
@@ -156,9 +158,15 @@ class _CpReferralRedeemScreenState extends ConsumerState<CpReferralRedeemScreen>
                       decoration: BoxDecoration(
                         color: scheme.onSurface.withValues(alpha: 0.05),
                         shape: BoxShape.circle,
-                        border: Border.all(color: scheme.onSurface.withValues(alpha: 0.1)),
+                        border: Border.all(
+                          color: scheme.onSurface.withValues(alpha: 0.1),
+                        ),
                       ),
-                      child: Icon(LucideIcons.arrowLeft, size: 16, color: scheme.onSurface),
+                      child: Icon(
+                        LucideIcons.arrowLeft,
+                        size: 16,
+                        color: scheme.onSurface,
+                      ),
                     ),
                   ),
                   Expanded(
@@ -196,7 +204,12 @@ class _CpReferralRedeemScreenState extends ConsumerState<CpReferralRedeemScreen>
             // ─── Body ────────────────────────────────────────────
             Expanded(
               child: _loading
-                  ? Center(child: CircularProgressIndicator(color: scheme.onSurface, strokeWidth: 2))
+                  ? Center(
+                      child: CircularProgressIndicator(
+                        color: scheme.onSurface,
+                        strokeWidth: 2,
+                      ),
+                    )
                   : RefreshIndicator(
                       onRefresh: _load,
                       color: scheme.onSurface,
@@ -220,7 +233,9 @@ class _CpReferralRedeemScreenState extends ConsumerState<CpReferralRedeemScreen>
                               ),
                             ),
                             const SizedBox(height: 16),
-                            ..._options.map((o) => _buildOption(o, scheme, isDark)),
+                            ..._options.map(
+                              (o) => _buildOption(o, scheme, isDark),
+                            ),
 
                             if (_selectedOption != null) ...[
                               const SizedBox(height: 12),
@@ -248,7 +263,7 @@ class _CpReferralRedeemScreenState extends ConsumerState<CpReferralRedeemScreen>
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+        color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
         borderRadius: BorderRadius.circular(40),
         boxShadow: [
           BoxShadow(
@@ -312,11 +327,16 @@ class _CpReferralRedeemScreenState extends ConsumerState<CpReferralRedeemScreen>
                 ),
                 const SizedBox(height: 16),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: scheme.onSurface.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: scheme.onSurface.withValues(alpha: 0.08)),
+                    border: Border.all(
+                      color: scheme.onSurface.withValues(alpha: 0.08),
+                    ),
                   ),
                   child: Text(
                     'VALUE: ₹${_formatNumber(_balance)}',
@@ -339,7 +359,11 @@ class _CpReferralRedeemScreenState extends ConsumerState<CpReferralRedeemScreen>
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   // OPTION CARD
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  Widget _buildOption(Map<String, dynamic> opt, ColorScheme scheme, bool isDark) {
+  Widget _buildOption(
+    Map<String, dynamic> opt,
+    ColorScheme scheme,
+    bool isDark,
+  ) {
     final isSelected = _selectedOption == opt['id'];
     return GestureDetector(
       onTap: () => setState(() => _selectedOption = opt['id'] as String),
@@ -347,10 +371,14 @@ class _CpReferralRedeemScreenState extends ConsumerState<CpReferralRedeemScreen>
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          color: isDark ? scheme.onSurface.withValues(alpha: 0.03) : Colors.white,
+          color: isDark
+              ? scheme.onSurface.withValues(alpha: 0.03)
+              : Colors.white,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? scheme.onSurface : scheme.onSurface.withValues(alpha: 0.08),
+            color: isSelected
+                ? scheme.onSurface
+                : scheme.onSurface.withValues(alpha: 0.08),
             width: isSelected ? 2 : 1,
           ),
           boxShadow: isDark
@@ -370,9 +398,15 @@ class _CpReferralRedeemScreenState extends ConsumerState<CpReferralRedeemScreen>
               decoration: BoxDecoration(
                 color: scheme.onSurface.withValues(alpha: 0.04),
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: scheme.onSurface.withValues(alpha: 0.08)),
+                border: Border.all(
+                  color: scheme.onSurface.withValues(alpha: 0.08),
+                ),
               ),
-              child: Icon(opt['icon'] as IconData, color: scheme.onSurface, size: 20),
+              child: Icon(
+                opt['icon'] as IconData,
+                color: scheme.onSurface,
+                size: 20,
+              ),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -429,7 +463,9 @@ class _CpReferralRedeemScreenState extends ConsumerState<CpReferralRedeemScreen>
         ),
         Container(
           decoration: BoxDecoration(
-            color: isDark ? scheme.onSurface.withValues(alpha: 0.03) : Colors.white,
+            color: isDark
+                ? scheme.onSurface.withValues(alpha: 0.03)
+                : Colors.white,
             borderRadius: BorderRadius.circular(18),
             border: Border.all(color: scheme.onSurface.withValues(alpha: 0.08)),
           ),
@@ -473,14 +509,15 @@ class _CpReferralRedeemScreenState extends ConsumerState<CpReferralRedeemScreen>
     return Expanded(
       child: GestureDetector(
         onTap: () => setState(() {
-          _amountController.text =
-              isMax ? _balance.toInt().toString() : label;
+          _amountController.text = isMax ? _balance.toInt().toString() : label;
         }),
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 4),
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            color: isMax ? scheme.onSurface.withValues(alpha: 0.06) : Colors.transparent,
+            color: isMax
+                ? scheme.onSurface.withValues(alpha: 0.06)
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: scheme.onSurface.withValues(alpha: 0.1)),
           ),
@@ -504,7 +541,9 @@ class _CpReferralRedeemScreenState extends ConsumerState<CpReferralRedeemScreen>
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   Widget _buildConfirmButton(ColorScheme scheme, bool isDark) {
     final isEnabled =
-        _selectedOption != null && _amountController.text.trim().isNotEmpty && !_submitting;
+        _selectedOption != null &&
+        _amountController.text.trim().isNotEmpty &&
+        !_submitting;
     return GestureDetector(
       onTap: isEnabled ? _handleRedeem : null,
       child: Opacity(
@@ -528,7 +567,10 @@ class _CpReferralRedeemScreenState extends ConsumerState<CpReferralRedeemScreen>
               ? SizedBox(
                   width: 20,
                   height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2, color: scheme.surface),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: scheme.surface,
+                  ),
                 )
               : Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -553,7 +595,9 @@ class _CpReferralRedeemScreenState extends ConsumerState<CpReferralRedeemScreen>
 
   String _formatNumber(num n) {
     if (n >= 1000) {
-      return n.toStringAsFixed(0).replaceAllMapped(
+      return n
+          .toStringAsFixed(0)
+          .replaceAllMapped(
             RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
             (m) => '${m[1]},',
           );

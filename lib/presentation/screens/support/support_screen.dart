@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'package:m4_mobile/presentation/providers/support_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:m4_mobile/presentation/screens/support/schedule_visit_screen.dart';
@@ -152,6 +153,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
               ),
             ],
           ),
+          const SideMenuButton(),
         ],
       ),
     ).animate().fadeIn().slideY(begin: -0.1);
@@ -264,7 +266,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
             style: GoogleFonts.ebGaramond(
               fontSize: 9,
               fontWeight: FontWeight.w900,
-              color: scheme.onSurface.withValues(alpha: 0.82),
+              color: scheme.onSurface.withValues(alpha: 0.6),
               letterSpacing: 1.2,
             ),
           ),
@@ -289,7 +291,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
           style: GoogleFonts.ebGaramond(
             fontSize: 13,
             fontWeight: FontWeight.w600,
-            color: scheme.onSurface.withValues(alpha: 0.85),
+            color: scheme.onSurface.withValues(alpha: 0.68),
             letterSpacing: 0,
           ),
         ),
@@ -369,7 +371,7 @@ class _MatrixItem extends StatelessWidget {
             Text(
               subtitle.toUpperCase(),
               style: GoogleFonts.ebGaramond(
-                color: scheme.onSurface.withValues(alpha: 0.85),
+                color: scheme.onSurface.withValues(alpha: 0.68),
                 fontSize: 8,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 0.8,
@@ -396,9 +398,9 @@ class _TicketPreviewItem extends StatelessWidget {
     final isOpen =
         status.toLowerCase() == 'open' || status.toLowerCase() == 'in progress';
     final badgeBg = isOpen
-        ? Color(0xFFC5A35B).withOpacity(0.1)
-        : Color(0xFFC5A35B).withOpacity(0.12);
-    final badgeFg = isOpen ? Color(0xFFC5A35B) : Color(0xFFC5A35B);
+        ? Colors.blueAccent.withOpacity(0.1)
+        : Colors.greenAccent.withOpacity(0.12);
+    final badgeFg = isOpen ? Colors.blueAccent : Colors.greenAccent;
     return ClipRRect(
       borderRadius: BorderRadius.circular(24),
       child: BackdropFilter(
@@ -408,7 +410,7 @@ class _TicketPreviewItem extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: isDark
-                ? const Color(0xFF141B3A).withOpacity(0.8)
+                ? const Color(0xFF18181B).withOpacity(0.8)
                 : Colors.white.withOpacity(0.6),
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
@@ -431,7 +433,7 @@ class _TicketPreviewItem extends StatelessWidget {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: Color(0xFFC5A35B).withOpacity(0.1),
+                            color: Colors.blueAccent.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
@@ -439,7 +441,7 @@ class _TicketPreviewItem extends StatelessWidget {
                                 ? '—'
                                 : id.substring(0, id.length.clamp(0, 8)),
                             style: GoogleFonts.ebGaramond(
-                              color: Color(0xFFC5A35B),
+                              color: Colors.blueAccent,
                               fontSize: 8,
                               fontWeight: FontWeight.w900,
                             ),

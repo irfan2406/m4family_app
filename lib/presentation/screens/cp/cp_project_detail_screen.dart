@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:dio/dio.dart';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -10,6 +11,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/providers/project_provider.dart';
+import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
+import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
 import 'package:m4_mobile/presentation/widgets/luxury_amenity_icon.dart';
 import 'package:m4_mobile/presentation/widgets/wheel_date_time_picker.dart';
 import 'package:share_plus/share_plus.dart';
@@ -67,6 +71,16 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
   // Registration (interest) form — web section `#registration`
   bool _regSubmitting = false;
   String? _regEmployeeId;
+
+  // Inline validation for the Registration form — each error is shown on its
+  // own field rather than as a snackbar that didn't say which one was wrong.
+  String? _regNameError;
+  String? _regPhoneError;
+  String? _regEmailError;
+
+  /// Resolved project ObjectId for the registration payload — null when we only
+  /// have a slug (the API rejects a non-ObjectId here).
+  String? _regProjectId;
   final _regEmployeeEntered = TextEditingController();
   final _regClientName = TextEditingController();
   final _regClientPhone = TextEditingController();
@@ -85,7 +99,25 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _load();
       _loadLiked();
+      // Populate the Registration "Employee Name" dropdown up front — it used
+      // to fetch only when the video-call sheet opened or on submit, so the
+      // list showed just "Select / Other" until then (web loads it on mount).
+      _fetchEmployees();
     });
+  }
+
+  Future<void> _fetchEmployees() async {
+    if (_employees.isNotEmpty) return;
+    try {
+      final res = await ref.read(apiClientProvider).getCpEmployees();
+      final body = res.data;
+      if (body is Map && body['status'] == true && body['data'] is List) {
+        final list = (body['data'] as List)
+            .map((e) => Map<String, dynamic>.from(e as Map))
+            .toList();
+        if (mounted) setState(() => _employees = list);
+      }
+    } catch (_) {}
   }
 
   @override
@@ -127,6 +159,35 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           _progress = List<dynamic>.from(pb);
         }
       } catch (_) {}
+
+      // Fallback for catalog projects that carry no phase records yet: build a
+      // representative construction timeline from the project's OWN hero image +
+      // overall completion (statuses/percentages derived from it — no fabricated
+      // milestone figures), so the phase section renders like projects that do
+      // have phase data instead of vanishing.
+      if (_progress.isEmpty) {
+        final pct = _overallProgressPct();
+        final hero = _heroImage();
+        final imgs = hero.isNotEmpty ? <String>[hero] : const <String>[];
+        final done = pct >= 100;
+        final started = pct > 0;
+        _progress = [
+          {
+            'phaseName': 'Foundation',
+            'status': done ? 'Completed' : (started ? 'In Progress' : 'Upcoming'),
+            'progressPercent': pct,
+            'phaseOrder': 1,
+            'images': imgs,
+          },
+          {
+            'phaseName': 'Structure & Handover',
+            'status': done ? 'Completed' : 'Upcoming',
+            'progressPercent': done ? 100 : 0,
+            'phaseOrder': 2,
+            'images': imgs,
+          },
+        ];
+      }
     } catch (_) {
       _project = widget.projectData;
     }
@@ -242,7 +303,24 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
 
   Future<void> _toggleLiked() async {
     final next = !_liked;
+    // 1) Instant UI: flip the heart immediately.
     setState(() => _liked = next);
+    // 2) Instant toast: show it NOW (before the async save), and clear any
+    //    previous one so rapid taps don't stack/overlap SnackBars — only the
+    //    latest action's toast is shown.
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(
+        SnackBar(
+          backgroundColor: const Color(0xFF10B981),
+          duration: const Duration(milliseconds: 1100),
+          behavior: SnackBarBehavior.fixed,
+          content: Text(
+            next ? 'Saved to favorites' : 'Removed from favorites',
+          ),
+        ),
+      );
+    // 3) Persist in the background (UI + toast already reflect the change).
     try {
       final prefs = await SharedPreferences.getInstance();
       final ids = (prefs.getStringList('cp_favorites') ?? const <String>[])
@@ -251,12 +329,6 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       if (next) ids.add(widget.projectId);
       await prefs.setStringList('cp_favorites', ids);
     } catch (_) {}
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(next ? 'Saved to favorites' : 'Removed from favorites'),
-      ),
-    );
   }
 
   Future<void> _shareProject() async {
@@ -271,9 +343,12 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
 
   void _openOrWarn(String? url, [String message = 'Not available']) {
     if (url == null || url.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: const Color(0xFFE24B4A),
+          content: Text(message),
+        ),
+      );
       return;
     }
     _openUrl(url);
@@ -317,7 +392,16 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
   }
 
   Future<void> _openVideoCallSheet() async {
-    // fetch employees once (CP CRM)
+    // Open the sheet FIRST. These fetches used to be awaited before it opened —
+    // and the projects catalog takes ~90s (multi-MB payload), so tapping
+    // "Connect Now" appeared to do nothing at all for a minute and a half.
+    // The dropdowns fill in as each fetch lands.
+    //
+    // Web parity: client fields start EMPTY — don't prefill with the CP's own
+    // account details. "Select Project" also starts unselected, matching web.
+    if (mounted) setState(() => _leadOpen = true);
+
+    // Employees (CP CRM) — small payload, lands quickly.
     if (_employees.isEmpty) {
       try {
         final res = await ref.read(apiClientProvider).getCpEmployees();
@@ -326,27 +410,24 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           _employees = (body['data'] as List)
               .map((e) => Map<String, dynamic>.from(e as Map))
               .toList();
+          if (mounted) setState(() {});
         }
       } catch (_) {}
     }
 
-    // Fetch all projects for the "Select Project" dropdown (web parity).
+    // Projects for the "Select Project" dropdown. Go through the shared
+    // projectsProvider rather than a bare getProjects(): it's cached, so this
+    // no longer re-downloads the multi-MB catalog every time the sheet opens.
     if (_allProjects.isEmpty) {
       try {
-        final res = await ref.read(apiClientProvider).getProjects();
-        final body = res.data;
-        final list = body is Map ? body['data'] : null;
-        if (list is List) {
-          _allProjects = list
-              .map((e) => Map<String, dynamic>.from(e as Map))
-              .toList();
-        }
+        final list = await ref.read(projectsProvider.future);
+        _allProjects = list
+            .whereType<Map>()
+            .map((e) => Map<String, dynamic>.from(e))
+            .toList();
+        if (mounted) setState(() {});
       } catch (_) {}
     }
-
-    // Web parity: client fields start EMPTY — don't prefill with the CP's own
-    // account details. "Select Project" also starts unselected, matching web.
-    if (mounted) setState(() => _leadOpen = true);
   }
 
   Future<void> _submitRegistration() async {
@@ -367,28 +448,36 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     }
 
     final typedEmp = _regEmployeeEntered.text.trim();
-    final hasPick = _regEmployeeId != null && _regEmployeeId!.isNotEmpty;
-    if (!typedEmp.isNotEmpty && !hasPick) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Enter employee name or select from list'),
-        ),
-      );
-      return;
-    }
-    if (_regClientName.text.trim().isEmpty ||
-        _regClientPhone.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Enter client name and number')),
-      );
-      return;
-    }
-    if (_regClientEmail.text.trim().isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Enter email address')));
-      return;
-    }
+    // Employee name is OPTIONAL (web parity). "Other" (value 'other') is a
+    // free-text choice, not a real employee id, so it never counts as a picked
+    // employee — the typed name is used instead.
+    final hasPick =
+        _regEmployeeId != null &&
+        _regEmployeeId!.isNotEmpty &&
+        _regEmployeeId != 'other';
+    // Each problem is reported ON its own field (red border + reason) instead
+    // of a snackbar that didn't say which field was wrong.
+    final email = _regClientEmail.text.trim();
+    final phone = _regClientPhone.text.trim();
+    final nameErr = _regClientName.text.trim().isEmpty
+        ? 'Enter the client name'
+        : null;
+    final phoneErr = phone.isEmpty
+        ? 'Enter the client number'
+        : (phone.replaceAll(RegExp(r'\D'), '').length < 10
+              ? 'Enter a valid 10-digit number'
+              : null);
+    final emailErr = email.isEmpty
+        ? 'Enter the email address'
+        : (!RegExp(r'^[\w.+-]+@[\w-]+\.[\w.-]+$').hasMatch(email)
+              ? 'Enter a valid email address'
+              : null);
+    setState(() {
+      _regNameError = nameErr;
+      _regPhoneError = phoneErr;
+      _regEmailError = emailErr;
+    });
+    if (nameErr != null || phoneErr != null || emailErr != null) return;
 
     final selectName = hasPick
         ? _employees
@@ -411,6 +500,11 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         ref.read(authProvider).user?['_id']?.toString() ??
         ref.read(authProvider).user?['id']?.toString();
 
+    // Resolve a REAL project ObjectId; widget.projectId may be a route slug.
+    final regProjectIdRaw =
+        p['_id']?.toString() ?? p['id']?.toString() ?? widget.projectId;
+    _regProjectId = regProjectIdRaw.length == 24 ? regProjectIdRaw : null;
+
     setState(() => _regSubmitting = true);
     try {
       final api = ref.read(apiClientProvider);
@@ -418,11 +512,17 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         'name': _regClientName.text.trim(),
         'email': _regClientEmail.text.trim(),
         'phone': _regClientPhone.text.trim(),
-        'projectId':
-            p['_id']?.toString() ?? p['id']?.toString() ?? widget.projectId,
+        // `projectId` is an ObjectId ref. widget.projectId can be a route SLUG
+        // ("cledor"), which made the API reject the whole lead with a
+        // CastToObjectId/BSONError — so only send a real id (same guard as
+        // sourceId below). `project` still carries the title either way.
+        if (_regProjectId != null) 'projectId': _regProjectId,
         'project': (p['title'] ?? 'Project').toString(),
-        'interest': 'Registration',
-        'status': 'new',
+        // Server-side enum — 'Registration' isn't a valid value and was
+        // rejected with a 400. Valid: Buying | Selling | Site Visit | Video Call.
+        'interest': 'Buying',
+        // Enum is UPPERCASE ('new' was rejected). Valid: NEW | INTERESTED | …
+        'status': 'NEW',
         'source': 'cp',
         'message':
             'CP portal registration • Employee: $employeeName • Project: ${(p['title'] ?? 'N/A').toString()}${loc.isNotEmpty ? ' • Location: $loc' : ''}',
@@ -435,9 +535,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       if (!mounted) return;
       final ok = res.data is Map ? (res.data as Map)['status'] == true : false;
       if (ok) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Registration submitted')));
+        _regToast('Registration submitted', success: true);
         _regEmployeeEntered.clear();
         _regClientName.clear();
         _regClientPhone.clear();
@@ -448,18 +546,13 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         final msg = res.data is Map
             ? (res.data as Map)['message']?.toString()
             : null;
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(msg ?? 'Submission failed')));
+        _regToast(msg ?? 'Submission failed');
       }
     } on DioException catch (e) {
       final msg = e.response?.data is Map
           ? (e.response!.data as Map)['message']?.toString()
           : null;
-      if (mounted)
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(msg ?? 'Submission failed')));
+      if (mounted) _regToast(msg ?? 'Submission failed');
     } finally {
       if (mounted) setState(() => _regSubmitting = false);
     }
@@ -477,7 +570,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       isScrollControlled: true,
       builder: (sheetCtx) => Container(
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+          color: isDark ? const Color(0xFF0B111E) : Colors.white,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         ),
         padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
@@ -489,7 +582,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
+                  color: (isDark ? Colors.white : Colors.black).withValues(
                     alpha: 0.15,
                   ),
                   borderRadius: BorderRadius.circular(99),
@@ -585,23 +678,17 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     final typedEmp = _employeeEntered.text.trim();
     final hasPick = _employeeId != null && _employeeId!.isNotEmpty;
     if (!typedEmp.isNotEmpty && !hasPick) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Enter or select employee name')),
-      );
+      _regToast('Enter or select employee name');
       return;
     }
     if (_clientName.text.trim().isEmpty ||
         _clientPhone.text.trim().isEmpty ||
         _clientEmail.text.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Enter client name, number, and email')),
-      );
+      _regToast('Enter client name, number, and email');
       return;
     }
     if (_videoCallDt == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Select date and time')));
+      _regToast('Select date and time');
       return;
     }
 
@@ -650,10 +737,13 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         'name': _clientName.text.trim(),
         'phone': _clientPhone.text.trim(),
         'email': _clientEmail.text.trim(),
-        'projectId': effectiveProjectId,
+        // Only ever send a real ObjectId — a slug here made the API reject the
+        // whole lead with a CastToObjectId/BSONError.
+        if (effectiveProjectId.length == 24) 'projectId': effectiveProjectId,
         'project': effectiveProjectTitle,
         'interest': _visitType,
-        'status': 'new',
+        // Enum is UPPERCASE ('new' was rejected). Valid: NEW | INTERESTED | …
+        'status': 'NEW',
         'source': 'cp',
         'message':
             'CP video call • Employee: $employeeName • ${(p['title'] ?? '').toString()}',
@@ -668,25 +758,18 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       final ok = res.data is Map ? (res.data as Map)['status'] == true : false;
       if (ok) {
         setState(() => _leadOpen = false);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Request submitted')));
+        _regToast('Request submitted', success: true);
       } else {
         final msg = res.data is Map
             ? (res.data as Map)['message']?.toString()
             : null;
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(msg ?? 'Submission failed')));
+        _regToast(msg ?? 'Submission failed');
       }
     } on DioException catch (e) {
       final msg = e.response?.data is Map
           ? (e.response!.data as Map)['message']?.toString()
           : null;
-      if (mounted)
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(msg ?? 'Submission failed')));
+      if (mounted) _regToast(msg ?? 'Submission failed');
     } finally {
       if (mounted) setState(() => _leadSubmitting = false);
     }
@@ -744,8 +827,18 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         ? (p['heroImages'] as List).first?.toString()
         : p['heroImage']?.toString();
 
+    final cpIdx = ref.watch(cpNavigationIndexProvider);
+
     return Scaffold(
       backgroundColor: scheme.surface,
+      extendBody: true,
+      bottomNavigationBar: CpBottomNav(
+        currentIndex: cpIdx,
+        onTap: (i) {
+          context.go('/home');
+          ref.read(cpNavigationIndexProvider.notifier).state = i;
+        },
+      ),
       body: Stack(
         children: [
           CustomScrollView(
@@ -894,6 +987,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
+                                      backgroundColor: Color(0xFFE24B4A),
                                       content: Text(
                                         '360° Virtual Tour coming soon',
                                       ),
@@ -1046,18 +1140,48 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         _sectionTitle('Amenities', scheme, accent),
                         const SizedBox(height: 12),
                         _amenitiesGrid(p, scheme),
-                        const SizedBox(height: 26),
+                        const SizedBox(height: 20),
                         _sectionTitle('Construction Progress', scheme, accent),
                         const SizedBox(height: 12),
-                        _progressCard(p, overallPct, scheme),
-                        if (_progress.isNotEmpty) ...[
-                          const SizedBox(height: 20),
-                          _progressYearHeader(scheme),
-                          const SizedBox(height: 16),
-                          _progressTimeline(scheme),
-                          const SizedBox(height: 24),
-                          _phaseTrackingSection(scheme),
-                        ],
+                        // Web parity: ONE box + ONE shadow wrapping the progress
+                        // content, the 2026 rail, the phase cards AND phase
+                        // tracking (these used to be separate blocks).
+                        Container(
+                          // Narrower side padding (was 22) so the phase card
+                          // fills the box, matching the guest portal.
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 36,
+                          ),
+                          // Investor-parity construction box (master design):
+                          // subtle translucent fill, radius 40, hairline
+                          // border, no shadow.
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(40),
+                            border: Border.all(
+                              color: scheme.brightness == Brightness.light
+                                  ? Colors.black.withValues(alpha: 0.06)
+                                  : Colors.white.withValues(alpha: 0.08),
+                            ),
+                            color: scheme.brightness == Brightness.light
+                                ? const Color(0xFFF8FAFC)
+                                : Colors.white.withValues(alpha: 0.03),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _progressCard(p, overallPct, scheme),
+                              if (_progress.isNotEmpty) ...[
+                                const SizedBox(height: 20),
+                                _progressYearHeader(scheme),
+                                const SizedBox(height: 16),
+                                _progressTimeline(scheme),
+                                const SizedBox(height: 24),
+                                _phaseTrackingSection(scheme),
+                              ],
+                            ],
+                          ),
+                        ),
                         const SizedBox(height: 26),
                         _sectionTitle('Registration', scheme, accent),
                         const SizedBox(height: 12),
@@ -1070,7 +1194,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         _sectionTitle('Location', scheme, accent),
                         const SizedBox(height: 12),
                         _locationCard(p, scheme),
-                        const SizedBox(height: 90),
+                        const SizedBox(height: 130),
                       ],
                     ),
                   ),
@@ -1180,8 +1304,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
 
   Widget _vrButton({required ColorScheme scheme, required VoidCallback onTap}) {
     return Material(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(18),
+      color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(18),
@@ -1189,16 +1312,20 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           width: 66,
           height: 66,
           decoration: BoxDecoration(
+            color: Colors.white,
             borderRadius: BorderRadius.circular(18),
+            // Outline-bordered card — same footprint + frame as the Exterior /
+            // Interior thumbnails (matched on request). A visible hairline outline
+            // (white-on-white would be invisible) plus a soft shadow.
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.7),
-              width: 2,
+              color: Colors.black.withValues(alpha: 0.12),
+              width: 1.5,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.35),
-                blurRadius: 18,
-                offset: const Offset(0, 8),
+                color: Colors.black.withValues(alpha: 0.10),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -1206,12 +1333,27 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(LucideIcons.glasses, size: 26),
-              const SizedBox(height: 2),
+              // The /360-vr.png "360" glyph (matches the reference icon). It is
+              // scaled up + clipped so the glyph fills the card, instead of
+              // floating small inside the PNG's large built-in padding.
+              SizedBox(
+                width: 44,
+                height: 44,
+                child: ClipRect(
+                  child: Transform.scale(
+                    scale: 1.5,
+                    child: Image.asset(
+                      'assets/360-vr.png',
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 3),
               Text(
-                '360°',
+                '360° VIEW',
                 style: GoogleFonts.ebGaramond(
-                  fontSize: 9,
+                  fontSize: 8,
                   fontWeight: FontWeight.w900,
                 ),
               ),
@@ -1449,7 +1591,15 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
 
   Widget _amenitiesGrid(Map<String, dynamic> p, ColorScheme scheme) {
     final am = p['amenities'];
-    final list = am is List ? am : <dynamic>[];
+    final rawList = am is List ? am : <dynamic>[];
+    // Drop blank entries. The data carried empty amenity slots which rendered as
+    // invisible grid cells — that's what left the big empty band under "Lobby".
+    final list = rawList.where((e) {
+      final n =
+          (e is String ? e : (e is Map ? e['name'] : e))?.toString().trim() ??
+          '';
+      return n.isNotEmpty;
+    }).toList();
     if (list.isEmpty) {
       return Text(
         'No amenities listed',
@@ -1459,164 +1609,178 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         ),
       );
     }
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 16,
-        childAspectRatio: 1.0,
-      ),
-      itemCount: list.length,
-      itemBuilder: (context, i) {
-        final raw = list[i];
-        final name = (raw is String ? raw : (raw is Map ? raw['name'] : raw))
-            .toString();
-        final iconRaw = raw is Map ? raw['icon']?.toString() : null;
-        final iconUrl = (iconRaw != null && iconRaw.isNotEmpty)
-            ? ref.read(apiClientProvider).resolveUrl(iconRaw)
-            : null;
-        // Web parity: gold, name-mapped LuxuryAmenityIcon + Title-case label,
-        // no card background.
-        return Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            LuxuryAmenityIcon(name: name, iconUrl: iconUrl, size: 44),
-            const SizedBox(height: 10),
-            Text(
-              name,
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.ebGaramond(
-                fontSize: 9.5,
-                fontWeight: FontWeight.w600,
-                height: 1.2,
-                color: scheme.onSurface.withValues(alpha: 0.8),
+    // A Wrap sizes each item to its OWN content height (icon + label) and flows
+    // to a new row past 3, so there is no fixed-height cell leaving an empty band
+    // above/below the icons the way the old GridView mainAxisExtent did.
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const spacing = 8.0;
+        final itemWidth = (constraints.maxWidth - spacing * 2) / 3;
+        return Wrap(
+          spacing: spacing,
+          runSpacing: 16,
+          children: list.map((raw) {
+            final name =
+                (raw is String ? raw : (raw is Map ? raw['name'] : raw))
+                    .toString();
+            final iconRaw = raw is Map ? raw['icon']?.toString() : null;
+            final iconUrl = (iconRaw != null && iconRaw.isNotEmpty)
+                ? ref.read(apiClientProvider).resolveUrl(iconRaw)
+                : null;
+            // Web parity: gold, name-mapped LuxuryAmenityIcon + Title-case label.
+            return SizedBox(
+              width: itemWidth,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  LuxuryAmenityIcon(name: name, iconUrl: iconUrl, size: 44),
+                  const SizedBox(height: 10),
+                  Text(
+                    name,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.ebGaramond(
+                      fontSize: 9.5,
+                      fontWeight: FontWeight.w600,
+                      height: 1.2,
+                      color: scheme.onSurface.withValues(alpha: 0.8),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
+            );
+          }).toList(),
         );
       },
     );
   }
 
   Widget _progressCard(Map<String, dynamic> p, int pct, ColorScheme scheme) {
-    final est = (p['estimatedCompletionDate'] ?? 'Q1 2028').toString();
+    final estRaw = (p['estimatedCompletionDate'] ?? '').toString().trim();
+    final est = estRaw.isEmpty ? 'Q1 2028' : estRaw;
     final isLight = scheme.brightness == Brightness.light;
     final accent = isLight ? Colors.black : scheme.primary;
-    return Container(
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(34),
-        border: Border.all(
-          color: scheme.outlineVariant.withValues(alpha: 0.35),
-        ),
-        color: scheme.surfaceContainerHighest.withValues(alpha: 0.22),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'ESTIMATED COMPLETION DATE',
-                  style: GoogleFonts.gelasio(
-                    fontSize: 9,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 2,
-                    color: accent.withValues(alpha: 0.7),
-                  ),
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  est,
-                  style: GoogleFonts.gelasio(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: -1,
-                    color: isLight ? Colors.black : scheme.onSurface,
-                  ),
-                ),
-                const SizedBox(height: 14),
-                Text(
-                  'As the project progresses, significant milestones are reached, showcasing our team’s dedication and expertise. We are steadily moving closer to our completion goal, ensuring quality and safety at every step. Each phase is handled with precision to meet our luxury standards and timeline.',
-                  maxLines: _showFullProgressDesc ? null : 3,
-                  overflow: _showFullProgressDesc
-                      ? TextOverflow.visible
-                      : TextOverflow.ellipsis,
-                  style: GoogleFonts.ebGaramond(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: scheme.onSurfaceVariant,
-                    height: 1.6,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                GestureDetector(
-                  onTap: () => setState(
-                    () => _showFullProgressDesc = !_showFullProgressDesc,
-                  ),
-                  child: Text(
-                    _showFullProgressDesc ? 'Show less' : 'Read more',
+    // Web parity: the box + shadow now live on the SINGLE outer construction
+    // container in build() (which also wraps the year rail, phase cards and
+    // phase tracking), so this returns content only.
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'ESTIMATED\nCOMPLETION\nDATE',
                     style: GoogleFonts.ebGaramond(
-                      fontSize: 11,
+                      fontSize: 12,
                       fontWeight: FontWeight.w700,
-                      color: accent,
-                      decoration: TextDecoration.underline,
+                      letterSpacing: 1.2,
+                      height: 1.3,
+                      // Was 0.5 — too faint to read.
+                      color: scheme.onSurface.withValues(alpha: 0.72),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 16),
-          SizedBox(
-            width: 110,
-            height: 110,
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: CircularProgressIndicator(
-                    value: pct / 100.0,
-                    strokeWidth: 4,
-                    color: accent,
-                    backgroundColor: scheme.onSurface.withValues(alpha: 0.08),
-                  ),
-                ),
-                Positioned.fill(
-                  child: Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          '$pct%',
-                          style: GoogleFonts.gelasio(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w900,
-                          ),
-                        ),
-                        Text(
-                          'OVERALL',
-                          style: GoogleFonts.ebGaramond(
-                            fontSize: 9,
-                            fontWeight: FontWeight.w800,
-                            color: scheme.onSurfaceVariant,
-                            letterSpacing: 1,
-                          ),
-                        ),
-                      ],
+                  const SizedBox(height: 8),
+                  Text(
+                    est.replaceAll(' ', '\n'),
+                    style: GoogleFonts.ebGaramond(
+                      fontSize: 46,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -1.5,
+                      height: 1.02,
+                      color: isLight ? Colors.black : scheme.onSurface,
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            SizedBox(
+              width: 100,
+              height: 100,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Positioned.fill(
+                    // Guest-parity ring: fine tangential tick marks (56 @ 6px),
+                    // same dot size + ring size as every other portal's OVERALL
+                    // ring. Colours stay CP's (accent fill + faded track).
+                    child: CustomPaint(
+                      painter: _DashedCirclePainter(
+                        progress: pct / 100.0,
+                        color: accent,
+                        backgroundColor: scheme.onSurface.withValues(
+                          alpha: 0.22,
+                        ),
+                        strokeWidth: 6,
+                      ),
+                    ),
+                  ),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '$pct%',
+                        style: GoogleFonts.ebGaramond(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w900,
+                          // Was inheriting the theme's navy — force dark.
+                          color: isLight ? Colors.black : scheme.onSurface,
+                        ),
+                      ),
+                      Text(
+                        'OVERALL',
+                        style: GoogleFonts.ebGaramond(
+                          fontSize: 8,
+                          fontWeight: FontWeight.w800,
+                          color: scheme.onSurface.withValues(alpha: 0.7),
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        Text(
+          'As the project progresses, significant milestones are reached, showcasing our team’s dedication and expertise. We are steadily moving closer to our completion goal, ensuring quality and safety at every step. Each phase is handled with precision to meet our luxury standards and timeline.',
+          maxLines: _showFullProgressDesc ? null : 3,
+          overflow: _showFullProgressDesc
+              ? TextOverflow.visible
+              : TextOverflow.ellipsis,
+          style: GoogleFonts.ebGaramond(
+            // Was 12.5 / 0.55 — small and faint. Bigger + darker for
+            // readability.
+            fontSize: 13.5,
+            fontWeight: FontWeight.w500,
+            color: scheme.onSurface.withValues(alpha: 0.72),
+            height: 1.55,
+          ),
+        ),
+        const SizedBox(height: 10),
+        GestureDetector(
+          onTap: () =>
+              setState(() => _showFullProgressDesc = !_showFullProgressDesc),
+          child: Text(
+            _showFullProgressDesc ? 'Show less' : 'Read more',
+            style: GoogleFonts.ebGaramond(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w700,
+              color: isLight ? Colors.black : scheme.onSurface,
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -1634,194 +1798,225 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             ),
           );
 
-    return SizedBox(
-      height: 260,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 2),
-        itemCount: phases.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 12),
-        itemBuilder: (context, i) {
-          final ph = phases[i];
-          final img =
-              (ph['images'] is List && (ph['images'] as List).isNotEmpty)
-              ? _stringUrl((ph['images'] as List).first)
-              : _stringUrl(ph['image']);
-          final status = (ph['status'] ?? 'In Progress').toString();
-          final name = (ph['name'] ?? ph['phaseName'] ?? 'Phase').toString();
-          final pct = (ph['progressPercent'] is num)
-              ? (ph['progressPercent'] as num).toInt().clamp(0, 100)
-              : 0;
+    if (phases.isEmpty) return const SizedBox.shrink();
 
-          Color badgeBg;
-          Color badgeFg;
-          if (status == 'Completed') {
-            badgeBg = Colors.green;
-            badgeFg = Colors.white;
-          } else if (status == 'In Progress') {
-            badgeBg = accent;
-            badgeFg = isLight ? Colors.white : scheme.onPrimary;
-          } else {
-            badgeBg = scheme.surfaceContainerHighest;
-            badgeFg = scheme.onSurfaceVariant;
-          }
+    // Phase cards swipe HORIZONTALLY, exactly ONE at a time: each card fills
+    // the full width and snaps, so the next card is fully off-screen until you
+    // actually swipe (no peeking card at the right edge), and never stacks
+    // below the first.
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Image is a fixed 220 (same as the guest portal phase card); the
+        // footer (padding + title + 42px ring row) needs ~106 (98 overflowed
+        // by 1px, so this keeps a small safety margin).
+        const cardH = 220.0 + 106;
+        return SizedBox(
+          height: cardH,
+          child: PageView.builder(
+            physics: const BouncingScrollPhysics(),
+            itemCount: phases.length,
+            itemBuilder: (context, i) =>
+                _phaseCard(phases[i], scheme, isLight, accent),
+          ),
+        );
+      },
+    );
+  }
 
-          return Container(
-            width: 240,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(26),
-              border: Border.all(
-                color: scheme.outlineVariant.withValues(alpha: 0.35),
-              ),
-              color: scheme.surfaceContainerHighest.withValues(alpha: 0.22),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+  Widget _phaseCard(
+    Map<String, dynamic> ph,
+    ColorScheme scheme,
+    bool isLight,
+    Color accent,
+  ) {
+    final img = (ph['images'] is List && (ph['images'] as List).isNotEmpty)
+        ? _stringUrl((ph['images'] as List).first)
+        : _stringUrl(ph['image']);
+    final status = (ph['status'] ?? 'In Progress').toString();
+    final name = (ph['name'] ?? ph['phaseName'] ?? 'Phase').toString();
+    final pct = (ph['progressPercent'] is num)
+        ? (ph['progressPercent'] as num).toInt().clamp(0, 100)
+        : 0;
+
+    Color badgeBg;
+    Color badgeFg;
+    if (status == 'Completed') {
+      badgeBg = Colors.green;
+      badgeFg = Colors.white;
+    } else if (status == 'In Progress') {
+      badgeBg = accent;
+      badgeFg = isLight ? Colors.white : scheme.onPrimary;
+    } else {
+      badgeBg = scheme.surfaceContainerHighest;
+      badgeFg = scheme.onSurfaceVariant;
+    }
+
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(
+          color: isLight
+              ? Colors.black.withValues(alpha: 0.06)
+              : Colors.white.withValues(alpha: 0.08),
+        ),
+        color: isLight ? Colors.white : Colors.white.withValues(alpha: 0.03),
+        // Softer than before — this card is now nested inside the single
+        // shadowed construction box, so a heavy shadow double-stacked.
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isLight ? 0.07 : 0.35),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Same image size as the guest portal phase card (fixed 220).
+          SizedBox(
+            height: 220,
+            child: Stack(
+              fit: StackFit.expand,
               children: [
-                Expanded(
-                  child: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      _projectImage(img, fit: BoxFit.cover),
-                      Positioned.fill(
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: () {
-                              final urls = _stringList(ph['images']);
-                              if (urls.isNotEmpty) {
-                                _openGallery(urls);
-                              } else if (img != null && img.isNotEmpty) {
-                                _openGallery([img]);
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'No progress images available',
-                                    ),
-                                  ),
-                                );
-                              }
-                            },
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        top: 12,
-                        left: 12,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: badgeBg,
-                            borderRadius: BorderRadius.circular(999),
-                          ),
-                          child: Text(
-                            status.toUpperCase(),
-                            style: GoogleFonts.ebGaramond(
-                              fontSize: 8,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 1,
-                              color: badgeFg,
+                _projectImage(img, fit: BoxFit.cover),
+                Positioned.fill(
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: () {
+                        final urls = _stringList(ph['images']);
+                        if (urls.isNotEmpty) {
+                          _openGallery(urls);
+                        } else if (img != null && img.isNotEmpty) {
+                          _openGallery([img]);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              backgroundColor: Color(0xFFE24B4A),
+                              content: Text('No progress images available'),
                             ),
-                          ),
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 12,
+                  left: 12,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: badgeBg,
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Text(
+                      status.toUpperCase(),
+                      style: GoogleFonts.ebGaramond(
+                        fontSize: 8,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1,
+                        color: badgeFg,
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned.fill(
+                  child: IgnorePointer(
+                    ignoring: true,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black.withValues(alpha: 0.55),
+                          ],
                         ),
                       ),
-                      Positioned.fill(
-                        child: IgnorePointer(
-                          ignoring: true,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  Colors.transparent,
-                                  Colors.black.withValues(alpha: 0.55),
-                                ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Web parity: the project title is the card's heading;
+                // the phase name sits next to the small progress ring.
+                Text(
+                  (_project?['title'] ?? '').toString().toUpperCase(),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.ebGaramond(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 46,
+                      height: 46,
+                      child: Stack(
+                        children: [
+                          Positioned.fill(
+                            child: CircularProgressIndicator(
+                              value: pct / 100.0,
+                              strokeWidth: 3,
+                              color: accent,
+                              backgroundColor: scheme.onSurface.withValues(
+                                alpha: 0.12,
                               ),
                             ),
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(14),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Web parity: the project title is the card's heading;
-                      // the phase name sits next to the small progress ring.
-                      Text(
-                        (_project?['title'] ?? '').toString().toUpperCase(),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.ebGaramond(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 1.2,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: 42,
-                            height: 42,
-                            child: Stack(
-                              children: [
-                                Positioned.fill(
-                                  child: CircularProgressIndicator(
-                                    value: pct / 100.0,
-                                    strokeWidth: 3,
-                                    color: accent,
-                                    backgroundColor: scheme.onSurface
-                                        .withValues(alpha: 0.12),
-                                  ),
+                          Positioned.fill(
+                            child: Center(
+                              child: Text(
+                                '$pct%',
+                                style: GoogleFonts.ebGaramond(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w900,
+                                  color: scheme.onSurfaceVariant,
                                 ),
-                                Positioned.fill(
-                                  child: Center(
-                                    child: Text(
-                                      '$pct%',
-                                      style: GoogleFonts.ebGaramond(
-                                        fontSize: 9,
-                                        fontWeight: FontWeight.w900,
-                                        color: scheme.onSurfaceVariant,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Text(
-                              name.toUpperCase(),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.ebGaramond(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w800,
-                                color: scheme.onSurfaceVariant,
-                                letterSpacing: 0.6,
                               ),
                             ),
                           ),
                         ],
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        name.toUpperCase(),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.ebGaramond(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w800,
+                          color: scheme.onSurfaceVariant,
+                          letterSpacing: 0.6,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-          );
-        },
+          ),
+        ],
       ),
     );
   }
@@ -1836,7 +2031,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       children: [
         Text(
           '2026',
-          style: GoogleFonts.gelasio(
+          style: GoogleFonts.ebGaramond(
             fontSize: 20,
             fontWeight: FontWeight.w900,
             color: accent,
@@ -1895,7 +2090,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               children: [
                 Text(
                   'PHASE TRACKING',
-                  style: GoogleFonts.gelasio(
+                  style: GoogleFonts.ebGaramond(
                     fontSize: 13,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -1936,10 +2131,11 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         const SizedBox(height: 16),
         SizedBox(
           height: 112,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
+          // Exactly ONE full-width card at a time — the next only appears when
+          // you swipe (was a 220-wide list that showed two side by side).
+          child: PageView.builder(
+            physics: const BouncingScrollPhysics(),
             itemCount: phases.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 12),
             itemBuilder: (context, i) {
               final ph = phases[i];
               final status = (ph['status'] ?? 'In Progress').toString();
@@ -1959,14 +2155,18 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               }
 
               return Container(
-                width: 220,
+                width: double.infinity,
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: scheme.outlineVariant.withValues(alpha: 0.3),
+                    color: scheme.brightness == Brightness.light
+                        ? Colors.black.withValues(alpha: 0.06)
+                        : Colors.white.withValues(alpha: 0.08),
                   ),
-                  color: scheme.surfaceContainerHighest.withValues(alpha: 0.14),
+                  color: scheme.brightness == Brightness.light
+                      ? Colors.white
+                      : Colors.white.withValues(alpha: 0.05),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -2050,10 +2250,10 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     ),
                     const SizedBox(height: 10),
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(99),
+                      borderRadius: BorderRadius.circular(999),
                       child: LinearProgressIndicator(
                         value: pct / 100.0,
-                        minHeight: 4,
+                        minHeight: 6,
                         color: accent,
                         backgroundColor: scheme.onSurface.withValues(
                           alpha: 0.08,
@@ -2090,50 +2290,65 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             style: GoogleFonts.gelasio(
               fontSize: 18,
               fontWeight: FontWeight.w600,
+              // Was inheriting the theme's blue/navy — force plain ink (black on
+              // light, white on dark).
+              color: scheme.onSurface,
             ),
           ),
           const SizedBox(height: 12),
           _cpLabel(scheme, 'Employee Name'),
           const SizedBox(height: 6),
-          Theme(
-            data: Theme.of(context).copyWith(
-              focusColor: accent,
-              canvasColor: scheme.surface,
-              cardColor: scheme.surface,
-              colorScheme: Theme.of(
-                context,
-              ).colorScheme.copyWith(primary: accent),
-              dropdownMenuTheme: DropdownMenuThemeData(
-                menuStyle: MenuStyle(
-                  backgroundColor: WidgetStatePropertyAll(scheme.surface),
-                  surfaceTintColor: const WidgetStatePropertyAll(
-                    Colors.transparent,
+          DropdownButtonFormField<String>(
+            initialValue: _regEmployeeId,
+            isExpanded: true,
+            dropdownColor: isLight ? Colors.white : const Color(0xFF17212F),
+            borderRadius: BorderRadius.circular(16),
+            elevation: 4,
+            iconEnabledColor: scheme.onSurface.withValues(alpha: 0.55),
+            style: GoogleFonts.ebGaramond(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: scheme.onSurface,
+            ),
+            items: [
+              DropdownMenuItem(
+                value: null,
+                child: Text(
+                  '— Select —',
+                  style: GoogleFonts.ebGaramond(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: scheme.onSurface.withValues(alpha: 0.55),
                   ),
-                ),
-                textStyle: GoogleFonts.ebGaramond(
-                  fontWeight: FontWeight.w700,
-                  color: scheme.onSurface,
                 ),
               ),
-            ),
-            child: DropdownButtonFormField<String>(
-              initialValue: _regEmployeeId,
-              items: [
-                const DropdownMenuItem(value: null, child: Text('— Select —')),
-                ..._employees.map(
-                  (e) => DropdownMenuItem(
-                    value: e['_id']?.toString(),
-                    child: Text((e['name'] ?? '').toString()),
+              ..._employees.map(
+                (e) => DropdownMenuItem(
+                  value: e['_id']?.toString(),
+                  child: Text(
+                    (e['name'] ?? '').toString().toUpperCase(),
+                    style: GoogleFonts.ebGaramond(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: scheme.onSurface,
+                    ),
                   ),
                 ),
-                const DropdownMenuItem(
-                  value: 'other',
-                  child: Text('+ OTHER (TYPE NAME)'),
+              ),
+              DropdownMenuItem(
+                value: 'other',
+                child: Text(
+                  '+ OTHER (TYPE NAME)',
+                  style: GoogleFonts.ebGaramond(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                    color: const Color(0xFFEAA33E),
+                  ),
                 ),
-              ],
-              onChanged: (v) => setState(() => _regEmployeeId = v),
-              decoration: _cpInputDec(scheme, hint: '— Select —'),
-            ),
+              ),
+            ],
+            onChanged: (v) => setState(() => _regEmployeeId = v),
+            decoration: _cpInputDec(scheme, hint: '— Select —'),
           ),
           // Conditional free-text field — only when "Other" is picked (web parity).
           if (_regEmployeeId == 'other') ...[
@@ -2151,6 +2366,11 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             controller: _regClientName,
             hint: 'CLIENT NAME',
             scheme: scheme,
+            errorText: _regNameError,
+            // Clear the red state as soon as they start typing.
+            onChanged: (v) {
+              if (_regNameError != null) setState(() => _regNameError = null);
+            },
           ),
           const SizedBox(height: 12),
           _cpLabel(scheme, 'Client Number'),
@@ -2160,6 +2380,10 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             hint: '+91 98653 21250',
             scheme: scheme,
             keyboardType: TextInputType.phone,
+            errorText: _regPhoneError,
+            onChanged: (v) {
+              if (_regPhoneError != null) setState(() => _regPhoneError = null);
+            },
           ),
           const SizedBox(height: 12),
           _cpLabel(scheme, 'E-mail'),
@@ -2169,6 +2393,10 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             hint: 'EMAIL ADDRESS',
             scheme: scheme,
             keyboardType: TextInputType.emailAddress,
+            errorText: _regEmailError,
+            onChanged: (v) {
+              if (_regEmailError != null) setState(() => _regEmailError = null);
+            },
           ),
           const SizedBox(height: 12),
           _cpLabel(scheme, 'Location'),
@@ -2249,7 +2477,10 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Contact not available')),
+                      const SnackBar(
+                        backgroundColor: Color(0xFFE24B4A),
+                        content: Text('Contact not available'),
+                      ),
                     );
                   }
                 },
@@ -2398,6 +2629,12 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     final btnBg = isLight ? Colors.black : Colors.white;
     final btnFg = isLight ? Colors.white : Colors.black;
     final accent = isLight ? Colors.black : scheme.primary;
+    final media = MediaQuery.of(context);
+    // Clear the floating bottom nav (the sheet used to butt straight into it),
+    // and ride up with the keyboard when a field is focused.
+    final bottomGap = media.viewInsets.bottom > 0
+        ? media.viewInsets.bottom + 12
+        : 96.0;
     return Positioned.fill(
       child: Material(
         color: Colors.black.withValues(alpha: 0.45),
@@ -2405,12 +2642,21 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           child: Align(
             alignment: Alignment.bottomCenter,
             child: Container(
+              margin: EdgeInsets.fromLTRB(12, 12, 12, bottomGap),
+              // Never swallow the whole screen — it had no height cap at all.
+              constraints: BoxConstraints(maxHeight: media.size.height * 0.70),
               padding: const EdgeInsets.fromLTRB(18, 14, 18, 18),
               decoration: BoxDecoration(
                 color: scheme.surface,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(34),
-                ),
+                // Floats clear of the nav now, so round every corner.
+                borderRadius: BorderRadius.circular(28),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.28),
+                    blurRadius: 30,
+                    offset: const Offset(0, 12),
+                  ),
+                ],
               ),
               child: SingleChildScrollView(
                 child: Column(
@@ -2466,15 +2712,43 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     const SizedBox(height: 6),
                     DropdownButtonFormField<String>(
                       initialValue: _selectedProjectId,
+                      isExpanded: true,
+                      dropdownColor: scheme.brightness == Brightness.light
+                          ? Colors.white
+                          : const Color(0xFF17212F),
+                      borderRadius: BorderRadius.circular(16),
+                      elevation: 4,
+                      iconEnabledColor: scheme.onSurface.withValues(
+                        alpha: 0.55,
+                      ),
+                      style: GoogleFonts.ebGaramond(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: scheme.onSurface,
+                      ),
                       items: [
-                        const DropdownMenuItem(
+                        DropdownMenuItem(
                           value: null,
-                          child: Text('— Select Project —'),
+                          child: Text(
+                            '— Select Project —',
+                            style: GoogleFonts.ebGaramond(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: scheme.onSurface.withValues(alpha: 0.55),
+                            ),
+                          ),
                         ),
                         ..._allProjects.map(
                           (proj) => DropdownMenuItem(
                             value: (proj['_id'] ?? proj['id'])?.toString(),
-                            child: Text((proj['title'] ?? '').toString()),
+                            child: Text(
+                              (proj['title'] ?? '').toString().toUpperCase(),
+                              style: GoogleFonts.ebGaramond(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: scheme.onSurface,
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -2489,20 +2763,55 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                     const SizedBox(height: 6),
                     DropdownButtonFormField<String>(
                       initialValue: _employeeId,
+                      isExpanded: true,
+                      dropdownColor: scheme.brightness == Brightness.light
+                          ? Colors.white
+                          : const Color(0xFF17212F),
+                      borderRadius: BorderRadius.circular(16),
+                      elevation: 4,
+                      iconEnabledColor: scheme.onSurface.withValues(
+                        alpha: 0.55,
+                      ),
+                      style: GoogleFonts.ebGaramond(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: scheme.onSurface,
+                      ),
                       items: [
-                        const DropdownMenuItem(
+                        DropdownMenuItem(
                           value: null,
-                          child: Text('— Select —'),
+                          child: Text(
+                            '— Select —',
+                            style: GoogleFonts.ebGaramond(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: scheme.onSurface.withValues(alpha: 0.55),
+                            ),
+                          ),
                         ),
                         ..._employees.map(
                           (e) => DropdownMenuItem(
                             value: e['_id']?.toString(),
-                            child: Text((e['name'] ?? '').toString()),
+                            child: Text(
+                              (e['name'] ?? '').toString().toUpperCase(),
+                              style: GoogleFonts.ebGaramond(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: scheme.onSurface,
+                              ),
+                            ),
                           ),
                         ),
-                        const DropdownMenuItem(
+                        DropdownMenuItem(
                           value: 'other',
-                          child: Text('+ OTHER (TYPE NAME)'),
+                          child: Text(
+                            '+ OTHER (TYPE NAME)',
+                            style: GoogleFonts.ebGaramond(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w800,
+                              color: const Color(0xFFEAA33E),
+                            ),
+                          ),
                         ),
                       ],
                       onChanged: (v) => setState(() => _employeeId = v),
@@ -2660,24 +2969,74 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     );
   }
 
+  /// Registration result toast — red on failure, green on success.
+  void _regToast(String message, {bool success = false}) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(
+            message,
+            style: GoogleFonts.ebGaramond(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+          ),
+          backgroundColor: success
+              ? const Color(0xFF10B981)
+              : const Color(0xFFE24B4A),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
+  }
+
   Widget _cpField({
     required TextEditingController controller,
     required String hint,
     required ColorScheme scheme,
     TextInputType? keyboardType,
+    // When set, the field turns red and shows the reason underneath — the
+    // problem stays on the field it belongs to, no snackbar over the page.
+    String? errorText,
+    ValueChanged<String>? onChanged,
   }) {
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
-      decoration: _cpInputDec(scheme, hint: hint),
+      onChanged: onChanged,
+      decoration: _cpInputDec(scheme, hint: hint, errorText: errorText),
       style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w700),
     );
   }
 
-  InputDecoration _cpInputDec(ColorScheme scheme, {required String hint}) {
+  InputDecoration _cpInputDec(
+    ColorScheme scheme, {
+    required String hint,
+    String? errorText,
+  }) {
     final isLight = scheme.brightness == Brightness.light;
+    const errorColor = Color(0xFFE24B4A);
     return InputDecoration(
       hintText: hint,
+      errorText: errorText,
+      errorStyle: GoogleFonts.ebGaramond(
+        fontSize: 11,
+        fontWeight: FontWeight.w600,
+        color: errorColor,
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: errorColor, width: 1.5),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(16),
+        borderSide: const BorderSide(color: errorColor, width: 1.5),
+      ),
       hintStyle: GoogleFonts.gelasio(
         fontSize: 10,
         fontWeight: FontWeight.w900,
@@ -2841,4 +3200,142 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       ),
     );
   }
+}
+
+/// Guest-parity OVERALL ring — fine tangential tick marks (a "watch bezel"),
+/// identical to the guest project detail so every portal's ring matches.
+class _DashedCirclePainter extends CustomPainter {
+  final double progress;
+  final Color color;
+  final Color backgroundColor;
+  final double? strokeWidth;
+
+  _DashedCirclePainter({
+    required this.progress,
+    required this.color,
+    required this.backgroundColor,
+    this.strokeWidth,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+    final actualStrokeWidth = strokeWidth ?? 4.0;
+    const dashCount = 56;
+    const gap = 0.5;
+
+    final bgPaint = Paint()
+      ..color = backgroundColor
+      ..strokeWidth = actualStrokeWidth
+      ..style = PaintingStyle.stroke;
+
+    final progressPaint = Paint()
+      ..color = color
+      ..strokeWidth = actualStrokeWidth
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.butt;
+
+    final dashAngle = (2 * 3.14159) / dashCount;
+
+    for (int i = 0; i < dashCount; i++) {
+      final startAngle = i * dashAngle;
+      final sweepAngle = dashAngle * (1 - gap);
+
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        startAngle,
+        sweepAngle,
+        false,
+        bgPaint,
+      );
+
+      if (i < dashCount * progress) {
+        canvas.drawArc(
+          Rect.fromCircle(center: center, radius: radius),
+          startAngle,
+          sweepAngle,
+          false,
+          progressPaint,
+        );
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
+}
+
+/// Dotted progress ring — matches the web "% OVERALL" circle: evenly-spaced
+/// round dots around the ring, coloured up to [progress] (0–1), the remainder
+/// shown faint in [trackColor].
+class _DottedProgressRingPainter extends CustomPainter {
+  const _DottedProgressRingPainter({
+    required this.progress,
+    required this.color,
+    required this.trackColor,
+    this.dotCount = 40,
+    this.dotRadius = 2.8,
+    this.margin = 5,
+    this.dashLength = 0,
+  });
+
+  final double progress;
+  final Color color;
+  final Color trackColor;
+  final int dotCount;
+  final double dotRadius;
+  final double margin;
+
+  /// When > 0 each mark is drawn as a short radial dash (tick) of this length
+  /// instead of a round dot — matches the web ring's elongated ticks.
+  final double dashLength;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = (math.min(size.width, size.height) / 2) - margin;
+    final filled = (progress.clamp(0.0, 1.0) * dotCount).round();
+    for (int i = 0; i < dotCount; i++) {
+      final angle = -math.pi / 2 + (2 * math.pi / dotCount) * i;
+      final paint = Paint()..color = i < filled ? color : trackColor;
+      if (dashLength > 0) {
+        paint
+          ..strokeWidth = dotRadius * 2
+          ..strokeCap = StrokeCap.round;
+        final inner = radius - dashLength / 2;
+        final outer = radius + dashLength / 2;
+        canvas.drawLine(
+          Offset(
+            center.dx + math.cos(angle) * inner,
+            center.dy + math.sin(angle) * inner,
+          ),
+          Offset(
+            center.dx + math.cos(angle) * outer,
+            center.dy + math.sin(angle) * outer,
+          ),
+          paint,
+        );
+      } else {
+        canvas.drawCircle(
+          Offset(
+            center.dx + math.cos(angle) * radius,
+            center.dy + math.sin(angle) * radius,
+          ),
+          dotRadius,
+          paint,
+        );
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _DottedProgressRingPainter old) =>
+      old.progress != progress ||
+      old.color != color ||
+      old.trackColor != trackColor ||
+      old.dotCount != dotCount ||
+      old.dotRadius != dotRadius ||
+      old.margin != margin ||
+      old.dashLength != dashLength;
 }

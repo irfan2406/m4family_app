@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/custom_views_provider.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
@@ -161,30 +164,7 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                       ],
                     ),
                   ),
-                  Builder(
-                    builder: (context) => GestureDetector(
-                      onTap: () => Scaffold.of(context).openDrawer(),
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withOpacity(0.05),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: Theme.of(
-                              context,
-                            ).colorScheme.onSurface.withOpacity(0.1),
-                          ),
-                        ),
-                        child: Icon(
-                          LucideIcons.menu,
-                          size: 20,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                      ),
-                    ),
-                  ),
+                  const SideMenuButton(),
                 ],
               ),
             ),
@@ -365,7 +345,7 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                       padding: const EdgeInsets.all(28),
                       decoration: BoxDecoration(
                         color: Theme.of(context).brightness == Brightness.dark
-                            ? const Color(0xFF141B3A)
+                            ? const Color(0xFF18181B)
                             : Colors.white.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(40),
                         border: Border.all(
@@ -1041,7 +1021,7 @@ class _UnitDetailFieldState extends ConsumerState<_UnitDetailField> {
         Container(
           height: 44,
           decoration: BoxDecoration(
-            color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
+            color: (isDark ? Colors.white : Colors.black).withValues(
               alpha: 0.03,
             ),
             borderRadius: BorderRadius.circular(12),
@@ -1052,7 +1032,7 @@ class _UnitDetailFieldState extends ConsumerState<_UnitDetailField> {
             controller: _controller,
             onChanged: (v) => ref.read(_provider.notifier).state = v,
             style: GoogleFonts.ebGaramond(
-              fontSize: 12,
+              fontSize: 15,
               fontWeight: FontWeight.w600,
               color: scheme.onSurface,
             ),
@@ -2217,6 +2197,8 @@ class _ConsultationSection extends ConsumerWidget {
                   'FULL NAME',
                   LucideIcons.user,
                   nameController,
+                  keyboardType: TextInputType.name,
+                  inputFormatters: Validators.nameFormatters,
                 ),
                 _buildField(
                   context,
@@ -2224,6 +2206,7 @@ class _ConsultationSection extends ConsumerWidget {
                   LucideIcons.phone,
                   phoneController,
                   keyboardType: TextInputType.phone,
+                  inputFormatters: Validators.phoneFormatters,
                 ),
                 _buildField(
                   context,
@@ -2231,17 +2214,29 @@ class _ConsultationSection extends ConsumerWidget {
                   LucideIcons.mail,
                   emailController,
                   keyboardType: TextInputType.emailAddress,
+                  inputFormatters: Validators.emailFormatters,
                 ),
                 const SizedBox(height: 32),
                 GestureDetector(
                   onTap: isLoading
                       ? null
                       : () async {
-                          if (nameController.text.isEmpty ||
-                              phoneController.text.isEmpty) {
+                          final vErr =
+                              Validators.nameError(
+                                nameController.text,
+                                field: 'full name',
+                              ) ??
+                              Validators.phoneError(phoneController.text) ??
+                              (emailController.text.trim().isEmpty
+                                  ? null
+                                  : Validators.emailError(
+                                      emailController.text,
+                                    ));
+                          if (vErr != null) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Name and Phone are required'),
+                              SnackBar(
+                                backgroundColor: const Color(0xFFE24B4A),
+                                content: Text(vErr),
                               ),
                             );
                             return;
@@ -2254,7 +2249,9 @@ class _ConsultationSection extends ConsumerWidget {
                               'name': nameController.text,
                               'phone': phoneController.text,
                               'email': emailController.text,
-                              'source': 'App Custom Views Consultation',
+                              // Server-side enum: source = online | cp |
+                              // walk-in | referral | other.
+                              'source': 'online',
                             });
 
                             if (context.mounted) {
@@ -2340,6 +2337,7 @@ class _ConsultationSection extends ConsumerWidget {
     IconData icon,
     TextEditingController controller, {
     TextInputType keyboardType = TextInputType.text,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -2353,9 +2351,10 @@ class _ConsultationSection extends ConsumerWidget {
       child: TextField(
         controller: controller,
         keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
         style: GoogleFonts.ebGaramond(
           color: Theme.of(context).colorScheme.onSurface,
-          fontSize: 13,
+          fontSize: 15,
         ),
         decoration: InputDecoration(
           labelText: label,

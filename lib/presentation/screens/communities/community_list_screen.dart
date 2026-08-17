@@ -4,6 +4,7 @@ import 'package:m4_mobile/presentation/widgets/conditional_drawer.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'dart:convert';
 import 'dart:ui';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
@@ -43,7 +44,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
         .toLowerCase();
     final isCp = role == 'cp';
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: isDark ? Colors.black : Colors.white,
       drawer: const ConditionalDrawer(),
       extendBody: true,
       bottomNavigationBar: isCp
@@ -99,20 +100,21 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
+                            // Web parity: header reads "M4 FAMILY / DEVELOPMENTS".
                             'M4 FAMILY',
-                            style: GoogleFonts.gelasio(
+                            style: GoogleFonts.ebGaramond(
                               color: isDark ? Colors.white : Colors.black,
-                              fontSize: 18,
+                              fontSize: 16,
                               fontWeight: FontWeight.w900,
-                              letterSpacing: -1,
+                              letterSpacing: -0.3,
                             ),
                           ),
                           Text(
                             'DEVELOPMENTS',
                             style: GoogleFonts.gelasio(
                               color: (isDark ? Colors.white : Colors.black)
-                                  .withOpacity(0.6),
-                              fontSize: 8,
+                                  .withOpacity(0.55),
+                              fontSize: 9,
                               fontWeight: FontWeight.w700,
                               letterSpacing: 3,
                             ),
@@ -121,25 +123,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       ),
                     ],
                   ),
-                  Builder(
-                    builder: (context) => GestureDetector(
-                      onTap: () => Scaffold.of(context).openDrawer(),
-                      child: Container(
-                        width: 52,
-                        height: 36,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Icon(
-                          LucideIcons.menu,
-                          color: Theme.of(context).colorScheme.onSurface,
-                          size: 18,
-                        ),
-                      ),
-                    ),
-                  ),
+                  const SideMenuButton(),
                 ],
               ),
             ),
@@ -153,23 +137,16 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'ABOUT THE',
+                    'ABOUT THE COMMUNITIES',
+                    maxLines: 1,
+                    overflow: TextOverflow.visible,
                     style: GoogleFonts.gelasio(
-                      fontSize: 32,
-                      fontWeight: FontWeight.w300,
-                      color: (isDark ? Colors.white : Colors.black).withOpacity(
-                        0.85,
-                      ),
-                      height: 1,
-                    ),
-                  ),
-                  Text(
-                    'COMMUNITIES',
-                    style: GoogleFonts.gelasio(
-                      fontSize: 32,
-                      fontWeight: FontWeight.w300,
+                      // Web parity: thin elegant serif on one line (not heavy bold).
+                      fontSize: 26,
+                      fontWeight: FontWeight.w400,
                       color: isDark ? Colors.white : Colors.black,
-                      height: 1,
+                      letterSpacing: -0.5,
+                      height: 1.1,
                     ),
                   ),
                   const SizedBox(height: 30),
@@ -184,8 +161,8 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       // muted, text-[13px] font-medium (not serif).
                       style: GoogleFonts.ebGaramond(
                         color: (isDark ? Colors.white : Colors.black)
-                            .withOpacity(0.6),
-                        fontSize: 13,
+                            .withOpacity(0.78),
+                        fontSize: 14.5,
                         height: 1.6,
                         fontWeight: FontWeight.w500,
                       ),
@@ -196,8 +173,8 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                       // muted, text-[13px] font-medium (not serif).
                       style: GoogleFonts.ebGaramond(
                         color: (isDark ? Colors.white : Colors.black)
-                            .withOpacity(0.6),
-                        fontSize: 13,
+                            .withOpacity(0.78),
+                        fontSize: 14.5,
                         height: 1.6,
                         fontWeight: FontWeight.w500,
                       ),
@@ -281,7 +258,7 @@ Widget _communityImagePlaceholder() => Container(
     gradient: LinearGradient(
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
-      colors: [Color(0xFFF4EFE3), Color(0xFFD7D9DE)],
+      colors: [Color(0xFFEDEEF1), Color(0xFFD7D9DE)],
     ),
   ),
   child: Center(
@@ -402,10 +379,11 @@ class _CommunityCard extends ConsumerWidget {
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.ebGaramond(
-                            fontSize: 13,
-                            color: Colors.white.withOpacity(0.8),
+                            fontSize: 14,
+                            // Brighter on the dark card = more readable.
+                            color: Colors.white.withOpacity(0.9),
                             height: 1.5,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],

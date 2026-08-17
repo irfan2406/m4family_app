@@ -148,16 +148,16 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
   Color _statusColor(String status) {
     final s = status.toLowerCase();
     if (s == 'completed' || s == 'verified' || s == 'success') {
-      return const Color(0xFFC5A35B); // green
+      return const Color(0xFF16A34A); // green
     }
     if (s == 'open' || s == 'active') {
-      return const Color(0xFFC5A35B); // blue
+      return const Color(0xFF2563EB); // blue
     }
     return const Color(0xFF6B7280); // grey
   }
 
   void _showFilterSheet(ColorScheme scheme) {
-    const sheetBg = Color(0xFF0F2A20);
+    const sheetBg = Color(0xFF0D0D0D);
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -234,7 +234,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                     child: Container(
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: active ? const Color(0xFF163A2C) : Colors.white,
+                        color: active ? const Color(0xFF1A1A24) : Colors.white,
                         borderRadius: BorderRadius.circular(18),
                         border: active
                             ? Border.all(
@@ -374,7 +374,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                 controller: _searchController,
                 onChanged: (_) => setState(() {}),
                 style: GoogleFonts.ebGaramond(
-                  fontSize: 14,
+                  fontSize: 15,
                   fontWeight: FontWeight.w800,
                 ),
                 decoration: InputDecoration(
@@ -761,7 +761,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
     final statusColor = _statusColor(log['status'] as String);
     final details = (log['details'] as Map).cast<String, dynamic>();
 
-    const sheetBg = Color(0xFF0F2A20);
+    const sheetBg = Color(0xFF0D0D0D);
     const labelGrey = Color(0xFF8A8A8A);
     const summaryText = Color(0xFF9A9A9A);
 
@@ -870,7 +870,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                         const SizedBox(height: 16),
                         Container(
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF4EFE3),
+                            color: const Color(0xFFECECEE),
                             borderRadius: BorderRadius.circular(26),
                           ),
                           clipBehavior: Clip.antiAlias,
@@ -939,7 +939,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                       child: ElevatedButton(
                         onPressed: () => Navigator.pop(ctx),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF163A2C),
+                          backgroundColor: const Color(0xFF1A1A24),
                           foregroundColor: Colors.white,
                           elevation: 0,
                           shape: RoundedRectangleBorder(

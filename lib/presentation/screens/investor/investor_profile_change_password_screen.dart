@@ -26,7 +26,7 @@ class InvestorProfileChangePasswordScreen extends ConsumerStatefulWidget {
 
 class _InvestorProfileChangePasswordScreenState
     extends ConsumerState<InvestorProfileChangePasswordScreen> {
-  static const _gold = Color(0xFFC5A35B);
+  static const _gold = Color(0xFFFFD700);
 
   final _current = TextEditingController();
   final _newPass = TextEditingController();
@@ -48,15 +48,16 @@ class _InvestorProfileChangePasswordScreenState
   bool get _hasMinLength => _newPass.text.length >= 8;
   bool get _hasUppercase => RegExp(r'[A-Z]').hasMatch(_newPass.text);
   bool get _hasNumber => RegExp(r'[0-9]').hasMatch(_newPass.text);
-  bool get _hasSpecial =>
-      RegExp(r'''[!@#$%^&*(),.?":{}|<>_\-\[\]\\/;'`~+=]''').hasMatch(_newPass.text);
+  bool get _hasSpecial => RegExp(
+    r'''[!@#$%^&*(),.?":{}|<>_\-\[\]\\/;'`~+=]''',
+  ).hasMatch(_newPass.text);
 
   void _snack(String msg, {bool error = false}) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(msg),
-        backgroundColor: error ? const Color(0xFFD32F2F) : Colors.green,
+        backgroundColor: error ? Colors.redAccent : Colors.green,
       ),
     );
   }
@@ -112,8 +113,9 @@ class _InvestorProfileChangePasswordScreenState
         if (!mounted) return;
         _back();
       } else {
-        final msg =
-            res.data is Map ? (res.data as Map)['message']?.toString() : null;
+        final msg = res.data is Map
+            ? (res.data as Map)['message']?.toString()
+            : null;
         _snack(msg ?? 'Failed to update password', error: true);
       }
     } on DioException catch (e) {
@@ -131,10 +133,10 @@ class _InvestorProfileChangePasswordScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
+    final bg = isDark ? Colors.black : Colors.white;
+    final textPrimary = isDark ? Colors.white : Colors.black;
+    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -354,7 +356,7 @@ class _InvestorProfileChangePasswordScreenState
       obscureText: obscure,
       onChanged: onChanged,
       style: GoogleFonts.ebGaramond(
-        fontSize: 14,
+        fontSize: 15,
         fontWeight: FontWeight.w600,
         color: textPrimary,
       ),
@@ -368,7 +370,10 @@ class _InvestorProfileChangePasswordScreenState
         filled: true,
         fillColor: card,
         isDense: true,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 16,
+        ),
         prefixIcon: Icon(LucideIcons.lock, size: 16, color: muted),
         suffixIcon: showToggle
             ? IconButton(
@@ -419,8 +424,11 @@ class _InvestorProfileChangePasswordScreenState
         children: [
           Row(
             children: [
-              Icon(LucideIcons.alertCircle,
-                  size: 14, color: _gold.withValues(alpha: 0.7)),
+              Icon(
+                LucideIcons.alertCircle,
+                size: 14,
+                color: _gold.withValues(alpha: 0.7),
+              ),
               const SizedBox(width: 8),
               Text(
                 'REQUIREMENTS',
@@ -441,7 +449,7 @@ class _InvestorProfileChangePasswordScreenState
   }
 
   Widget _requirementRow(String label, bool met, Color muted) {
-    const green = Color(0xFFC5A35B);
+    const green = Color(0xFF10B981);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
@@ -487,7 +495,7 @@ class _InvestorProfileChangePasswordScreenState
           width: double.infinity,
           height: 54,
           decoration: BoxDecoration(
-            gradient: const LinearGradient(colors: [_gold, Color(0xFFC5A35B)]),
+            gradient: const LinearGradient(colors: [_gold, Color(0xFFE6B800)]),
             borderRadius: BorderRadius.circular(14),
             boxShadow: [
               BoxShadow(
@@ -503,7 +511,9 @@ class _InvestorProfileChangePasswordScreenState
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
-                      strokeWidth: 2, color: Colors.black),
+                    strokeWidth: 2,
+                    color: Colors.black,
+                  ),
                 )
               : Text(
                   'SECURE UPDATE',

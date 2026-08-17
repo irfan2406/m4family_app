@@ -52,10 +52,12 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
 
   String _formatNumber(num n) {
     if (n >= 1000) {
-      return n.toStringAsFixed(0).replaceAllMapped(
-        RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
-        (m) => '${m[1]},',
-      );
+      return n
+          .toStringAsFixed(0)
+          .replaceAllMapped(
+            RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
+            (m) => '${m[1]},',
+          );
     }
     return n.toStringAsFixed(0);
   }
@@ -63,7 +65,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    const purple = Color(0xFFC5A35B);
+    const purple = Color(0xFFA855F7);
 
     const events = [
       {
@@ -80,11 +82,20 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
       },
     ];
 
-    final members = _list.whereType<Map>().map((m) => Map<String, dynamic>.from(m)).toList();
+    final members = _list
+        .whereType<Map>()
+        .map((m) => Map<String, dynamic>.from(m))
+        .toList();
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(icon: const Icon(LucideIcons.arrowLeft), onPressed: () => context.pop()),
-        title: Text('Network', style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w800)),
+        leading: IconButton(
+          icon: const Icon(LucideIcons.arrowLeft),
+          onPressed: () => context.pop(),
+        ),
+        title: Text(
+          'Network',
+          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w800),
+        ),
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
@@ -112,7 +123,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                           icon: LucideIcons.wallet,
                           label: 'COMMISSION',
                           value: 'AED ${_formatNumber(_balance())}',
-                          accent: const Color(0xFFC5A35B),
+                          accent: const Color(0xFFFFD700),
                         ),
                       ),
                     ],
@@ -123,14 +134,39 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                     children: [
                       Row(
                         children: [
-                          const Icon(LucideIcons.calendar, size: 16, color: purple),
+                          const Icon(
+                            LucideIcons.calendar,
+                            size: 16,
+                            color: purple,
+                          ),
                           const SizedBox(width: 8),
-                          Text('Upcoming Events', style: GoogleFonts.ebGaramond(fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 0.2)),
+                          Text(
+                            'Upcoming Events',
+                            style: GoogleFonts.ebGaramond(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 0.2,
+                            ),
+                          ),
                         ],
                       ),
                       TextButton(
-                        onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Events coming soon'))),
-                        child: Text('VIEW ALL', style: GoogleFonts.gelasio(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1.6, color: purple)),
+                        onPressed: () =>
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                backgroundColor: Color(0xFFE24B4A),
+                                content: Text('Events coming soon'),
+                              ),
+                            ),
+                        child: Text(
+                          'VIEW ALL',
+                          style: GoogleFonts.gelasio(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 1.6,
+                            color: purple,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -141,47 +177,84 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.4)),
-                        color: scheme.surfaceContainerHighest.withValues(alpha: 0.18),
+                        border: Border.all(
+                          color: scheme.outlineVariant.withValues(alpha: 0.4),
+                        ),
+                        color: scheme.surfaceContainerHighest.withValues(
+                          alpha: 0.18,
+                        ),
                       ),
-                      child: Stack(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Positioned(
-                            top: -14,
-                            right: -14,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                              decoration: const BoxDecoration(
-                                color: purple,
-                                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(12), topRight: Radius.circular(16)),
-                              ),
-                              child: Text(
-                                (e['type'] ?? '').toString().toUpperCase(),
-                                style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.2, color: Colors.white),
-                              ),
-                            ),
-                          ),
-                          Column(
+                          Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(e['title']!.toString(), style: GoogleFonts.ebGaramond(fontSize: 13, fontWeight: FontWeight.w900)),
-                              const SizedBox(height: 6),
-                              Text(
-                                '${e['date']} • ${e['location']}',
-                                style: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.w700, color: scheme.onSurface.withValues(alpha: 0.68)),
-                              ),
-                              const SizedBox(height: 10),
-                              FilledButton(
-                                onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('RSVP received'))),
-                                style: FilledButton.styleFrom(
-                                  backgroundColor: scheme.surfaceContainerHighest,
-                                  foregroundColor: scheme.onSurface,
-                                  minimumSize: const Size.fromHeight(36),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              Expanded(
+                                child: Text(
+                                  e['title']!.toString(),
+                                  style: GoogleFonts.ebGaramond(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w900,
+                                  ),
                                 ),
-                                child: Text('RSVP NOW', style: GoogleFonts.gelasio(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2)),
+                              ),
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 5,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: purple,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Text(
+                                  (e['type'] ?? '').toString().toUpperCase(),
+                                  style: GoogleFonts.ebGaramond(
+                                    fontSize: 8,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: 1.2,
+                                    color: Colors.white,
+                                  ),
+                                ),
                               ),
                             ],
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            '${e['date']} • ${e['location']}',
+                            style: GoogleFonts.ebGaramond(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              color: scheme.onSurface.withValues(alpha: 0.68),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          FilledButton(
+                            onPressed: () =>
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    backgroundColor: Color(0xFF10B981),
+                                    content: Text('RSVP received'),
+                                  ),
+                                ),
+                            style: FilledButton.styleFrom(
+                              backgroundColor: scheme.surfaceContainerHighest,
+                              foregroundColor: scheme.onSurface,
+                              minimumSize: const Size.fromHeight(36),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: Text(
+                              'RSVP NOW',
+                              style: GoogleFonts.gelasio(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w900,
+                                letterSpacing: 2,
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -193,40 +266,82 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                     children: [
                       Row(
                         children: [
-                          const Icon(LucideIcons.users, size: 16, color: purple),
+                          const Icon(
+                            LucideIcons.users,
+                            size: 16,
+                            color: purple,
+                          ),
                           const SizedBox(width: 8),
-                          Text('Member Spotlight', style: GoogleFonts.ebGaramond(fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 0.2)),
+                          Text(
+                            'Member Spotlight',
+                            style: GoogleFonts.ebGaramond(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 0.2,
+                            ),
+                          ),
                         ],
                       ),
                       TextButton(
                         onPressed: () => context.push('/cp/referral'),
-                        child: Text('VIEW ALL REFERRALS', style: GoogleFonts.gelasio(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1.6, color: purple)),
+                        child: Text(
+                          'VIEW ALL REFERRALS',
+                          style: GoogleFonts.gelasio(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 1.6,
+                            color: purple,
+                          ),
+                        ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 10),
                   if (members.isEmpty)
-                    Text('No referrals in your network yet', style: GoogleFonts.ebGaramond(color: scheme.onSurfaceVariant))
+                    Text(
+                      'No referrals in your network yet',
+                      style: GoogleFonts.ebGaramond(
+                        color: scheme.onSurfaceVariant,
+                      ),
+                    )
                   else
                     GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 10,
-                      ),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                          ),
                       itemCount: members.length.clamp(0, 6),
                       itemBuilder: (_, i) {
                         final r = members[i];
-                        final name = (r['referralName'] ?? r['clientName'] ?? r['name'] ?? '').toString().trim();
-                        final industry = (r['projectName'] ?? r['project'] ?? r['source'] ?? 'Partner').toString();
-                        final initial = name.isNotEmpty ? name[0].toUpperCase() : 'P';
+                        final name =
+                            (r['referralName'] ??
+                                    r['clientName'] ??
+                                    r['name'] ??
+                                    '')
+                                .toString()
+                                .trim();
+                        final industry =
+                            (r['projectName'] ??
+                                    r['project'] ??
+                                    r['source'] ??
+                                    'Partner')
+                                .toString();
+                        final initial = name.isNotEmpty
+                            ? name[0].toUpperCase()
+                            : 'P';
                         return Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.4)),
+                            border: Border.all(
+                              color: scheme.outlineVariant.withValues(
+                                alpha: 0.4,
+                              ),
+                            ),
                             color: scheme.onSurface.withValues(alpha: 0.03),
                           ),
                           child: Column(
@@ -237,23 +352,46 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                                 height: 40,
                                 decoration: const BoxDecoration(
                                   shape: BoxShape.circle,
-                                  gradient: LinearGradient(colors: [Color(0xFFC5A35B), Color(0xFFC5A35B)]),
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Color(0xFFA855F7),
+                                      Color(0xFF6D28D9),
+                                    ],
+                                  ),
                                 ),
-                                child: Center(child: Text(initial, style: GoogleFonts.ebGaramond(color: Colors.white, fontWeight: FontWeight.w900))),
+                                child: Center(
+                                  child: Text(
+                                    initial,
+                                    style: GoogleFonts.ebGaramond(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                                  ),
+                                ),
                               ),
                               const SizedBox(height: 8),
                               Text(
                                 name.isEmpty ? 'Partner' : name,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.w900),
+                                style: GoogleFonts.ebGaramond(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w900,
+                                ),
                               ),
                               const SizedBox(height: 2),
                               Text(
                                 industry.toUpperCase(),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w800, letterSpacing: 1.2, color: scheme.onSurface.withValues(alpha: 0.68)),
+                                style: GoogleFonts.ebGaramond(
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 1.2,
+                                  color: scheme.onSurface.withValues(
+                                    alpha: 0.68,
+                                  ),
+                                ),
                               ),
                             ],
                           ),
@@ -265,8 +403,8 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: const Color(0x33C5A35B)),
-                      color: const Color(0x1AC5A35B),
+                      border: Border.all(color: const Color(0x3360A5FA)),
+                      color: const Color(0x1A60A5FA),
                     ),
                     child: Row(
                       children: [
@@ -274,17 +412,35 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Private Forum', style: GoogleFonts.ebGaramond(fontSize: 12, fontWeight: FontWeight.w900)),
+                              Text(
+                                'Private Forum',
+                                style: GoogleFonts.ebGaramond(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
                               const SizedBox(height: 4),
                               Text(
                                 'Discuss trends with verified Partners',
-                                style: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.w700, color: scheme.onSurface.withValues(alpha: 0.68)),
+                                style: GoogleFonts.ebGaramond(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w700,
+                                  color: scheme.onSurface.withValues(
+                                    alpha: 0.68,
+                                  ),
+                                ),
                               ),
                             ],
                           ),
                         ),
                         IconButton(
-                          onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Forum coming soon'))),
+                          onPressed: () =>
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  backgroundColor: Color(0xFFE24B4A),
+                                  content: Text('Forum coming soon'),
+                                ),
+                              ),
                           icon: const Icon(LucideIcons.messageSquare, size: 18),
                         ),
                       ],
@@ -326,7 +482,10 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
             value,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.gelasio(fontSize: 18, fontWeight: FontWeight.w900),
+            style: GoogleFonts.gelasio(
+              fontSize: 18,
+              fontWeight: FontWeight.w900,
+            ),
           ),
           const SizedBox(height: 4),
           Text(

@@ -95,9 +95,9 @@ class _CommunityProjectsListScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final bg = isDark ? Colors.black : Colors.white;
+    final textPrimary = isDark ? Colors.white : Colors.black;
+    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
     final apiClient = ref.watch(apiClientProvider);
 
     return Scaffold(
@@ -241,7 +241,7 @@ class _GlassHeaderDelegate extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
+    final bg = isDark ? Colors.black : Colors.white;
     return ClipRect(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
@@ -251,7 +251,7 @@ class _GlassHeaderDelegate extends SliverPersistentHeaderDelegate {
             color: bg.withValues(alpha: 0.8),
             border: Border(
               bottom: BorderSide(
-                color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
+                color: (isDark ? Colors.white : Colors.black).withValues(
                   alpha: 0.08,
                 ),
               ),
@@ -612,7 +612,7 @@ class _EmptyState extends StatelessWidget {
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 18),
               side: BorderSide(
-                color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
+                color: (isDark ? Colors.white : Colors.black).withValues(
                   alpha: 0.2,
                 ),
               ),
@@ -651,7 +651,7 @@ class _ErrorState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 28),
@@ -695,7 +695,7 @@ class _ErrorState extends StatelessWidget {
                   vertical: 18,
                 ),
                 side: BorderSide(
-                  color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
+                  color: (isDark ? Colors.white : Colors.black).withValues(
                     alpha: 0.2,
                   ),
                 ),

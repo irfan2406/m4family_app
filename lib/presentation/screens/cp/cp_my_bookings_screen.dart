@@ -1,7 +1,10 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -90,23 +93,56 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
   static Map<String, dynamic>? _m(dynamic v) =>
       v is Map ? v.cast<String, dynamic>() : null;
 
+  static const _bookingsCacheKey = 'cp_bookings_cache';
+
   @override
   void initState() {
     super.initState();
-    _load();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // Show the last-loaded bookings instantly, then refresh in the background
+      // so reopening feels fast even when the backend is slow.
+      await _loadCachedBookings();
+      _load();
+    });
   }
 
-  Future<void> _load() async {
+  Future<void> _loadCachedBookings() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final cached = prefs.getString(_bookingsCacheKey);
+      if (cached == null || !mounted || _list.isNotEmpty) return;
+      final list = jsonDecode(cached);
+      if (list is List && list.isNotEmpty) {
+        setState(() {
+          _list = List<dynamic>.from(list);
+          _loading = false; // cache shown; _load() still refreshes in bg
+        });
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _load({bool retried = false}) async {
     setState(() => _loading = true);
     try {
-      final res = await ref.read(apiClientProvider).getCpBookings();
+      final res = await ref
+          .read(apiClientProvider)
+          .getCpBookings()
+          // Dio receiveTimeout is 90s — far too long. Cap it, and let a cold-
+          // started backend recover via a single silent auto-retry.
+          .timeout(const Duration(seconds: 15));
       if (!mounted) return;
       if (res.statusCode == 200 && res.data['status'] == true) {
         final d = res.data['data'];
         if (d is Map && d['bookings'] is List) {
           _list = List<dynamic>.from(d['bookings']);
+          try {
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setString(_bookingsCacheKey, jsonEncode(_list));
+          } catch (_) {}
         }
       }
+    } on TimeoutException {
+      if (!retried) return _load(retried: true);
     } catch (_) {}
     if (mounted) setState(() => _loading = false);
   }
@@ -123,7 +159,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
   ) {
     final s = status.toLowerCase();
     if (s.contains('confirmed') || s.contains('allotted')) {
-      const fg = Color(0xFFC5A35B);
+      const fg = Color(0xFF10B981);
       return (
         bg: fg.withValues(alpha: 0.10),
         border: fg.withValues(alpha: 0.20),
@@ -131,7 +167,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
       );
     }
     if (s.contains('pending')) {
-      const fg = Color(0xFFC5A35B);
+      const fg = Color(0xFF9333EA);
       return (
         bg: fg.withValues(alpha: 0.10),
         border: fg.withValues(alpha: 0.20),
@@ -150,7 +186,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
     required bool isDark,
     EdgeInsets padding = const EdgeInsets.all(22),
   }) {
-    final border = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
+    final border = (isDark ? Colors.white : Colors.black).withValues(
       alpha: 0.08,
     );
     return ClipRRect(
@@ -161,10 +197,10 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
           padding: padding,
           decoration: BoxDecoration(
             // Web parity: glass-card is a bright WHITE card in light mode (it
-            // pops off the background via the shadow), not a grey tint.
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.06)
-                : const Color(0xFFFBF7EF),
+            // pops off the background via the shadow), not a grey tint. In dark
+            // mode it uses the home page's neutral card colour (0xFF15171C) so
+            // every card across the app reads as one cohesive system.
+            color: isDark ? const Color(0xFF15171C) : Colors.white,
             borderRadius: BorderRadius.circular(40),
             border: Border.all(color: border),
             boxShadow: [
@@ -188,7 +224,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
     required bool isDark,
     Color? iconColor,
   }) {
-    final border = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
+    final border = (isDark ? Colors.white : Colors.black).withValues(
       alpha: 0.08,
     );
     return InkWell(
@@ -423,7 +459,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
               color: onSurf.withValues(alpha: isDark ? 0.06 : 0.035),
               borderRadius: BorderRadius.circular(22),
               border: Border.all(
-                color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
+                color: (isDark ? Colors.white : Colors.black).withValues(
                   alpha: 0.06,
                 ),
               ),
@@ -473,10 +509,12 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                   child: Container(
                     height: 10,
                     // Web parity (bg-black/20): a clearly-visible track so the
-                    // empty bar shows on every card, even at 0%.
+                    // empty bar shows on every card, even at 0%. width:infinity
+                    // guarantees the full-width track renders when the fill is 0.
+                    width: double.infinity,
                     decoration: BoxDecoration(
-                      color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
-                        alpha: isDark ? 0.28 : 0.16,
+                      color: (isDark ? Colors.white : Colors.black).withValues(
+                        alpha: isDark ? 0.28 : 0.18,
                       ),
                     ),
                     child: TweenAnimationBuilder<double>(
@@ -522,7 +560,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
               // client's digits, prefixed 91 when it's a 10-digit number.
               _pillButton(
                 icon: LucideIcons.messageCircle,
-                iconColor: const Color(0xFFC5A35B),
+                iconColor: const Color(0xFF10B981),
                 onTap: (clientPhone.isNotEmpty && clientPhone != 'N/A')
                     ? () {
                         final clean = clientPhone.replaceAll(RegExp(r'\D'), '');
@@ -554,7 +592,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                     color: onSurf.withValues(alpha: 0.03),
                     borderRadius: BorderRadius.circular(999),
                     border: Border.all(
-                      color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
+                      color: (isDark ? Colors.white : Colors.black).withValues(
                         alpha: 0.06,
                       ),
                     ),
@@ -660,7 +698,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
   // Web parity: a real-time search field + project filter dropdown, sitting
   // as a second row under the header.
   Widget _buildSearchAndFilter(ColorScheme scheme, bool isDark) {
-    final border = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
+    final border = (isDark ? Colors.white : Colors.black).withValues(
       alpha: 0.08,
     );
     final fill = scheme.surface.withValues(alpha: isDark ? 0.06 : 0.5);
@@ -682,7 +720,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
               controller: _searchController,
               onChanged: (v) => setState(() => _searchQuery = v),
               style: GoogleFonts.ebGaramond(
-                fontSize: 11,
+                fontSize: 15,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 1,
               ),
@@ -712,11 +750,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                         },
                       )
                     : null,
-                filled: false,
-                isDense: true,
                 border: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
                 contentPadding: const EdgeInsets.symmetric(vertical: 12),
               ),
             ),
@@ -782,23 +816,9 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
       body: Stack(
         children: [
           Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: isDark
-                      ? [
-                          scheme.primary.withValues(alpha: 0.08),
-                          scheme.surface,
-                        ]
-                      : const [
-                          Color(0xFFF3EDE0),
-                          Color(0xFFFBF7EF),
-                        ],
-                ),
-              ),
-            ),
+            // Flat page base (matches the Performance Tracker / home page): the
+            // old primary tint at the top washed the background to grey.
+            child: ColoredBox(color: scheme.surface),
           ),
           SafeArea(
             child: Column(
@@ -836,9 +856,9 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                               children: [
                                 Text(
                                   'CLIENT BOOKINGS',
-                                  style: GoogleFonts.gelasio(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w700,
+                                  style: GoogleFonts.ebGaramond(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w900,
                                     letterSpacing: -0.2,
                                     color: scheme.onSurface,
                                   ),
@@ -867,7 +887,10 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                   ),
                 ),
                 Expanded(
-                  child: _loading
+                  // Only block with the spinner when there's nothing to show;
+                  // if cached bookings are present, keep them visible while the
+                  // background refresh runs.
+                  child: (_loading && _list.isEmpty)
                       ? Center(
                           child: SizedBox(
                             width: 40,

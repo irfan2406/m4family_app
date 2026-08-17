@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/presentation/providers/custom_views_provider.dart';
 import 'package:m4_mobile/presentation/providers/my_custom_views_provider.dart';
+
+// Web parity: the Portfolio Suite uses an orange accent (title highlight,
+// active tab, section icons) instead of the neutral foreground colour.
+const Color _kPortfolioOrange = Color(0xFFF97316);
 
 class MyCustomViewsScreen extends ConsumerStatefulWidget {
   const MyCustomViewsScreen({super.key});
@@ -64,8 +69,15 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
       leadingWidth: 60,
       leading: Center(
         child: GestureDetector(
-          onTap: () => ref.read(navigationProvider.notifier).state =
-              3, // Back to Profile
+          // Pushed (from profile / menu) → pop the route; if it's shown as a
+          // shell tab instead, fall back to switching to the Profile tab.
+          onTap: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              ref.read(navigationProvider.notifier).state = 3;
+            }
+          },
           // Web parity: back button in a rounded bordered card box.
           child: Container(
             width: 40,
@@ -88,7 +100,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
           // Web parity: "Personalisation Suite" title + "Portfolio Dashboard"
           // subtitle with a paint-bucket icon.
           Text(
-            'PERSONALISATION SUITE',
+            'PORTFOLIO SUITE',
             style: GoogleFonts.ebGaramond(
               fontSize: 14,
               fontWeight: FontWeight.w900,
@@ -98,19 +110,19 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
+              const Icon(
                 LucideIcons.paintBucket,
                 size: 10,
-                color: Theme.of(context).colorScheme.onSurface,
+                color: _kPortfolioOrange,
               ),
               const SizedBox(width: 5),
               Text(
-                'PORTFOLIO DASHBOARD',
+                'ASSET DASHBOARD',
                 style: GoogleFonts.gelasio(
                   fontSize: 8,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 2,
-                  color: Theme.of(context).colorScheme.onSurface,
+                  color: _kPortfolioOrange,
                 ),
               ),
             ],
@@ -160,7 +172,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                 children: [
                   // Web parity: dark `text-foreground`; MY (light) + PORTFOLIO (bold).
                   TextSpan(
-                    text: 'MY ',
+                    text: 'ELITE ',
                     style: GoogleFonts.gelasio(
                       color: Colors.black,
                       fontSize: 30,
@@ -171,7 +183,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                   TextSpan(
                     text: 'PORTFOLIO',
                     style: GoogleFonts.gelasio(
-                      color: Colors.black,
+                      color: _kPortfolioOrange,
                       fontSize: 30,
                       fontWeight: FontWeight.w700,
                       letterSpacing: -0.5,
@@ -183,8 +195,8 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
             Text(
               'PERSONALISATION SUITE',
               style: GoogleFonts.gelasio(
-                // Web parity: dark `text-primary`, readable on the light fade.
-                color: Colors.black,
+                // Web parity: orange `text-primary`, readable on the light fade.
+                color: _kPortfolioOrange,
                 fontSize: 10,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 3,
@@ -238,7 +250,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                 child: Container(
                   decoration: BoxDecoration(
                     color: _activeTab == 0
-                        ? Theme.of(context).colorScheme.onSurface
+                        ? _kPortfolioOrange
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(16),
                   ),
@@ -250,7 +262,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1,
                       color: _activeTab == 0
-                          ? Theme.of(context).colorScheme.surface
+                          ? Colors.white
                           : Theme.of(
                               context,
                             ).colorScheme.onSurface.withOpacity(0.68),
@@ -265,7 +277,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                 child: Container(
                   decoration: BoxDecoration(
                     color: _activeTab == 1
-                        ? Theme.of(context).colorScheme.onSurface
+                        ? _kPortfolioOrange
                         : Colors.transparent,
                     borderRadius: BorderRadius.circular(16),
                   ),
@@ -277,7 +289,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1,
                       color: _activeTab == 1
-                          ? Theme.of(context).colorScheme.surface
+                          ? Colors.white
                           : Theme.of(
                               context,
                             ).colorScheme.onSurface.withOpacity(0.68),
@@ -299,16 +311,91 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
       );
     }
     if (state.units.isEmpty) {
-      return SliverFillRemaining(
-        child: Center(
-          child: Text(
-            'NO UNITS FOUND',
-            style: GoogleFonts.ebGaramond(
-              fontSize: 10,
-              fontWeight: FontWeight.w800,
-              color: Colors.grey,
+      final foreground = isDark ? Colors.white : Colors.black;
+      // Web parity: styled empty-state card (orange icon box + heading + copy)
+      // under the "ASSET CUSTOMIZATION STATUS" header, not bare text.
+      return SliverToBoxAdapter(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 4, bottom: 20),
+              child: Row(
+                children: [
+                  const Icon(
+                    LucideIcons.paintBucket,
+                    size: 16,
+                    color: _kPortfolioOrange,
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    'ASSET CUSTOMIZATION STATUS',
+                    style: GoogleFonts.gelasio(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 2,
+                      color: foreground.withOpacity(0.6),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
+              decoration: BoxDecoration(
+                color: isDark ? Colors.white.withOpacity(0.02) : Colors.white,
+                borderRadius: BorderRadius.circular(36),
+                border: Border.all(color: foreground.withOpacity(0.06)),
+                boxShadow: isDark
+                    ? null
+                    : [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.03),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    width: 72,
+                    height: 72,
+                    decoration: BoxDecoration(
+                      color: _kPortfolioOrange.withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: const Icon(
+                      LucideIcons.layoutGrid,
+                      color: _kPortfolioOrange,
+                      size: 30,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'NO UNITS FOUND',
+                    style: GoogleFonts.ebGaramond(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
+                      color: foreground,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'You currently have no purchased units registered in your portfolio that support online customization.',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.ebGaramond(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      height: 1.6,
+                      color: foreground.withOpacity(0.5),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       );
     }
@@ -321,14 +408,14 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
             padding: const EdgeInsets.only(top: 4, bottom: 20),
             child: Row(
               children: [
-                Icon(
-                  LucideIcons.building2,
+                const Icon(
+                  LucideIcons.paintBucket,
                   size: 16,
-                  color: Theme.of(context).colorScheme.onSurface,
+                  color: _kPortfolioOrange,
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  'SELECT UNIT TO CUSTOMIZE',
+                  'ASSET CUSTOMIZATION STATUS',
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
@@ -354,7 +441,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
       );
     }
 
-    final foreground = isDark ? Colors.white : const Color(0xFF163A2C);
+    final foreground = isDark ? Colors.white : Colors.black;
     final q = _historyQuery.trim().toLowerCase();
     // Web parity: filter by project title or log id.
     final filtered = state.history.where((req) {
@@ -449,7 +536,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
           child: TextField(
             onChanged: (v) => setState(() => _historyQuery = v),
             style: GoogleFonts.gelasio(
-              fontSize: 10,
+              fontSize: 15,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.5,
               color: fg,
@@ -487,12 +574,12 @@ class _UnitCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final status = unit['customizationStatus'] ?? 'NOT_STARTED';
-    final foreground = isDark ? Colors.white : const Color(0xFF163A2C);
+    final foreground = isDark ? Colors.white : Colors.black;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+        color: isDark ? const Color(0xFF18181B) : Colors.white,
         borderRadius: BorderRadius.circular(32),
         border: Border.all(
           color: isDark
@@ -626,7 +713,7 @@ class _UnitCard extends ConsumerWidget {
                         content: Text(
                           'Maximum modification limit reached (2 revisions).',
                         ),
-                        backgroundColor: Color(0xFFC5A35B),
+                        backgroundColor: Colors.redAccent,
                       ),
                     );
                     return;
@@ -637,7 +724,7 @@ class _UnitCard extends ConsumerWidget {
                         content: Text(
                           'The 30-day modification window has expired.',
                         ),
-                        backgroundColor: Color(0xFFC5A35B),
+                        backgroundColor: Colors.redAccent,
                       ),
                     );
                     return;
@@ -724,7 +811,7 @@ class _HistoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final foreground = isDark ? Colors.white : const Color(0xFF163A2C);
+    final foreground = isDark ? Colors.white : Colors.black;
     final id =
         req['_id']
             ?.toString()
@@ -742,7 +829,7 @@ class _HistoryCard extends StatelessWidget {
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: isDark
-              ? const Color(0xFF141B3A).withOpacity(0.4)
+              ? const Color(0xFF18181B).withOpacity(0.4)
               : Colors.white,
           borderRadius: BorderRadius.circular(28),
           border: Border.all(
@@ -1052,13 +1139,15 @@ class _DetailDialog {
                                                   maxLines: 1,
                                                   overflow:
                                                       TextOverflow.ellipsis,
-                                                  style: GoogleFonts.ebGaramond(
-                                                    fontSize: 7,
-                                                    fontWeight: FontWeight.w900,
-                                                    letterSpacing: 1.0,
-                                                    color: scheme.onSurface
-                                                        .withOpacity(0.68),
-                                                  ),
+                                                  style:
+                                                      GoogleFonts.ebGaramond(
+                                                        fontSize: 7,
+                                                        fontWeight:
+                                                            FontWeight.w900,
+                                                        letterSpacing: 1.0,
+                                                        color: scheme.onSurface
+                                                            .withOpacity(0.68),
+                                                      ),
                                                 ),
                                                 const SizedBox(height: 2),
                                                 Text(
@@ -1066,11 +1155,13 @@ class _DetailDialog {
                                                   maxLines: 1,
                                                   overflow:
                                                       TextOverflow.ellipsis,
-                                                  style: GoogleFonts.ebGaramond(
-                                                    fontSize: 11,
-                                                    fontWeight: FontWeight.w900,
-                                                    letterSpacing: 0.5,
-                                                  ),
+                                                  style:
+                                                      GoogleFonts.ebGaramond(
+                                                        fontSize: 11,
+                                                        fontWeight:
+                                                            FontWeight.w900,
+                                                        letterSpacing: 0.5,
+                                                      ),
                                                 ),
                                               ],
                                             ),
@@ -1138,7 +1229,7 @@ class _DetailDialog {
                                   errorMessage!.toUpperCase(),
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.ebGaramond(
-                                    color: Color(0xFFC5A35B),
+                                    color: Colors.redAccent,
                                     fontSize: 9,
                                     fontWeight: FontWeight.w800,
                                     letterSpacing: 1.0,
@@ -1447,17 +1538,17 @@ class _StatusBadge extends StatelessWidget {
     switch (status.toLowerCase()) {
       case 'approved':
       case 'closed':
-        return const Color(0xFFC5A35B); // green-500
+        return const Color(0xFF22C55E); // green-500
       case 'completed':
       case 'reviewed':
       case 'contacted':
-        return const Color(0xFFC5A35B); // blue-500
+        return const Color(0xFF3B82F6); // blue-500
       case 'rejected':
-        return const Color(0xFFC65B46); // red-500
+        return const Color(0xFFEF4444); // red-500
       case 'requested':
       case 'pending':
       case 'submitted':
-        return const Color(0xFFC5A35B); // amber-500
+        return const Color(0xFFF59E0B); // amber-500
       default:
         return Colors.grey;
     }
@@ -1506,7 +1597,7 @@ class _DetailItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final foreground = isDark ? Colors.white : const Color(0xFF163A2C);
+    final foreground = isDark ? Colors.white : Colors.black;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

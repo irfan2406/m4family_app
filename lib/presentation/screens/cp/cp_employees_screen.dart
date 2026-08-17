@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -22,7 +23,7 @@ class CpEmployeesScreen extends ConsumerStatefulWidget {
 class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
   // Web parity: the CP accent is purple (only the header dot uses it); the
   // icons/buttons are neutral grey, not gold.
-  static const Color _purple = Color(0xFFC5A35B);
+  static const Color _purple = Color(0xFF9333EA);
 
   bool _loading = true;
   String? _error;
@@ -79,8 +80,15 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
 
   void _toast(String msg) {
     if (!mounted) return;
+    // Success messages get a green background; errors stay red.
+    final isSuccess = msg.toLowerCase().contains('successful');
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg, style: GoogleFonts.ebGaramond(fontSize: 12))),
+      SnackBar(
+        backgroundColor: isSuccess
+            ? const Color(0xFF10B981)
+            : const Color(0xFFE24B4A),
+        content: Text(msg, style: GoogleFonts.ebGaramond(fontSize: 12)),
+      ),
     );
   }
 
@@ -178,9 +186,9 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
+    final bg = isDark ? Colors.black : Colors.white;
+    final textPrimary = isDark ? Colors.white : Colors.black;
+    final muted = (isDark ? Colors.white : Colors.black).withValues(
       alpha: 0.62,
     );
     final border = isDark
@@ -249,7 +257,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
     Color muted,
     Color border,
   ) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
       child: Row(
@@ -326,7 +334,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
     Color muted,
     Color border,
   ) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     return Container(
       height: 50,
       decoration: BoxDecoration(
@@ -343,7 +351,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
             child: TextField(
               onChanged: (v) => setState(() => _search = v),
               style: GoogleFonts.ebGaramond(
-                fontSize: 12,
+                fontSize: 15,
                 fontWeight: FontWeight.w700,
                 color: textPrimary,
               ),
@@ -356,10 +364,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                   color: muted.withValues(alpha: 0.6),
                   letterSpacing: 1.2,
                 ),
-                filled: false,
                 border: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
               ),
             ),
           ),
@@ -375,7 +380,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
     Color muted,
     Color border,
   ) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
+    final card = isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white;
     final id = emp['_id']?.toString() ?? '';
     final name = (emp['name'] ?? '').toString();
     final phone = (emp['phone'] ?? '').toString();
@@ -386,9 +391,25 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: card,
+        gradient: isDark
+            ? const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFF1C2029), Color(0xFF121419)],
+              )
+            : null,
+        color: isDark ? null : Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: border),
+        border: Border.all(
+          color: isDark ? Colors.white.withValues(alpha: 0.08) : border,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.05),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -610,7 +631,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
   void _confirmDelete(String id, String name, Color textPrimary, Color muted) {
     if (id.isEmpty) return;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final dialogBg = isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF);
+    final dialogBg = isDark ? const Color(0xFF111111) : Colors.white;
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -667,15 +688,15 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
   /// Add (existing == null) or edit employee dialog.
   void _openEmployeeDialog({dynamic existing}) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final dialogBg = isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF);
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
+    final dialogBg = isDark ? const Color(0xFF111111) : Colors.white;
+    final textPrimary = isDark ? Colors.white : Colors.black;
+    final muted = (isDark ? Colors.white : Colors.black).withValues(
       alpha: 0.62,
     );
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
 
     final isEdit = existing != null;
     final nameCtrl = TextEditingController(
@@ -700,6 +721,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
               TextEditingController c,
               String hint, {
               bool phone = false,
+              bool email = false,
             }) {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -720,15 +742,19 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                     controller: c,
                     keyboardType: phone
                         ? TextInputType.phone
-                        : TextInputType.text,
+                        : email
+                        ? TextInputType.emailAddress
+                        : TextInputType.name,
                     inputFormatters: phone
                         ? [
                             FilteringTextInputFormatter.digitsOnly,
                             LengthLimitingTextInputFormatter(10),
                           ]
-                        : null,
+                        : email
+                        ? Validators.emailFormatters
+                        : Validators.nameFormatters,
                     style: GoogleFonts.ebGaramond(
-                      fontSize: 12,
+                      fontSize: 15,
                       fontWeight: FontWeight.w700,
                       color: textPrimary,
                     ),
@@ -787,7 +813,12 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                       phone: true,
                     ),
                     const SizedBox(height: 14),
-                    field('EMAIL ADDRESS', emailCtrl, 'john@example.com'),
+                    field(
+                      'EMAIL ADDRESS',
+                      emailCtrl,
+                      'john@example.com',
+                      email: true,
+                    ),
                   ],
                 ),
               ),
@@ -816,8 +847,14 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                           final name = nameCtrl.text.trim();
                           final phone = phoneCtrl.text.trim();
                           final email = emailCtrl.text.trim();
-                          if (name.isEmpty || phone.isEmpty) {
-                            _toast('Name and Phone are required');
+                          final vErr =
+                              Validators.nameError(name, field: 'full name') ??
+                              Validators.phoneError(phone) ??
+                              (email.isEmpty
+                                  ? null
+                                  : Validators.emailError(email));
+                          if (vErr != null) {
+                            _toast(vErr);
                             return;
                           }
                           setLocal(() => saving = true);

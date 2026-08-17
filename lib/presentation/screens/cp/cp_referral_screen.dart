@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
@@ -20,7 +21,6 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
   Map<String, dynamic>? _wallet;
   List<dynamic> _referrals = [];
   bool _loading = true;
-
 
   @override
   void initState() {
@@ -53,7 +53,8 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
     return (w['balance'] ?? w['availableBalance'] ?? 0) as num? ?? 0;
   }
 
-  String _name(dynamic r) => (r['referralName'] ?? r['clientName'] ?? '').toString();
+  String _name(dynamic r) =>
+      (r['referralName'] ?? r['clientName'] ?? '').toString();
   String _status(dynamic r) => (r['status'] ?? 'Pending').toString();
   String _project(dynamic r) {
     final pid = r['projectId'];
@@ -83,9 +84,15 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                       decoration: BoxDecoration(
                         color: scheme.onSurface.withValues(alpha: 0.05),
                         shape: BoxShape.circle,
-                        border: Border.all(color: scheme.onSurface.withValues(alpha: 0.1)),
+                        border: Border.all(
+                          color: scheme.onSurface.withValues(alpha: 0.1),
+                        ),
                       ),
-                      child: Icon(LucideIcons.arrowLeft, size: 16, color: scheme.onSurface),
+                      child: Icon(
+                        LucideIcons.arrowLeft,
+                        size: 16,
+                        color: scheme.onSurface,
+                      ),
                     ),
                   ),
                   Expanded(
@@ -108,7 +115,12 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
             // Body
             Expanded(
               child: _loading
-                  ? Center(child: CircularProgressIndicator(color: scheme.onSurface, strokeWidth: 2))
+                  ? Center(
+                      child: CircularProgressIndicator(
+                        color: scheme.onSurface,
+                        strokeWidth: 2,
+                      ),
+                    )
                   : RefreshIndicator(
                       onRefresh: _load,
                       color: scheme.onSurface,
@@ -164,7 +176,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+        color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
         borderRadius: BorderRadius.circular(40),
         boxShadow: [
           BoxShadow(
@@ -253,7 +265,8 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                     final result = await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => ReferralRedeemScreen(walletBalance: pts.toDouble()),
+                        builder: (_) =>
+                            ReferralRedeemScreen(walletBalance: pts.toDouble()),
                       ),
                     );
                     if (result == true && mounted) _load();
@@ -285,7 +298,11 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                           ),
                         ),
                         const SizedBox(width: 12),
-                        Icon(LucideIcons.checkCircle2, size: 18, color: scheme.surface),
+                        Icon(
+                          LucideIcons.checkCircle2,
+                          size: 18,
+                          color: scheme.surface,
+                        ),
                       ],
                     ),
                   ),
@@ -321,10 +338,14 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
             icon: LucideIcons.share2,
             label: 'SHARE CODE',
             onTap: () {
-              final code = _wallet?['cpId']?.toString().substring(0, 6) ?? 'M4FAM-CP';
+              final code =
+                  _wallet?['cpId']?.toString().substring(0, 6) ?? 'M4FAM-CP';
               Clipboard.setData(ClipboardData(text: code));
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Referral code copied!'), backgroundColor: Colors.green),
+                const SnackBar(
+                  content: Text('Referral code copied!'),
+                  backgroundColor: Colors.green,
+                ),
               );
             },
           ),
@@ -345,7 +366,9 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
       child: Container(
         height: 130,
         decoration: BoxDecoration(
-          color: isDark ? scheme.onSurface.withValues(alpha: 0.04) : Colors.white.withValues(alpha: 0.4),
+          color: isDark
+              ? scheme.onSurface.withValues(alpha: 0.04)
+              : Colors.white.withValues(alpha: 0.4),
           borderRadius: BorderRadius.circular(32),
           border: Border.all(color: scheme.onSurface.withValues(alpha: 0.08)),
         ),
@@ -357,7 +380,9 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
               decoration: BoxDecoration(
                 color: scheme.onSurface.withValues(alpha: 0.04),
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: scheme.onSurface.withValues(alpha: 0.08)),
+                border: Border.all(
+                  color: scheme.onSurface.withValues(alpha: 0.08),
+                ),
               ),
               child: Icon(icon, size: 22, color: scheme.onSurface),
             ),
@@ -386,7 +411,9 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 40),
         decoration: BoxDecoration(
-          color: isDark ? scheme.onSurface.withValues(alpha: 0.03) : Colors.white.withValues(alpha: 0.4),
+          color: isDark
+              ? scheme.onSurface.withValues(alpha: 0.03)
+              : Colors.white.withValues(alpha: 0.4),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: scheme.onSurface.withValues(alpha: 0.06)),
         ),
@@ -405,7 +432,9 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
     }
 
     return Column(
-      children: _referrals.map((r) => _buildReferralCard(r, scheme, isDark)).toList(),
+      children: _referrals
+          .map((r) => _buildReferralCard(r, scheme, isDark))
+          .toList(),
     );
   }
 
@@ -418,7 +447,9 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? scheme.onSurface.withValues(alpha: 0.03) : Colors.white.withValues(alpha: 0.5),
+        color: isDark
+            ? scheme.onSurface.withValues(alpha: 0.03)
+            : Colors.white.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: scheme.onSurface.withValues(alpha: 0.06)),
       ),
@@ -430,7 +461,9 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
             decoration: BoxDecoration(
               color: scheme.onSurface.withValues(alpha: 0.04),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: scheme.onSurface.withValues(alpha: 0.08)),
+              border: Border.all(
+                color: scheme.onSurface.withValues(alpha: 0.08),
+              ),
             ),
             child: Icon(LucideIcons.users, size: 20, color: scheme.onSurface),
           ),
@@ -473,7 +506,9 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                   ? scheme.primary.withValues(alpha: 0.1)
                   : scheme.onSurface.withValues(alpha: 0.04),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: scheme.onSurface.withValues(alpha: 0.08)),
+              border: Border.all(
+                color: scheme.onSurface.withValues(alpha: 0.08),
+              ),
             ),
             child: Text(
               status.toUpperCase(),
@@ -481,7 +516,9 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                 fontSize: 8,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1,
-                color: status == 'CONVERTED' ? scheme.primary : scheme.onSurface.withValues(alpha: 0.68),
+                color: status == 'CONVERTED'
+                    ? scheme.primary
+                    : scheme.onSurface.withValues(alpha: 0.68),
               ),
             ),
           ),
@@ -509,12 +546,16 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
           builder: (ctx, setModalState) {
             return Container(
               padding: EdgeInsets.only(
-                left: 28, right: 28, top: 32,
+                left: 28,
+                right: 28,
+                top: 32,
                 bottom: MediaQuery.of(ctx).viewInsets.bottom + 32,
               ),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
+                color: isDark ? const Color(0xFF18181B) : Colors.white,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(40),
+                ),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -523,7 +564,8 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                   // Handle
                   Center(
                     child: Container(
-                      width: 40, height: 4,
+                      width: 40,
+                      height: 4,
                       decoration: BoxDecoration(
                         color: scheme.onSurface.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(2),
@@ -564,7 +606,12 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                         loading: () => Container(
                           height: 56,
                           decoration: _inputDecoration(scheme, isDark),
-                          child: Center(child: CircularProgressIndicator(strokeWidth: 2, color: scheme.onSurface)),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: scheme.onSurface,
+                            ),
+                          ),
                         ),
                         error: (_, __) => const Text('Could not load projects'),
                         data: (projects) {
@@ -581,18 +628,30 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                                   style: GoogleFonts.ebGaramond(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w800,
-                                    color: scheme.onSurface.withValues(alpha: 0.68),
+                                    color: scheme.onSurface.withValues(
+                                      alpha: 0.68,
+                                    ),
                                   ),
                                 ),
-                                dropdownColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
-                                icon: Icon(LucideIcons.chevronDown, size: 16, color: scheme.onSurface.withValues(alpha: 0.3)),
+                                dropdownColor: isDark
+                                    ? const Color(0xFF1C1C1E)
+                                    : Colors.white,
+                                icon: Icon(
+                                  LucideIcons.chevronDown,
+                                  size: 16,
+                                  color: scheme.onSurface.withValues(
+                                    alpha: 0.3,
+                                  ),
+                                ),
                                 items: [
                                   for (final p in projects)
                                     if ((p['_id']?.toString() ?? '').isNotEmpty)
                                       DropdownMenuItem(
                                         value: p['_id'].toString(),
                                         child: Text(
-                                          (p['title'] ?? 'Project').toString().toUpperCase(),
+                                          (p['title'] ?? 'Project')
+                                              .toString()
+                                              .toUpperCase(),
                                           style: GoogleFonts.ebGaramond(
                                             fontSize: 10,
                                             fontWeight: FontWeight.w800,
@@ -626,7 +685,13 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                   // Phone
                   _buildFormLabel('MOBILE NUMBER', scheme),
                   const SizedBox(height: 10),
-                  _buildTextField(phoneCtrl, '+91 XXXXX XXXXX', scheme, isDark, isPhone: true),
+                  _buildTextField(
+                    phoneCtrl,
+                    '+91 XXXXX XXXXX',
+                    scheme,
+                    isDark,
+                    isPhone: true,
+                  ),
 
                   const SizedBox(height: 32),
 
@@ -635,9 +700,20 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                     onTap: submitting
                         ? null
                         : () async {
-                            if (nameCtrl.text.trim().isEmpty || phoneCtrl.text.trim().isEmpty || selectedProjectId == null) {
+                            final vErr =
+                                Validators.nameError(
+                                  nameCtrl.text,
+                                  field: "friend's name",
+                                ) ??
+                                Validators.phoneError(phoneCtrl.text);
+                            if (vErr != null || selectedProjectId == null) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Please fill all fields'), backgroundColor: Color(0xFFC5A35B)),
+                                SnackBar(
+                                  content: Text(
+                                    vErr ?? 'Please select a project',
+                                  ),
+                                  backgroundColor: Colors.redAccent,
+                                ),
                               );
                               return;
                             }
@@ -651,25 +727,39 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                                 'notes': 'Submitted via Flutter CP Portal',
                               });
                               if (!mounted) return;
-                              if (res.statusCode == 201 && res.data['status'] == true) {
+                              if (res.statusCode == 201 &&
+                                  res.data['status'] == true) {
                                 Navigator.pop(ctx);
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Referral registered!'), backgroundColor: Colors.green),
+                                  const SnackBar(
+                                    content: Text('Referral registered!'),
+                                    backgroundColor: Colors.green,
+                                  ),
                                 );
                                 _load();
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text(res.data['message']?.toString() ?? 'Failed')),
+                                  SnackBar(
+                                    backgroundColor: const Color(0xFFE24B4A),
+                                    content: Text(
+                                      res.data['message']?.toString() ??
+                                          'Failed',
+                                    ),
+                                  ),
                                 );
                               }
                             } catch (e) {
                               if (mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Submission error.')),
+                                  const SnackBar(
+                                    backgroundColor: Color(0xFFE24B4A),
+                                    content: Text('Submission error.'),
+                                  ),
                                 );
                               }
                             } finally {
-                              if (mounted) setModalState(() => submitting = false);
+                              if (mounted)
+                                setModalState(() => submitting = false);
                             }
                           },
                     child: Container(
@@ -681,7 +771,14 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                       ),
                       alignment: Alignment.center,
                       child: submitting
-                          ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: scheme.surface))
+                          ? SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: scheme.surface,
+                              ),
+                            )
                           : Text(
                               'SUBMIT REFERRAL',
                               style: GoogleFonts.gelasio(
@@ -723,15 +820,24 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String hint, ColorScheme scheme, bool isDark, {bool isPhone = false}) {
+  Widget _buildTextField(
+    TextEditingController controller,
+    String hint,
+    ColorScheme scheme,
+    bool isDark, {
+    bool isPhone = false,
+  }) {
     return Container(
       height: 56,
       decoration: _inputDecoration(scheme, isDark),
       child: TextField(
         controller: controller,
-        keyboardType: isPhone ? TextInputType.phone : TextInputType.text,
+        keyboardType: isPhone ? TextInputType.phone : TextInputType.name,
+        inputFormatters: isPhone
+            ? Validators.phoneFormatters
+            : Validators.nameFormatters,
         style: GoogleFonts.ebGaramond(
-          fontSize: 12,
+          fontSize: 15,
           fontWeight: FontWeight.w700,
           color: scheme.onSurface,
         ),
@@ -751,10 +857,12 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
 
   String _formatNumber(num n) {
     if (n >= 1000) {
-      return n.toStringAsFixed(0).replaceAllMapped(
-        RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
-        (m) => '${m[1]},',
-      );
+      return n
+          .toStringAsFixed(0)
+          .replaceAllMapped(
+            RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
+            (m) => '${m[1]},',
+          );
     }
     return n.toStringAsFixed(0);
   }

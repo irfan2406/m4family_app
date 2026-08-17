@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter/services.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
+import 'package:m4_mobile/core/utils/project_highlights.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:io';
 import 'dart:ui';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:m4_mobile/presentation/widgets/guest_sidebar_menu.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:m4_mobile/presentation/screens/projects/guest_project_detail_screen.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
 import 'package:m4_mobile/presentation/screens/communities/community_detail_screen.dart';
 import 'package:m4_mobile/presentation/screens/communities/community_list_screen.dart';
+import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
 import 'dart:async';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -40,86 +46,6 @@ class GuestHomeData {
 
 final guestHomeCacheProvider = StateProvider<GuestHomeData?>((ref) => null);
 
-/// Placeholder media cards shown when the backend returns no media, so the
-/// Media tab isn't blank. (Unchanged content — only lifted out of the fetch
-/// method so both the fetch and the prefetch-skip path can reuse it.)
-const List<Map<String, dynamic>> _dummyMedia = [
-  {
-    '_id': 'dummy1',
-    'title': 'CLÉDOR LUXURY LIVING',
-    'thumbnail':
-        'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80',
-    'description':
-        'Discover the epitome of refinement in our latest architectural masterpiece.',
-    'slug': 'cledor-luxury-living',
-  },
-  {
-    '_id': 'dummy2',
-    'title': 'OCEAN VIEW RESIDENCES',
-    'thumbnail':
-        'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
-    'description':
-        'Where horizon meets home. Experience coastal elegance like never before.',
-    'slug': 'ocean-view-residences',
-  },
-  {
-    '_id': 'dummy3',
-    'title': 'URBAN SANCTUARY',
-    'thumbnail':
-        'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80',
-    'description': 'A peaceful retreat in the heart of the city.',
-    'slug': 'urban-sanctuary',
-  },
-];
-
-/// When the guest catalog was last warmed by [prefetchGuestHome]. Lets the
-/// dashboard skip its immediate refetch right after launch (the data is already
-/// fresh), so prefetching costs no extra API calls overall.
-final guestPrefetchAtProvider = StateProvider<DateTime?>((ref) => null);
-
-/// Warms the guest-home catalog cache in the background — e.g. during the
-/// onboarding splash animation — so the guest home renders with data instantly
-/// instead of showing a spinner. Fires the same three catalog requests in
-/// parallel, mirrors the dashboard's parse logic, and is a no-op on error.
-/// Skipped for signed-in users (they land on their own portal, not the guest
-/// home), so it never adds wasted calls.
-Future<void> prefetchGuestHome(WidgetRef ref) async {
-  if (ref.read(guestHomeCacheProvider) != null) return;
-  try {
-    const storage = FlutterSecureStorage();
-    final token = await storage.read(key: 'jwt_token');
-    if (token != null && token.isNotEmpty) return; // signed in → not guest home
-
-    final api = ref.read(apiClientProvider);
-    List<dynamic> pick(dynamic res) {
-      final d = res.data;
-      if (d is Map && d['data'] is List) return d['data'] as List;
-      if (d is List) return d;
-      return [];
-    }
-    Future<List<dynamic>> safe(Future Function() call) async {
-      try {
-        return pick(await call());
-      } catch (_) {
-        return [];
-      }
-    }
-
-    final results = await Future.wait([
-      safe(api.getProjects),
-      safe(api.getCommunities),
-      safe(() => api.getContent('media')),
-    ]);
-    if (results.every((r) => r.isEmpty)) return;
-    ref.read(guestHomeCacheProvider.notifier).state = GuestHomeData(
-      projects: results[0],
-      communities: results[1],
-      media: results[2],
-    );
-    ref.read(guestPrefetchAtProvider.notifier).state = DateTime.now();
-  } catch (_) {}
-}
-
 class GuestDashboardScreen extends ConsumerStatefulWidget {
   const GuestDashboardScreen({super.key});
 
@@ -138,6 +64,17 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
   List<dynamic> _communities = [];
   List<dynamic> _media = [];
   bool _loading = true;
+
+  // Inline validation for the "Register your interest" form — the field itself
+  // turns red instead of a snackbar popping over the page.
+  String? _nameError;
+  String? _emailError;
+  String? _phoneError;
+  // Per-slice freshness: set when NETWORK data lands, so the async disk-cache
+  // read never overwrites fresh data — but still fills slices whose fetch
+  // failed or is still in flight (e.g. offline cold start).
+  bool _hasFreshFast = false;
+  bool _hasFreshProjects = false;
   String _activeTab = 'Communities';
   int _featuredIndex = 0;
 
@@ -162,29 +99,132 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       _communities = cached.communities;
       _media = cached.media;
       _loading = false;
-    }
-    // If the onboarding prefetch just warmed the catalog (< 15s ago), the data
-    // is already fresh — skip the redundant immediate refetch so prefetching
-    // adds no extra network calls. Any later visit refreshes as before.
-    final prefetchAt = ref.read(guestPrefetchAtProvider);
-    final justPrefetched = cached != null &&
-        prefetchAt != null &&
-        DateTime.now().difference(prefetchAt).inSeconds < 15;
-    if (justPrefetched) {
-      // Media dummies are normally added by _fetchData; ensure they're present
-      // when we skip it so the media tab isn't empty on first paint.
-      if (_media.isEmpty) _media = _dummyMedia;
     } else {
-      _fetchData();
+      // Cold start: render the last-known payload from disk immediately
+      // (stale-while-revalidate) instead of blocking on the network.
+      _loadDiskCache();
     }
-    _heroTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
-      if (mounted && _projects.isNotEmpty) {
-        setState(
-          () => _heroIndex =
-              (_heroIndex + 1) % (_projects.length > 5 ? 5 : _projects.length),
-        );
-      }
+    // Deferred to a microtask: _fetchData initializes/invalidates providers,
+    // which must not notify other watchers mid-build (initState runs during
+    // element inflation).
+    Future.microtask(() {
+      if (!mounted) return;
+      // Keep _projects in sync with later provider refreshes too (e.g. the
+      // Projects tab's RETRY re-fetching after an offline start).
+      ref.listenManual(projectsProvider, (previous, next) {
+        final data = next.asData?.value;
+        if (data == null || !mounted) return;
+        setState(() {
+          _projects = data;
+          _hasFreshProjects = true;
+          _loading = false;
+        });
+      });
+      // Menu "Enquiry" → jump to this page's Register Your Interest form.
+      ref.listenManual(scrollToRegisterProvider, (previous, next) {
+        if (!mounted) return;
+        // Let the home tab become visible/settle, then scroll to the form.
+        Future.delayed(const Duration(milliseconds: 250), () {
+          if (mounted) _scrollToInterestForm();
+        });
+      });
+      _fetchData();
     });
+    _heroTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      if (!mounted) return;
+      // Cycles both the real hero set and the placeholder set (same getter).
+      final count = _heroSlides.length;
+      setState(() => _heroIndex = (_heroIndex + 1) % count);
+    });
+  }
+
+  /// Web parity: the hero cycles the first 3 catalog projects (the web shows
+  /// 3 dots and leads with the newest project — currently the Cledor tower),
+  /// keeping a reference to each project so slides with attached media get
+  /// the web's ▶ play affordance. Falls back to curated stock shots while
+  /// projects are still loading.
+  List<Map<String, dynamic>> get _heroSlides {
+    // Web parity: the hero leads with the newest live (Ongoing) project and
+    // then the completed showcases — Upcoming projects and additional
+    // Ongoing ones never appear (matches the web's slide set).
+    final slides = <Map<String, dynamic>>[];
+    var ongoingTaken = false;
+    for (final p in _projects) {
+      final status = (p['status'] ?? '').toString().toLowerCase();
+      if (status == 'upcoming') continue;
+      if (status == 'ongoing') {
+        if (ongoingTaken) continue;
+        ongoingTaken = true;
+      }
+      final img = _pickImage([p['heroImage'], p['image']], '');
+      if (img.isEmpty) continue;
+      slides.add({'image': img, 'project': p});
+      if (slides.length == 3) break;
+    }
+    if (slides.isNotEmpty) {
+      // The Artistic Impression hero leads with a bright interior render
+      // (bundled asset) rather than the project's exterior shot.
+      slides[0] = {...slides[0], 'image': 'assets/hero_artistic.jpg'};
+      return slides;
+    }
+    return const [
+      {'image': 'assets/hero_artistic.jpg', 'project': null},
+      {
+        'image':
+            'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
+        'project': null,
+      },
+      {
+        'image':
+            'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80',
+        'project': null,
+      },
+    ];
+  }
+
+  File get _diskCacheFile =>
+      File('${Directory.systemTemp.path}/m4_guest_home_cache.json');
+
+  /// Reads the persisted guest-home payload (if any) so a cold app start
+  /// renders instantly; the network refresh in [_fetchData] replaces it.
+  Future<void> _loadDiskCache() async {
+    try {
+      final file = _diskCacheFile;
+      if (!await file.exists()) return;
+      final raw = await file.readAsString();
+      // Decode off the UI isolate — the payload can be multiple MB.
+      final map = await compute(jsonDecode, raw) as Map<String, dynamic>;
+      if (!mounted) return;
+      setState(() {
+        // Fill only the slices the network hasn't (yet) delivered — the disk
+        // copy must never overwrite fresh data, but it must still cover
+        // failed/pending fetches (e.g. offline cold start).
+        if (!_hasFreshProjects) {
+          _projects = map['projects'] as List<dynamic>? ?? [];
+        }
+        if (!_hasFreshFast) {
+          _communities = map['communities'] as List<dynamic>? ?? [];
+          _media = map['media'] as List<dynamic>? ?? [];
+        }
+        _loading = false;
+      });
+    } catch (_) {
+      // Corrupt/unreadable cache: ignore, the network fetch still runs.
+    }
+  }
+
+  /// Persists the freshly fetched payload for instant cold starts.
+  Future<void> _saveDiskCache() async {
+    try {
+      final raw = await compute(jsonEncode, <String, dynamic>{
+        'projects': _projects,
+        'communities': _communities,
+        'media': _media,
+      });
+      await _diskCacheFile.writeAsString(raw);
+    } catch (_) {
+      // Best-effort cache; failures must never surface to the UI.
+    }
   }
 
   @override
@@ -198,119 +238,154 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     super.dispose();
   }
 
-  // Fetch one catalog list, returning [] on any error instead of throwing —
-  // so a single slow/failed request can't wipe out the others.
-  Future<List<dynamic>> _safeList(
-    Future Function() call, {
-    int retries = 2,
-  }) async {
-    for (int attempt = 0; attempt <= retries; attempt++) {
-      try {
-        final res = await call();
-        final data = res.data;
-        if (data is Map && data['data'] is List) return data['data'] as List;
-        if (data is List) return data;
-        return [];
-      } catch (_) {
-        // Transient connection/DNS blips are common on mobile; retry with a
-        // short backoff so a single failed request doesn't leave the section
-        // permanently empty until the user reloads.
-        if (attempt == retries) return [];
-        await Future.delayed(Duration(milliseconds: 700 * (attempt + 1)));
-      }
-    }
-    return [];
-  }
-
   Future<void> _fetchData() async {
-    try {
-      final apiClient = ref.read(apiClientProvider);
-      // Independent requests: previously a single Future.wait meant that if
-      // ANY one of projects/communities/media failed or timed out, all three
-      // came back empty — which is why Communities showed nothing on slower
-      // connections. Now each populates on its own.
-      // All three still start in parallel (fastest total time), but we reveal
-      // the page as soon as PROJECTS arrive (they drive the hero + featured
-      // sections) instead of blocking the whole screen on the slowest request —
-      // communities/media then stream into their tabs a moment later.
-      final projectsFuture = _safeList(apiClient.getProjects);
-      final communitiesFuture = _safeList(apiClient.getCommunities);
-      final mediaFuture = _safeList(() => apiClient.getContent('media'));
+    final apiClient = ref.read(apiClientProvider);
 
-      unawaited(
-        projectsFuture.then((projects) {
-          if (mounted && projects.isNotEmpty) {
-            setState(() {
-              _projects = projects;
-              _loading = false;
-            });
-          }
-        }),
-      );
+    // The communities + media payloads are a few KB and land in well under a
+    // second; the projects payload can be several MB (hero images). Fetch them
+    // independently and render as soon as the fast pair arrives — the hero
+    // section shows its built-in placeholders until projects stream in.
+    final fastPair = Future.wait([apiClient.getCommunities(), apiClient.getContent('media')])
+        .then((results) {
+          if (!mounted) return false;
+          setState(() {
+            _communities = results[0].data['data'] ?? [];
+            _media = results[1].data['data'] ?? [];
 
-      final results = await Future.wait([
-        projectsFuture,
-        communitiesFuture,
-        mediaFuture,
-      ]);
-
-      if (mounted) {
-        setState(() {
-          // Keep the last good data if a refresh comes back empty (e.g. a
-          // dropped/failed request) instead of blanking a section that
-          // previously had content.
-          if (results[0].isNotEmpty) _projects = results[0];
-          if (results[1].isNotEmpty) _communities = results[1];
-          if (results[2].isNotEmpty) _media = results[2];
-
-          // 💡 Add dummy content if media is empty to fill blank space
-          if (_media.isEmpty) {
-            _media = _dummyMedia;
-          }
-          _loading = false;
+            // 💡 Add dummy content if media is empty to fill blank space
+            if (_media.isEmpty) {
+              _media = [
+                {
+                  '_id': 'dummy1',
+                  'title': 'CLÉDOR LUXURY LIVING',
+                  'thumbnail':
+                      'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80',
+                  'description':
+                      'Discover the epitome of refinement in our latest architectural masterpiece.',
+                  'slug': 'cledor-luxury-living',
+                },
+                {
+                  '_id': 'dummy2',
+                  'title': 'OCEAN VIEW RESIDENCES',
+                  'thumbnail':
+                      'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
+                  'description':
+                      'Where horizon meets home. Experience coastal elegance like never before.',
+                  'slug': 'ocean-view-residences',
+                },
+                {
+                  '_id': 'dummy3',
+                  'title': 'URBAN SANCTUARY',
+                  'thumbnail':
+                      'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80',
+                  'description': 'A peaceful retreat in the heart of the city.',
+                  'slug': 'urban-sanctuary',
+                },
+              ];
+            }
+            _hasFreshFast = true;
+            _loading = false;
+          });
+          return true;
+        })
+        .catchError((_) {
+          if (mounted) setState(() => _loading = false);
+          return false;
         });
-        // Cache the fresh payload so the next guest-home mount is instant.
-        // Only cache when we actually have content, so a failed/offline load
-        // never poisons the cache with an empty payload that would then show
-        // empty on the next open.
-        if (_projects.isNotEmpty ||
-            _communities.isNotEmpty ||
-            _media.isNotEmpty) {
-          ref.read(guestHomeCacheProvider.notifier).state = GuestHomeData(
-            projects: _projects,
-            communities: _communities,
-            media: _media,
-          );
-        }
-      }
-    } catch (e) {
-      if (mounted) setState(() => _loading = false);
+
+    // Projects come through the shared [projectsProvider] so this screen and
+    // ProjectListScreen (both alive in the guest IndexedStack) reuse ONE
+    // download of the multi-MB payload instead of fetching it twice.
+    // FutureProviders cache errors: if a previous attempt failed, retry it on
+    // this mount (matches the old fetch-per-mount recovery behaviour).
+    if (ref.read(projectsProvider) is AsyncError) {
+      ref.invalidate(projectsProvider);
     }
+    final projectsFetch = ref
+        .read(projectsProvider.future)
+        .then((projects) {
+          if (!mounted) return false;
+          setState(() {
+            _projects = projects;
+            _hasFreshProjects = true;
+            _loading = false;
+          });
+          return true;
+        })
+        .catchError((_) {
+          if (mounted) setState(() => _loading = false);
+          return false;
+        });
+
+    final ok = await Future.wait([fastPair, projectsFetch]);
+    if (!mounted || ok.contains(false)) return;
+
+    // Cache the complete fresh payload so the next guest-home mount is
+    // instant (in memory for this session, on disk for the next cold start).
+    ref.read(guestHomeCacheProvider.notifier).state = GuestHomeData(
+      projects: _projects,
+      communities: _communities,
+      media: _media,
+    );
+    _saveDiskCache();
   }
 
   void _scrollToInterestForm() {
-    final context = _interestFormKey.currentContext;
-    if (context != null) {
+    final ctx = _interestFormKey.currentContext;
+    if (ctx != null) {
       Scrollable.ensureVisible(
-        context,
+        ctx,
         duration: const Duration(seconds: 1),
         curve: Curves.easeInOut,
       );
+    } else if (_scrollController.hasClients) {
+      // Form not laid out yet (page at the top). It's the last section, so
+      // animate to the bottom to reveal it, then settle exactly onto it.
+      _scrollController
+          .animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 800),
+            curve: Curves.easeInOut,
+          )
+          .then((_) {
+            final c = _interestFormKey.currentContext;
+            if (c != null) {
+              Scrollable.ensureVisible(
+                c,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+            }
+          });
     }
   }
 
+  /// Marks the empty required fields red in place. Returns true when valid.
+  bool _validateInterest() {
+    // Full validation (was empty-check only): name = letters, email = proper
+    // format, phone = 10-digit. Errors show in red on each field.
+    final nameErr = Validators.nameError(
+      _nameController.text,
+      field: 'full name',
+    );
+    final emailErr = Validators.emailError(_emailController.text);
+    final phoneErr = Validators.phoneError(_phoneController.text);
+    setState(() {
+      _nameError = nameErr;
+      _emailError = emailErr;
+      _phoneError = phoneErr;
+    });
+    return nameErr == null && emailErr == null && phoneErr == null;
+  }
+
   Future<void> _submitInterest() async {
-    if (_nameController.text.isEmpty ||
-        _emailController.text.isEmpty ||
-        _phoneController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all required fields (*)')),
-      );
-      return;
-    }
+    if (!_validateInterest()) return;
     if (!_agreedToTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please agree to the Privacy Policy')),
+        const SnackBar(
+          backgroundColor: Color(0xFFE24B4A),
+          content: Text('Please agree to the Privacy Policy'),
+        ),
       );
       return;
     }
@@ -323,8 +398,11 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         'email': _emailController.text,
         'phone': _phoneController.text,
         'message': _messageController.text,
-        'interest': 'Guest Interest',
-        'source': 'Mobile Guest Portal',
+        // Server-side enums — anything else is rejected with a 400. Valid:
+        // interest = Buying | Selling | Site Visit | Video Call
+        // (case-sensitive); source = online | cp | walk-in | referral | other.
+        'interest': 'Buying',
+        'source': 'online',
       });
 
       if (mounted) {
@@ -341,9 +419,12 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         setState(() => _agreedToTerms = false);
       }
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Submission failed: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: const Color(0xFFE24B4A),
+          content: Text('Submission failed: $e'),
+        ),
+      );
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
@@ -369,9 +450,9 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               const SizedBox(height: 18),
               Text(
                 'M4 FAMILY',
-                style: GoogleFonts.gelasio(
+                style: GoogleFonts.ebGaramond(
                   fontSize: 11,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                   letterSpacing: 5,
                   color: Theme.of(
                     context,
@@ -388,9 +469,10 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       child: CustomScrollView(
         controller: _scrollController,
         slivers: [
-          // ⭐️ FIXED HEADER (Web Parity)
+          // ⭐️ HEADER (web parity: scrolls away with content — pinning it
+          // made scrolled content bleed through the translucent bar)
           SliverAppBar(
-            pinned: true,
+            pinned: false,
             toolbarHeight: 120,
             backgroundColor: Theme.of(
               context,
@@ -450,154 +532,211 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             ),
           ),
 
-          // ⭐️ TAGLINE & HERO SECTION
+          // ⭐️ TAGLINE & HERO SECTION (web parity: compact left tagline, no
+          // translate hacks — natural flow keeps the hero→tabs gap tight)
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-              // The tagline + hero image are painted upward via Transform, but
-              // still reserve their full height. heightFactor trims the empty
-              // reserved space at the bottom so the tabs sit closer (no big gap).
-              child: Align(
-                alignment: Alignment.topCenter,
-                heightFactor: 0.82,
-                child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // ⭐️ Tagline (Living the M4 Life)
-                  Transform.translate(
-                    offset: const Offset(0, -50),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 0),
-                      child: M4Theme.taglineWordmark(context, height: 200),
+                  // Tagline (Living the M4 Life) — full-width script image,
+                  // cropped tight to the text band so there is no large gap
+                  // before the hero. Same in light and dark mode.
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12, bottom: 8),
+                    child: ColorFiltered(
+                      colorFilter: ColorFilter.matrix(
+                        Theme.of(context).brightness == Brightness.dark
+                            ? const [
+                                // Dark Mode: Invert and boost to white
+                                -5.0, 0, 0, 0, 255,
+                                0, -5.0, 0, 0, 255,
+                                0, -5.0, 0, 0, 255,
+                                0, 0, 0, 1, 0,
+                              ]
+                            : const [
+                                // Light Mode: Crush to black
+                                5.0, 0, 0, 0, -150,
+                                0, 5.0, 0, 0, -150,
+                                0, 0, 5.0, 0, -150,
+                                0, 0, 0, 1, 0,
+                              ],
+                      ),
+                      child: Image.asset(
+                        'assets/living_m4_life.png',
+                        width: MediaQuery.of(context).size.width,
+                        height: 120,
+                        fit: BoxFit.fitWidth,
+                      ),
                     ),
                   ),
 
                   // Hero Image Container
-                  Transform.translate(
-                    offset: const Offset(
-                      0,
-                      -110,
-                    ), // 👈 Adjusted from -140 to fix overlap
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: Builder(
-                        builder: (context) {
-                          final mainImage = _projects.isNotEmpty
-                              ? (_projects[_heroIndex %
-                                        _projects.length]['heroImage'] ??
-                                    _projects[_heroIndex %
-                                        _projects.length]['image'] ??
-                                    'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80')
-                              : [
-                                  'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80',
-                                  'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
-                                  'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80',
-                                ][_heroIndex % 3];
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Builder(
+                      builder: (context) {
+                        final slides = _heroSlides;
+                        final slide = slides[_heroIndex % slides.length];
+                        final mainImage = slide['image'] as String;
+                        final project = slide['project'];
+                        final hasMedia =
+                            project != null &&
+                            project['media'] is List &&
+                            (project['media'] as List).isNotEmpty;
+                        final dotCount = slides.length;
 
-                          return Stack(
-                            children: [
-                              AspectRatio(
-                                aspectRatio: 4 / 3,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(32),
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(32),
-                                    child: AnimatedSwitcher(
-                                      duration: const Duration(
-                                        milliseconds: 800,
-                                      ),
-                                      transitionBuilder:
-                                          (
-                                            Widget child,
-                                            Animation<double> animation,
-                                          ) {
-                                            return FadeTransition(
-                                              opacity: animation,
-                                              child: child,
-                                            );
-                                          },
-                                      child: _buildProjectImage(
-                                        mainImage.toString(),
-                                        key: ValueKey<int>(_heroIndex),
-                                        width: double.infinity,
-                                        height: double.infinity,
-                                        errorIcon: LucideIcons.image,
-                                        errorIconSize: 50,
-                                      ),
+                        return Stack(
+                          children: [
+                            AspectRatio(
+                              aspectRatio: 4 / 3,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(24),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.12),
+                                      blurRadius: 24,
+                                      offset: const Offset(0, 12),
+                                    ),
+                                  ],
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(24),
+                                  child: AnimatedSwitcher(
+                                    duration: const Duration(milliseconds: 800),
+                                    transitionBuilder:
+                                        (
+                                          Widget child,
+                                          Animation<double> animation,
+                                        ) {
+                                          return FadeTransition(
+                                            opacity: animation,
+                                            child: child,
+                                          );
+                                        },
+                                    child: _buildProjectImage(
+                                      mainImage.toString(),
+                                      key: ValueKey<int>(_heroIndex),
+                                      width: double.infinity,
+                                      height: double.infinity,
+                                      errorIcon: LucideIcons.image,
+                                      errorIconSize: 50,
                                     ),
                                   ),
                                 ),
                               ),
+                            ),
 
-                              // Artistic Impression Badge
-                              Positioned(
-                                top: 16,
-                                right: 16,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
+                            // Artistic Impression Badge
+                            Positioned(
+                              top: 16,
+                              right: 16,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.45),
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: Colors.white.withOpacity(0.1),
                                   ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.4),
-                                    borderRadius: BorderRadius.circular(4),
-                                    border: Border.all(
-                                      color: Colors.white.withOpacity(0.1),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'ARTISTIC IMPRESSION',
-                                    style: GoogleFonts.gelasio(
-                                      color: Colors.white,
-                                      fontSize: 7,
-                                      fontWeight: FontWeight.w900,
-                                      letterSpacing: 1.5,
-                                    ),
+                                ),
+                                child: Text(
+                                  'ARTISTIC IMPRESSION',
+                                  style: GoogleFonts.ebGaramond(
+                                    color: Colors.white,
+                                    fontSize: 8,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 1.5,
                                   ),
                                 ),
                               ),
+                            ),
 
-                              // Pagination Dots
-                              Positioned(
-                                bottom: 24,
-                                left: 0,
-                                right: 0,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: List.generate(3, (index) {
-                                    final isSelected =
-                                        (_heroIndex % 3) == index;
-                                    return AnimatedContainer(
-                                      duration: const Duration(
-                                        milliseconds: 300,
-                                      ),
-                                      margin: const EdgeInsets.symmetric(
-                                        horizontal: 4,
-                                      ),
-                                      width: isSelected ? 32 : 24,
-                                      height: 4,
+                            // ▶ Play affordance (web parity: shown when the
+                            // project has attached media)
+                            if (hasMedia)
+                              Positioned.fill(
+                                child: Center(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      final id = project['_id'];
+                                      if (id != null) {
+                                        context.push(
+                                          '/projects/$id',
+                                          extra: project,
+                                        );
+                                      }
+                                    },
+                                    child: Container(
+                                      width: 64,
+                                      height: 64,
                                       decoration: BoxDecoration(
-                                        color: isSelected
-                                            ? Colors.black
-                                            : Colors.white.withValues(
-                                                alpha: 0.5,
-                                              ),
-                                        borderRadius: BorderRadius.circular(2),
+                                        color: Colors.white.withValues(
+                                          alpha: 0.75,
+                                        ),
+                                        shape: BoxShape.circle,
                                       ),
-                                    );
-                                  }),
+                                      child: const Center(
+                                        child: Icon(
+                                          LucideIcons.play,
+                                          color: Colors.black87,
+                                          size: 26,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ],
-                          );
-                        },
-                      ),
+
+                            // Pagination Dots (web parity: bottom-left,
+                            // active becomes a wider dark pill; count follows
+                            // the actual carousel length)
+                            Positioned(
+                              bottom: 18,
+                              left: 20,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: List.generate(dotCount, (index) {
+                                  final isSelected =
+                                      (_heroIndex % dotCount) == index;
+                                  return AnimatedContainer(
+                                    duration: const Duration(milliseconds: 300),
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 4,
+                                    ),
+                                    width: isSelected ? 22 : 8,
+                                    height: 8,
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? Colors.black.withValues(alpha: 0.85)
+                                          : Colors.white.withValues(
+                                              alpha: 0.75,
+                                            ),
+                                      borderRadius: BorderRadius.circular(4),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(
+                                            alpha: 0.15,
+                                          ),
+                                          blurRadius: 4,
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
                   ),
                 ],
-              ),
               ),
             ),
           ),
@@ -605,23 +744,13 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             padding: const EdgeInsets.only(bottom: 32),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
-                // Pull the tabs up under the hero, but keep them tappable: the
-                // internal SizedBox keeps the tab bar inside the sliver item's
-                // layout bounds so hit-testing lands correctly (a bare
-                // Transform on a sliver child shifts paint but not hit-tests).
-                Transform.translate(
-                  offset: const Offset(0, -60),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const SizedBox(height: 60),
-                        _buildTabsSection(),
-                      ],
-                    ),
-                  ),
+                // Tabs sit in natural flow right under the hero (web parity —
+                // the old translate hack left a large ghost gap here).
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 40, 24, 0),
+                  child: _buildTabsSection(),
                 ),
+                const SizedBox(height: 48),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: _buildPhilosophy(),
@@ -719,33 +848,33 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                             tab[0].toUpperCase() + tab.substring(1),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.only(right: 24),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              tab.toUpperCase(),
-                              style: GoogleFonts.gelasio(
+                        padding: const EdgeInsets.only(right: 28),
+                        // Web parity: the active underline spans the full tab
+                        // text width (border-bottom), not a short stub.
+                        child: Container(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
                                 color: isSelected
                                     ? (isDark ? Colors.white : Colors.black)
-                                    : (isDark ? Colors.white : Colors.black)
-                                          .withValues(alpha: 0.68),
-                                fontSize: 12,
-                                fontWeight: FontWeight.w900,
-                                letterSpacing: 2,
+                                    : Colors.transparent,
+                                width: 2,
                               ),
                             ),
-                            const SizedBox(height: 10),
-                            if (isSelected)
-                              Container(
-                                width: 24,
-                                height: 2,
-                                decoration: BoxDecoration(
-                                  color: isDark ? Colors.white : Colors.black,
-                                  borderRadius: BorderRadius.circular(1),
-                                ),
-                              ),
-                          ],
+                          ),
+                          child: Text(
+                            tab.toUpperCase(),
+                            style: GoogleFonts.ebGaramond(
+                              color: isSelected
+                                  ? (isDark ? Colors.white : Colors.black)
+                                  : (isDark ? Colors.white : Colors.black)
+                                        .withValues(alpha: 0.55),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 2,
+                            ),
+                          ),
                         ),
                       ),
                     );
@@ -755,65 +884,103 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 32),
-        Builder(
-          builder: (context) {
-            final List<dynamic> items = _activeTab == 'Communities'
-                ? _communities
-                : (_activeTab == 'Media' ? _media : _projects);
-            // While the payload is still loading, show a spinner instead of a
-            // blank 360px gap (which looked like nothing was there); once
-            // loaded, show a subtle message if the list is genuinely empty.
-            if (items.isEmpty) {
-              return SizedBox(
-                height: 360,
-                child: Center(
-                  child: _loading
-                      ? const CircularProgressIndicator(
-                          color: Color(0xFFC5A35B),
-                          strokeWidth: 2,
-                        )
-                      : Text(
-                          'No ${_activeTab.toLowerCase()} available yet.',
-                          style: GoogleFonts.ebGaramond(
-                            color: Colors.white.withOpacity(0.6),
-                            fontSize: 13,
-                          ),
+        const SizedBox(height: 24),
+        SizedBox(
+          // The Properties info-card (image + text + button) needs more room
+          // than the image-overlay cards used by Communities/Media. Horizontal
+          // lists stretch children to this height, so it matches the card's
+          // content height exactly (image 180 + info section + margin).
+          height: _activeTab == 'Properties' ? 336 : 320,
+          child: Builder(
+            builder: (context) {
+              final isCommunities = _activeTab == 'Communities';
+              final items = isCommunities ? _communities : _projects;
+              // Properties/Media render the projects payload, which arrives via
+              // projectsProvider and can take a while (multi-MB). Surface its
+              // real state — an empty box while loading/failed reads as broken.
+              if (items.isEmpty && !isCommunities) {
+                final projectsAsync = ref.watch(projectsProvider);
+                if (projectsAsync is AsyncLoading) {
+                  return const Center(
+                    child: SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  );
+                }
+                if (projectsAsync is AsyncError) {
+                  return Center(
+                    child: TextButton.icon(
+                      onPressed: () => ref.invalidate(projectsProvider),
+                      icon: const Icon(LucideIcons.refreshCw, size: 14),
+                      label: Text(
+                        'RETRY',
+                        style: GoogleFonts.gelasio(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 1.5,
                         ),
-                ),
-              );
-            }
-            return SizedBox(
-              height: 360,
-              child: ListView.builder(
+                      ),
+                    ),
+                  );
+                }
+              }
+              return ListView.builder(
                 scrollDirection: Axis.horizontal,
                 physics: const BouncingScrollPhysics(),
+                // Web parity: the Media tab is a visual gallery of the catalog
+                // projects (hero image + title), not the CMS media articles.
                 itemCount: items.length,
                 itemBuilder: (context, index) => _buildTabCard(items[index]),
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ],
     );
   }
 
+  /// Web parity: JS `||` treats empty strings as missing, Dart `??` does not.
+  /// The API returns `image: ""` for some records — those must fall back to
+  /// the same stock image the web shows, not slip through as "present".
+  static String _pickImage(List<dynamic> candidates, String fallback) {
+    for (final c in candidates) {
+      final s = (c ?? '').toString().trim();
+      if (s.isNotEmpty) return s;
+    }
+    return fallback;
+  }
+
   Widget _buildTabCard(dynamic item) {
     final isCommunity = _activeTab.toLowerCase() == 'communities';
     final isMedia = _activeTab.toLowerCase() == 'media';
-    final rawImage =
-        (isCommunity
-                ? (item['image'] ??
-                      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80')
-                : (isMedia
-                      ? ((item['thumbnail']?.toString().isNotEmpty ?? false)
-                            ? item['thumbnail']
-                            : (item['image']?.toString().isNotEmpty ?? false)
-                            ? item['image']
-                            : 'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80')
-                      : (item['heroImage'] ??
-                            'https://images.unsplash.com/photo-1613545325278-f24b0cae1224?auto=format&fit=crop&q=80')))
-            .toString();
+
+    // Web parity: Media cards are a plain visual gallery — project image with
+    // only the title bottom-left (no badge/play/action row).
+    if (isMedia) return _buildMediaCard(item);
+
+    final rawImage = isCommunity
+        ? _pickImage(
+            [item['image']],
+            'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80',
+          )
+        : (isMedia
+              ? _pickImage(
+                  [item['thumbnail'], item['image']],
+                  'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80',
+                )
+              : _pickImage(
+                  [item['heroImage']],
+                  'https://images.unsplash.com/photo-1613545325278-f24b0cae1224?auto=format&fit=crop&q=80',
+                ));
+
+    // Web parity: the Properties tab uses a light "info card" layout (image
+    // on top, title/location below, READ MORE button) — unlike the
+    // image-overlay cards used by Communities and Media.
+    if (!isCommunity && !isMedia) {
+      return _buildPropertyCard(item, rawImage);
+    }
 
     return _ScaleButton(
       onTap: () {
@@ -826,29 +993,39 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         }
       },
       child: Container(
-        width: 300,
-        margin: const EdgeInsets.only(right: 20, bottom: 10),
+        // Web parity: card ≈56% of screen width so ~1.7 cards peek into view,
+        // with softer 24px corners.
+        width: MediaQuery.of(context).size.width * 0.56,
+        margin: const EdgeInsets.only(right: 16, bottom: 10),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(40),
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.12),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
+            ),
+          ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(40),
+          borderRadius: BorderRadius.circular(24),
           child: Stack(
             fit: StackFit.expand,
             children: [
               // 🖼️ High Resolution Image
               _buildProjectImage(rawImage, errorIconSize: 40),
 
-              // 🌫️ High-End Gradient Overlay
+              // 🌫️ Text scrim (web parity: cards stay bright, only the
+              // bottom label area gets a soft dark fade)
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    stops: const [0.3, 1.0],
+                    stops: const [0.55, 1.0],
                     colors: [
                       Colors.transparent,
-                      Colors.black.withValues(alpha: 0.85),
+                      Colors.black.withValues(alpha: 0.7),
                     ],
                   ),
                 ),
@@ -939,8 +1116,6 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                     Text(
                       (isCommunity
                               ? (item['overview'] ?? item['description'] ?? '')
-                              : isMedia
-                              ? (item['description'] ?? item['type'] ?? 'MEDIA')
                               : (item['location'] is Map
                                     ? item['location']['name']
                                     : item['location'] ?? 'MAZGAON'))
@@ -951,7 +1126,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       style: GoogleFonts.ebGaramond(
                         color: Colors.white.withValues(alpha: 0.7),
                         fontSize: 10,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 0.5,
                         height: 1.4,
                       ),
@@ -1003,6 +1178,260 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     );
   }
 
+  /// Web-parity media card: the web's Media tab is a visual gallery of the
+  /// catalog projects — full-bleed hero image with just the project title in
+  /// small white caps at the bottom-left.
+  /// Opens the featured project's detail page. Shared by the card image and the
+  /// READ MORE button — tapping the artwork did nothing before, which read as
+  /// the section being dead.
+  void _openFeatured(dynamic project) {
+    final id = project['_id'];
+    if (id != null) {
+      context.push('/projects/$id', extra: project);
+    } else {
+      // No live project at all: fall back to the Projects tab.
+      ref.read(guestNavigationProvider.notifier).state = 1;
+    }
+  }
+
+  Widget _buildMediaCard(dynamic item) {
+    final rawImage = _pickImage(
+      [item['heroImage'], item['image']],
+      'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80',
+    );
+    return _ScaleButton(
+      // Media tiles open the Media Gallery (content hub) — the same target as
+      // the menu's Media entry. They used to open the project detail page,
+      // which is the Properties tab's destination, not this one's.
+      onTap: () => context.push('/media'),
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.56,
+        margin: const EdgeInsets.only(right: 16, bottom: 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.12),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              _buildProjectImage(rawImage, errorIconSize: 40),
+              // Soft scrim so the title stays readable on bright images.
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    stops: const [0.6, 1.0],
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withValues(alpha: 0.55),
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 18,
+                bottom: 16,
+                child: Text(
+                  (item['title'] ?? item['name'] ?? '')
+                      .toString()
+                      .toUpperCase(),
+                  style: GoogleFonts.ebGaramond(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Web-parity property card: image on top (status pill + ARTISTIC
+  /// IMPRESSION badge), then title, pinned location and a full-width dark
+  /// READ MORE button on a light card surface.
+  Widget _buildPropertyCard(dynamic item, String rawImage) {
+    final scheme = Theme.of(context).colorScheme;
+    final title = (item['title'] ?? item['name'] ?? '').toString();
+    final location =
+        (item['location'] is Map
+                ? item['location']['name']
+                : item['location'] ?? '')
+            .toString();
+    final status = (item['status'] ?? 'Ongoing').toString();
+
+    return _ScaleButton(
+      onTap: () => context.push('/projects/${item['_id']}', extra: item),
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.68,
+        margin: const EdgeInsets.only(right: 16, bottom: 10),
+        decoration: BoxDecoration(
+          color: scheme.surface,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 🖼️ Image with badges
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(24),
+              ),
+              child: Stack(
+                children: [
+                  _buildProjectImage(
+                    rawImage,
+                    height: 180,
+                    width: double.infinity,
+                    errorIconSize: 40,
+                  ),
+                  Positioned(
+                    top: 12,
+                    right: 12,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.75),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        status.toUpperCase(),
+                        style: GoogleFonts.ebGaramond(
+                          color: Colors.white,
+                          fontSize: 8,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 10,
+                    right: 10,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.55),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        'ARTISTIC IMPRESSION',
+                        style: GoogleFonts.ebGaramond(
+                          color: Colors.white,
+                          fontSize: 6.5,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // 📄 Info section
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.gelasio(
+                      color: scheme.onSurface,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Icon(
+                        LucideIcons.mapPin,
+                        size: 12,
+                        color: scheme.onSurface.withValues(alpha: 0.55),
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          location.toUpperCase(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.ebGaramond(
+                            color: scheme.onSurface.withValues(alpha: 0.55),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  Container(
+                    width: double.infinity,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: scheme.onSurface,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'READ MORE',
+                          style: GoogleFonts.ebGaramond(
+                            color: scheme.surface,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 2,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Icon(
+                          LucideIcons.chevronRight,
+                          size: 14,
+                          color: scheme.surface,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   /// Renders a project image the same way the web does (see web `getAssetUrl`):
   /// inline base64 `data:` URIs are decoded with [Image.memory] (CachedNetworkImage
   /// can only fetch network URLs), `http(s)` URLs load directly, and relative
@@ -1017,7 +1446,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     double errorIconSize = 64,
   }) {
     Widget errorBox() => Container(
-      color: const Color(0xFF141B3A),
+      color: const Color(0xFF1A1A1A),
       child: Center(
         child: Icon(errorIcon, color: Colors.white24, size: errorIconSize),
       ),
@@ -1026,6 +1455,17 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     final src = raw.trim().isEmpty
         ? 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80'
         : raw.trim();
+
+    if (src.startsWith('assets/')) {
+      return Image.asset(
+        src,
+        key: key,
+        width: width,
+        height: height,
+        fit: fit,
+        errorBuilder: (_, __, ___) => errorBox(),
+      );
+    }
 
     if (src.startsWith('data:')) {
       try {
@@ -1068,9 +1508,43 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
   }
 
   Widget _buildFeaturedSection() {
-    if (_projects.isEmpty) return const SizedBox.shrink();
-    final project = _projects[_featuredIndex % _projects.length];
+    // Web parity: the FEATURED PROPERTY block always renders. When the projects
+    // API is unavailable (e.g. a 504 timeout) and nothing is cached, fall back
+    // to a bundled brand feature so the section never disappears from home.
+    final List<dynamic> featuredList = _projects.isNotEmpty
+        ? _projects
+        : [
+            {
+              // Carries an id (and the fields the detail page reads) so READ
+              // MORE can actually open it. Without `_id` the button fell
+              // through to "switch to the Projects tab" and the card looked
+              // dead — the detail screen renders from the `extra` we pass, so
+              // this works even though the id isn't a real ObjectId.
+              '_id': 'cledor',
+              'title': 'Cledor',
+              'status': 'Ongoing',
+              'location': {'name': 'Mumbai'},
+              'description':
+                  'CLÉDOR is a thoughtfully designed residential tower that '
+                  'blends modern architecture with timeless elegance—crafted '
+                  'for those who value refined, future-ready living.',
+              'heroImage': 'assets/hero_artistic.jpg',
+            },
+          ];
+    final project = featuredList[_featuredIndex % featuredList.length];
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Web parity: use the featured project's own description (HTML stripped),
+    // falling back to a brand blurb only when the project has none.
+    final rawDesc = (project['description'] ?? '')
+        .toString()
+        .replaceAll(RegExp(r'<[^>]*>'), ' ')
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .trim();
+    final featuredDesc = rawDesc.isNotEmpty
+        ? rawDesc
+        : 'Live smart at Aura Heights—space-efficient 1 & 2 BHK homes with '
+              'curated amenities and rare parking solutions.';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1090,121 +1564,137 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         ),
         const SizedBox(height: 40),
 
-        // ⭐️ Main Artistic Card
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 24),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(50),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(50),
-            child: Stack(
-              children: [
-                _buildProjectImage(
-                  () {
-                    final hero = project['heroImages'];
-                    if (hero is List &&
-                        hero.isNotEmpty &&
-                        hero.first != null &&
-                        hero.first.toString().trim().isNotEmpty) {
-                      return hero.first.toString();
-                    }
-                    return (project['heroImage'] ??
-                            project['image'] ??
-                            project['coverImage'] ??
-                            '')
-                        .toString();
-                  }(),
-                  height: 520,
-                  width: double.infinity,
-                ),
-                // Gradient Overlay
-                Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          Colors.black.withOpacity(0.7),
-                        ],
-                        stops: const [0.5, 1.0],
-                      ),
-                    ),
-                  ),
-                ),
-                // Artistic Impression Badge
-                Positioned(
-                  top: 24,
-                  right: 24,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.6),
-                      borderRadius: BorderRadius.circular(4),
-                      border: Border.all(color: Colors.white.withOpacity(0.2)),
-                    ),
-                    child: Text(
-                      'ARTISTIC IMPRESSION',
-                      style: GoogleFonts.gelasio(
-                        color: Colors.white,
-                        fontSize: 7,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 1.5,
-                      ),
-                    ),
-                  ),
-                ),
-                // Content Overlay
-                Positioned(
-                  bottom: 40,
-                  left: 32,
-                  right: 32,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'FEATURED PROPERTY',
-                        style: GoogleFonts.gelasio(
-                          color: const Color(0xFFC5A35B),
-                          fontSize: 9,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 2.5,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        (project['title'] ?? '').toString(),
-                        style: GoogleFonts.gelasio(
-                          color: Colors.white,
-                          fontSize: 44,
-                          fontWeight: FontWeight.w400,
-                          height: 1,
-                          letterSpacing: -1,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Live smart at Aura Heights—space-efficient 1 & 2 BHK homes with curated amenities and rare parking solutions.'
-                            .toUpperCase(),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.ebGaramond(
-                          color: Colors.white.withOpacity(0.8),
-                          fontSize: 9,
-                          height: 1.6,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 1.2,
-                        ),
-                      ),
-                    ],
-                  ),
+        // ⭐️ Main Artistic Card — the artwork itself opens the project, same as
+        // READ MORE below it.
+        GestureDetector(
+          onTap: () => _openFeatured(project),
+          behavior: HitTestBehavior.opaque,
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 24),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(50),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 40,
+                  offset: const Offset(0, 20),
                 ),
               ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(50),
+              child: Stack(
+                children: [
+                  _buildProjectImage(
+                    () {
+                      final hero = project['heroImages'];
+                      if (hero is List &&
+                          hero.isNotEmpty &&
+                          hero.first != null &&
+                          hero.first.toString().trim().isNotEmpty) {
+                        return hero.first.toString();
+                      }
+                      return (project['heroImage'] ??
+                              project['image'] ??
+                              project['coverImage'] ??
+                              '')
+                          .toString();
+                    }(),
+                    height: 520,
+                    width: double.infinity,
+                  ),
+                  // Gradient Overlay
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black.withOpacity(0.7),
+                          ],
+                          stops: const [0.5, 1.0],
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Artistic Impression Badge
+                  Positioned(
+                    top: 24,
+                    right: 24,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(0.6),
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.2),
+                        ),
+                      ),
+                      child: Text(
+                        'ARTISTIC IMPRESSION',
+                        style: GoogleFonts.ebGaramond(
+                          color: Colors.white,
+                          fontSize: 7,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Content Overlay
+                  Positioned(
+                    bottom: 40,
+                    left: 32,
+                    right: 32,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'FEATURED PROPERTY',
+                          style: GoogleFonts.ebGaramond(
+                            color: const Color(0xFFC5A358),
+                            fontSize: 9,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 2.5,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          (project['title'] ?? '').toString(),
+                          // Lighter serif: DM Serif Display ships only weight
+                          // 400, so fontWeight can't thin it. Playfair Display
+                          // at w400 reads noticeably less bold.
+                          style: GoogleFonts.playfairDisplay(
+                            color: Colors.white,
+                            fontSize: 44,
+                            fontWeight: FontWeight.w400,
+                            height: 1,
+                            letterSpacing: -1,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          featuredDesc.toUpperCase(),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.ebGaramond(
+                            color: Colors.white.withOpacity(0.8),
+                            fontSize: 9,
+                            height: 1.6,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -1215,14 +1705,14 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            // Web parity: USPs come from the featured project's backend
+            // `highlights` (e.g. ["Prime Location", "20 min from Airport"]),
+            // not a hardcoded pair. Each is Expanded so its label wraps.
             children: [
-              _buildFeatureIcon(LucideIcons.building2, 'FULLY\nFURNISHED'),
-              _buildFeatureIcon(LucideIcons.mapPin, 'PRIME\nLOCATION'),
-              _buildFeatureIcon(
-                LucideIcons.smartphone,
-                '20 MIN FROM\nSHEIKH ZAYED RD',
-              ),
+              for (final h in projectHighlights(project).take(3))
+                Expanded(
+                  child: _buildFeatureIcon(highlightIcon(h), h.toUpperCase()),
+                ),
             ],
           ),
         ),
@@ -1238,8 +1728,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               _ScaleButton(
                 onTap: () => setState(
                   () => _featuredIndex =
-                      (_featuredIndex - 1 + _projects.length) %
-                      _projects.length,
+                      (_featuredIndex - 1 + featuredList.length) %
+                      featuredList.length,
                 ),
                 child: Container(
                   width: 56,
@@ -1263,22 +1753,26 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               const SizedBox(width: 12),
               Expanded(
                 child: _ScaleButton(
-                  onTap: () => context.push(
-                    '/projects/${project['_id']}',
-                    extra: project,
-                  ),
+                  onTap: () => _openFeatured(project),
                   child: Container(
                     height: 56,
                     decoration: BoxDecoration(
                       color: isDark ? Colors.white : Colors.black,
                       borderRadius: BorderRadius.circular(14),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
                     ),
                     child: Center(
                       child: Text(
                         'READ MORE',
-                        style: GoogleFonts.gelasio(
+                        style: GoogleFonts.ebGaramond(
                           color: isDark ? Colors.black : Colors.white,
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                           fontSize: 12,
                           letterSpacing: 3,
                         ),
@@ -1290,8 +1784,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               const SizedBox(width: 12),
               _ScaleButton(
                 onTap: () => setState(
-                  () =>
-                      _featuredIndex = (_featuredIndex + 1) % _projects.length,
+                  () => _featuredIndex =
+                      (_featuredIndex + 1) % featuredList.length,
                 ),
                 child: Container(
                   width: 56,
@@ -1328,10 +1822,10 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         Text(
           label,
           textAlign: TextAlign.center,
-          style: GoogleFonts.gelasio(
+          style: GoogleFonts.ebGaramond(
             color: isDark ? Colors.white : Colors.black,
             fontSize: 9,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w600,
             letterSpacing: 1.5,
           ),
         ),
@@ -1347,7 +1841,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         width: 56,
         height: 56,
         decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
+          color: isDark ? Colors.black : Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
@@ -1390,6 +1884,13 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
             border: Border.all(
               color: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
             ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.03),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
+              ),
+            ],
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(32),
@@ -1476,8 +1977,8 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               textAlign: TextAlign.center,
               style: GoogleFonts.ebGaramond(
                 color: isDark ? Colors.white : Colors.black,
-                fontWeight: FontWeight.w900,
-                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
                 letterSpacing: 1,
               ),
             ),
@@ -1487,7 +1988,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               textAlign: TextAlign.center,
               style: GoogleFonts.ebGaramond(
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
-                fontSize: 8,
+                fontSize: 11,
                 fontWeight: FontWeight.w500,
                 height: 1.4,
               ),
@@ -1515,11 +2016,39 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
           ),
         ),
         const SizedBox(height: 48),
-        _buildLuxuryInput('Full Name *', _nameController),
+        _buildLuxuryInput(
+          'Full Name *',
+          _nameController,
+          errorText: _nameError,
+          keyboardType: TextInputType.name,
+          inputFormatters: Validators.nameFormatters,
+          // Clear the red state as soon as they start typing.
+          onChanged: (v) {
+            if (_nameError != null) setState(() => _nameError = null);
+          },
+        ),
         const SizedBox(height: 16),
-        _buildLuxuryInput('Email *', _emailController),
+        _buildLuxuryInput(
+          'Email *',
+          _emailController,
+          errorText: _emailError,
+          keyboardType: TextInputType.emailAddress,
+          inputFormatters: Validators.emailFormatters,
+          onChanged: (v) {
+            if (_emailError != null) setState(() => _emailError = null);
+          },
+        ),
         const SizedBox(height: 16),
-        _buildLuxuryInput('Phone Number *', _phoneController),
+        _buildLuxuryInput(
+          'Phone Number *',
+          _phoneController,
+          errorText: _phoneError,
+          keyboardType: TextInputType.phone,
+          inputFormatters: Validators.phoneFormatters,
+          onChanged: (v) {
+            if (_phoneError != null) setState(() => _phoneError = null);
+          },
+        ),
         const SizedBox(height: 16),
         _buildLuxuryInput('Message', _messageController, isLong: true),
         const SizedBox(height: 24),
@@ -1580,42 +2109,75 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     String hint,
     TextEditingController controller, {
     bool isLong = false,
+    // When set, the field turns red and shows the message underneath — keeps
+    // validation on the field instead of a snackbar over the page.
+    String? errorText,
+    ValueChanged<String>? onChanged,
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.12),
-        ),
-        boxShadow: isDark
-            ? []
-            : [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                ),
-              ],
-      ),
-      child: TextField(
-        controller: controller,
-        style: TextStyle(color: isDark ? Colors.white : Colors.black),
-        maxLines: isLong ? 5 : 1,
-        decoration: InputDecoration(
-          hintText: hint,
-          hintStyle: GoogleFonts.ebGaramond(
-            color: isDark ? Colors.white54 : Colors.black45,
-            fontSize: 13,
+    final hasError = errorText != null;
+    const errorColor = Color(0xFFE24B4A);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: isDark ? Colors.black : Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: hasError
+                  ? errorColor
+                  : (isDark ? Colors.white : Colors.black).withOpacity(0.12),
+              width: hasError ? 1.5 : 1,
+            ),
+            boxShadow: isDark
+                ? []
+                : [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
           ),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 24,
-            vertical: 12,
+          child: TextField(
+            controller: controller,
+            onChanged: onChanged,
+            keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
+            style: TextStyle(color: isDark ? Colors.white : Colors.black),
+            maxLines: isLong ? 5 : 1,
+            decoration: InputDecoration(
+              hintText: hint,
+              hintStyle: GoogleFonts.ebGaramond(
+                color: hasError
+                    ? errorColor.withOpacity(0.75)
+                    : (isDark ? Colors.white54 : Colors.black45),
+                fontSize: 13,
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 20,
+              ),
+              border: InputBorder.none,
+            ),
           ),
-          filled: false, border: InputBorder.none, enabledBorder: InputBorder.none, focusedBorder: InputBorder.none,
         ),
-      ),
+        if (hasError)
+          Padding(
+            padding: const EdgeInsets.only(left: 10, top: 6),
+            child: Text(
+              errorText,
+              style: GoogleFonts.ebGaramond(
+                color: errorColor,
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

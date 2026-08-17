@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Network security configuration.
+
+  Intentionally PERMISSIVE for now (cleartextTrafficPermitted="true") so it
+  exactly matches the existing android:usesCleartextTraffic="true" behaviour and
+  cannot break image/API loading. It exists so the policy is explicit and easy
+  to tighten later.
+
+  TO HARDEN FOR PRODUCTION (once you confirm every host — API + all image URLs —
+  is HTTPS): set base-config cleartextTrafficPermitted="false" and, if a single
+  host still needs HTTP, add a <domain-config cleartextTrafficPermitted="true">
+  block listing only that host.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

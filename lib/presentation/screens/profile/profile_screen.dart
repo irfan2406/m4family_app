@@ -29,7 +29,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     }
 
     return Material(
-      color: isDark ? const Color(0xFF0B1026) : const Color(0xFFF4EFE3),
+      color: isDark ? const Color(0xFF09090B) : const Color(0xFFF8FAFC),
       child: Stack(
         children: [
           SafeArea(
@@ -124,7 +124,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+        color: isDark ? const Color(0xFF18181B) : Colors.white,
         borderRadius: BorderRadius.circular(40),
         boxShadow: [
           BoxShadow(
@@ -372,14 +372,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(LucideIcons.logOut, color: Color(0xFFC5A35B), size: 20),
+            const Icon(LucideIcons.logOut, color: Colors.redAccent, size: 20),
             const SizedBox(width: 12),
             Text(
               'LOG OUT',
               style: GoogleFonts.ebGaramond(
                 fontSize: 12,
                 fontWeight: FontWeight.w900,
-                color: Color(0xFFC5A35B),
+                color: Colors.redAccent,
                 letterSpacing: 1,
               ),
             ),
@@ -445,7 +445,7 @@ class _SupportTile extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+          color: isDark ? const Color(0xFF18181B) : Colors.white,
           borderRadius: BorderRadius.circular(32),
           boxShadow: [
             BoxShadow(

@@ -8,7 +8,6 @@ import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 import 'package:m4_mobile/core/providers/theme_provider.dart';
-import 'package:m4_mobile/core/theme/app_theme.dart';
 
 class CpSidebarMenu extends ConsumerStatefulWidget {
   const CpSidebarMenu({super.key});
@@ -30,19 +29,138 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
     context.push(path);
   }
 
+  // Confirm before logging out — a Yes/No popup so a stray tap can't log out.
+  Future<void> _confirmLogout() async {
+    final isDark = ref.read(themeProvider) == ThemeMode.dark;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      barrierDismissible: true,
+      builder: (dialogCtx) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 40),
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF15171C) : Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isDark
+                  ? Colors.white.withOpacity(0.08)
+                  : Colors.black.withOpacity(0.06),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  LucideIcons.logOut,
+                  color: Colors.red,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Logout',
+                style: GoogleFonts.gelasio(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: isDark ? Colors.white : const Color(0xFF111827),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Are you sure you want to logout?',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.ebGaramond(
+                  fontSize: 13,
+                  color: isDark ? Colors.white60 : Colors.grey[600],
+                ),
+              ),
+              const SizedBox(height: 22),
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(dialogCtx).pop(false),
+                      child: Container(
+                        height: 48,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.white.withOpacity(0.06)
+                              : const Color(0xFFF3F4F6),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: isDark
+                                ? Colors.white.withOpacity(0.08)
+                                : Colors.black.withOpacity(0.06),
+                          ),
+                        ),
+                        child: Text(
+                          'NO',
+                          style: GoogleFonts.ebGaramond(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1.2,
+                            color: isDark ? Colors.white70 : Colors.grey[800],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(dialogCtx).pop(true),
+                      child: Container(
+                        height: 48,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Text(
+                          'YES',
+                          style: GoogleFonts.ebGaramond(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1.2,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    if (confirmed != true) return;
+    _close();
+    await ref.read(authProvider.notifier).logout();
+    if (!mounted) return;
+    // After logout, go to guest mode, not the login screen.
+    context.go('/home');
+  }
+
   @override
   Widget build(BuildContext context) {
     final idx = ref.watch(cpNavigationIndexProvider);
     final themeMode = ref.watch(themeProvider);
-    // Match the GUEST drawer: GREEN glass in LIGHT mode, NAVY glass in DARK.
-    // `realIsDark` drives the panel tint; `isDark` (forced true) keeps all
-    // text/icons cream-on-dark for both tints.
-    final realIsDark = themeMode == ThemeMode.dark;
-    const isDark = true;
+    final isDark = themeMode == ThemeMode.dark;
 
-    return Theme(
-      data: realIsDark ? M4Theme.darkThemeNavy : M4Theme.darkTheme,
-      child: Drawer(
+    return Drawer(
       width: MediaQuery.of(context).size.width * 0.8,
       backgroundColor: Colors.transparent,
       elevation: 0,
@@ -52,7 +170,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
               child: Container(
-                color: (realIsDark ? const Color(0xFF0B1026) : const Color(0xFF0F2A20)).withOpacity(0.6),
+                color: (isDark ? Colors.black : Colors.white).withOpacity(0.6),
               ),
             ),
           ),
@@ -65,19 +183,13 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                   padding: const EdgeInsets.fromLTRB(24, 20, 24, 12),
                   child: Row(
                     children: [
-                      const Icon(
-                        LucideIcons.sparkles,
-                        size: 16,
-                        color: Color(0xFFC5A35B),
-                      ),
-                      const SizedBox(width: 10),
                       Text(
                         'PARTNER MENU',
                         style: GoogleFonts.gelasio(
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 2,
-                          color: isDark ? Colors.white38 : const Color(0xFF0F2A20).withValues(alpha: 0.55),
+                          color: isDark ? Colors.white38 : Colors.grey[600],
                         ),
                       ),
                     ],
@@ -128,8 +240,8 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                           context,
                         ).copyWith(dividerColor: Colors.transparent),
                         child: ExpansionTile(
-                          iconColor: const Color(0xFFC5A35B),
-                          collapsedIconColor: const Color(0xFFC5A35B),
+                          iconColor: const Color(0xFF9333EA),
+                          collapsedIconColor: const Color(0xFF9333EA),
                           onExpansionChanged: (_) {},
                           tilePadding: EdgeInsets.zero,
                           title: _SidebarItem(
@@ -193,7 +305,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                             fontSize: 10,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 2,
-                            color: isDark ? Colors.white38 : const Color(0xFF0F2A20).withValues(alpha: 0.55),
+                            color: isDark ? Colors.white38 : Colors.grey[600],
                           ),
                         ),
                       ),
@@ -243,7 +355,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 2,
-                          color: isDark ? Colors.white38 : const Color(0xFF0F2A20).withValues(alpha: 0.55),
+                          color: isDark ? Colors.white38 : Colors.grey[600],
                         ),
                       ),
                       GestureDetector(
@@ -257,11 +369,11 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                         child: Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: (isDark ? Colors.white : const Color(0xFF0F2A20))
+                            color: (isDark ? Colors.white : Colors.black)
                                 .withOpacity(0.08),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: (isDark ? Colors.white : const Color(0xFF0F2A20))
+                              color: (isDark ? Colors.white : Colors.black)
                                   .withOpacity(0.1),
                             ),
                           ),
@@ -269,7 +381,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                           // (resolvedTheme === "dark" ? Moon : Sparkles).
                           child: Icon(
                             isDark ? LucideIcons.moon : LucideIcons.sparkles,
-                            color: isDark ? Colors.white : const Color(0xFF0F2A20),
+                            color: isDark ? Colors.white : Colors.black,
                             size: 18,
                           ),
                         ),
@@ -282,13 +394,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                 Padding(
                   padding: const EdgeInsets.all(24),
                   child: GestureDetector(
-                    onTap: () async {
-                      _close();
-                      await ref.read(authProvider.notifier).logout();
-                      if (!context.mounted) return;
-                      // After logout, go to guest mode, not the login screen.
-                      context.go('/home');
-                    },
+                    onTap: _confirmLogout,
                     child: Container(
                       height: 56,
                       width: double.infinity,
@@ -296,7 +402,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                         // Web parity: bg-red-50 (light) / red-900/10 (dark).
                         color: isDark
                             ? Colors.red.withOpacity(0.1)
-                            : const Color(0xFFC65B46),
+                            : const Color(0xFFFEF2F2),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: Row(
@@ -327,7 +433,6 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
           ),
         ],
       ),
-      ),
     );
   }
 }
@@ -347,20 +452,17 @@ class _SidebarItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // The CP drawer is always the dark (green/navy) glass panel, so items are
-    // always cream-on-dark. (An inner ExpansionTile theme was flipping this to
-    // light for Content Hub, hiding its text.)
-    const isDark = true;
-    const purple = Color(0xFFC5A35B); // purple-600
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    const purple = Color(0xFF9333EA); // purple-600
     // Web parity: active → purple icon tile; inactive → slate tile + slate-400
     // icon.
     final iconBg = isActive
         ? (isDark
               ? purple.withOpacity(0.25)
-              : const Color(0xFFC5A35B)) // purple-100
+              : const Color(0xFFF3E8FF)) // purple-100
         : (isDark
-              ? const Color(0xFF141B3A)
-              : const Color(0xFFF4EFE3)); // slate-800 / slate-50
+              ? const Color(0xFF1E293B)
+              : const Color(0xFFF8FAFC)); // slate-800 / slate-50
     final iconColor = isActive ? purple : const Color(0xFF94A3B8); // slate-400
 
     return InkWell(
@@ -391,7 +493,7 @@ class _SidebarItem extends StatelessWidget {
                   letterSpacing: -0.2,
                   color: isActive
                       ? purple
-                      : (isDark ? Colors.white70 : const Color(0xFF163A2C)),
+                      : (isDark ? Colors.white70 : const Color(0xFF1E293B)),
                 ),
               ),
             ),
@@ -410,7 +512,7 @@ class _SubItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const isDark = true; // always dark (green/navy) glass panel
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return InkWell(
       onTap: onTap,
@@ -422,7 +524,7 @@ class _SubItem extends StatelessWidget {
               width: 28,
               height: 28,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : const Color(0xFF0F2A20)).withOpacity(0.05),
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(
@@ -437,7 +539,7 @@ class _SubItem extends StatelessWidget {
               style: GoogleFonts.ebGaramond(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
-                color: isDark ? Colors.white : const Color(0xFF0F2A20),
+                color: isDark ? Colors.white : Colors.black87,
               ),
             ),
           ],

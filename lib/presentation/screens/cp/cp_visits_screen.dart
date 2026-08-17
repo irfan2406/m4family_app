@@ -1,10 +1,15 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
 
@@ -35,17 +40,36 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
   bool _bookingsLoading = false;
   List<dynamic> _bookings = [];
 
+  static const _visitsCacheKey = 'cp_visits_cache';
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Only the Visit Tracking data is needed for the initial view; bookings
-      // load lazily when the Payment Tracker tab is opened (faster first paint).
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // Show the last-loaded visits instantly, then refresh in the background —
+      // so reopening the screen feels fast even when the backend is slow.
+      await _loadCachedVisits();
       _load();
+      _loadBookings();
     });
   }
 
-  Future<void> _load({int page = 1}) async {
+  Future<void> _loadCachedVisits() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final cached = prefs.getString(_visitsCacheKey);
+      if (cached == null || !mounted || _visits.isNotEmpty) return;
+      final list = jsonDecode(cached);
+      if (list is List && list.isNotEmpty) {
+        setState(() {
+          _visits = list;
+          _loading = false; // cache is shown; _load() still refreshes in bg
+        });
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _load({int page = 1, bool retried = false}) async {
     setState(() {
       _loading = true;
       _error = null;
@@ -53,7 +77,11 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
     try {
       final res = await ref
           .read(apiClientProvider)
-          .getCpVisits(page: page, limit: 10);
+          .getCpVisits(page: page, limit: 10)
+          // The Dio client's receiveTimeout is 90s — far too long for a small
+          // paginated list. Cap this at 15s so a slow/hung backend shows the
+          // retry state fast instead of spinning "SYNCHRONIZING RECORDS...".
+          .timeout(const Duration(seconds: 15));
       final body = res.data;
       if (body is Map && body['status'] == true && body['data'] is Map) {
         final d = body['data'] as Map;
@@ -61,10 +89,24 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
         _visits = raw is List ? List<dynamic>.from(raw) : [];
         _page = (d['page'] as num?)?.toInt() ?? page;
         _totalPages = (d['totalPages'] as num?)?.toInt() ?? 1;
+        // Cache so the next open shows this list instantly.
+        try {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString(_visitsCacheKey, jsonEncode(_visits));
+        } catch (_) {}
       } else {
         _error = 'Could not load visits';
         _visits = [];
       }
+    } on TimeoutException {
+      // The backend can cold-start: the first request often times out while it
+      // wakes up. Retry once automatically — it is usually warm + fast by now,
+      // so the user doesn't have to tap "Retry".
+      if (!retried) {
+        return _load(page: page, retried: true);
+      }
+      _error = 'Taking longer than usual — please retry.';
+      _visits = [];
     } on DioException catch (e) {
       _error = e.response?.data is Map
           ? (e.response!.data as Map)['message']?.toString()
@@ -80,7 +122,10 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
   Future<void> _loadBookings() async {
     setState(() => _bookingsLoading = true);
     try {
-      final res = await ref.read(apiClientProvider).getCpBookings();
+      final res = await ref
+          .read(apiClientProvider)
+          .getCpBookings()
+          .timeout(const Duration(seconds: 15));
       final body = res.data;
       if (body is Map && body['status'] == true && body['data'] is Map) {
         final raw = (body['data'] as Map)['bookings'];
@@ -100,6 +145,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
             content: Text(
               ok
                   ? 'Admin notified'
@@ -114,7 +160,10 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to send notification')),
+          const SnackBar(
+            backgroundColor: Color(0xFFE24B4A),
+            content: Text('Failed to send notification'),
+          ),
         );
       }
     }
@@ -128,17 +177,23 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
       final body = res.data;
       if (body is Map && body['status'] == true) {
         if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('Status updated to $status')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: const Color(0xFF10B981),
+              content: Text('Status updated to $status'),
+            ),
+          );
         }
         await _load(page: _page);
       } else {
         final msg = body is Map ? body['message']?.toString() : null;
         if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(msg ?? 'Update failed')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: const Color(0xFFE24B4A),
+              content: Text(msg ?? 'Update failed'),
+            ),
+          );
         }
       }
     } on DioException catch (e) {
@@ -146,9 +201,12 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
           ? (e.response!.data as Map)['message']?.toString()
           : e.message;
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(m ?? 'Error')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text(m ?? 'Error'),
+          ),
+        );
       }
     }
   }
@@ -341,14 +399,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
       final active = _activeTab == key;
       return Expanded(
         child: GestureDetector(
-          onTap: () {
-            setState(() => _activeTab = key);
-            // Lazy-load bookings only when the Payment Tracker tab is first
-            // opened — keeps the initial Visit Tracking view fast.
-            if (key == 'payments' && _bookings.isEmpty && !_bookingsLoading) {
-              _loadBookings();
-            }
-          },
+          onTap: () => setState(() => _activeTab = key),
           child: Container(
             height: 40,
             alignment: Alignment.center,
@@ -472,7 +523,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
             child: TextField(
               onChanged: (v) => setState(() => _searchQuery = v),
               style: GoogleFonts.ebGaramond(
-                fontSize: 12,
+                fontSize: 15,
                 fontWeight: FontWeight.bold,
               ),
               decoration: InputDecoration(
@@ -557,14 +608,20 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
       margin: const EdgeInsets.only(bottom: 18),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: scheme.surfaceContainerHighest.withValues(alpha: 0.25),
-        borderRadius: BorderRadius.circular(40),
-        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.4)),
+        color: scheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(
+          color: scheme.brightness == Brightness.dark
+              ? Colors.white.withValues(alpha: 0.07)
+              : scheme.outlineVariant.withValues(alpha: 0.55),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
-            blurRadius: 30,
-            offset: const Offset(0, 14),
+            color: Colors.black.withValues(
+              alpha: scheme.brightness == Brightness.dark ? 0.35 : 0.08,
+            ),
+            blurRadius: 24,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
@@ -744,13 +801,25 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                   _iconAction(
                     scheme,
                     LucideIcons.phone,
-                    phone != null && phone.isNotEmpty ? () {} : null,
+                    phone != null && phone.isNotEmpty
+                        ? () => _contact('tel', phone)
+                        : null,
+                  ),
+                  const SizedBox(width: 8),
+                  _iconAction(
+                    scheme,
+                    LucideIcons.messageSquare,
+                    phone != null && phone.isNotEmpty
+                        ? () => _contact('sms', phone)
+                        : null,
                   ),
                   const SizedBox(width: 8),
                   _iconAction(
                     scheme,
                     LucideIcons.mail,
-                    email != null && email.isNotEmpty ? () {} : null,
+                    email != null && email.isNotEmpty
+                        ? () => _contact('mailto', email)
+                        : null,
                   ),
                 ],
               ),
@@ -811,6 +880,37 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
     );
   }
 
+  // Opens the phone dialer (tel:), SMS composer (sms:) or e-mail client
+  // (mailto:) for the client. Digits are stripped of spaces/formatting so the
+  // dialer receives a clean number.
+  Future<void> _contact(String scheme, String raw) async {
+    final value = scheme == 'mailto'
+        ? raw.trim()
+        : raw.replaceAll(RegExp(r'[^0-9+]'), '');
+    if (value.isEmpty) return;
+    final uri = Uri(scheme: scheme, path: value);
+    try {
+      final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (!ok && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text('No app found to open $scheme'),
+          ),
+        );
+      }
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Color(0xFFE24B4A),
+            content: Text('Could not open'),
+          ),
+        );
+      }
+    }
+  }
+
   Widget _iconAction(ColorScheme scheme, IconData icon, VoidCallback? onTap) {
     return Material(
       color: Colors.transparent,
@@ -863,7 +963,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
             style: GoogleFonts.ebGaramond(
               fontSize: 11,
               fontWeight: FontWeight.w900,
-              color: Color(0xFFC5A35B),
+              color: Colors.amber.shade800,
             ),
           ),
         ),
@@ -988,41 +1088,37 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
   }
 
   Widget _statusChip(ColorScheme scheme, String status) {
-    Color bg;
-    Color fg;
+    final isDark = scheme.brightness == Brightness.dark;
+    Color base;
     String label;
     switch (status) {
       case 'NEW':
-        bg = Color(0xFFC5A35B).withValues(alpha: 0.1);
-        fg = Color(0xFFC5A35B);
+        base = const Color(0xFF3B82F6); // blue
         label = 'NEW VISIT';
         break;
       case 'INTERESTED':
-        bg = Color(0xFFC5A35B).withValues(alpha: 0.1);
-        fg = Color(0xFFC5A35B);
+        base = const Color(0xFFF59E0B); // amber
         label = 'INTERESTED';
         break;
       case 'NOT_INTERESTED':
-        bg = Colors.red.withValues(alpha: 0.1);
-        fg = Colors.red;
+        base = const Color(0xFFEF4444); // red
         label = 'NOT INTERESTED';
         break;
       case 'CLOSED':
-        bg = Colors.green.withValues(alpha: 0.1);
-        fg = Colors.green;
+        base = const Color(0xFF10B981); // green
         label = 'CLOSED / BOOKING';
         break;
       default:
-        bg = scheme.surfaceContainerHighest;
-        fg = scheme.onSurfaceVariant;
+        base = scheme.onSurfaceVariant;
         label = status;
     }
+    final fg = isDark ? Color.lerp(base, Colors.white, 0.28)! : base;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: bg,
+        color: base.withValues(alpha: isDark ? 0.20 : 0.12),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: fg.withValues(alpha: 0.2)),
+        border: Border.all(color: base.withValues(alpha: isDark ? 0.45 : 0.30)),
       ),
       child: Text(
         label,
@@ -1198,14 +1294,27 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: isReady
-            ? Colors.green.withValues(alpha: 0.03)
-            : scheme.surfaceContainerHighest.withValues(alpha: 0.25),
-        borderRadius: BorderRadius.circular(40),
+            ? (scheme.brightness == Brightness.dark
+                  ? const Color(0xFF10251E)
+                  : const Color(0xFFF1FBF6))
+            : scheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(28),
         border: Border.all(
           color: isReady
-              ? Colors.green.withValues(alpha: 0.2)
-              : scheme.outlineVariant.withValues(alpha: 0.4),
+              ? const Color(0xFF10B981).withValues(alpha: 0.35)
+              : (scheme.brightness == Brightness.dark
+                    ? Colors.white.withValues(alpha: 0.07)
+                    : scheme.outlineVariant.withValues(alpha: 0.55)),
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(
+              alpha: scheme.brightness == Brightness.dark ? 0.35 : 0.08,
+            ),
+            blurRadius: 24,
+            offset: const Offset(0, 10),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1289,10 +1398,10 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                       ),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(6),
-                        color: (sanctioned ? Colors.green : Color(0xFFC5A35B))
+                        color: (sanctioned ? Colors.green : Colors.amber)
                             .withValues(alpha: 0.1),
                         border: Border.all(
-                          color: (sanctioned ? Colors.green : Color(0xFFC5A35B))
+                          color: (sanctioned ? Colors.green : Colors.amber)
                               .withValues(alpha: 0.2),
                         ),
                       ),
@@ -1303,7 +1412,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                           fontWeight: FontWeight.w900,
                           color: sanctioned
                               ? Colors.green
-                              : Color(0xFFC5A35B),
+                              : Colors.amber.shade800,
                         ),
                       ),
                     ),
@@ -1365,7 +1474,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                     width: 6,
                     height: 6,
                     decoration: const BoxDecoration(
-                      color: Color(0xFFC5A35B),
+                      color: Colors.amber,
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -1377,7 +1486,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
                       style: GoogleFonts.ebGaramond(
                         fontSize: 7,
                         fontWeight: FontWeight.w900,
-                        color: Color(0xFFC5A35B),
+                        color: Colors.amber.shade800,
                         letterSpacing: 0.4,
                       ),
                     ),

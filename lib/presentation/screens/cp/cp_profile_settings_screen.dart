@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -24,8 +26,8 @@ class CpProfileSettingsScreen extends ConsumerStatefulWidget {
 
 class _CpProfileSettingsScreenState
     extends ConsumerState<CpProfileSettingsScreen> {
-  static const _purple = Color(0xFFC5A35B);
-  static const _indigo = Color(0xFFC5A35B);
+  static const _purple = Color(0xFF9333EA);
+  static const _indigo = Color(0xFF4F46E5);
 
   final _first = TextEditingController();
   final _last = TextEditingController();
@@ -74,8 +76,10 @@ class _CpProfileSettingsScreenState
       }
       u ??= ref.read(authProvider).user;
       if (u != null) {
-        _first.text = (u['firstName']?.toString() ?? '').toUpperCase();
-        _last.text = (u['lastName']?.toString() ?? '').toUpperCase();
+        // Show the name exactly as stored (was force-uppercased on load, so a
+        // saved "Abuzar" came back as "ABUZAR").
+        _first.text = u['firstName']?.toString() ?? '';
+        _last.text = u['lastName']?.toString() ?? '';
         _email.text = u['email']?.toString() ?? '';
         _phone.text = u['phone']?.toString() ?? '';
         _company.text = u['companyName']?.toString() ?? '';
@@ -96,8 +100,10 @@ class _CpProfileSettingsScreenState
       debugPrint('CP settings load: $e');
       final u = ref.read(authProvider).user;
       if (u != null) {
-        _first.text = (u['firstName']?.toString() ?? '').toUpperCase();
-        _last.text = (u['lastName']?.toString() ?? '').toUpperCase();
+        // Show the name exactly as stored (was force-uppercased on load, so a
+        // saved "Abuzar" came back as "ABUZAR").
+        _first.text = u['firstName']?.toString() ?? '';
+        _last.text = u['lastName']?.toString() ?? '';
         _email.text = u['email']?.toString() ?? '';
         _phone.text = u['phone']?.toString() ?? '';
         _company.text = u['companyName']?.toString() ?? '';
@@ -129,7 +135,10 @@ class _CpProfileSettingsScreenState
     if (len > 2 * 1024 * 1024) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('File too large (max 2MB)')),
+          const SnackBar(
+            backgroundColor: Color(0xFFE24B4A),
+            content: Text('File too large (max 2MB)'),
+          ),
         );
       }
       return;
@@ -145,9 +154,12 @@ class _CpProfileSettingsScreenState
       }
       if (newUrl == null || newUrl.isEmpty) {
         if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('Upload failed')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              backgroundColor: Color(0xFFE24B4A),
+              content: Text('Upload failed'),
+            ),
+          );
         }
         return;
       }
@@ -160,7 +172,10 @@ class _CpProfileSettingsScreenState
         await ref.read(authProvider.notifier).fetchMe();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Profile photo updated')),
+            const SnackBar(
+              backgroundColor: Color(0xFF10B981),
+              content: Text('Profile photo updated'),
+            ),
           );
         }
       } else {
@@ -168,9 +183,12 @@ class _CpProfileSettingsScreenState
             ? (patch.data as Map)['message']?.toString()
             : null;
         if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(msg ?? 'Update failed')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: const Color(0xFFE24B4A),
+              content: Text(msg ?? 'Update failed'),
+            ),
+          );
         }
       }
     } on DioException catch (e) {
@@ -178,9 +196,12 @@ class _CpProfileSettingsScreenState
         final m = e.response?.data is Map
             ? (e.response!.data as Map)['message']?.toString()
             : null;
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(m ?? 'Upload failed')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text(m ?? 'Upload failed'),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _uploadingAvatar = false);
@@ -194,6 +215,18 @@ class _CpProfileSettingsScreenState
   }
 
   Future<void> _save() async {
+    final vErr =
+        Validators.nameError(_first.text, field: 'first name') ??
+        Validators.nameError(_last.text, field: 'last name') ??
+        Validators.phoneError(_phone.text);
+    if (vErr != null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(vErr), backgroundColor: Colors.red.shade700),
+        );
+      }
+      return;
+    }
     setState(() => _saving = true);
     try {
       final res = await ref.read(apiClientProvider).updateMe({
@@ -207,32 +240,50 @@ class _CpProfileSettingsScreenState
       if (!mounted) return;
       final ok = res.data is Map && (res.data as Map)['status'] == true;
       if (ok) {
-        await ref.read(authProvider.notifier).fetchMe();
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Profile updated successfully')),
-          );
+        // The PATCH already returns the saved user — apply it locally so the
+        // change shows instantly. Previously this awaited a SECOND round-trip
+        // (fetchMe) before doing anything, which is why saving felt slow; that
+        // refresh now runs in the background just to reconcile.
+        final updated = (res.data as Map)['data'];
+        if (updated is Map) {
+          ref
+              .read(authProvider.notifier)
+              .setUser(Map<String, dynamic>.from(updated));
         }
+        _toast('Profile updated successfully', success: true);
+        unawaited(ref.read(authProvider.notifier).fetchMe());
       } else {
         final msg = res.data is Map
             ? (res.data as Map)['message']?.toString()
             : null;
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(msg ?? 'Update failed')));
+        _toast(msg ?? 'Update failed');
       }
     } on DioException catch (e) {
       if (mounted) {
         final m = e.response?.data is Map
             ? (e.response!.data as Map)['message']?.toString()
             : null;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(m ?? e.message ?? 'Network error')),
-        );
+        _toast(m ?? 'Network error. Please try again.');
       }
     } finally {
       if (mounted) setState(() => _saving = false);
     }
+  }
+
+  /// Red on failure, green on success.
+  void _toast(String message, {bool success = false}) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(message),
+          backgroundColor: success
+              ? const Color(0xFF10B981)
+              : const Color(0xFFE24B4A),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
   }
 
   // Web parity: `IOSDateTimePicker` with mode="date" — absolute Day/Month/Year
@@ -254,7 +305,7 @@ class _CpProfileSettingsScreenState
       isScrollControlled: true,
       builder: (sheetCtx) => Container(
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+          color: isDark ? const Color(0xFF0B111E) : Colors.white,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         ),
         padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
@@ -266,7 +317,7 @@ class _CpProfileSettingsScreenState
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
+                  color: (isDark ? Colors.white : Colors.black).withValues(
                     alpha: 0.15,
                   ),
                   borderRadius: BorderRadius.circular(99),
@@ -392,15 +443,21 @@ class _CpProfileSettingsScreenState
         final msg = res.data is Map
             ? (res.data as Map)['message']?.toString()
             : null;
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(msg ?? 'Failed')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text(msg ?? 'Failed'),
+          ),
+        );
       }
     } on DioException catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(e.message ?? 'Error')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text(e.message ?? 'Error'),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _sessionsBusy = false);
@@ -448,15 +505,21 @@ class _CpProfileSettingsScreenState
         final msg = res.data is Map
             ? (res.data as Map)['message']?.toString()
             : null;
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(msg ?? 'Failed')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text(msg ?? 'Failed'),
+          ),
+        );
       }
     } on DioException catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(e.message ?? 'Error')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text(e.message ?? 'Error'),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _deleteBusy = false);
@@ -477,6 +540,7 @@ class _CpProfileSettingsScreenState
               if (_newPass.text.length < 4) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
+                    backgroundColor: Color(0xFFE24B4A),
                     content: Text('Passcode must be at least 4 digits'),
                   ),
                 );
@@ -484,7 +548,10 @@ class _CpProfileSettingsScreenState
               }
               if (_newPass.text != _confPass.text) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('New passcodes do not match')),
+                  const SnackBar(
+                    backgroundColor: Color(0xFFE24B4A),
+                    content: Text('New passcodes do not match'),
+                  ),
                 );
                 return;
               }
@@ -507,6 +574,7 @@ class _CpProfileSettingsScreenState
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
+                        backgroundColor: Color(0xFF10B981),
                         content: Text('Passcode updated successfully'),
                       ),
                     );
@@ -518,6 +586,7 @@ class _CpProfileSettingsScreenState
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
+                        backgroundColor: const Color(0xFFE24B4A),
                         content: Text(msg ?? 'Failed to update passcode'),
                       ),
                     );
@@ -529,7 +598,10 @@ class _CpProfileSettingsScreenState
                       ? (e.response!.data as Map)['message']?.toString()
                       : null;
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(m ?? 'Error updating passcode')),
+                    SnackBar(
+                      backgroundColor: const Color(0xFFE24B4A),
+                      content: Text(m ?? 'Error updating passcode'),
+                    ),
                   );
                 }
               } finally {
@@ -873,9 +945,11 @@ class _CpProfileSettingsScreenState
         border: Border.all(
           color: scheme.outlineVariant.withValues(alpha: 0.45),
         ),
-        // Web parity: white card in light mode (translucent in dark).
+        // White card in light mode; solid neutral near-black in dark (matches
+        // the Performance Tracker / home cards) — the old translucent fill let
+        // the navy page show through and read as a muddy tint.
         color: Theme.of(context).brightness == Brightness.dark
-            ? scheme.surfaceContainerHighest.withValues(alpha: 0.35)
+            ? const Color(0xFF15171C)
             : Colors.white,
         boxShadow: [
           BoxShadow(
@@ -1009,10 +1083,12 @@ class _CpProfileSettingsScreenState
                   'FIRST NAME',
                   TextField(
                     controller: _first,
-                    // Names type + display in uppercase (matches how the
-                    // profile renders them); bold and slightly larger.
-                    textCapitalization: TextCapitalization.characters,
-                    inputFormatters: [_UpperCaseTextFormatter()],
+                    // Type the name exactly as the user enters it — the field
+                    // used to force ALL CAPS (keyboard caps-lock + an
+                    // uppercase input formatter), so "Abuzar" became "ABUZAR".
+                    textCapitalization: TextCapitalization.words,
+                    keyboardType: TextInputType.name,
+                    inputFormatters: Validators.nameFormatters,
                     style: GoogleFonts.ebGaramond(
                       fontWeight: FontWeight.w800,
                       fontSize: 16,
@@ -1036,8 +1112,9 @@ class _CpProfileSettingsScreenState
                   'LAST NAME',
                   TextField(
                     controller: _last,
-                    textCapitalization: TextCapitalization.characters,
-                    inputFormatters: [_UpperCaseTextFormatter()],
+                    textCapitalization: TextCapitalization.words,
+                    keyboardType: TextInputType.name,
+                    inputFormatters: Validators.nameFormatters,
                     style: GoogleFonts.ebGaramond(
                       fontWeight: FontWeight.w800,
                       fontSize: 16,
@@ -1061,7 +1138,7 @@ class _CpProfileSettingsScreenState
                   readOnly: true,
                   style: GoogleFonts.ebGaramond(
                     fontWeight: FontWeight.w600,
-                    fontSize: 14,
+                    fontSize: 15,
                     color: scheme.onSurface.withValues(alpha: 0.92),
                   ),
                   decoration:
@@ -1091,10 +1168,10 @@ class _CpProfileSettingsScreenState
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFC5A35B).withValues(alpha: 0.1),
+                      color: const Color(0xFF10B981).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(999),
                       border: Border.all(
-                        color: const Color(0xFFC5A35B).withValues(alpha: 0.25),
+                        color: const Color(0xFF10B981).withValues(alpha: 0.25),
                       ),
                     ),
                     child: Row(
@@ -1103,7 +1180,7 @@ class _CpProfileSettingsScreenState
                         const Icon(
                           LucideIcons.check,
                           size: 12,
-                          color: Color(0xFFC5A35B),
+                          color: Color(0xFF10B981),
                         ),
                         const SizedBox(width: 4),
                         Text(
@@ -1111,7 +1188,7 @@ class _CpProfileSettingsScreenState
                           style: GoogleFonts.ebGaramond(
                             fontSize: 8,
                             fontWeight: FontWeight.w900,
-                            color: const Color(0xFFC5A35B),
+                            color: const Color(0xFF10B981),
                             letterSpacing: 0.5,
                           ),
                         ),
@@ -1129,9 +1206,10 @@ class _CpProfileSettingsScreenState
             TextField(
               controller: _phone,
               keyboardType: TextInputType.phone,
+              inputFormatters: Validators.phoneFormatters,
               style: GoogleFonts.ebGaramond(
                 fontWeight: FontWeight.w700,
-                fontSize: 14,
+                fontSize: 15,
                 color: scheme.onSurface.withValues(alpha: 0.92),
               ),
               decoration: _inputDec(
@@ -1156,7 +1234,7 @@ class _CpProfileSettingsScreenState
                     controller: _company,
                     style: GoogleFonts.ebGaramond(
                       fontWeight: FontWeight.w700,
-                      fontSize: 14,
+                      fontSize: 15,
                       color: scheme.onSurface.withValues(alpha: 0.92),
                     ),
                     decoration: _inputDec(scheme),
@@ -1172,7 +1250,7 @@ class _CpProfileSettingsScreenState
                     controller: _rera,
                     style: GoogleFonts.ebGaramond(
                       fontWeight: FontWeight.w700,
-                      fontSize: 14,
+                      fontSize: 15,
                       color: scheme.onSurface.withValues(alpha: 0.92),
                     ),
                     decoration: _inputDec(scheme),
@@ -1397,16 +1475,5 @@ class _CpProfileSettingsScreenState
               ),
             ),
     );
-  }
-}
-
-/// Forces field text to uppercase as the user types (name fields).
-class _UpperCaseTextFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
-    return newValue.copyWith(text: newValue.text.toUpperCase());
   }
 }

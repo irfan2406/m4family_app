@@ -28,26 +28,26 @@ class BookingStartScreen extends ConsumerWidget {
         'title': 'SEND INQUIRY',
         'desc': 'Get detailed brochure and pricing via email/WhatsApp.',
         'icon': LucideIcons.messageSquare,
-        'color': const Color(0xFFC5A35B),
+        'color': const Color(0xFF3B82F6),
       },
       {
         'id': 'site-visit',
         'title': 'SCHEDULE SITE VISIT',
         'desc': 'Book a personalized tour with our project manager.',
         'icon': LucideIcons.calendar,
-        'color': const Color(0xFFC5A35B),
+        'color': const Color(0xFF10B981),
       },
       {
         'id': 'token',
         'title': 'TOKEN BOOKING',
         'desc': 'Lock your preferred unit with a refundable token amount.',
         'icon': LucideIcons.creditCard,
-        'color': const Color(0xFFC5A35B),
+        'color': const Color(0xFFF59E0B),
       },
     ];
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
+      backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
       extendBody: true,
       bottomNavigationBar: NavigationPill(
         currentIndex: -1,

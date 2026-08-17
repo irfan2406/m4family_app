@@ -46,6 +46,11 @@ class _GuestCustomViewsScreenState
     },
   ];
 
+  // Ask the image host for a card-sized image instead of the full-res original
+  // (multi-MB) — massively cuts download time for these grid thumbnails.
+  String _sized(String url, int w) =>
+      url.contains('w=') ? url : '$url&w=$w';
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -55,7 +60,7 @@ class _GuestCustomViewsScreenState
     final isCp = role == 'cp';
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: isDark ? Colors.black : Colors.white,
       drawer: const ConditionalDrawer(),
       extendBody: true,
       bottomNavigationBar: isCp
@@ -119,30 +124,6 @@ class _GuestCustomViewsScreenState
                 ),
               ],
             ),
-            actions: [
-              Builder(
-                builder: (context) => GestureDetector(
-                  onTap: () => Scaffold.of(context).openDrawer(),
-                  child: Container(
-                    margin: const EdgeInsets.only(
-                      right: 16,
-                      top: 20,
-                      bottom: 20,
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 14),
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Icon(
-                      LucideIcons.menu,
-                      color: Theme.of(context).colorScheme.onSurface,
-                      size: 18,
-                    ),
-                  ),
-                ),
-              ),
-            ],
           ),
 
           // 🎭 Hero Section
@@ -226,8 +207,10 @@ class _GuestCustomViewsScreenState
                           fit: StackFit.expand,
                           children: [
                             CachedNetworkImage(
-                              imageUrl: cat['image']!,
+                              imageUrl: _sized(cat['image']!, 800),
                               fit: BoxFit.cover,
+                              memCacheWidth: 800,
+                              fadeInDuration: const Duration(milliseconds: 200),
                               placeholder: (context, url) =>
                                   Container(color: Colors.black12),
                               errorWidget: (context, url, error) =>

@@ -10,7 +10,8 @@ class CpHubAnalyticsScreen extends ConsumerStatefulWidget {
   const CpHubAnalyticsScreen({super.key});
 
   @override
-  ConsumerState<CpHubAnalyticsScreen> createState() => _CpHubAnalyticsScreenState();
+  ConsumerState<CpHubAnalyticsScreen> createState() =>
+      _CpHubAnalyticsScreenState();
 }
 
 class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
@@ -33,14 +34,16 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
         final d = res.data['data'];
         if (d is Map) {
           _data = Map<String, dynamic>.from(d);
-          if (d['monthlyGraph'] is List) _months = List<dynamic>.from(d['monthlyGraph'] as List);
+          if (d['monthlyGraph'] is List)
+            _months = List<dynamic>.from(d['monthlyGraph'] as List);
         }
       }
     } catch (_) {}
     if (mounted) setState(() => _loading = false);
   }
 
-  double _asDouble(dynamic v) => v is num ? v.toDouble() : double.tryParse(v?.toString() ?? '') ?? 0;
+  double _asDouble(dynamic v) =>
+      v is num ? v.toDouble() : double.tryParse(v?.toString() ?? '') ?? 0;
 
   String _fmtCompact(num n) {
     if (n >= 10000000) return '${(n / 10000000).toStringAsFixed(1)}Cr';
@@ -60,7 +63,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
     final scheme = Theme.of(context).colorScheme;
     final isLight = scheme.brightness == Brightness.light;
     final accent = isLight ? Colors.black : scheme.primary;
-    const purple = Color(0xFFC5A35B); // web hue
+    const purple = Color(0xFFA855F7); // web hue
 
     final totalLeads = _asDouble(_data?['totalLeads']);
     final totalConv = _asDouble(_data?['totalConversions']);
@@ -70,32 +73,79 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
     // Map backend fields into the web-style stat cards.
     final stat1 = conversionRateStr; // Total ROI in web UI
     final stat2 = '₹${_fmtCompact(totalCommission)}'; // Net Profit in web UI
-    final stat3 = totalLeads <= 0 ? '0%' : '${((totalConv / totalLeads) * 100).clamp(0, 100).toStringAsFixed(1)}%'; // Avg Yield
+    final stat3 = totalLeads <= 0
+        ? '0%'
+        : '${((totalConv / totalLeads) * 100).clamp(0, 100).toStringAsFixed(1)}%'; // Avg Yield
 
     return Scaffold(
       backgroundColor: scheme.surface,
       appBar: AppBar(
         backgroundColor: scheme.surface,
         elevation: 0,
-        leading: IconButton(icon: const Icon(LucideIcons.arrowLeft), onPressed: () => context.pop()),
-        title: Text('Analytics', style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w900)),
+        leading: IconButton(
+          icon: const Icon(LucideIcons.arrowLeft),
+          onPressed: () => context.pop(),
+        ),
+        title: Text(
+          'Analytics',
+          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w900),
+        ),
       ),
       body: _loading
           ? Center(child: CircularProgressIndicator(color: accent))
           : ListView(
               padding: const EdgeInsets.fromLTRB(20, 10, 20, 24),
               children: [
-                Text('PORTFOLIO PERFORMANCE', style: GoogleFonts.gelasio(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2.4, color: scheme.onSurface.withValues(alpha: 0.68))),
+                Text(
+                  'PORTFOLIO PERFORMANCE',
+                  style: GoogleFonts.gelasio(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 2.4,
+                    color: scheme.onSurface.withValues(alpha: 0.68),
+                  ),
+                ),
                 const SizedBox(height: 14),
-                _rangeTabs(scheme, selected: _range, onPick: (v) => setState(() => _range = v)),
+                _rangeTabs(
+                  scheme,
+                  selected: _range,
+                  onPick: (v) => setState(() => _range = v),
+                ),
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    Expanded(child: _statCard(scheme, label: 'TOTAL ROI', value: stat1, change: '', trendUp: true, accent: purple)),
+                    Expanded(
+                      child: _statCard(
+                        scheme,
+                        label: 'TOTAL ROI',
+                        value: stat1,
+                        change: '',
+                        trendUp: true,
+                        accent: purple,
+                      ),
+                    ),
                     const SizedBox(width: 10),
-                    Expanded(child: _statCard(scheme, label: 'NET PROFIT', value: stat2, change: '', trendUp: true, accent: purple)),
+                    Expanded(
+                      child: _statCard(
+                        scheme,
+                        label: 'NET PROFIT',
+                        value: stat2,
+                        change: '',
+                        trendUp: true,
+                        accent: purple,
+                      ),
+                    ),
                     const SizedBox(width: 10),
-                    Expanded(child: _statCard(scheme, label: 'AVG. YIELD', value: stat3, change: '', trendUp: false, accent: purple)),
+                    Expanded(
+                      child: _statCard(
+                        scheme,
+                        label: 'AVG. YIELD',
+                        value: stat3,
+                        change: '',
+                        trendUp: false,
+                        accent: purple,
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -105,13 +155,34 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                   children: [
                     Icon(LucideIcons.pieChart, size: 16, color: purple),
                     const SizedBox(width: 8),
-                    Text('Asset Allocation', style: GoogleFonts.ebGaramond(fontSize: 12, fontWeight: FontWeight.w800)),
+                    Text(
+                      'Asset Allocation',
+                      style: GoogleFonts.ebGaramond(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 12),
-                _allocRow(scheme, label: 'Commercial Real Estate', value: 65, color: purple),
-                _allocRow(scheme, label: 'Residential Luxury', value: 25, color: const Color(0xFFC5A35B)),
-                _allocRow(scheme, label: 'REITs & Bonds', value: 10, color: purple),
+                _allocRow(
+                  scheme,
+                  label: 'Commercial Real Estate',
+                  value: 65,
+                  color: purple,
+                ),
+                _allocRow(
+                  scheme,
+                  label: 'Residential Luxury',
+                  value: 25,
+                  color: const Color(0xFF60A5FA),
+                ),
+                _allocRow(
+                  scheme,
+                  label: 'REITs & Bonds',
+                  value: 10,
+                  color: purple,
+                ),
                 const SizedBox(height: 16),
                 // Keep the raw backend numbers visible (small) for correctness/debug parity.
                 if (_data != null)
@@ -119,19 +190,51 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.4)),
-                      color: scheme.surfaceContainerHighest.withValues(alpha: 0.14),
+                      border: Border.all(
+                        color: scheme.outlineVariant.withValues(alpha: 0.4),
+                      ),
+                      color: scheme.surfaceContainerHighest.withValues(
+                        alpha: 0.14,
+                      ),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('BACKEND (CP PERFORMANCE)', style: GoogleFonts.gelasio(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2, color: scheme.onSurface.withValues(alpha: 0.68))),
+                        Text(
+                          'BACKEND (CP PERFORMANCE)',
+                          style: GoogleFonts.gelasio(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 2,
+                            color: scheme.onSurface.withValues(alpha: 0.68),
+                          ),
+                        ),
                         const SizedBox(height: 10),
-                        _kv('Total leads', '${_data!['totalLeads'] ?? 0}', scheme),
-                        _kv('Bookings / conversions', '${_data!['totalConversions'] ?? 0}', scheme),
-                        _kv('Conversion rate', '${_data!['conversionRate'] ?? '0%'}', scheme),
-                        _kv('Total commission', '${_data!['totalCommission'] ?? 0}', scheme),
-                        _kv('Paid commission', '${_data!['paidCommission'] ?? 0}', scheme),
+                        _kv(
+                          'Total leads',
+                          '${_data!['totalLeads'] ?? 0}',
+                          scheme,
+                        ),
+                        _kv(
+                          'Bookings / conversions',
+                          '${_data!['totalConversions'] ?? 0}',
+                          scheme,
+                        ),
+                        _kv(
+                          'Conversion rate',
+                          '${_data!['conversionRate'] ?? '0%'}',
+                          scheme,
+                        ),
+                        _kv(
+                          'Total commission',
+                          '${_data!['totalCommission'] ?? 0}',
+                          scheme,
+                        ),
+                        _kv(
+                          'Paid commission',
+                          '${_data!['paidCommission'] ?? 0}',
+                          scheme,
+                        ),
                       ],
                     ),
                   ),
@@ -140,14 +243,20 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
     );
   }
 
-  Widget _rangeTabs(ColorScheme scheme, {required String selected, required ValueChanged<String> onPick}) {
+  Widget _rangeTabs(
+    ColorScheme scheme, {
+    required String selected,
+    required ValueChanged<String> onPick,
+  }) {
     const ranges = ['1M', '3M', '6M', '1Y', 'ALL'];
     final isLight = scheme.brightness == Brightness.light;
     return Container(
       padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(14),
-        color: scheme.surfaceContainerHighest.withValues(alpha: isLight ? 0.16 : 0.22),
+        color: scheme.surfaceContainerHighest.withValues(
+          alpha: isLight ? 0.16 : 0.22,
+        ),
         border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.4)),
       ),
       child: Row(
@@ -161,7 +270,9 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: selected == r ? const Color(0xFFC5A35B) : Colors.transparent,
+                    color: selected == r
+                        ? const Color(0xFFA855F7)
+                        : Colors.transparent,
                   ),
                   child: Text(
                     r,
@@ -170,7 +281,9 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1.4,
-                      color: selected == r ? Colors.white : scheme.onSurface.withValues(alpha: 0.65),
+                      color: selected == r
+                          ? Colors.white
+                          : scheme.onSurface.withValues(alpha: 0.65),
                     ),
                   ),
                 ),
@@ -198,17 +311,47 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
       ),
       child: Column(
         children: [
-          Text(label, textAlign: TextAlign.center, style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1.1, color: scheme.onSurface.withValues(alpha: 0.68))),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.ebGaramond(
+              fontSize: 9,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1.1,
+              color: scheme.onSurface.withValues(alpha: 0.68),
+            ),
+          ),
           const SizedBox(height: 8),
-          Text(value, style: GoogleFonts.ebGaramond(fontSize: 12, fontWeight: FontWeight.w900)),
+          Text(
+            value,
+            style: GoogleFonts.ebGaramond(
+              fontSize: 12,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
           const SizedBox(height: 6),
           if (change.isNotEmpty)
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(trendUp ? LucideIcons.trendingUp : LucideIcons.activity, size: 12, color: trendUp ? const Color(0xFFC5A35B) : const Color(0xFFC65B46)),
+                Icon(
+                  trendUp ? LucideIcons.trendingUp : LucideIcons.activity,
+                  size: 12,
+                  color: trendUp
+                      ? const Color(0xFF34D399)
+                      : const Color(0xFFF87171),
+                ),
                 const SizedBox(width: 4),
-                Text(change, style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w900, color: trendUp ? const Color(0xFFC5A35B) : const Color(0xFFC65B46))),
+                Text(
+                  change,
+                  style: GoogleFonts.ebGaramond(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w900,
+                    color: trendUp
+                        ? const Color(0xFF34D399)
+                        : const Color(0xFFF87171),
+                  ),
+                ),
               ],
             ),
         ],
@@ -216,12 +359,23 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
     );
   }
 
-  Widget _growthCard(ColorScheme scheme, {required List<dynamic> months, required Color accent}) {
-    final items = months.whereType<Map>().map((m) => Map<String, dynamic>.from(m)).toList();
+  Widget _growthCard(
+    ColorScheme scheme, {
+    required List<dynamic> months,
+    required Color accent,
+  }) {
+    final items = months
+        .whereType<Map>()
+        .map((m) => Map<String, dynamic>.from(m))
+        .toList();
     // Use last 8 points similar to web bars.
     final last = items.length > 8 ? items.sublist(items.length - 8) : items;
-    final values = last.map((m) => _asDouble(m['leads'] ?? m['count'] ?? 0)).toList();
-    final maxV = values.isEmpty ? 1.0 : values.reduce((a, b) => a > b ? a : b).clamp(1, double.infinity);
+    final values = last
+        .map((m) => _asDouble(m['leads'] ?? m['count'] ?? 0))
+        .toList();
+    final maxV = values.isEmpty
+        ? 1.0
+        : values.reduce((a, b) => a > b ? a : b).clamp(1, double.infinity);
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -231,10 +385,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Colors.white.withValues(alpha: 0.05),
-            Colors.transparent,
-          ],
+          colors: [Colors.white.withValues(alpha: 0.05), Colors.transparent],
         ),
       ),
       child: Column(
@@ -246,9 +397,22 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Growth Trajectory', style: GoogleFonts.ebGaramond(fontSize: 12, fontWeight: FontWeight.w900)),
+                  Text(
+                    'Growth Trajectory',
+                    style: GoogleFonts.ebGaramond(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
                   const SizedBox(height: 2),
-                  Text('Portfolio valuation over time', style: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.w700, color: scheme.onSurface.withValues(alpha: 0.68))),
+                  Text(
+                    'Portfolio valuation over time',
+                    style: GoogleFonts.ebGaramond(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      color: scheme.onSurface.withValues(alpha: 0.68),
+                    ),
+                  ),
                 ],
               ),
               Container(
@@ -275,9 +439,13 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 520),
                         curve: Curves.easeOutCubic,
-                        height: 18 + (values.isEmpty ? 0 : (values[i] / maxV) * 112),
+                        height:
+                            18 +
+                            (values.isEmpty ? 0 : (values[i] / maxV) * 112),
                         decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.vertical(top: Radius.circular(6)),
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(6),
+                          ),
                           gradient: LinearGradient(
                             begin: Alignment.bottomCenter,
                             end: Alignment.topCenter,
@@ -294,12 +462,18 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              for (final m in (last.isEmpty ? const <Map<String, dynamic>>[] : last))
+              for (final m
+                  in (last.isEmpty ? const <Map<String, dynamic>>[] : last))
                 Expanded(
                   child: Text(
                     _monthShort((m['_id'] ?? '').toString()),
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.gelasio(fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.8, color: scheme.onSurface.withValues(alpha: 0.68)),
+                    style: GoogleFonts.gelasio(
+                      fontSize: 8,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1.8,
+                      color: scheme.onSurface.withValues(alpha: 0.68),
+                    ),
                   ),
                 ),
             ],
@@ -309,7 +483,12 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
     );
   }
 
-  Widget _allocRow(ColorScheme scheme, {required String label, required int value, required Color color}) {
+  Widget _allocRow(
+    ColorScheme scheme, {
+    required String label,
+    required int value,
+    required Color color,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Column(
@@ -317,8 +496,24 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(child: Text(label, style: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.w800, color: scheme.onSurface.withValues(alpha: 0.7)))),
-              Text('$value%', style: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.w900, color: scheme.onSurface.withValues(alpha: 0.7))),
+              Expanded(
+                child: Text(
+                  label,
+                  style: GoogleFonts.ebGaramond(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                    color: scheme.onSurface.withValues(alpha: 0.7),
+                  ),
+                ),
+              ),
+              Text(
+                '$value%',
+                style: GoogleFonts.ebGaramond(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w900,
+                  color: scheme.onSurface.withValues(alpha: 0.7),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 6),
@@ -328,7 +523,13 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
               height: 6,
               child: Stack(
                 children: [
-                  Positioned.fill(child: Container(color: scheme.surfaceContainerHighest.withValues(alpha: 0.45))),
+                  Positioned.fill(
+                    child: Container(
+                      color: scheme.surfaceContainerHighest.withValues(
+                        alpha: 0.45,
+                      ),
+                    ),
+                  ),
                   Positioned.fill(
                     child: FractionallySizedBox(
                       alignment: Alignment.centerLeft,
@@ -346,13 +547,28 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
   }
 
   Widget _kv(String k, String v, ColorScheme scheme) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 6),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(child: Text(k, style: GoogleFonts.ebGaramond(fontSize: 11, fontWeight: FontWeight.w600, color: scheme.onSurface.withValues(alpha: 0.65)))),
-            Text(v, style: GoogleFonts.ebGaramond(fontSize: 11, fontWeight: FontWeight.w900)),
-          ],
+    padding: const EdgeInsets.symmetric(vertical: 6),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: Text(
+            k,
+            style: GoogleFonts.ebGaramond(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: scheme.onSurface.withValues(alpha: 0.65),
+            ),
+          ),
         ),
-      );
+        Text(
+          v,
+          style: GoogleFonts.ebGaramond(
+            fontSize: 11,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+      ],
+    ),
+  );
 }

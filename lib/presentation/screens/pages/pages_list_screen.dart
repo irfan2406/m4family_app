@@ -31,10 +31,13 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
       final response = await apiClient.getCmsPages();
       if (response.data['status'] == true && response.data['data'] is List) {
         setState(() {
-          _pages = (response.data['data'] as List).where((p) => 
-            (p['published'] == true || p['status'] == 'published') && 
-            p['portal'] == 'user'
-          ).toList();
+          _pages = (response.data['data'] as List)
+              .where(
+                (p) =>
+                    (p['published'] == true || p['status'] == 'published') &&
+                    p['portal'] == 'user',
+              )
+              .toList();
           _isLoading = false;
         });
       } else {
@@ -67,7 +70,11 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(LucideIcons.chevronLeft, color: Theme.of(context).colorScheme.onSurface, size: 16),
+                      Icon(
+                        LucideIcons.chevronLeft,
+                        color: Theme.of(context).colorScheme.onSurface,
+                        size: 16,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         'Back to Home',
@@ -103,7 +110,9 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                     Text(
                       'DIRECT CONTENT ACCESS',
                       style: GoogleFonts.gelasio(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withOpacity(0.4),
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 2,
@@ -118,22 +127,29 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
               // ─── List Content ──────────────────────────────────
               Expanded(
                 child: _isLoading
-                    ? Center(child: CircularProgressIndicator(color: isDark ? Colors.white24 : Colors.black12))
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          color: isDark ? Colors.white24 : Colors.black12,
+                        ),
+                      )
                     : _pages.isEmpty
-                        ? Center(
-                            child: Text(
-                              'No published pages available.',
-                              style: GoogleFonts.ebGaramond(
-                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.38),
-                                fontSize: 13,
-                              ),
-                            ),
-                          )
-                        : ListView.builder(
-                            padding: const EdgeInsets.fromLTRB(24, 0, 24, 40),
-                            itemCount: _pages.length,
-                            itemBuilder: (context, index) => _buildPageCard(_pages[index], index),
+                    ? Center(
+                        child: Text(
+                          'No published pages available.',
+                          style: GoogleFonts.ebGaramond(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withOpacity(0.38),
+                            fontSize: 13,
                           ),
+                        ),
+                      )
+                    : ListView.builder(
+                        padding: const EdgeInsets.fromLTRB(24, 0, 24, 40),
+                        itemCount: _pages.length,
+                        itemBuilder: (context, index) =>
+                            _buildPageCard(_pages[index], index),
+                      ),
               ),
             ],
           ),
@@ -155,7 +171,8 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => PageDetailScreen(slug: page['slug'] ?? ''),
+                builder: (context) =>
+                    PageDetailScreen(slug: page['slug'] ?? ''),
               ),
             );
           },
@@ -167,9 +184,15 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
               child: Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
+                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    0.04,
+                  ),
                   borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+                  border: Border.all(
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      0.05,
+                    ),
+                  ),
                 ),
                 child: Row(
                   children: [
@@ -177,10 +200,16 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                       width: 44,
                       height: 44,
                       decoration: BoxDecoration(
-                        color: (isDark ? Colors.white : Colors.black).withOpacity(0.06),
+                        color: (isDark ? Colors.white : Colors.black)
+                            .withOpacity(0.06),
                         borderRadius: BorderRadius.circular(14),
                       ),
-                      child: Icon(LucideIcons.fileText, color: (isDark ? Colors.white : Colors.black).withOpacity(0.7), size: 20),
+                      child: Icon(
+                        LucideIcons.fileText,
+                        color: (isDark ? Colors.white : Colors.black)
+                            .withOpacity(0.7),
+                        size: 20,
+                      ),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
@@ -191,9 +220,13 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                             children: [
                               Expanded(
                                 child: Text(
-                                  (page['title'] ?? 'Untitled').toString().toUpperCase(),
+                                  (page['title'] ?? 'Untitled')
+                                      .toString()
+                                      .toUpperCase(),
                                   style: GoogleFonts.ebGaramond(
-                                    color: Theme.of(context).colorScheme.onSurface,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w800,
                                     letterSpacing: -0.5,
@@ -202,16 +235,26 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                               ),
                               const SizedBox(width: 8),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 2,
+                                ),
                                 decoration: BoxDecoration(
-                                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+                                  color: (isDark ? Colors.white : Colors.black)
+                                      .withOpacity(0.05),
                                   borderRadius: BorderRadius.circular(6),
-                                  border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
+                                  border: Border.all(
+                                    color:
+                                        (isDark ? Colors.white : Colors.black)
+                                            .withOpacity(0.1),
+                                  ),
                                 ),
                                 child: Text(
                                   portal,
                                   style: GoogleFonts.ebGaramond(
-                                    color: (isDark ? Colors.white : Colors.black).withOpacity(0.4),
+                                    color:
+                                        (isDark ? Colors.white : Colors.black)
+                                            .withOpacity(0.4),
                                     fontSize: 8,
                                     fontWeight: FontWeight.w900,
                                     letterSpacing: 1,
@@ -226,7 +269,8 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                               Text(
                                 'DYNAMIC CONTENT',
                                 style: GoogleFonts.ebGaramond(
-                                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.3),
+                                  color: (isDark ? Colors.white : Colors.black)
+                                      .withOpacity(0.3),
                                   fontSize: 9,
                                   fontWeight: FontWeight.w800,
                                   letterSpacing: 1,
@@ -238,7 +282,13 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    Icon(LucideIcons.arrowRight, color: Theme.of(context).colorScheme.onSurface.withOpacity(0.3), size: 20),
+                    Icon(
+                      LucideIcons.arrowRight,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withOpacity(0.3),
+                      size: 20,
+                    ),
                   ],
                 ),
               ),
@@ -249,4 +299,3 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
     ).animate().fadeIn(delay: (index * 80).ms).slideX(begin: 0.05);
   }
 }
-

@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
-import 'package:m4_mobile/presentation/screens/home/guest_dashboard_screen.dart'
-    show prefetchGuestHome;
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -16,7 +14,8 @@ class OnboardingScreen extends ConsumerStatefulWidget {
   ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState extends ConsumerState<OnboardingScreen> with SingleTickerProviderStateMixin {
+class _OnboardingScreenState extends ConsumerState<OnboardingScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -26,20 +25,19 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> with Single
     // parallel with the animation. By the time we navigate to /home, the auth
     // state is already resolved and the home renders instantly — no extra wait.
     ref.read(authProvider);
-    // Also warm the guest catalog during the splash animation so the guest
-    // home shows data immediately instead of a spinner. Fire-and-forget; the
-    // dashboard skips its own refetch when it finds this fresh prefetch, so no
-    // extra API calls are made overall. Skipped automatically for signed-in
-    // users.
-    prefetchGuestHome(ref);
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1800),
-    )..forward().then((_) {
-        if (mounted) {
-          context.go('/home');
-        }
-      });
+    _controller =
+        AnimationController(
+            vsync: this,
+            // Was 1800ms. The session check above already runs in parallel, so this
+            // was pure waiting on every cold start — the splash still plays, just
+            // without holding the app back for the better part of two seconds.
+            duration: const Duration(milliseconds: 900),
+          )
+          ..forward().then((_) {
+            if (mounted) {
+              context.go('/home');
+            }
+          });
   }
 
   @override
@@ -56,10 +54,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> with Single
         fit: StackFit.expand,
         children: [
           // Pure Black Background
-          Positioned.fill(
-            child: Container(color: Colors.black),
-          ),
-          
+          Positioned.fill(child: Container(color: Colors.black)),
+
           // Main Animation Stack
           Center(
             child: Column(
@@ -68,15 +64,25 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> with Single
                 // Logo Container (Centered and Clean)
                 Container(
                   padding: const EdgeInsets.all(24),
-                  child: Image.asset(
-                    'assets/m4_family_logo.png',
-                    width: 220,
-                    fit: BoxFit.contain,
-                    color: Colors.white,
-                  )
-                  .animate()
-                  .fadeIn(duration: 1500.ms, curve: Curves.easeOut)
-                  .moveY(begin: 10, end: 0, duration: 1500.ms, curve: Curves.easeOut),
+                  child:
+                      Image.asset(
+                            'assets/m4_family_logo.png',
+                            width: 220,
+                            fit: BoxFit.contain,
+                            color: Colors.white,
+                          )
+                          // Was 1500ms — LONGER than the 900ms splash itself, so
+                          // the logo was still faded-out when we navigated away
+                          // and the launch read as a black screen. Now it lands
+                          // almost immediately on the first frame.
+                          .animate()
+                          .fadeIn(duration: 350.ms, curve: Curves.easeOut)
+                          .moveY(
+                            begin: 10,
+                            end: 0,
+                            duration: 350.ms,
+                            curve: Curves.easeOut,
+                          ),
                 ),
               ],
             ),
@@ -104,17 +110,23 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> with Single
                         child: FractionallySizedBox(
                           alignment: Alignment.centerLeft,
                           widthFactor: 1.0,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.6),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.white.withOpacity(0.4),
-                                  blurRadius: 4,
+                          child:
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.6),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.white.withOpacity(0.4),
+                                      blurRadius: 4,
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ).animate().moveX(begin: -160, end: 160, duration: 1800.ms, curve: Curves.linear),
+                              ).animate().moveX(
+                                begin: -160,
+                                end: 160,
+                                duration: 1800.ms,
+                                curve: Curves.linear,
+                              ),
                         ),
                       ),
                     ],
@@ -128,5 +140,3 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> with Single
     );
   }
 }
-
-

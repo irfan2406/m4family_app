@@ -64,7 +64,9 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
     return _rows
         .whereType<Map>()
         .map((r) => Map<String, dynamic>.from(r))
-        .where((m) => _yearFilter == null || m['year']?.toString() == _yearFilter)
+        .where(
+          (m) => _yearFilter == null || m['year']?.toString() == _yearFilter,
+        )
         .toList();
   }
 
@@ -80,17 +82,20 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
   void _toast(String msg) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg, style: GoogleFonts.ebGaramond(fontSize: 12))),
+      SnackBar(
+        backgroundColor: const Color(0xFFE24B4A),
+        content: Text(msg, style: GoogleFonts.ebGaramond(fontSize: 12)),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
+    final bg = isDark ? Colors.black : Colors.white;
+    final textPrimary = isDark ? Colors.white : Colors.black;
+    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -129,7 +134,9 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
         ),
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator(color: M4Theme.premiumBlue))
+          ? const Center(
+              child: CircularProgressIndicator(color: M4Theme.premiumBlue),
+            )
           : RefreshIndicator(
               color: M4Theme.premiumBlue,
               onRefresh: _load,
@@ -148,7 +155,12 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
   }
 
   // ─── Year Selector ──────────────────────────────────────────────────────────
-  Widget _yearSelector(Color textPrimary, Color muted, Color card, Color border) {
+  Widget _yearSelector(
+    Color textPrimary,
+    Color muted,
+    Color card,
+    Color border,
+  ) {
     final years = _years;
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
@@ -166,17 +178,22 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
                 onTap: () => setState(() => _yearFilter = year),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
-                    color: selected ? const Color(0xFFC5A35B) : card,
+                    color: selected ? const Color(0xFF8B5CF6) : card,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: selected ? const Color(0xFFC5A35B) : border,
+                      color: selected ? const Color(0xFF8B5CF6) : border,
                     ),
                     boxShadow: selected
                         ? [
                             BoxShadow(
-                              color: const Color(0xFFC5A35B).withValues(alpha: 0.3),
+                              color: const Color(
+                                0xFF8B5CF6,
+                              ).withValues(alpha: 0.3),
                               blurRadius: 15,
                             ),
                           ]
@@ -201,8 +218,17 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
   }
 
   // ─── Summary Card ─────────────────────────────────────────────────────────────
-  Widget _summaryCard(bool isDark, Color textPrimary, Color muted, Color border) {
-    final fmt = NumberFormat.currency(locale: 'en_IN', symbol: '₹', decimalDigits: 0);
+  Widget _summaryCard(
+    bool isDark,
+    Color textPrimary,
+    Color muted,
+    Color border,
+  ) {
+    final fmt = NumberFormat.currency(
+      locale: 'en_IN',
+      symbol: '₹',
+      decimalDigits: 0,
+    );
     final total = _totalTaxDeducted;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
@@ -215,7 +241,7 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.05),
+              (isDark ? Colors.white : Colors.black).withValues(alpha: 0.05),
               Colors.transparent,
             ],
           ),
@@ -276,7 +302,10 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
                   style: OutlinedButton.styleFrom(
                     foregroundColor: textPrimary,
                     side: BorderSide(color: border),
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 6,
+                    ),
                     minimumSize: const Size(0, 32),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -337,16 +366,16 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
             )
           else
             ...reports.asMap().entries.map(
-                  (e) => _documentCard(
-                    e.value,
-                    e.key,
-                    isDark,
-                    textPrimary,
-                    muted,
-                    card,
-                    border,
-                  ),
-                ),
+              (e) => _documentCard(
+                e.value,
+                e.key,
+                isDark,
+                textPrimary,
+                muted,
+                card,
+                border,
+              ),
+            ),
         ],
       ),
     );
@@ -361,7 +390,7 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
     Color card,
     Color border,
   ) {
-    const red = Color(0xFFC65B46);
+    const red = Color(0xFFEF4444);
     final id = m['id']?.toString() ?? '';
     final name = m['name']?.toString() ?? 'Statement';
     final date = m['date']?.toString() ?? '';
@@ -406,7 +435,11 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(color: red.withValues(alpha: 0.2)),
                     ),
-                    child: const Icon(LucideIcons.fileText, size: 20, color: red),
+                    child: const Icon(
+                      LucideIcons.fileText,
+                      size: 20,
+                      color: red,
+                    ),
                   ),
                   const SizedBox(width: 16),
                   // Title + meta.
@@ -442,7 +475,9 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
                             ),
                             if (size.isNotEmpty) ...[
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                ),
                                 child: Container(
                                   width: 3,
                                   height: 3,
@@ -482,7 +517,11 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(color: border),
                         ),
-                        child: Icon(LucideIcons.download, size: 16, color: muted),
+                        child: Icon(
+                          LucideIcons.download,
+                          size: 16,
+                          color: muted,
+                        ),
                       ),
                     ),
                   ),

@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -8,8 +10,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:flutter/services.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
+import 'package:m4_mobile/core/utils/project_highlights.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
 
@@ -45,6 +51,13 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
   bool _submitting = false;
   bool _agreedToTerms = false;
 
+  // Inline validation for the partner interest form — errors live on the field
+  // itself instead of a toast over the page.
+  String? _nameError;
+  String? _emailError;
+  String? _phoneError;
+  bool _termsError = false;
+
   Timer? _heroTimer;
 
   @override
@@ -73,15 +86,22 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
   Future<void> _fetchData() async {
     try {
       final apiClient = ref.read(apiClientProvider);
-      final results = await Future.wait([
-        apiClient.getProjects(),
-        apiClient.getCommunities(),
-      ]);
+      // Projects go through the shared projectsProvider rather than a bare
+      // getProjects(): it caches the multi-MB catalog (so re-entering the CP
+      // portal is instant), retries cold-start timeouts, and shares ONE
+      // download with the other screens instead of re-fetching per screen.
+      if (ref.read(projectsProvider) is AsyncError) {
+        ref.invalidate(projectsProvider);
+      }
+      final projectsFuture = ref.read(projectsProvider.future);
+      final communitiesFuture = apiClient.getCommunities();
+      final projects = await projectsFuture;
+      final communitiesRes = await communitiesFuture;
 
       if (mounted) {
         setState(() {
-          _projects = results[0].data['data'] ?? [];
-          _communities = results[1].data['data'] ?? [];
+          _projects = projects;
+          _communities = communitiesRes.data['data'] ?? [];
 
           // Media tab mirrors web: flatten each project's heroImages (or its
           // single heroImage) into one media item per image.
@@ -124,68 +144,56 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
     }
   }
 
-  void _validationToast(String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg), backgroundColor: Colors.red.shade700),
+  /// Validates in place: every problem is shown ON the field it belongs to
+  /// (red border + message) rather than as a toast over the page.
+  bool _validateInterest() {
+    // Shared rules: name = letters only, email = proper format, phone = 10-digit.
+    final nameErr = Validators.nameError(
+      _nameController.text,
+      field: 'full name',
     );
+    final emailErr = Validators.emailError(_emailController.text);
+    final phoneErr = Validators.phoneError(_phoneController.text);
+
+    setState(() {
+      _nameError = nameErr;
+      _emailError = emailErr;
+      _phoneError = phoneErr;
+      _termsError = !_agreedToTerms;
+    });
+    return nameErr == null &&
+        emailErr == null &&
+        phoneErr == null &&
+        _agreedToTerms;
   }
 
   Future<void> _submitInterest() async {
+    if (!_validateInterest()) return;
     final name = _nameController.text.trim();
     final email = _emailController.text.trim();
     final phone = _phoneController.text.trim();
-
-    // Full Name: required, at least 2 chars.
-    if (name.isEmpty) {
-      _validationToast('Please enter your full name');
-      return;
-    }
-    if (name.length < 2) {
-      _validationToast('Please enter a valid name');
-      return;
-    }
-    // Email: required + valid format.
-    if (email.isEmpty) {
-      _validationToast('Please enter your email address');
-      return;
-    }
-    final emailValid = RegExp(r'^[\w.+-]+@[\w-]+\.[\w.-]+$').hasMatch(email);
-    if (!emailValid) {
-      _validationToast('Please enter a valid email address');
-      return;
-    }
-    // Phone: required + at least 10 digits (ignores +91 / spaces / dashes).
-    if (phone.isEmpty) {
-      _validationToast('Please enter your phone number');
-      return;
-    }
-    final phoneDigits = phone.replaceAll(RegExp(r'\D'), '');
-    if (phoneDigits.length < 10) {
-      _validationToast('Please enter a valid 10-digit phone number');
-      return;
-    }
-    if (!_agreedToTerms) {
-      _validationToast('Please agree to the Privacy Policy');
-      return;
-    }
 
     setState(() => _submitting = true);
     try {
       final apiClient = ref.read(apiClientProvider);
       final user = ref.read(authProvider).user;
-      final partner =
-          user?['firstName']?.toString() ??
-          user?['companyName']?.toString() ??
-          user?['phone']?.toString() ??
-          'Partner';
+      // `userId` is an ObjectId reference. The old code put the partner's
+      // *display name* here ('Partner' / firstName / companyName), which made
+      // the API reject the entire lead with:
+      //   userId: Cast to ObjectId failed for value "Partner" … BSONError
+      // Send the real id, and only when it actually looks like one.
+      final partnerId = (user?['_id'] ?? user?['id'])?.toString() ?? '';
       await apiClient.submitLead({
         'name': name,
         'email': email,
         'phone': phone,
         'message': _messageController.text.trim(),
-        'interest': 'Channel Partner Interest',
-        'source': 'cp app',
-        'userId': partner,
+        // Server-side enums: interest = Buying | Selling | Site Visit | Video
+        // Call (case-sensitive); source = online | cp | walk-in | referral |
+        // other. Anything else is rejected with a 400.
+        'interest': 'Buying',
+        'source': 'cp',
+        if (partnerId.length == 24) 'userId': partnerId,
       });
 
       if (mounted) {
@@ -202,10 +210,27 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         setState(() => _agreedToTerms = false);
       }
     } catch (e) {
-      if (mounted)
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Submission failed: $e')));
+      if (!mounted) return;
+      // Surface the API's own reason; a raw DioException dump filled the screen
+      // and told the user nothing.
+      String msg = 'Could not submit right now. Please try again.';
+      if (e is DioException) {
+        final data = e.response?.data;
+        if (data is Map && data['message'] != null) {
+          msg = data['message'].toString();
+        } else if (e.type == DioExceptionType.connectionError ||
+            e.type == DioExceptionType.connectionTimeout ||
+            e.type == DioExceptionType.receiveTimeout) {
+          msg = 'Connection problem. Please try again.';
+        }
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(msg),
+          backgroundColor: const Color(0xFFE24B4A),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
@@ -304,31 +329,44 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Tagline (Living the M4 Life) — script image, not text.
-                Transform.translate(
-                  offset: const Offset(0, -50),
-                  child: M4Theme.taglineWordmark(context, height: 200),
+                // Guest parity: natural flow with a small top gap (no -50
+                // translate), so it never touches the logo or the hero.
+                Padding(
+                  padding: const EdgeInsets.only(top: 12, bottom: 8),
+                  child: ColorFiltered(
+                    colorFilter: ColorFilter.matrix(
+                      Theme.of(context).brightness == Brightness.dark
+                          ? const [
+                              // Dark Mode: Invert and boost to white
+                              -5.0, 0, 0, 0, 255,
+                              0, -5.0, 0, 0, 255,
+                              0, -5.0, 0, 0, 255,
+                              0, 0, 0, 1, 0,
+                            ]
+                          : const [
+                              // Light Mode: Crush to black
+                              5.0, 0, 0, 0, -150,
+                              0, 5.0, 0, 0, -150,
+                              0, 0, 5.0, 0, -150,
+                              0, 0, 0, 1, 0,
+                            ],
+                    ),
+                    child: Image.asset(
+                      'assets/living_m4_life.png',
+                      width: MediaQuery.of(context).size.width,
+                      height: 120,
+                      fit: BoxFit.fitWidth,
+                    ),
+                  ),
                 ),
 
-                // Hero carousel (4:3, auto-cycle, badge, dots).
-                // The hero is painted 110px up (Transform), leaving dead space at
-                // the bottom of its box. We shrink the box by 60px so the tabs
-                // below can drop their own upward Transform (which made their
-                // buttons un-tappable) while keeping the exact same layout.
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    final heroH = (constraints.maxWidth - 48) * 3 / 4;
-                    return SizedBox(
-                      height: heroH > 60 ? heroH - 60 : heroH,
-                      child: OverflowBox(
-                        minHeight: 0,
-                        maxHeight: double.infinity,
-                        alignment: Alignment.topCenter,
-                        child: Transform.translate(
-                          offset: const Offset(0, -110),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 24),
-                            child: Builder(
-                              builder: (context) {
+                // Hero carousel (4:3, auto-cycle, badge, dots). Guest parity:
+                // natural flow (no OverflowBox / -110 translate / box shrink) so
+                // spacing above (tagline) and below (tabs) matches the guest home.
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Builder(
+                    builder: (context) {
                                 // Web parity: the hero cycles the FEATURED
                                 // project's 3 media slides, not different projects.
                                 final featured = _projects.isNotEmpty
@@ -490,11 +528,6 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                               },
                             ),
                           ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
               ],
             ),
           ),
@@ -503,9 +536,12 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
             sliver: SliverList(
               delegate: SliverChildListDelegate([
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  // Guest parity: 40px top gap so the tabs sit below the hero
+                  // with breathing room (was flush against the image).
+                  padding: const EdgeInsets.fromLTRB(24, 40, 24, 0),
                   child: _buildTabsSection(),
                 ),
+                const SizedBox(height: 48),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: _buildPhilosophy(),
@@ -573,7 +609,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
     double errorIconSize = 64,
   }) {
     Widget errorBox() => Container(
-      color: const Color(0xFF141B3A),
+      color: const Color(0xFF1A1A1A),
       child: Center(
         child: Icon(errorIcon, color: Colors.white24, size: errorIconSize),
       ),
@@ -980,10 +1016,10 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         width: 288,
         margin: const EdgeInsets.only(right: 20, bottom: 10),
         decoration: BoxDecoration(
-          color: isDark ? Theme.of(context).colorScheme.surface : Colors.white,
+          color: isDark ? const Color(0xFF15171C) : Colors.white,
           borderRadius: BorderRadius.circular(32),
           border: Border.all(
-            color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
+            color: (isDark ? Colors.white : Colors.black).withValues(
               alpha: 0.08,
             ),
           ),
@@ -1165,121 +1201,127 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         ),
         const SizedBox(height: 40),
 
-        // Main Artistic Card
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 24),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(50),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.2),
-                blurRadius: 40,
-                offset: const Offset(0, 20),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(50),
-            child: Stack(
-              children: [
-                _buildProjectImage(
-                  _getImg(project, 0),
-                  height: 520,
-                  width: double.infinity,
-                ),
-                // Gradient Overlay
-                Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          Colors.black.withValues(alpha: 0.55),
-                        ],
-                        stops: const [0.5, 1.0],
-                      ),
-                    ),
-                  ),
-                ),
-                // Artistic Impression Badge
-                Positioned(
-                  top: 24,
-                  right: 24,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.6),
-                      borderRadius: BorderRadius.circular(4),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.2),
-                      ),
-                    ),
-                    child: Text(
-                      'ARTISTIC IMPRESSION',
-                      style: GoogleFonts.gelasio(
-                        color: Colors.white,
-                        fontSize: 7,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 1.5,
-                      ),
-                    ),
-                  ),
-                ),
-                // Content Overlay
-                Positioned(
-                  bottom: 40,
-                  left: 32,
-                  right: 32,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'FEATURED PROPERTY',
-                        style: GoogleFonts.gelasio(
-                          color: const Color(0xFFC4A484),
-                          fontSize: 9,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 1.8,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      // Web renders this in Montserrat (globals.css forces
-                      // montserrat !important over the font-serif class), light
-                      // weight, text-4xl, tracking-tight.
-                      Text(
-                        (project['title'] ?? '').toString(),
-                        style: GoogleFonts.gelasio(
-                          color: Theme.of(context).colorScheme.onSurface,
-                          fontSize: 36,
-                          fontWeight: FontWeight.w300,
-                          height: 1,
-                          letterSpacing: -0.5,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      // Hardcoded subtitle to match web SharedHomePage.
-                      Text(
-                        'Live smart at Aura Heights—space-efficient 1 & 2 BHK homes with curated amenities and rare parking solutions.'
-                            .toUpperCase(),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.ebGaramond(
-                          color: Colors.white.withValues(alpha: 0.8),
-                          fontSize: 10,
-                          height: 1.5,
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: 1.2,
-                        ),
-                      ),
-                    ],
-                  ),
+        // Main Artistic Card — the artwork itself opens the project detail,
+        // same target as READ MORE below (it wasn't tappable before).
+        GestureDetector(
+          onTap: () =>
+              context.push('/cp/projects/${project['_id']}', extra: project),
+          behavior: HitTestBehavior.opaque,
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 24),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(50),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 40,
+                  offset: const Offset(0, 20),
                 ),
               ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(50),
+              child: Stack(
+                children: [
+                  _buildProjectImage(
+                    _getImg(project, 0),
+                    height: 520,
+                    width: double.infinity,
+                  ),
+                  // Gradient Overlay
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black.withValues(alpha: 0.55),
+                          ],
+                          stops: const [0.5, 1.0],
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Artistic Impression Badge
+                  Positioned(
+                    top: 24,
+                    right: 24,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.6),
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.2),
+                        ),
+                      ),
+                      child: Text(
+                        'ARTISTIC IMPRESSION',
+                        style: GoogleFonts.gelasio(
+                          color: Colors.white,
+                          fontSize: 7,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Content Overlay
+                  Positioned(
+                    bottom: 40,
+                    left: 32,
+                    right: 32,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'FEATURED PROPERTY',
+                          style: GoogleFonts.gelasio(
+                            color: const Color(0xFFC4A484),
+                            fontSize: 9,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1.8,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        // Web renders this in Montserrat (globals.css forces
+                        // montserrat !important over the font-serif class), light
+                        // weight, text-4xl, tracking-tight.
+                        Text(
+                          (project['title'] ?? '').toString(),
+                          style: GoogleFonts.gelasio(
+                            color: Theme.of(context).colorScheme.onSurface,
+                            fontSize: 36,
+                            fontWeight: FontWeight.w300,
+                            height: 1,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        // Hardcoded subtitle to match web SharedHomePage.
+                        Text(
+                          'Live smart at Aura Heights—space-efficient 1 & 2 BHK homes with curated amenities and rare parking solutions.'
+                              .toUpperCase(),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.ebGaramond(
+                            color: Colors.white.withValues(alpha: 0.8),
+                            fontSize: 10,
+                            height: 1.5,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -1290,14 +1332,14 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            // Web parity: USPs come from the featured project's backend
+            // `highlights` (e.g. ["Prime Location", "20 min from Airport"]),
+            // not a hardcoded pair. Each is Expanded so its label wraps.
             children: [
-              _buildFeatureIcon(LucideIcons.building2, 'FULLY\nFURNISHED'),
-              _buildFeatureIcon(LucideIcons.mapPin, 'PRIME\nLOCATION'),
-              _buildFeatureIcon(
-                LucideIcons.smartphone,
-                '20 MIN FROM\nSHEIKH ZAYED RD',
-              ),
+              for (final h in projectHighlights(project).take(3))
+                Expanded(
+                  child: _buildFeatureIcon(highlightIcon(h), h.toUpperCase()),
+                ),
             ],
           ),
         ),
@@ -1323,7 +1365,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                     color: Colors.transparent,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
+                      color: (isDark ? Colors.white : Colors.black).withValues(
                         alpha: 0.1,
                       ),
                     ),
@@ -1382,7 +1424,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                     color: Colors.transparent,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
+                      color: (isDark ? Colors.white : Colors.black).withValues(
                         alpha: 0.1,
                       ),
                     ),
@@ -1447,7 +1489,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                 : Colors.black.withValues(alpha: 0.02),
             borderRadius: BorderRadius.circular(32),
             border: Border.all(
-              color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
+              color: (isDark ? Colors.white : Colors.black).withValues(
                 alpha: 0.08,
               ),
             ),
@@ -1525,12 +1567,12 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
+                color: (isDark ? Colors.white : Colors.black).withValues(
                   alpha: 0.05,
                 ),
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
+                  color: (isDark ? Colors.white : Colors.black).withValues(
                     alpha: 0.1,
                   ),
                 ),
@@ -1548,7 +1590,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
               style: GoogleFonts.ebGaramond(
                 color: isDark ? Colors.white : Colors.black,
                 fontWeight: FontWeight.w900,
-                fontSize: 10,
+                fontSize: 13,
                 letterSpacing: 1,
               ),
             ),
@@ -1557,10 +1599,10 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
               desc,
               textAlign: TextAlign.center,
               style: GoogleFonts.ebGaramond(
-                color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
+                color: (isDark ? Colors.white : Colors.black).withValues(
                   alpha: 0.68,
                 ),
-                fontSize: 8,
+                fontSize: 11,
                 fontWeight: FontWeight.w500,
                 height: 1.4,
               ),
@@ -1588,15 +1630,39 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
           ),
         ),
         const SizedBox(height: 48),
-        _buildLuxuryInput('Full Name *', _nameController),
+        _buildLuxuryInput(
+          'Full Name *',
+          _nameController,
+          keyboardType: TextInputType.name,
+          inputFormatters: Validators.nameFormatters,
+          errorText: _nameError,
+          // Clear the red state as soon as they start typing.
+          onChanged: (v) {
+            if (_nameError != null) setState(() => _nameError = null);
+          },
+        ),
         const SizedBox(height: 16),
-        _buildLuxuryInput('Email *', _emailController),
+        _buildLuxuryInput(
+          'Email *',
+          _emailController,
+          keyboardType: TextInputType.emailAddress,
+          inputFormatters: Validators.emailFormatters,
+          errorText: _emailError,
+          onChanged: (v) {
+            if (_emailError != null) setState(() => _emailError = null);
+          },
+        ),
         const SizedBox(height: 16),
         _buildLuxuryInput(
           'Phone Number *',
           _phoneController,
           keyboardType: TextInputType.phone,
+          inputFormatters: Validators.phoneFormatters,
           hint: '+91',
+          errorText: _phoneError,
+          onChanged: (v) {
+            if (_phoneError != null) setState(() => _phoneError = null);
+          },
         ),
         const SizedBox(height: 16),
         _buildLuxuryInput('Message', _messageController, isLong: true),
@@ -1605,16 +1671,27 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
           children: [
             Checkbox(
               value: _agreedToTerms,
-              onChanged: (val) => setState(() => _agreedToTerms = val ?? false),
+              // Un-ticked on submit turns this red in place — no popup.
+              onChanged: (val) => setState(() {
+                _agreedToTerms = val ?? false;
+                if (_agreedToTerms) _termsError = false;
+              }),
               activeColor: isDark ? Colors.white : Colors.black,
               checkColor: isDark ? Colors.black : Colors.white,
-              side: BorderSide(color: isDark ? Colors.white24 : Colors.black26),
+              side: BorderSide(
+                color: _termsError
+                    ? const Color(0xFFE24B4A)
+                    : (isDark ? Colors.white24 : Colors.black26),
+                width: _termsError ? 1.8 : 1,
+              ),
             ),
             Expanded(
               child: Text(
                 "I've read and agree to the Privacy Policy",
                 style: GoogleFonts.ebGaramond(
-                  color: isDark ? Colors.white54 : Colors.black54,
+                  color: _termsError
+                      ? const Color(0xFFE24B4A)
+                      : (isDark ? Colors.white54 : Colors.black54),
                   fontSize: 11,
                   letterSpacing: 1,
                 ),
@@ -1659,44 +1736,77 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
     TextEditingController controller, {
     bool isLong = false,
     TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
     String? hint,
+    // When set, the field turns red and shows the message underneath — keeps
+    // validation on the field instead of a toast over the page.
+    String? errorText,
+    ValueChanged<String>? onChanged,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.12),
-        ),
-        boxShadow: isDark
-            ? []
-            : [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                ),
-              ],
-      ),
-      child: TextField(
-        controller: controller,
-        keyboardType: keyboardType,
-        style: TextStyle(color: isDark ? Colors.white : Colors.black),
-        maxLines: isLong ? 5 : 1,
-        decoration: InputDecoration(
-          hintText: hint ?? label,
-          hintStyle: GoogleFonts.ebGaramond(
-            color: isDark ? Colors.white54 : Colors.black45,
-            fontSize: 13,
+    final hasError = errorText != null;
+    const errorColor = Color(0xFFE24B4A);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: isDark ? Colors.black : Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: hasError
+                  ? errorColor
+                  : (isDark ? Colors.white : Colors.black).withValues(
+                      alpha: 0.12,
+                    ),
+              width: hasError ? 1.5 : 1,
+            ),
+            boxShadow: isDark
+                ? []
+                : [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
           ),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 24,
-            vertical: 20,
+          child: TextField(
+            controller: controller,
+            keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
+            onChanged: onChanged,
+            style: TextStyle(color: isDark ? Colors.white : Colors.black),
+            maxLines: isLong ? 5 : 1,
+            decoration: InputDecoration(
+              hintText: hint ?? label,
+              hintStyle: GoogleFonts.ebGaramond(
+                color: hasError
+                    ? errorColor.withValues(alpha: 0.75)
+                    : (isDark ? Colors.white54 : Colors.black45),
+                fontSize: 13,
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 20,
+              ),
+              border: InputBorder.none,
+            ),
           ),
-          border: InputBorder.none,
         ),
-      ),
+        if (hasError)
+          Padding(
+            padding: const EdgeInsets.only(left: 10, top: 6),
+            child: Text(
+              errorText,
+              style: GoogleFonts.ebGaramond(
+                color: errorColor,
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

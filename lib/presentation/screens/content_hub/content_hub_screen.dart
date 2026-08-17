@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
@@ -143,7 +144,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
             center: Alignment.topLeft,
             radius: 1.5,
             colors: isDark
-                ? [const Color(0xFF163A2C), const Color(0xFF0F2A20)]
+                ? [const Color(0xFF1A1A1A), const Color(0xFF0A0A0A)]
                 : [scheme.surface, scheme.surfaceContainerLowest],
           ),
         ),
@@ -207,12 +208,12 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                         Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFC5A35B).withOpacity(0.1),
+                            color: scheme.onSurface.withOpacity(0.1),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             _getIcon(),
-                            color: const Color(0xFFC5A35B),
+                            color: scheme.onSurface,
                             size: 18,
                           ),
                         ),
@@ -223,7 +224,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 3,
-                            color: const Color(0xFFC5A35B),
+                            color: scheme.onSurface,
                           ),
                         ),
                       ],
@@ -255,9 +256,9 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
 
               Expanded(
                 child: _isLoading
-                    ? const Center(
+                    ? Center(
                         child: CircularProgressIndicator(
-                          color: Color(0xFFC5A35B),
+                          color: scheme.onSurface,
                         ),
                       )
                     : _items.isEmpty
@@ -304,30 +305,8 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
   }
 
   Widget _buildMenuButton() {
-    final scheme = Theme.of(context).colorScheme;
-    return GestureDetector(
-      onTap: () => _scaffoldKey.currentState?.openDrawer(),
-      child: Container(
-        width: 56,
-        height: 48,
-        decoration: BoxDecoration(
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(18),
-          boxShadow: [
-            BoxShadow(
-              color: scheme.onSurface.withOpacity(0.2),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
-            ),
-          ],
-        ),
-        child: Icon(
-          LucideIcons.menu,
-          size: 24,
-          color: Theme.of(context).colorScheme.onSurface,
-        ),
-      ),
-    );
+    // Canonical side-menu button (identical size/colour to every other screen).
+    return SideMenuButton(onTap: () => _scaffoldKey.currentState?.openDrawer());
   }
 
   Widget _buildEmptyState() {
@@ -339,10 +318,10 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
           Container(
             padding: const EdgeInsets.all(30),
             decoration: BoxDecoration(
-              color: const Color(0xFFC5A35B).withOpacity(0.1),
+              color: scheme.onSurface.withOpacity(0.1),
               borderRadius: BorderRadius.circular(30),
             ),
-            child: Icon(_getIcon(), size: 40, color: const Color(0xFFC5A35B)),
+            child: Icon(_getIcon(), size: 40, color: scheme.onSurface),
           ),
           const SizedBox(height: 25),
           Text(
@@ -444,7 +423,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFC5A35B).withOpacity(0.1),
+                            color: scheme.onSurface.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
@@ -454,7 +433,7 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                             style: GoogleFonts.ebGaramond(
                               fontSize: 7,
                               fontWeight: FontWeight.w900,
-                              color: const Color(0xFFC5A35B),
+                              color: scheme.onSurface,
                               letterSpacing: 1,
                             ),
                           ),
@@ -501,14 +480,14 @@ class _GuestContentHubScreenState extends ConsumerState<GuestContentHubScreen> {
                           style: GoogleFonts.ebGaramond(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
-                            color: const Color(0xFFC5A35B),
+                            color: scheme.onSurface,
                             letterSpacing: 1,
                           ),
                         ),
-                        const Icon(
+                        Icon(
                           LucideIcons.arrowRight,
                           size: 14,
-                          color: Color(0xFFC5A35B),
+                          color: scheme.onSurface,
                         ),
                       ],
                     ),

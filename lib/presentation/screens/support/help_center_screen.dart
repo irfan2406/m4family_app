@@ -170,18 +170,18 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
       decoration: BoxDecoration(
         color: isDark
             ? scheme.surfaceContainerHighest.withValues(alpha: 0.3)
-            : scheme.surface,
+            : Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: scheme.outlineVariant.withValues(alpha: 0.22),
+          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
         ),
         boxShadow: isDark
             ? null
             : [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.06),
-                  blurRadius: 24,
-                  offset: const Offset(0, 12),
+                  color: Colors.black.withValues(alpha: 0.03),
+                  blurRadius: 12,
+                  offset: const Offset(0, 6),
                 ),
               ],
       ),
@@ -191,7 +191,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
             setState(() => _searchQuery = value.toLowerCase()),
         style: GoogleFonts.ebGaramond(
           color: scheme.onSurface,
-          fontSize: 12,
+          fontSize: 15,
           fontWeight: FontWeight.bold,
         ),
         decoration: InputDecoration(
@@ -220,10 +220,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
                   },
                 )
               : null,
-          filled: false,
           border: InputBorder.none,
-          enabledBorder: InputBorder.none,
-          focusedBorder: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(vertical: 16),
         ),
       ),
@@ -250,7 +247,7 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
           style: GoogleFonts.gelasio(
             fontSize: 9,
             fontWeight: FontWeight.w700,
-            color: scheme.onSurface.withValues(alpha: 0.6),
+            color: scheme.onSurfaceVariant.withValues(alpha: 0.7),
             letterSpacing: 2,
           ),
         ),
@@ -279,18 +276,18 @@ class _HelpCenterScreenState extends ConsumerState<HelpCenterScreen> {
       decoration: BoxDecoration(
         color: isDark
             ? scheme.surfaceContainerHighest.withValues(alpha: 0.3)
-            : scheme.surface,
+            : Colors.white,
         borderRadius: BorderRadius.circular(28),
         border: Border.all(
-          color: scheme.outlineVariant.withValues(alpha: 0.22),
+          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.1),
         ),
         boxShadow: isDark
             ? null
             : [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.06),
-                  blurRadius: 30,
-                  offset: const Offset(0, 14),
+                  color: Colors.black.withValues(alpha: 0.03),
+                  blurRadius: 12,
+                  offset: const Offset(0, 6),
                 ),
               ],
       ),
@@ -400,7 +397,7 @@ class _FaqCategory extends StatelessWidget {
               style: GoogleFonts.gelasio(
                 fontSize: 9,
                 fontWeight: FontWeight.w700,
-                color: scheme.onSurface.withValues(alpha: 0.6),
+                color: scheme.onSurfaceVariant.withValues(alpha: 0.7),
                 letterSpacing: 2,
               ),
             ),
@@ -411,23 +408,21 @@ class _FaqCategory extends StatelessWidget {
           decoration: BoxDecoration(
             color: isDark
                 ? scheme.surfaceContainerHighest.withValues(alpha: 0.3)
-                : scheme.surface,
+                : Colors.white,
             borderRadius: BorderRadius.circular(24),
+            // Web parity: a clean, visible thin outline border — the FAQ groups
+            // read as outlined cards, not soft-shadow "floating" cards.
             border: Border.all(
-              color: scheme.outlineVariant.withValues(alpha: 0.22),
+              color: (isDark ? Colors.white : Colors.black).withValues(
+                alpha: 0.1,
+              ),
             ),
-            // Web parity: shadow-lg — a more pronounced, raised card shadow.
             boxShadow: isDark
                 ? null
                 : [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
-                      blurRadius: 24,
-                      offset: const Offset(0, 12),
-                    ),
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.06),
-                      blurRadius: 8,
+                      color: Colors.black.withValues(alpha: 0.03),
+                      blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
                   ],
@@ -440,7 +435,9 @@ class _FaqCategory extends StatelessWidget {
                   Divider(
                     height: 1,
                     thickness: 1,
-                    color: scheme.outlineVariant.withValues(alpha: 0.3),
+                    color: (isDark ? Colors.white : Colors.black).withValues(
+                      alpha: 0.07,
+                    ),
                   ),
                 _FaqRow(
                   question: questions[i]['q']!,

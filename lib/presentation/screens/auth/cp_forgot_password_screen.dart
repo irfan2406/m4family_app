@@ -1,9 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 
 /// Mirrors web `app/auth/cp/forgot-password/page.tsx`: forgot → OTP → reset.
@@ -11,15 +13,20 @@ class CpForgotPasswordScreen extends ConsumerStatefulWidget {
   const CpForgotPasswordScreen({super.key});
 
   @override
-  ConsumerState<CpForgotPasswordScreen> createState() => _CpForgotPasswordScreenState();
+  ConsumerState<CpForgotPasswordScreen> createState() =>
+      _CpForgotPasswordScreenState();
 }
 
-class _CpForgotPasswordScreenState extends ConsumerState<CpForgotPasswordScreen> {
+class _CpForgotPasswordScreenState
+    extends ConsumerState<CpForgotPasswordScreen> {
   int _step = 0;
   final _emailController = TextEditingController();
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final List<TextEditingController> _otpControllers = List.generate(6, (_) => TextEditingController());
+  final List<TextEditingController> _otpControllers = List.generate(
+    6,
+    (_) => TextEditingController(),
+  );
   final List<FocusNode> _otpFocus = List.generate(6, (_) => FocusNode());
 
   String? _devOtp;
@@ -41,8 +48,14 @@ class _CpForgotPasswordScreenState extends ConsumerState<CpForgotPasswordScreen>
 
   Future<void> _sendEmail() async {
     final email = _emailController.text.trim();
-    if (email.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please enter your email address')));
+    final emailErr = Validators.emailError(email);
+    if (emailErr != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: const Color(0xFFE24B4A),
+          content: Text(emailErr),
+        ),
+      );
       return;
     }
     setState(() => _loading = true);
@@ -56,21 +69,39 @@ class _CpForgotPasswordScreenState extends ConsumerState<CpForgotPasswordScreen>
           _devOtp = dev;
           _step = 1;
         });
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Security code sent!')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Color(0xFF10B981),
+            content: Text('Security code sent!'),
+          ),
+        );
         if (dev != null && dev.isNotEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('DEV: recovery code $dev'), backgroundColor: Color(0xFFC5A35B)),
+            SnackBar(
+              content: Text('DEV: recovery code $dev'),
+              backgroundColor: Colors.amber.shade900,
+            ),
           );
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(res.data['message']?.toString() ?? 'Failed')),
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text(res.data['message']?.toString() ?? 'Failed'),
+          ),
         );
       }
     } on DioException catch (e) {
-      final msg = e.response?.data is Map ? e.response?.data['message']?.toString() : null;
+      final msg = e.response?.data is Map
+          ? e.response?.data['message']?.toString()
+          : null;
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg ?? 'User not found')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text(msg ?? 'User not found'),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -80,7 +111,12 @@ class _CpForgotPasswordScreenState extends ConsumerState<CpForgotPasswordScreen>
   void _goPasswordStep() {
     final code = _otpControllers.map((c) => c.text).join();
     if (code.length != 6) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Enter the complete 6-digit code')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Color(0xFFE24B4A),
+          content: Text('Enter the complete 6-digit code'),
+        ),
+      );
       return;
     }
     setState(() => _step = 2);
@@ -90,15 +126,30 @@ class _CpForgotPasswordScreenState extends ConsumerState<CpForgotPasswordScreen>
     final np = _newPasswordController.text;
     final cp = _confirmPasswordController.text;
     if (np.isEmpty || cp.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please fill in all fields')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Color(0xFFE24B4A),
+          content: Text('Please fill in all fields'),
+        ),
+      );
       return;
     }
     if (np != cp) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Passwords do not match')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Color(0xFFE24B4A),
+          content: Text('Passwords do not match'),
+        ),
+      );
       return;
     }
     if (np.length < 8) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Password must be at least 8 characters')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Color(0xFFE24B4A),
+          content: Text('Password must be at least 8 characters'),
+        ),
+      );
       return;
     }
     final identifier = _emailController.text.trim();
@@ -106,21 +157,41 @@ class _CpForgotPasswordScreenState extends ConsumerState<CpForgotPasswordScreen>
     setState(() => _loading = true);
     try {
       final api = ref.read(apiClientProvider);
-      final res = await api.resetPassword(identifier: identifier, token: token, newPassword: np);
+      final res = await api.resetPassword(
+        identifier: identifier,
+        token: token,
+        newPassword: np,
+      );
       if (!mounted) return;
       if (res.statusCode == 200 && res.data['status'] == true) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Password updated. You can login.')));
-        final fromGuest = GoRouterState.of(context).uri.queryParameters['from'] == 'guest';
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            backgroundColor: Color(0xFF10B981),
+            content: Text('Password updated. You can login.'),
+          ),
+        );
+        final fromGuest =
+            GoRouterState.of(context).uri.queryParameters['from'] == 'guest';
         context.go('/auth/cp/login${fromGuest ? '?from=guest' : ''}');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(res.data['message']?.toString() ?? 'Reset failed')),
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text(res.data['message']?.toString() ?? 'Reset failed'),
+          ),
         );
       }
     } on DioException catch (e) {
-      final msg = e.response?.data is Map ? e.response?.data['message']?.toString() : null;
+      final msg = e.response?.data is Map
+          ? e.response?.data['message']?.toString()
+          : null;
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg ?? 'Reset failed')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text(msg ?? 'Reset failed'),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -129,14 +200,27 @@ class _CpForgotPasswordScreenState extends ConsumerState<CpForgotPasswordScreen>
 
   @override
   Widget build(BuildContext context) {
-    final fromGuest = GoRouterState.of(context).uri.queryParameters['from'] == 'guest';
+    final fromGuest =
+        GoRouterState.of(context).uri.queryParameters['from'] == 'guest';
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F2A20),
+      backgroundColor: Colors.black,
       body: Stack(
         fit: StackFit.expand,
         children: [
-          const Positioned.fill(child: ColoredBox(color: Color(0xFF0F2A20))),
+          Positioned.fill(
+            child: Image.asset('assets/login-bg.png', fit: BoxFit.cover),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.black.withValues(alpha: 0.55),
+                  Colors.black.withValues(alpha: 0.88),
+                ],
+              ),
+            ),
+          ),
           SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -150,22 +234,33 @@ class _CpForgotPasswordScreenState extends ConsumerState<CpForgotPasswordScreen>
                         onPressed: () => context.go('/home'),
                         child: Text(
                           'BACK TO GUEST PORTAL',
-                          style: GoogleFonts.gelasio(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 2, color: Colors.white),
+                          style: GoogleFonts.gelasio(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 2,
+                          ),
                         ),
                       ),
                     ),
                   Row(
                     children: [
                       IconButton(
-                        style: IconButton.styleFrom(backgroundColor: Colors.white.withValues(alpha: 0.1)),
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.white.withValues(alpha: 0.1),
+                        ),
                         onPressed: () {
                           if (_step == 0) {
-                            context.go('/auth/cp/login${fromGuest ? '?from=guest' : ''}');
+                            context.go(
+                              '/auth/cp/login${fromGuest ? '?from=guest' : ''}',
+                            );
                           } else {
                             setState(() => _step = _step - 1);
                           }
                         },
-                        icon: const Icon(LucideIcons.chevronLeft, color: Colors.white),
+                        icon: const Icon(
+                          LucideIcons.chevronLeft,
+                          color: Colors.white,
+                        ),
                       ),
                     ],
                   ),
@@ -174,39 +269,53 @@ class _CpForgotPasswordScreenState extends ConsumerState<CpForgotPasswordScreen>
                     _step == 0
                         ? 'RECOVER ACCESS'
                         : _step == 1
-                            ? 'VERIFY CODE'
-                            : 'NEW PASSWORD',
-                    style: GoogleFonts.gelasio(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white),
+                        ? 'VERIFY CODE'
+                        : 'NEW PASSWORD',
+                    style: GoogleFonts.gelasio(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
                   const SizedBox(height: 24),
                   if (_step == 0) ...[
                     TextField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
+                      inputFormatters: Validators.emailFormatters,
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         labelText: 'Email',
                         labelStyle: const TextStyle(color: Colors.white54),
-                        prefixIcon: const Icon(LucideIcons.mail, color: Colors.white54),
+                        prefixIcon: const Icon(
+                          LucideIcons.mail,
+                          color: Colors.white54,
+                        ),
                         filled: true,
-                        fillColor: Colors.white.withValues(alpha: 0.06),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                        fillColor: Colors.black.withValues(alpha: 0.4),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 24),
                     FilledButton(
                       onPressed: _loading ? null : _sendEmail,
                       style: FilledButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: const Color(0xFF0F2A20),
+                        backgroundColor: Colors.purple.shade600,
                         minimumSize: const Size(double.infinity, 52),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
                       ),
                       child: _loading
                           ? const SizedBox(
                               width: 22,
                               height: 22,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF0F2A20)),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
                             )
                           : const Text('SEND CODE'),
                     ),
@@ -217,13 +326,18 @@ class _CpForgotPasswordScreenState extends ConsumerState<CpForgotPasswordScreen>
                         margin: const EdgeInsets.only(bottom: 16),
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Color(0xFFC5A35B).withValues(alpha: 0.15),
+                          color: Colors.amber.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Color(0xFFC5A35B).withValues(alpha: 0.4)),
+                          border: Border.all(
+                            color: Colors.amber.withValues(alpha: 0.4),
+                          ),
                         ),
                         child: Text(
                           'DEV: code $_devOtp',
-                          style: const TextStyle(color: Color(0xFFC5A35B), fontWeight: FontWeight.bold),
+                          style: const TextStyle(
+                            color: Colors.amber,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     Row(
@@ -237,16 +351,24 @@ class _CpForgotPasswordScreenState extends ConsumerState<CpForgotPasswordScreen>
                             textAlign: TextAlign.center,
                             maxLength: 1,
                             keyboardType: TextInputType.number,
-                            style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                             decoration: InputDecoration(
                               counterText: '',
                               filled: true,
                               fillColor: Colors.white.withValues(alpha: 0.06),
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
                             ),
                             onChanged: (v) {
-                              if (v.length == 1 && i < 5) _otpFocus[i + 1].requestFocus();
-                              if (v.isEmpty && i > 0) _otpFocus[i - 1].requestFocus();
+                              if (v.length == 1 && i < 5)
+                                _otpFocus[i + 1].requestFocus();
+                              if (v.isEmpty && i > 0)
+                                _otpFocus[i - 1].requestFocus();
                             },
                           ),
                         );
@@ -256,10 +378,11 @@ class _CpForgotPasswordScreenState extends ConsumerState<CpForgotPasswordScreen>
                     FilledButton(
                       onPressed: _goPasswordStep,
                       style: FilledButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: const Color(0xFF0F2A20),
+                        backgroundColor: Colors.purple.shade600,
                         minimumSize: const Size(double.infinity, 52),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
                       ),
                       child: const Text('CONTINUE'),
                     ),
@@ -272,10 +395,15 @@ class _CpForgotPasswordScreenState extends ConsumerState<CpForgotPasswordScreen>
                       decoration: InputDecoration(
                         labelText: 'New password',
                         labelStyle: const TextStyle(color: Colors.white54),
-                        prefixIcon: const Icon(LucideIcons.lock, color: Colors.white54),
+                        prefixIcon: const Icon(
+                          LucideIcons.lock,
+                          color: Colors.white54,
+                        ),
                         filled: true,
-                        fillColor: Colors.white.withValues(alpha: 0.06),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                        fillColor: Colors.black.withValues(alpha: 0.4),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -286,26 +414,35 @@ class _CpForgotPasswordScreenState extends ConsumerState<CpForgotPasswordScreen>
                       decoration: InputDecoration(
                         labelText: 'Confirm password',
                         labelStyle: const TextStyle(color: Colors.white54),
-                        prefixIcon: const Icon(LucideIcons.lock, color: Colors.white54),
+                        prefixIcon: const Icon(
+                          LucideIcons.lock,
+                          color: Colors.white54,
+                        ),
                         filled: true,
-                        fillColor: Colors.white.withValues(alpha: 0.06),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+                        fillColor: Colors.black.withValues(alpha: 0.4),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 24),
                     FilledButton(
                       onPressed: _loading ? null : _resetPassword,
                       style: FilledButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: const Color(0xFF0F2A20),
+                        backgroundColor: Colors.purple.shade600,
                         minimumSize: const Size(double.infinity, 52),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
                       ),
                       child: _loading
                           ? const SizedBox(
                               width: 22,
                               height: 22,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF0F2A20)),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
                             )
                           : const Text('UPDATE PASSWORD'),
                     ),

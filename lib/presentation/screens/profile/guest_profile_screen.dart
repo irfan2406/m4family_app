@@ -17,14 +17,17 @@ class GuestProfileScreen extends ConsumerWidget {
     final themeMode = ref.watch(themeProvider);
     final bool isDarkMode = themeMode == ThemeMode.dark;
 
-    final Color bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
-    final Color textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
-    final Color textMuted =
-        isDark ? Colors.white.withValues(alpha: 0.5) : Colors.black.withValues(alpha: 0.5);
-    final Color cardColor =
-        isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
-    final Color borderColor =
-        isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06);
+    final Color bg = isDark ? Colors.black : Colors.white;
+    final Color textPrimary = isDark ? Colors.white : Colors.black;
+    final Color textMuted = isDark
+        ? Colors.white.withValues(alpha: 0.5)
+        : Colors.black.withValues(alpha: 0.5);
+    final Color cardColor = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : Colors.white;
+    final Color borderColor = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.black.withValues(alpha: 0.06);
 
     return Scaffold(
       backgroundColor: bg,
@@ -39,7 +42,9 @@ class GuestProfileScreen extends ConsumerWidget {
               height: 220,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.04),
+                color: (isDark ? Colors.white : Colors.black).withValues(
+                  alpha: 0.04,
+                ),
               ),
             ),
           ),
@@ -93,10 +98,12 @@ class GuestProfileScreen extends ConsumerWidget {
                                 ? []
                                 : [
                                     BoxShadow(
-                                      color: Colors.black.withValues(alpha: 0.05),
+                                      color: Colors.black.withValues(
+                                        alpha: 0.05,
+                                      ),
                                       blurRadius: 30,
                                       offset: const Offset(0, 10),
-                                    )
+                                    ),
                                   ],
                           ),
                           child: Column(
@@ -108,7 +115,7 @@ class GuestProfileScreen extends ConsumerWidget {
                                   shape: BoxShape.circle,
                                   color: isDark
                                       ? Colors.white.withValues(alpha: 0.04)
-                                      : const Color(0xFFF4EFE3),
+                                      : const Color(0xFFF4F4F5),
                                   border: Border.all(
                                     color: borderColor,
                                     width: 2,
@@ -184,14 +191,16 @@ class GuestProfileScreen extends ConsumerWidget {
                             Expanded(
                               child: _InfoTile(
                                 title: 'EXCLUSIVE ACCESS',
-                                body: 'Get early access to new project launches.',
+                                body:
+                                    'Get early access to new project launches.',
                               ),
                             ),
                             SizedBox(width: 16),
                             Expanded(
                               child: _InfoTile(
                                 title: 'PERSONALIZED',
-                                body: 'Track your favorite properties and visits.',
+                                body:
+                                    'Track your favorite properties and visits.',
                               ),
                             ),
                           ],
@@ -209,7 +218,10 @@ class GuestProfileScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: 16),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 16,
+                          ),
                           decoration: BoxDecoration(
                             color: cardColor,
                             borderRadius: BorderRadius.circular(28),
@@ -223,12 +235,14 @@ class GuestProfileScreen extends ConsumerWidget {
                                 decoration: BoxDecoration(
                                   color: isDark
                                       ? Colors.white.withValues(alpha: 0.05)
-                                      : const Color(0xFFF4EFE3),
+                                      : const Color(0xFFF4F4F5),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(color: borderColor),
                                 ),
                                 child: Icon(
-                                  isDarkMode ? LucideIcons.moon : LucideIcons.globe,
+                                  isDarkMode
+                                      ? LucideIcons.moon
+                                      : LucideIcons.globe,
                                   size: 20,
                                   color: textMuted,
                                 ),
@@ -261,12 +275,20 @@ class GuestProfileScreen extends ConsumerWidget {
                               ),
                               Switch(
                                 value: isDarkMode,
-                                activeThumbColor: isDark ? Colors.black : Colors.white,
-                                activeTrackColor: isDark ? Colors.white : Colors.black,
+                                activeThumbColor: isDark
+                                    ? Colors.black
+                                    : Colors.white,
+                                activeTrackColor: isDark
+                                    ? Colors.white
+                                    : Colors.black,
                                 onChanged: (checked) {
                                   ref
                                       .read(themeProvider.notifier)
-                                      .setTheme(checked ? ThemeMode.dark : ThemeMode.light);
+                                      .setTheme(
+                                        checked
+                                            ? ThemeMode.dark
+                                            : ThemeMode.light,
+                                      );
                                 },
                               ),
                             ],
@@ -279,25 +301,32 @@ class GuestProfileScreen extends ConsumerWidget {
                           child: Container(
                             height: 56,
                             decoration: BoxDecoration(
-                              color: const Color(0xFFC5A35B).withValues(alpha: 0.08),
+                              color: const Color(
+                                0xFFFFD700,
+                              ).withValues(alpha: 0.08),
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
-                                color: const Color(0xFFC5A35B).withValues(alpha: 0.25),
+                                color: const Color(
+                                  0xFFFFD700,
+                                ).withValues(alpha: 0.25),
                               ),
                             ),
                             child: Center(
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Icon(LucideIcons.trendingUp,
-                                      size: 16, color: Color(0xFFC5A35B)),
+                                  const Icon(
+                                    LucideIcons.trendingUp,
+                                    size: 16,
+                                    color: Color(0xFFD4A93B),
+                                  ),
                                   const SizedBox(width: 8),
                                   Text(
                                     'INVESTOR LOGIN',
                                     style: GoogleFonts.gelasio(
                                       fontSize: 10,
                                       fontWeight: FontWeight.w900,
-                                      color: const Color(0xFFC5A35B),
+                                      color: const Color(0xFFD4A93B),
                                       letterSpacing: 1.5,
                                     ),
                                   ),
@@ -327,16 +356,19 @@ class _InfoTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final Color textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
-    final Color textMuted =
-        isDark ? Colors.white.withValues(alpha: 0.5) : Colors.black.withValues(alpha: 0.5);
+    final Color textPrimary = isDark ? Colors.white : Colors.black;
+    final Color textMuted = isDark
+        ? Colors.white.withValues(alpha: 0.5)
+        : Colors.black.withValues(alpha: 0.5);
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.03),
+        color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06),
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.black.withValues(alpha: 0.06),
         ),
       ),
       child: Column(
@@ -380,8 +412,12 @@ class _PrimaryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final Color fg = filled ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white : Colors.black);
-    final Color bg = filled ? (isDark ? Colors.white : Colors.black) : Colors.transparent;
+    final Color fg = filled
+        ? (isDark ? Colors.black : Colors.white)
+        : (isDark ? Colors.white : Colors.black);
+    final Color bg = filled
+        ? (isDark ? Colors.white : Colors.black)
+        : Colors.transparent;
     return _ScaleTap(
       onTap: onTap,
       child: Container(
@@ -393,7 +429,10 @@ class _PrimaryButton extends StatelessWidget {
           border: filled
               ? null
               : Border.all(
-                  color: isDark ? Colors.white.withValues(alpha: 0.15) : Colors.black.withValues(alpha: 0.12)),
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.15)
+                      : Colors.black.withValues(alpha: 0.12),
+                ),
         ),
         child: Center(
           child: Row(
@@ -433,12 +472,20 @@ class _CircleButton extends StatelessWidget {
         height: 40,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF4EFE3),
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.05)
+              : const Color(0xFFF4F4F5),
           border: Border.all(
-            color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06),
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.08)
+                : Colors.black.withValues(alpha: 0.06),
           ),
         ),
-        child: Icon(icon, size: 20, color: isDark ? Colors.white : Colors.black),
+        child: Icon(
+          icon,
+          size: 20,
+          color: isDark ? Colors.white : Colors.black,
+        ),
       ),
     );
   }

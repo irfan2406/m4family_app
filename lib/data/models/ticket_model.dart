@@ -31,13 +31,17 @@ class TicketModel {
       status: json['status'] ?? 'Open',
       priority: json['priority'] ?? 'Medium',
       messages: json['messages'] ?? [],
-      createdAt: json['createdAt'] != null 
-          ? DateTime.parse(json['createdAt']) 
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
           : DateTime.now(),
     );
   }
 
-  String get displayId => ticketId ?? (id.length > 8 ? id.substring(id.length - 8).toUpperCase() : id.toUpperCase());
+  String get displayId =>
+      ticketId ??
+      (id.length > 8
+          ? id.substring(id.length - 8).toUpperCase()
+          : id.toUpperCase());
 
   TicketModel copyWith({
     String? id,

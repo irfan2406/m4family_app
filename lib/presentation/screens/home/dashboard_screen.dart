@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:m4_mobile/presentation/widgets/m4_image.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
+import 'package:m4_mobile/core/utils/project_highlights.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,6 +16,7 @@ import 'package:m4_mobile/presentation/widgets/main_shell.dart';
 import 'package:m4_mobile/core/utils/support_handlers.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:m4_mobile/presentation/screens/pages/pages_list_screen.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_detail_screen.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
@@ -57,6 +61,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _messageController = TextEditingController();
   String? _selectedProject;
+
+  // Inline validation for the "Register your interest" form — the field itself
+  // turns red instead of a snackbar popping over the page.
+  String? _nameError;
+  String? _emailError;
+  String? _phoneError;
   bool _isSubmitting = false;
 
   @override
@@ -167,10 +177,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       return Center(
         child: Text(
           'NO MEDIA FOUND',
-          style: GoogleFonts.ebGaramond(
-            color: Colors.white10,
+          style: GoogleFonts.gelasio(
+            // Was Colors.white10 — invisible on the light background.
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.4),
             fontSize: 10,
             fontWeight: FontWeight.w900,
+            letterSpacing: 1.5,
           ),
         ),
       );
@@ -182,28 +196,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       itemCount: media.length > 12 ? 12 : media.length,
       itemBuilder: (context, index) {
         final m = media[index];
-        final project = m['project'];
         return _MediaCard(
           imageUrl: m['image'] as String,
           title: m['title'] as String,
-          onTap: () {
-            final projectId = project is Map
-                ? (project['_id']?.toString() ??
-                      project['id']?.toString() ??
-                      '')
-                : '';
-            if (projectId.isNotEmpty) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ProjectDetailScreen(
-                    projectId: projectId,
-                    projectData: project,
-                  ),
-                ),
-              );
-            }
-          },
+          // Media tiles open the Media Gallery (content hub) — same target as
+          // the menu's Media entry and the guest home — not the project page.
+          onTap: () => context.push('/media'),
         );
       },
     );
@@ -227,31 +225,28 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 
   Future<void> _fetchProjects() async {
+    // Go through the shared projectsProvider rather than a bare getProjects():
+    // it caches the (multi-MB) catalog payload so re-entering Home is instant,
+    // retries cold-start timeouts, and shares ONE download with the Projects
+    // tab. The old direct call also gated on `status == true`, which left the
+    // list silently empty whenever the API omitted that field.
     try {
-      final apiClient = ref.read(apiClientProvider);
-      final response = await apiClient.getProjects();
-      if (response.data['status'] == true && response.data['data'] is List) {
-        setState(() {
-          _projects = response.data['data'];
-          _projectsLoading = false;
-        });
-      } else {
-        setState(() => _projectsLoading = false);
-        final msg = response.data['message'] ?? 'Unknown error';
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('API Error: $msg'),
-            backgroundColor: Color(0xFFC5A35B),
-          ),
-        );
+      if (ref.read(projectsProvider) is AsyncError) {
+        ref.invalidate(projectsProvider);
       }
+      final projects = await ref.read(projectsProvider.future);
+      if (!mounted) return;
+      setState(() {
+        _projects = projects;
+        _projectsLoading = false;
+      });
     } catch (e) {
       if (mounted) {
         setState(() => _projectsLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to load projects: $e'),
-            backgroundColor: Color(0xFFC5A35B),
+            backgroundColor: Colors.redAccent,
           ),
         );
       }
@@ -283,20 +278,30 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     }
   }
 
+  /// Marks the empty required fields red in place. Returns true when valid.
+  /// (Replaces the old snackbar — and the `_selectedProject == null` gate,
+  /// which could never pass: the project dropdown isn't part of this form, so
+  /// nothing ever set it and every submit failed even when fully filled.)
+  bool _validateInquiry() {
+    // Full validation (was empty-check only): name = letters, email = proper
+    // format, phone = 10-digit. Errors show in red on each field.
+    final nameErr = Validators.nameError(
+      _nameController.text,
+      field: 'full name',
+    );
+    final emailErr = Validators.emailError(_emailController.text);
+    final phoneErr = Validators.phoneError(_phoneController.text);
+    setState(() {
+      _nameError = nameErr;
+      _emailError = emailErr;
+      _phoneError = phoneErr;
+    });
+    return nameErr == null && emailErr == null && phoneErr == null;
+  }
+
   Future<void> _submitInquiry() async {
     final apiClient = ref.read(apiClientProvider);
-    if (_nameController.text.isEmpty ||
-        _emailController.text.isEmpty ||
-        _phoneController.text.isEmpty ||
-        _selectedProject == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please fill all required fields (*)'),
-          backgroundColor: Color(0xFFC5A35B),
-        ),
-      );
-      return;
-    }
+    if (!_validateInquiry()) return;
 
     setState(() => _isSubmitting = true);
 
@@ -306,11 +311,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         'email': _emailController.text,
         'phone': _phoneController.text,
         'message': _messageController.text,
-        'interest': 'Property Inquiry',
+        // `interest` and `source` are server-side enums — anything else is
+        // rejected with a 400. Valid: interest = Buying | Selling | Site Visit
+        // | Video Call (case-sensitive); source = online | cp | walk-in |
+        // referral | other.
+        'interest': 'Buying',
         'projectName': _selectedProject,
-        'source': 'Mobile Dashboard Inquiry',
+        'source': 'online',
       });
 
+      if (!mounted) return;
       if (response.data['status'] == true) {
         _nameController.clear();
         _emailController.clear();
@@ -324,16 +334,26 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             backgroundColor: Colors.green,
           ),
         );
+      } else {
+        // The API answered but rejected it — don't fail silently.
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not submit right now. Please try again.'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
       }
     } catch (e) {
+      if (!mounted) return;
+      // A raw DioException dump helps nobody — keep it human.
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Submission failed: $e'),
-          backgroundColor: Color(0xFFC5A35B),
+        const SnackBar(
+          content: Text('Could not submit right now. Please try again.'),
+          backgroundColor: Colors.redAccent,
         ),
       );
     } finally {
-      setState(() => _isSubmitting = false);
+      if (mounted) setState(() => _isSubmitting = false);
     }
   }
 
@@ -346,9 +366,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         Text(
           label,
           textAlign: TextAlign.center,
+          // Was 8px / 60% — far too small and faint to read. Bigger + darker.
           style: GoogleFonts.ebGaramond(
-            color: foreground.withOpacity(0.6),
-            fontSize: 8,
+            color: foreground.withOpacity(0.85),
+            fontSize: 10.5,
             fontWeight: FontWeight.w900,
             letterSpacing: 0.5,
             height: 1.4,
@@ -455,82 +476,95 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   // ⭐️ Tagline (Living the M4 Life)
-                  Transform.translate(
-                    offset: const Offset(
-                      0,
-                      -20,
-                    ), // 👈 Reduced from -60 to avoid overlap
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 0),
-                      child: M4Theme.taglineWordmark(context, height: 140),
+                  // Tagline (Living the M4 Life) — full-width script image,
+                  // cropped tight to the text band so there is no large gap
+                  // before the hero. Same in light and dark mode.
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12, bottom: 8),
+                    child: ColorFiltered(
+                      colorFilter: ColorFilter.matrix(
+                        Theme.of(context).brightness == Brightness.dark
+                            ? const [
+                                // Dark Mode: Invert and boost to white
+                                -5.0, 0, 0, 0, 255,
+                                0, -5.0, 0, 0, 255,
+                                0, -5.0, 0, 0, 255,
+                                0, 0, 0, 1, 0,
+                              ]
+                            : const [
+                                // Light Mode: Crush to black
+                                5.0, 0, 0, 0, -150,
+                                0, 5.0, 0, 0, -150,
+                                0, 0, 5.0, 0, -150,
+                                0, 0, 0, 1, 0,
+                              ],
+                      ),
+                      child: Image.asset(
+                        'assets/living_m4_life.png',
+                        width: MediaQuery.of(context).size.width,
+                        height: 120,
+                        fit: BoxFit.fitWidth,
+                      ),
                     ),
                   ),
 
-                  // Hero Image Container (Pulled UP)
-                  Transform.translate(
-                    offset: const Offset(
-                      0,
-                      -40,
-                    ), // 👈 Pull even higher due to taller tagline box
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      child: Builder(
-                        builder: (context) {
-                          // Web parity: the top hero cycles the FIRST (featured)
-                          // project's heroImages[0..2], matching SharedHomePage.
-                          final featured = _projects.isNotEmpty
-                              ? _projects[0]
-                              : null;
-                          final mainImage = _projImg(featured, _heroSlide % 3);
+                  // Hero Image Container
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Builder(
+                      builder: (context) {
+                        // Web parity: the top hero cycles the FIRST (featured)
+                        // project's heroImages[0..2], matching SharedHomePage.
+                        final featured = _projects.isNotEmpty
+                            ? _projects[0]
+                            : null;
+                        final mainImage = _projImg(featured, _heroSlide % 3);
 
-                          return Stack(
-                            children: [
-                              AspectRatio(
-                                aspectRatio: 4 / 3,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(32),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.15),
-                                        blurRadius: 30,
-                                        offset: const Offset(0, 15),
+                        return Stack(
+                          children: [
+                            AspectRatio(
+                              aspectRatio: 4 / 3,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(24),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.12),
+                                      blurRadius: 24,
+                                      offset: const Offset(0, 12),
+                                    ),
+                                  ],
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(24),
+                                  child: AnimatedSwitcher(
+                                    duration: const Duration(milliseconds: 800),
+                                    transitionBuilder:
+                                        (
+                                          Widget child,
+                                          Animation<double> animation,
+                                        ) {
+                                          return FadeTransition(
+                                            opacity: animation,
+                                            child: child,
+                                          );
+                                        },
+                                    child: M4Image(
+                                      key: ValueKey<int>(_heroSlide),
+                                      imageUrl: mainImage,
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                      height: double.infinity,
+                                      placeholder: Container(
+                                        color: Colors.black12,
                                       ),
-                                    ],
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(32),
-                                    child: AnimatedSwitcher(
-                                      duration: const Duration(
-                                        milliseconds: 800,
-                                      ),
-                                      transitionBuilder:
-                                          (
-                                            Widget child,
-                                            Animation<double> animation,
-                                          ) {
-                                            return FadeTransition(
-                                              opacity: animation,
-                                              child: child,
-                                            );
-                                          },
-                                      child: M4Image(
-                                        key: ValueKey<int>(_heroSlide),
-                                        imageUrl: mainImage,
-                                        fit: BoxFit.cover,
-                                        width: double.infinity,
-                                        height: double.infinity,
-                                        placeholder: Container(
-                                          color: Colors.black12,
-                                        ),
-                                        errorWidget: Container(
-                                          color: Colors.white10,
-                                          child: const Center(
-                                            child: Icon(
-                                              LucideIcons.image,
-                                              color: Colors.white24,
-                                              size: 50,
-                                            ),
+                                      errorWidget: Container(
+                                        color: Colors.white10,
+                                        child: const Center(
+                                          child: Icon(
+                                            LucideIcons.image,
+                                            color: Colors.white24,
+                                            size: 50,
                                           ),
                                         ),
                                       ),
@@ -538,72 +572,67 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                   ),
                                 ),
                               ),
+                            ),
 
-                              // Artistic Impression Badge
-                              Positioned(
-                                top: 16,
-                                right: 16,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
+                            // Artistic Impression Badge
+                            Positioned(
+                              top: 16,
+                              right: 16,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.6),
+                                  borderRadius: BorderRadius.circular(4),
+                                  border: Border.all(
+                                    color: Colors.white.withOpacity(0.1),
                                   ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(0.6),
-                                    borderRadius: BorderRadius.circular(4),
-                                    border: Border.all(
-                                      color: Colors.white.withOpacity(0.1),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    'ARTISTIC IMPRESSION',
-                                    style: GoogleFonts.gelasio(
-                                      color: Colors.white,
-                                      fontSize: 7,
-                                      fontWeight: FontWeight.w900,
-                                      letterSpacing: 1.5,
-                                    ),
+                                ),
+                                child: Text(
+                                  'ARTISTIC IMPRESSION',
+                                  style: GoogleFonts.gelasio(
+                                    color: Colors.white,
+                                    fontSize: 7,
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: 1.5,
                                   ),
                                 ),
                               ),
+                            ),
 
-                              // Carousel Indicators
-                              Positioned(
-                                bottom: 24,
-                                left: 0,
-                                right: 0,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: List.generate(3, (index) {
-                                    final isSelected =
-                                        (_heroSlide % 3) == index;
-                                    return AnimatedContainer(
-                                      duration: const Duration(
-                                        milliseconds: 300,
-                                      ),
-                                      margin: const EdgeInsets.symmetric(
-                                        horizontal: 4,
-                                      ),
-                                      width: isSelected ? 32 : 24,
-                                      height: 4,
-                                      decoration: BoxDecoration(
-                                        color: isSelected
-                                            ? Colors.black
-                                            : Colors.white.withValues(
-                                                alpha: 0.5,
-                                              ),
-                                        borderRadius: BorderRadius.circular(2),
-                                      ),
-                                    );
-                                  }),
-                                ),
+                            // Carousel Indicators
+                            Positioned(
+                              bottom: 24,
+                              left: 0,
+                              right: 0,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: List.generate(3, (index) {
+                                  final isSelected = (_heroSlide % 3) == index;
+                                  return AnimatedContainer(
+                                    duration: const Duration(milliseconds: 300),
+                                    margin: const EdgeInsets.symmetric(
+                                      horizontal: 4,
+                                    ),
+                                    width: isSelected ? 32 : 24,
+                                    height: 4,
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? Colors.black
+                                          : Colors.white.withOpacity(0.5),
+                                      borderRadius: BorderRadius.circular(2),
+                                    ),
+                                  );
+                                }),
                               ),
-                            ],
-                          );
-                        },
-                      ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
-                  ), // 👈 Closing Transform.translate for Hero
+                  ),
                 ],
               ),
             ),
@@ -612,20 +641,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           // ⭐️ DISCOVERY SECTION TABS (Web Parity)
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withOpacity(0.1),
-                        ),
-                      ),
-                    ),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    physics: const BouncingScrollPhysics(),
                     child: Row(
                       children: [
                         _WebTab(
@@ -634,14 +656,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                           onTap: () =>
                               setState(() => _topTabCategory = 'COMMUNITIES'),
                         ),
-                        const SizedBox(width: 32),
+                        const SizedBox(width: 44),
                         _WebTab(
                           label: 'PROPERTIES',
                           isActive: _topTabCategory == 'PROPERTIES',
                           onTap: () =>
                               setState(() => _topTabCategory = 'PROPERTIES'),
                         ),
-                        const SizedBox(width: 32),
+                        const SizedBox(width: 44),
                         _WebTab(
                           label: 'MEDIA',
                           isActive: _topTabCategory == 'MEDIA',
@@ -651,7 +673,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 28),
                   Text(
                     _topTabCategory == 'COMMUNITIES'
                         ? 'M4 COMMUNITIES'
@@ -677,8 +699,19 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   (_topTabCategory == 'COMMUNITIES'
                       ? _communitiesLoading
                       : _projectsLoading)
-                  ? const Center(
-                      child: CircularProgressIndicator(color: Colors.white10),
+                  ? Center(
+                      // Was Colors.white10 — invisible on the light background,
+                      // so the section read as "nothing is loading".
+                      child: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.4),
+                        ),
+                      ),
                     )
                   : Builder(
                       builder: (context) {
@@ -699,10 +732,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                           return Center(
                             child: Text(
                               'NO ITEMS FOUND',
-                              style: GoogleFonts.ebGaramond(
-                                color: Colors.white10,
+                              style: GoogleFonts.gelasio(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.4),
                                 fontSize: 10,
                                 fontWeight: FontWeight.w900,
+                                letterSpacing: 1.5,
                               ),
                             ),
                           );
@@ -725,15 +761,31 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                     item['overview'] ??
                                     item['description'] ??
                                     'Explore this master-planned community',
-                                imageUrl:
-                                    (item['image']?.toString().isNotEmpty ??
-                                        false)
-                                    ? item['image'].toString()
-                                    : (item['heroImages'] is List &&
-                                          (item['heroImages'] as List)
-                                              .isNotEmpty)
-                                    ? item['heroImages'][0].toString()
-                                    : 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80',
+                                imageUrl: (() {
+                                  final title = (item['title'] ?? '')
+                                      .toString()
+                                      .toUpperCase();
+                                  if (title.contains('HEEYYA HOOO')) {
+                                    return 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80';
+                                  }
+                                  if (title.contains('MAZGAON')) {
+                                    return 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80';
+                                  }
+
+                                  final rawImg = item['image']?.toString();
+                                  if (rawImg != null &&
+                                      rawImg.isNotEmpty &&
+                                      rawImg != 'null' &&
+                                      rawImg != '[]' &&
+                                      rawImg.trim().isNotEmpty) {
+                                    return rawImg;
+                                  }
+                                  final heroImgs = item['heroImages'];
+                                  if (heroImgs is List && heroImgs.isNotEmpty) {
+                                    return heroImgs[0].toString();
+                                  }
+                                  return 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80';
+                                })(),
                                 onTap: () {
                                   Navigator.push(
                                     context,
@@ -950,9 +1002,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                       children: [
                                         Text(
                                           'FEATURED PROPERTY',
+                                          // Was 9px — too small to read.
                                           style: GoogleFonts.gelasio(
-                                            color: const Color(0xFFC5A35B),
-                                            fontSize: 9,
+                                            color: const Color(0xFFD4B871),
+                                            fontSize: 11,
                                             fontWeight: FontWeight.w900,
                                             letterSpacing: 2,
                                           ),
@@ -972,14 +1025,16 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                           tagline.toUpperCase(),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
+                                          // Was 10px / 80% — faint on the photo.
+                                          // Bigger, bolder, near-solid white.
                                           style: GoogleFonts.ebGaramond(
                                             color: Colors.white.withOpacity(
-                                              0.8,
+                                              0.95,
                                             ),
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w600,
+                                            fontSize: 11.5,
+                                            fontWeight: FontWeight.w700,
                                             height: 1.5,
-                                            letterSpacing: 1,
+                                            letterSpacing: 0.8,
                                           ),
                                         ),
                                       ],
@@ -1030,23 +1085,21 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      // Web parity: USPs come from the featured project's
+                      // backend `highlights` (e.g. ["Prime Location", "20 min
+                      // from Airport"]), not a hardcoded pair. Each is Expanded
+                      // so its label wraps.
                       children: [
-                        _buildWebUSP(
-                          context,
-                          LucideIcons.building2,
-                          'FULLY\nFURNISHED',
-                        ),
-                        _buildWebUSP(
-                          context,
-                          LucideIcons.mapPin,
-                          'PRIME\nLOCATION',
-                        ),
-                        _buildWebUSP(
-                          context,
-                          LucideIcons.smartphone,
-                          '20 MIN FROM\nSHEIKH ZAYED RD',
-                        ),
+                        for (final h in projectHighlights(
+                          _projects.isNotEmpty ? _projects.first : null,
+                        ).take(3))
+                          Expanded(
+                            child: _buildWebUSP(
+                              context,
+                              highlightIcon(h),
+                              h.toUpperCase(),
+                            ),
+                          ),
                       ],
                     ),
                   ),
@@ -1123,7 +1176,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                   ? Colors.black
                                   : Colors.white,
                               fontWeight: FontWeight.w900,
-                              fontSize: 11,
+                              fontSize: 13,
                               letterSpacing: 1.5,
                             ),
                           ),
@@ -1288,11 +1341,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   const SizedBox(height: 8),
                   Text(
                     'OFFICIAL INQUIRY FORM',
+                    // Was 10px / 68% — small and washed out.
                     style: TextStyle(
                       color: Theme.of(
                         context,
-                      ).colorScheme.onSurface.withOpacity(0.68),
-                      fontSize: 10,
+                      ).colorScheme.onSurface.withOpacity(0.85),
+                      fontSize: 12,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 2,
                     ),
@@ -1301,16 +1355,37 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   _PremiumInputField(
                     label: 'Full Name *',
                     controller: _nameController,
+                    errorText: _nameError,
+                    keyboardType: TextInputType.name,
+                    inputFormatters: Validators.nameFormatters,
+                    // Clear the red state as soon as they start typing.
+                    onChanged: (v) {
+                      if (_nameError != null) setState(() => _nameError = null);
+                    },
                   ),
                   _PremiumInputField(
                     label: 'Email Address *',
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
+                    inputFormatters: Validators.emailFormatters,
+                    errorText: _emailError,
+                    onChanged: (v) {
+                      if (_emailError != null) {
+                        setState(() => _emailError = null);
+                      }
+                    },
                   ),
                   _PremiumInputField(
                     label: 'Phone Number *',
                     controller: _phoneController,
                     keyboardType: TextInputType.phone,
+                    inputFormatters: Validators.phoneFormatters,
+                    errorText: _phoneError,
+                    onChanged: (v) {
+                      if (_phoneError != null) {
+                        setState(() => _phoneError = null);
+                      }
+                    },
                   ),
                   _PremiumInputField(
                     label: 'Message',
@@ -1420,199 +1495,180 @@ class _ProjectCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final hasImage = imageUrl.isNotEmpty;
-    final displayLocation = location.isNotEmpty
-        ? location.toUpperCase()
-        : 'MUMBAI';
-    final displayStatus = status.isNotEmpty ? status.toUpperCase() : 'UPCOMING';
-
+    // Web parity: light "info card" — image on top (with ONGOING + ARTISTIC
+    // IMPRESSION badges), then title / location / a full-width READ MORE
+    // button below. (Was a full-bleed image-overlay card with VIEW PROPERTY.)
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 288,
-        margin: const EdgeInsets.only(right: 16),
+        width: 280,
+        margin: const EdgeInsets.only(right: 20, bottom: 10),
         decoration: BoxDecoration(
           color: scheme.surface,
-          borderRadius: BorderRadius.circular(28),
-          border: Border.all(color: scheme.onSurface.withOpacity(0.08)),
-          boxShadow: isDark
-              ? null
-              : [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.10),
-                    blurRadius: 30,
-                    offset: const Offset(0, 16),
-                  ),
-                ],
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
+            ),
+          ],
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(28),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Image with status pill + Artistic Impression (web parity)
-              SizedBox(
-                height: 180,
-                width: double.infinity,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Image on top with badges — fills the space above the footer.
+            Expanded(
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(24),
+                ),
                 child: Stack(
                   fit: StackFit.expand,
-                  children: <Widget>[
-                    hasImage
+                  children: [
+                    imageUrl.isNotEmpty
                         ? M4Image(
                             imageUrl: imageUrl,
+                            height: double.infinity,
+                            width: double.infinity,
                             fit: BoxFit.cover,
                             placeholder: Container(color: Colors.black12),
-                            errorWidget: Container(
-                              color: scheme.onSurface.withOpacity(0.05),
+                            errorWidget: Container(color: Colors.white10),
+                          )
+                        : Container(
+                            color: scheme.onSurface.withOpacity(0.05),
+                            child: Center(
                               child: Icon(
                                 LucideIcons.building,
                                 color: scheme.onSurface.withOpacity(0.2),
                                 size: 40,
                               ),
                             ),
-                          )
-                        : Container(
-                            color: scheme.onSurface.withOpacity(0.05),
-                            child: Icon(
-                              LucideIcons.building,
-                              color: scheme.onSurface.withOpacity(0.2),
-                              size: 40,
+                          ),
+                    if (status.isNotEmpty)
+                      Positioned(
+                        top: 12,
+                        right: 12,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.75),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            status.toUpperCase(),
+                            style: GoogleFonts.ebGaramond(
+                              color: Colors.white,
+                              fontSize: 8,
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: 1,
                             ),
-                          ),
-                    // Status pill (top-right)
-                    Positioned(
-                      top: 14,
-                      right: 14,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.6),
-                          borderRadius: BorderRadius.circular(30),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.1),
-                          ),
-                        ),
-                        child: Text(
-                          displayStatus,
-                          style: GoogleFonts.gelasio(
-                            color: Colors.white,
-                            fontSize: 8,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 1.5,
                           ),
                         ),
                       ),
-                    ),
-                    // Artistic Impression (bottom-right)
                     Positioned(
-                      bottom: 8,
-                      right: 8,
+                      bottom: 10,
+                      right: 10,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 3,
+                          horizontal: 8,
+                          vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.6),
+                          color: Colors.black.withOpacity(0.55),
                           borderRadius: BorderRadius.circular(4),
-                          border: Border.all(
-                            color: Colors.white.withOpacity(0.1),
-                          ),
                         ),
                         child: Text(
                           'ARTISTIC IMPRESSION',
-                          style: GoogleFonts.gelasio(
+                          style: GoogleFonts.ebGaramond(
                             color: Colors.white,
-                            fontSize: 6,
-                            fontWeight: FontWeight.w900,
+                            fontSize: 6.5,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            // Info section: title, location, full-width READ MORE button.
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.gelasio(
+                      color: scheme.onSurface,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Icon(
+                        LucideIcons.mapPin,
+                        size: 12,
+                        color: scheme.onSurface.withOpacity(0.55),
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          location.toUpperCase(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.ebGaramond(
+                            color: scheme.onSurface.withOpacity(0.55),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
                             letterSpacing: 1.5,
                           ),
                         ),
                       ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  Container(
+                    width: double.infinity,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: scheme.onSurface,
+                      borderRadius: BorderRadius.circular(14),
                     ),
-                  ],
-                ),
-              ),
-              // Content
-              Padding(
-                padding: const EdgeInsets.all(18),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.gelasio(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w400,
-                        color: scheme.onSurface,
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          LucideIcons.mapPin,
-                          color: scheme.onSurface.withOpacity(0.5),
-                          size: 12,
+                        Text(
+                          'READ MORE',
+                          style: GoogleFonts.ebGaramond(
+                            color: scheme.surface,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 2,
+                          ),
                         ),
                         const SizedBox(width: 6),
-                        Expanded(
-                          child: Text(
-                            displayLocation,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.ebGaramond(
-                              color: scheme.onSurface.withOpacity(0.68),
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
+                        Icon(
+                          LucideIcons.chevronRight,
+                          size: 14,
+                          color: scheme.surface,
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
-                    // READ MORE button (bg-primary / text-primary-foreground)
-                    Container(
-                      width: double.infinity,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: scheme.onSurface,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'READ MORE',
-                            style: GoogleFonts.gelasio(
-                              color: scheme.surface,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 2,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Icon(
-                            LucideIcons.chevronRight,
-                            color: scheme.surface,
-                            size: 14,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -1717,22 +1773,24 @@ class _EngageCell extends StatelessWidget {
               title,
               textAlign: TextAlign.center,
               style: GoogleFonts.ebGaramond(
-                fontSize: 12,
+                fontSize: 15,
                 fontWeight: FontWeight.w900,
                 color: scheme.onSurface,
-                letterSpacing: 1,
+                letterSpacing: 0.8,
                 height: 1.2,
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 8),
             Text(
               desc,
               textAlign: TextAlign.center,
+              // Was 10.5px / 65% (then 12 / 82%) — still read as faint grey.
+              // Now near-solid foreground at a proper body size.
               style: GoogleFonts.ebGaramond(
-                fontSize: 10.5,
-                fontWeight: FontWeight.w500,
-                color: scheme.onSurface.withOpacity(0.65),
-                height: 1.35,
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: scheme.onSurface.withOpacity(0.95),
+                height: 1.4,
               ),
             ),
           ],
@@ -1748,7 +1806,7 @@ class _QuickFilterSheet extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
+        color: isDark ? const Color(0xFF070708) : Colors.white,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(35),
           topRight: Radius.circular(35),
@@ -1909,7 +1967,7 @@ class _SliderNavButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final foreground = isDark ? Colors.white : const Color(0xFF163A2C);
+    final foreground = isDark ? Colors.white : Colors.black;
 
     return GestureDetector(
       onTap: onTap,
@@ -1933,68 +1991,112 @@ class _PremiumInputField extends StatelessWidget {
   final TextInputType keyboardType;
   final int maxLines;
 
+  /// When set, the field itself turns red and shows this message underneath —
+  /// validation stays on the field instead of a snackbar over the page.
+  final String? errorText;
+  final ValueChanged<String>? onChanged;
+
+  /// Blocks invalid characters as the user types (e.g. digits in a name).
+  final List<TextInputFormatter>? inputFormatters;
+
   const _PremiumInputField({
     required this.label,
     required this.controller,
     this.keyboardType = TextInputType.text,
     this.maxLines = 1,
+    this.errorText,
+    this.onChanged,
+    this.inputFormatters,
   });
+
+  static const _errorColor = Color(0xFFE24B4A);
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final hasError = errorText != null;
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(15),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 8),
-            decoration: BoxDecoration(
-              // Web parity: white field with a soft shadow.
-              color: isDark ? Colors.white.withOpacity(0.04) : Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
-              ),
-              boxShadow: isDark
-                  ? null
-                  : [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
-                        blurRadius: 18,
-                        offset: const Offset(0, 8),
-                      ),
-                    ],
-            ),
-            child: TextFormField(
-              controller: controller,
-              keyboardType: keyboardType,
-              maxLines: maxLines,
-              cursorColor: Theme.of(context).colorScheme.onSurface,
-              style: GoogleFonts.ebGaramond(
-                color: Theme.of(context).colorScheme.onSurface,
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
-              // Web parity: a placeholder that disappears on typing (not a
-              // floating label that sits above the typed text).
-              decoration: InputDecoration(
-                isCollapsed: true,
-                hintText: label,
-                hintStyle: GoogleFonts.ebGaramond(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withOpacity(0.68),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 22,
+                  vertical: 16,
                 ),
-                filled: false, border: InputBorder.none, enabledBorder: InputBorder.none, focusedBorder: InputBorder.none,
+                decoration: BoxDecoration(
+                  // Web parity: white field with a soft shadow.
+                  color: isDark ? Colors.white.withOpacity(0.04) : Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: hasError
+                        ? _errorColor
+                        : (isDark ? Colors.white : Colors.black).withOpacity(
+                            0.08,
+                          ),
+                    width: hasError ? 1.5 : 1,
+                  ),
+                  boxShadow: isDark
+                      ? null
+                      : [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 18,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
+                ),
+                child: TextFormField(
+                  controller: controller,
+                  keyboardType: keyboardType,
+                  maxLines: maxLines,
+                  onChanged: onChanged,
+                  inputFormatters: inputFormatters,
+                  cursorColor: Theme.of(context).colorScheme.onSurface,
+                  style: GoogleFonts.ebGaramond(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontSize: 15.5,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  // Web parity: a placeholder that disappears on typing (not a
+                  // floating label that sits above the typed text).
+                  decoration: InputDecoration(
+                    isCollapsed: true,
+                    hintText: label,
+                    // Was 14px / 68% — the placeholder read as washed out.
+                    hintStyle: GoogleFonts.ebGaramond(
+                      color: hasError
+                          ? _errorColor.withOpacity(0.85)
+                          : Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withOpacity(0.82),
+                      fontSize: 14.5,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    border: InputBorder.none,
+                  ),
+                ),
               ),
             ),
           ),
-        ),
+          if (hasError)
+            Padding(
+              padding: const EdgeInsets.only(left: 10, top: 6),
+              child: Text(
+                errorText!,
+                style: GoogleFonts.ebGaramond(
+                  color: _errorColor,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -2034,7 +2136,7 @@ class _PremiumDropdownField extends StatelessWidget {
             child: DropdownButtonHideUnderline(
               child: DropdownButtonFormField<String>(
                 value: value,
-                dropdownColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
+                dropdownColor: isDark ? const Color(0xFF0F0F11) : Colors.white,
                 style: GoogleFonts.ebGaramond(
                   color: Theme.of(context).colorScheme.onSurface,
                   fontSize: 13,
@@ -2054,7 +2156,7 @@ class _PremiumDropdownField extends StatelessWidget {
                     ).colorScheme.onSurface.withOpacity(0.68),
                     fontSize: 13,
                   ),
-                  filled: false, border: InputBorder.none, enabledBorder: InputBorder.none, focusedBorder: InputBorder.none,
+                  border: InputBorder.none,
                   contentPadding: EdgeInsets.zero,
                 ),
                 items: options
@@ -2154,7 +2256,7 @@ class _GlassSearchField extends StatelessWidget {
                   onChanged: onChanged,
                   style: GoogleFonts.ebGaramond(
                     color: Colors.black,
-                    fontSize: 14,
+                    fontSize: 15,
                   ),
                   decoration: InputDecoration(
                     hintText: 'Search residences...',
@@ -2162,7 +2264,7 @@ class _GlassSearchField extends StatelessWidget {
                       color: Colors.black45,
                       fontSize: 13,
                     ),
-                    filled: false, border: InputBorder.none, enabledBorder: InputBorder.none, focusedBorder: InputBorder.none,
+                    border: InputBorder.none,
                   ),
                 ),
               ),
@@ -2225,18 +2327,18 @@ class _WebTab extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.only(bottom: 8),
         decoration: BoxDecoration(
           border: isActive
-              ? Border(bottom: BorderSide(color: onSurface, width: 2.5))
+              ? Border(bottom: BorderSide(color: onSurface, width: 2))
               : null,
         ),
         child: Text(
           label,
-          style: GoogleFonts.gelasio(
-            color: isActive ? onSurface : onSurface.withOpacity(0.68),
-            fontSize: 12, // 👈 Matched with web text-xs
-            fontWeight: FontWeight.w900, // 👈 Matched with web font-black
+          style: GoogleFonts.ebGaramond(
+            color: isActive ? onSurface : onSurface.withOpacity(0.55),
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
             letterSpacing: 2,
           ),
         ),
@@ -2480,21 +2582,22 @@ class _CommunityCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 280,
-        margin: const EdgeInsets.only(right: 20),
+        width: 300,
+        margin: const EdgeInsets.only(right: 20, bottom: 10),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(35),
+          borderRadius: BorderRadius.circular(40),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
+              color: Colors.black.withOpacity(0.15),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
             ),
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(35),
+          borderRadius: BorderRadius.circular(40),
           child: Stack(
+            fit: StackFit.expand,
             children: [
               M4Image(
                 imageUrl: imageUrl,
@@ -2509,16 +2612,20 @@ class _CommunityCard extends StatelessWidget {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
-                    stops: const [0.5, 1.0],
+                    stops: const [0.3, 1.0],
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withOpacity(0.85),
+                    ],
                   ),
                 ),
               ),
               Positioned(
-                bottom: 25,
-                left: 25,
-                right: 25,
+                bottom: 24,
+                left: 24,
+                right: 24,
                 child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
@@ -2526,40 +2633,49 @@ class _CommunityCard extends StatelessWidget {
                       style: GoogleFonts.gelasio(
                         color: Colors.white,
                         fontSize: 22,
-                        fontWeight: FontWeight.w400,
+                        fontWeight: FontWeight.w900,
                         letterSpacing: -0.5,
                       ),
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 10),
                     Text(
                       description,
                       style: GoogleFonts.ebGaramond(
-                        color: Colors.white.withOpacity(0.6),
+                        color: Colors.white.withOpacity(0.7),
                         fontSize: 10,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w800,
                         letterSpacing: 0.5,
+                        height: 1.4,
                       ),
-                      maxLines: 1,
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           'EXPLORE COMMUNITY',
-                          style: GoogleFonts.gelasio(
-                            color: Colors.white.withOpacity(0.8),
-                            fontSize: 9,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 1.5,
+                          style: GoogleFonts.ebGaramond(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w400,
+                            letterSpacing: 1.2,
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.all(10),
+                          width: 44,
+                          height: 44,
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(15),
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
                           child: const Icon(
                             LucideIcons.arrowRight,

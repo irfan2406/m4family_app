@@ -35,7 +35,7 @@ class SelectionLogsNotifier extends StateNotifier<SelectionLogsState> {
     try {
       final apiClient = _ref.read(apiClientProvider);
       final response = await apiClient.getMyCustomViews();
-      
+
       if (response.data['status'] == true) {
         state = state.copyWith(
           logs: response.data['data'] ?? [],
@@ -48,14 +48,12 @@ class SelectionLogsNotifier extends StateNotifier<SelectionLogsState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 }
 
-final selectionLogsProvider = StateNotifierProvider<SelectionLogsNotifier, SelectionLogsState>((ref) {
-  return SelectionLogsNotifier(ref);
-});
+final selectionLogsProvider =
+    StateNotifierProvider<SelectionLogsNotifier, SelectionLogsState>((ref) {
+      return SelectionLogsNotifier(ref);
+    });

@@ -22,8 +22,8 @@ class NotificationModel {
       message: json['message'] ?? '',
       type: json['type'] ?? 'Announcement',
       read: json['read'] ?? false,
-      createdAt: json['createdAt'] != null 
-          ? DateTime.parse(json['createdAt']) 
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
           : DateTime.now(),
     );
   }

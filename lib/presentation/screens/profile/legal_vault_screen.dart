@@ -45,8 +45,10 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
     return _documents.where((doc) {
       final name = doc['name'].toString().toLowerCase();
       if (_selectedFilter == "AGREEMENTS") return name.contains("agreement");
-      if (_selectedFilter == "PAYMENTS") return name.contains("payment") || name.contains("receipt");
-      if (_selectedFilter == "PORTFOLIO") return name.contains("portfolio") || name.contains("overview");
+      if (_selectedFilter == "PAYMENTS")
+        return name.contains("payment") || name.contains("receipt");
+      if (_selectedFilter == "PORTFOLIO")
+        return name.contains("portfolio") || name.contains("overview");
       return true;
     }).toList();
   }
@@ -54,36 +56,47 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = ref.watch(themeProvider) == ThemeMode.dark;
-    
+
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFF4EFE3),
+      backgroundColor: isDark
+          ? const Color(0xFF09090B)
+          : const Color(0xFFF8FAFC),
       body: SafeArea(
         child: Column(
           children: [
             _buildHeader(isDark),
             Expanded(
-              child: _isLoading 
-                ? const Center(child: CircularProgressIndicator())
-                : Column(
-                    children: [
-                      _buildSecurityHeader(isDark),
-                      _buildFilterTabs(isDark),
-                      Expanded(
-                        child: RefreshIndicator(
-                          onRefresh: _fetchDocuments,
-                          child: ListView.builder(
-                            physics: const BouncingScrollPhysics(),
-                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                            itemCount: _filteredDocs.isEmpty ? 1 : _filteredDocs.length,
-                            itemBuilder: (context, index) {
-                              if (_filteredDocs.isEmpty) return _buildEmptyState(isDark);
-                              return _buildDocumentCard(_filteredDocs[index], isDark);
-                            },
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : Column(
+                      children: [
+                        _buildSecurityHeader(isDark),
+                        _buildFilterTabs(isDark),
+                        Expanded(
+                          child: RefreshIndicator(
+                            onRefresh: _fetchDocuments,
+                            child: ListView.builder(
+                              physics: const BouncingScrollPhysics(),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24,
+                                vertical: 12,
+                              ),
+                              itemCount: _filteredDocs.isEmpty
+                                  ? 1
+                                  : _filteredDocs.length,
+                              itemBuilder: (context, index) {
+                                if (_filteredDocs.isEmpty)
+                                  return _buildEmptyState(isDark);
+                                return _buildDocumentCard(
+                                  _filteredDocs[index],
+                                  isDark,
+                                );
+                              },
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
             ),
           ],
         ),
@@ -105,7 +118,8 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
             child: Center(
               child: Text(
                 'LEGAL VAULT',
-                style: GoogleFonts.gelasio(textStyle: const TextStyle(inherit: true), 
+                style: GoogleFonts.gelasio(
+                  textStyle: const TextStyle(inherit: true),
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white : Colors.black,
@@ -117,10 +131,16 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: isDark ? Colors.white.withOpacity(0.04) : Colors.black.withOpacity(0.04),
+              color: isDark
+                  ? Colors.white.withOpacity(0.04)
+                  : Colors.black.withOpacity(0.04),
               shape: BoxShape.circle,
             ),
-            child: Icon(LucideIcons.shield, color: isDark ? Colors.white54 : Colors.black54, size: 20),
+            child: Icon(
+              LucideIcons.shield,
+              color: isDark ? Colors.white54 : Colors.black54,
+              size: 20,
+            ),
           ),
         ],
       ),
@@ -132,10 +152,20 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
       margin: const EdgeInsets.all(24),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+        color: isDark ? const Color(0xFF18181B) : Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
-        boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 20, offset: const Offset(0, 10))],
+        border: Border.all(
+          color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+        ),
+        boxShadow: isDark
+            ? []
+            : [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
       ),
       child: Row(
         children: [
@@ -146,7 +176,11 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
               color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(LucideIcons.lock, color: isDark ? Colors.white54 : Colors.black54, size: 20),
+            child: Icon(
+              LucideIcons.lock,
+              color: isDark ? Colors.white54 : Colors.black54,
+              size: 20,
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -155,7 +189,8 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
               children: [
                 Text(
                   'ENCRYPTED STORAGE',
-                  style: GoogleFonts.gelasio(textStyle: const TextStyle(inherit: true), 
+                  style: GoogleFonts.gelasio(
+                    textStyle: const TextStyle(inherit: true),
                     fontSize: 8,
                     fontWeight: FontWeight.w800,
                     color: isDark ? Colors.white38 : Colors.black38,
@@ -164,7 +199,8 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
                 ),
                 Text(
                   'SECURE DOCUMENT REPOSITORY',
-                  style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), 
+                  style: GoogleFonts.ebGaramond(
+                    textStyle: const TextStyle(inherit: true),
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
                     color: isDark ? Colors.white : Colors.black,
@@ -184,25 +220,39 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Row(
-        children: filters.map((f) => Padding(
-          padding: const EdgeInsets.only(right: 12),
-          child: ChoiceChip(
-            label: Text(f),
-            selected: _selectedFilter == f,
-            onSelected: (selected) {
-              if (selected) setState(() => _selectedFilter = f);
-            },
-            labelStyle: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), 
-              fontSize: 9,
-              fontWeight: FontWeight.w800,
-              color: _selectedFilter == f ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white54 : Colors.black54),
-            ),
-            selectedColor: isDark ? Colors.white : Colors.black,
-            backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          ),
-        )).toList(),
+        children: filters
+            .map(
+              (f) => Padding(
+                padding: const EdgeInsets.only(right: 12),
+                child: ChoiceChip(
+                  label: Text(f),
+                  selected: _selectedFilter == f,
+                  onSelected: (selected) {
+                    if (selected) setState(() => _selectedFilter = f);
+                  },
+                  labelStyle: GoogleFonts.ebGaramond(
+                    textStyle: const TextStyle(inherit: true),
+                    fontSize: 9,
+                    fontWeight: FontWeight.w800,
+                    color: _selectedFilter == f
+                        ? (isDark ? Colors.black : Colors.white)
+                        : (isDark ? Colors.white54 : Colors.black54),
+                  ),
+                  selectedColor: isDark ? Colors.white : Colors.black,
+                  backgroundColor: isDark
+                      ? const Color(0xFF18181B)
+                      : Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            )
+            .toList(),
       ),
     );
   }
@@ -214,13 +264,26 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+        color: isDark ? const Color(0xFF18181B) : Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
-        boxShadow: isDark ? [] : [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))],
+        border: Border.all(
+          color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+        ),
+        boxShadow: isDark
+            ? []
+            : [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
       ),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 12,
+        ),
         leading: Container(
           width: 44,
           height: 44,
@@ -228,23 +291,56 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
             color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(LucideIcons.fileText, color: isDark ? Colors.white54 : Colors.black54, size: 20),
+          child: Icon(
+            LucideIcons.fileText,
+            color: isDark ? Colors.white54 : Colors.black54,
+            size: 20,
+          ),
         ),
         title: Text(
           (doc['name'] ?? 'DOCUMENT').toUpperCase(),
-          style: GoogleFonts.ebGaramond(fontSize: 12, fontWeight: FontWeight.w800, color: isDark ? Colors.white : Colors.black),
+          style: GoogleFonts.ebGaramond(
+            fontSize: 12,
+            fontWeight: FontWeight.w800,
+            color: isDark ? Colors.white : Colors.black,
+          ),
           overflow: TextOverflow.ellipsis,
         ),
         subtitle: Row(
           children: [
-            Text((project['title'] ?? 'GENERAL').toUpperCase(), style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w700, color: isDark ? Colors.white38 : Colors.black38)),
+            Text(
+              (project['title'] ?? 'GENERAL').toUpperCase(),
+              style: GoogleFonts.ebGaramond(
+                fontSize: 8,
+                fontWeight: FontWeight.w700,
+                color: isDark ? Colors.white38 : Colors.black38,
+              ),
+            ),
             const SizedBox(width: 8),
-            Container(width: 3, height: 3, decoration: BoxDecoration(color: (isDark ? Colors.white : Colors.black).withOpacity(0.2), shape: BoxShape.circle)),
+            Container(
+              width: 3,
+              height: 3,
+              decoration: BoxDecoration(
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.2),
+                shape: BoxShape.circle,
+              ),
+            ),
             const SizedBox(width: 8),
-            Text(date, style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w700, color: isDark ? Colors.white38 : Colors.black38)),
+            Text(
+              date,
+              style: GoogleFonts.ebGaramond(
+                fontSize: 8,
+                fontWeight: FontWeight.w700,
+                color: isDark ? Colors.white38 : Colors.black38,
+              ),
+            ),
           ],
         ),
-        trailing: Icon(LucideIcons.chevronRight, size: 16, color: (isDark ? Colors.white : Colors.black).withOpacity(0.2)),
+        trailing: Icon(
+          LucideIcons.chevronRight,
+          size: 16,
+          color: (isDark ? Colors.white : Colors.black).withOpacity(0.2),
+        ),
         onTap: () => _showDocumentDetails(doc, isDark),
       ),
     ).animate().fadeIn().slideX(begin: 0.1);
@@ -272,11 +368,16 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
     return Column(
       children: [
         const SizedBox(height: 60),
-        Icon(LucideIcons.fileWarning, size: 64, color: (isDark ? Colors.white : Colors.black).withOpacity(0.1)),
+        Icon(
+          LucideIcons.fileWarning,
+          size: 64,
+          color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+        ),
         const SizedBox(height: 24),
         Text(
           'NO DOCUMENTS FOUND',
-          style: GoogleFonts.gelasio(textStyle: const TextStyle(inherit: true), 
+          style: GoogleFonts.gelasio(
+            textStyle: const TextStyle(inherit: true),
             fontSize: 10,
             fontWeight: FontWeight.w800,
             color: (isDark ? Colors.white : Colors.black).withOpacity(0.2),
@@ -297,7 +398,7 @@ class _DocumentDetailSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+        color: isDark ? const Color(0xFF18181B) : Colors.white,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
       ),
       padding: const EdgeInsets.all(32),
@@ -310,39 +411,77 @@ class _DocumentDetailSheet extends StatelessWidget {
             decoration: BoxDecoration(
               color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+              border: Border.all(
+                color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+              ),
             ),
-            child: Icon(LucideIcons.fileText, color: isDark ? Colors.white54 : Colors.black54, size: 40),
+            child: Icon(
+              LucideIcons.fileText,
+              color: isDark ? Colors.white54 : Colors.black54,
+              size: 40,
+            ),
           ),
           const SizedBox(height: 24),
           Text(
             (doc['name'] ?? 'DOCUMENT').toUpperCase(),
             textAlign: TextAlign.center,
-            style: GoogleFonts.gelasio(fontSize: 18, fontWeight: FontWeight.w800, color: isDark ? Colors.white : Colors.black),
+            style: GoogleFonts.gelasio(
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+              color: isDark ? Colors.white : Colors.black,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
             'SECURE DOCUMENT ACCESS',
-            style: GoogleFonts.gelasio(fontSize: 9, fontWeight: FontWeight.w800, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 2),
+            style: GoogleFonts.gelasio(
+              fontSize: 9,
+              fontWeight: FontWeight.w800,
+              color: isDark ? Colors.white38 : Colors.black38,
+              letterSpacing: 2,
+            ),
           ),
           const SizedBox(height: 32),
-          _DetailRow(label: 'ADDED ON', value: DateFormat('d MMM yyyy').format(DateTime.parse(doc['createdAt'])).toUpperCase(), isDark: isDark, icon: LucideIcons.calendar),
+          _DetailRow(
+            label: 'ADDED ON',
+            value: DateFormat(
+              'd MMM yyyy',
+            ).format(DateTime.parse(doc['createdAt'])).toUpperCase(),
+            isDark: isDark,
+            icon: LucideIcons.calendar,
+          ),
           const SizedBox(height: 12),
-          _DetailRow(label: 'PROJECT', value: (doc['project']?['title'] ?? 'GENERAL').toUpperCase(), isDark: isDark, icon: LucideIcons.tag),
+          _DetailRow(
+            label: 'PROJECT',
+            value: (doc['project']?['title'] ?? 'GENERAL').toUpperCase(),
+            isDark: isDark,
+            icon: LucideIcons.tag,
+          ),
           const SizedBox(height: 12),
-          _DetailRow(label: 'SECURITY', value: 'VERIFIED', isDark: isDark, icon: LucideIcons.shieldCheck, color: const Color(0xFFC5A35B)),
+          _DetailRow(
+            label: 'SECURITY',
+            value: 'VERIFIED',
+            isDark: isDark,
+            icon: LucideIcons.shieldCheck,
+            color: const Color(0xFF22C55E),
+          ),
           const SizedBox(height: 40),
           Row(
             children: [
               Expanded(
-                child: _ActionButton(label: 'SHARE', icon: LucideIcons.share2, isDark: isDark, onTap: () {}),
+                child: _ActionButton(
+                  label: 'SHARE',
+                  icon: LucideIcons.share2,
+                  isDark: isDark,
+                  onTap: () {},
+                ),
               ),
               const SizedBox(width: 16),
               Expanded(
                 child: _ActionButton(
-                  label: 'VIEW DOC', 
-                  icon: LucideIcons.eye, 
-                  isDark: isDark, 
+                  label: 'VIEW DOC',
+                  icon: LucideIcons.eye,
+                  isDark: isDark,
                   isPrimary: true,
                   onTap: () async {
                     final url = doc['fileUrl'] ?? doc['url'];
@@ -365,7 +504,13 @@ class _DetailRow extends StatelessWidget {
   final bool isDark;
   final IconData icon;
   final Color? color;
-  const _DetailRow({required this.label, required this.value, required this.isDark, required this.icon, this.color});
+  const _DetailRow({
+    required this.label,
+    required this.value,
+    required this.isDark,
+    required this.icon,
+    this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -374,19 +519,40 @@ class _DetailRow extends StatelessWidget {
       decoration: BoxDecoration(
         color: (isDark ? Colors.white : Colors.black).withOpacity(0.02),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.04)),
+        border: Border.all(
+          color: (isDark ? Colors.white : Colors.black).withOpacity(0.04),
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             children: [
-              Icon(icon, size: 16, color: color ?? (isDark ? Colors.white24 : Colors.black26)),
+              Icon(
+                icon,
+                size: 16,
+                color: color ?? (isDark ? Colors.white24 : Colors.black26),
+              ),
               const SizedBox(width: 12),
-              Text(label, style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w800, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1)),
+              Text(
+                label,
+                style: GoogleFonts.ebGaramond(
+                  fontSize: 9,
+                  fontWeight: FontWeight.w800,
+                  color: isDark ? Colors.white38 : Colors.black38,
+                  letterSpacing: 1,
+                ),
+              ),
             ],
           ),
-          Text(value, style: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.w800, color: color ?? (isDark ? Colors.white : Colors.black))),
+          Text(
+            value,
+            style: GoogleFonts.ebGaramond(
+              fontSize: 10,
+              fontWeight: FontWeight.w800,
+              color: color ?? (isDark ? Colors.white : Colors.black),
+            ),
+          ),
         ],
       ),
     );
@@ -399,7 +565,13 @@ class _ActionButton extends StatelessWidget {
   final bool isDark;
   final bool isPrimary;
   final VoidCallback onTap;
-  const _ActionButton({required this.label, required this.icon, required this.isDark, this.isPrimary = false, required this.onTap});
+  const _ActionButton({
+    required this.label,
+    required this.icon,
+    required this.isDark,
+    this.isPrimary = false,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -408,14 +580,31 @@ class _ActionButton extends StatelessWidget {
       child: ElevatedButton.icon(
         onPressed: onTap,
         icon: Icon(icon, size: 18),
-        label: Text(label, style: GoogleFonts.gelasio(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
+        label: Text(
+          label,
+          style: GoogleFonts.gelasio(
+            fontSize: 10,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 1.5,
+          ),
+        ),
         style: ElevatedButton.styleFrom(
-          backgroundColor: isPrimary ? (isDark ? Colors.white : Colors.black) : (isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF)),
-          foregroundColor: isPrimary ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white54 : Colors.black54),
+          backgroundColor: isPrimary
+              ? (isDark ? Colors.white : Colors.black)
+              : (isDark ? const Color(0xFF18181B) : Colors.white),
+          foregroundColor: isPrimary
+              ? (isDark ? Colors.black : Colors.white)
+              : (isDark ? Colors.white54 : Colors.black54),
           elevation: isPrimary ? 8 : 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
-            side: isPrimary ? BorderSide.none : BorderSide(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+            side: isPrimary
+                ? BorderSide.none
+                : BorderSide(
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      0.05,
+                    ),
+                  ),
           ),
         ),
       ),
@@ -427,7 +616,11 @@ class _IconButton extends StatelessWidget {
   final IconData icon;
   final bool isDark;
   final VoidCallback onTap;
-  const _IconButton({required this.icon, required this.isDark, required this.onTap});
+  const _IconButton({
+    required this.icon,
+    required this.isDark,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -436,11 +629,17 @@ class _IconButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+          color: isDark ? const Color(0xFF18181B) : Colors.white,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+          border: Border.all(
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.05),
+          ),
         ),
-        child: Icon(icon, color: isDark ? Colors.white54 : Colors.black54, size: 20),
+        child: Icon(
+          icon,
+          color: isDark ? Colors.white54 : Colors.black54,
+          size: 20,
+        ),
       ),
     );
   }

@@ -3,10 +3,12 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 
@@ -16,11 +18,13 @@ class CpProfileDetailsScreen extends ConsumerStatefulWidget {
   const CpProfileDetailsScreen({super.key});
 
   @override
-  ConsumerState<CpProfileDetailsScreen> createState() => _CpProfileDetailsScreenState();
+  ConsumerState<CpProfileDetailsScreen> createState() =>
+      _CpProfileDetailsScreenState();
 }
 
-class _CpProfileDetailsScreenState extends ConsumerState<CpProfileDetailsScreen> {
-  static const _purple = Color(0xFFC5A35B);
+class _CpProfileDetailsScreenState
+    extends ConsumerState<CpProfileDetailsScreen> {
+  static const _purple = Color(0xFF9333EA);
 
   final _name = TextEditingController();
   final _email = TextEditingController();
@@ -109,6 +113,17 @@ class _CpProfileDetailsScreenState extends ConsumerState<CpProfileDetailsScreen>
   }
 
   Future<void> _save() async {
+    final vErr =
+        Validators.nameError(_name.text, field: 'full name') ??
+        Validators.phoneError(_phone.text);
+    if (vErr != null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(vErr), backgroundColor: Colors.red.shade700),
+        );
+      }
+      return;
+    }
     setState(() => _saving = true);
     try {
       final trimmed = _name.text.trim();
@@ -133,17 +148,34 @@ class _CpProfileDetailsScreenState extends ConsumerState<CpProfileDetailsScreen>
         if (mounted) {
           setState(() => _editing = false);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Profile updated successfully')),
+            const SnackBar(
+              backgroundColor: Color(0xFF10B981),
+              content: Text('Profile updated successfully'),
+            ),
           );
         }
       } else {
-        final msg = res.data is Map ? (res.data as Map)['message']?.toString() : null;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg ?? 'Update failed')));
+        final msg = res.data is Map
+            ? (res.data as Map)['message']?.toString()
+            : null;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text(msg ?? 'Update failed'),
+          ),
+        );
       }
     } on DioException catch (e) {
       if (mounted) {
-        final m = e.response?.data is Map ? (e.response!.data as Map)['message']?.toString() : null;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m ?? e.message ?? 'Network error')));
+        final m = e.response?.data is Map
+            ? (e.response!.data as Map)['message']?.toString()
+            : null;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text(m ?? e.message ?? 'Network error'),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -163,7 +195,10 @@ class _CpProfileDetailsScreenState extends ConsumerState<CpProfileDetailsScreen>
     if (len > 2 * 1024 * 1024) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('File too large (max 2MB)')),
+          const SnackBar(
+            backgroundColor: Color(0xFFE24B4A),
+            content: Text('File too large (max 2MB)'),
+          ),
         );
       }
       return;
@@ -180,31 +215,53 @@ class _CpProfileDetailsScreenState extends ConsumerState<CpProfileDetailsScreen>
       if (newUrl == null || newUrl.isEmpty) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Upload failed')),
+            const SnackBar(
+              backgroundColor: Color(0xFFE24B4A),
+              content: Text('Upload failed'),
+            ),
           );
         }
         return;
       }
-      final patch = await ref.read(apiClientProvider).updateMe({'avatarUrl': newUrl});
+      final patch = await ref.read(apiClientProvider).updateMe({
+        'avatarUrl': newUrl,
+      });
       final ok = patch.data is Map && (patch.data as Map)['status'] == true;
       if (ok) {
         setState(() => _avatarUrl = newUrl);
         await ref.read(authProvider.notifier).fetchMe();
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Profile photo updated')),
+            const SnackBar(
+              backgroundColor: Color(0xFF10B981),
+              content: Text('Profile photo updated'),
+            ),
           );
         }
       } else {
-        final msg = patch.data is Map ? (patch.data as Map)['message']?.toString() : null;
+        final msg = patch.data is Map
+            ? (patch.data as Map)['message']?.toString()
+            : null;
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg ?? 'Update failed')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: const Color(0xFFE24B4A),
+              content: Text(msg ?? 'Update failed'),
+            ),
+          );
         }
       }
     } on DioException catch (e) {
       if (mounted) {
-        final m = e.response?.data is Map ? (e.response!.data as Map)['message']?.toString() : null;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m ?? 'Upload failed')));
+        final m = e.response?.data is Map
+            ? (e.response!.data as Map)['message']?.toString()
+            : null;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text(m ?? 'Upload failed'),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _uploadingAvatar = false);
@@ -214,11 +271,13 @@ class _CpProfileDetailsScreenState extends ConsumerState<CpProfileDetailsScreen>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
-    final border = isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06);
+    final bg = isDark ? Colors.black : Colors.white;
+    final textPrimary = isDark ? Colors.white : Colors.black;
+    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final border = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.black.withValues(alpha: 0.06);
 
     if (_loading) {
       return Scaffold(
@@ -252,6 +311,8 @@ class _CpProfileDetailsScreenState extends ConsumerState<CpProfileDetailsScreen>
                       label: 'FULL NAME',
                       controller: _name,
                       icon: LucideIcons.user,
+                      keyboardType: TextInputType.name,
+                      inputFormatters: Validators.nameFormatters,
                       textPrimary: textPrimary,
                       muted: muted,
                       isDark: isDark,
@@ -263,6 +324,7 @@ class _CpProfileDetailsScreenState extends ConsumerState<CpProfileDetailsScreen>
                       controller: _email,
                       icon: LucideIcons.mail,
                       keyboardType: TextInputType.emailAddress,
+                      inputFormatters: Validators.emailFormatters,
                       textPrimary: textPrimary,
                       muted: muted,
                       isDark: isDark,
@@ -274,6 +336,7 @@ class _CpProfileDetailsScreenState extends ConsumerState<CpProfileDetailsScreen>
                       controller: _phone,
                       icon: LucideIcons.phone,
                       keyboardType: TextInputType.phone,
+                      inputFormatters: Validators.phoneFormatters,
                       textPrimary: textPrimary,
                       muted: muted,
                       isDark: isDark,
@@ -327,7 +390,9 @@ class _CpProfileDetailsScreenState extends ConsumerState<CpProfileDetailsScreen>
             color: card,
             borderRadius: BorderRadius.circular(10),
             child: InkWell(
-              onTap: () => context.canPop() ? context.pop() : context.go('/cp/dashboard'),
+              onTap: () => context.canPop()
+                  ? context.pop()
+                  : context.go('/cp/dashboard'),
               borderRadius: BorderRadius.circular(10),
               child: Container(
                 width: 38,
@@ -337,7 +402,11 @@ class _CpProfileDetailsScreenState extends ConsumerState<CpProfileDetailsScreen>
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(color: border),
                 ),
-                child: Icon(LucideIcons.arrowLeft, size: 18, color: textPrimary),
+                child: Icon(
+                  LucideIcons.arrowLeft,
+                  size: 18,
+                  color: textPrimary,
+                ),
               ),
             ),
           ),
@@ -425,16 +494,27 @@ class _CpProfileDetailsScreenState extends ConsumerState<CpProfileDetailsScreen>
                   borderRadius: BorderRadius.circular(23),
                   child: _avatarUrl != null && _avatarUrl!.isNotEmpty
                       ? CachedNetworkImage(
-                          imageUrl: ref.read(apiClientProvider).resolveUrl(_avatarUrl!),
+                          imageUrl: ref
+                              .read(apiClientProvider)
+                              .resolveUrl(_avatarUrl!),
                           fit: BoxFit.cover,
                           alignment: Alignment.center,
                           memCacheWidth: 192,
                           memCacheHeight: 192,
                           fadeInDuration: Duration.zero,
-                          errorWidget: (_, __, ___) =>
-                              const Icon(LucideIcons.user, size: 40, color: _purple),
+                          errorWidget: (_, __, ___) => const Icon(
+                            LucideIcons.user,
+                            size: 40,
+                            color: _purple,
+                          ),
                         )
-                      : const Center(child: Icon(LucideIcons.user, size: 40, color: _purple)),
+                      : const Center(
+                          child: Icon(
+                            LucideIcons.user,
+                            size: 40,
+                            color: _purple,
+                          ),
+                        ),
                 ),
               ),
               if (_uploadingAvatar)
@@ -448,7 +528,10 @@ class _CpProfileDetailsScreenState extends ConsumerState<CpProfileDetailsScreen>
                       child: SizedBox(
                         width: 26,
                         height: 26,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
@@ -466,7 +549,11 @@ class _CpProfileDetailsScreenState extends ConsumerState<CpProfileDetailsScreen>
                       onTap: _uploadingAvatar ? null : _pickAndUploadAvatar,
                       child: const Padding(
                         padding: EdgeInsets.all(9),
-                        child: Icon(LucideIcons.camera, size: 16, color: Colors.white),
+                        child: Icon(
+                          LucideIcons.camera,
+                          size: 16,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
@@ -505,10 +592,13 @@ class _CpProfileDetailsScreenState extends ConsumerState<CpProfileDetailsScreen>
     required bool isDark,
     required Color border,
     TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
     int maxLines = 1,
   }) {
     final enabled = _editing;
-    final fillColor = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.black.withValues(alpha: 0.02);
+    final fillColor = isDark
+        ? Colors.white.withValues(alpha: 0.03)
+        : Colors.black.withValues(alpha: 0.02);
     final borderColor = enabled ? _purple.withValues(alpha: 0.5) : border;
 
     return Column(
@@ -530,20 +620,31 @@ class _CpProfileDetailsScreenState extends ConsumerState<CpProfileDetailsScreen>
           controller: controller,
           enabled: enabled,
           keyboardType: keyboardType,
+          inputFormatters: inputFormatters,
           maxLines: maxLines,
           style: GoogleFonts.ebGaramond(
-            fontSize: 14,
+            fontSize: 15,
             fontWeight: FontWeight.w600,
             color: enabled ? textPrimary : textPrimary.withValues(alpha: 0.8),
           ),
           decoration: InputDecoration(
             isDense: true,
             prefixIcon: Padding(
-              padding: EdgeInsets.only(left: 12, right: 8, bottom: maxLines > 1 ? (maxLines - 1) * 18.0 : 0),
+              padding: EdgeInsets.only(
+                left: 12,
+                right: 8,
+                bottom: maxLines > 1 ? (maxLines - 1) * 18.0 : 0,
+              ),
               child: Icon(icon, size: 16, color: muted),
             ),
-            prefixIconConstraints: const BoxConstraints(minWidth: 36, minHeight: 20),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 14),
+            prefixIconConstraints: const BoxConstraints(
+              minWidth: 36,
+              minHeight: 20,
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 8,
+              vertical: 14,
+            ),
             filled: true,
             fillColor: fillColor,
             border: OutlineInputBorder(
@@ -612,7 +713,10 @@ class _CpProfileDetailsScreenState extends ConsumerState<CpProfileDetailsScreen>
                     ? const SizedBox(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
                       )
                     : Text(
                         'SAVE CHANGES',

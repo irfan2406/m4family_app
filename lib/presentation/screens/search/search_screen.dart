@@ -9,6 +9,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_detail_screen.dart';
 import 'package:m4_mobile/presentation/screens/projects/guest_project_detail_screen.dart';
 
@@ -36,7 +37,10 @@ class SearchQuery {
     List<String> splitParam(dynamic v) {
       if (v == null) return const [];
       if (v is List) {
-        return v.map((e) => e.toString().trim()).where((e) => e.isNotEmpty).toList();
+        return v
+            .map((e) => e.toString().trim())
+            .where((e) => e.isNotEmpty)
+            .toList();
       }
       return v
           .toString()
@@ -66,81 +70,91 @@ class SearchQuery {
 
   @override
   int get hashCode => Object.hash(
-        query,
-        status,
-        locations.join(','),
-        budgets.join(','),
-        types.join(','),
-      );
+    query,
+    status,
+    locations.join(','),
+    budgets.join(','),
+    types.join(','),
+  );
 }
 
-/// Fetches all projects via [ApiClient.getProjects] then filters client-side,
-/// matching the web `/search` page logic exactly.
-final searchResultsProvider =
-    FutureProvider.family<List<dynamic>, SearchQuery>((ref, q) async {
-  final apiClient = ref.watch(apiClientProvider);
-  try {
-    final response = await apiClient.getProjects();
-    final ok = response.statusCode == 200 || response.statusCode == 201;
-    if (!ok) return const [];
-    final List<dynamic> projects = (response.data['data'] as List?) ?? const [];
+/// Filters the shared catalog client-side, matching the web `/search` page
+/// logic exactly.
+///
+/// Reads the cached [projectsProvider] rather than calling getProjects()
+/// directly — that endpoint returns a multi-MB payload, and this provider is a
+/// `.family`, so it was re-downloading the whole catalog on EVERY search query.
+final searchResultsProvider = FutureProvider.family<List<dynamic>, SearchQuery>(
+  (ref, q) async {
+    try {
+      final List<dynamic> projects = await ref.watch(projectsProvider.future);
 
-    final queryLc = q.query.toLowerCase();
+      final queryLc = q.query.toLowerCase();
 
-    return projects.where((p) {
-      final title = (p['title']?.toString() ?? '').toLowerCase();
-      final location =
-          (p['location']?['name']?.toString() ?? '').toLowerCase();
-      final description = (p['description']?.toString() ?? '').toLowerCase();
-      final statusVal = (p['status']?.toString() ?? '');
-      final startingPrice = (p['startingPrice']?.toString() ?? '');
-      final projectType = (p['category']?['name']?.toString() ?? '');
+      return projects.where((p) {
+        final title = (p['title']?.toString() ?? '').toLowerCase();
+        final location = (p['location']?['name']?.toString() ?? '')
+            .toLowerCase();
+        final description = (p['description']?.toString() ?? '').toLowerCase();
+        final statusVal = (p['status']?.toString() ?? '');
+        final startingPrice = (p['startingPrice']?.toString() ?? '');
+        final projectType = (p['category']?['name']?.toString() ?? '');
 
-      final matchesQuery = q.query.isEmpty ||
-          title.contains(queryLc) ||
-          location.contains(queryLc) ||
-          description.contains(queryLc);
+        final matchesQuery =
+            q.query.isEmpty ||
+            title.contains(queryLc) ||
+            location.contains(queryLc) ||
+            description.contains(queryLc);
 
-      final matchesStatus = q.status.isEmpty ||
-          statusVal.toLowerCase() == q.status.toLowerCase();
+        final matchesStatus =
+            q.status.isEmpty ||
+            statusVal.toLowerCase() == q.status.toLowerCase();
 
-      final matchesLocation = q.locations.isEmpty ||
-          q.locations.any((loc) => location.contains(loc.toLowerCase()));
+        final matchesLocation =
+            q.locations.isEmpty ||
+            q.locations.any((loc) => location.contains(loc.toLowerCase()));
 
-      final matchesBudget = q.budgets.isEmpty ||
-          q.budgets.any((budget) {
-            final priceValue = double.tryParse(
-                    startingPrice.replaceAll(RegExp(r'[^\d.]'), '')) ??
-                0;
-            switch (budget) {
-              case '< 5 Cr':
-                return priceValue < 5;
-              case '5 - 10 Cr':
-                return priceValue >= 5 && priceValue <= 10;
-              case '10 - 20 Cr':
-                return priceValue >= 10 && priceValue <= 20;
-              case '20 Cr +':
-                return priceValue > 20;
-              default:
-                return true;
-            }
-          });
+        final matchesBudget =
+            q.budgets.isEmpty ||
+            q.budgets.any((budget) {
+              final priceValue =
+                  double.tryParse(
+                    startingPrice.replaceAll(RegExp(r'[^\d.]'), ''),
+                  ) ??
+                  0;
+              switch (budget) {
+                case '< 5 Cr':
+                  return priceValue < 5;
+                case '5 - 10 Cr':
+                  return priceValue >= 5 && priceValue <= 10;
+                case '10 - 20 Cr':
+                  return priceValue >= 10 && priceValue <= 20;
+                case '20 Cr +':
+                  return priceValue > 20;
+                default:
+                  return true;
+              }
+            });
 
-      final matchesType = q.types.isEmpty ||
-          q.types.any((type) =>
-              projectType.toLowerCase().contains(type.toLowerCase()) ||
-              description.contains(type.toLowerCase()));
+        final matchesType =
+            q.types.isEmpty ||
+            q.types.any(
+              (type) =>
+                  projectType.toLowerCase().contains(type.toLowerCase()) ||
+                  description.contains(type.toLowerCase()),
+            );
 
-      return matchesQuery &&
-          matchesStatus &&
-          matchesLocation &&
-          matchesBudget &&
-          matchesType;
-    }).toList();
-  } catch (_) {
-    return const [];
-  }
-});
+        return matchesQuery &&
+            matchesStatus &&
+            matchesLocation &&
+            matchesBudget &&
+            matchesType;
+      }).toList();
+    } catch (_) {
+      return const [];
+    }
+  },
+);
 
 /// Search results screen. Reached via go_router `/search?query=...` or pushed
 /// from a parent screen (project_list / custom_views) with an `extra` Map of
@@ -203,7 +217,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         context,
         MaterialPageRoute(
           builder: (context) => GuestProjectDetailScreen(
-              projectId: projectId, projectData: project),
+            projectId: projectId,
+            projectData: project,
+          ),
         ),
       );
     }
@@ -212,19 +228,26 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
+    final bg = isDark ? Colors.black : Colors.white;
+    final textPrimary = isDark ? Colors.white : Colors.black;
+    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
 
     final resultsAsync = ref.watch(searchResultsProvider(_query));
     final apiClient = ref.read(apiClientProvider);
-    final count = resultsAsync.maybeWhen(data: (d) => d.length, orElse: () => 0);
+    final count = resultsAsync.maybeWhen(
+      data: (d) => d.length,
+      orElse: () => 0,
+    );
 
-    final summaryTags = [..._query.locations, ..._query.budgets, ..._query.types];
+    final summaryTags = [
+      ..._query.locations,
+      ..._query.budgets,
+      ..._query.types,
+    ];
 
     return Scaffold(
       backgroundColor: bg,
@@ -254,8 +277,11 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(color: border),
                           ),
-                          child: Icon(LucideIcons.arrowLeft,
-                              color: textPrimary, size: 22),
+                          child: Icon(
+                            LucideIcons.arrowLeft,
+                            color: textPrimary,
+                            size: 22,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -315,16 +341,18 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                         if (_query.status.isNotEmpty)
                           _FilterBadge(
                             text: _query.status,
-                            background: const Color(0xFFC5A35B),
+                            background: const Color(0xFFF59E0B),
                             foreground: Colors.black,
-                            border: const Color(0xFFC5A35B),
+                            border: const Color(0xFFF59E0B),
                           ),
-                        ...summaryTags.map((tag) => _FilterBadge(
-                              text: tag,
-                              background: card,
-                              foreground: muted,
-                              border: border,
-                            )),
+                        ...summaryTags.map(
+                          (tag) => _FilterBadge(
+                            text: tag,
+                            background: card,
+                            foreground: muted,
+                            border: border,
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 32),
@@ -332,7 +360,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
                   // ── Loading / Results / Empty ──────────────────────────
                   resultsAsync.when(
-                    loading: () => _LoadingSkeletons(card: card, border: border),
+                    loading: () =>
+                        _LoadingSkeletons(card: card, border: border),
                     error: (e, s) => _EmptyState(
                       textPrimary: textPrimary,
                       muted: muted,
@@ -352,23 +381,23 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                         children: [
                           for (int i = 0; i < results.length; i++) ...[
                             _ResultCard(
-                              project: results[i],
-                              apiClient: apiClient,
-                              textPrimary: textPrimary,
-                              muted: muted,
-                              border: border,
-                              onTap: () => _openProject(context, results[i]),
-                            )
+                                  project: results[i],
+                                  apiClient: apiClient,
+                                  textPrimary: textPrimary,
+                                  muted: muted,
+                                  border: border,
+                                  onTap: () =>
+                                      _openProject(context, results[i]),
+                                )
                                 .animate()
-                                .fadeIn(
-                                    duration: 400.ms,
-                                    delay: (i * 100).ms)
+                                .fadeIn(duration: 400.ms, delay: (i * 100).ms)
                                 .moveY(
-                                    begin: 20,
-                                    end: 0,
-                                    duration: 400.ms,
-                                    delay: (i * 100).ms,
-                                    curve: Curves.easeOut),
+                                  begin: 20,
+                                  end: 0,
+                                  duration: 400.ms,
+                                  delay: (i * 100).ms,
+                                  curve: Curves.easeOut,
+                                ),
                             if (i != results.length - 1)
                               const SizedBox(height: 24),
                           ],
@@ -437,18 +466,22 @@ class _LoadingSkeletons extends StatelessWidget {
       children: List.generate(3, (i) {
         return Padding(
           padding: EdgeInsets.only(bottom: i == 2 ? 0 : 24),
-          child: Container(
-            height: 256,
-            decoration: BoxDecoration(
-              color: Color.alphaBlend(accent.withValues(alpha: 0.02), card),
-              borderRadius: BorderRadius.circular(32),
-              border: Border.all(color: border),
-            ),
-          )
-              .animate(onPlay: (c) => c.repeat(reverse: true))
-              .fadeIn(duration: 700.ms)
-              .then()
-              .fade(begin: 1, end: 0.4, duration: 700.ms),
+          child:
+              Container(
+                    height: 256,
+                    decoration: BoxDecoration(
+                      color: Color.alphaBlend(
+                        accent.withValues(alpha: 0.02),
+                        card,
+                      ),
+                      borderRadius: BorderRadius.circular(32),
+                      border: Border.all(color: border),
+                    ),
+                  )
+                  .animate(onPlay: (c) => c.repeat(reverse: true))
+                  .fadeIn(duration: 700.ms)
+                  .then()
+                  .fade(begin: 1, end: 0.4, duration: 700.ms),
         );
       }),
     );
@@ -476,7 +509,8 @@ class _ResultCard extends StatelessWidget {
   String _resolveImage() {
     final images = project['images'] as List?;
     final heroImages = project['heroImages'] as List?;
-    final raw = project['heroImage']?.toString() ??
+    final raw =
+        project['heroImage']?.toString() ??
         ((heroImages != null && heroImages.isNotEmpty)
             ? heroImages[0].toString()
             : null) ??
@@ -490,11 +524,13 @@ class _ResultCard extends StatelessWidget {
     final title = project['title']?.toString() ?? 'M4 PROJECT';
     final status = project['status']?.toString() ?? '';
     final locationFull = project['location']?['name']?.toString() ?? '';
-    final locationShort =
-        locationFull.split(',').first.trim().isEmpty ? 'N/A' : locationFull.split(',').first.trim();
+    final locationShort = locationFull.split(',').first.trim().isEmpty
+        ? 'N/A'
+        : locationFull.split(',').first.trim();
     final startingPrice = project['startingPrice']?.toString() ?? '';
     final showPrice =
-        startingPrice.isNotEmpty && !startingPrice.toLowerCase().contains('request');
+        startingPrice.isNotEmpty &&
+        !startingPrice.toLowerCase().contains('request');
 
     return _PressableScale(
       onTap: onTap,
@@ -552,12 +588,15 @@ class _ResultCard extends StatelessWidget {
                     filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 6),
+                        horizontal: 16,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.2)),
+                          color: Colors.white.withValues(alpha: 0.2),
+                        ),
                       ),
                       child: Text(
                         status.toUpperCase(),
@@ -602,9 +641,11 @@ class _ResultCard extends StatelessWidget {
                         Expanded(
                           child: Row(
                             children: [
-                              Icon(LucideIcons.mapPin,
-                                  size: 14,
-                                  color: Colors.white.withValues(alpha: 0.7)),
+                              Icon(
+                                LucideIcons.mapPin,
+                                size: 14,
+                                color: Colors.white.withValues(alpha: 0.7),
+                              ),
                               const SizedBox(width: 6),
                               Expanded(
                                 child: Text(
@@ -627,17 +668,18 @@ class _ResultCard extends StatelessWidget {
                           ClipRRect(
                             borderRadius: BorderRadius.circular(12),
                             child: BackdropFilter(
-                              filter:
-                                  ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                              filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 8),
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
                                 decoration: BoxDecoration(
                                   color: Colors.white.withValues(alpha: 0.12),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
-                                      color: Colors.white
-                                          .withValues(alpha: 0.2)),
+                                    color: Colors.white.withValues(alpha: 0.2),
+                                  ),
                                 ),
                                 child: Text(
                                   startingPrice,

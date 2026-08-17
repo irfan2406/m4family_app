@@ -8,6 +8,7 @@ import 'dart:ui';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:m4_mobile/core/providers/theme_provider.dart';
 import 'package:m4_mobile/presentation/widgets/main_shell.dart';
+import 'package:m4_mobile/presentation/widgets/guest_main_shell.dart';
 
 class GuestSidebarMenu extends ConsumerStatefulWidget {
   const GuestSidebarMenu({super.key});
@@ -20,19 +21,134 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
   bool _isContentOpen = false;
   bool _isConnectOpen = false;
 
+  // Confirm before leaving — a Yes/No popup so a stray tap can't exit the app.
+  Future<void> _confirmExit() async {
+    final isDark = ref.read(themeProvider) == ThemeMode.dark;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      barrierDismissible: true,
+      builder: (dialogCtx) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 40),
+        child: Container(
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: isDark ? const Color(0xFF15171C) : Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isDark
+                  ? Colors.white.withOpacity(0.08)
+                  : Colors.black.withOpacity(0.06),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  LucideIcons.logOut,
+                  color: Colors.red,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Exit App',
+                style: GoogleFonts.gelasio(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w700,
+                  color: isDark ? Colors.white : const Color(0xFF111827),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Are you sure you want to exit the app?',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.ebGaramond(
+                  fontSize: 13,
+                  color: isDark ? Colors.white60 : Colors.grey[600],
+                ),
+              ),
+              const SizedBox(height: 22),
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(dialogCtx).pop(false),
+                      child: Container(
+                        height: 48,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.white.withOpacity(0.06)
+                              : const Color(0xFFF3F4F6),
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: isDark
+                                ? Colors.white.withOpacity(0.08)
+                                : Colors.black.withOpacity(0.06),
+                          ),
+                        ),
+                        child: Text(
+                          'NO',
+                          style: GoogleFonts.ebGaramond(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1.2,
+                            color: isDark ? Colors.white70 : Colors.grey[800],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(dialogCtx).pop(true),
+                      child: Container(
+                        height: 48,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Text(
+                          'YES',
+                          style: GoogleFonts.ebGaramond(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1.2,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    if (confirmed != true) return;
+    if (!mounted) return;
+    context.go('/onboarding');
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeMode = ref.watch(themeProvider);
-    // The guest drawer is GREEN glass in LIGHT mode (Figma frame 2 — unchanged)
-    // and NAVY glass in DARK mode, so it darkens with the rest of the app.
-    // `realIsDark` drives the panel tint + theme toggle; `isDark` (forced true)
-    // keeps text/icons cream-on-dark for both tints.
-    final realIsDark = themeMode == ThemeMode.dark;
-    const isDark = true;
+    final isDark = themeMode == ThemeMode.dark;
 
-    return Theme(
-      data: realIsDark ? M4Theme.darkThemeNavy : M4Theme.darkTheme,
-      child: Drawer(
+    return Drawer(
       backgroundColor: Colors.transparent,
       width: MediaQuery.of(context).size.width * 0.85,
       child: Stack(
@@ -41,13 +157,15 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
             filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
             child: Container(
               decoration: BoxDecoration(
-                // Frosted glass: green tint in LIGHT mode, deep navy tint in
-                // DARK mode.
-                color: realIsDark
-                    ? M4Theme.navyBackground.withOpacity(0.62)
-                    : M4Theme.deepGreen.withOpacity(0.6),
+                color: isDark
+                    ? Colors.black.withOpacity(0.8)
+                    : Colors.white.withOpacity(0.8),
                 border: Border(
-                  right: BorderSide(color: M4Theme.gold.withOpacity(0.18)),
+                  right: BorderSide(
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      0.05,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -61,7 +179,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                   child: Text(
                     'MENU',
                     style: GoogleFonts.gelasio(
-                      color: (isDark ? Colors.white : M4Theme.deepGreen).withOpacity(
+                      color: (isDark ? Colors.white : Colors.black).withOpacity(
                         0.68,
                       ),
                       fontSize: 10,
@@ -209,7 +327,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                         child: Text(
                           'QUICK ACTIONS',
                           style: GoogleFonts.gelasio(
-                            color: (isDark ? Colors.white : M4Theme.deepGreen)
+                            color: (isDark ? Colors.white : Colors.black)
                                 .withOpacity(0.6),
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
@@ -221,7 +339,14 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                       _QuickActionItem(
                         label: 'Enquiry',
                         icon: LucideIcons.mail,
-                        onTap: () => context.push('/contact'),
+                        // Go to the home page and scroll straight to its
+                        // "Register Your Interest" form.
+                        onTap: () {
+                          Navigator.of(context).pop(); // close the menu drawer
+                          ref.read(guestNavigationProvider.notifier).state = 0;
+                          ref.read(scrollToRegisterProvider.notifier).state++;
+                          context.go('/home');
+                        },
                       ),
                       _QuickActionItem(
                         label: 'Call',
@@ -256,7 +381,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                       Text(
                         'THEME MODE',
                         style: GoogleFonts.ebGaramond(
-                          color: isDark ? Colors.white70 : M4Theme.deepGreen,
+                          color: isDark ? Colors.white70 : Colors.black87,
                           fontSize: 11,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1,
@@ -267,23 +392,23 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                           ref
                               .read(themeProvider.notifier)
                               .setTheme(
-                                realIsDark ? ThemeMode.light : ThemeMode.dark,
+                                isDark ? ThemeMode.light : ThemeMode.dark,
                               );
                         },
                         child: Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: (isDark ? Colors.white : M4Theme.deepGreen)
+                            color: (isDark ? Colors.white : Colors.black)
                                 .withOpacity(0.08),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: (isDark ? Colors.white : M4Theme.deepGreen)
+                              color: (isDark ? Colors.white : Colors.black)
                                   .withOpacity(0.1),
                             ),
                           ),
                           child: Icon(
-                            realIsDark ? LucideIcons.sparkles : LucideIcons.moon,
-                            color: Colors.white,
+                            isDark ? LucideIcons.sparkles : LucideIcons.moon,
+                            color: isDark ? Colors.white : Colors.black,
                             size: 18,
                           ),
                         ),
@@ -297,26 +422,26 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                     width: double.infinity,
                     height: 60,
                     decoration: BoxDecoration(
-                      color: M4Theme.coral.withOpacity(0.14),
+                      color: Colors.red.withOpacity(0.12),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: M4Theme.coral.withOpacity(0.35)),
+                      border: Border.all(color: Colors.red.withOpacity(0.1)),
                     ),
                     child: InkWell(
-                      onTap: () => context.go('/onboarding'),
+                      onTap: _confirmExit,
                       borderRadius: BorderRadius.circular(20),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Icon(
                             LucideIcons.logOut,
-                            color: M4Theme.coral,
+                            color: Colors.red,
                             size: 20,
                           ),
                           const SizedBox(width: 12),
                           Text(
                             'EXIT APP',
                             style: GoogleFonts.ebGaramond(
-                              color: M4Theme.coral,
+                              color: Colors.red,
                               fontWeight: FontWeight.w900,
                               fontSize: 13,
                               letterSpacing: 1,
@@ -331,7 +456,6 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
             ),
           ),
         ],
-      ),
       ),
     );
   }
@@ -352,56 +476,41 @@ class _MenuItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    // Reference: no gold. The active item gets a bright vertical accent bar on
-    // the far left (white on the green theme, deep-green on the cream theme), a
-    // subtly-lifted frosted icon box, and a full-strength icon + label.
-    final accent = isDark ? Colors.white : M4Theme.deepGreen;
-    return Stack(
-      alignment: Alignment.centerLeft,
-      children: [
-        ListTile(
-          onTap: onTap,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 14,
-            vertical: 2,
-          ),
-          leading: Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: accent.withOpacity(isActive ? 0.16 : 0.06),
-              borderRadius: BorderRadius.circular(12),
-              border: isActive
-                  ? Border.all(color: accent.withOpacity(0.25))
-                  : null,
-            ),
-            child: Icon(
-              icon,
-              color: isActive ? accent : accent.withOpacity(0.45),
-              size: 20,
-            ),
-          ),
-          title: Text(
-            label,
-            style: GoogleFonts.ebGaramond(
-              color: isActive ? accent : accent.withOpacity(0.75),
-              fontSize: 15,
-              fontWeight: isActive ? FontWeight.w800 : FontWeight.w700,
-              letterSpacing: -0.2,
-            ),
-          ),
+    return ListTile(
+      onTap: onTap,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+      leading: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: isActive
+              ? (isDark ? Colors.white : Colors.black).withOpacity(0.15)
+              : (isDark ? Colors.white : Colors.black).withOpacity(0.08),
+          borderRadius: BorderRadius.circular(12),
         ),
-        // Far-left active accent bar (does not shift the row — overlaid).
-        if (isActive)
-          Container(
-            width: 3,
-            height: 26,
-            decoration: BoxDecoration(
-              color: accent,
-              borderRadius: BorderRadius.circular(3),
-            ),
-          ),
-      ],
+        child: Icon(
+          icon,
+          color: isActive
+              ? (isDark ? Colors.white : Colors.black)
+              : (isDark
+                    ? Colors.white.withOpacity(0.4)
+                    : Colors.black.withOpacity(0.5)),
+          size: 20,
+        ),
+      ),
+      title: Text(
+        label,
+        style: GoogleFonts.ebGaramond(
+          color: isActive
+              ? (isDark ? Colors.white : Colors.black)
+              : (isDark
+                    ? Colors.white.withOpacity(0.7)
+                    : Colors.black.withOpacity(0.8)),
+          fontSize: 15,
+          fontWeight: isActive ? FontWeight.w800 : FontWeight.w700,
+          letterSpacing: -0.2,
+        ),
+      ),
     );
   }
 }
@@ -436,24 +545,24 @@ class _DropdownMenuItem extends StatelessWidget {
             height: 44,
             decoration: BoxDecoration(
               color: isOpen
-                  ? (isDark ? Colors.white : M4Theme.deepGreen).withOpacity(0.15)
-                  : (isDark ? Colors.white : M4Theme.deepGreen).withOpacity(0.08),
+                  ? (isDark ? Colors.white : Colors.black).withOpacity(0.15)
+                  : (isDark ? Colors.white : Colors.black).withOpacity(0.08),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
               icon,
               color: isOpen
-                  ? (isDark ? Colors.white : M4Theme.deepGreen)
+                  ? (isDark ? Colors.white : Colors.black)
                   : (isDark
                         ? Colors.white.withOpacity(0.4)
-                        : M4Theme.deepGreen.withOpacity(0.5)),
+                        : Colors.black.withOpacity(0.5)),
               size: 20,
             ),
           ),
           title: Text(
             label,
             style: GoogleFonts.ebGaramond(
-              color: (isDark ? Colors.white : M4Theme.deepGreen).withOpacity(
+              color: (isDark ? Colors.white : Colors.black).withOpacity(
                 isOpen ? 1.0 : 0.8,
               ),
               fontSize: 15,
@@ -463,7 +572,7 @@ class _DropdownMenuItem extends StatelessWidget {
           ),
           trailing: Icon(
             isOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown,
-            color: isDark ? Colors.white30 : M4Theme.deepGreen.withOpacity(0.35),
+            color: isDark ? Colors.white30 : Colors.black26,
             size: 18,
           ),
         ),
@@ -497,12 +606,12 @@ class _SubItem extends StatelessWidget {
           icon,
           size: 16,
           color:
-              color ?? (isDark ? Colors.white : M4Theme.deepGreen).withOpacity(0.6),
+              color ?? (isDark ? Colors.white : Colors.black).withOpacity(0.6),
         ),
         title: Text(
           label,
           style: GoogleFonts.ebGaramond(
-            color: (isDark ? Colors.white : M4Theme.deepGreen).withOpacity(0.85),
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.85),
             fontSize: 13,
             fontWeight: FontWeight.w700,
           ),
@@ -532,19 +641,19 @@ class _QuickActionItem extends StatelessWidget {
         width: 44,
         height: 44,
         decoration: BoxDecoration(
-          color: (isDark ? Colors.white : M4Theme.deepGreen).withOpacity(0.08),
+          color: (isDark ? Colors.white : Colors.black).withOpacity(0.08),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Icon(
           icon,
-          color: (isDark ? Colors.white : M4Theme.deepGreen).withOpacity(0.5),
+          color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
           size: 18,
         ),
       ),
       title: Text(
         label,
         style: GoogleFonts.ebGaramond(
-          color: (isDark ? Colors.white : M4Theme.deepGreen).withOpacity(0.8),
+          color: (isDark ? Colors.white : Colors.black).withOpacity(0.8),
           fontSize: 15,
           fontWeight: FontWeight.w700,
           letterSpacing: -0.2,

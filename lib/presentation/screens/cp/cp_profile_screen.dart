@@ -131,7 +131,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                     center: const Alignment(-0.8, -1),
                     radius: 1.2,
                     colors: [
-                      scheme.primary.withValues(alpha: 0.06),
+                      const Color(0xFF3B6FB5).withValues(alpha: 0.10),
                       Colors.transparent,
                     ],
                   ),
@@ -146,7 +146,6 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         'MY PROFILE',
@@ -157,6 +156,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                           letterSpacing: -0.5,
                         ),
                       ),
+                      const Spacer(),
                       Material(
                         color: scheme.surfaceContainerHighest.withValues(
                           alpha: 0.85,
@@ -366,11 +366,9 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(40),
-        border: Border.all(
-          color: scheme.outlineVariant.withValues(alpha: 0.45),
-        ),
-        color: scheme.surfaceContainerHighest.withValues(alpha: 0.4),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.6)),
+        color: scheme.surfaceContainerHighest,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(
@@ -385,7 +383,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(32),
+            padding: const EdgeInsets.all(22),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -393,8 +391,8 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                   clipBehavior: Clip.none,
                   children: [
                     Container(
-                      width: 116,
-                      height: 116,
+                      width: 96,
+                      height: 96,
                       padding: const EdgeInsets.all(2),
                       decoration: BoxDecoration(
                         // Web parity: `rounded-full` — circular, not squared.
@@ -434,9 +432,10 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.gelasio(
-                          fontSize: 21,
+                          fontSize: 18,
                           fontWeight: FontWeight.w700,
                           color: scheme.onSurface,
+                          height: 1.1,
                           letterSpacing: 0.2,
                         ),
                       ),
@@ -448,7 +447,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.ebGaramond(
-                          fontSize: 10,
+                          fontSize: 13,
                           fontWeight: FontWeight.w700,
                           color: scheme.primary.withValues(alpha: 0.8),
                           letterSpacing: 1.2,
@@ -460,7 +459,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.ebGaramond(
-                          fontSize: 9,
+                          fontSize: 12,
                           fontWeight: FontWeight.w700,
                           color: scheme.onSurface.withValues(alpha: 0.6),
                           letterSpacing: 0.2,
@@ -494,7 +493,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                               child: Text(
                                 'BORN: $born',
                                 style: GoogleFonts.ebGaramond(
-                                  fontSize: 10,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.w700,
                                   color: scheme.primary,
                                   letterSpacing: 0.8,
@@ -526,7 +525,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
       child: Text(
         text.toUpperCase(),
         style: GoogleFonts.ebGaramond(
-          fontSize: 8,
+          fontSize: 10,
           fontWeight: FontWeight.w900,
           color: scheme.primary,
           letterSpacing: 0.6,
@@ -621,7 +620,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
             border: Border.all(
               color: scheme.outlineVariant.withValues(alpha: 0.35),
             ),
-            color: scheme.onSurface.withValues(alpha: 0.03),
+            color: scheme.surfaceContainerHighest,
           ),
           child: Row(
             children: [

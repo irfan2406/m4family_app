@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
@@ -43,30 +45,12 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
   }
 
   // Inline field validators (shown as red text under each field).
-  String? _validateName(String? v) {
-    final s = (v ?? '').trim();
-    if (s.isEmpty) return 'Full name is required';
-    if (s.length < 2) return 'Please enter a valid name';
-    return null;
-  }
+  String? _validateName(String? v) =>
+      Validators.nameError(v, field: 'full name');
 
-  String? _validateEmail(String? v) {
-    final s = (v ?? '').trim();
-    if (s.isEmpty) return 'Email is required';
-    if (!RegExp(r'^[\w.+-]+@[\w-]+\.[\w.-]+$').hasMatch(s)) {
-      return 'Enter a valid email address';
-    }
-    return null;
-  }
+  String? _validateEmail(String? v) => Validators.emailError(v);
 
-  String? _validatePhone(String? v) {
-    final s = (v ?? '').trim();
-    if (s.isEmpty) return 'Phone number is required';
-    if (s.replaceAll(RegExp(r'\D'), '').length < 10) {
-      return 'Enter a valid 10-digit phone number';
-    }
-    return null;
-  }
+  String? _validatePhone(String? v) => Validators.phoneError(v);
 
   Future<void> _submit() async {
     final name = _name.text.trim();
@@ -88,8 +72,11 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
         'name': name,
         'email': email,
         'phone': phone,
-        'interest': 'Channel Partner Interest',
-        'source': 'cp inquiry',
+        // Server-side enums: interest = Buying | Selling | Site Visit | Video
+        // Call (case-sensitive); source = online | cp | walk-in | referral |
+        // other. Anything else is rejected with a 400.
+        'interest': 'Buying',
+        'source': 'cp',
         'notes': _message.text.trim(),
       });
       if (!mounted) return;
@@ -99,12 +86,16 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
           res.data['status'] == true;
       if (ok) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Interest registered successfully!')),
+          const SnackBar(
+            backgroundColor: Color(0xFF10B981),
+            content: Text('Interest registered successfully!'),
+          ),
         );
         context.pop();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
             content: Text(
               (res.data is Map ? res.data['message']?.toString() : null) ??
                   'Failed to submit',
@@ -114,9 +105,12 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('$e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text('$e'),
+          ),
+        );
       }
     } finally {
       if (mounted) setState(() => _submitting = false);
@@ -151,12 +145,12 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                   height: 40,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
+                    color: (isDark ? Colors.white : Colors.black).withValues(
                       alpha: 0.05,
                     ),
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
+                      color: (isDark ? Colors.white : Colors.black).withValues(
                         alpha: 0.1,
                       ),
                     ),
@@ -190,6 +184,8 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                     _luxuryInput(
                       'Full Name *',
                       _name,
+                      keyboardType: TextInputType.name,
+                      inputFormatters: Validators.nameFormatters,
                       validator: _validateName,
                     ),
                     const SizedBox(height: 16),
@@ -197,6 +193,7 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                       'Email *',
                       _email,
                       keyboardType: TextInputType.emailAddress,
+                      inputFormatters: Validators.emailFormatters,
                       validator: _validateEmail,
                     ),
                     const SizedBox(height: 16),
@@ -204,6 +201,7 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                       '+91 98653 21250 *',
                       _phone,
                       keyboardType: TextInputType.phone,
+                      inputFormatters: Validators.phoneFormatters,
                       validator: _validatePhone,
                     ),
                     const SizedBox(height: 16),
@@ -302,15 +300,16 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
     TextEditingController controller, {
     bool isLong = false,
     TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
     String? Function(String?)? validator,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
+        color: isDark ? Colors.black : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.12),
+          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.12),
         ),
         boxShadow: isDark
             ? null
@@ -325,6 +324,7 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
       child: TextFormField(
         controller: controller,
         keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
         maxLines: isLong ? 5 : 1,
         validator: validator,
         style: TextStyle(color: isDark ? Colors.white : Colors.black),
@@ -335,7 +335,7 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
             fontSize: 13,
           ),
           errorStyle: GoogleFonts.ebGaramond(
-            color: Color(0xFFC5A35B),
+            color: Colors.redAccent,
             fontSize: 11,
             fontWeight: FontWeight.w600,
           ),

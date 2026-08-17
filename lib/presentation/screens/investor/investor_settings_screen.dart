@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 
 /// Investor settings — parity with web `app/investor/settings/page.tsx`
@@ -13,11 +15,13 @@ class InvestorSettingsScreen extends ConsumerStatefulWidget {
   const InvestorSettingsScreen({super.key});
 
   @override
-  ConsumerState<InvestorSettingsScreen> createState() => _InvestorSettingsScreenState();
+  ConsumerState<InvestorSettingsScreen> createState() =>
+      _InvestorSettingsScreenState();
 }
 
-class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen> {
-  static const _gold = Color(0xFFC5A35B);
+class _InvestorSettingsScreenState
+    extends ConsumerState<InvestorSettingsScreen> {
+  static const _gold = Color(0xFFFFD700);
 
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
@@ -71,8 +75,12 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
         final prefBody = prefRes.data;
         if (prefBody is Map && prefBody['data'] is Map) {
           final prefs = Map<String, dynamic>.from(prefBody['data'] as Map);
-          _biometric = prefs['biometricAccess'] ?? prefs['biometric'] ?? _biometric;
-          _notifications = prefs['pushNotifications'] ?? prefs['notifications'] ?? _notifications;
+          _biometric =
+              prefs['biometricAccess'] ?? prefs['biometric'] ?? _biometric;
+          _notifications =
+              prefs['pushNotifications'] ??
+              prefs['notifications'] ??
+              _notifications;
           _privacyMode = prefs['privacyMode'] ?? _privacyMode;
         }
       } catch (_) {}
@@ -97,6 +105,15 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
 
   Future<void> _save() async {
     if (_saving) return;
+    final vErr =
+        Validators.nameError(_nameController.text, field: 'full name') ??
+        Validators.phoneError(_phoneController.text);
+    if (vErr != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(vErr), backgroundColor: Colors.red.shade700),
+      );
+      return;
+    }
     setState(() => _saving = true);
     final apiClient = ref.read(apiClientProvider);
     bool ok = true;
@@ -123,7 +140,9 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
       SnackBar(
         backgroundColor: ok ? _gold : Colors.red,
         content: Text(
-          ok ? 'Preferences updated securely' : 'Could not save changes. Try again.',
+          ok
+              ? 'Preferences updated securely'
+              : 'Could not save changes. Try again.',
           style: GoogleFonts.ebGaramond(
             fontSize: 12,
             fontWeight: FontWeight.w700,
@@ -138,10 +157,18 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
     final go = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text('Sign out everywhere', style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w700)),
-        content: const Text('Sign out of your investor account on all devices?'),
+        title: Text(
+          'Sign out everywhere',
+          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w700),
+        ),
+        content: const Text(
+          'Sign out of your investor account on all devices?',
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
             child: const Text('Sign out', style: TextStyle(color: Colors.red)),
@@ -163,14 +190,16 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
+    final bg = isDark ? Colors.black : Colors.white;
+    final textPrimary = isDark ? Colors.white : Colors.black;
     final muted = textPrimary.withValues(alpha: 0.5);
 
     if (_loading) {
       return Scaffold(
         backgroundColor: bg,
-        body: const Center(child: CircularProgressIndicator(color: M4Theme.premiumBlue)),
+        body: const Center(
+          child: CircularProgressIndicator(color: M4Theme.premiumBlue),
+        ),
       );
     }
 
@@ -189,7 +218,11 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
                   Text(
                     _error!,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.ebGaramond(fontSize: 13, fontWeight: FontWeight.w600, color: muted),
+                    style: GoogleFonts.ebGaramond(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: muted,
+                    ),
                   ),
                   const SizedBox(height: 20),
                   TextButton(
@@ -228,14 +261,20 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
                     _sectionLabel('PERSONAL DETAIL', muted),
                     const SizedBox(height: 16),
                     _field(
-                      isDark, textPrimary, muted,
+                      isDark,
+                      textPrimary,
+                      muted,
                       label: 'FULL NAME',
                       icon: LucideIcons.user,
                       controller: _nameController,
+                      keyboardType: TextInputType.name,
+                      inputFormatters: Validators.nameFormatters,
                     ),
                     const SizedBox(height: 16),
                     _field(
-                      isDark, textPrimary, muted,
+                      isDark,
+                      textPrimary,
+                      muted,
                       label: 'EMAIL ADDRESS',
                       icon: LucideIcons.mail,
                       value: _email.isNotEmpty ? _email : 'no email provided',
@@ -244,17 +283,22 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
                     ),
                     const SizedBox(height: 16),
                     _field(
-                      isDark, textPrimary, muted,
+                      isDark,
+                      textPrimary,
+                      muted,
                       label: 'MOBILE NUMBER',
                       icon: LucideIcons.phone,
                       controller: _phoneController,
                       keyboardType: TextInputType.phone,
+                      inputFormatters: Validators.phoneFormatters,
                     ),
                     const SizedBox(height: 28),
                     _sectionLabel('SECURITY & ACCESS', muted),
                     const SizedBox(height: 16),
                     _toggleTile(
-                      isDark, textPrimary, muted,
+                      isDark,
+                      textPrimary,
+                      muted,
                       icon: LucideIcons.smartphone,
                       title: 'BIOMETRIC LOGIN',
                       subtitle: 'FACE ID / TOUCH ID',
@@ -263,7 +307,9 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
                     ),
                     const SizedBox(height: 12),
                     _toggleTile(
-                      isDark, textPrimary, muted,
+                      isDark,
+                      textPrimary,
+                      muted,
                       icon: LucideIcons.bell,
                       title: 'NOTIFICATIONS',
                       subtitle: 'PORTFOLIO & DEAL ALERTS',
@@ -272,7 +318,9 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
                     ),
                     const SizedBox(height: 12),
                     _toggleTile(
-                      isDark, textPrimary, muted,
+                      isDark,
+                      textPrimary,
+                      muted,
                       icon: LucideIcons.shield,
                       title: 'PRIVACY MODE',
                       subtitle: 'MASK SENSITIVE VALUES',
@@ -292,7 +340,9 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
   }
 
   Widget _buildHeader(bool isDark, Color textPrimary, Color muted) {
-    final border = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.06);
+    final border = (isDark ? Colors.white : Colors.black).withValues(
+      alpha: 0.06,
+    );
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(
@@ -316,7 +366,9 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: textPrimary.withValues(alpha: 0.08)),
+                  border: Border.all(
+                    color: textPrimary.withValues(alpha: 0.08),
+                  ),
                 ),
                 child: Icon(LucideIcons.chevronLeft, size: 20, color: muted),
               ),
@@ -353,7 +405,10 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
               ? const SizedBox(
                   width: 20,
                   height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2, color: M4Theme.premiumBlue),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: M4Theme.premiumBlue,
+                  ),
                 )
               : Material(
                   color: _gold,
@@ -362,7 +417,10 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
                     borderRadius: BorderRadius.circular(10),
                     onTap: _save,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 9,
+                      ),
                       child: Text(
                         'SAVE',
                         style: GoogleFonts.gelasio(
@@ -383,7 +441,12 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
   Widget _sectionLabel(String text, Color muted) {
     return Text(
       text,
-      style: GoogleFonts.gelasio(fontSize: 9, fontWeight: FontWeight.w900, color: muted, letterSpacing: 2.5),
+      style: GoogleFonts.gelasio(
+        fontSize: 9,
+        fontWeight: FontWeight.w900,
+        color: muted,
+        letterSpacing: 2.5,
+      ),
     );
   }
 
@@ -398,9 +461,12 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
     bool enabled = true,
     bool verified = false,
     TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
   }) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
-    final border = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: isDark ? 0.08 : 0.06);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final border = (isDark ? Colors.white : Colors.black).withValues(
+      alpha: isDark ? 0.08 : 0.06,
+    );
     final fieldColor = enabled ? textPrimary : muted;
 
     return Column(
@@ -408,7 +474,12 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
       children: [
         Text(
           label,
-          style: GoogleFonts.gelasio(fontSize: 9, fontWeight: FontWeight.w800, color: muted, letterSpacing: 1.5),
+          style: GoogleFonts.gelasio(
+            fontSize: 9,
+            fontWeight: FontWeight.w800,
+            color: muted,
+            letterSpacing: 1.5,
+          ),
         ),
         const SizedBox(height: 6),
         Container(
@@ -428,7 +499,12 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
                         controller: controller,
                         enabled: enabled,
                         keyboardType: keyboardType,
-                        style: GoogleFonts.ebGaramond(fontSize: 14, fontWeight: FontWeight.w600, color: fieldColor),
+                        inputFormatters: inputFormatters,
+                        style: GoogleFonts.ebGaramond(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: fieldColor,
+                        ),
                         decoration: const InputDecoration(
                           border: InputBorder.none,
                           isDense: true,
@@ -441,21 +517,33 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
                           value ?? '',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.ebGaramond(fontSize: 14, fontWeight: FontWeight.w600, color: fieldColor),
+                          style: GoogleFonts.ebGaramond(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: fieldColor,
+                          ),
                         ),
                       ),
               ),
               if (verified) ...[
                 const SizedBox(width: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(6),
                     border: Border.all(color: _gold.withValues(alpha: 0.3)),
                   ),
                   child: Text(
                     'VERIFIED',
-                    style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w800, color: _gold, letterSpacing: 1),
+                    style: GoogleFonts.ebGaramond(
+                      fontSize: 8,
+                      fontWeight: FontWeight.w800,
+                      color: _gold,
+                      letterSpacing: 1,
+                    ),
                   ),
                 ),
               ],
@@ -476,8 +564,10 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
     required bool value,
     required ValueChanged<bool> onChanged,
   }) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
-    final border = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: isDark ? 0.08 : 0.06);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final border = (isDark ? Colors.white : Colors.black).withValues(
+      alpha: isDark ? 0.08 : 0.06,
+    );
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
@@ -506,12 +596,21 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.ebGaramond(fontSize: 12, fontWeight: FontWeight.w700, color: textPrimary),
+                  style: GoogleFonts.ebGaramond(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: textPrimary,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w800, color: muted, letterSpacing: 1),
+                  style: GoogleFonts.ebGaramond(
+                    fontSize: 8,
+                    fontWeight: FontWeight.w800,
+                    color: muted,
+                    letterSpacing: 1,
+                  ),
                 ),
               ],
             ),
@@ -548,7 +647,12 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
               const SizedBox(width: 8),
               Text(
                 'SIGN OUT ON ALL DEVICES',
-                style: GoogleFonts.gelasio(fontSize: 9, fontWeight: FontWeight.w800, color: Colors.red, letterSpacing: 2),
+                style: GoogleFonts.gelasio(
+                  fontSize: 9,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.red,
+                  letterSpacing: 2,
+                ),
               ),
             ],
           ),

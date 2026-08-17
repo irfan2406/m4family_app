@@ -22,10 +22,10 @@ class CpPurgeCacheScreen extends ConsumerStatefulWidget {
 }
 
 class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
-  static const _red = Color(0xFFC65B46);
-  static const _amber = Color(0xFFC5A35B);
-  static const _green = Color(0xFFC5A35B);
-  static const _gold = Color(0xFFC5A35B);
+  static const _red = Color(0xFFEF4444);
+  static const _amber = Color(0xFFF59E0B);
+  static const _green = Color(0xFF10B981);
+  static const _gold = Color(0xFFFFD700);
 
   bool _purging = false;
   bool _done = false;
@@ -91,6 +91,7 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
       setState(() => _done = true);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          backgroundColor: const Color(0xFF10B981),
           content: Text(
             'Cache purged. The app cache has been rebuilt.',
             style: GoogleFonts.ebGaramond(fontSize: 12),
@@ -101,6 +102,7 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          backgroundColor: const Color(0xFFE24B4A),
           content: Text(
             'Purge failed: $e',
             style: GoogleFonts.ebGaramond(fontSize: 12),
@@ -121,10 +123,12 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.68);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
+    final bg = isDark ? Colors.black : Colors.white;
+    final textPrimary = isDark ? Colors.white : Colors.black;
+    final muted = (isDark ? Colors.white : Colors.black).withValues(
+      alpha: 0.68,
+    );
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -170,7 +174,9 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
           const SizedBox(height: 24),
           _sectionLabel('SCOPE OF OPERATIONS', muted),
           const SizedBox(height: 12),
-          ..._scopes.map((s) => _scopeCard(s, textPrimary, muted, card, border)),
+          ..._scopes.map(
+            (s) => _scopeCard(s, textPrimary, muted, card, border),
+          ),
           const SizedBox(height: 24),
           _sectionLabel('DIAGNOSTIC INDICATORS', muted),
           const SizedBox(height: 12),
@@ -221,7 +227,11 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: _amber.withValues(alpha: 0.25)),
             ),
-            child: const Icon(LucideIcons.alertTriangle, size: 20, color: _amber),
+            child: const Icon(
+              LucideIcons.alertTriangle,
+              size: 20,
+              color: _amber,
+            ),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -283,9 +293,7 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
               decoration: BoxDecoration(
                 color: M4Theme.premiumBlue.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(
-                  color: textPrimary.withValues(alpha: 0.08),
-                ),
+                border: Border.all(color: textPrimary.withValues(alpha: 0.08)),
               ),
               child: Icon(s.icon, size: 18, color: textPrimary),
             ),
@@ -360,14 +368,14 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
                   child: checked
                       ? const Icon(LucideIcons.check, size: 14, color: _green)
                       : (_purging
-                          ? Padding(
-                              padding: const EdgeInsets.all(4),
-                              child: CircularProgressIndicator(
-                                strokeWidth: 1.5,
-                                color: muted,
-                              ),
-                            )
-                          : null),
+                            ? Padding(
+                                padding: const EdgeInsets.all(4),
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 1.5,
+                                  color: muted,
+                                ),
+                              )
+                            : null),
                 ),
                 const SizedBox(width: 12),
                 Expanded(

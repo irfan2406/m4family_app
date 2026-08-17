@@ -25,18 +25,17 @@ class InvestorBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    // Frosted glass: translucent deep-green on green screens, translucent
-    // white on cream screens — icons on top stay crisp.
     final surface = isDark
-        ? Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.5)
-        : Colors.white.withValues(alpha: 0.6);
-    final border = (isDark ? const Color(0xFFF4EFE3) : const Color(0xFF0F2A20))
-        .withValues(alpha: 0.14);
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.white.withValues(alpha: 0.95);
+    final border = (isDark ? Colors.white : Colors.black).withValues(
+      alpha: 0.08,
+    );
 
     return SafeArea(
       top: false,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 28),
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(40),
           child: BackdropFilter(
@@ -65,7 +64,10 @@ class InvestorBottomNav extends StatelessWidget {
                     onTap: () => onTap(i),
                     borderRadius: BorderRadius.circular(14),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 10,
+                      ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
@@ -75,16 +77,22 @@ class InvestorBottomNav extends StatelessWidget {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(14),
                               color: active
-                                  ? onSurf.withValues(alpha: isDark ? 0.12 : 0.08)
+                                  ? onSurf.withValues(
+                                      alpha: isDark ? 0.12 : 0.08,
+                                    )
                                   : null,
                               border: active
-                                  ? Border.all(color: onSurf.withValues(alpha: 0.12))
+                                  ? Border.all(
+                                      color: onSurf.withValues(alpha: 0.12),
+                                    )
                                   : null,
                             ),
                             child: Icon(
                               _icons[i],
                               size: 22,
-                              color: active ? onSurf : onSurf.withValues(alpha: 0.5),
+                              color: active
+                                  ? onSurf
+                                  : onSurf.withValues(alpha: 0.38),
                             ),
                           ),
                           const SizedBox(height: 4),

@@ -120,49 +120,31 @@ import 'package:m4_mobile/presentation/widgets/navigation_pill.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import 'package:m4_mobile/core/providers/theme_provider.dart';
-import 'package:m4_mobile/core/utils/app_toast.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'dart:async';
 
-void main() {
-  // Run inside a guarded zone so ANY uncaught / unexpected async exception
-  // surfaces a consistent red error toast instead of failing silently.
-  runZonedGuarded(
-    () async {
-      debugPaintSizeEnabled = false;
-      debugPaintBaselinesEnabled = false;
-      debugPaintPointersEnabled = false;
-      debugPaintLayerBordersEnabled = false;
-      debugRepaintRainbowEnabled = false;
+void main() async {
+  debugPaintSizeEnabled = false;
+  debugPaintBaselinesEnabled = false;
+  debugPaintPointersEnabled = false;
+  debugPaintLayerBordersEnabled = false;
+  debugRepaintRainbowEnabled = false;
 
-      WidgetsFlutterBinding.ensureInitialized();
-      await dotenv.load(fileName: ".env");
+  WidgetsFlutterBinding.ensureInitialized();
 
-      // Framework-level (build/layout/widget) errors → red toast, while still
-      // printing the error to the console as before.
-      final previousOnError = FlutterError.onError;
-      FlutterError.onError = (details) {
-        previousOnError?.call(details);
-        AppToast.error('Something went wrong. Please try again.');
-      };
+  // .env MUST stay awaited: OnboardingScreen.initState reads authProvider,
+  // whose ApiClient calls dotenv.get() — loading it lazily would throw. It is
+  // a small bundled asset (~ms), so it is not what delayed the splash.
+  await dotenv.load(fileName: ".env");
 
-      // The saved light/dark theme is restored asynchronously inside
-      // ThemeNotifier (off the startup critical path) — no blocking
-      // secure-storage read before runApp(), which previously cold-initialised
-      // the Android Keystore (100ms+).
-      runApp(
-        const ProviderScope(
-          child: M4FamilyApp(),
-        ),
-      );
-    },
-    (error, stack) {
-      // Uncaught async errors anywhere in the app.
-      AppToast.error('Something went wrong. Please try again.');
-    },
-  );
+  // The saved theme is NO LONGER read here. FlutterSecureStorage.read() spins
+  // up the Android Keystore/EncryptedSharedPreferences on first use (100ms+,
+  // much worse on a cold start), and awaiting it before runApp() held back the
+  // first frame — that was the black screen before the animated splash.
+  // ThemeNotifier now restores the preference asynchronously instead; it starts
+  // on ThemeMode.dark, which already matches the black splash, so there is no
+  // flash while it resolves.
+  runApp(const ProviderScope(child: M4FamilyApp()));
 }
 
 class M4FamilyApp extends ConsumerWidget {
@@ -170,15 +152,20 @@ class M4FamilyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Single theme source for the WHOLE app (screens, drawers, popups): the
+    // stored light/dark preference. This keeps everything consistent — the
+    // drawer follows the same setting as every screen — and the toggle works.
     final themeMode = ref.watch(themeProvider);
 
     return MaterialApp.router(
       title: 'M4 Family',
       debugShowCheckedModeBanner: false,
-      scaffoldMessengerKey: rootScaffoldMessengerKey,
       theme: M4Theme.lightTheme,
-      darkTheme: M4Theme.darkThemeNavy, // dark mode = deep navy (screenshot)
+      darkTheme: M4Theme.darkTheme,
       themeMode: themeMode,
+      // Instant theme switch — disable MaterialApp's ~200ms cross-fade so the
+      // WHOLE app (screens + menu) flips light/dark together, with zero delay.
+      themeAnimationDuration: Duration.zero,
       routerConfig: _router,
     );
   }
@@ -603,13 +590,23 @@ final GoRouter _router = GoRouter(
     ),
     GoRoute(
       path: '/investor/projects/:id',
-      builder: (context, state) =>
-          InvestorProjectDetailScreen(projectId: state.pathParameters['id']!),
+      // Callers push the project they already have as `extra`; forward it so the
+      // page renders instantly and still works when the id is a placeholder slug.
+      builder: (context, state) => InvestorProjectDetailScreen(
+        projectId: state.pathParameters['id']!,
+        projectData: state.extra is Map
+            ? Map<String, dynamic>.from(state.extra as Map)
+            : null,
+      ),
     ),
     GoRoute(
       path: '/investor/projects/:id/3d-view',
-      builder: (context, state) =>
-          InvestorProjectDetailScreen(projectId: state.pathParameters['id']!),
+      builder: (context, state) => InvestorProjectDetailScreen(
+        projectId: state.pathParameters['id']!,
+        projectData: state.extra is Map
+            ? Map<String, dynamic>.from(state.extra as Map)
+            : null,
+      ),
     ),
     // Investor elite
     GoRoute(
@@ -715,8 +712,10 @@ final GoRouter _router = GoRouter(
       builder: (context, state) => const SearchScreen(),
     ),
     GoRoute(
+      // Web parity: "Custom Views" is the Interactive Living / Design Your
+      // Destiny showcase; "My Custom Views" is the personal Portfolio Suite.
       path: '/investor/custom-views',
-      builder: (context, state) => MyCustomViewsScreen(),
+      builder: (context, state) => const GuestCustomViewsScreen(),
     ),
     GoRoute(
       path: '/investor/my-custom-views',

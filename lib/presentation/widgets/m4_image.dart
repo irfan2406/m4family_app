@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -7,6 +8,8 @@ import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class M4Image extends ConsumerWidget {
+  static final Map<String, Uint8List> _base64Cache = {};
+
   final String? imageUrl;
   final BoxFit fit;
   final double? width;
@@ -35,8 +38,12 @@ class M4Image extends ConsumerWidget {
       try {
         final commaIndex = imageUrl!.indexOf('base64,');
         if (commaIndex != -1) {
-          final base64Str = imageUrl!.substring(commaIndex + 7).trim();
-          final bytes = base64Decode(base64Str);
+          final bytes = _base64Cache.putIfAbsent(imageUrl!, () {
+            final base64Str = imageUrl!
+                .substring(commaIndex + 7)
+                .replaceAll(RegExp(r'\s'), '');
+            return base64Decode(base64Str);
+          });
           return Image.memory(
             bytes,
             fit: fit,
@@ -54,12 +61,26 @@ class M4Image extends ConsumerWidget {
     final apiClient = ref.read(apiClientProvider);
     final resolvedUrl = apiClient.resolveUrl(imageUrl);
 
+    // Decode at roughly the size we actually paint at rather than the source's
+    // full resolution, and skip CachedNetworkImage's default 500ms fade — both
+    // are why images appeared late. Falls back to the screen width when this
+    // image is sized by its parent (width == null / infinite).
+    final media = MediaQuery.maybeOf(context);
+    final dpr = media?.devicePixelRatio ?? 2.0;
+    final logicalWidth = (width != null && width!.isFinite)
+        ? width!
+        : (media?.size.width ?? 400.0);
+    final memWidth = (logicalWidth * dpr).round().clamp(64, 2048);
+
     return CachedNetworkImage(
       imageUrl: resolvedUrl,
       fit: fit,
       width: width,
       height: height,
-      placeholder: (context, url) => placeholder ?? Container(color: Colors.black12),
+      memCacheWidth: memWidth,
+      fadeInDuration: Duration.zero,
+      placeholder: (context, url) =>
+          placeholder ?? Container(color: Colors.black12),
       errorWidget: (context, url, error) => errorWidget ?? _buildFallback(),
     );
   }

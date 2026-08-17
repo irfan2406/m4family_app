@@ -24,7 +24,7 @@ class PremiumCheckoutScreen extends ConsumerStatefulWidget {
 enum _CheckoutStep { details, processing, success }
 
 class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
-  static const Color _gold = Color(0xFFC5A35B);
+  static const Color _gold = Color(0xFFFFD700);
 
   _CheckoutStep _step = _CheckoutStep.details;
 
@@ -84,8 +84,8 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF);
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
+    final bg = isDark ? const Color(0xFF0F1115) : Colors.white;
+    final textPrimary = isDark ? Colors.white : Colors.black;
 
     return Scaffold(
       backgroundColor: bg,
@@ -118,10 +118,9 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
 
   // ─────────────────────────── STEP 1 · DETAILS ───────────────────────────
   Widget _buildDetails(bool isDark) {
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
-    final card =
-        isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
+    final textPrimary = isDark ? Colors.white : Colors.black;
+    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -133,86 +132,88 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
         children: [
           // ── Summary Card ──
           Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: card,
-              borderRadius: BorderRadius.circular(28),
-              border: Border.all(color: border),
-            ),
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: card,
+                  borderRadius: BorderRadius.circular(28),
+                  border: Border.all(color: border),
+                ),
+                padding: const EdgeInsets.all(24),
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 3),
-                            decoration: BoxDecoration(
-                              color: _gold,
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Text(
-                              'M4 ELITE',
-                              style: GoogleFonts.ebGaramond(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w900,
-                                color: Colors.black,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            'Lifetime Membership',
-                            style: GoogleFonts.gelasio(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: textPrimary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          '₹4,999',
-                          style: GoogleFonts.gelasio(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: textPrimary,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 3,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: _gold,
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  'M4 ELITE',
+                                  style: GoogleFonts.ebGaramond(
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.w900,
+                                    color: Colors.black,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                'Lifetime Membership',
+                                style: GoogleFonts.gelasio(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: textPrimary,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        Text(
-                          'Fixed One-time',
-                          style: GoogleFonts.ebGaramond(
-                            fontSize: 10,
-                            color: muted,
-                          ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              '₹4,999',
+                              style: GoogleFonts.gelasio(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: textPrimary,
+                              ),
+                            ),
+                            Text(
+                              'Fixed One-time',
+                              style: GoogleFonts.ebGaramond(
+                                fontSize: 10,
+                                color: muted,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
+                    const SizedBox(height: 16),
+                    Divider(color: border, height: 1),
+                    const SizedBox(height: 16),
+                    _benefitRow('Full VR Access', muted),
+                    const SizedBox(height: 8),
+                    _benefitRow('Priority Support & Bookings', muted),
                   ],
                 ),
-                const SizedBox(height: 16),
-                Divider(color: border, height: 1),
-                const SizedBox(height: 16),
-                _benefitRow('Full VR Access', muted),
-                const SizedBox(height: 8),
-                _benefitRow('Priority Support & Bookings', muted),
-              ],
-            ),
-          ).animate().fadeIn(duration: 350.ms).scale(
-                begin: const Offset(0.97, 0.97),
-                end: const Offset(1, 1),
-              ),
+              )
+              .animate()
+              .fadeIn(duration: 350.ms)
+              .scale(begin: const Offset(0.97, 0.97), end: const Offset(1, 1)),
 
           const SizedBox(height: 32),
 
@@ -298,7 +299,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                             obscure: true,
                             keyboardType: TextInputType.number,
                             inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
+                              FilteringTextInputFormatter.digitsOnly,
                             ],
                           ),
                         ],
@@ -323,9 +324,11 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(LucideIcons.shieldCheck,
-                    color: const Color(0xFFC5A35B).withValues(alpha: 0.6),
-                    size: 28),
+                Icon(
+                  LucideIcons.shieldCheck,
+                  color: const Color(0xFF22C55E).withValues(alpha: 0.6),
+                  size: 28,
+                ),
                 const SizedBox(width: 14),
                 Expanded(
                   child: Text(
@@ -346,36 +349,36 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
 
           // ── Pay button ──
           _PressableScale(
-            onTap: _handlePayment,
-            child: Container(
-              width: double.infinity,
-              height: 64,
-              decoration: BoxDecoration(
-                color: _gold,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: _gold.withValues(alpha: 0.25),
-                    blurRadius: 24,
-                    offset: const Offset(0, 12),
+                onTap: _handlePayment,
+                child: Container(
+                  width: double.infinity,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    color: _gold,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: _gold.withValues(alpha: 0.25),
+                        blurRadius: 24,
+                        offset: const Offset(0, 12),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: Center(
-                child: Text(
-                  'Pay ₹4,999',
-                  style: GoogleFonts.ebGaramond(
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                  child: Center(
+                    child: Text(
+                      'Pay ₹4,999',
+                      style: GoogleFonts.ebGaramond(
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          ).animate().fadeIn(delay: 200.ms, duration: 350.ms).moveY(
-                begin: 12,
-                end: 0,
-              ),
+              )
+              .animate()
+              .fadeIn(delay: 200.ms, duration: 350.ms)
+              .moveY(begin: 12, end: 0),
         ],
       ),
     );
@@ -447,8 +450,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
         ),
         filled: true,
         fillColor: fillColor,
-        prefixIcon:
-            icon != null ? Icon(icon, size: 18, color: muted) : null,
+        prefixIcon: icon != null ? Icon(icon, size: 18, color: muted) : null,
         contentPadding: EdgeInsets.symmetric(
           horizontal: icon != null ? 12 : 16,
           vertical: 16,
@@ -467,65 +469,65 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
 
   // ────────────────────────── STEP 2 · PROCESSING ─────────────────────────
   Widget _buildProcessing(bool isDark) {
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : Colors.black;
+    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
 
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-            width: 96,
-            height: 96,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Container(
-                  width: 96,
-                  height: 96,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border(
-                      bottom: BorderSide(color: _gold, width: 2),
-                    ),
-                  ),
-                )
-                    .animate(onPlay: (c) => c.repeat())
-                    .rotate(duration: 2.seconds),
-                Icon(LucideIcons.loader2, size: 32, color: muted)
-                    .animate(onPlay: (c) => c.repeat(reverse: true))
-                    .fadeIn(duration: 800.ms)
-                    .then()
-                    .fadeOut(duration: 800.ms),
-              ],
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 96,
+                height: 96,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                          width: 96,
+                          height: 96,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border(
+                              bottom: BorderSide(color: _gold, width: 2),
+                            ),
+                          ),
+                        )
+                        .animate(onPlay: (c) => c.repeat())
+                        .rotate(duration: 2.seconds),
+                    Icon(LucideIcons.loader2, size: 32, color: muted)
+                        .animate(onPlay: (c) => c.repeat(reverse: true))
+                        .fadeIn(duration: 800.ms)
+                        .then()
+                        .fadeOut(duration: 800.ms),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 28),
+              Text(
+                'Verifying Payment',
+                style: GoogleFonts.gelasio(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: textPrimary,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Communicating with your banking partner...',
+                style: GoogleFonts.ebGaramond(fontSize: 13, color: muted),
+              ),
+            ],
           ),
-          const SizedBox(height: 28),
-          Text(
-            'Verifying Payment',
-            style: GoogleFonts.gelasio(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: textPrimary,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Communicating with your banking partner...',
-            style: GoogleFonts.ebGaramond(fontSize: 13, color: muted),
-          ),
-        ],
-      ),
-    ).animate().fadeIn(duration: 300.ms).scale(
-          begin: const Offset(0.9, 0.9),
-          end: const Offset(1, 1),
-        );
+        )
+        .animate()
+        .fadeIn(duration: 300.ms)
+        .scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1));
   }
 
   // ─────────────────────────── STEP 3 · SUCCESS ───────────────────────────
   Widget _buildSuccess(bool isDark) {
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final textPrimary = isDark ? Colors.white : Colors.black;
+    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -544,19 +546,15 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                 alignment: Alignment.center,
                 children: [
                   Container(
-                    width: 128,
-                    height: 128,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: _gold,
-                    ),
-                  )
+                        width: 128,
+                        height: 128,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: _gold,
+                        ),
+                      )
                       .animate(onPlay: (c) => c.repeat(reverse: true))
-                      .scaleXY(
-                        begin: 1,
-                        end: 1.18,
-                        duration: 1.seconds,
-                      ),
+                      .scaleXY(begin: 1, end: 1.18, duration: 1.seconds),
                   Container(
                     width: 128,
                     height: 128,
@@ -571,14 +569,17 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                         ),
                       ],
                     ),
-                    child: const Icon(LucideIcons.checkCircle2,
-                        size: 64, color: Colors.black),
+                    child: const Icon(
+                      LucideIcons.checkCircle2,
+                      size: 64,
+                      color: Colors.black,
+                    ),
                   ).animate().scale(
-                        begin: const Offset(0, 0),
-                        end: const Offset(1, 1),
-                        duration: 600.ms,
-                        curve: Curves.elasticOut,
-                      ),
+                    begin: const Offset(0, 0),
+                    end: const Offset(1, 1),
+                    duration: 600.ms,
+                    curve: Curves.elasticOut,
+                  ),
                 ],
               ),
             ),
@@ -673,7 +674,9 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
 class _CardNumberFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
     final digits = newValue.text.replaceAll(RegExp(r'\D'), '');
     final buffer = StringBuffer();
     for (var i = 0; i < digits.length; i++) {
@@ -692,7 +695,9 @@ class _CardNumberFormatter extends TextInputFormatter {
 class _ExpiryFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
     final digits = newValue.text.replaceAll(RegExp(r'\D'), '');
     final buffer = StringBuffer();
     for (var i = 0; i < digits.length && i < 4; i++) {

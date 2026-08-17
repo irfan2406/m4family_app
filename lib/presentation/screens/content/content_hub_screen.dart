@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
@@ -146,7 +147,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
             center: Alignment.topLeft,
             radius: 1.5,
             colors: isDark
-                ? [const Color(0xFF163A2C), const Color(0xFF0F2A20)]
+                ? [const Color(0xFF1A1A1A), const Color(0xFF0A0A0A)]
                 : [scheme.surface, scheme.surfaceContainerLowest],
           ),
         ),
@@ -314,32 +315,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
   }
 
   Widget _buildMenuButton() {
-    final scheme = Theme.of(context).colorScheme;
-    return GestureDetector(
-      onTap: () {
-        Scaffold.of(context).openDrawer();
-      },
-      child: Container(
-        width: 56,
-        height: 48,
-        decoration: BoxDecoration(
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(18),
-          boxShadow: [
-            BoxShadow(
-              color: scheme.onSurface.withOpacity(0.2),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
-            ),
-          ],
-        ),
-        child: Icon(
-          LucideIcons.menu,
-          size: 24,
-          color: Theme.of(context).colorScheme.onSurface,
-        ),
-      ),
-    );
+    return const SideMenuButton();
   }
 
   Widget _buildEmptyState() {

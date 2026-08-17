@@ -115,9 +115,12 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
       _scrollToBottom();
     } else {
       setState(() => _sending = false);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Failed to send message')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Color(0xFFE24B4A),
+          content: Text('Failed to send message'),
+        ),
+      );
     }
   }
 
@@ -189,9 +192,9 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
+    final bg = isDark ? Colors.black : Colors.white;
+    final textPrimary = isDark ? Colors.white : Colors.black;
+    final muted = (isDark ? Colors.white : Colors.black).withValues(
       alpha: 0.68,
     );
     final border = isDark
@@ -235,7 +238,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
       decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
+        color: isDark ? Colors.black : Colors.white,
         border: Border(bottom: BorderSide(color: border)),
       ),
       child: Row(
@@ -288,7 +291,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                       width: 6,
                       height: 6,
                       decoration: const BoxDecoration(
-                        color: Color(0xFFC5A35B),
+                        color: Color(0xFF22C55E),
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -311,7 +314,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: (_isOpen ? Color(0xFFC5A35B) : const Color(0xFFC5A35B))
+              color: (_isOpen ? Colors.blue : const Color(0xFF22C55E))
                   .withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: border),
@@ -321,7 +324,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
               style: GoogleFonts.gelasio(
                 fontSize: 8,
                 fontWeight: FontWeight.w900,
-                color: _isOpen ? Color(0xFFC5A35B) : const Color(0xFFC5A35B),
+                color: _isOpen ? Colors.blue : const Color(0xFF22C55E),
                 letterSpacing: 2,
               ),
             ),
@@ -502,7 +505,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     // User bubble: solid (foreground/background inversion). Support: card style.
     final bubbleColor = isUser
         ? textPrimary
-        : (isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF));
+        : (isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white);
     final bubbleTextColor = isUser
         ? (isDark ? Colors.black : Colors.white)
         : textPrimary;
@@ -651,7 +654,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     Color muted,
     Color border,
   ) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     return Container(
       padding: EdgeInsets.fromLTRB(
         16,
@@ -660,7 +663,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
         12 + MediaQuery.of(context).viewPadding.bottom,
       ),
       decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
+        color: isDark ? Colors.black : Colors.white,
         border: Border(top: BorderSide(color: border)),
       ),
       child: Row(
@@ -679,7 +682,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                 textInputAction: TextInputAction.send,
                 onSubmitted: (_) => _handleSend(),
                 style: GoogleFonts.ebGaramond(
-                  fontSize: 13,
+                  fontSize: 15,
                   fontWeight: FontWeight.w700,
                   color: textPrimary,
                 ),

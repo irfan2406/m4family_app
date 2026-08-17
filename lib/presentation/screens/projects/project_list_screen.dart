@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
+import 'package:m4_mobile/presentation/providers/investor_shell_provider.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -22,7 +23,7 @@ import 'package:m4_mobile/presentation/widgets/cp_sidebar_menu.dart';
 /// (CachedNetworkImage can only fetch network URLs). Used by the project cards.
 Widget _projListImage(String url, {BoxFit fit = BoxFit.cover}) {
   Widget errorBox() => Container(
-    color: const Color(0xFF141B3A),
+    color: const Color(0xFF1A1A1A),
     child: const Center(
       child: Icon(LucideIcons.building2, color: Colors.white24, size: 40),
     ),
@@ -55,6 +56,9 @@ class ProjectListScreen extends ConsumerWidget {
 
   final bool cpCatalogMode;
 
+  // Retained for future use; the header filter button was removed for web
+  // parity (screenshot has only the grid/list toggle and the "..." menu).
+  // ignore: unused_element
   void _showFilterBottomSheet(BuildContext context, WidgetRef ref) {
     final locationOptions = [
       "SOUTH MUMBAI",
@@ -85,7 +89,7 @@ class ProjectListScreen extends ConsumerWidget {
             return Container(
               height: MediaQuery.of(context).size.height * 0.85,
               decoration: BoxDecoration(
-                color: isDark ? Theme.of(context).scaffoldBackgroundColor : Colors.white,
+                color: isDark ? const Color(0xFF111111) : Colors.white,
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(40),
                 ),
@@ -293,28 +297,54 @@ class ProjectListScreen extends ConsumerWidget {
                       children: [
                         InkWell(
                           onTap: () {
+                            // Robust back: if a route was pushed, pop it;
+                            // otherwise this is a shell tab, so switch that
+                            // portal's shell back to its Home tab.
+                            if (context.canPop()) {
+                              context.pop();
+                              return;
+                            }
                             if (cpCatalogMode) {
                               ref
                                       .read(cpNavigationIndexProvider.notifier)
                                       .state =
                                   0;
-                              context.go('/home');
-                              return;
+                            } else {
+                              // Reset whichever shell is actually active back to
+                              // its Home tab. The inactive shells' providers are
+                              // simply ignored, so setting all is safe — and the
+                              // investor one was missing, which broke back on
+                              // the investor Properties tab.
+                              ref.read(navigationProvider.notifier).state = 0;
+                              ref.read(guestNavigationProvider.notifier).state =
+                                  0;
+                              ref
+                                  .read(
+                                    investorNavigationIndexProvider.notifier,
+                                  )
+                                  .state = 0;
                             }
-                            if (Navigator.canPop(context)) {
-                              Navigator.pop(context);
-                            }
-                            ref.read(navigationProvider.notifier).state = 0;
-                            ref.read(guestNavigationProvider.notifier).state =
-                                0;
                           },
                           borderRadius: BorderRadius.circular(12),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
+                          // Web parity: contained back button (light rounded
+                          // square with a subtle border), not a bare icon.
+                          child: Container(
+                            width: 40,
+                            height: 40,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: (isDark ? Colors.white : Colors.black)
+                                  .withOpacity(0.05),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: (isDark ? Colors.white : Colors.black)
+                                    .withOpacity(0.08),
+                              ),
+                            ),
                             child: Icon(
                               LucideIcons.arrowLeft,
                               color: Theme.of(context).colorScheme.onSurface,
-                              size: 24,
+                              size: 18,
                             ),
                           ),
                         ),
@@ -391,14 +421,14 @@ class ProjectListScreen extends ConsumerWidget {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      // Web parity: filter (sliders) button + a grid/list
-                      // view toggle (projects/page.tsx has all three).
-                      // Filter button (sliders icon)
+                      // Web parity: filter icon (light rounded square) to the
+                      // left of the view toggle. Opens the REFINE SEARCH sheet.
                       GestureDetector(
+                        behavior: HitTestBehavior.opaque,
                         onTap: () => _showFilterBottomSheet(context, ref),
                         child: Container(
                           width: 40,
-                          height: 36,
+                          height: 40,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: (isDark ? Colors.white : Colors.black)
@@ -410,9 +440,9 @@ class ProjectListScreen extends ConsumerWidget {
                             ),
                           ),
                           child: Icon(
-                            LucideIcons.sliders,
-                            size: 16,
+                            LucideIcons.slidersHorizontal,
                             color: Theme.of(context).colorScheme.onSurface,
+                            size: 18,
                           ),
                         ),
                       ),
@@ -601,7 +631,7 @@ class ProjectListScreen extends ConsumerWidget {
                 error: (e, s) {
                   final isDark =
                       Theme.of(context).brightness == Brightness.dark;
-                  final onSurface = isDark ? Colors.white : const Color(0xFF163A2C);
+                  final onSurface = isDark ? Colors.white : Colors.black;
                   final msg = e.toString().toLowerCase();
                   final isTimeout =
                       msg.contains('timeout') || msg.contains('connection');
@@ -700,7 +730,7 @@ class _ProjectGridItem extends StatelessWidget {
       height:
           200, // Enforce 16:9 aspect ratio parity with web (approx for mobile width)
       decoration: BoxDecoration(
-        color: isDark ? Theme.of(context).colorScheme.surface : Colors.white,
+        color: isDark ? const Color(0xFF18181B) : Colors.white,
         borderRadius: BorderRadius.circular(40),
         boxShadow: [
           BoxShadow(
@@ -856,7 +886,7 @@ class _ProjectListRowItem extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark ? Theme.of(context).colorScheme.surface : Colors.white,
+        color: isDark ? const Color(0xFF18181B) : Colors.white,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(

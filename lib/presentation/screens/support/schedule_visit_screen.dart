@@ -49,7 +49,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
       isScrollControlled: true,
       builder: (sheetCtx) => Container(
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+          color: isDark ? const Color(0xFF0B111E) : Colors.white,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         ),
         padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
@@ -151,7 +151,10 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
     // from the logged-in account (web pre-fills these from the stored user).
     if (_selectedProjectId == null || _scheduledAt == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all required fields')),
+        const SnackBar(
+          backgroundColor: Color(0xFFE24B4A),
+          content: Text('Please fill in all required fields'),
+        ),
       );
       return;
     }
@@ -171,9 +174,12 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
             'App User',
         'phone': authUser?['phone']?.toString() ?? '',
         'interest': 'Site Visit',
-        'projectId': _selectedProjectId,
+        // Only ever send a real ObjectId (CastToObjectId/BSONError otherwise).
+        if ((_selectedProjectId?.length ?? 0) == 24)
+          'projectId': _selectedProjectId,
         'message': visitDetails,
-        'source': 'Mobile App',
+        // Server-side enum: source = online | cp | walk-in | referral | other.
+        'source': 'online',
       });
 
       if (!mounted) return;
@@ -181,6 +187,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
       if (response.data['status'] == true) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
+            backgroundColor: Color(0xFF10B981),
             content: Text(
               'Visit scheduled successfully! We will contact you soon.',
             ),
@@ -190,6 +197,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
             content: Text(
               response.data['message'] ?? 'Failed to schedule visit',
             ),
@@ -198,9 +206,12 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: const Color(0xFFE24B4A),
+          content: Text('Error: $e'),
+        ),
+      );
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
@@ -423,7 +434,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
     // draw a drop shadow, so this wraps the field in a shadowed Container.
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+        color: isDark ? const Color(0xFF15171C) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: (isDark ? Colors.white : Colors.black).withOpacity(0.06),
@@ -443,24 +454,23 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
         maxLines: maxLines,
         keyboardType: keyboardType,
         style: GoogleFonts.ebGaramond(
-          color: isDark ? Colors.white : const Color(0xFF15271E),
-          fontSize: 13,
+          color: isDark ? Colors.white : Colors.black,
+          fontSize: 15,
           fontWeight: FontWeight.bold,
         ),
         decoration: InputDecoration(
           hintText: hint.toUpperCase(),
           hintStyle: GoogleFonts.ebGaramond(
-            color: (isDark ? Colors.white : const Color(0xFF15271E))
-                .withOpacity(0.55),
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
             fontSize: 13,
             fontWeight: FontWeight.bold,
           ),
           prefixIcon: icon != null
               ? Icon(
                   icon,
-                  color: isDark
-                      ? Colors.white.withOpacity(0.6)
-                      : const Color(0xFFC5A35B),
+                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    0.6,
+                  ),
                   size: 18,
                 )
               : null,
@@ -499,7 +509,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+              color: isDark ? const Color(0xFF15171C) : Colors.white,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: _isProjectDropdownOpen
@@ -552,7 +562,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
             margin: const EdgeInsets.only(top: 8),
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
+              color: isDark ? const Color(0xFF111111) : Colors.white,
               borderRadius: BorderRadius.circular(16),
               boxShadow: isDark
                   ? null
@@ -626,7 +636,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
         height: 56,
         padding: const EdgeInsets.symmetric(horizontal: 20),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+          color: isDark ? const Color(0xFF15171C) : Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: (isDark ? Colors.white : Colors.black).withOpacity(0.06),

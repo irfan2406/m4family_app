@@ -73,7 +73,9 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
 
   void _onDarkModeToggle(bool value) {
     setState(() => _darkMode = value);
-    ref.read(themeProvider.notifier).setTheme(value ? ThemeMode.dark : ThemeMode.light);
+    ref
+        .read(themeProvider.notifier)
+        .setTheme(value ? ThemeMode.dark : ThemeMode.light);
     _persist();
   }
 
@@ -84,7 +86,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
     _darkMode = themeMode == ThemeMode.dark;
     final isDark = themeMode == ThemeMode.dark;
 
-    final bg = isDark ? const Color(0xFF0B1026) : const Color(0xFFF4EFE3);
+    final bg = isDark ? const Color(0xFF09090B) : const Color(0xFFF8FAFC);
 
     return Scaffold(
       backgroundColor: bg,
@@ -123,7 +125,9 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.06),
+            color: (isDark ? Colors.white : Colors.black).withValues(
+              alpha: 0.06,
+            ),
           ),
         ),
       ),
@@ -159,7 +163,9 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
                 style: GoogleFonts.gelasio(
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
-                  color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5),
+                  color: (isDark ? Colors.white : Colors.black).withValues(
+                    alpha: 0.5,
+                  ),
                   letterSpacing: 2,
                 ),
               ),
@@ -251,9 +257,15 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
 
   // ─── Reusable building blocks ───────────────────────────────────────────
 
-  Widget _buildCard(bool isDark, {required String label, required List<Widget> children}) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
-    final border = isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06);
+  Widget _buildCard(
+    bool isDark, {
+    required String label,
+    required List<Widget> children,
+  }) {
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final border = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.black.withValues(alpha: 0.06);
 
     return Container(
       width: double.infinity,
@@ -264,7 +276,13 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
         border: Border.all(color: border),
         boxShadow: isDark
             ? []
-            : [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 20, offset: const Offset(0, 10))],
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -274,7 +292,9 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
             style: GoogleFonts.gelasio(
               fontSize: 8,
               fontWeight: FontWeight.w800,
-              color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5),
+              color: (isDark ? Colors.white : Colors.black).withValues(
+                alpha: 0.5,
+              ),
               letterSpacing: 3.2,
             ),
           ),
@@ -293,12 +313,16 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
     required bool value,
     required ValueChanged<bool> onChanged,
   }) {
-    final tileBg = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
-    final tileBorder = isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06);
-    final iconBg = isDark ? M4Theme.premiumBlue.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.05);
-    final iconColor = isDark ? Colors.white : const Color(0xFF163A2C);
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final tileBg = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final tileBorder = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.black.withValues(alpha: 0.06);
+    final iconBg = isDark
+        ? M4Theme.premiumBlue.withValues(alpha: 0.08)
+        : Colors.black.withValues(alpha: 0.05);
+    final iconColor = isDark ? Colors.white : Colors.black;
+    final textPrimary = isDark ? Colors.white : Colors.black;
+    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -361,7 +385,11 @@ class _IconButton extends StatelessWidget {
   final IconData icon;
   final bool isDark;
   final VoidCallback onTap;
-  const _IconButton({required this.icon, required this.isDark, required this.onTap});
+  const _IconButton({
+    required this.icon,
+    required this.isDark,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -370,14 +398,28 @@ class _IconButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+          color: isDark ? const Color(0xFF18181B) : Colors.white,
           borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.05)),
+          border: Border.all(
+            color: (isDark ? Colors.white : Colors.black).withValues(
+              alpha: 0.05,
+            ),
+          ),
           boxShadow: isDark
               ? []
-              : [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 4))],
+              : [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
         ),
-        child: Icon(icon, color: isDark ? Colors.white54 : Colors.black54, size: 20),
+        child: Icon(
+          icon,
+          color: isDark ? Colors.white54 : Colors.black54,
+          size: 20,
+        ),
       ),
     );
   }

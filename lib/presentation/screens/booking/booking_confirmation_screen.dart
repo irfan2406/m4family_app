@@ -105,7 +105,10 @@ class _BookingConfirmationScreenState
       await Clipboard.setData(ClipboardData(text: content));
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Receipt copied to clipboard')),
+          const SnackBar(
+            backgroundColor: Color(0xFF10B981),
+            content: Text('Receipt copied to clipboard'),
+          ),
         );
       }
     }
@@ -122,7 +125,10 @@ class _BookingConfirmationScreenState
       await Clipboard.setData(ClipboardData(text: text));
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Booking details copied to clipboard')),
+          const SnackBar(
+            backgroundColor: Color(0xFF10B981),
+            content: Text('Booking details copied to clipboard'),
+          ),
         );
       }
     }
@@ -131,14 +137,14 @@ class _BookingConfirmationScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
+    final textPrimary = isDark ? Colors.white : Colors.black;
+    final muted = (isDark ? Colors.white : Colors.black).withValues(
       alpha: 0.68,
     );
 
     if (_loading) {
       return Scaffold(
-        backgroundColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
+        backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
         body: const Center(
           child: CircularProgressIndicator(color: M4Theme.premiumBlue),
         ),
@@ -146,7 +152,7 @@ class _BookingConfirmationScreenState
     }
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
+      backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
       body: Stack(
         children: [
           // Decorative background circles
@@ -426,7 +432,7 @@ class _BookingConfirmationScreenState
       width: double.infinity,
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.02) : const Color(0xFFFBF7EF),
+        color: isDark ? Colors.white.withValues(alpha: 0.02) : Colors.white,
         borderRadius: BorderRadius.circular(40),
         border: Border.all(
           color: isDark
@@ -534,7 +540,7 @@ class _BookingConfirmationScreenState
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFC5A35B).withValues(alpha: 0.1),
+                        color: const Color(0xFF10B981).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: Row(
@@ -542,7 +548,7 @@ class _BookingConfirmationScreenState
                         children: [
                           const Icon(
                             LucideIcons.checkCircle2,
-                            color: Color(0xFFC5A35B),
+                            color: Color(0xFF10B981),
                             size: 12,
                           ),
                           const SizedBox(width: 6),
@@ -551,7 +557,7 @@ class _BookingConfirmationScreenState
                             style: GoogleFonts.gelasio(
                               fontSize: 8,
                               fontWeight: FontWeight.w900,
-                              color: const Color(0xFFC5A35B),
+                              color: const Color(0xFF10B981),
                               letterSpacing: 2,
                             ),
                           ),
@@ -621,7 +627,7 @@ class _ActionButton extends StatelessWidget {
       child: Container(
         height: 56,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF),
+          color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: isDark

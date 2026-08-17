@@ -14,14 +14,18 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
   }
 
   /// Restores the saved light/dark preference OFF the startup critical path.
-  /// The first FlutterSecureStorage read cold-initialises the Android Keystore
-  /// (100ms+), so instead of awaiting it in main() before runApp() we start
-  /// from the default (light) and flip async — resolving during the splash.
+  ///
+  /// This used to be awaited in `main()` before `runApp()`, but the first
+  /// FlutterSecureStorage read initialises the Android Keystore (100ms+ cold),
+  /// so the window sat black until it finished and the animated splash showed
+  /// up late. We start from the default (dark — the same colour as the splash)
+  /// and flip only if the stored value differs, which resolves while the splash
+  /// is still playing, so nothing visibly changes.
   Future<void> _restoreSavedTheme() async {
     try {
       final themeStr = await _storage.read(key: 'app_theme');
       if (themeStr == null || !mounted) return;
-      final saved = themeStr == 'dark' ? ThemeMode.dark : ThemeMode.light;
+      final saved = themeStr == 'light' ? ThemeMode.light : ThemeMode.dark;
       if (state != saved) state = saved;
     } catch (_) {
       // Storage unavailable — keep the default rather than fail the launch.
@@ -31,7 +35,7 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
   Future<void> setTheme(ThemeMode mode) async {
     if (state == mode) return;
     state = mode;
-    
+
     final themeStr = mode == ThemeMode.light ? 'light' : 'dark';
     await _storage.write(key: 'app_theme', value: themeStr);
 
@@ -42,7 +46,7 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
 
       final portal = _ref.read(portalProvider);
       final portalKey = _getPortalKey(portal);
-      
+
       await _ref.read(apiClientProvider).updatePreferences({
         portalKey: themeStr,
       });
@@ -53,16 +57,18 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
 
   String _getPortalKey(PortalType portal) {
     switch (portal) {
-      case PortalType.guest: return 'guest_theme';
-      case PortalType.investor: return 'investor_theme';
-      case PortalType.cp: return 'cp_theme';
-      case PortalType.user: return 'user_theme';
+      case PortalType.guest:
+        return 'guest_theme';
+      case PortalType.investor:
+        return 'investor_theme';
+      case PortalType.cp:
+        return 'cp_theme';
+      case PortalType.user:
+        return 'user_theme';
     }
   }
 }
 
 final themeProvider = StateNotifierProvider<ThemeNotifier, ThemeMode>((ref) {
-  // Default to the LIGHT (cream) theme — matches the Figma "M4 Web Screen"
-  // home design. The moon toggle still switches to the deep-green dark theme.
-  return ThemeNotifier(ref, ThemeMode.light);
+  return ThemeNotifier(ref, ThemeMode.dark);
 });

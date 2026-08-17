@@ -1,11 +1,14 @@
 import 'dart:io';
 import 'package:m4_mobile/core/theme/app_theme.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
@@ -51,10 +54,12 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
   }
 
   Future<void> _submitApplication() async {
-    if (_fullNameController.text.trim().isEmpty ||
-        _phoneController.text.trim().isEmpty ||
-        _emailController.text.trim().isEmpty) {
-      _showToast('Please fill in all required fields', isError: true);
+    final validationError =
+        Validators.nameError(_fullNameController.text, field: 'full name') ??
+        Validators.emailError(_emailController.text) ??
+        Validators.phoneError(_phoneController.text);
+    if (validationError != null) {
+      _showToast(validationError, isError: true);
       return;
     }
 
@@ -126,7 +131,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
             fontSize: 12,
           ),
         ),
-        backgroundColor: isError ? const Color(0xFFD32F2F) : const Color(0xFFC5A35B),
+        backgroundColor: isError ? Colors.redAccent : const Color(0xFF10B981),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
@@ -137,7 +142,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: isDark ? Colors.black : Colors.white,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         centerTitle: true,
@@ -212,24 +217,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
             builder: (context) => Center(
               child: Padding(
                 padding: const EdgeInsets.only(right: 12),
-                child: InkWell(
-                  onTap: () => Scaffold.of(context).openDrawer(),
-                  borderRadius: BorderRadius.circular(12),
-                  child: Container(
-                    width: 40,
-                    height: 36,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      LucideIcons.menu,
-                      size: 18,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                  ),
-                ),
+                child: const SideMenuButton(),
               ),
             ),
           ),
@@ -239,12 +227,12 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
       body: Container(
         padding: const EdgeInsets.only(top: 120),
         decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
+          color: isDark ? Colors.black : Colors.white,
           gradient: isDark
               ? const RadialGradient(
                   center: Alignment.topCenter,
                   radius: 2.5,
-                  colors: [Color(0xFF163A2C), Colors.black],
+                  colors: [Color(0xFF111319), Colors.black],
                 )
               : null,
         ),
@@ -295,8 +283,10 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                           .toString()
                           .toUpperCase(),
                       style: GoogleFonts.gelasio(
-                        color: (isDark ? Colors.white : Colors.black)
-                            .withOpacity(0.68),
+                        // Web parity: location shown in the M4 slate-blue accent.
+                        color: isDark
+                            ? Colors.white.withOpacity(0.7)
+                            : const Color(0xFF3E5C86),
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 3,
@@ -310,14 +300,17 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
               // Form Fields
               _buildLabel('FULL NAME', isDark),
               const SizedBox(height: 12),
-              _buildTextField(controller: _fullNameController, hint: ''),
+              _buildTextField(
+                controller: _fullNameController,
+                hint: 'JOHN DOE',
+              ),
               const SizedBox(height: 32),
 
               _buildLabel('PHONE NUMBER', isDark),
               const SizedBox(height: 12),
               _buildTextField(
                 controller: _phoneController,
-                hint: '',
+                hint: '+1 234 567 890',
                 isPhone: true,
               ),
               const SizedBox(height: 32),
@@ -326,7 +319,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
               const SizedBox(height: 12),
               _buildTextField(
                 controller: _emailController,
-                hint: '',
+                hint: 'JOHN.DOE@M4FAMILY.COM',
                 isEmail: true,
               ),
               const SizedBox(height: 48),
@@ -347,64 +340,86 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                     );
                   }
                 },
-                child: Container(
-                  height: 200,
-                  decoration: BoxDecoration(
-                    color: (isDark ? Colors.white : Colors.black).withOpacity(
-                      0.03,
-                    ),
-                    borderRadius: BorderRadius.circular(40),
-                    border: Border.all(
-                      color: _resumeFile != null
-                          ? (isDark ? Colors.white : Colors.black)
-                          : (isDark ? Colors.white : Colors.black).withOpacity(
-                              0.05,
-                            ),
-                      width: 1.5,
-                    ),
+                child: CustomPaint(
+                  // Web parity: dashed rounded border drawn ON TOP of the fill
+                  // (foregroundPainter) so the full stroke is visible.
+                  foregroundPainter: _DashedRRectPainter(
+                    color: _resumeFile != null
+                        ? (isDark ? Colors.white : Colors.black)
+                        : (isDark ? Colors.white : Colors.black).withOpacity(
+                            0.28,
+                          ),
+                    radius: 40,
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        width: 64,
-                        height: 64,
-                        decoration: BoxDecoration(
-                          color: _resumeFile != null
-                              ? Colors.black
-                              : (isDark ? Colors.white : Colors.black),
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              blurRadius: 20,
-                              offset: const Offset(0, 10),
+                  child: Container(
+                    height: 200,
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? Colors.white.withOpacity(0.03)
+                          : Colors.white,
+                      borderRadius: BorderRadius.circular(40),
+                      boxShadow: isDark
+                          ? null
+                          : [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.04),
+                                blurRadius: 24,
+                                offset: const Offset(0, 10),
+                              ),
+                            ],
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 64,
+                          height: 64,
+                          decoration: BoxDecoration(
+                            color: _resumeFile != null
+                                ? Colors.black
+                                : (isDark ? Colors.white : Colors.black),
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 20,
+                                offset: const Offset(0, 10),
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            _resumeFile != null
+                                ? LucideIcons.fileCheck
+                                : LucideIcons.rocket,
+                            color: _resumeFile != null
+                                ? Colors.white
+                                : (isDark ? Colors.black : Colors.white),
+                            size: 30,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
+                          child: Text(
+                            _resumeFile != null
+                                ? _resumeFile!.path
+                                      .split('/')
+                                      .last
+                                      .toUpperCase()
+                                : 'SELECT PDF DOCUMENT',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.gelasio(
+                              color: isDark ? Colors.white : Colors.black,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 2,
                             ),
-                          ],
+                          ),
                         ),
-                        child: Icon(
-                          _resumeFile != null
-                              ? LucideIcons.fileCheck
-                              : LucideIcons.rocket,
-                          color: _resumeFile != null
-                              ? Colors.white
-                              : (isDark ? Colors.black : Colors.white),
-                          size: 30,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      Text(
-                        _resumeFile != null
-                            ? _resumeFile!.path.split('/').last.toUpperCase()
-                            : 'SELECT PDF DOCUMENT',
-                        style: GoogleFonts.gelasio(
-                          color: isDark ? Colors.white : Colors.black,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 2,
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -468,53 +483,103 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
     bool isPhone = false,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return TextField(
-      controller: controller,
-      keyboardType: isEmail
-          ? TextInputType.emailAddress
-          : isPhone
-          ? TextInputType.phone
-          : TextInputType.text,
-      style: GoogleFonts.ebGaramond(
-        color: isDark ? Colors.white : Colors.black,
-        fontWeight: FontWeight.bold,
-        fontSize: 13,
+    // Web parity: white "card" field with a soft shadow and light border.
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.04),
+                  blurRadius: 18,
+                  offset: const Offset(0, 8),
+                ),
+              ],
       ),
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle: GoogleFonts.ebGaramond(
-          color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
+      child: TextField(
+        controller: controller,
+        keyboardType: isEmail
+            ? TextInputType.emailAddress
+            : isPhone
+            ? TextInputType.phone
+            : TextInputType.name,
+        inputFormatters: isEmail
+            ? Validators.emailFormatters
+            : isPhone
+            ? Validators.phoneFormatters
+            : Validators.nameFormatters,
+        style: GoogleFonts.ebGaramond(
+          color: isDark ? Colors.white : Colors.black,
           fontWeight: FontWeight.bold,
-          fontSize: 13,
+          fontSize: 15,
         ),
-        filled: true,
-        fillColor: isDark
-            ? const Color(0xFF0B1026)
-            : const Color(0xFFF4EFE3), // Neutral grey instead of blue-grey
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 24,
-          vertical: 24,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+        decoration: InputDecoration(
+          hintText: hint,
+          hintStyle: GoogleFonts.ebGaramond(
+            color: (isDark ? Colors.white : Colors.black).withOpacity(0.4),
+            fontWeight: FontWeight.bold,
+            fontSize: 13,
           ),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(
-            color: (isDark ? Colors.white : Colors.black).withOpacity(0.1),
+          filled: true,
+          fillColor: isDark ? const Color(0xFF0F1219) : Colors.white,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 24,
+            vertical: 24,
           ),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(
-            color: isDark ? Colors.white : Colors.black,
-            width: 1.5,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+            borderSide: BorderSide(
+              color: (isDark ? Colors.white : Colors.black).withOpacity(0.06),
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(20),
+            borderSide: const BorderSide(color: Color(0xFFC5A358), width: 1.5),
           ),
         ),
       ),
     );
   }
+}
+
+// Web parity: dashed rounded-rectangle border for the résumé upload zone.
+class _DashedRRectPainter extends CustomPainter {
+  final Color color;
+  final double radius;
+
+  _DashedRRectPainter({required this.color, this.radius = 40});
+
+  static const double _dashWidth = 7;
+  static const double _dashGap = 5;
+  static const double _strokeWidth = 1.5;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = _strokeWidth;
+    final rrect = RRect.fromRectAndRadius(
+      Offset.zero & size,
+      Radius.circular(radius),
+    );
+    final source = Path()..addRRect(rrect);
+    final dashed = Path();
+    for (final metric in source.computeMetrics()) {
+      double dist = 0;
+      while (dist < metric.length) {
+        dashed.addPath(
+          metric.extractPath(dist, dist + _dashWidth),
+          Offset.zero,
+        );
+        dist += _dashWidth + _dashGap;
+      }
+    }
+    canvas.drawPath(dashed, paint);
+  }
+
+  @override
+  bool shouldRepaint(_DashedRRectPainter old) =>
+      old.color != color || old.radius != radius;
 }

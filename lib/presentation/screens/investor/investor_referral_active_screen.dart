@@ -4,7 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
-import 'package:m4_mobile/presentation/providers/auth_provider.dart' show apiClientProvider;
+import 'package:m4_mobile/presentation/providers/auth_provider.dart'
+    show apiClientProvider;
 
 /// Web `/investor/referral/active` parity: active (not yet closed/credited)
 /// referrals in the lead pipeline. Shows referral name, project, status and
@@ -20,7 +21,12 @@ class InvestorReferralActiveScreen extends ConsumerStatefulWidget {
 class _InvestorReferralActiveScreenState
     extends ConsumerState<InvestorReferralActiveScreen> {
   // Statuses considered closed/credited (excluded from the active list).
-  static const _closedStatuses = ['CLOSED', 'CREDITED', 'BOOKING_DONE', 'Booked'];
+  static const _closedStatuses = [
+    'CLOSED',
+    'CREDITED',
+    'BOOKING_DONE',
+    'Booked',
+  ];
 
   List<dynamic> _referrals = [];
   bool _loading = true;
@@ -74,9 +80,9 @@ class _InvestorReferralActiveScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final bg = isDark ? Colors.black : Colors.white;
+    final textPrimary = isDark ? Colors.white : Colors.black;
+    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -96,10 +102,10 @@ class _InvestorReferralActiveScreenState
                       ),
                     )
                   : _error
-                      ? _buildError(textPrimary, muted)
-                      : _referrals.isEmpty
-                          ? _buildEmpty(muted)
-                          : _buildList(isDark, textPrimary, muted, border),
+                  ? _buildError(textPrimary, muted)
+                  : _referrals.isEmpty
+                  ? _buildEmpty(muted)
+                  : _buildList(isDark, textPrimary, muted, border),
             ),
           ],
         ),
@@ -165,7 +171,7 @@ class _InvestorReferralActiveScreenState
 
   // ─── List ────────────────────────────────────────────────────────────────
   Widget _buildList(bool isDark, Color textPrimary, Color muted, Color border) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
 
     return RefreshIndicator(
       onRefresh: _load,
@@ -278,7 +284,7 @@ class _InvestorReferralActiveScreenState
                   const Icon(
                     LucideIcons.trendingUp,
                     size: 12,
-                    color: Color(0xFFC5A35B),
+                    color: Color(0xFF10B981),
                   ),
                   const SizedBox(width: 6),
                   Text(

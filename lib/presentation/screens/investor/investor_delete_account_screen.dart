@@ -28,8 +28,8 @@ class InvestorDeleteAccountScreen extends ConsumerStatefulWidget {
 
 class _InvestorDeleteAccountScreenState
     extends ConsumerState<InvestorDeleteAccountScreen> {
-  static const Color _danger = Color(0xFFC65B46);
-  static const Color _dangerDeep = Color(0xFFC65B46);
+  static const Color _danger = Color(0xFFEF4444);
+  static const Color _dangerDeep = Color(0xFFDC2626);
   static const String _confirmWord = 'DELETE';
 
   final TextEditingController _confirmCtrl = TextEditingController();
@@ -84,9 +84,11 @@ class _InvestorDeleteAccountScreenState
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content:
-            Text(msg, style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w600)),
-        backgroundColor: error ? const Color(0xFFD32F2F) : Colors.green,
+        content: Text(
+          msg,
+          style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w600),
+        ),
+        backgroundColor: error ? _dangerDeep : Colors.green,
       ),
     );
   }
@@ -99,8 +101,10 @@ class _InvestorDeleteAccountScreenState
       builder: (ctx) {
         final isDark = Theme.of(ctx).brightness == Brightness.dark;
         return AlertDialog(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          backgroundColor: isDark ? Colors.black : Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
           title: Text(
             'FINAL CONFIRMATION',
             style: GoogleFonts.ebGaramond(
@@ -116,8 +120,9 @@ class _InvestorDeleteAccountScreenState
             style: GoogleFonts.ebGaramond(
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              color:
-                  (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.7),
+              color: (isDark ? Colors.white : Colors.black).withValues(
+                alpha: 0.7,
+              ),
             ),
           ),
           actions: [
@@ -128,8 +133,9 @@ class _InvestorDeleteAccountScreenState
                 style: GoogleFonts.ebGaramond(
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
-                  color: (isDark ? Colors.white : Colors.black)
-                      .withValues(alpha: 0.6),
+                  color: (isDark ? Colors.white : Colors.black).withValues(
+                    alpha: 0.6,
+                  ),
                 ),
               ),
             ),
@@ -137,8 +143,9 @@ class _InvestorDeleteAccountScreenState
               onPressed: () => Navigator.pop(ctx, true),
               style: FilledButton.styleFrom(
                 backgroundColor: _dangerDeep,
-                shape:
-                    RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               child: Text(
                 'EXECUTE PURGE',
@@ -188,8 +195,9 @@ class _InvestorDeleteAccountScreenState
         // After session ends, go to guest mode, not the login page.
         context.go('/home');
       } else {
-        final msg =
-            res.data is Map ? (res.data as Map)['message']?.toString() : null;
+        final msg = res.data is Map
+            ? (res.data as Map)['message']?.toString()
+            : null;
         _snack(msg ?? 'Failed to deactivate account', error: true);
       }
     } on DioException catch (e) {
@@ -207,10 +215,10 @@ class _InvestorDeleteAccountScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
+    final bg = isDark ? Colors.black : Colors.white;
+    final textPrimary = isDark ? Colors.white : Colors.black;
+    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -332,8 +340,11 @@ class _InvestorDeleteAccountScreenState
                   color: _danger.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: const Icon(LucideIcons.alertTriangle,
-                    size: 20, color: _danger),
+                child: const Icon(
+                  LucideIcons.alertTriangle,
+                  size: 20,
+                  color: _danger,
+                ),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -381,7 +392,11 @@ class _InvestorDeleteAccountScreenState
 
   // ── Purge scope list ───────────────────────────────────────────────────
   Widget _purgeScopeCard(
-      Color card, Color border, Color textPrimary, Color muted) {
+    Color card,
+    Color border,
+    Color textPrimary,
+    Color muted,
+  ) {
     return Container(
       decoration: BoxDecoration(
         color: card,
@@ -433,8 +448,11 @@ class _InvestorDeleteAccountScreenState
                       ],
                     ),
                   ),
-                  Icon(LucideIcons.x,
-                      size: 16, color: _danger.withValues(alpha: 0.6)),
+                  Icon(
+                    LucideIcons.x,
+                    size: 16,
+                    color: _danger.withValues(alpha: 0.6),
+                  ),
                 ],
               ),
             ),
@@ -448,7 +466,11 @@ class _InvestorDeleteAccountScreenState
 
   // ── Type-DELETE confirmation ───────────────────────────────────────────
   Widget _confirmField(
-      Color card, Color border, Color textPrimary, Color muted) {
+    Color card,
+    Color border,
+    Color textPrimary,
+    Color muted,
+  ) {
     final ok = _confirmMatches;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -495,8 +517,10 @@ class _InvestorDeleteAccountScreenState
                 color: muted.withValues(alpha: 0.4),
               ),
               border: InputBorder.none,
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 18,
+                vertical: 16,
+              ),
               suffixIcon: _confirmCtrl.text.isEmpty
                   ? null
                   : Icon(
@@ -513,7 +537,11 @@ class _InvestorDeleteAccountScreenState
 
   // ── Password credential authorization ──────────────────────────────────
   Widget _passwordField(
-      Color card, Color border, Color textPrimary, Color muted) {
+    Color card,
+    Color border,
+    Color textPrimary,
+    Color muted,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -540,7 +568,7 @@ class _InvestorDeleteAccountScreenState
             obscureText: _obscurePass,
             onChanged: (_) => setState(() {}),
             style: GoogleFonts.ebGaramond(
-              fontSize: 14,
+              fontSize: 15,
               fontWeight: FontWeight.w700,
               color: textPrimary,
             ),
@@ -552,8 +580,10 @@ class _InvestorDeleteAccountScreenState
                 color: muted.withValues(alpha: 0.4),
               ),
               border: InputBorder.none,
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 18,
+                vertical: 16,
+              ),
               prefixIcon: Icon(LucideIcons.lock, size: 16, color: muted),
               suffixIcon: GestureDetector(
                 onTap: () => setState(() => _obscurePass = !_obscurePass),
@@ -577,8 +607,9 @@ class _InvestorDeleteAccountScreenState
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color:
-              _acknowledged ? _danger.withValues(alpha: 0.06) : Colors.transparent,
+          color: _acknowledged
+              ? _danger.withValues(alpha: 0.06)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: _acknowledged ? _danger.withValues(alpha: 0.4) : border,
@@ -650,13 +681,18 @@ class _InvestorDeleteAccountScreenState
                   width: 22,
                   height: 22,
                   child: CircularProgressIndicator(
-                      strokeWidth: 2, color: Colors.white),
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
                 )
               : Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(LucideIcons.trash2,
-                        color: Colors.white, size: 16),
+                    const Icon(
+                      LucideIcons.trash2,
+                      color: Colors.white,
+                      size: 16,
+                    ),
                     const SizedBox(width: 12),
                     Text(
                       'EXECUTE PURGE',

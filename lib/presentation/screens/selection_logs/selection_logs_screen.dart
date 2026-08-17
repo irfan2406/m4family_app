@@ -21,7 +21,8 @@ class SelectionLogsScreen extends ConsumerStatefulWidget {
   const SelectionLogsScreen({super.key});
 
   @override
-  ConsumerState<SelectionLogsScreen> createState() => _SelectionLogsScreenState();
+  ConsumerState<SelectionLogsScreen> createState() =>
+      _SelectionLogsScreenState();
 }
 
 class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
@@ -30,7 +31,9 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => ref.read(selectionLogsProvider.notifier).fetchLogs());
+    Future.microtask(
+      () => ref.read(selectionLogsProvider.notifier).fetchLogs(),
+    );
   }
 
   @override
@@ -40,9 +43,12 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
     final foreground = Theme.of(context).colorScheme.onSurface;
 
     final filteredLogs = state.logs.where((log) {
-      final projectName = (log['project']?['title'] ?? 'Undefined Project').toString().toLowerCase();
+      final projectName = (log['project']?['title'] ?? 'Undefined Project')
+          .toString()
+          .toLowerCase();
       final id = log['_id']?.toString().toLowerCase() ?? '';
-      return projectName.contains(_searchQuery.toLowerCase()) || id.contains(_searchQuery.toLowerCase());
+      return projectName.contains(_searchQuery.toLowerCase()) ||
+          id.contains(_searchQuery.toLowerCase());
     }).toList();
 
     return Scaffold(
@@ -57,21 +63,32 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
               _buildSectionInfo(context, filteredLogs.length, foreground),
               Expanded(
                 child: RefreshIndicator(
-                  onRefresh: () => ref.read(selectionLogsProvider.notifier).fetchLogs(),
+                  onRefresh: () =>
+                      ref.read(selectionLogsProvider.notifier).fetchLogs(),
                   color: foreground,
                   backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                   child: state.isLoading && state.logs.isEmpty
-                      ? Center(child: CircularProgressIndicator(color: foreground.withOpacity(0.2)))
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            color: foreground.withOpacity(0.2),
+                          ),
+                        )
                       : filteredLogs.isEmpty
-                          ? _buildEmptyState()
-                          : ListView.builder(
-                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-                              itemCount: filteredLogs.length,
-                              itemBuilder: (context, index) {
-                                final log = filteredLogs[index];
-                                return _LogCard(log: log).animate().fadeIn(delay: (index * 100).ms).slideY(begin: 0.1);
-                              },
-                            ),
+                      ? _buildEmptyState()
+                      : ListView.builder(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 10,
+                          ),
+                          itemCount: filteredLogs.length,
+                          itemBuilder: (context, index) {
+                            final log = filteredLogs[index];
+                            return _LogCard(log: log)
+                                .animate()
+                                .fadeIn(delay: (index * 100).ms)
+                                .slideY(begin: 0.1);
+                          },
+                        ),
                 ),
               ),
             ],
@@ -104,7 +121,11 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: foreground.withOpacity(0.05)),
               ),
-              child: Icon(LucideIcons.arrowLeft, color: foreground.withOpacity(0.7), size: 20),
+              child: Icon(
+                LucideIcons.arrowLeft,
+                color: foreground.withOpacity(0.7),
+                size: 20,
+              ),
             ),
           ),
           const SizedBox(width: 16),
@@ -149,7 +170,7 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
         ),
         child: TextField(
           onChanged: (v) => setState(() => _searchQuery = v),
-          style: GoogleFonts.ebGaramond(color: foreground, fontSize: 13),
+          style: GoogleFonts.ebGaramond(color: foreground, fontSize: 15),
           decoration: InputDecoration(
             hintText: 'SEARCH BY ID OR PROJECT...',
             hintStyle: GoogleFonts.ebGaramond(
@@ -158,9 +179,16 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
               fontWeight: FontWeight.w900,
               letterSpacing: 1,
             ),
-            prefixIcon: Icon(LucideIcons.search, size: 16, color: foreground.withOpacity(0.24)),
+            prefixIcon: Icon(
+              LucideIcons.search,
+              size: 16,
+              color: foreground.withOpacity(0.24),
+            ),
             border: InputBorder.none,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 15,
+            ),
           ),
         ),
       ),
@@ -221,11 +249,21 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: (isDark ? Colors.white : Colors.black).withOpacity(0.03),
+                  color: (isDark ? Colors.white : Colors.black).withOpacity(
+                    0.03,
+                  ),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: (isDark ? Colors.white : Colors.black).withOpacity(0.05)),
+                  border: Border.all(
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      0.05,
+                    ),
+                  ),
                 ),
-                child: Icon(LucideIcons.layout, color: foreground.withOpacity(0.3), size: 32),
+                child: Icon(
+                  LucideIcons.layout,
+                  color: foreground.withOpacity(0.3),
+                  size: 32,
+                ),
               ),
               const SizedBox(height: 24),
               Text(
@@ -248,11 +286,14 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
                   }
                 },
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8,
+                    horizontal: 4,
+                  ),
                   child: Text(
                     'START CUSTOMIZING',
                     style: GoogleFonts.gelasio(
-                      color: const Color(0xFFC5A35B),
+                      color: const Color(0xFFFFD700),
                       fontWeight: FontWeight.w900,
                       fontSize: 11,
                       letterSpacing: 1.5,
@@ -305,10 +346,18 @@ class _LogCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final foreground = Theme.of(context).colorScheme.onSurface;
     final id = log['_id']?.toString() ?? '';
-    final shortId = id.length >= 6 ? id.substring(id.length - 6).toUpperCase() : id;
-    final projectName = (log['project']?['title'] ?? log['project']?['name'] ?? 'Undefined Project').toString();
+    final shortId = id.length >= 6
+        ? id.substring(id.length - 6).toUpperCase()
+        : id;
+    final projectName =
+        (log['project']?['title'] ??
+                log['project']?['name'] ??
+                'Undefined Project')
+            .toString();
     final status = (log['status'] ?? 'REQUESTED').toString().toUpperCase();
-    final createdAt = log['createdAt'] != null ? DateTime.parse(log['createdAt']) : DateTime.now();
+    final createdAt = log['createdAt'] != null
+        ? DateTime.parse(log['createdAt'])
+        : DateTime.now();
     final dateStr = DateFormat('M/d/yyyy').format(createdAt);
     final selections = log['selections'] as Map? ?? {};
     final space = (log['space'] ?? selections['space'] ?? 'N/A').toString();
@@ -318,7 +367,12 @@ class _LogCard extends StatelessWidget {
     selections.forEach((key, value) {
       if (key != 'space') {
         if (value is Map) {
-          summaryItems.add(value['name'] ?? value['title'] ?? value['label'] ?? value.toString());
+          summaryItems.add(
+            value['name'] ??
+                value['title'] ??
+                value['label'] ??
+                value.toString(),
+          );
         } else {
           summaryItems.add(value.toString());
         }
@@ -328,7 +382,9 @@ class _LogCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: (isDark ? const Color(0xFF0B1026) : Colors.black).withOpacity(isDark ? 0.4 : 0.05),
+        color: (isDark ? const Color(0xFF0F172A) : Colors.black).withOpacity(
+          isDark ? 0.4 : 0.05,
+        ),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: foreground.withOpacity(0.05)),
       ),
@@ -346,11 +402,16 @@ class _LogCard extends StatelessWidget {
                     Row(
                       children: [
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
                           decoration: BoxDecoration(
                             color: foreground.withOpacity(0.05),
                             borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: foreground.withOpacity(0.05)),
+                            border: Border.all(
+                              color: foreground.withOpacity(0.05),
+                            ),
                           ),
                           child: Text(
                             '#$shortId',
@@ -373,9 +434,15 @@ class _LogCard extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: foreground.withOpacity(0.03),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: foreground.withOpacity(0.05)),
+                          border: Border.all(
+                            color: foreground.withOpacity(0.05),
+                          ),
                         ),
-                        child: Icon(LucideIcons.chevronRight, color: foreground.withOpacity(0.7), size: 18),
+                        child: Icon(
+                          LucideIcons.chevronRight,
+                          color: foreground.withOpacity(0.7),
+                          size: 18,
+                        ),
                       ),
                     ),
                   ],
@@ -398,7 +465,12 @@ class _LogCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     _buildDetailInfo(context, 'LOCATION', space.toUpperCase()),
-                    _buildDetailInfo(context, 'LOGGED ON', dateStr, alignEnd: true),
+                    _buildDetailInfo(
+                      context,
+                      'LOGGED ON',
+                      dateStr,
+                      alignEnd: true,
+                    ),
                   ],
                 ),
                 const SizedBox(height: 20),
@@ -419,7 +491,9 @@ class _LogCard extends StatelessWidget {
                 const SizedBox(height: 12),
                 Row(
                   children: [
-                    ...summaryItems.take(2).map((item) => _buildSummaryChip(context, item)),
+                    ...summaryItems
+                        .take(2)
+                        .map((item) => _buildSummaryChip(context, item)),
                     if (summaryItems.length > 2)
                       Text(
                         ' +${summaryItems.length - 2} MORE',
@@ -440,9 +514,10 @@ class _LogCard extends StatelessWidget {
   }
 
   Widget _buildStatusBadge(String status) {
-    Color color = Color(0xFFC5A35B);
-    if (['APPROVED', 'COMPLETED'].contains(status)) color = const Color(0xFFC5A35B);
-    if (['REJECTED'].contains(status)) color = Color(0xFFC5A35B);
+    Color color = Colors.orangeAccent;
+    if (['APPROVED', 'COMPLETED'].contains(status))
+      color = const Color(0xFF10B981);
+    if (['REJECTED'].contains(status)) color = Colors.redAccent;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -463,10 +538,17 @@ class _LogCard extends StatelessWidget {
     );
   }
 
-  Widget _buildDetailInfo(BuildContext context, String label, String value, {bool alignEnd = false}) {
+  Widget _buildDetailInfo(
+    BuildContext context,
+    String label,
+    String value, {
+    bool alignEnd = false,
+  }) {
     final foreground = Theme.of(context).colorScheme.onSurface;
     return Column(
-      crossAxisAlignment: alignEnd ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      crossAxisAlignment: alignEnd
+          ? CrossAxisAlignment.end
+          : CrossAxisAlignment.start,
       children: [
         Text(
           label,
@@ -522,9 +604,14 @@ class _LogCard extends StatelessWidget {
       pageBuilder: (context, anim1, anim2) => _LogDetailDialog(log: log),
       transitionBuilder: (context, anim1, anim2, child) {
         return BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10 * anim1.value, sigmaY: 10 * anim1.value),
+          filter: ImageFilter.blur(
+            sigmaX: 10 * anim1.value,
+            sigmaY: 10 * anim1.value,
+          ),
           child: ScaleTransition(
-            scale: Tween<double>(begin: 0.9, end: 1.0).animate(CurvedAnimation(parent: anim1, curve: Curves.easeOutCubic)),
+            scale: Tween<double>(begin: 0.9, end: 1.0).animate(
+              CurvedAnimation(parent: anim1, curve: Curves.easeOutCubic),
+            ),
             child: FadeTransition(opacity: anim1, child: child),
           ),
         );
@@ -541,8 +628,14 @@ class _LogDetailDialog extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final foreground = Theme.of(context).colorScheme.onSurface;
     final id = log['_id']?.toString() ?? '';
-    final shortId = id.length >= 6 ? id.substring(id.length - 6).toUpperCase() : id;
-    final projectName = (log['project']?['title'] ?? log['project']?['name'] ?? 'Undefined Project').toString();
+    final shortId = id.length >= 6
+        ? id.substring(id.length - 6).toUpperCase()
+        : id;
+    final projectName =
+        (log['project']?['title'] ??
+                log['project']?['name'] ??
+                'Undefined Project')
+            .toString();
     final status = (log['status'] ?? 'REQUESTED').toString().toUpperCase();
     final selections = log['selections'] as Map? ?? {};
     final space = (log['space'] ?? selections['space'] ?? 'N/A').toString();
@@ -558,7 +651,11 @@ class _LogDetailDialog extends ConsumerWidget {
           borderRadius: BorderRadius.circular(40),
           border: Border.all(color: foreground.withOpacity(0.1)),
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.5), blurRadius: 40, offset: const Offset(0, 20)),
+            BoxShadow(
+              color: Colors.black.withOpacity(0.5),
+              blurRadius: 40,
+              offset: const Offset(0, 20),
+            ),
           ],
         ),
         child: ClipRRect(
@@ -576,7 +673,10 @@ class _LogDetailDialog extends ConsumerWidget {
                       Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 5,
+                            ),
                             decoration: BoxDecoration(
                               color: foreground.withOpacity(0.05),
                               borderRadius: BorderRadius.circular(8),
@@ -596,7 +696,11 @@ class _LogDetailDialog extends ConsumerWidget {
                       ),
                       IconButton(
                         onPressed: () => Navigator.pop(context),
-                        icon: Icon(LucideIcons.x, color: foreground.withOpacity(0.3), size: 20),
+                        icon: Icon(
+                          LucideIcons.x,
+                          color: foreground.withOpacity(0.3),
+                          size: 20,
+                        ),
                       ),
                     ],
                   ),
@@ -613,7 +717,11 @@ class _LogDetailDialog extends ConsumerWidget {
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      Icon(LucideIcons.mapPin, size: 14, color: const Color(0xFFC5A35B).withOpacity(0.6)),
+                      Icon(
+                        LucideIcons.mapPin,
+                        size: 14,
+                        color: const Color(0xFFFFD700).withOpacity(0.6),
+                      ),
                       const SizedBox(width: 8),
                       Flexible(
                         child: Text(
@@ -641,7 +749,10 @@ class _LogDetailDialog extends ConsumerWidget {
                   const SizedBox(height: 16),
                   ...selections.entries
                       .where((entry) => entry.key != 'space')
-                      .map((entry) => _buildSpecItem(context, entry.key, entry.value)),
+                      .map(
+                        (entry) =>
+                            _buildSpecItem(context, entry.key, entry.value),
+                      ),
                   const SizedBox(height: 40),
                   Text(
                     'PROTOCOL STATUS',
@@ -683,36 +794,64 @@ class _LogDetailDialog extends ConsumerWidget {
                           onTap: () {
                             // Pre-load state for edit mode
                             final project = log['project'];
-                            final projectId = project is Map ? project['_id']?.toString() : null;
-                            final unitType = log['unitType']?.toString() ?? '3 BHK';
+                            final projectId = project is Map
+                                ? project['_id']?.toString()
+                                : null;
+                            final unitType =
+                                log['unitType']?.toString() ?? '3 BHK';
                             final unitNumber = log['unitNumber']?.toString();
-                            final bookingId = log['bookingId'] is Map 
-                                ? log['bookingId']['_id']?.toString() 
+                            final bookingId = log['bookingId'] is Map
+                                ? log['bookingId']['_id']?.toString()
                                 : log['bookingId']?.toString();
                             final selections = log['selections'] as Map? ?? {};
                             final space = log['space']?.toString();
 
                             // Update providers
-                            ref.read(customViewsProjectProvider.notifier).state = projectId;
-                            ref.read(customViewsUnitProvider.notifier).state = unitType;
-                            ref.read(customViewsUnitNumberProvider.notifier).state = unitNumber;
-                            ref.read(customViewsBookingIdProvider.notifier).state = bookingId;
-                            
-                            final selectionsMap = Map<String, dynamic>.from(selections);
+                            ref
+                                    .read(customViewsProjectProvider.notifier)
+                                    .state =
+                                projectId;
+                            ref.read(customViewsUnitProvider.notifier).state =
+                                unitType;
+                            ref
+                                    .read(
+                                      customViewsUnitNumberProvider.notifier,
+                                    )
+                                    .state =
+                                unitNumber;
+                            ref
+                                    .read(customViewsBookingIdProvider.notifier)
+                                    .state =
+                                bookingId;
+
+                            final selectionsMap = Map<String, dynamic>.from(
+                              selections,
+                            );
                             if (space != null) selectionsMap['space'] = space;
-                            ref.read(customViewsSelectionsProvider.notifier).state = selectionsMap;
-                            
-                            ref.read(customViewsEditModeProvider.notifier).state = true;
-                            
+                            ref
+                                    .read(
+                                      customViewsSelectionsProvider.notifier,
+                                    )
+                                    .state =
+                                selectionsMap;
+
+                            ref
+                                    .read(customViewsEditModeProvider.notifier)
+                                    .state =
+                                true;
+
                             // Reset step and navigate to wizard
                             if (projectId != null) {
-                              ref.read(customViewsStepProvider.notifier).state = 1; // Advance to Space Selection if project known
+                              ref.read(customViewsStepProvider.notifier).state =
+                                  1; // Advance to Space Selection if project known
                             } else {
-                              ref.read(customViewsStepProvider.notifier).state = 0; // Start at Project Selection
+                              ref.read(customViewsStepProvider.notifier).state =
+                                  0; // Start at Project Selection
                             }
-                            
-                            ref.read(navigationProvider.notifier).state = 6; // 6 is CustomViewsScreen (Wizard)
-                            
+
+                            ref.read(navigationProvider.notifier).state =
+                                6; // 6 is CustomViewsScreen (Wizard)
+
                             Navigator.pop(context);
                           },
                           isPrimary: true,
@@ -739,9 +878,10 @@ class _LogDetailDialog extends ConsumerWidget {
   }
 
   Widget _buildStatusBadge(String status) {
-    Color color = Color(0xFFC5A35B);
-    if (['APPROVED', 'COMPLETED'].contains(status)) color = const Color(0xFFC5A35B);
-    if (['REJECTED'].contains(status)) color = Color(0xFFC5A35B);
+    Color color = Colors.orangeAccent;
+    if (['APPROVED', 'COMPLETED'].contains(status))
+      color = const Color(0xFF10B981);
+    if (['REJECTED'].contains(status)) color = Colors.redAccent;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -764,11 +904,13 @@ class _LogDetailDialog extends ConsumerWidget {
     final foreground = Theme.of(context).colorScheme.onSurface;
     String displayValue = value.toString();
     if (value is Map) {
-      displayValue = value['name'] ?? value['title'] ?? value['label'] ?? value.toString();
+      displayValue =
+          value['name'] ?? value['title'] ?? value['label'] ?? value.toString();
     }
 
     // Category-specific icon, fallback to box for unknown categories.
-    final IconData specIcon = _kSpecIconMap[key.toLowerCase()] ?? LucideIcons.box;
+    final IconData specIcon =
+        _kSpecIconMap[key.toLowerCase()] ?? LucideIcons.box;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -787,7 +929,11 @@ class _LogDetailDialog extends ConsumerWidget {
               color: foreground.withOpacity(0.05),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(specIcon, size: 16, color: foreground.withValues(alpha: 0.5)),
+            child: Icon(
+              specIcon,
+              size: 16,
+              color: foreground.withValues(alpha: 0.5),
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -820,7 +966,12 @@ class _LogDetailDialog extends ConsumerWidget {
     );
   }
 
-  Widget _buildActionButton(BuildContext context, String label, {required VoidCallback onTap, required bool isPrimary}) {
+  Widget _buildActionButton(
+    BuildContext context,
+    String label, {
+    required VoidCallback onTap,
+    required bool isPrimary,
+  }) {
     final foreground = Theme.of(context).colorScheme.onSurface;
     return GestureDetector(
       onTap: onTap,
@@ -829,7 +980,9 @@ class _LogDetailDialog extends ConsumerWidget {
         decoration: BoxDecoration(
           color: isPrimary ? foreground : Colors.transparent,
           borderRadius: BorderRadius.circular(16),
-          border: isPrimary ? null : Border.all(color: foreground.withOpacity(0.1)),
+          border: isPrimary
+              ? null
+              : Border.all(color: foreground.withOpacity(0.1)),
         ),
         alignment: Alignment.center,
         child: Text(
@@ -837,7 +990,9 @@ class _LogDetailDialog extends ConsumerWidget {
           style: GoogleFonts.ebGaramond(
             fontSize: 11,
             fontWeight: FontWeight.w900,
-            color: isPrimary ? Theme.of(context).scaffoldBackgroundColor : foreground.withOpacity(0.6),
+            color: isPrimary
+                ? Theme.of(context).scaffoldBackgroundColor
+                : foreground.withOpacity(0.6),
             letterSpacing: 1,
           ),
         ),

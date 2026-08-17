@@ -96,9 +96,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           // Web parity: custom controls so play/time + volume, fullscreen and
           // the 3-dot all sit together in the bottom bar (right side).
           showOptions: false,
-          customControls: _M4VideoControls(
-            onShare: () => _shareContent(apiClient),
-          ),
+          customControls: const _M4VideoControls(),
           deviceOrientationsOnEnterFullScreen:
               _videoPlayerController!.value.aspectRatio < 1
               ? [DeviceOrientation.portraitUp]
@@ -220,6 +218,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                             onTap: () => Navigator.pop(context),
                           ),
                           Column(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
                                 widget.content['type'].toString().toUpperCase(),
@@ -228,6 +227,18 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                                   fontWeight: FontWeight.w900,
                                   letterSpacing: 2,
                                   color: scheme.onSurface,
+                                ),
+                              ),
+                              // Web parity: "DEEP DIVE" kicker under the type.
+                              Text(
+                                'DEEP DIVE',
+                                style: GoogleFonts.gelasio(
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 3,
+                                  color: scheme.onSurface.withValues(
+                                    alpha: 0.4,
+                                  ),
                                 ),
                               ),
                             ],
@@ -315,7 +326,8 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.28),
+                                    // Light-grey drop shadow (was a dark shadow).
+                                    color: Colors.grey.withOpacity(0.35),
                                     blurRadius: 18,
                                     offset: const Offset(0, 7),
                                   ),
@@ -449,7 +461,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         decoration: BoxDecoration(
           color: isOverMedia
               ? Colors.black.withOpacity(0.3)
-              : (isBlack ? const Color(0xFF0B1026) : scheme.surface),
+              : (isBlack ? const Color(0xFF0A0A0A) : scheme.surface),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isOverMedia
@@ -484,7 +496,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         width: double.infinity,
         height: 65,
         decoration: BoxDecoration(
-          color: const Color(0xFF0B1026),
+          color: const Color(0xFF0A0A0A),
           borderRadius: BorderRadius.circular(35),
           boxShadow: [
             BoxShadow(
@@ -605,13 +617,13 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     Color color;
     switch (status.toUpperCase()) {
       case 'TODAY':
-        color = const Color(0xFFC5A35B);
+        color = const Color(0xFFFFD700);
         break;
       case 'ENDED':
         color = isDark ? Colors.white38 : Colors.black38;
         break;
       case 'CANCELLED':
-        color = const Color(0xFFC65B46);
+        color = const Color(0xFFEF4444);
         break;
       case 'UPCOMING':
       default:
@@ -645,7 +657,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF),
+        color: isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: isDark
@@ -888,7 +900,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         width: double.infinity,
         height: 65,
         decoration: BoxDecoration(
-          color: const Color(0xFF0B1026),
+          color: const Color(0xFF0A0A0A),
           borderRadius: BorderRadius.circular(35),
           boxShadow: [
             BoxShadow(
@@ -955,8 +967,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
 /// Web-parity video controls: play/time on the left, and sound + fullscreen +
 /// 3-dot grouped together on the right — all in the bottom bar.
 class _M4VideoControls extends StatefulWidget {
-  final VoidCallback onShare;
-  const _M4VideoControls({required this.onShare});
+  const _M4VideoControls();
 
   @override
   State<_M4VideoControls> createState() => _M4VideoControlsState();
@@ -966,6 +977,8 @@ class _M4VideoControlsState extends State<_M4VideoControls> {
   ChewieController? _chewie;
   bool _visible = true;
   bool _muted = false;
+  bool _menuOpen = false;
+  bool _speedOpen = false;
   Timer? _hideTimer;
 
   VideoPlayerController get _vpc => _chewie!.videoPlayerController;
@@ -1022,16 +1035,105 @@ class _M4VideoControlsState extends State<_M4VideoControls> {
     );
   }
 
+  // ─── 3-dot menu (web parity): a small WHITE popup shown OVER the video,
+  // anchored bottom-right by the 3-dot — not a dark bottom sheet.
+  void _openMenu() {
+    _hideTimer?.cancel();
+    setState(() {
+      _menuOpen = true;
+      _speedOpen = false;
+      _visible = true;
+    });
+  }
+
+  void _closeMenus() {
+    setState(() {
+      _menuOpen = false;
+      _speedOpen = false;
+    });
+    _startHideTimer();
+  }
+
+  Widget _menuCard(List<Widget> rows) {
+    return Container(
+      constraints: const BoxConstraints(minWidth: 190),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(mainAxisSize: MainAxisSize.min, children: rows),
+    );
+  }
+
+  Widget _menuRow(IconData? icon, String label, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              width: 22,
+              child: icon == null
+                  ? null
+                  : Icon(icon, size: 18, color: Colors.black87),
+            ),
+            const SizedBox(width: 10),
+            Text(
+              label,
+              style: GoogleFonts.ebGaramond(
+                color: Colors.black87,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _download() async {
+    try {
+      await launchUrl(
+        Uri.parse(_vpc.dataSource),
+        mode: LaunchMode.externalApplication,
+      );
+    } catch (_) {}
+  }
+
+  // Native PiP is wired in MainActivity + AndroidManifest; it only activates
+  // after a full `flutter build apk` (the hot-patch deploy can't ship native
+  // code). No-ops gracefully until then.
+  Future<void> _enterPip() async {
+    try {
+      await const MethodChannel('m4/pip').invokeMethod('enter');
+    } catch (_) {}
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () {
+        // Tapping the video closes an open menu first, else toggles controls.
+        if (_menuOpen || _speedOpen) {
+          _closeMenus();
+          return;
+        }
         setState(() => _visible = !_visible);
         if (_visible) _startHideTimer();
       },
       child: AnimatedOpacity(
-        opacity: _visible ? 1 : 0,
+        opacity: (_visible || _menuOpen || _speedOpen) ? 1 : 0,
         duration: const Duration(milliseconds: 200),
         child: Stack(
           children: [
@@ -1096,7 +1198,7 @@ class _M4VideoControlsState extends State<_M4VideoControls> {
                             () => _chewie!.toggleFullScreen(),
                           ),
                           const SizedBox(width: 16),
-                          _ctrlIcon(LucideIcons.moreVertical, widget.onShare),
+                          _ctrlIcon(LucideIcons.moreVertical, _openMenu),
                         ],
                       ),
                       const SizedBox(height: 6),
@@ -1115,6 +1217,46 @@ class _M4VideoControlsState extends State<_M4VideoControls> {
                 },
               ),
             ),
+            // 3-dot popup — small white card over the video, bottom-right.
+            if (_menuOpen || _speedOpen)
+              Positioned(
+                right: 12,
+                bottom: 46,
+                child: _menuOpen
+                    ? _menuCard([
+                        _menuRow(LucideIcons.download, 'Download', () {
+                          _closeMenus();
+                          _download();
+                        }),
+                        _menuRow(LucideIcons.gauge, 'Playback speed', () {
+                          setState(() {
+                            _menuOpen = false;
+                            _speedOpen = true;
+                          });
+                        }),
+                        _menuRow(
+                          LucideIcons.pictureInPicture2,
+                          'Picture in picture',
+                          () {
+                            _closeMenus();
+                            _enterPip();
+                          },
+                        ),
+                      ])
+                    : _menuCard([
+                        for (final s in const [0.5, 0.75, 1.0, 1.5, 2.0])
+                          _menuRow(
+                            (_vpc.value.playbackSpeed - s).abs() < 0.01
+                                ? LucideIcons.check
+                                : null,
+                            s == 1.0 ? 'Normal' : '${s}x',
+                            () {
+                              _vpc.setPlaybackSpeed(s);
+                              _closeMenus();
+                            },
+                          ),
+                      ]),
+              ),
           ],
         ),
       ),

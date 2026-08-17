@@ -27,7 +27,7 @@ class PortfolioScreen extends ConsumerStatefulWidget {
 }
 
 class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
-  static const Color _gold = Color(0xFFC5A35B);
+  static const Color _gold = Color(0xFFFFD700);
 
   bool _isLoading = true;
   bool _hasError = false;
@@ -54,9 +54,11 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
         final List<dynamic> data = res.data['data'] ?? [];
         // Holdings = actual property reservations/bookings (exclude pure site visits).
         final holdings = data
-            .where((b) =>
-                b['type'] == 'Token Reservation' ||
-                b['type'] == 'Booking Confirmation')
+            .where(
+              (b) =>
+                  b['type'] == 'Token Reservation' ||
+                  b['type'] == 'Booking Confirmation',
+            )
             .toList();
         final combined = holdings.fold<double>(0, (sum, b) {
           final raw = (b['amount'] ?? '').toString();
@@ -91,7 +93,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
+    final bg = isDark ? Colors.black : Colors.white;
 
     return Scaffold(
       backgroundColor: bg,
@@ -108,7 +110,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
 
   // ─── Header ────────────────────────────────────────────────────────────────
   Widget _buildHeader(bool isDark) {
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
+    final textPrimary = isDark ? Colors.white : Colors.black;
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -132,9 +134,11 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(color: border),
               ),
-              child: Icon(LucideIcons.arrowLeft,
-                  size: 20,
-                  color: textPrimary.withValues(alpha: 0.6)),
+              child: Icon(
+                LucideIcons.arrowLeft,
+                size: 20,
+                color: textPrimary.withValues(alpha: 0.6),
+              ),
             ),
           ),
           const SizedBox(width: 16),
@@ -184,7 +188,8 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
       onRefresh: _fetchPortfolio,
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(
-            parent: BouncingScrollPhysics()),
+          parent: BouncingScrollPhysics(),
+        ),
         padding: const EdgeInsets.fromLTRB(24, 24, 24, 120),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -198,8 +203,9 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                 style: GoogleFonts.gelasio(
                   fontSize: 9,
                   fontWeight: FontWeight.w700,
-                  color: (isDark ? Colors.white : Colors.black)
-                      .withValues(alpha: 0.5),
+                  color: (isDark ? Colors.white : Colors.black).withValues(
+                    alpha: 0.5,
+                  ),
                   letterSpacing: 3,
                 ),
               ),
@@ -216,9 +222,9 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
 
   // ─── Summary card ────────────────────────────────────────────────────────────
   Widget _buildSummaryCard(bool isDark) {
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
+    final textPrimary = isDark ? Colors.white : Colors.black;
     final muted = textPrimary.withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -314,17 +320,17 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
 
   // ─── Holding card ────────────────────────────────────────────────────────────
   Widget _buildHoldingCard(dynamic holding, bool isDark) {
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
+    final textPrimary = isDark ? Colors.white : Colors.black;
     final muted = textPrimary.withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
 
     final project = holding['project'] ?? {};
     final name = (project['title'] ?? 'Unknown Project').toString();
-    final location =
-        (project['location']?['name'] ?? 'Developing Area').toString();
+    final location = (project['location']?['name'] ?? 'Developing Area')
+        .toString();
     final id = (holding['id'] ?? holding['_id'] ?? '—').toString();
     final shortId = id.length > 8 ? id.substring(id.length - 8) : id;
     final status = (holding['status'] ?? 'In Progress').toString();
@@ -375,8 +381,9 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                           end: Alignment.bottomCenter,
                           colors: [
                             Colors.transparent,
-                            (isDark ? Colors.black : Colors.white)
-                                .withValues(alpha: 0.9),
+                            (isDark ? Colors.black : Colors.white).withValues(
+                              alpha: 0.9,
+                            ),
                           ],
                         ),
                       ),
@@ -418,8 +425,11 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                   const SizedBox(height: 6),
                   Row(
                     children: [
-                      Icon(LucideIcons.mapPin,
-                          size: 12, color: M4Theme.premiumBlue.withValues(alpha: 0.6)),
+                      Icon(
+                        LucideIcons.mapPin,
+                        size: 12,
+                        color: M4Theme.premiumBlue.withValues(alpha: 0.6),
+                      ),
                       const SizedBox(width: 6),
                       Expanded(
                         child: Text(
@@ -488,9 +498,11 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          Icon(LucideIcons.maximize2,
-                              size: 14,
-                              color: isDark ? Colors.black : Colors.white),
+                          Icon(
+                            LucideIcons.maximize2,
+                            size: 14,
+                            color: isDark ? Colors.black : Colors.white,
+                          ),
                         ],
                       ),
                     ),
@@ -505,15 +517,17 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
   }
 
   Widget _buildImage(String? url, bool isDark) {
-    final placeholderBg = (isDark ? Colors.white : Colors.black)
-        .withValues(alpha: 0.05);
+    final placeholderBg = (isDark ? Colors.white : Colors.black).withValues(
+      alpha: 0.05,
+    );
     if (url == null || url.isEmpty) {
       return Container(
         color: placeholderBg,
-        child: Icon(LucideIcons.building2,
-            size: 48,
-            color: (isDark ? Colors.white : Colors.black)
-                .withValues(alpha: 0.15)),
+        child: Icon(
+          LucideIcons.building2,
+          size: 48,
+          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.15),
+        ),
       );
     }
     final apiClient = ref.read(apiClientProvider);
@@ -523,10 +537,11 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
       placeholder: (context, _) => Container(color: placeholderBg),
       errorWidget: (context, _, __) => Container(
         color: placeholderBg,
-        child: Icon(LucideIcons.building2,
-            size: 48,
-            color: (isDark ? Colors.white : Colors.black)
-                .withValues(alpha: 0.15)),
+        child: Icon(
+          LucideIcons.building2,
+          size: 48,
+          color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.15),
+        ),
       ),
     );
   }
@@ -539,13 +554,13 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
     final floor = (holding['floor'] ?? 'PENDING').toString();
     final area = (holding['area'] ?? holding['carpetArea'] ?? '—').toString();
     final facing = (holding['facing'] ?? '—').toString();
-    final possession =
-        (holding['possession'] ?? project['possession'] ?? '—').toString();
+    final possession = (holding['possession'] ?? project['possession'] ?? '—')
+        .toString();
     final imageUrl = _firstImage(project);
 
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
+    final textPrimary = isDark ? Colors.white : Colors.black;
     final muted = textPrimary.withValues(alpha: 0.5);
-    final sheetBg = isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF);
+    final sheetBg = isDark ? const Color(0xFF0A0A0A) : Colors.white;
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -565,8 +580,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
             border: Border.all(color: border),
           ),
           child: ClipRRect(
-            borderRadius:
-                const BorderRadius.vertical(top: Radius.circular(36)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(36)),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -618,8 +632,9 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                                 style: GoogleFonts.gelasio(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w700,
-                                  color: M4Theme.premiumBlue
-                                      .withValues(alpha: 0.7),
+                                  color: M4Theme.premiumBlue.withValues(
+                                    alpha: 0.7,
+                                  ),
                                   letterSpacing: 2,
                                 ),
                               ),
@@ -694,18 +709,18 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(LucideIcons.shieldCheck,
-                                    size: 16,
-                                    color:
-                                        isDark ? Colors.black : Colors.white),
+                                Icon(
+                                  LucideIcons.shieldCheck,
+                                  size: 16,
+                                  color: isDark ? Colors.black : Colors.white,
+                                ),
                                 const SizedBox(width: 8),
                                 Text(
                                   'VERIFIED PROPERTY',
                                   style: GoogleFonts.gelasio(
                                     fontSize: 9,
                                     fontWeight: FontWeight.w800,
-                                    color:
-                                        isDark ? Colors.black : Colors.white,
+                                    color: isDark ? Colors.black : Colors.white,
                                     letterSpacing: 2,
                                   ),
                                 ),
@@ -728,7 +743,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
 
   // ─── Empty / error states ────────────────────────────────────────────────────
   Widget _buildEmptyState(bool isDark) {
-    final faint = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.2);
+    final faint = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.2);
     return Padding(
       padding: const EdgeInsets.only(top: 48),
       child: Center(
@@ -751,8 +766,9 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
               style: GoogleFonts.ebGaramond(
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
-                color: (isDark ? Colors.white : Colors.black)
-                    .withValues(alpha: 0.35),
+                color: (isDark ? Colors.white : Colors.black).withValues(
+                  alpha: 0.35,
+                ),
               ),
             ),
           ],
@@ -762,7 +778,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
   }
 
   Widget _buildErrorState(bool isDark) {
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
+    final textPrimary = isDark ? Colors.white : Colors.black;
     final muted = textPrimary.withValues(alpha: 0.5);
     return Center(
       child: Padding(
@@ -770,8 +786,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(LucideIcons.alertTriangle,
-                size: 48, color: muted),
+            Icon(LucideIcons.alertTriangle, size: 48, color: muted),
             const SizedBox(height: 20),
             Text(
               'UNABLE TO LOAD PORTFOLIO',
@@ -786,8 +801,10 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
             _PressableScale(
               onTap: _fetchPortfolio,
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   color: textPrimary,
                   borderRadius: BorderRadius.circular(14),
@@ -901,10 +918,11 @@ class _StatusPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ready = status.toLowerCase().contains('ready') ||
+    final ready =
+        status.toLowerCase().contains('ready') ||
         status.toLowerCase().contains('confirmed') ||
         status.toLowerCase().contains('move');
-    final color = ready ? const Color(0xFFC5A35B) : const Color(0xFFC5A35B);
+    final color = ready ? const Color(0xFF22C55E) : const Color(0xFFF59E0B);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
@@ -942,8 +960,9 @@ class _DetailItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment:
-          alignEnd ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      crossAxisAlignment: alignEnd
+          ? CrossAxisAlignment.end
+          : CrossAxisAlignment.start,
       children: [
         Text(
           label,

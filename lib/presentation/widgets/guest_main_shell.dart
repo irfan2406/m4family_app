@@ -15,6 +15,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 final guestNavigationProvider = StateProvider<int>((ref) => 0);
 final drawerOpenProvider = StateProvider<bool>((ref) => false);
 
+// Bumped when the user taps "Enquiry" in the menu; the guest home watches this
+// and scrolls to its "Register Your Interest" form.
+final scrollToRegisterProvider = StateProvider<int>((ref) => 0);
+
 class GuestMainShell extends ConsumerWidget {
   const GuestMainShell({super.key});
 
@@ -25,42 +29,40 @@ class GuestMainShell extends ConsumerWidget {
 
     final bool appIsDark = Theme.of(context).brightness == Brightness.dark;
 
-    // LIGHT mode: Home (0) & Properties (1) keep the GREEN showcase look
-    // (Figma frames 1 & 4) — unchanged. DARK mode: they inherit the app's
-    // navy theme like every other section, so dark mode is navy everywhere.
+    // LIGHT mode: Home (0) & Properties (1) are the deep-green "showcase"
+    // screens (white typography); the info tabs stay cream with green
+    // typography. DARK mode: everything inherits the navy theme.
     Widget showcase(Widget child) => appIsDark
-        ? child // dark → inherit the app's navy theme
-        : Theme(data: M4Theme.darkTheme, child: child); // light → green
+        ? child
+        : Theme(data: M4Theme.darkTheme, child: child);
 
     final List<Widget> screens = [
-      showcase(const GuestDashboardScreen()), // 0: Home     — green / navy
-      showcase(const ProjectListScreen()),    // 1: Projects  — green / navy
-      const AboutScreen(),                    // 2: About     — cream / navy
-      const CareersScreen(),                  // 3: Careers   — cream / navy
-      const ContactScreen(),                  // 4: Contact   — cream / navy
+      showcase(const GuestDashboardScreen()), // 0: Home     — green
+      showcase(const ProjectListScreen()), // 1: Projects — green
+      const AboutScreen(), // 2: About    — cream
+      const CareersScreen(), // 3: Careers  — cream
+      const ContactScreen(), // 4: Contact  — cream
     ];
 
-    // Nav-pill surface: navy in dark mode (all tabs); in light mode green on
-    // the showcase tabs and cream on the info tabs.
-    final ThemeData pillTheme = appIsDark
+    // Nav pill follows the active tab's surface: green on the showcase tabs,
+    // cream on the info tabs, navy in dark mode.
+    final ThemeData navTheme = appIsDark
         ? M4Theme.darkThemeNavy
         : (currentIndex <= 1 ? M4Theme.darkTheme : M4Theme.lightTheme);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: navTheme.scaffoldBackgroundColor,
       drawer: const ConditionalDrawer(),
-      onDrawerChanged: (isOpen) => ref.read(drawerOpenProvider.notifier).state = isOpen,
+      onDrawerChanged: (isOpen) =>
+          ref.read(drawerOpenProvider.notifier).state = isOpen,
       body: Stack(
         children: [
-          IndexedStack(
-            index: currentIndex,
-            children: screens,
-          ),
+          IndexedStack(index: currentIndex, children: screens),
           if (!isDrawerOpen)
             Align(
               alignment: Alignment.bottomCenter,
               child: Theme(
-                data: pillTheme,
+                data: navTheme,
                 child: _GuestNavigationPill(
                   currentIndex: currentIndex,
                   onTap: (index) =>
@@ -83,45 +85,71 @@ class _GuestNavigationPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    // Frosted-glass pill: the surface follows the screen behind it (deep-green
+    // on the showcase tabs, cream on the info tabs, navy in dark), with a
+    // hairline border and a soft shadow — no heavy dark halo.
     return Container(
       margin: const EdgeInsets.only(bottom: 48),
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(100)),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(100),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(isDark ? 0.22 : 0.10),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
-      // Frosted-glass pill: the blur only affects the content BEHIND the bar;
-      // the icons sit on top and stay perfectly crisp.
       child: ClipRRect(
         borderRadius: BorderRadius.circular(100),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
           child: Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              // Frosted glass follows the surface: green on the green light
-              // screens, navy in dark mode, white on the cream screens.
-              color: isDark
-                  ? Theme.of(context).scaffoldBackgroundColor.withOpacity(0.5)
-                  : Colors.white.withOpacity(0.6),
-              borderRadius: BorderRadius.circular(100),
-              border: Border.all(
-                color: (isDark ? M4Theme.cream : M4Theme.deepGreen)
-                    .withOpacity(0.14),
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _NavIcon(icon: LucideIcons.home, isActive: currentIndex == 0, onTap: () => onTap(0)),
-                const SizedBox(width: 12),
-                _NavIcon(icon: LucideIcons.building2, isActive: currentIndex == 1, onTap: () => onTap(1)),
-                const SizedBox(width: 12),
-                _NavIcon(icon: LucideIcons.info, isActive: currentIndex == 2, onTap: () => onTap(2)),
-                const SizedBox(width: 12),
-                _NavIcon(icon: LucideIcons.briefcase, isActive: currentIndex == 3, onTap: () => onTap(3)),
-                const SizedBox(width: 12),
-                _NavIcon(icon: LucideIcons.headphones, isActive: currentIndex == 4, onTap: () => onTap(4)),
-              ],
-            ),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: isDark
+            ? Theme.of(context).scaffoldBackgroundColor.withOpacity(0.5)
+            : Colors.white.withOpacity(0.92),
+        borderRadius: BorderRadius.circular(100),
+        border: Border.all(
+          color: (isDark ? M4Theme.cream : M4Theme.deepGreen)
+              .withOpacity(isDark ? 0.14 : 0.28),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _NavIcon(
+            icon: LucideIcons.home,
+            isActive: currentIndex == 0,
+            onTap: () => onTap(0),
+          ),
+          const SizedBox(width: 12),
+          _NavIcon(
+            icon: LucideIcons.building2,
+            isActive: currentIndex == 1,
+            onTap: () => onTap(1),
+          ),
+          const SizedBox(width: 12),
+          _NavIcon(
+            icon: LucideIcons.info,
+            isActive: currentIndex == 2,
+            onTap: () => onTap(2),
+          ),
+          const SizedBox(width: 12),
+          _NavIcon(
+            icon: LucideIcons.briefcase,
+            isActive: currentIndex == 3,
+            onTap: () => onTap(3),
+          ),
+          const SizedBox(width: 12),
+          _NavIcon(
+            icon: LucideIcons.headphones,
+            isActive: currentIndex == 4,
+            onTap: () => onTap(4),
+          ),
+        ],
+      ),
           ),
         ),
       ),
@@ -134,35 +162,42 @@ class _NavIcon extends StatelessWidget {
   final bool isActive;
   final VoidCallback onTap;
 
-  const _NavIcon({required this.icon, required this.isActive, required this.onTap});
+  const _NavIcon({
+    required this.icon,
+    required this.isActive,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    // Reference: the active tab is a solid green circle on the cream screens
-    // and a solid white circle on the green screens; inactive icons are the
-    // opposite tone, dimmed, but still clearly legible on the frosted glass.
-    final activeCircle = isDark ? M4Theme.cream : M4Theme.midGreen;
-    final activeIcon = isDark ? M4Theme.navyBackground : M4Theme.cream;
-    final inactiveIcon = isDark
-        ? M4Theme.cream.withOpacity(0.75)
-        : M4Theme.deepGreen.withOpacity(0.72);
     return _ScaleButton(
       onTap: onTap,
       child: Container(
         width: 56,
         height: 56,
         decoration: BoxDecoration(
-          color: isActive ? activeCircle : Colors.transparent,
+          color: isActive
+              ? (isDark ? Colors.white : Colors.black)
+              : Colors.transparent,
           shape: BoxShape.circle,
           boxShadow: isActive
-              ? [BoxShadow(color: activeCircle.withOpacity(0.3), blurRadius: 12)]
+              ? [
+                  BoxShadow(
+                    color: (isDark ? Colors.white : Colors.black).withOpacity(
+                      0.1,
+                    ),
+                    blurRadius: 10,
+                  ),
+                ]
               : [],
         ),
         child: Center(
           child: Icon(
             icon,
-            color: isActive ? activeIcon : inactiveIcon,
+            color: isActive
+                ? (isDark ? Colors.black : Colors.white)
+                : (isDark ? Colors.white70 : Colors.black54),
             size: 24,
           ),
         ),
@@ -180,15 +215,22 @@ class _ScaleButton extends StatefulWidget {
   State<_ScaleButton> createState() => _ScaleButtonState();
 }
 
-class _ScaleButtonState extends State<_ScaleButton> with SingleTickerProviderStateMixin {
+class _ScaleButtonState extends State<_ScaleButton>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scale;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 100));
-    _scale = Tween<double>(begin: 1.0, end: 0.95).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 100),
+    );
+    _scale = Tween<double>(
+      begin: 1.0,
+      end: 0.95,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override

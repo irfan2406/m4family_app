@@ -38,20 +38,17 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
     try {
       final apiClient = _ref.read(apiClientProvider);
       final response = await apiClient.getNotifications();
-      
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         final List<dynamic> data = response.data['data'] ?? [];
         final List<NotificationModel> notifications = data
             .map((json) => NotificationModel.fromJson(json))
             .toList();
-        
+
         // Sort by date newest first
         notifications.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-        
-        state = state.copyWith(
-          notifications: notifications,
-          isLoading: false,
-        );
+
+        state = state.copyWith(notifications: notifications, isLoading: false);
       } else {
         state = state.copyWith(
           isLoading: false,
@@ -59,10 +56,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -70,7 +64,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
     try {
       final apiClient = _ref.read(apiClientProvider);
       final response = await apiClient.markAllNotificationsAsRead();
-      
+
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Optimistically update local state
         final updatedNotifications = state.notifications
@@ -87,6 +81,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
   int get unreadCount => state.notifications.where((n) => !n.read).length;
 }
 
-final notificationProvider = StateNotifierProvider<NotificationNotifier, NotificationState>((ref) {
-  return NotificationNotifier(ref);
-});
+final notificationProvider =
+    StateNotifierProvider<NotificationNotifier, NotificationState>((ref) {
+      return NotificationNotifier(ref);
+    });

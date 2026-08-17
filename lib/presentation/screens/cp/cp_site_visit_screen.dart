@@ -1,6 +1,8 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
@@ -80,7 +82,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
       isScrollControlled: true,
       builder: (sheetCtx) => Container(
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+          color: isDark ? const Color(0xFF0B111E) : Colors.white,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         ),
         padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
@@ -182,8 +184,17 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
         _selectedProjectId == null ||
         _employeeId == null ||
         _scheduledAt == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please complete all fields')),
+      _showMessage('Please complete all fields');
+      return;
+    }
+    // The catalog falls back to placeholder projects (slug ids like 'cledor')
+    // while the bloated projects endpoint is still loading. Booking one can
+    // only fail server-side with `Cast to ObjectId failed`, so stop here and
+    // say what's actually happening rather than surfacing a BSON error.
+    if (_selectedProjectId!.length != 24) {
+      _showMessage(
+        'Still loading the live project list — please wait a moment, '
+        'then reselect the project.',
       );
       return;
     }
@@ -205,26 +216,64 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
       if (!mounted) return;
       final ok = res.data is Map && (res.data as Map)['status'] == true;
       if (ok) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Visit scheduled successfully!')),
-        );
+        _showMessage('Visit scheduled successfully!', success: true);
         Navigator.pop(context);
       } else {
         final msg = res.data is Map
             ? (res.data as Map)['message']?.toString()
             : null;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(msg ?? 'Failed to schedule visit')),
-        );
+        _showMessage(msg ?? 'Failed to schedule visit');
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Error: $e')));
+      _showMessage(_errorText(e));
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
+  }
+
+  /// The API explains *why* it rejected a request in `message` — surface that
+  /// instead of dumping the raw DioException (which said nothing useful and
+  /// filled the screen).
+  String _errorText(Object e) {
+    if (e is DioException) {
+      final data = e.response?.data;
+      if (data is Map && data['message'] != null) {
+        return data['message'].toString();
+      }
+      if (e.type == DioExceptionType.connectionError ||
+          e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout) {
+        return 'Connection problem. Please try again.';
+      }
+    }
+    return 'Could not schedule the visit. Please try again.';
+  }
+
+  /// Red on failure, green on success.
+  void _showMessage(String message, {bool success = false}) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(
+            message,
+            style: GoogleFonts.ebGaramond(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+          ),
+          backgroundColor: success
+              ? const Color(0xFF10B981)
+              : const Color(0xFFE24B4A),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
   }
 
   @override
@@ -293,6 +342,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
           padding: const EdgeInsets.all(24),
           child: Form(
             key: _formKey,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -300,7 +350,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: Theme.of(context).brightness == Brightness.dark
-                        ? const Color(0xFF0B1026)
+                        ? const Color(0xFF111111)
                         : Colors.black,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: Colors.white.withOpacity(0.08)),
@@ -343,7 +393,9 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                   controller: _nameController,
                   hint: 'ENTER NAME',
                   icon: LucideIcons.user,
-                  validator: (v) => v!.isEmpty ? 'Name is required' : null,
+                  keyboardType: TextInputType.name,
+                  inputFormatters: Validators.nameFormatters,
+                  validator: (v) => Validators.nameError(v),
                 ),
                 const SizedBox(height: 24),
 
@@ -354,8 +406,8 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                   hint: '+91 XXXXX XXXXX',
                   icon: LucideIcons.phone,
                   keyboardType: TextInputType.phone,
-                  validator: (v) =>
-                      v!.isEmpty ? 'Phone number is required' : null,
+                  inputFormatters: Validators.phoneFormatters,
+                  validator: (v) => Validators.phoneError(v),
                 ),
                 const SizedBox(height: 24),
 
@@ -425,6 +477,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
     IconData? icon,
     int maxLines = 1,
     TextInputType keyboardType = TextInputType.text,
+    List<TextInputFormatter>? inputFormatters,
     String? Function(String?)? validator,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -433,7 +486,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
     // draw a drop shadow, so this wraps the field in a shadowed Container.
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+        color: isDark ? const Color(0xFF15171C) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: (isDark ? Colors.white : Colors.black).withOpacity(0.06),
@@ -452,10 +505,11 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
         controller: controller,
         maxLines: maxLines,
         keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
         validator: validator,
         style: GoogleFonts.ebGaramond(
           color: isDark ? Colors.white : Colors.black,
-          fontSize: 13,
+          fontSize: 15,
           fontWeight: FontWeight.bold,
         ),
         decoration: InputDecoration(
@@ -475,7 +529,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                 )
               : null,
           errorStyle: GoogleFonts.ebGaramond(
-            color: Color(0xFFC5A35B),
+            color: Colors.redAccent,
             fontSize: 10,
           ),
           border: InputBorder.none,
@@ -507,7 +561,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+              color: isDark ? const Color(0xFF15171C) : Colors.white,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: _isProjectDropdownOpen
@@ -560,7 +614,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
             margin: const EdgeInsets.only(top: 8),
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
+              color: isDark ? const Color(0xFF111111) : Colors.white,
               borderRadius: BorderRadius.circular(16),
               boxShadow: isDark
                   ? null
@@ -637,7 +691,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+              color: isDark ? const Color(0xFF15171C) : Colors.white,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: _isEmployeeDropdownOpen
@@ -692,7 +746,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
             margin: const EdgeInsets.only(top: 8),
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
+              color: isDark ? const Color(0xFF111111) : Colors.white,
               borderRadius: BorderRadius.circular(16),
               boxShadow: isDark
                   ? null
@@ -766,7 +820,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
         height: 56,
         padding: const EdgeInsets.symmetric(horizontal: 20),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
+          color: isDark ? const Color(0xFF15171C) : Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: (isDark ? Colors.white : Colors.black).withOpacity(0.06),

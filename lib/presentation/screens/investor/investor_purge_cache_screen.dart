@@ -26,9 +26,9 @@ class InvestorPurgeCacheScreen extends ConsumerStatefulWidget {
 
 class _InvestorPurgeCacheScreenState
     extends ConsumerState<InvestorPurgeCacheScreen> {
-  static const _red = Color(0xFFC65B46);
-  static const _green = Color(0xFFC5A35B);
-  static const _gold = Color(0xFFC5A35B);
+  static const _red = Color(0xFFEF4444);
+  static const _green = Color(0xFF10B981);
+  static const _gold = Color(0xFFFFD700);
 
   bool _purging = false;
   bool _done = false;
@@ -155,6 +155,7 @@ class _InvestorPurgeCacheScreenState
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
+          backgroundColor: const Color(0xFFE24B4A),
           content: Text(
             'Failed to purge cache: $e',
             style: GoogleFonts.ebGaramond(fontSize: 12),
@@ -175,10 +176,10 @@ class _InvestorPurgeCacheScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
+    final bg = isDark ? Colors.black : Colors.white;
+    final textPrimary = isDark ? Colors.white : Colors.black;
+    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -190,9 +191,8 @@ class _InvestorPurgeCacheScreenState
         elevation: 0,
         leading: IconButton(
           icon: Icon(LucideIcons.arrowLeft, color: textPrimary),
-          onPressed: () => context.canPop()
-              ? context.pop()
-              : context.go('/investor/home'),
+          onPressed: () =>
+              context.canPop() ? context.pop() : context.go('/investor/home'),
         ),
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -227,7 +227,9 @@ class _InvestorPurgeCacheScreenState
           const SizedBox(height: 24),
           _sectionLabel('SCOPE OF OPERATIONS', muted),
           const SizedBox(height: 12),
-          ..._scopes.map((s) => _scopeCard(s, textPrimary, muted, card, border)),
+          ..._scopes.map(
+            (s) => _scopeCard(s, textPrimary, muted, card, border),
+          ),
           const SizedBox(height: 24),
           _sectionLabel('DIAGNOSTIC INDICATORS', muted),
           const SizedBox(height: 12),
@@ -265,10 +267,7 @@ class _InvestorPurgeCacheScreenState
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            _red.withValues(alpha: 0.12),
-            _red.withValues(alpha: 0.02),
-          ],
+          colors: [_red.withValues(alpha: 0.12), _red.withValues(alpha: 0.02)],
         ),
       ),
       child: Row(
@@ -547,14 +546,14 @@ class _InvestorPurgeCacheScreenState
                   child: checked
                       ? const Icon(LucideIcons.check, size: 14, color: _green)
                       : (_purging
-                          ? Padding(
-                              padding: const EdgeInsets.all(4),
-                              child: CircularProgressIndicator(
-                                strokeWidth: 1.5,
-                                color: muted,
-                              ),
-                            )
-                          : null),
+                            ? Padding(
+                                padding: const EdgeInsets.all(4),
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 1.5,
+                                  color: muted,
+                                ),
+                              )
+                            : null),
                 ),
                 const SizedBox(width: 12),
                 Expanded(

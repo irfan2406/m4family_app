@@ -1,16 +1,22 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:flutter/services.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
+import 'package:m4_mobile/core/utils/api_error.dart';
+import 'package:m4_mobile/core/utils/project_highlights.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/providers/project_provider.dart';
+import 'package:m4_mobile/presentation/providers/investor_shell_provider.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
 import 'package:m4_mobile/presentation/screens/home/guest_dashboard_screen.dart'
     show guestHomeCacheProvider, GuestHomeData;
@@ -51,6 +57,12 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
   bool _submitting = false;
   bool _agreedToTerms = false;
 
+  // Inline validation for the "Register your interest" form — the field itself
+  // turns red instead of a snackbar popping over the page.
+  String? _nameError;
+  String? _emailError;
+  String? _phoneError;
+
   Timer? _heroTimer;
 
   @override
@@ -90,6 +102,18 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
   // Renders an image that may be a base64 `data:` URI (how the backend stores
   // images — CachedNetworkImage can't handle those), an http URL, or a
   // relative path. Mirrors the guest home helper.
+  // Web parity: JS `||` treats empty strings as missing; Dart `??` does not.
+  // The API returns `image: ""` / `heroImage: ""` for some records, so pick the
+  // first non-empty candidate (else the fallback) instead of letting "" slip
+  // through as "present" and render an empty (placeholder) image.
+  static String _pickImage(List<dynamic> candidates, String fallback) {
+    for (final c in candidates) {
+      final s = (c ?? '').toString().trim();
+      if (s.isNotEmpty) return s;
+    }
+    return fallback;
+  }
+
   Widget _buildProjectImage(
     String raw, {
     Key? key,
@@ -97,6 +121,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
     double? height,
     BoxFit fit = BoxFit.cover,
     double errorIconSize = 50,
+    Alignment alignment = Alignment.center,
   }) {
     Widget errorBox() => Container(
       color: Colors.white10,
@@ -111,6 +136,18 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
 
     final src = raw.trim();
     if (src.isEmpty) return errorBox();
+
+    if (src.startsWith('assets/')) {
+      return Image.asset(
+        src,
+        key: key,
+        width: width,
+        height: height,
+        fit: fit,
+        alignment: alignment,
+        errorBuilder: (_, __, ___) => errorBox(),
+      );
+    }
 
     if (src.startsWith('data:')) {
       try {
@@ -128,6 +165,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
           width: width,
           height: height,
           fit: fit,
+          alignment: alignment,
           gaplessPlayback: true,
           cacheWidth: 1080,
           errorBuilder: (_, __, ___) => errorBox(),
@@ -146,25 +184,110 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
       width: width,
       height: height,
       fit: fit,
+      alignment: alignment,
       placeholder: (c, u) => Container(color: Colors.black12),
       errorWidget: (c, u, e) => errorBox(),
     );
   }
 
-  Future<void> _fetchData() async {
+  // Reads the last-known-good projects the guest home persisted to disk, so the
+  // Properties tab can show data when the (bloated) projects call 504s.
+  Future<List<dynamic>?> _loadCachedProjectsFromDisk() async {
     try {
-      final apiClient = ref.read(apiClientProvider);
+      final f = File('${Directory.systemTemp.path}/m4_guest_home_cache.json');
+      if (!await f.exists()) return null;
+      final map = jsonDecode(await f.readAsString());
+      final list = map is Map ? map['projects'] : null;
+      return (list is List && list.isNotEmpty) ? list : null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  // Shown in the Properties tab when the real projects can't load (the bloated
+  // base64 hero image makes GET /projects 504 on a cold cache) so the tab is
+  // never blank. Replaced by real data the moment it arrives.
+  static final List<Map<String, dynamic>> _placeholderProjects = [
+    {
+      '_id': 'cledor',
+      'title': 'Cledor',
+      'location': 'Mumbai',
+      'status': 'Ongoing',
+      'heroImage': 'assets/cledor_featured.jpg',
+      'description':
+          'Live smart at Aura Heights—space-efficient 1 & 2 BHK homes with curated amenities and rare parking solutions.',
+    },
+    {
+      '_id': 'skai',
+      'title': 'Skai',
+      'location': 'Mumbai',
+      'status': 'Ongoing',
+      'heroImage': 'assets/cledor_interior.jpg',
+      'description':
+          'Elevated living with panoramic city views and world-class amenities.',
+    },
+    {
+      '_id': 'ocean-view',
+      'title': 'Ocean View Residences',
+      'location': 'Mumbai',
+      'status': 'Completed',
+      'heroImage':
+          'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
+      'description': 'Where horizon meets home. Coastal elegance redefined.',
+    },
+  ];
+
+  // Web parity: the MEDIA tab shows real-estate cards over interior/property
+  // photos (matching the web), not the project towers only.
+  static final List<Map<String, dynamic>> _placeholderMedia = [
+    {
+      '_id': 'media1',
+      'title': 'Ocean View',
+      'image': 'assets/hero_artistic.jpg',
+    },
+    {
+      '_id': 'media2',
+      'title': 'Ocean View',
+      'image': 'assets/custom_view_1.png',
+    },
+    {
+      '_id': 'media3',
+      'title': 'Aura Residences',
+      'image': 'assets/community_luxury.png',
+    },
+    {'_id': 'media4', 'title': 'Cledor', 'image': 'assets/cledor_featured.jpg'},
+  ];
+
+  Future<void> _fetchData() async {
+    final apiClient = ref.read(apiClientProvider);
+
+    // Cold start with no in-memory cache: hydrate projects from the on-disk
+    // payload so the Properties tab shows instantly instead of waiting on (and
+    // then failing) the slow projects call.
+    if (_projects.isEmpty) {
+      final cachedProjects = await _loadCachedProjectsFromDisk();
+      if (cachedProjects != null && mounted) {
+        setState(() {
+          _projects = cachedProjects;
+          _loading = false;
+        });
+      }
+    }
+
+    // Communities + media are small and reliable — load them first, on their
+    // own, so the tabs populate even when the bloated projects call is slow or
+    // 504s. (Previously all three shared one Future.wait, so a projects failure
+    // discarded the communities/media too.)
+    try {
       final results = await Future.wait([
-        apiClient.getProjects(),
         apiClient.getCommunities(),
         apiClient.getContent('media'),
       ]);
 
       if (mounted) {
         setState(() {
-          _projects = results[0].data['data'] ?? [];
-          _communities = results[1].data['data'] ?? [];
-          _media = results[2].data['data'] ?? [];
+          _communities = results[0].data['data'] ?? _communities;
+          _media = results[1].data['data'] ?? _media;
 
           // Fill blank space with placeholder media when none returned.
           if (_media.isEmpty) {
@@ -199,15 +322,30 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
           }
           _loading = false;
         });
-        // Cache the fresh payload so the next home mount is instant.
-        ref.read(guestHomeCacheProvider.notifier).state = GuestHomeData(
-          projects: _projects,
-          communities: _communities,
-          media: _media,
-        );
       }
-    } catch (e) {
+    } catch (_) {
       if (mounted) setState(() => _loading = false);
+    }
+
+    // Projects can be slow / return a 504 (multi-MB base64 hero image) — fetch
+    // separately so a failure never wipes the communities/media loaded above.
+    // Via the shared projectsProvider: cached + retried + ONE download for the
+    // whole app, instead of this screen pulling the multi-MB catalog again.
+    try {
+      if (ref.read(projectsProvider) is AsyncError) {
+        ref.invalidate(projectsProvider);
+      }
+      final list = await ref.read(projectsProvider.future);
+      if (mounted && list.isNotEmpty) setState(() => _projects = list);
+    } catch (_) {}
+
+    // Cache whatever we managed to load for an instant next mount.
+    if (mounted) {
+      ref.read(guestHomeCacheProvider.notifier).state = GuestHomeData(
+        projects: _projects,
+        communities: _communities,
+        media: _media,
+      );
     }
   }
 
@@ -216,24 +354,46 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
     if (ctx != null) {
       Scrollable.ensureVisible(
         ctx,
-        duration: const Duration(seconds: 1),
+        duration: const Duration(milliseconds: 800),
+        curve: Curves.easeInOut,
+        alignment: 0.1,
+      );
+    } else if (_scrollController.hasClients) {
+      // Fallback: the Register Interest form sits near the bottom of the page.
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 800),
         curve: Curves.easeInOut,
       );
     }
   }
 
+  /// Marks the empty required fields red in place. Returns true when valid.
+  bool _validateInterest() {
+    // Full validation (was empty-check only): name = letters, email = proper
+    // format, phone = 10-digit. Errors show in red on each field.
+    final nameErr = Validators.nameError(
+      _nameController.text,
+      field: 'full name',
+    );
+    final emailErr = Validators.emailError(_emailController.text);
+    final phoneErr = Validators.phoneError(_phoneController.text);
+    setState(() {
+      _nameError = nameErr;
+      _emailError = emailErr;
+      _phoneError = phoneErr;
+    });
+    return nameErr == null && emailErr == null && phoneErr == null;
+  }
+
   Future<void> _submitInterest() async {
-    if (_nameController.text.isEmpty ||
-        _emailController.text.isEmpty ||
-        _phoneController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all required fields (*)')),
-      );
-      return;
-    }
+    if (!_validateInterest()) return;
     if (!_agreedToTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please agree to the Privacy Policy')),
+        const SnackBar(
+          backgroundColor: Color(0xFFE24B4A),
+          content: Text('Please agree to the Privacy Policy'),
+        ),
       );
       return;
     }
@@ -242,19 +402,22 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
     try {
       final apiClient = ref.read(apiClientProvider);
       final user = ref.read(authProvider).user;
-      final investor =
-          user?['firstName']?.toString() ??
-          user?['fullName']?.toString() ??
-          user?['phone']?.toString() ??
-          'Investor';
+      // `userId` is an ObjectId reference — the old code put the investor's
+      // *display name* here ('Investor' / firstName), which made the API reject
+      // the whole lead with:
+      //   userId: Cast to ObjectId failed for value "Investor" … BSONError
+      final investorId = (user?['_id'] ?? user?['id'])?.toString() ?? '';
       await apiClient.submitLead({
         'name': _nameController.text,
         'email': _emailController.text,
         'phone': _phoneController.text,
         'message': _messageController.text,
-        'interest': 'Investor Interest',
-        'source': 'investor',
-        'userId': investor,
+        // Server-side enums — anything else is rejected with a 400. Valid:
+        // interest = Buying | Selling | Site Visit | Video Call
+        // (case-sensitive); source = online | cp | walk-in | referral | other.
+        'interest': 'Buying',
+        'source': 'online',
+        if (investorId.length == 24) 'userId': investorId,
       });
 
       if (mounted) {
@@ -272,9 +435,21 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
       }
     } catch (e) {
       if (mounted)
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Submission failed: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            // Was 'Submission failed: $e', which printed the whole
+            // DioException (status-code explanation, MDN link and all) at the
+            // user. The backend sends an empty error body, so translate it.
+            content: Text(
+              friendlyApiError(
+                e,
+                fallback:
+                    'Could not register your interest. Please check the form and try again.',
+              ),
+            ),
+          ),
+        );
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
@@ -282,6 +457,16 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Sidebar "Enquiry" quick action: scroll the Register Interest form in.
+    ref.listen<int>(investorInquiryScrollTriggerProvider, (prev, next) {
+      if (next > 0 && (prev == null || next > prev)) {
+        // Delay so the drawer close + tab switch settle before scrolling.
+        Future.delayed(const Duration(milliseconds: 450), () {
+          if (mounted) _scrollToInterestForm();
+        });
+      }
+    });
+
     if (_loading) {
       return Material(
         color: Theme.of(context).scaffoldBackgroundColor,
@@ -390,26 +575,53 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                 // Tagline (Living the M4 Life) — script image, not text.
                 Transform.translate(
                   offset: const Offset(0, -50),
-                  child: M4Theme.taglineWordmark(context, height: 200),
+                  child: ColorFiltered(
+                    colorFilter: ColorFilter.matrix(
+                      Theme.of(context).brightness == Brightness.dark
+                          ? const [
+                              // Dark Mode: Invert and boost to white
+                              -5.0, 0, 0, 0, 255,
+                              0, -5.0, 0, 0, 255,
+                              0, -5.0, 0, 0, 255,
+                              0, 0, 0, 1, 0,
+                            ]
+                          : const [
+                              // Light Mode: Crush to black
+                              5.0, 0, 0, 0, -150,
+                              0, 5.0, 0, 0, -150,
+                              0, 0, 5.0, 0, -150,
+                              0, 0, 0, 1, 0,
+                            ],
+                    ),
+                    child: Image.asset(
+                      'assets/living_m4_life.png',
+                      width: MediaQuery.of(context).size.width,
+                      height: 200,
+                      fit: BoxFit.fitWidth,
+                    ),
+                  ),
                 ),
 
                 // Hero carousel (4:3, auto-cycle, badge, dots).
+                // Was -110, which pulled the hero up until it touched the
+                // "Living the M4 Life" logo — leave it breathing room.
                 Transform.translate(
-                  offset: const Offset(0, -110),
+                  offset: const Offset(0, -70),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Builder(
                       builder: (context) {
-                        final mainImage = _projects.isNotEmpty
-                            ? (_projects[_heroIndex %
-                                      _projects.length]['heroImage'] ??
-                                  _projects[_heroIndex %
-                                      _projects.length]['image'] ??
-                                  _projects[_heroIndex %
-                                      _projects.length]['coverImage'] ??
-                                  'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80')
+                        final heroProject = _projects.isNotEmpty
+                            ? _projects[_heroIndex % _projects.length]
+                            : null;
+                        final mainImage = heroProject != null
+                            ? _pickImage([
+                                heroProject['heroImage'],
+                                heroProject['image'],
+                                heroProject['coverImage'],
+                              ], 'assets/hero_artistic.jpg')
                             : [
-                                'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80',
+                                'assets/hero_artistic.jpg',
                                 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
                                 'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80',
                               ][_heroIndex % 3];
@@ -584,10 +796,12 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         RichText(
           text: TextSpan(
             style: GoogleFonts.ebGaramond(
+              // Was 0.6 — too faint/grey to read. Darker + slightly heavier.
               color: Theme.of(
                 context,
-              ).colorScheme.onSurface.withValues(alpha: 0.6),
+              ).colorScheme.onSurface.withValues(alpha: 0.82),
               fontSize: 14,
+              fontWeight: FontWeight.w500,
               height: 1.8,
             ),
             children: [
@@ -677,23 +891,201 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
           ],
         ),
         const SizedBox(height: 32),
-        SizedBox(
-          height: 360,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            physics: const BouncingScrollPhysics(),
-            itemCount: _activeTab == 'Communities'
-                ? _communities.length
-                : (_activeTab == 'Media' ? _media.length : _projects.length),
-            itemBuilder: (context, index) {
-              final item = _activeTab == 'Communities'
-                  ? _communities[index]
-                  : (_activeTab == 'Media' ? _media[index] : _projects[index]);
-              return _buildTabCard(item);
-            },
-          ),
+        Builder(
+          builder: (context) {
+            // Web parity: Properties shows the projects (white info cards);
+            // Media shows "Ocean View" living-room boxes; Communities its own
+            // list. Projects fall back to placeholders when the projects call
+            // 504s / cache is cold, so no tab is ever blank.
+            final projectItems = _projects.isNotEmpty
+                ? _projects
+                : _placeholderProjects;
+            final tabItems = _activeTab == 'Communities'
+                ? _communities
+                : (_activeTab == 'Media' ? _placeholderMedia : projectItems);
+            return SizedBox(
+              height: 360,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                physics: const BouncingScrollPhysics(),
+                itemCount: tabItems.length,
+                itemBuilder: (context, index) => _buildTabCard(tabItems[index]),
+              ),
+            );
+          },
         ),
       ],
+    );
+  }
+
+  // Web parity: Properties tab card is a white "info card" — image on top with
+  // COMPLETED + ARTISTIC IMPRESSION badges, then a white section with the title,
+  // location and a READ MORE button (same as the guest home / web).
+  Widget _buildInvestorPropertyCard(dynamic item, String imageUrl) {
+    final scheme = Theme.of(context).colorScheme;
+    final title = (item['title'] ?? item['name'] ?? '').toString();
+    final location =
+        (item['location'] is Map
+                ? item['location']['name']
+                : item['location'] ?? '')
+            .toString();
+    final status = (item['status'] ?? 'Ongoing').toString();
+
+    return _ScaleButton(
+      onTap: () =>
+          context.push('/investor/projects/${item['_id']}', extra: item),
+      child: Container(
+        width: 300,
+        margin: const EdgeInsets.only(right: 20, bottom: 10),
+        decoration: BoxDecoration(
+          color: scheme.surface,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.12),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(24),
+              ),
+              child: Stack(
+                children: [
+                  _buildProjectImage(
+                    imageUrl,
+                    height: 200,
+                    width: double.infinity,
+                    errorIconSize: 40,
+                  ),
+                  Positioned(
+                    top: 12,
+                    right: 12,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.75),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        status.toUpperCase(),
+                        style: GoogleFonts.ebGaramond(
+                          color: Colors.white,
+                          fontSize: 8,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 10,
+                    right: 10,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.55),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        'ARTISTIC IMPRESSION',
+                        style: GoogleFonts.ebGaramond(
+                          color: Colors.white,
+                          fontSize: 6.5,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.gelasio(
+                      color: scheme.onSurface,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Icon(
+                        LucideIcons.mapPin,
+                        size: 12,
+                        color: scheme.onSurface.withValues(alpha: 0.55),
+                      ),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          location.toUpperCase(),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.ebGaramond(
+                            color: scheme.onSurface.withValues(alpha: 0.55),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  Container(
+                    width: double.infinity,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: scheme.onSurface,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'READ MORE',
+                          style: GoogleFonts.ebGaramond(
+                            color: scheme.surface,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 2,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Icon(
+                          LucideIcons.chevronRight,
+                          size: 14,
+                          color: scheme.surface,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -702,17 +1094,36 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
     final isMedia = _activeTab.toLowerCase() == 'media';
     final apiClient = ref.read(apiClientProvider);
 
-    final imageUrl = apiClient.resolveUrl(
-      isCommunity
-          ? (item['image'] ??
-                'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80')
-          : (isMedia
-                ? (item['thumbnail'] ??
-                      item['image'] ??
-                      'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80')
-                : (item['heroImage'] ??
-                      'https://images.unsplash.com/photo-1613545325278-f24b0cae1224?auto=format&fit=crop&q=80')),
-    );
+    final picked = isCommunity
+        ? _pickImage(
+            [item['image'], item['heroImage']],
+            'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80',
+          )
+        : (isMedia
+              ? _pickImage(
+                  [
+                    item['thumbnail'],
+                    item['image'],
+                    item['heroImage'],
+                    item['coverImage'],
+                  ],
+                  'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80',
+                )
+              : _pickImage(
+                  [item['heroImage'], item['image'], item['coverImage']],
+                  'https://images.unsplash.com/photo-1613545325278-f24b0cae1224?auto=format&fit=crop&q=80',
+                ));
+    // Asset paths must bypass resolveUrl (it would prepend the backend host and
+    // 404); http/relative paths still resolve normally.
+    final imageUrl = picked.startsWith('assets/')
+        ? picked
+        : apiClient.resolveUrl(picked);
+
+    // Web parity: Properties uses the white info card; Communities/Media keep
+    // the full-bleed image-overlay card.
+    if (!isCommunity && !isMedia) {
+      return _buildInvestorPropertyCard(item, imageUrl);
+    }
 
     return _ScaleButton(
       onTap: () {
@@ -728,7 +1139,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         width: 300,
         margin: const EdgeInsets.only(right: 20, bottom: 10),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(40),
+          borderRadius: BorderRadius.circular(isMedia ? 24 : 40),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.15),
@@ -738,88 +1149,32 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(40),
+          borderRadius: BorderRadius.circular(isMedia ? 24 : 40),
           child: Stack(
             fit: StackFit.expand,
             children: [
-              // High Resolution Image
-              _buildProjectImage(imageUrl, errorIconSize: 40),
+              // High Resolution Image (Media biases the crop toward the tower)
+              _buildProjectImage(
+                imageUrl,
+                errorIconSize: 40,
+                alignment: Alignment.center,
+              ),
 
-              // High-End Gradient Overlay
+              // Gradient Overlay — subtle for Media (title only), stronger for
+              // Communities (description + action row need more contrast).
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    stops: const [0.3, 1.0],
+                    stops: isMedia ? const [0.55, 1.0] : const [0.3, 1.0],
                     colors: [
                       Colors.transparent,
-                      Colors.black.withValues(alpha: 0.85),
+                      Colors.black.withValues(alpha: isMedia ? 0.6 : 0.85),
                     ],
                   ),
                 ),
               ),
-
-              // Play Icon for Media
-              if (isMedia)
-                Center(
-                  child:
-                      Container(
-                        width: 60,
-                        height: 60,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.2),
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.4),
-                            width: 2,
-                          ),
-                        ),
-                        child: const Center(
-                          child: Icon(
-                            LucideIcons.play,
-                            color: Colors.white,
-                            size: 30,
-                          ),
-                        ),
-                      ).animate().scale(
-                        begin: const Offset(0.8, 0.8),
-                        curve: Curves.elasticOut,
-                        duration: 800.ms,
-                      ),
-                ),
-
-              // Badge (for Properties/Media)
-              if (!isCommunity)
-                Positioned(
-                  top: 24,
-                  right: 24,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.6),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.1),
-                      ),
-                    ),
-                    child: Text(
-                      isMedia
-                          ? 'MEDIA'
-                          : (item['status']?.toString() ?? 'ONGOING')
-                                .toUpperCase(),
-                      style: GoogleFonts.ebGaramond(
-                        color: Colors.white,
-                        fontSize: 8,
-                        fontWeight: FontWeight.w400,
-                        letterSpacing: 1,
-                      ),
-                    ),
-                  ),
-                ),
 
               // Content Section
               Positioned(
@@ -834,69 +1189,78 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                       (item['title'] ?? item['name'] ?? '')
                           .toString()
                           .toUpperCase(),
-                      style: GoogleFonts.gelasio(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w400,
-                        letterSpacing: -0.5,
-                      ),
+                      // Web parity: Media titles are small + letterspaced
+                      // (CLEDOR / SKAI); Communities use the large serif.
+                      style: isMedia
+                          ? GoogleFonts.gelasio(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 2,
+                            )
+                          : GoogleFonts.gelasio(
+                              color: Colors.white,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w400,
+                              letterSpacing: -0.5,
+                            ),
                     ),
-                    const SizedBox(height: 10),
-                    Text(
-                      (isCommunity
-                              ? (item['overview'] ?? item['description'] ?? '')
-                              : (item['location'] is Map
-                                    ? item['location']['name']
-                                    : item['location'] ?? 'MAZGAON'))
-                          .toString()
-                          .toUpperCase(),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.ebGaramond(
-                        color: Colors.white.withValues(alpha: 0.7),
-                        fontSize: 10,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 0.5,
-                        height: 1.4,
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          isCommunity
-                              ? 'EXPLORE COMMUNITY'
-                              : (isMedia ? 'READ ARTICLE' : 'VIEW PROPERTY'),
-                          style: GoogleFonts.ebGaramond(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w400,
-                            letterSpacing: 1.2,
-                          ),
+                    // Media (web parity): the card shows only the title over
+                    // the image + play button. Communities keep the fuller
+                    // layout (description + EXPLORE COMMUNITY action row).
+                    if (isCommunity) ...[
+                      const SizedBox(height: 10),
+                      Text(
+                        (item['overview'] ?? item['description'] ?? '')
+                            .toString()
+                            .toUpperCase(),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.ebGaramond(
+                          // Brighter on the dark card = clearly readable.
+                          color: Colors.white.withValues(alpha: 0.92),
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.5,
+                          height: 1.4,
                         ),
-                        Container(
-                          width: 44,
-                          height: 44,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.2),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
+                      ),
+                      const SizedBox(height: 24),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'EXPLORE COMMUNITY',
+                            style: GoogleFonts.ebGaramond(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 1.2,
+                            ),
                           ),
-                          child: const Icon(
-                            LucideIcons.arrowRight,
-                            color: Colors.black,
-                            size: 18,
+                          Container(
+                            width: 44,
+                            height: 44,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withValues(alpha: 0.2),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: const Icon(
+                              LucideIcons.arrowRight,
+                              color: Colors.black,
+                              size: 18,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -908,9 +1272,11 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
   }
 
   Widget _buildFeaturedSection() {
-    if (_projects.isEmpty) return const SizedBox.shrink();
-    final project = _projects[_featuredIndex % _projects.length];
-    final apiClient = ref.read(apiClientProvider);
+    // Always render — fall back to placeholder projects when the real list is
+    // empty (cold cache / 504) so the Featured section matches the web instead
+    // of vanishing.
+    final featured = _projects.isNotEmpty ? _projects : _placeholderProjects;
+    final project = featured[_featuredIndex % featured.length];
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Column(
@@ -931,125 +1297,140 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         ),
         const SizedBox(height: 40),
 
-        // Main Artistic Card
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 24),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(50),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.2),
-                blurRadius: 40,
-                offset: const Offset(0, 20),
-              ),
-            ],
+        // Main Artistic Card — tapping the image opens the project (web parity).
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => context.push(
+            '/investor/projects/${project['_id']}',
+            extra: project,
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(50),
-            child: Stack(
-              children: [
-                _buildProjectImage(
-                  (project['heroImage'] ??
-                          project['image'] ??
-                          project['coverImage'] ??
-                          '')
-                      .toString(),
-                  height: 520,
-                  width: double.infinity,
-                  errorIconSize: 64,
-                ),
-                // Gradient Overlay
-                Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          Colors.black.withValues(alpha: 0.7),
-                        ],
-                        stops: const [0.5, 1.0],
-                      ),
-                    ),
-                  ),
-                ),
-                // Artistic Impression Badge
-                Positioned(
-                  top: 24,
-                  right: 24,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.6),
-                      borderRadius: BorderRadius.circular(4),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.2),
-                      ),
-                    ),
-                    child: Text(
-                      'ARTISTIC IMPRESSION',
-                      style: GoogleFonts.gelasio(
-                        color: Colors.white,
-                        fontSize: 7,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 1.5,
-                      ),
-                    ),
-                  ),
-                ),
-                // Content Overlay
-                Positioned(
-                  bottom: 40,
-                  left: 32,
-                  right: 32,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'FEATURED PROPERTY',
-                        style: GoogleFonts.gelasio(
-                          color: const Color(0xFFC5A35B),
-                          fontSize: 9,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 2.5,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        (project['title'] ?? '').toString(),
-                        style: GoogleFonts.gelasio(
-                          color: Colors.white,
-                          fontSize: 44,
-                          fontWeight: FontWeight.w400,
-                          height: 1,
-                          letterSpacing: -1,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        (project['startingPrice'] ??
-                                project['description'] ??
-                                '')
-                            .toString()
-                            .toUpperCase(),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.ebGaramond(
-                          color: Colors.white.withValues(alpha: 0.8),
-                          fontSize: 9,
-                          height: 1.6,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 1.2,
-                        ),
-                      ),
-                    ],
-                  ),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 24),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(50),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 40,
+                  offset: const Offset(0, 20),
                 ),
               ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(50),
+              child: Stack(
+                children: [
+                  _buildProjectImage(
+                    _pickImage([
+                      project['heroImage'],
+                      project['image'],
+                      project['coverImage'],
+                    ], 'assets/hero_artistic.jpg'),
+                    height: 520,
+                    width: double.infinity,
+                    errorIconSize: 64,
+                    // Bias the crop toward the tower (right side) so the featured
+                    // card frames the building like the web, not just the ocean.
+                    alignment: const Alignment(0.55, 0),
+                  ),
+                  // Gradient Overlay
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black.withValues(alpha: 0.7),
+                          ],
+                          stops: const [0.5, 1.0],
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Artistic Impression Badge
+                  Positioned(
+                    top: 24,
+                    right: 24,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.6),
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.2),
+                        ),
+                      ),
+                      child: Text(
+                        'ARTISTIC IMPRESSION',
+                        style: GoogleFonts.gelasio(
+                          color: Colors.white,
+                          fontSize: 7,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Content Overlay
+                  Positioned(
+                    bottom: 40,
+                    left: 32,
+                    right: 32,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'FEATURED PROPERTY',
+                          style: GoogleFonts.gelasio(
+                            color: const Color(0xFFC5A358),
+                            fontSize: 9,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 2.5,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          (project['title'] ?? '').toString(),
+                          // Lighter serif: DM Serif Display ships only weight
+                          // 400, so fontWeight can't thin it. Playfair Display
+                          // at w400 reads noticeably less bold.
+                          style: GoogleFonts.playfairDisplay(
+                            color: Colors.black,
+                            fontSize: 44,
+                            fontWeight: FontWeight.w400,
+                            height: 1,
+                            letterSpacing: -1,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          ((project['description'] ?? '')
+                                      .toString()
+                                      .trim()
+                                      .isNotEmpty
+                                  ? project['description'].toString()
+                                  : 'Live smart at Aura Heights—space-efficient 1 & 2 BHK homes with curated amenities and rare parking solutions.')
+                              .toUpperCase(),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.ebGaramond(
+                            color: Colors.white.withValues(alpha: 0.8),
+                            fontSize: 9,
+                            height: 1.6,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -1060,11 +1441,14 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            // Web parity: USPs come from the featured project's backend
+            // `highlights` (e.g. ["Prime Location", "20 min from Airport"]),
+            // not a hardcoded pair. Each is Expanded so its label wraps.
             children: [
-              _buildFeatureIcon(LucideIcons.building2, 'FULLY\nFURNISHED'),
-              _buildFeatureIcon(LucideIcons.mapPin, 'PRIME\nLOCATION'),
-              _buildFeatureIcon(LucideIcons.smartphone, 'SMART\nHOMES'),
+              for (final h in projectHighlights(project).take(3))
+                Expanded(
+                  child: _buildFeatureIcon(highlightIcon(h), h.toUpperCase()),
+                ),
             ],
           ),
         ),
@@ -1080,8 +1464,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
               _ScaleButton(
                 onTap: () => setState(
                   () => _featuredIndex =
-                      (_featuredIndex - 1 + _projects.length) %
-                      _projects.length,
+                      (_featuredIndex - 1 + featured.length) % featured.length,
                 ),
                 child: Container(
                   width: 56,
@@ -1090,7 +1473,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                     color: Colors.transparent,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
+                      color: (isDark ? Colors.white : Colors.black).withValues(
                         alpha: 0.1,
                       ),
                     ),
@@ -1139,8 +1522,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
               const SizedBox(width: 12),
               _ScaleButton(
                 onTap: () => setState(
-                  () =>
-                      _featuredIndex = (_featuredIndex + 1) % _projects.length,
+                  () => _featuredIndex = (_featuredIndex + 1) % featured.length,
                 ),
                 child: Container(
                   width: 56,
@@ -1149,7 +1531,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                     color: Colors.transparent,
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
+                      color: (isDark ? Colors.white : Colors.black).withValues(
                         alpha: 0.1,
                       ),
                     ),
@@ -1214,7 +1596,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                 : Colors.black.withValues(alpha: 0.02),
             borderRadius: BorderRadius.circular(32),
             border: Border.all(
-              color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
+              color: (isDark ? Colors.white : Colors.black).withValues(
                 alpha: 0.08,
               ),
             ),
@@ -1291,12 +1673,12 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
+                color: (isDark ? Colors.white : Colors.black).withValues(
                   alpha: 0.05,
                 ),
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
+                  color: (isDark ? Colors.white : Colors.black).withValues(
                     alpha: 0.1,
                   ),
                 ),
@@ -1314,7 +1696,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
               style: GoogleFonts.ebGaramond(
                 color: isDark ? Colors.white : Colors.black,
                 fontWeight: FontWeight.w900,
-                fontSize: 10,
+                fontSize: 13,
                 letterSpacing: 1,
               ),
             ),
@@ -1323,10 +1705,10 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
               desc,
               textAlign: TextAlign.center,
               style: GoogleFonts.ebGaramond(
-                color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
+                color: (isDark ? Colors.white : Colors.black).withValues(
                   alpha: 0.5,
                 ),
-                fontSize: 8,
+                fontSize: 11,
                 fontWeight: FontWeight.w500,
                 height: 1.4,
               ),
@@ -1344,7 +1726,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'REGISTER YOUR\nINTEREST',
+          'REGISTER\nINTEREST',
           style: GoogleFonts.gelasio(
             color: isDark ? Colors.white : Colors.black,
             fontSize: 32,
@@ -1354,15 +1736,39 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
           ),
         ),
         const SizedBox(height: 48),
-        _buildLuxuryInput('Full Name *', _nameController),
+        _buildLuxuryInput(
+          'Full Name *',
+          _nameController,
+          keyboardType: TextInputType.name,
+          inputFormatters: Validators.nameFormatters,
+          errorText: _nameError,
+          // Clear the red state as soon as they start typing.
+          onChanged: (v) {
+            if (_nameError != null) setState(() => _nameError = null);
+          },
+        ),
         const SizedBox(height: 16),
-        _buildLuxuryInput('Email *', _emailController),
+        _buildLuxuryInput(
+          'Email *',
+          _emailController,
+          keyboardType: TextInputType.emailAddress,
+          inputFormatters: Validators.emailFormatters,
+          errorText: _emailError,
+          onChanged: (v) {
+            if (_emailError != null) setState(() => _emailError = null);
+          },
+        ),
         const SizedBox(height: 16),
         _buildLuxuryInput(
           'Phone Number *',
           _phoneController,
           keyboardType: TextInputType.phone,
-          hint: '+91',
+          inputFormatters: Validators.phoneFormatters,
+          hint: '+91 98653 21250 *',
+          errorText: _phoneError,
+          onChanged: (v) {
+            if (_phoneError != null) setState(() => _phoneError = null);
+          },
         ),
         const SizedBox(height: 16),
         _buildLuxuryInput('Message', _messageController, isLong: true),
@@ -1377,12 +1783,28 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
               side: BorderSide(color: isDark ? Colors.white24 : Colors.black26),
             ),
             Expanded(
-              child: Text(
-                "I've read and agree to the Privacy Policy",
-                style: GoogleFonts.ebGaramond(
-                  color: isDark ? Colors.white54 : Colors.black54,
-                  fontSize: 11,
-                  letterSpacing: 1,
+              child: RichText(
+                text: TextSpan(
+                  style: GoogleFonts.ebGaramond(
+                    color: isDark ? Colors.white54 : Colors.black54,
+                    fontSize: 11,
+                    letterSpacing: 0.8,
+                    height: 1.4,
+                  ),
+                  children: [
+                    const TextSpan(text: "I'VE READ AND AGREE TO THE "),
+                    TextSpan(
+                      text: 'PRIVACY POLICY',
+                      style: GoogleFonts.ebGaramond(
+                        color: isDark ? Colors.white : Colors.black,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.8,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                    const TextSpan(text: '.'),
+                  ],
                 ),
               ),
             ),
@@ -1396,7 +1818,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
             onTap: _submitting ? () {} : _submitInterest,
             child: Container(
               decoration: BoxDecoration(
-                color: isDark ? Colors.white : Colors.black,
+                color: isDark ? Colors.white : const Color(0xFF0B1120),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Center(
@@ -1425,44 +1847,77 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
     TextEditingController controller, {
     bool isLong = false,
     TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
     String? hint,
+    // When set, the field turns red and shows the message underneath — keeps
+    // validation on the field instead of a snackbar over the page.
+    String? errorText,
+    ValueChanged<String>? onChanged,
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.12),
-        ),
-        boxShadow: isDark
-            ? []
-            : [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.05),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
-                ),
-              ],
-      ),
-      child: TextField(
-        controller: controller,
-        keyboardType: keyboardType,
-        style: TextStyle(color: isDark ? Colors.white : Colors.black),
-        maxLines: isLong ? 5 : 1,
-        decoration: InputDecoration(
-          hintText: hint ?? label,
-          hintStyle: GoogleFonts.ebGaramond(
-            color: isDark ? Colors.white54 : Colors.black45,
-            fontSize: 13,
+    final hasError = errorText != null;
+    const errorColor = Color(0xFFE24B4A);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: isDark ? Colors.black : Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: hasError
+                  ? errorColor
+                  : (isDark ? Colors.white : Colors.black).withValues(
+                      alpha: 0.12,
+                    ),
+              width: hasError ? 1.5 : 1,
+            ),
+            boxShadow: isDark
+                ? []
+                : [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
           ),
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 24,
-            vertical: 20,
+          child: TextField(
+            controller: controller,
+            keyboardType: keyboardType,
+            inputFormatters: inputFormatters,
+            onChanged: onChanged,
+            style: TextStyle(color: isDark ? Colors.white : Colors.black),
+            maxLines: isLong ? 5 : 1,
+            decoration: InputDecoration(
+              hintText: hint ?? label,
+              hintStyle: GoogleFonts.ebGaramond(
+                color: hasError
+                    ? errorColor.withValues(alpha: 0.75)
+                    : (isDark ? Colors.white54 : Colors.black45),
+                fontSize: 13,
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 20,
+              ),
+              border: InputBorder.none,
+            ),
           ),
-          border: InputBorder.none,
         ),
-      ),
+        if (hasError)
+          Padding(
+            padding: const EdgeInsets.only(left: 10, top: 6),
+            child: Text(
+              errorText,
+              style: GoogleFonts.ebGaramond(
+                color: errorColor,
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

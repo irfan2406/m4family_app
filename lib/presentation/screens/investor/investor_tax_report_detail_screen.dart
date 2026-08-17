@@ -55,11 +55,11 @@ class _InvestorTaxReportDetailScreenState
         final d = res.data['data'];
         if (d is List) {
           final match = d.whereType<Map>().cast<Map>().firstWhere(
-                (m) =>
-                    (m['id']?.toString() ?? m['_id']?.toString() ?? '') ==
-                    widget.reportId,
-                orElse: () => const {},
-              );
+            (m) =>
+                (m['id']?.toString() ?? m['_id']?.toString() ?? '') ==
+                widget.reportId,
+            orElse: () => const {},
+          );
           if (match.isNotEmpty) {
             _report = Map<String, dynamic>.from(match);
           } else if (_report == null) {
@@ -81,6 +81,7 @@ class _InvestorTaxReportDetailScreenState
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
+        backgroundColor: const Color(0xFFE24B4A),
         content: Text(
           'Opening $_name...',
           style: GoogleFonts.ebGaramond(fontSize: 12),
@@ -93,6 +94,7 @@ class _InvestorTaxReportDetailScreenState
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
+        backgroundColor: const Color(0xFFE24B4A),
         content: Text(
           'Downloading $_name...',
           style: GoogleFonts.ebGaramond(fontSize: 12),
@@ -118,9 +120,9 @@ class _InvestorTaxReportDetailScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
+    final bg = isDark ? Colors.black : Colors.white;
+    final textPrimary = isDark ? Colors.white : Colors.black;
+    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
 
     return Scaffold(
       backgroundColor: bg,
@@ -131,12 +133,13 @@ class _InvestorTaxReportDetailScreenState
             Expanded(
               child: _loading && _report == null
                   ? const Center(
-                      child:
-                          CircularProgressIndicator(color: M4Theme.premiumBlue),
+                      child: CircularProgressIndicator(
+                        color: M4Theme.premiumBlue,
+                      ),
                     )
                   : (_error && _report == null)
-                      ? _errorState(textPrimary, muted)
-                      : _content(isDark, textPrimary, muted),
+                  ? _errorState(textPrimary, muted)
+                  : _content(isDark, textPrimary, muted),
             ),
           ],
         ),
@@ -151,9 +154,8 @@ class _InvestorTaxReportDetailScreenState
         children: [
           IconButton(
             icon: Icon(LucideIcons.arrowLeft, color: textPrimary),
-            onPressed: () => context.canPop()
-                ? context.pop()
-                : context.go('/investor/home'),
+            onPressed: () =>
+                context.canPop() ? context.pop() : context.go('/investor/home'),
           ),
           Expanded(
             child: Column(
@@ -188,12 +190,14 @@ class _InvestorTaxReportDetailScreenState
             child: Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: (isDark ? Colors.white : Colors.black)
-                    .withValues(alpha: 0.04),
+                color: (isDark ? Colors.white : Colors.black).withValues(
+                  alpha: 0.04,
+                ),
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: (isDark ? Colors.white : Colors.black)
-                      .withValues(alpha: 0.08),
+                  color: (isDark ? Colors.white : Colors.black).withValues(
+                    alpha: 0.08,
+                  ),
                 ),
               ),
               child: Icon(LucideIcons.download, size: 18, color: muted),
@@ -235,7 +239,7 @@ class _InvestorTaxReportDetailScreenState
   }
 
   Widget _content(bool isDark, Color textPrimary, Color muted) {
-    const red = Color(0xFFC65B46);
+    const red = Color(0xFFEF4444);
 
     return RefreshIndicator(
       color: M4Theme.premiumBlue,
@@ -262,19 +266,15 @@ class _InvestorTaxReportDetailScreenState
     );
   }
 
-  Widget _overviewCard(
-      bool isDark, Color textPrimary, Color muted, Color red) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
+  Widget _overviewCard(bool isDark, Color textPrimary, Color muted, Color red) {
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
 
     final chips = <String>[
       if (_year.isNotEmpty) _year,
-      [
-        if (_type.isNotEmpty) _type,
-        if (_size.isNotEmpty) _size,
-      ].join(' • '),
+      [if (_type.isNotEmpty) _type, if (_size.isNotEmpty) _size].join(' • '),
     ].where((c) => c.isNotEmpty).toList();
 
     return Container(
@@ -317,8 +317,9 @@ class _InvestorTaxReportDetailScreenState
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children:
-                        chips.map((c) => _chip(c, isDark, muted)).toList(),
+                    children: chips
+                        .map((c) => _chip(c, isDark, muted))
+                        .toList(),
                   ),
                 ],
               ],
@@ -336,8 +337,7 @@ class _InvestorTaxReportDetailScreenState
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color:
-            (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.03),
+        color: (isDark ? Colors.white : Colors.black).withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(7),
         border: Border.all(color: border),
       ),
@@ -354,8 +354,8 @@ class _InvestorTaxReportDetailScreenState
   }
 
   Widget _badgesRow() {
-    const green = Color(0xFFC5A35B);
-    const gold = Color(0xFFC5A35B);
+    const green = Color(0xFF10B981);
+    const gold = Color(0xFFFFD700);
     return Wrap(
       spacing: 10,
       runSpacing: 10,
@@ -394,8 +394,8 @@ class _InvestorTaxReportDetailScreenState
   }
 
   Widget _statusGrid(bool isDark, Color textPrimary, Color muted) {
-    const green = Color(0xFFC5A35B);
-    const amber = Color(0xFFC5A35B);
+    const green = Color(0xFF10B981);
+    const amber = Color(0xFFF59E0B);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -438,7 +438,7 @@ class _InvestorTaxReportDetailScreenState
     required IconData icon,
     required Color iconColor,
   }) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -486,7 +486,7 @@ class _InvestorTaxReportDetailScreenState
   }
 
   Widget _descriptionCard(bool isDark, Color textPrimary, Color muted) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -532,7 +532,7 @@ class _InvestorTaxReportDetailScreenState
   }
 
   Widget _secureNote(bool isDark, Color muted) {
-    const gold = Color(0xFFC5A35B);
+    const gold = Color(0xFFFFD700);
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -593,7 +593,7 @@ class _InvestorTaxReportDetailScreenState
   }
 
   Widget _downloadButton() {
-    const gold = Color(0xFFC5A35B);
+    const gold = Color(0xFFFFD700);
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton.icon(

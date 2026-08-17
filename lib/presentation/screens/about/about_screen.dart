@@ -1,9 +1,12 @@
 import 'dart:ui';
 import 'package:m4_mobile/core/theme/app_theme.dart';
+import 'package:m4_mobile/core/utils/validators.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:m4_mobile/presentation/widgets/side_menu_button.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
@@ -153,7 +156,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: isDark ? Colors.black : Colors.white,
       extendBodyBehindAppBar: true,
       extendBody: true,
       // Bottom nav — shown only when pushed standalone (from the menu), not
@@ -192,11 +195,9 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             ),
           ],
         ),
-        backgroundColor:
-            (isDark
-                    ? Colors.black
-                    : Theme.of(context).scaffoldBackgroundColor)
-                .withOpacity(0.8),
+        backgroundColor: (isDark ? Colors.black : Colors.white).withOpacity(
+          0.8,
+        ),
         flexibleSpace: ClipRRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
@@ -246,24 +247,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             builder: (context) => Center(
               child: Padding(
                 padding: const EdgeInsets.only(right: 12),
-                child: InkWell(
-                  onTap: () => Scaffold.of(context).openDrawer(),
-                  borderRadius: BorderRadius.circular(12),
-                  child: Container(
-                    width: 40,
-                    height: 36,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      LucideIcons.menu,
-                      size: 18,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                  ),
-                ),
+                child: const SideMenuButton(),
               ),
             ),
           ),
@@ -272,12 +256,12 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
       drawer: const ConditionalDrawer(),
       body: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
+          color: isDark ? Colors.black : Colors.white,
           gradient: isDark
               ? const RadialGradient(
                   center: Alignment.topCenter,
                   radius: 2.5,
-                  colors: [Color(0xFF0F2A20), Colors.black],
+                  colors: [Color(0xFF0F1115), Colors.black],
                 )
               : null,
         ),
@@ -321,9 +305,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
       decoration: BoxDecoration(
-        color: isDark
-            ? Colors.black.withOpacity(0.3)
-            : Theme.of(context).scaffoldBackgroundColor,
+        color: (isDark ? Colors.black : Colors.white).withOpacity(0.3),
         border: Border(
           bottom: BorderSide(color: Colors.white.withOpacity(0.05)),
         ),
@@ -548,7 +530,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                         height: 24,
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
-                          color: Theme.of(context).scaffoldBackgroundColor,
+                          color: isDark ? Colors.black : Colors.white,
                           shape: BoxShape.circle,
                           border: Border.all(
                             color: colorScheme.primary,
@@ -1071,10 +1053,11 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           const SizedBox(height: 24),
           Text(
             section['content'].toString().toUpperCase(),
+            // Web parity: lighter, less heavy body copy inside the card.
             style: GoogleFonts.ebGaramond(
-              color: (isDark ? Colors.white : Colors.black).withOpacity(0.7),
+              color: (isDark ? Colors.white : Colors.black).withOpacity(0.5),
               fontSize: 11,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w600,
               height: 1.6,
               letterSpacing: 0.5,
             ),
@@ -1252,172 +1235,260 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
   }
 
   void _showCustomEnquiryForm(BuildContext context) {
-    showModalBottomSheet(
+    String? submitError;
+    showDialog(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withOpacity(0.6),
       builder: (context) => StatefulBuilder(
         builder: (context, setModalState) {
           final isDark = Theme.of(context).brightness == Brightness.dark;
-          return Container(
-            padding: EdgeInsets.only(
-              left: 24,
-              right: 24,
-              bottom: MediaQuery.of(context).viewInsets.bottom + 40,
-              top: 40,
+          // Web parity: a centered floating card with margins on every edge,
+          // rounded on all corners — not a full-width bottom sheet.
+          return Dialog(
+            backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
+            insetPadding: const EdgeInsets.symmetric(
+              horizontal: 20,
+              vertical: 44,
             ),
-            decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(40),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(28),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.82,
               ),
-              boxShadow: isDark
-                  ? null
-                  : [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 40,
-                        spreadRadius: 10,
-                      ),
-                    ],
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'CUSTOM PERSONALISATION',
-                      style: GoogleFonts.ebGaramond(
-                        color: isDark ? Colors.white : Colors.black,
-                        fontWeight: FontWeight.w400,
-                        fontSize: 16,
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        LucideIcons.x,
-                        color: isDark ? Colors.white : Colors.black,
-                        size: 20,
-                      ),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Enter your details to receive our premium personalisation catalog and schedule a consultation.',
-                  style: GoogleFonts.ebGaramond(
-                    color: isDark ? Colors.white : Colors.black,
-                    fontSize: 10,
-                    height: 1.6,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 32),
-
-                _buildFieldLabel('FULL NAME'),
-                _buildTextField(_nameController, 'Your Name', LucideIcons.user),
-                const SizedBox(height: 20),
-
-                _buildFieldLabel('PHONE NUMBER'),
-                _buildTextField(
-                  _phoneController,
-                  'Mobile Number',
-                  LucideIcons.phone,
-                ),
-                const SizedBox(height: 20),
-
-                _buildFieldLabel('EMAIL ADDRESS (OPTIONAL)'),
-                _buildTextField(
-                  _emailController,
-                  'Email Address',
-                  LucideIcons.mail,
-                ),
-                const SizedBox(height: 40),
-
-                SizedBox(
-                  width: double.infinity,
-                  height: 60,
-                  child: ElevatedButton(
-                    onPressed: _isSubmitting
-                        ? null
-                        : () async {
-                            if (_nameController.text.isEmpty ||
-                                _phoneController.text.isEmpty) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'Please fill in required fields',
-                                  ),
-                                ),
-                              );
-                              return;
-                            }
-
-                            setModalState(() => _isSubmitting = true);
-                            try {
-                              final apiClient = ref.read(apiClientProvider);
-                              await apiClient.submitCustomViews({
-                                'name': _nameController.text,
-                                'phone': _phoneController.text,
-                                'email': _emailController.text,
-                                'source': 'App Custom Views Enquiry',
-                              });
-
-                              if (context.mounted) {
-                                Navigator.pop(context);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Enquiry submitted successfully! We will contact you soon.',
-                                    ),
-                                  ),
-                                );
-                                _nameController.clear();
-                                _phoneController.clear();
-                                _emailController.clear();
-                              }
-                            } catch (e) {
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Error: $e')),
-                                );
-                              }
-                            } finally {
-                              if (context.mounted)
-                                setModalState(() => _isSubmitting = false);
-                            }
-                          },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: isDark ? Colors.white : Colors.black,
-                      foregroundColor: isDark ? Colors.black : Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    child: _isSubmitting
-                        ? SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: isDark ? Colors.black : Colors.white,
-                            ),
-                          )
-                        : Text(
-                            'SEND REQUEST',
-                            style: GoogleFonts.ebGaramond(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 12,
-                              letterSpacing: 2,
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 28, 24, 28),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'CUSTOM PERSONALISATION',
+                              style: GoogleFonts.ebGaramond(
+                                color: isDark ? Colors.white : Colors.black,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 17,
+                                letterSpacing: -0.3,
+                              ),
                             ),
                           ),
+                          IconButton(
+                            icon: Icon(
+                              LucideIcons.x,
+                              color: isDark ? Colors.white : Colors.black,
+                              size: 20,
+                            ),
+                            onPressed: () => Navigator.pop(context),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Enter your details to receive our premium personalisation catalog and schedule a consultation.',
+                        style: GoogleFonts.ebGaramond(
+                          // Web parity: muted gray subtitle, not solid black.
+                          color: isDark
+                              ? Colors.white54
+                              : const Color(0xFF6B7280),
+                          fontSize: 12,
+                          height: 1.5,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+
+                      _buildFieldLabel('FULL NAME'),
+                      _buildTextField(
+                        _nameController,
+                        'Your Name',
+                        LucideIcons.user,
+                        keyboardType: TextInputType.name,
+                        inputFormatters: Validators.nameFormatters,
+                      ),
+                      const SizedBox(height: 20),
+
+                      _buildFieldLabel('PHONE NUMBER'),
+                      _buildTextField(
+                        _phoneController,
+                        'Mobile Number',
+                        LucideIcons.phone,
+                        keyboardType: TextInputType.phone,
+                        inputFormatters: Validators.phoneFormatters,
+                      ),
+                      const SizedBox(height: 20),
+
+                      _buildFieldLabel('EMAIL ADDRESS (OPTIONAL)'),
+                      _buildTextField(
+                        _emailController,
+                        'Email Address',
+                        LucideIcons.mail,
+                        keyboardType: TextInputType.emailAddress,
+                        inputFormatters: Validators.emailFormatters,
+                      ),
+                      const SizedBox(height: 40),
+
+                      if (submitError != null) ...[
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 12,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFE24B4A).withOpacity(0.12),
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: const Color(0xFFE24B4A).withOpacity(0.4),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                LucideIcons.alertCircle,
+                                color: Color(0xFFE24B4A),
+                                size: 18,
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  submitError!,
+                                  style: GoogleFonts.ebGaramond(
+                                    color: const Color(0xFFE24B4A),
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+
+                      SizedBox(
+                        width: double.infinity,
+                        height: 60,
+                        child: ElevatedButton(
+                          onPressed: _isSubmitting
+                              ? null
+                              : () async {
+                                  final vErr =
+                                      Validators.nameError(
+                                        _nameController.text,
+                                        field: 'name',
+                                      ) ??
+                                      Validators.phoneError(
+                                        _phoneController.text,
+                                      ) ??
+                                      (_emailController.text.trim().isEmpty
+                                          ? null
+                                          : Validators.emailError(
+                                              _emailController.text,
+                                            ));
+                                  if (vErr != null) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        backgroundColor: const Color(
+                                          0xFFE24B4A,
+                                        ),
+                                        content: Text(vErr),
+                                      ),
+                                    );
+                                    return;
+                                  }
+
+                                  setModalState(() {
+                                    _isSubmitting = true;
+                                    submitError = null;
+                                  });
+                                  try {
+                                    final apiClient = ref.read(
+                                      apiClientProvider,
+                                    );
+                                    // Web parity: this is a lead enquiry, so it
+                                    // posts to /api/leads (submitLead) with a
+                                    // valid `source` enum — not /api/custom-views
+                                    // (which expects a full customization payload
+                                    // and 400s for a plain enquiry).
+                                    await apiClient.submitLead({
+                                      'name': _nameController.text.trim(),
+                                      'phone': _phoneController.text.trim(),
+                                      'email': _emailController.text.trim(),
+                                      'source': 'online',
+                                    });
+
+                                    if (context.mounted) {
+                                      Navigator.pop(context);
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        const SnackBar(
+                                          backgroundColor: Color(0xFF10B981),
+                                          content: Text(
+                                            'Enquiry submitted successfully! We will contact you soon.',
+                                          ),
+                                        ),
+                                      );
+                                      _nameController.clear();
+                                      _phoneController.clear();
+                                      _emailController.clear();
+                                    }
+                                  } catch (e) {
+                                    // Show a short, friendly error INSIDE the
+                                    // dialog (on top) instead of dumping the raw
+                                    // DioException in a giant toast behind it.
+                                    setModalState(
+                                      () => submitError =
+                                          'Could not submit right now. Please check your details and try again.',
+                                    );
+                                  } finally {
+                                    if (context.mounted)
+                                      setModalState(
+                                        () => _isSubmitting = false,
+                                      );
+                                  }
+                                },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: isDark
+                                ? Colors.white
+                                : Colors.black,
+                            foregroundColor: isDark
+                                ? Colors.black
+                                : Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                          ),
+                          child: _isSubmitting
+                              ? SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: isDark ? Colors.black : Colors.white,
+                                  ),
+                                )
+                              : Text(
+                                  'SEND REQUEST',
+                                  style: GoogleFonts.ebGaramond(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 12,
+                                    letterSpacing: 2,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
           );
         },
@@ -1428,14 +1499,15 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
   Widget _buildFieldLabel(String label) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
-      padding: const EdgeInsets.only(left: 4, bottom: 8),
+      padding: const EdgeInsets.only(left: 4, bottom: 10),
       child: Text(
         label,
         style: GoogleFonts.ebGaramond(
-          color: isDark ? Colors.white : Colors.black,
-          fontSize: 8,
-          fontWeight: FontWeight.w400,
-          letterSpacing: 1.5,
+          // Web parity: muted slate-gray field labels.
+          color: isDark ? Colors.white54 : const Color(0xFF8A93A5),
+          fontSize: 10,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 1.2,
         ),
       ),
     );
@@ -1444,43 +1516,49 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
   Widget _buildTextField(
     TextEditingController controller,
     String hint,
-    IconData icon,
-  ) {
+    IconData icon, {
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
+  }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withOpacity(0.03)
-            : Colors.black.withOpacity(0.04),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isDark
-              ? Colors.white.withOpacity(0.08)
-              : Colors.black.withOpacity(0.08),
-        ),
+    // Web parity: plain light-filled input, no leading icon, and a gold
+    // border only while focused (matches the reference popup).
+    final fill = isDark
+        ? Colors.white.withOpacity(0.04)
+        : const Color(0xFFF3F4F6);
+    final baseBorder = isDark
+        ? Colors.white.withOpacity(0.06)
+        : Colors.transparent;
+    const gold = Color(0xFFC5A358);
+    return TextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      inputFormatters: inputFormatters,
+      style: GoogleFonts.ebGaramond(
+        color: isDark ? Colors.white : Colors.black,
+        fontSize: 15,
+        fontWeight: FontWeight.w500,
       ),
-      child: TextField(
-        controller: controller,
-        style: GoogleFonts.ebGaramond(
-          color: isDark ? Colors.white : Colors.black,
-          fontSize: 13,
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: GoogleFonts.ebGaramond(
+          color: isDark ? Colors.white38 : const Color(0xFF9AA1AD),
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
         ),
-        decoration: InputDecoration(
-          hintText: hint,
-          hintStyle: GoogleFonts.ebGaramond(
-            color: isDark ? Colors.white : Colors.black,
-            fontSize: 13,
-          ),
-          prefixIcon: Icon(
-            icon,
-            color: isDark ? Colors.white : Colors.black,
-            size: 18,
-          ),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 16,
-          ),
+        filled: true,
+        fillColor: fill,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 18,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: baseBorder, width: 1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: const BorderSide(color: gold, width: 1.8),
         ),
       ),
     );

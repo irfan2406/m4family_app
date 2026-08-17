@@ -87,9 +87,12 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
 
   void _showToast(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: const Color(0xFFE24B4A),
+        content: Text(message),
+      ),
+    );
   }
 
   Future<void> _pickDocument() async {
@@ -197,7 +200,10 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Payment failed: ${e.toString()}')),
+          SnackBar(
+            backgroundColor: const Color(0xFFE24B4A),
+            content: Text('Payment failed: ${e.toString()}'),
+          ),
         );
       }
     } finally {
@@ -220,8 +226,8 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
   Widget _buildPaymentMethod(String name, IconData icon, bool isDark) {
     final id = name.split(' ')[0].toLowerCase();
     final isActive = _selectedMethod == id;
-    final onSurface = isDark ? Colors.white : const Color(0xFF163A2C);
-    final surface = isDark ? Colors.black : const Color(0xFFF3EDE0);
+    final onSurface = isDark ? Colors.white : Colors.black;
+    final surface = isDark ? Colors.black : Colors.white;
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: GestureDetector(
@@ -316,7 +322,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
 
     if (_isSuccess) {
       return Scaffold(
-        backgroundColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFFBF7EF),
+        backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(40),
@@ -384,8 +390,8 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
 
     return Scaffold(
       backgroundColor: isDark
-          ? const Color(0xFF0B1026)
-          : const Color(0xFFF4EFE3),
+          ? const Color(0xFF0F1115)
+          : const Color(0xFFF9FAFB),
       extendBody: true,
       bottomNavigationBar: NavigationPill(
         currentIndex: -1,
@@ -444,7 +450,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                           begin: Alignment.bottomLeft,
                           end: Alignment.topRight,
                           colors: [
-                            const Color(0xFF163A2C).withOpacity(0.7),
+                            const Color(0xFF1B2233).withOpacity(0.7),
                             Colors.transparent,
                           ],
                         ),
@@ -715,7 +721,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                             size: 18,
                           ),
                           dropdownColor: isDark
-                              ? const Color(0xFF141B3A)
+                              ? const Color(0xFF1A1C20)
                               : Colors.white,
                           style: GoogleFonts.ebGaramond(
                             fontSize: 11,
@@ -991,20 +997,20 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: isDark
-                          ? Color(0xFFC5A35B).withOpacity(0.05)
-                          : const Color(0xFFF4EFE3),
+                          ? Colors.orange.withOpacity(0.05)
+                          : const Color(0xFFFFF7ED),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
                         color: isDark
-                            ? Color(0xFFC5A35B).withOpacity(0.2)
-                            : const Color(0xFFC65B46),
+                            ? Colors.orange.withOpacity(0.2)
+                            : const Color(0xFFFED7AA),
                       ),
                     ),
                     child: Row(
                       children: [
                         const Icon(
                           LucideIcons.alertCircle,
-                          color: Color(0xFFC5A35B),
+                          color: Color(0xFFF97316),
                           size: 18,
                         ),
                         const SizedBox(width: 16),
@@ -1015,8 +1021,8 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                               fontSize: 8,
                               fontWeight: FontWeight.w900,
                               color: isDark
-                                  ? Color(0xFFC5A35B).withOpacity(0.8)
-                                  : const Color(0xFFC65B46),
+                                  ? Colors.orange.withOpacity(0.8)
+                                  : const Color(0xFF9A3412),
                               height: 1.4,
                             ),
                           ),

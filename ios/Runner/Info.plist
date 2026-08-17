@@ -7,7 +7,7 @@
 		<key>CFBundleDevelopmentRegion</key>
 		<string>$(DEVELOPMENT_LANGUAGE)</string>
 		<key>CFBundleDisplayName</key>
-		<string>M4 Mobile</string>
+		<string>M4 Family</string>
 		<key>CFBundleExecutable</key>
 		<string>$(EXECUTABLE_NAME)</string>
 		<key>CFBundleIdentifier</key>
@@ -15,7 +15,7 @@
 		<key>CFBundleInfoDictionaryVersion</key>
 		<string>6.0</string>
 		<key>CFBundleName</key>
-		<string>m4_mobile</string>
+		<string>M4 Family</string>
 		<key>CFBundlePackageType</key>
 		<string>APPL</string>
 		<key>CFBundleShortVersionString</key>
@@ -68,5 +68,13 @@
 		</array>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<!-- Required by image_picker / file_picker. iOS terminates the app if it
+		     accesses the photo library or camera without these strings. -->
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>M4 Family needs access to your photos so you can upload documents and images for your bookings and enquiries.</string>
+		<key>NSCameraUsageDescription</key>
+		<string>M4 Family needs camera access so you can capture and upload documents and images.</string>
+		<key>NSPhotoLibraryAddUsageDescription</key>
+		<string>M4 Family needs permission to save images to your photo library.</string>
 	</dict>
 </plist>

@@ -21,8 +21,8 @@ class CpChangePasswordScreen extends ConsumerStatefulWidget {
 
 class _CpChangePasswordScreenState
     extends ConsumerState<CpChangePasswordScreen> {
-  static const _purple = Color(0xFFC5A35B);
-  static const _indigo = Color(0xFFC5A35B);
+  static const _purple = Color(0xFF9333EA);
+  static const _indigo = Color(0xFF4F46E5);
 
   final _current = TextEditingController();
   final _newPass = TextEditingController();
@@ -44,15 +44,16 @@ class _CpChangePasswordScreenState
   bool get _hasMinLength => _newPass.text.length >= 8;
   bool get _hasUppercase => RegExp(r'[A-Z]').hasMatch(_newPass.text);
   bool get _hasNumber => RegExp(r'[0-9]').hasMatch(_newPass.text);
-  bool get _hasSpecial =>
-      RegExp(r'''[!@#$%^&*(),.?":{}|<>_\-\[\]\\/;'`~+=]''').hasMatch(_newPass.text);
+  bool get _hasSpecial => RegExp(
+    r'''[!@#$%^&*(),.?":{}|<>_\-\[\]\\/;'`~+=]''',
+  ).hasMatch(_newPass.text);
 
   void _snack(String msg, {bool error = false}) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(msg),
-        backgroundColor: error ? const Color(0xFFD32F2F) : Colors.green,
+        backgroundColor: error ? Colors.redAccent : Colors.green,
       ),
     );
   }
@@ -92,7 +93,9 @@ class _CpChangePasswordScreenState
 
     setState(() => _submitting = true);
     try {
-      final res = await ref.read(apiClientProvider).changePassword(
+      final res = await ref
+          .read(apiClientProvider)
+          .changePassword(
             currentPassword: _current.text,
             newPassword: _newPass.text,
           );
@@ -107,8 +110,9 @@ class _CpChangePasswordScreenState
         if (!mounted) return;
         _back();
       } else {
-        final msg =
-            res.data is Map ? (res.data as Map)['message']?.toString() : null;
+        final msg = res.data is Map
+            ? (res.data as Map)['message']?.toString()
+            : null;
         _snack(msg ?? 'Failed to update password', error: true);
       }
     } on DioException catch (e) {
@@ -126,10 +130,10 @@ class _CpChangePasswordScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF3EDE0);
-    final textPrimary = isDark ? Colors.white : const Color(0xFF163A2C);
-    final muted = (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFFBF7EF);
+    final bg = isDark ? Colors.black : Colors.white;
+    final textPrimary = isDark ? Colors.white : Colors.black;
+    final muted = (isDark ? Colors.white : Colors.black).withValues(alpha: 0.5);
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -349,7 +353,7 @@ class _CpChangePasswordScreenState
       obscureText: obscure,
       onChanged: onChanged,
       style: GoogleFonts.ebGaramond(
-        fontSize: 14,
+        fontSize: 15,
         fontWeight: FontWeight.w600,
         color: textPrimary,
       ),
@@ -363,7 +367,10 @@ class _CpChangePasswordScreenState
         filled: true,
         fillColor: card,
         isDense: true,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 16,
+        ),
         prefixIcon: Icon(LucideIcons.lock, size: 16, color: muted),
         suffixIcon: showToggle
             ? IconButton(
@@ -414,8 +421,11 @@ class _CpChangePasswordScreenState
         children: [
           Row(
             children: [
-              Icon(LucideIcons.alertCircle,
-                  size: 14, color: _purple.withValues(alpha: 0.6)),
+              Icon(
+                LucideIcons.alertCircle,
+                size: 14,
+                color: _purple.withValues(alpha: 0.6),
+              ),
               const SizedBox(width: 8),
               Text(
                 'REQUIREMENTS',
@@ -436,7 +446,7 @@ class _CpChangePasswordScreenState
   }
 
   Widget _requirementRow(String label, bool met, Color muted) {
-    const green = Color(0xFFC5A35B);
+    const green = Color(0xFF10B981);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
@@ -498,7 +508,9 @@ class _CpChangePasswordScreenState
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
-                      strokeWidth: 2, color: Colors.white),
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
                 )
               : Text(
                   'UPDATE PASSWORD',

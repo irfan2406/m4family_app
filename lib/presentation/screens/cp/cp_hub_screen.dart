@@ -1,11 +1,15 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:m4_mobile/presentation/providers/project_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/providers/cp_shell_provider.dart';
 import 'package:m4_mobile/presentation/widgets/cp_sidebar_menu.dart';
+import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
 
 /// Web `/cp/hub`: cinematic header + welcome card + tool matrix + priority access.
 class CpHubScreen extends ConsumerStatefulWidget {
@@ -31,14 +35,22 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
   Future<void> _load() async {
     try {
       final api = ref.read(apiClientProvider);
+      // Projects come from the shared projectsProvider instead of a bare
+      // getProjects(). That call is the multi-MB catalog: fetching it here too
+      // meant the CP hub re-downloaded it on every visit AND blocked the whole
+      // page (perf + wallet were stuck behind it) — this is why the hub sat on
+      // a spinner after login. The provider is cached and shared app-wide.
+      if (ref.read(projectsProvider) is AsyncError) {
+        ref.invalidate(projectsProvider);
+      }
       final results = await Future.wait([
         api.getCpPerformance(),
-        api.getProjects(),
+        ref.read(projectsProvider.future),
         api.getCpWallet(),
       ]);
-      final res = results[0];
-      final projRes = results[1];
-      final walletRes = results[2];
+      final res = results[0] as Response;
+      final projectList = results[1] as List<dynamic>;
+      final walletRes = results[2] as Response;
       if (!mounted) return;
       if (res.statusCode == 200 && res.data['status'] == true) {
         final d = res.data['data'];
@@ -51,14 +63,15 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
 
       // Priority Access + Holdings: take from real catalog (database).
       try {
-        final body = projRes.data;
-        final list = (body is Map && body['status'] == true && body['data'] is List)
-            ? (body['data'] as List)
-            : (body is List ? body : const <dynamic>[]);
-        final projects = list.whereType<Map>().map((m) => Map<String, dynamic>.from(m)).toList();
+        final projects = projectList
+            .whereType<Map>()
+            .map((m) => Map<String, dynamic>.from(m))
+            .toList();
         Map<String, dynamic>? pick;
-        pick = projects.cast<Map<String, dynamic>?>().firstWhere(
-              (p) => (p?['status']?.toString() ?? '').toLowerCase() == 'upcoming',
+        pick =
+            projects.cast<Map<String, dynamic>?>().firstWhere(
+              (p) =>
+                  (p?['status']?.toString() ?? '').toLowerCase() == 'upcoming',
               orElse: () => null,
             ) ??
             projects.cast<Map<String, dynamic>?>().firstWhere(
@@ -71,7 +84,10 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
         // Holdings: prefer CP-owned/holdings payload if present, else derive from catalog projects.
         final perfHoldings = _perf?['holdings'];
         if (perfHoldings is List && perfHoldings.isNotEmpty) {
-          _holdings = perfHoldings.whereType<Map>().map((m) => Map<String, dynamic>.from(m)).toList();
+          _holdings = perfHoldings
+              .whereType<Map>()
+              .map((m) => Map<String, dynamic>.from(m))
+              .toList();
         } else {
           _holdings = projects.take(2).toList();
         }
@@ -82,27 +98,39 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
 
   /// Total asset portfolio value, formatted as "₹ X.XX Cr".
   String _portfolioValue() {
-    final raw = _perf?['totalAssets'] ??
+    final raw =
+        _perf?['totalAssets'] ??
         _perf?['portfolioValue'] ??
         _wallet?['totalAssets'] ??
         _wallet?['portfolioValue'];
     final num? n = raw is num ? raw : num.tryParse(raw?.toString() ?? '');
     if (n == null || n == 0) return '₹ 4.50 Cr';
-    final cr = n >= 10000 ? n / 10000000 : n; // assume rupees if large, else already Cr
+    final cr = n >= 10000
+        ? n / 10000000
+        : n; // assume rupees if large, else already Cr
     return '₹ ${cr.toStringAsFixed(2)} Cr';
   }
 
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(authProvider).user;
-    final name = user?['firstName']?.toString() ??
+    final name =
+        user?['firstName']?.toString() ??
         user?['companyName']?.toString().split(' ').first ??
         'Partner';
     final scheme = Theme.of(context).colorScheme;
     final isLight = scheme.brightness == Brightness.light;
     final accent = isLight ? Colors.black : scheme.primary;
+    final cpIdx = ref.watch(cpNavigationIndexProvider);
 
     return Scaffold(
+      bottomNavigationBar: CpBottomNav(
+        currentIndex: cpIdx,
+        onTap: (i) {
+          context.go('/home');
+          ref.read(cpNavigationIndexProvider.notifier).state = i;
+        },
+      ),
       drawer: const CpSidebarMenu(),
       body: Stack(
         children: [
@@ -126,116 +154,130 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
               onRefresh: _load,
               color: scheme.onSurface,
               child: ListView(
-              padding: const EdgeInsets.fromLTRB(20, 18, 20, 26),
-              physics: const AlwaysScrollableScrollPhysics(),
-              children: [
-                _header(context, scheme, accent),
-                const SizedBox(height: 16),
-                if (_loading)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 30),
-                    child: Center(child: CircularProgressIndicator()),
-                  )
-                else ...[
-                  _welcomeCard(name: name, scheme: scheme, accent: accent),
+                padding: const EdgeInsets.fromLTRB(20, 18, 20, 26),
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: [
+                  _header(context, scheme, accent),
+                  const SizedBox(height: 16),
+                  if (_loading)
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 30),
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  else ...[
+                    _welcomeCard(name: name, scheme: scheme, accent: accent),
+                    const SizedBox(height: 18),
+                    _assetPortfolioCard(scheme: scheme, accent: accent),
+                  ],
                   const SizedBox(height: 18),
-                  _assetPortfolioCard(scheme: scheme, accent: accent),
-                ],
-                const SizedBox(height: 18),
-                Text(
-                  'TOOL MATRIX',
-                  style: GoogleFonts.gelasio(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 3,
-                    color: scheme.onSurface.withValues(alpha: isLight ? 0.7 : 0.68),
+                  Text(
+                    'TOOL MATRIX',
+                    style: GoogleFonts.gelasio(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 3,
+                      color: scheme.onSurface.withValues(
+                        alpha: isLight ? 0.7 : 0.68,
+                      ),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                GridView.count(
-                  crossAxisCount: 2,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  childAspectRatio: 1.1,
-                  children: [
-                    _matrixTile(
-                      context,
-                      title: 'Reports',
-                      icon: LucideIcons.fileText,
-                      bg: const Color(0x1AC5A35B),
-                      fg: const Color(0xFFC5A35B),
-                      onTap: () => context.push('/cp/hub/reports'),
-                      scheme: scheme,
-                    ),
-                    _matrixTile(
-                      context,
-                      title: 'Analytics',
-                      icon: LucideIcons.barChart3,
-                      bg: const Color(0x1AC5A35B),
-                      fg: const Color(0xFFC5A35B),
-                      onTap: () => context.push('/cp/hub/analytics'),
-                      scheme: scheme,
-                    ),
-                    _matrixTile(
-                      context,
-                      title: 'Network',
-                      icon: LucideIcons.users,
-                      bg: scheme.onSurface.withValues(alpha: 0.05),
-                      fg: scheme.onSurface.withValues(alpha: 0.7),
-                      onTap: () => context.push('/cp/hub/network'),
-                      scheme: scheme,
-                    ),
-                    _matrixTile(
-                      context,
-                      title: 'Concierge',
-                      icon: LucideIcons.crown,
-                      bg: scheme.onSurface.withValues(alpha: 0.05),
-                      fg: scheme.onSurface.withValues(alpha: 0.7),
-                      onTap: () {
-                        // Match web: redirect to `/cp/support`.
-                        context.push('/cp/support');
-                      },
-                      scheme: scheme,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 18),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'PRIORITY ACCESS',
-                      style: GoogleFonts.gelasio(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w800,
-                        letterSpacing: 3,
-                        color: scheme.onSurface.withValues(alpha: isLight ? 0.7 : 0.68),
+                  const SizedBox(height: 12),
+                  GridView.count(
+                    crossAxisCount: 2,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    childAspectRatio: 1.1,
+                    children: [
+                      _matrixTile(
+                        context,
+                        title: 'Reports',
+                        icon: LucideIcons.fileText,
+                        bg: const Color(0x1A60A5FA),
+                        fg: const Color(0xFF60A5FA),
+                        onTap: () => context.push('/cp/hub/reports'),
+                        scheme: scheme,
                       ),
-                    ),
-                    TextButton(
-                      onPressed: () => context.push('/cp/projects'),
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.black,
-                        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+                      _matrixTile(
+                        context,
+                        title: 'Analytics',
+                        icon: LucideIcons.barChart3,
+                        bg: const Color(0x1A34D399),
+                        fg: const Color(0xFF34D399),
+                        onTap: () => context.push('/cp/hub/analytics'),
+                        scheme: scheme,
                       ),
-                      child: Text('VIEW ALL', style: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1)),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                _priorityCard(context, scheme: scheme),
-                const SizedBox(height: 18),
-                // ─── MY HOLDINGS (web investor-hub portfolio view) ───
-                _holdingsHeader(scheme),
-                const SizedBox(height: 12),
-                _holdingsList(context, scheme),
-                const SizedBox(height: 18),
-                // ─── INSTITUTIONAL TOOLS ─────────────────────────────
-                _institutionalTools(scheme),
-              ],
-            ),
+                      _matrixTile(
+                        context,
+                        title: 'Network',
+                        icon: LucideIcons.users,
+                        bg: scheme.onSurface.withValues(alpha: 0.05),
+                        fg: scheme.onSurface.withValues(alpha: 0.7),
+                        onTap: () => context.push('/cp/hub/network'),
+                        scheme: scheme,
+                      ),
+                      _matrixTile(
+                        context,
+                        title: 'Concierge',
+                        icon: LucideIcons.crown,
+                        bg: scheme.onSurface.withValues(alpha: 0.05),
+                        fg: scheme.onSurface.withValues(alpha: 0.7),
+                        onTap: () {
+                          // Match web: redirect to `/cp/support`.
+                          context.push('/cp/support');
+                        },
+                        scheme: scheme,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 18),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'PRIORITY ACCESS',
+                        style: GoogleFonts.gelasio(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 3,
+                          color: scheme.onSurface.withValues(
+                            alpha: isLight ? 0.7 : 0.68,
+                          ),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () => context.push('/cp/projects'),
+                        style: TextButton.styleFrom(
+                          foregroundColor: Colors.black,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 0,
+                            vertical: 10,
+                          ),
+                        ),
+                        child: Text(
+                          'VIEW ALL',
+                          style: GoogleFonts.ebGaramond(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  _priorityCard(context, scheme: scheme),
+                  const SizedBox(height: 18),
+                  // ─── MY HOLDINGS (web investor-hub portfolio view) ───
+                  _holdingsHeader(scheme),
+                  const SizedBox(height: 12),
+                  _holdingsList(context, scheme),
+                  const SizedBox(height: 18),
+                  // ─── INSTITUTIONAL TOOLS ─────────────────────────────
+                  _institutionalTools(scheme),
+                ],
+              ),
             ),
           ),
         ],
@@ -246,19 +288,26 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   // ASSET PORTFOLIO CARD — web `Total Asset Portfolio`
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  Widget _assetPortfolioCard({required ColorScheme scheme, required Color accent}) {
+  Widget _assetPortfolioCard({
+    required ColorScheme scheme,
+    required Color accent,
+  }) {
     final isDark = scheme.brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(40),
-        border: Border.all(color: scheme.outlineVariant.withValues(alpha: isDark ? 0.35 : 0.55)),
+        border: Border.all(
+          color: scheme.outlineVariant.withValues(alpha: isDark ? 0.35 : 0.55),
+        ),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
             isDark ? accent.withValues(alpha: 0.08) : Colors.white,
-            isDark ? scheme.surfaceContainerHighest.withValues(alpha: 0.15) : Colors.white,
+            isDark
+                ? scheme.surfaceContainerHighest.withValues(alpha: 0.15)
+                : Colors.white,
           ],
         ),
         boxShadow: [
@@ -282,7 +331,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
-                    color: scheme.onSurface.withValues(alpha: isDark ? 0.68 : 0.7),
+                    color: scheme.onSurface.withValues(
+                      alpha: isDark ? 0.68 : 0.7,
+                    ),
                   ),
                 ),
               ),
@@ -292,9 +343,15 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(14),
                   color: scheme.onSurface.withValues(alpha: 0.06),
-                  border: Border.all(color: scheme.onSurface.withValues(alpha: 0.1)),
+                  border: Border.all(
+                    color: scheme.onSurface.withValues(alpha: 0.1),
+                  ),
                 ),
-                child: Icon(LucideIcons.trendingUp, size: 18, color: scheme.onSurface),
+                child: Icon(
+                  LucideIcons.trendingUp,
+                  size: 18,
+                  color: scheme.onSurface,
+                ),
               ),
             ],
           ),
@@ -312,11 +369,18 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(999),
                   color: scheme.onSurface.withValues(alpha: 0.06),
-                  border: Border.all(color: scheme.outlineVariant.withValues(alpha: isDark ? 0.35 : 0.55)),
+                  border: Border.all(
+                    color: scheme.outlineVariant.withValues(
+                      alpha: isDark ? 0.35 : 0.55,
+                    ),
+                  ),
                 ),
                 child: Text(
                   'PORTFOLIO GROWTH',
@@ -336,7 +400,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1,
-                    color: scheme.onSurface.withValues(alpha: isDark ? 0.68 : 0.7),
+                    color: scheme.onSurface.withValues(
+                      alpha: isDark ? 0.68 : 0.7,
+                    ),
                   ),
                 ),
               ),
@@ -369,7 +435,11 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(999),
             color: scheme.onSurface.withValues(alpha: 0.04),
-            border: Border.all(color: scheme.outlineVariant.withValues(alpha: isDark ? 0.35 : 0.55)),
+            border: Border.all(
+              color: scheme.outlineVariant.withValues(
+                alpha: isDark ? 0.35 : 0.55,
+              ),
+            ),
           ),
           child: Text(
             '${_holdings.length} Active Projects',
@@ -393,8 +463,14 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
         padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 20),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(28),
-          color: isDark ? scheme.onSurface.withValues(alpha: 0.03) : Colors.white,
-          border: Border.all(color: scheme.outlineVariant.withValues(alpha: isDark ? 0.35 : 0.55)),
+          color: isDark
+              ? scheme.onSurface.withValues(alpha: 0.03)
+              : Colors.white,
+          border: Border.all(
+            color: scheme.outlineVariant.withValues(
+              alpha: isDark ? 0.35 : 0.55,
+            ),
+          ),
         ),
         child: Column(
           children: [
@@ -412,7 +488,12 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
               onPressed: () => context.push('/cp/projects'),
               child: Text(
                 'EXPLORE OPPORTUNITIES',
-                style: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1, color: scheme.onSurface),
+                style: GoogleFonts.ebGaramond(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1,
+                  color: scheme.onSurface,
+                ),
               ),
             ),
           ],
@@ -429,16 +510,23 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
     );
   }
 
-  String _holdingName(Map<String, dynamic> h) => (h['title'] ?? h['name'] ?? 'Project').toString();
+  String _holdingName(Map<String, dynamic> h) =>
+      (h['title'] ?? h['name'] ?? 'Project').toString();
 
   String _holdingUnit(Map<String, dynamic> h) {
     final unit = h['unit'] ?? h['unitDesignation'] ?? h['propertyType'];
-    if (unit != null && unit.toString().trim().isNotEmpty) return unit.toString();
+    if (unit != null && unit.toString().trim().isNotEmpty)
+      return unit.toString();
     return _locLine(h);
   }
 
   String _holdingValue(Map<String, dynamic> h) {
-    final v = h['value'] ?? h['equity'] ?? h['equityValue'] ?? h['price'] ?? h['startingPrice'];
+    final v =
+        h['value'] ??
+        h['equity'] ??
+        h['equityValue'] ??
+        h['price'] ??
+        h['startingPrice'];
     final num? n = v is num ? v : num.tryParse(v?.toString() ?? '');
     if (n == null || n == 0) return '—';
     final cr = n >= 10000 ? n / 10000000 : n;
@@ -447,13 +535,19 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
 
   double _holdingProgress(Map<String, dynamic> h) {
     final p = h['progress'] ?? h['constructionProgress'] ?? h['completion'];
-    final num? n = p is num ? p : num.tryParse(p?.toString().replaceAll('%', '') ?? '');
+    final num? n = p is num
+        ? p
+        : num.tryParse(p?.toString().replaceAll('%', '') ?? '');
     if (n == null) return 0.6;
     final d = n.toDouble();
     return (d > 1 ? d / 100 : d).clamp(0.0, 1.0);
   }
 
-  Widget _holdingCard(BuildContext context, Map<String, dynamic> h, ColorScheme scheme) {
+  Widget _holdingCard(
+    BuildContext context,
+    Map<String, dynamic> h,
+    ColorScheme scheme,
+  ) {
     final isDark = scheme.brightness == Brightness.dark;
     final id = (h['_id'] ?? h['id'] ?? '').toString();
     final progress = _holdingProgress(h);
@@ -462,7 +556,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(28),
         color: isDark ? scheme.onSurface.withValues(alpha: 0.03) : Colors.white,
-        border: Border.all(color: scheme.outlineVariant.withValues(alpha: isDark ? 0.35 : 0.55)),
+        border: Border.all(
+          color: scheme.outlineVariant.withValues(alpha: isDark ? 0.35 : 0.55),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.08 : 0.06),
@@ -483,9 +579,15 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(18),
                   color: scheme.onSurface.withValues(alpha: 0.05),
-                  border: Border.all(color: scheme.onSurface.withValues(alpha: 0.1)),
+                  border: Border.all(
+                    color: scheme.onSurface.withValues(alpha: 0.1),
+                  ),
                 ),
-                child: Icon(LucideIcons.building, size: 20, color: scheme.onSurface),
+                child: Icon(
+                  LucideIcons.building,
+                  size: 20,
+                  color: scheme.onSurface,
+                ),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -496,7 +598,11 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                       _holdingName(h).toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.ebGaramond(fontSize: 14, fontWeight: FontWeight.w900, color: scheme.onSurface),
+                      style: GoogleFonts.ebGaramond(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w900,
+                        color: scheme.onSurface,
+                      ),
                     ),
                     const SizedBox(height: 2),
                     Text(
@@ -507,7 +613,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                         fontSize: 8,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1.5,
-                        color: scheme.onSurface.withValues(alpha: isDark ? 0.68 : 0.6),
+                        color: scheme.onSurface.withValues(
+                          alpha: isDark ? 0.68 : 0.6,
+                        ),
                       ),
                     ),
                   ],
@@ -519,7 +627,11 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                 children: [
                   Text(
                     _holdingValue(h),
-                    style: GoogleFonts.ebGaramond(fontSize: 14, fontWeight: FontWeight.w900, color: scheme.onSurface),
+                    style: GoogleFonts.ebGaramond(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w900,
+                      color: scheme.onSurface,
+                    ),
                   ),
                   const SizedBox(height: 2),
                   Text(
@@ -528,7 +640,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                       fontSize: 8,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1.5,
-                      color: scheme.onSurface.withValues(alpha: isDark ? 0.68 : 0.6),
+                      color: scheme.onSurface.withValues(
+                        alpha: isDark ? 0.68 : 0.6,
+                      ),
                     ),
                   ),
                 ],
@@ -545,7 +659,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                   fontSize: 8,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 1.5,
-                  color: scheme.onSurface.withValues(alpha: isDark ? 0.68 : 0.6),
+                  color: scheme.onSurface.withValues(
+                    alpha: isDark ? 0.68 : 0.6,
+                  ),
                 ),
               ),
               Text(
@@ -553,7 +669,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                 style: GoogleFonts.ebGaramond(
                   fontSize: 8,
                   fontWeight: FontWeight.w900,
-                  color: scheme.onSurface.withValues(alpha: isDark ? 0.68 : 0.6),
+                  color: scheme.onSurface.withValues(
+                    alpha: isDark ? 0.68 : 0.6,
+                  ),
                 ),
               ),
             ],
@@ -603,7 +721,10 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
               GestureDetector(
                 onTap: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Live Stream Active'), backgroundColor: Colors.green),
+                    const SnackBar(
+                      content: Text('Live Stream Active'),
+                      backgroundColor: Colors.green,
+                    ),
                   );
                 },
                 child: Container(
@@ -613,9 +734,15 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                   decoration: BoxDecoration(
                     color: scheme.onSurface.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: scheme.onSurface.withValues(alpha: 0.1)),
+                    border: Border.all(
+                      color: scheme.onSurface.withValues(alpha: 0.1),
+                    ),
                   ),
-                  child: Icon(LucideIcons.eye, size: 20, color: scheme.onSurface),
+                  child: Icon(
+                    LucideIcons.eye,
+                    size: 20,
+                    color: scheme.onSurface,
+                  ),
                 ),
               ),
             ],
@@ -638,7 +765,10 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
             label: 'STATEMENT',
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Downloading Audit Statement...'), backgroundColor: Colors.green),
+                const SnackBar(
+                  content: Text('Downloading Audit Statement...'),
+                  backgroundColor: Colors.green,
+                ),
               );
             },
           ),
@@ -651,7 +781,10 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
             label: 'EXPERT DESK',
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Notifying Relationship Manager...'), backgroundColor: Colors.green),
+                const SnackBar(
+                  content: Text('Notifying Relationship Manager...'),
+                  backgroundColor: Colors.green,
+                ),
               );
               context.push('/cp/support');
             },
@@ -673,9 +806,13 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
       child: Container(
         height: 96,
         decoration: BoxDecoration(
-          color: isDark ? scheme.onSurface.withValues(alpha: 0.03) : Colors.white,
+          color: isDark
+              ? scheme.onSurface.withValues(alpha: 0.03)
+              : Colors.white,
           borderRadius: BorderRadius.circular(40),
-          border: Border.all(color: scheme.outlineVariant.withValues(alpha: isDark ? 0.35 : 0.5)),
+          border: Border.all(
+            color: scheme.outlineVariant.withValues(alpha: isDark ? 0.35 : 0.5),
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: isDark ? 0.08 : 0.06),
@@ -708,7 +845,15 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
     return Row(
       children: [
         IconButton(
-          onPressed: () => context.pop(),
+          // Back = go back if pushed, else return to the CP Home tab so the
+          // button always works (Partner Hub can be reached via a replace-nav).
+          onPressed: () {
+            if (Navigator.of(context).canPop()) {
+              Navigator.of(context).pop();
+            } else {
+              context.go('/home');
+            }
+          },
           icon: const Icon(LucideIcons.arrowLeft),
         ),
         const SizedBox(width: 8),
@@ -716,22 +861,28 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Partner Hub', style: GoogleFonts.gelasio(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: -0.2)),
+              Text(
+                'Partner Hub',
+                style: GoogleFonts.gelasio(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: -0.2,
+                  color: accent,
+                ),
+              ),
               const SizedBox(height: 2),
               Text(
                 'Premium Access & Tools',
-                style: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 1.4, color: scheme.onSurface.withValues(alpha: 0.68)),
+                style: GoogleFonts.ebGaramond(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 1.4,
+                  color: scheme.onSurface.withValues(alpha: 0.68),
+                ),
               ),
             ],
           ),
         ),
-        Builder(
-          builder: (ctx) => IconButton(
-            onPressed: () => Scaffold.of(ctx).openDrawer(),
-            icon: const Icon(LucideIcons.menu),
-          ),
-        ),
-        const SizedBox(width: 6),
         IconButton(
           onPressed: () => context.push('/cp/settings'),
           icon: const Icon(LucideIcons.settings),
@@ -740,7 +891,11 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
     );
   }
 
-  Widget _welcomeCard({required String name, required ColorScheme scheme, required Color accent}) {
+  Widget _welcomeCard({
+    required String name,
+    required ColorScheme scheme,
+    required Color accent,
+  }) {
     final conv = _perf?['conversionRate']?.toString() ?? '0%';
     final leads = '${_perf?['totalLeads'] ?? 0}';
     final isLight = scheme.brightness == Brightness.light;
@@ -748,13 +903,17 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(34),
-        border: Border.all(color: scheme.outlineVariant.withValues(alpha: isLight ? 0.55 : 0.35)),
+        border: Border.all(
+          color: scheme.outlineVariant.withValues(alpha: isLight ? 0.55 : 0.35),
+        ),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
             isLight ? Colors.white : accent.withValues(alpha: 0.08),
-            isLight ? Colors.white : scheme.surfaceContainerHighest.withValues(alpha: 0.15),
+            isLight
+                ? Colors.white
+                : scheme.surfaceContainerHighest.withValues(alpha: 0.15),
           ],
         ),
         boxShadow: [
@@ -762,7 +921,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
             color: Colors.black.withValues(alpha: isLight ? 0.06 : 0.08),
             blurRadius: 28,
             offset: const Offset(0, 14),
-          )
+          ),
         ],
       ),
       child: Column(
@@ -776,9 +935,15 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(14),
                   color: scheme.onSurface.withValues(alpha: 0.1),
-                  border: Border.all(color: scheme.onSurface.withValues(alpha: 0.1)),
+                  border: Border.all(
+                    color: scheme.onSurface.withValues(alpha: 0.1),
+                  ),
                 ),
-                child: Icon(LucideIcons.crown, color: scheme.onSurface, size: 20),
+                child: Icon(
+                  LucideIcons.crown,
+                  color: scheme.onSurface,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: 10),
               Text(
@@ -795,7 +960,11 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
           const SizedBox(height: 12),
           Text(
             'Welcome, $name',
-            style: GoogleFonts.gelasio(fontSize: 22, fontWeight: FontWeight.w900, color: scheme.onSurface),
+            style: GoogleFonts.gelasio(
+              fontSize: 22,
+              fontWeight: FontWeight.w900,
+              color: scheme.onSurface,
+            ),
           ),
           const SizedBox(height: 4),
           Text(
@@ -825,7 +994,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: scheme.outlineVariant.withValues(alpha: isLight ? 0.55 : 0.45)),
+        border: Border.all(
+          color: scheme.outlineVariant.withValues(alpha: isLight ? 0.55 : 0.45),
+        ),
         color: isLight ? Colors.white : scheme.surface.withValues(alpha: 0.65),
       ),
       child: Column(
@@ -841,7 +1012,14 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
             ),
           ),
           const SizedBox(height: 6),
-          Text(value, style: GoogleFonts.gelasio(fontSize: 18, fontWeight: FontWeight.w900, color: scheme.onSurface)),
+          Text(
+            value,
+            style: GoogleFonts.gelasio(
+              fontSize: 18,
+              fontWeight: FontWeight.w900,
+              color: scheme.onSurface,
+            ),
+          ),
         ],
       ),
     );
@@ -866,7 +1044,11 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(28),
-            border: Border.all(color: scheme.outlineVariant.withValues(alpha: isLight ? 0.55 : 0.4)),
+            border: Border.all(
+              color: scheme.outlineVariant.withValues(
+                alpha: isLight ? 0.55 : 0.4,
+              ),
+            ),
           ),
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -875,7 +1057,10 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
               Container(
                 width: 52,
                 height: 52,
-                decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(18)),
+                decoration: BoxDecoration(
+                  color: bg,
+                  borderRadius: BorderRadius.circular(18),
+                ),
                 child: Icon(icon, color: fg, size: 24),
               ),
               const SizedBox(height: 10),
@@ -884,7 +1069,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                 style: GoogleFonts.ebGaramond(
                   fontSize: 12,
                   fontWeight: FontWeight.w800,
-                  color: scheme.onSurface.withValues(alpha: isLight ? 0.92 : 0.85),
+                  color: scheme.onSurface.withValues(
+                    alpha: isLight ? 0.92 : 0.85,
+                  ),
                 ),
               ),
             ],
@@ -897,14 +1084,16 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
   String _locLine(Map<String, dynamic> p) {
     final loc = p['location'];
     if (loc is String) return loc.split(',').first.trim();
-    if (loc is Map) return (loc['name']?.toString() ?? '').split(',').first.trim();
+    if (loc is Map)
+      return (loc['name']?.toString() ?? '').split(',').first.trim();
     return '';
   }
 
   String _hero(Map<String, dynamic> p) {
     final api = ref.read(apiClientProvider);
     final imgs = p['images'];
-    if (imgs is List && imgs.isNotEmpty) return api.resolveUrl(imgs.first?.toString());
+    if (imgs is List && imgs.isNotEmpty)
+      return api.resolveUrl(imgs.first?.toString());
     final hero = p['heroImage']?.toString();
     return api.resolveUrl(hero);
   }
@@ -912,7 +1101,11 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
   Widget _priorityCard(BuildContext context, {required ColorScheme scheme}) {
     final p = _priorityProject;
     final title = (p?['title'] ?? 'Skyline Avenue').toString();
-    final desc = (p?['description'] ?? p?['shortDescription'] ?? 'Exclusive waterfront residences in South Mumbai').toString();
+    final desc =
+        (p?['description'] ??
+                p?['shortDescription'] ??
+                'Exclusive waterfront residences in South Mumbai')
+            .toString();
     final id = (p?['_id'] ?? p?['id'] ?? '').toString();
     final loc = p == null ? '' : _locLine(p);
     final bg = p == null ? null : _hero(p);
@@ -932,7 +1125,9 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
           height: 190,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(34),
-            border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.4)),
+            border: Border.all(
+              color: scheme.outlineVariant.withValues(alpha: 0.4),
+            ),
           ),
           clipBehavior: Clip.antiAlias,
           child: Stack(
@@ -942,7 +1137,8 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                 CachedNetworkImage(
                   imageUrl: bg,
                   fit: BoxFit.cover,
-                  errorWidget: (_, __, ___) => Container(color: scheme.surfaceContainerHighest),
+                  errorWidget: (_, __, ___) =>
+                      Container(color: scheme.surfaceContainerHighest),
                 )
               else
                 Container(color: scheme.surfaceContainerHighest),
@@ -966,28 +1162,63 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                      decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(999)),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(999),
+                      ),
                       child: Text(
-                        ((p?['status']?.toString() ?? '').isNotEmpty ? (p?['status']?.toString() ?? '') : 'PRE-LAUNCH').toUpperCase(),
-                        style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1.2, color: Colors.white),
+                        ((p?['status']?.toString() ?? '').isNotEmpty
+                                ? (p?['status']?.toString() ?? '')
+                                : 'PRE-LAUNCH')
+                            .toUpperCase(),
+                        style: GoogleFonts.ebGaramond(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.2,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                     const Spacer(),
-                    Text(title, style: GoogleFonts.gelasio(fontSize: 22, fontWeight: FontWeight.w900)),
+                    Text(
+                      title,
+                      style: GoogleFonts.gelasio(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
                     const SizedBox(height: 4),
                     Text(
                       loc.isNotEmpty ? loc : desc,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.ebGaramond(fontSize: 12, fontWeight: FontWeight.w600, color: scheme.onSurface.withValues(alpha: 0.68)),
+                      style: GoogleFonts.ebGaramond(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: scheme.onSurface.withValues(alpha: 0.68),
+                      ),
                     ),
                     const SizedBox(height: 10),
                     Row(
                       children: [
-                        Text('Explore Opportunity', style: GoogleFonts.ebGaramond(fontSize: 12, fontWeight: FontWeight.w900, color: Colors.black)),
+                        Text(
+                          'Explore Opportunity',
+                          style: GoogleFonts.ebGaramond(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.black,
+                          ),
+                        ),
                         const SizedBox(width: 8),
-                        const Icon(LucideIcons.arrowRight, size: 16, color: Colors.black),
+                        const Icon(
+                          LucideIcons.arrowRight,
+                          size: 16,
+                          color: Colors.black,
+                        ),
                       ],
                     ),
                   ],

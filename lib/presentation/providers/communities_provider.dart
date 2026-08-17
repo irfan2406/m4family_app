@@ -37,7 +37,7 @@ class CommunitiesNotifier extends StateNotifier<CommunitiesState> {
     try {
       final apiClient = _ref.read(apiClientProvider);
       final response = await apiClient.getCommunities();
-      
+
       if (response.data['status'] == true) {
         state = state.copyWith(
           communities: response.data['data'] ?? [],
@@ -50,14 +50,12 @@ class CommunitiesNotifier extends StateNotifier<CommunitiesState> {
         );
       }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 }
 
-final communitiesProvider = StateNotifierProvider<CommunitiesNotifier, CommunitiesState>((ref) {
-  return CommunitiesNotifier(ref);
-});
+final communitiesProvider =
+    StateNotifierProvider<CommunitiesNotifier, CommunitiesState>((ref) {
+      return CommunitiesNotifier(ref);
+    });
