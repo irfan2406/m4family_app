@@ -90,10 +90,10 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
                     width: 48,
                     height: 36,
                     decoration: BoxDecoration(
-                      color: colorScheme.primary,
+                      color: Colors.transparent,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Icon(LucideIcons.moreHorizontal, color: Colors.white, size: 20),
+                    child: Icon(LucideIcons.menu, color: Theme.of(context).colorScheme.onSurface, size: 20),
                   ),
                 ),
               ),
@@ -120,7 +120,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
                       const SizedBox(height: 16),
                       Text(
                         'SYNCING SECURE CONTENT...',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           color: (isDark ? Colors.white : Colors.black).withOpacity(0.4),
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
@@ -169,7 +169,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
             ),
             const SizedBox(height: 24),
             Text('Page Not Found',
-                style: GoogleFonts.ebGaramond(color: isDark ? Colors.white : Colors.black, fontSize: 24, fontWeight: FontWeight.bold)),
+                style: GoogleFonts.gelasio(color: isDark ? Colors.white : Colors.black, fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
             Text(
               'The page /${widget.slug} does not exist or has not been published yet.',
@@ -204,7 +204,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
       children: [
         Text(
           (_page?['title'] ?? '').toString().toUpperCase(),
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             color: isDark ? Colors.white : Colors.black,
             fontSize: 28,
             fontWeight: FontWeight.w900,
@@ -243,7 +243,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
               children: [
                 Text(
                   'LAST UPDATE',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     color: (isDark ? Colors.white : Colors.black).withOpacity(0.3),
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
@@ -338,7 +338,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
                           Expanded(
                             child: Text(
                               (section['title'] ?? '').toString(),
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                 color: isDark ? Colors.white : Colors.black,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w800,

@@ -98,7 +98,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
         ),
         title: Text(
           'ELITE CHECKOUT',
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 14,
             fontWeight: FontWeight.w900,
             color: textPrimary,
@@ -170,7 +170,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                           const SizedBox(height: 10),
                           Text(
                             'Lifetime Membership',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.gelasio(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                               color: textPrimary,
@@ -184,7 +184,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
                       children: [
                         Text(
                           '₹4,999',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                             color: textPrimary,
@@ -221,7 +221,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
             padding: const EdgeInsets.only(left: 4, bottom: 12),
             child: Text(
               'PAYMENT DETAILS',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 11,
                 fontWeight: FontWeight.w900,
                 color: muted,
@@ -503,7 +503,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
           const SizedBox(height: 28),
           Text(
             'Verifying Payment',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 22,
               fontWeight: FontWeight.bold,
               color: textPrimary,
@@ -585,7 +585,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
             const SizedBox(height: 32),
             Text(
               'ELITE ACTIVE',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 24,
                 fontWeight: FontWeight.w900,
                 color: textPrimary,
@@ -594,7 +594,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
             const SizedBox(height: 8),
             Text(
               'WELCOME TO THE INNER CIRCLE',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
                 color: _gold,

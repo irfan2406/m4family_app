@@ -358,7 +358,7 @@ class _CpProfileDetailsScreenState extends ConsumerState<CpProfileDetailsScreen>
                 const SizedBox(height: 2),
                 Text(
                   'MANAGE YOUR PERSONAL DETAILS',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 8,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
@@ -483,7 +483,7 @@ class _CpProfileDetailsScreenState extends ConsumerState<CpProfileDetailsScreen>
             ),
             child: Text(
               'PLATINUM MEMBER',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 9,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 2,
@@ -518,7 +518,7 @@ class _CpProfileDetailsScreenState extends ConsumerState<CpProfileDetailsScreen>
           padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: Text(
             label,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 9,
               fontWeight: FontWeight.w800,
               letterSpacing: 1.5,
@@ -586,7 +586,7 @@ class _CpProfileDetailsScreenState extends ConsumerState<CpProfileDetailsScreen>
                 ),
                 child: Text(
                   'CANCEL',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
@@ -616,7 +616,7 @@ class _CpProfileDetailsScreenState extends ConsumerState<CpProfileDetailsScreen>
                       )
                     : Text(
                         'SAVE CHANGES',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 11,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 1.5,

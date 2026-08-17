@@ -92,7 +92,7 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                   children: [
                     Text(
                       'Pages',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         color: Theme.of(context).colorScheme.onSurface,
                         fontSize: 32,
                         fontWeight: FontWeight.w900,
@@ -102,7 +102,7 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                     const SizedBox(height: 8),
                     Text(
                       'DIRECT CONTENT ACCESS',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
                         fontSize: 10,
                         fontWeight: FontWeight.w900,

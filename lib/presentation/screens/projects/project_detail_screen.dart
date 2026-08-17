@@ -266,7 +266,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
             const SizedBox(height: 32),
             Text(
               'HOW CAN\nWE HELP?',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 28,
                 fontWeight: FontWeight.w900,
                 color: isDark ? Colors.white : Colors.black,
@@ -277,7 +277,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
             const SizedBox(height: 12),
             Text(
               'INTERESTED IN ${project?['title']?.toString().toUpperCase() ?? 'PROJECT'}?\nCHOOSE HOW YOU\'D LIKE TO PROCEED.',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 9,
                 color: isDark ? Colors.white38 : Colors.black38,
                 fontWeight: FontWeight.w900,
@@ -513,7 +513,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                         : type == 'Site Visit'
                         ? 'BOOK A SITE VISIT'
                         : 'REQUEST DETAILS',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 18,
                       fontWeight: FontWeight.w900,
                       color: isDark ? Colors.white : Colors.black,
@@ -635,7 +635,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                                 child: Text(
                                   vt.toUpperCase(),
                                   textAlign: TextAlign.center,
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.gelasio(
                                     fontSize: 9,
                                     fontWeight: FontWeight.w900,
                                     letterSpacing: 1.5,
@@ -836,7 +836,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
   Widget _inquiryLabel(String text, bool isDark) {
     return Text(
       text,
-      style: GoogleFonts.ebGaramond(
+      style: GoogleFonts.gelasio(
         fontSize: 10,
         fontWeight: FontWeight.w900,
         color: (isDark ? Colors.white : Colors.black).withOpacity(0.72),
@@ -1444,7 +1444,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               ),
               child: Text(
                 (project?['status']?.toString().toUpperCase() ?? 'ONGOING'),
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   color: Colors.white,
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
@@ -1518,7 +1518,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
         const SizedBox(width: 12),
         Text(
           title.toUpperCase(),
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 11,
             fontWeight: FontWeight.w900,
             color: isDark ? Colors.white : Colors.black,
@@ -1698,7 +1698,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
         children: [
           Text(
             'ABOUT THE RESIDENCE',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 10,
               fontWeight: FontWeight.w900,
               color: M4Theme.premiumBlue,
@@ -1839,7 +1839,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
           const SizedBox(height: 32),
           Text(
             'CONNECT WITH US',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 10,
               fontWeight: FontWeight.w900,
               color: Colors.black38,
@@ -2303,7 +2303,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                   child: Center(
                     child: Text(
                       'BOOK YOUR UNIT NOW',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         color: isDark ? Colors.black : Colors.white,
                         fontWeight: FontWeight.w900,
                         fontSize: 10,
@@ -2406,7 +2406,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                   child: Center(
                     child: Text(
                       'BOOK NOW',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         color: Colors.white,
                         fontWeight: FontWeight.w900,
                         fontSize: 13,
@@ -2713,7 +2713,7 @@ class _SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title,
-      style: GoogleFonts.ebGaramond(
+      style: GoogleFonts.gelasio(
         fontSize: 10,
         fontWeight: FontWeight.w900,
         color: M4Theme.premiumBlue,
@@ -3013,7 +3013,7 @@ class _InventoryItem extends StatelessWidget {
               child: Center(
                 child: Text(
                   'BOOK NOW',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -4023,7 +4023,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     children: [
                       Text(
                         '${overallProgress.toInt()}%',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 20,
                           fontWeight: FontWeight.w900,
                           color: isDark ? Colors.white : Colors.black,
@@ -4054,7 +4054,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                 children: [
                   Text(
                     year,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 20,
                       fontWeight: FontWeight.w900,
                       color: isDark ? Colors.white : Colors.black,
@@ -4265,7 +4265,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                             'PHASE')
                                         .toString()
                                         .toUpperCase(),
-                                    style: GoogleFonts.ebGaramond(
+                                    style: GoogleFonts.gelasio(
                                       fontSize: 10,
                                       fontWeight: FontWeight.w900,
                                       color:
@@ -4299,7 +4299,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                 children: [
                   Text(
                     'PHASE TRACKING',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 11,
                       fontWeight: FontWeight.w900,
                       color: isDark ? Colors.white : Colors.black,
@@ -4309,7 +4309,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   const SizedBox(height: 4),
                   Text(
                     'REAL-TIME DEVELOPMENT STATUS',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 8,
                       fontWeight: FontWeight.w700,
                       color: (isDark ? Colors.white : Colors.black).withOpacity(
@@ -4338,7 +4338,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                 ),
                 child: Text(
                   '${phases.length} MILESTONES',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     color: isDark ? Colors.white : Colors.black,
@@ -4364,7 +4364,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
               child: Center(
                 child: Text(
                   'AWAITING CONSTRUCTION DATA',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 9,
                     fontWeight: FontWeight.w900,
                     color: (isDark ? Colors.white : Colors.black).withOpacity(
@@ -4482,7 +4482,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                             const SizedBox(width: 6),
                                             Text(
                                               status.toUpperCase(),
-                                              style: GoogleFonts.ebGaramond(
+                                              style: GoogleFonts.gelasio(
                                                 fontSize: 9,
                                                 fontWeight: FontWeight.w700,
                                                 color:
@@ -4504,7 +4504,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                             const SizedBox(width: 8),
                             Text(
                               '${pct.toInt()}%',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w900,
                                 color: isDark ? Colors.white : Colors.black,

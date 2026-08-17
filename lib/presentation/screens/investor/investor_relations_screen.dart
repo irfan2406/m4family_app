@@ -140,9 +140,9 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('INVESTOR RELATIONS',
-                style: GoogleFonts.ebGaramond(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.bold, fontSize: 18, letterSpacing: 1)),
+                style: GoogleFonts.gelasio(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.bold, fontSize: 18, letterSpacing: 1)),
             Text('M4 FAMILY DEVELOPMENTS',
-                style: GoogleFonts.ebGaramond(color: (isDark ? Colors.white : Colors.black).withOpacity(0.5), fontWeight: FontWeight.w900, fontSize: 9, letterSpacing: 4)),
+                style: GoogleFonts.gelasio(color: (isDark ? Colors.white : Colors.black).withOpacity(0.5), fontWeight: FontWeight.w900, fontSize: 9, letterSpacing: 4)),
           ],
         ),
         backgroundColor: (isDark ? Colors.black : Colors.white).withOpacity(0.8),
@@ -165,12 +165,12 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
                 margin: const EdgeInsets.only(right: 16, top: 12, bottom: 12),
                 padding: const EdgeInsets.symmetric(horizontal: 14),
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.white : Colors.black,
+                  color: Colors.transparent,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Icon(
-                  LucideIcons.moreHorizontal, 
-                  color: isDark ? Colors.black : Colors.white, 
+                  LucideIcons.menu, 
+                  color: Theme.of(context).colorScheme.onSurface, 
                   size: 20
                 ),
               ),
@@ -305,7 +305,7 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
         // Preferred Contact Mode
         Text(
           'PREFERRED MODE OF CONTACT:',
-          style: GoogleFonts.ebGaramond(color: (isDark ? Colors.white : Colors.black).withOpacity(0.54), fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2),
+          style: GoogleFonts.gelasio(color: (isDark ? Colors.white : Colors.black).withOpacity(0.54), fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2),
         ),
         const SizedBox(height: 16),
         Row(
@@ -373,7 +373,7 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
         const SizedBox(height: 12),
         Text(
           'FOR ANY INVESTOR RELATION RELATED QUESTIONS OR QUERIES PLEASE CONTACT VIA BELOW EMAIL',
-          style: GoogleFonts.ebGaramond(color: (isDark ? Colors.white : Colors.black).withOpacity(0.38), fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 1.5, height: 1.6),
+          style: GoogleFonts.gelasio(color: (isDark ? Colors.white : Colors.black).withOpacity(0.38), fontSize: 9, fontWeight: FontWeight.w800, letterSpacing: 1.5, height: 1.6),
         ),
         const SizedBox(height: 24),
 
@@ -428,7 +428,7 @@ class _InvestorRelationsScreenState extends ConsumerState<InvestorRelationsScree
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(label.toUpperCase(),
-                          style: GoogleFonts.ebGaramond(color: (isDark ? Colors.white : Colors.black).withOpacity(0.54), fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2)),
+                          style: GoogleFonts.gelasio(color: (isDark ? Colors.white : Colors.black).withOpacity(0.54), fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2)),
                       const SizedBox(height: 4),
                       Text(value.toUpperCase(),
                           style: GoogleFonts.ebGaramond(color: isDark ? Colors.white : Colors.black, fontSize: 14, fontWeight: FontWeight.w900, letterSpacing: -0.5)),

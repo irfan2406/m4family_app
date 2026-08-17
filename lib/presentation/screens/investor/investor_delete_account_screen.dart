@@ -285,7 +285,7 @@ class _InvestorDeleteAccountScreenState
                 Text(
                   'DEACTIVATE',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 16,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.5,
@@ -296,7 +296,7 @@ class _InvestorDeleteAccountScreenState
                 Text(
                   'PURGE PROTOCOL',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -339,7 +339,7 @@ class _InvestorDeleteAccountScreenState
               Expanded(
                 child: Text(
                   'CRITICAL WARNING',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 12,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.5,
@@ -370,7 +370,7 @@ class _InvestorDeleteAccountScreenState
   Widget _sectionLabel(String text, Color muted) {
     return Text(
       text,
-      style: GoogleFonts.ebGaramond(
+      style: GoogleFonts.gelasio(
         fontSize: 9,
         fontWeight: FontWeight.w900,
         letterSpacing: 2,
@@ -457,7 +457,7 @@ class _InvestorDeleteAccountScreenState
           padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: Text(
             'TYPE "$_confirmWord" TO CONFIRM',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 9,
               fontWeight: FontWeight.w800,
               letterSpacing: 1.5,
@@ -480,7 +480,7 @@ class _InvestorDeleteAccountScreenState
             controller: _confirmCtrl,
             onChanged: (_) => setState(() {}),
             textCapitalization: TextCapitalization.characters,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 16,
               fontWeight: FontWeight.w800,
               letterSpacing: 3,
@@ -488,7 +488,7 @@ class _InvestorDeleteAccountScreenState
             ),
             decoration: InputDecoration(
               hintText: _confirmWord,
-              hintStyle: GoogleFonts.ebGaramond(
+              hintStyle: GoogleFonts.gelasio(
                 fontSize: 16,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 3,
@@ -521,7 +521,7 @@ class _InvestorDeleteAccountScreenState
           padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: Text(
             'CREDENTIAL AUTHORIZATION',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 9,
               fontWeight: FontWeight.w800,
               letterSpacing: 1.5,
@@ -660,7 +660,7 @@ class _InvestorDeleteAccountScreenState
                     const SizedBox(width: 12),
                     Text(
                       'EXECUTE PURGE',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 11,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1.5,
@@ -689,7 +689,7 @@ class _InvestorDeleteAccountScreenState
               },
         child: Text(
           'ABORT PROTOCOL',
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 10,
             fontWeight: FontWeight.w900,
             letterSpacing: 2,

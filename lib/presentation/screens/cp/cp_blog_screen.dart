@@ -89,7 +89,7 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
               children: [
                 Text(
                   'M4 FAMILY',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 14,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -98,7 +98,7 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                 ),
                 Text(
                   'DEVELOPMENTS',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 8,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 4,
@@ -114,10 +114,10 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                   padding: const EdgeInsets.only(right: 20),
                   child: IconButton(
                     onPressed: () => Scaffold.of(ctx).openDrawer(),
-                    icon: const Icon(
-                      LucideIcons.moreHorizontal,
+                    icon: Icon(
+                      LucideIcons.menu,
                       size: 22,
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                     style: IconButton.styleFrom(
                       backgroundColor: Colors.black,
@@ -162,7 +162,7 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                       const SizedBox(width: 14),
                       Text(
                         'CONTENT HUB',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 3,
@@ -174,7 +174,7 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                   const SizedBox(height: 16),
                   Text(
                     'M4 BLOG',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 32,
                       fontWeight: FontWeight.w900,
                       letterSpacing: -1,
@@ -215,7 +215,7 @@ class _CpBlogScreenState extends ConsumerState<CpBlogScreen> {
                   const SizedBox(height: 16),
                   Text(
                     'No blog posts found',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 18,
                       fontWeight: FontWeight.w900,
                       color: isLight ? Colors.black : Colors.white,
@@ -326,7 +326,7 @@ class _BlogCard extends ConsumerWidget {
                     ),
                     child: Text(
                       (item['type'] ?? 'ARTICLE').toString().toUpperCase(),
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 8,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 2,
@@ -355,7 +355,7 @@ class _BlogCard extends ConsumerWidget {
                     const SizedBox(width: 6),
                     Text(
                       formattedDate.toUpperCase(),
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 9,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1.5,
@@ -380,7 +380,7 @@ class _BlogCard extends ConsumerWidget {
                     const SizedBox(width: 6),
                     Text(
                       'BY M4 TEAM',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 9,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1.5,
@@ -392,7 +392,7 @@ class _BlogCard extends ConsumerWidget {
                 const SizedBox(height: 16),
                 Text(
                   (item['title'] ?? '').toString().toUpperCase(),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 20,
                     fontWeight: FontWeight.w900,
                     letterSpacing: -0.5,
@@ -425,7 +425,7 @@ class _BlogCard extends ConsumerWidget {
                       icon: const Icon(LucideIcons.arrowRight, size: 16),
                       label: Text(
                         'READ MORE',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1.5,

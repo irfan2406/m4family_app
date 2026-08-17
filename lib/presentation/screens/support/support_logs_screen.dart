@@ -434,7 +434,7 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
     return Center(
       child: Text(
         'NO LOGS FOUND',
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.gelasio(
           color: (isDark ? Colors.white : Colors.black).withOpacity(0.62),
           fontSize: 10,
           fontWeight: FontWeight.w900,
@@ -661,7 +661,7 @@ class _TicketDetailSheet extends StatelessWidget {
           const SizedBox(height: 24),
           Text(
             ticket.subject.toUpperCase(),
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               color: isDark ? Colors.white : Colors.black,
               fontSize: 20,
               fontWeight: FontWeight.w900,

@@ -154,7 +154,7 @@ class _InvestorEliteInvestorConnectScreenState
             ),
             Text(
               'ELITE INVESTOR NETWORK',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 8,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 2,
@@ -179,7 +179,7 @@ class _InvestorEliteInvestorConnectScreenState
                       // ── Greeting ──────────────────────────────────────────
                       Text(
                         greeting,
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 22,
                           fontWeight: FontWeight.w900,
                           letterSpacing: -1,
@@ -204,7 +204,7 @@ class _InvestorEliteInvestorConnectScreenState
                         children: [
                           Text(
                             'NETWORK STATS',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.gelasio(
                               fontSize: 10,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 4,
@@ -220,7 +220,7 @@ class _InvestorEliteInvestorConnectScreenState
                             ),
                             child: Text(
                               'LIVE',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 8,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 1.5,
@@ -239,7 +239,7 @@ class _InvestorEliteInvestorConnectScreenState
                       // ── Active Co-Investors ──────────────────────────────
                       Text(
                         'ACTIVE CO-INVESTORS',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 4,
@@ -261,7 +261,7 @@ class _InvestorEliteInvestorConnectScreenState
                       // ── Successful Deals ─────────────────────────────────
                       Text(
                         'SUCCESSFUL DEALS',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 4,
@@ -316,7 +316,7 @@ class _InvestorEliteInvestorConnectScreenState
               ),
               child: Text(
                 'RETRY',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 11,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2,
@@ -391,7 +391,7 @@ class _InvestorEliteInvestorConnectScreenState
                 children: [
                   Text(
                     s.label.toUpperCase(),
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 2,
@@ -401,7 +401,7 @@ class _InvestorEliteInvestorConnectScreenState
                   const SizedBox(height: 6),
                   Text(
                     s.value.toUpperCase(),
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 26,
                       fontWeight: FontWeight.w900,
                       height: 1,
@@ -525,7 +525,7 @@ class _InvestorEliteInvestorConnectScreenState
                   children: [
                     Text(
                       'PORTFOLIO',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 8,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1.5,
@@ -594,7 +594,7 @@ class _InvestorEliteInvestorConnectScreenState
                 ),
                 label: Text(
                   'CONNECT',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -679,7 +679,7 @@ class _InvestorEliteInvestorConnectScreenState
                         ),
                         child: Text(
                           d.roi.toUpperCase(),
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 1.5,
@@ -698,7 +698,7 @@ class _InvestorEliteInvestorConnectScreenState
                   children: [
                     Text(
                       d.title.toUpperCase(),
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 18,
                         fontWeight: FontWeight.w900,
                         letterSpacing: -0.5,
@@ -715,7 +715,7 @@ class _InvestorEliteInvestorConnectScreenState
                         Flexible(
                           child: Text(
                             d.syndicate.toUpperCase(),
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.gelasio(
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
                               letterSpacing: 1.5,
@@ -737,7 +737,7 @@ class _InvestorEliteInvestorConnectScreenState
                           children: [
                             Text(
                               'TICKET CLOSED',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 9,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 2,
@@ -747,7 +747,7 @@ class _InvestorEliteInvestorConnectScreenState
                             const SizedBox(height: 4),
                             Text(
                               d.ticket.toUpperCase(),
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: -0.5,
@@ -764,7 +764,7 @@ class _InvestorEliteInvestorConnectScreenState
                             const SizedBox(width: 6),
                             Text(
                               'FUNDED',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 2,
@@ -846,7 +846,7 @@ class _InvestorEliteInvestorConnectScreenState
                           children: [
                             Text(
                               'RELATIONSHIP DESK',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: -0.5,
@@ -857,7 +857,7 @@ class _InvestorEliteInvestorConnectScreenState
                             const SizedBox(height: 6),
                             Text(
                               'CURATED INTRODUCTIONS',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 1.5,
@@ -890,7 +890,7 @@ class _InvestorEliteInvestorConnectScreenState
                       ),
                       child: Text(
                         'REQUEST AN INTRODUCTION',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 2,

@@ -172,7 +172,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                       children: [
                         Text(
                           'M4 FAMILY',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 14,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 2.5,
@@ -181,7 +181,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                         ),
                         Text(
                           'DEVELOPMENTS',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 8,
                             fontWeight: FontWeight.w700,
                             letterSpacing: 3.5,
@@ -229,7 +229,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                         const SizedBox(width: 15),
                         Text(
                           'CONTENT HUB',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 3,
@@ -241,7 +241,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
                     const SizedBox(height: 20),
                     Text(
                       _getTitle(),
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 32,
                         fontWeight: FontWeight.w900,
                         color: scheme.onSurface,
@@ -323,7 +323,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
         width: 56,
         height: 48,
         decoration: BoxDecoration(
-          color: scheme.onSurface,
+          color: Colors.transparent,
           borderRadius: BorderRadius.circular(18),
           boxShadow: [
             BoxShadow(
@@ -334,9 +334,9 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
           ],
         ),
         child: Icon(
-          LucideIcons.moreHorizontal,
+          LucideIcons.menu,
           size: 24,
-          color: scheme.surface,
+          color: Theme.of(context).colorScheme.onSurface,
         ),
       ),
     );

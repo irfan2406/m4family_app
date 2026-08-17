@@ -117,7 +117,7 @@ class BookingStartScreen extends ConsumerWidget {
                   // Header
                   Text(
                     'HOW CAN\nWE HELP?',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 36,
                       fontWeight: FontWeight.w900,
                       color: isDark ? Colors.white : Colors.black,
@@ -130,7 +130,7 @@ class BookingStartScreen extends ConsumerWidget {
 
                   Text(
                     'INTERESTED IN ${projectTitle.toUpperCase()}?\nCHOOSE HOW YOU\'D LIKE TO PROCEED.',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 10,
                       color: (isDark ? Colors.white : Colors.black).withOpacity(
                         0.6,

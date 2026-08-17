@@ -55,13 +55,13 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
               children: [
                 Text(
                   'PROJECTED MATURITY VALUE',
-                  style: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2, color: purple),
+                  style: GoogleFonts.gelasio(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2, color: purple),
                 ),
                 const SizedBox(height: 10),
                 Text(
                   fmt.format(total),
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.ebGaramond(fontSize: 28, fontWeight: FontWeight.w900, letterSpacing: -0.4),
+                  style: GoogleFonts.gelasio(fontSize: 28, fontWeight: FontWeight.w900, letterSpacing: -0.4),
                 ),
                 const SizedBox(height: 12),
                 Container(
@@ -168,7 +168,7 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
           children: [
             Text(
               label.toUpperCase(),
-              style: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.6, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.68)),
+              style: GoogleFonts.gelasio(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.6, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.68)),
             ),
             Text(valueText, style: GoogleFonts.ebGaramond(fontSize: 12, fontWeight: FontWeight.w900)),
           ],

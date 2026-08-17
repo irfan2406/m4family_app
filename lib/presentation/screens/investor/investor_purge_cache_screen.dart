@@ -242,7 +242,7 @@ class _InvestorPurgeCacheScreenState
           Center(
             child: Text(
               'M4 FAMILY PRIVATE OFFICE',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 8,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 4,
@@ -291,7 +291,7 @@ class _InvestorPurgeCacheScreenState
               children: [
                 Text(
                   'NOTICE',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 11,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.5,
@@ -356,7 +356,7 @@ class _InvestorPurgeCacheScreenState
               children: [
                 Text(
                   'ESTIMATED CACHE SIZE',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 9,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1.5,
@@ -366,7 +366,7 @@ class _InvestorPurgeCacheScreenState
                 const SizedBox(height: 4),
                 Text(
                   _formatBytes(_cacheBytes),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 22,
                     fontWeight: FontWeight.w900,
                     letterSpacing: -0.5,
@@ -614,7 +614,7 @@ class _InvestorPurgeCacheScreenState
                   const SizedBox(width: 10),
                   Text(
                     allDone ? 'CORE PURGE COMPLETE' : 'INITIATE FULL RESET',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 12,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1.5,
@@ -641,7 +641,7 @@ class _InvestorPurgeCacheScreenState
         const SizedBox(width: 8),
         Text(
           text,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 10,
             fontWeight: FontWeight.w900,
             letterSpacing: 2,

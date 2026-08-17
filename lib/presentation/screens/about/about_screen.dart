@@ -174,7 +174,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           children: [
             Text(
               'WHO WE ARE',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 color: isDark ? Colors.white : Colors.black,
                 fontWeight: FontWeight.bold,
                 fontSize: 14,
@@ -254,13 +254,13 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                     height: 36,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Colors.black,
+                      color: Colors.transparent,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
-                      LucideIcons.moreHorizontal,
+                      LucideIcons.menu,
                       size: 18,
-                      color: isDark ? Colors.black : Colors.white,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                 ),
@@ -595,7 +595,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                         children: [
                           Text(
                             item['year']!,
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.gelasio(
                               color: colorScheme.primary,
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
@@ -697,7 +697,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   const SizedBox(height: 16),
                   Text(
                     pillar['title'].toString().toUpperCase(),
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       color: isDark ? Colors.white : Colors.black,
                       fontSize: 11,
                       fontWeight: FontWeight.w900,
@@ -824,7 +824,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         children: [
           Text(
             'CUSTOMER VIEWS',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               color: colorScheme.primary,
               fontSize: 10,
               fontWeight: FontWeight.w900,
@@ -886,7 +886,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 children: [
                   Text(
                     'THE COLLECTIVE',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       color: Colors.white60,
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
@@ -896,7 +896,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   const SizedBox(height: 4),
                   Text(
                     'M4 LEGACY',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       color: Colors.white,
                       fontSize: 32,
                       fontWeight: FontWeight.w900,
@@ -944,7 +944,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         const SizedBox(width: 16),
         Text(
           title,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             color: isDark ? Colors.white : Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.w900,
@@ -1165,7 +1165,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   const SizedBox(height: 24),
                   Text(
                     'YOUR DESIGN JOURNEY',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       color: Colors.white,
                       fontSize: 22,
                       fontWeight: FontWeight.w900,
@@ -1175,7 +1175,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   const SizedBox(height: 4),
                   Text(
                     'PERSONALISE EVERY DETAIL',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       color: Colors.white.withOpacity(0.68),
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
@@ -1517,7 +1517,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 ),
                 child: Text(
                   'BACK',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     color: isDark ? Colors.white : Colors.black,
                     fontWeight: FontWeight.w900,
                     fontSize: 10,
@@ -1554,7 +1554,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                 children: [
                   Text(
                     'NEXT STEP',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontWeight: FontWeight.w900,
                       fontSize: 10,
                       letterSpacing: 2,

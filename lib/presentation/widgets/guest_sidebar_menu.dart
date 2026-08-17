@@ -60,7 +60,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                   padding: const EdgeInsets.fromLTRB(24, 20, 24, 10),
                   child: Text(
                     'MENU',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       color: (isDark ? Colors.white : M4Theme.deepGreen).withOpacity(
                         0.68,
                       ),
@@ -208,7 +208,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                         padding: const EdgeInsets.symmetric(horizontal: 14),
                         child: Text(
                           'QUICK ACTIONS',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             color: (isDark ? Colors.white : M4Theme.deepGreen)
                                 .withOpacity(0.6),
                             fontSize: 10,

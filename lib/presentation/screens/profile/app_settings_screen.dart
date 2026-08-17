@@ -146,7 +146,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
             children: [
               Text(
                 'APP SETTINGS',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 14,
                   fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white : Colors.black,
@@ -156,7 +156,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
               const SizedBox(height: 4),
               Text(
                 'PLATFORM PREFERENCES',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
                   color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5),
@@ -271,7 +271,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
         children: [
           Text(
             label,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 8,
               fontWeight: FontWeight.w800,
               color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5),
@@ -335,7 +335,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 8,
                     fontWeight: FontWeight.w700,
                     color: muted,

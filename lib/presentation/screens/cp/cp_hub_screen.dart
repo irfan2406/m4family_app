@@ -144,7 +144,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                 const SizedBox(height: 18),
                 Text(
                   'TOOL MATRIX',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 3,
@@ -207,7 +207,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                   children: [
                     Text(
                       'PRIORITY ACCESS',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 10,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 3,
@@ -278,7 +278,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
               Expanded(
                 child: Text(
                   'TOTAL ASSET PORTFOLIO',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -301,7 +301,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
           const SizedBox(height: 8),
           Text(
             _portfolioValue(),
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 28,
               fontWeight: FontWeight.w900,
               height: 1,
@@ -320,7 +320,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                 ),
                 child: Text(
                   'PORTFOLIO GROWTH',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -357,7 +357,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
       children: [
         Text(
           'MY HOLDINGS',
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 10,
             fontWeight: FontWeight.w900,
             letterSpacing: 3,
@@ -400,7 +400,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
           children: [
             Text(
               'NO HOLDINGS YET',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 10,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 2,
@@ -503,7 +503,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                       _holdingUnit(h).toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 8,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1.5,
@@ -524,7 +524,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                   const SizedBox(height: 2),
                   Text(
                     'EQUITY',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 8,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1.5,
@@ -541,7 +541,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
             children: [
               Text(
                 'CONSTRUCTION',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 8,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 1.5,
@@ -589,7 +589,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                     ),
                     child: Text(
                       'EXPLORE',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 9,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 2,
@@ -691,7 +691,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
             const SizedBox(height: 8),
             Text(
               label,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 10,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 2,
@@ -716,7 +716,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Partner Hub', style: GoogleFonts.ebGaramond(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: -0.2)),
+              Text('Partner Hub', style: GoogleFonts.gelasio(fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: -0.2)),
               const SizedBox(height: 2),
               Text(
                 'Premium Access & Tools',
@@ -783,7 +783,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
               const SizedBox(width: 10),
               Text(
                 'PLATINUM TIER',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 11,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2,
@@ -795,7 +795,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
           const SizedBox(height: 12),
           Text(
             'Welcome, $name',
-            style: GoogleFonts.ebGaramond(fontSize: 22, fontWeight: FontWeight.w900, color: scheme.onSurface),
+            style: GoogleFonts.gelasio(fontSize: 22, fontWeight: FontWeight.w900, color: scheme.onSurface),
           ),
           const SizedBox(height: 4),
           Text(
@@ -841,7 +841,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
             ),
           ),
           const SizedBox(height: 6),
-          Text(value, style: GoogleFonts.ebGaramond(fontSize: 18, fontWeight: FontWeight.w900, color: scheme.onSurface)),
+          Text(value, style: GoogleFonts.gelasio(fontSize: 18, fontWeight: FontWeight.w900, color: scheme.onSurface)),
         ],
       ),
     );
@@ -974,7 +974,7 @@ class _CpHubScreenState extends ConsumerState<CpHubScreen> {
                       ),
                     ),
                     const Spacer(),
-                    Text(title, style: GoogleFonts.ebGaramond(fontSize: 22, fontWeight: FontWeight.w900)),
+                    Text(title, style: GoogleFonts.gelasio(fontSize: 22, fontWeight: FontWeight.w900)),
                     const SizedBox(height: 4),
                     Text(
                       loc.isNotEmpty ? loc : desc,

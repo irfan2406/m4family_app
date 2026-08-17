@@ -289,7 +289,7 @@ class _CpChangePasswordScreenState
               children: [
                 Text(
                   'SECURITY SETTINGS',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2.5,
@@ -299,7 +299,7 @@ class _CpChangePasswordScreenState
                 const SizedBox(height: 4),
                 Text(
                   'Change Password',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
                     letterSpacing: -0.3,
@@ -319,7 +319,7 @@ class _CpChangePasswordScreenState
       padding: const EdgeInsets.only(left: 4),
       child: Text(
         label,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.gelasio(
           fontSize: 10,
           fontWeight: FontWeight.w800,
           letterSpacing: 2,
@@ -419,7 +419,7 @@ class _CpChangePasswordScreenState
               const SizedBox(width: 8),
               Text(
                 'REQUIREMENTS',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 1.5,
@@ -502,7 +502,7 @@ class _CpChangePasswordScreenState
                 )
               : Text(
                   'UPDATE PASSWORD',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 12,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,

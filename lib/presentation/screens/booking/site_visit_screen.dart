@@ -238,7 +238,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                 const SizedBox(height: 40),
                 Text(
                   'SUBMITTED',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 24,
                     fontWeight: FontWeight.w900,
                     letterSpacing: -1,
@@ -248,7 +248,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                 Text(
                   'Your request has been registered. Our team will contact you shortly.',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
                     color: isDark ? Colors.white38 : Colors.black38,
                     fontWeight: FontWeight.w900,
@@ -277,7 +277,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                     child: Center(
                       child: Text(
                         'BACK TO PROJECT',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           color: isDark ? Colors.black : Colors.white,
                           fontWeight: FontWeight.w900,
                           fontSize: 10,
@@ -558,7 +558,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                           children: [
                             Text(
                               'SECURE BOOKING',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                 color: isDark ? Colors.black : Colors.white,
                                 fontWeight: FontWeight.w900,
                                 fontSize: 10,
@@ -601,7 +601,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
       padding: const EdgeInsets.only(left: 4, bottom: 12),
       child: Text(
         label,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.gelasio(
           fontSize: 9,
           fontWeight: FontWeight.w900,
           color: (isDark ? Colors.white : Colors.black).withOpacity(0.75),

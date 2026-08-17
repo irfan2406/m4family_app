@@ -95,7 +95,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
           children: [
             Text(
               'CAREERS',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 color: isDark ? Colors.white : Colors.black,
                 fontWeight: FontWeight.w900,
                 fontSize: 17,
@@ -177,13 +177,13 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                     height: 36,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Colors.black,
+                      color: Colors.transparent,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
-                      LucideIcons.moreHorizontal,
+                      LucideIcons.menu,
                       size: 18,
-                      color: isDark ? Colors.black : Colors.white,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                 ),
@@ -261,7 +261,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
       children: [
         Text(
           displayTitle,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             color: isDark ? Colors.white : Colors.black,
             fontSize: 40,
             fontWeight: FontWeight.w900,
@@ -312,7 +312,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
               alignment: Alignment.center,
               child: Text(
                 cat,
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   color: isActive
                       ? (isDark ? Colors.black : Colors.white)
                       : (isDark ? Colors.white60 : Colors.black54),
@@ -372,7 +372,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
             Text(
               'NO ACTIVE VACANCIES CURRENTLY AVAILABLE',
               textAlign: TextAlign.center,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.3),
                 fontSize: 10,
                 fontWeight: FontWeight.w900,
@@ -426,7 +426,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                   children: [
                     Text(
                       (job['title'] ?? '').toString().toUpperCase(),
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         color: isDark ? Colors.white : Colors.black,
                         fontSize: 18,
                         fontWeight: FontWeight.w900,
@@ -443,7 +443,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
                       children: [
                         Text(
                           (job['department'] ?? '').toString().toUpperCase(),
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             color: isDark ? Colors.white70 : Colors.black87,
                             fontSize: 10,
                             fontWeight: FontWeight.w900,

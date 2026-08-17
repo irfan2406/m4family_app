@@ -300,7 +300,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
               const SizedBox(height: 18),
               Text(
                 'M4 FAMILY',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 11,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 5,
@@ -366,16 +366,12 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                         width: 56,
                         height: 36,
                         decoration: BoxDecoration(
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white
-                              : Colors.black,
+                          color: Colors.transparent,
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Icon(
-                          LucideIcons.moreHorizontal,
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.black
-                              : Colors.white,
+                          LucideIcons.menu,
+                          color: Theme.of(context).colorScheme.onSurface,
                           size: 24,
                         ),
                       ),
@@ -479,7 +475,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                                 ),
                                 child: Text(
                                   'ARTISTIC IMPRESSION',
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.gelasio(
                                     color: Colors.white,
                                     fontSize: 7,
                                     fontWeight: FontWeight.w900,
@@ -650,7 +646,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                           children: [
                             Text(
                               tab.toUpperCase(),
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                 color: isSelected
                                     ? (isDark ? Colors.white : Colors.black)
                                     : (isDark ? Colors.white : Colors.black)
@@ -996,7 +992,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                     ),
                     child: Text(
                       'ARTISTIC IMPRESSION',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         color: Colors.white,
                         fontSize: 7,
                         fontWeight: FontWeight.w900,
@@ -1015,7 +1011,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                     children: [
                       Text(
                         'FEATURED PROPERTY',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           color: const Color(0xFFC5A35B),
                           fontSize: 9,
                           fontWeight: FontWeight.w900,
@@ -1129,7 +1125,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                     child: Center(
                       child: Text(
                         'READ MORE',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           color: isDark ? Colors.black : Colors.white,
                           fontWeight: FontWeight.w900,
                           fontSize: 12,
@@ -1181,7 +1177,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
         Text(
           label,
           textAlign: TextAlign.center,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             color: isDark ? Colors.white : Colors.black,
             fontSize: 9,
             fontWeight: FontWeight.w800,

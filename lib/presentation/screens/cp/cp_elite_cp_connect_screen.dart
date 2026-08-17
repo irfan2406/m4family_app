@@ -93,7 +93,7 @@ class _CpEliteCpConnectScreenState extends ConsumerState<CpEliteCpConnectScreen>
             ),
             Text(
               'INSTITUTIONAL CP NETWORK',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 8,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 2,
@@ -151,7 +151,7 @@ class _CpEliteCpConnectScreenState extends ConsumerState<CpEliteCpConnectScreen>
                   Expanded(
                     child: Text(
                       'VERIFIED NODE MATRIX',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 10,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 2,
@@ -167,7 +167,7 @@ class _CpEliteCpConnectScreenState extends ConsumerState<CpEliteCpConnectScreen>
                     ),
                     child: Text(
                       'TOP TIER',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 8,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1.5,
@@ -200,7 +200,7 @@ class _CpEliteCpConnectScreenState extends ConsumerState<CpEliteCpConnectScreen>
                         const SizedBox(height: 12),
                         Text(
                           'NO MATCHES FOUND',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 10,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 2,
@@ -337,7 +337,7 @@ class _StatCardState extends State<_StatCard> {
                   children: [
                     Text(
                       widget.stat.label.toUpperCase(),
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 9,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1.5,
@@ -347,7 +347,7 @@ class _StatCardState extends State<_StatCard> {
                     const SizedBox(height: 4),
                     Text(
                       widget.stat.value.toUpperCase(),
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
                         color: scheme.onSurface,
@@ -540,7 +540,7 @@ class _PartnerCardState extends State<_PartnerCard> {
                       icon: Icon(LucideIcons.messageCircle, size: 16, color: scheme.primary),
                       label: Text(
                         'TRANSMIT',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 9,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 1.5,
@@ -564,7 +564,7 @@ class _PartnerCardState extends State<_PartnerCard> {
                       icon: Icon(LucideIcons.phone, size: 16, color: scheme.surface),
                       label: Text(
                         'LINK-UP',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 9,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 1.5,
@@ -652,7 +652,7 @@ class _AcceleratorCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           'ACCELERATOR PROTOCOL',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 18,
                             fontWeight: FontWeight.w800,
                             letterSpacing: -0.5,
@@ -692,7 +692,7 @@ class _AcceleratorCard extends StatelessWidget {
                       ),
                       child: Text(
                         'VIEW YIELD STRUCTURES',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 2,

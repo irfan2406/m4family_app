@@ -245,7 +245,7 @@ class _CpTaxReportDetailScreenState
               Text(
                 _name,
                 textAlign: TextAlign.center,
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 20,
                   fontWeight: FontWeight.w900,
                   letterSpacing: -0.3,

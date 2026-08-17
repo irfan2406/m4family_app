@@ -179,7 +179,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
             child: Text(
               'MEMBER DASHBOARD',
               textAlign: TextAlign.center,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 16,
                 fontWeight: FontWeight.w900,
                 color: textPrimary,
@@ -250,7 +250,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
                                 const SizedBox(width: 8),
                                 Text(
                                   'PLATINUM MEMBER',
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.gelasio(
                                     fontSize: 10,
                                     fontWeight: FontWeight.w800,
                                     letterSpacing: 2,
@@ -262,7 +262,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
                             const SizedBox(height: 6),
                             Text(
                               'Active Membership',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 22,
                                 fontWeight: FontWeight.w900,
                                 color: Colors.white,
@@ -330,7 +330,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
             children: [
               Text(
                 label.toUpperCase(),
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 8,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 1.5,
@@ -362,7 +362,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
       children: [
         Text(
           'DOCUMENT REPOSITORY',
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 9,
             fontWeight: FontWeight.w900,
             letterSpacing: 2,
@@ -377,7 +377,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
           ),
           child: Text(
             'M4 SECURE',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 8,
               fontWeight: FontWeight.w900,
               letterSpacing: 1.5,
@@ -405,7 +405,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
             const SizedBox(height: 16),
             Text(
               'NO DOCUMENTS YET',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 10,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 2,
@@ -555,7 +555,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
                       maxLines: 1,
                       softWrap: false,
                       overflow: TextOverflow.visible,
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 28,
                         fontWeight: FontWeight.w900,
                         color: textPrimary,
@@ -632,7 +632,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
             const SizedBox(width: 12),
             Text(
               'UPGRADE MEMBERSHIP TIER',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 11,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.5,

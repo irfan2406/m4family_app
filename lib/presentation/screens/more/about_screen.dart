@@ -43,7 +43,7 @@ class _AboutScreenState extends State<AboutScreen> {
             ),
             Text(
               'M4 FAMILY COLLECTIVE',
-              style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 1.5),
+              style: GoogleFonts.gelasio(fontSize: 8, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 1.5),
             ),
           ],
         ),
@@ -52,7 +52,7 @@ class _AboutScreenState extends State<AboutScreen> {
             margin: const EdgeInsets.only(right: 16),
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.05), shape: BoxShape.circle),
-            child: const Icon(LucideIcons.moreHorizontal, size: 16),
+            child: const Icon(LucideIcons.menu, size: 16),
           ),
         ],
       ),
@@ -133,11 +133,11 @@ class _AboutScreenState extends State<AboutScreen> {
                     children: [
                       Text(
                         'THE COLLECTIVE',
-                        style: GoogleFonts.ebGaramond(fontSize: 12, fontWeight: FontWeight.w900, color: Colors.white70, letterSpacing: 2),
+                        style: GoogleFonts.gelasio(fontSize: 12, fontWeight: FontWeight.w900, color: Colors.white70, letterSpacing: 2),
                       ),
                       Text(
                         'M4 LEGACY',
-                        style: GoogleFonts.ebGaramond(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: -1, height: 1),
+                        style: GoogleFonts.gelasio(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: -1, height: 1),
                       ),
                     ],
                   ),

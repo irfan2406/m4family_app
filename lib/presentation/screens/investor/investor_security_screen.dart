@@ -303,7 +303,7 @@ class _InvestorSecurityScreenState
           const SizedBox(height: 16),
           Text(
             'Account Protected',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 18,
               fontWeight: FontWeight.w700,
               color: textPrimary,
@@ -331,7 +331,7 @@ class _InvestorSecurityScreenState
   Widget _sectionLabel(String label, Color muted) {
     return Text(
       label,
-      style: GoogleFonts.ebGaramond(
+      style: GoogleFonts.gelasio(
         fontSize: 10,
         fontWeight: FontWeight.bold,
         letterSpacing: 2,
@@ -594,7 +594,7 @@ class _InvestorSecurityScreenState
               onPressed: onAction,
               child: Text(
                 actionLabel,
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 10,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 2,
@@ -620,7 +620,7 @@ class _InvestorSecurityScreenState
           ),
           child: Text(
             'SIGN OUT OF ALL DEVICES',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 10,
               fontWeight: FontWeight.bold,
               letterSpacing: 2,

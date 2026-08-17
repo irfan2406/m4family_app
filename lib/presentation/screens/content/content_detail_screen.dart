@@ -223,7 +223,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                             children: [
                               Text(
                                 widget.content['type'].toString().toUpperCase(),
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.gelasio(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w900,
                                   letterSpacing: 2,
@@ -323,7 +323,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                               ),
                               child: Text(
                                 widget.content['type'].toString().toUpperCase(),
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.gelasio(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w900,
                                   color: scheme.onSurface,
@@ -347,7 +347,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
 
                         Text(
                           widget.content['title'].toString().toUpperCase(),
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 30,
                             fontWeight: FontWeight.w900,
                             color: scheme.onSurface,
@@ -412,7 +412,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                             child: Center(
                               child: Text(
                                 'CLOSE',
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.gelasio(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w900,
                                   color: scheme.onSurface.withOpacity(0.6),
@@ -499,7 +499,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           children: [
             Text(
               'SHARE THIS ARTICLE',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 12,
                 fontWeight: FontWeight.w900,
                 color: Colors.white,
@@ -629,7 +629,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         ),
         child: Text(
           status.toUpperCase(),
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 9,
             fontWeight: FontWeight.w900,
             color: color,
@@ -690,7 +690,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
             children: [
               Text(
                 label.toUpperCase(),
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 8,
                   fontWeight: FontWeight.w900,
                   color: isDark ? Colors.white38 : Colors.black38,
@@ -774,7 +774,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
                 children: [
                   Text(
                     'LOCATION',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 8,
                       fontWeight: FontWeight.w900,
                       color: isDark ? Colors.white38 : Colors.black38,
@@ -903,7 +903,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
           children: [
             Text(
               'RSVP TO EVENT',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 12,
                 fontWeight: FontWeight.w900,
                 color: Colors.white,

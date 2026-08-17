@@ -111,7 +111,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                 children: [
                   Text(
                     'MY PROFILE',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 20,
                       fontWeight: FontWeight.w700,
                       color: textPrimary,
@@ -298,11 +298,11 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
               children: [
                 Text(
                   'POINTS',
-                  style: GoogleFonts.ebGaramond(fontSize: 11, fontWeight: FontWeight.w900, color: textPrimary, letterSpacing: 2),
+                  style: GoogleFonts.gelasio(fontSize: 11, fontWeight: FontWeight.w900, color: textPrimary, letterSpacing: 2),
                 ),
                 Text(
                   '$points',
-                  style: GoogleFonts.ebGaramond(fontSize: 22, fontWeight: FontWeight.w900, color: _gold, letterSpacing: -0.5),
+                  style: GoogleFonts.gelasio(fontSize: 22, fontWeight: FontWeight.w900, color: _gold, letterSpacing: -0.5),
                 ),
               ],
             ),
@@ -315,7 +315,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
   Widget _sectionLabel(String text, Color muted) {
     return Text(
       text,
-      style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w900, color: muted, letterSpacing: 2.5),
+      style: GoogleFonts.gelasio(fontSize: 9, fontWeight: FontWeight.w900, color: muted, letterSpacing: 2.5),
     );
   }
 
@@ -421,7 +421,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
               const SizedBox(width: 8),
               Text(
                 'LOG OUT',
-                style: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.red, letterSpacing: 2),
+                style: GoogleFonts.gelasio(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.red, letterSpacing: 2),
               ),
             ],
           ),

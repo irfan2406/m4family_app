@@ -127,27 +127,43 @@ class M4Theme {
     required double height,
     BoxFit fit = BoxFit.fitWidth,
   }) {
-    final bg = Theme.of(context).scaffoldBackgroundColor;
+    // Text-rendered "Living the M4 Life" wordmark (replaces the old bitmap
+    // asset): flowing script for "Living the" / "Life", serif for "M4". The
+    // `height`/`width` params are kept so every existing caller works unchanged;
+    // the wordmark is centred inside the same reserved height the bitmap used,
+    // so no hero layout shifts and it stays consistent across every portal.
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final fg = isDark ? cream : lightForeground;
-    double slope(int f, int b) => (f - b) / 255.0;
-    final recolor = ColorFilter.matrix(<double>[
-      slope(fg.red, bg.red), 0, 0, 0, bg.red.toDouble(),
-      0, slope(fg.green, bg.green), 0, 0, bg.green.toDouble(),
-      0, 0, slope(fg.blue, bg.blue), 0, bg.blue.toDouble(),
-      0, 0, 0, 1, 0,
-    ]);
-    return Container(
-      color: bg,
-      child: ColorFiltered(
-        colorFilter: recolor,
-        child: ColorFiltered(
-          colorFilter: _taglineCrush,
-          child: Image.asset(
-            'assets/living_m4_life.png',
-            width: width ?? MediaQuery.of(context).size.width,
-            height: height,
-            fit: fit,
+    return SizedBox(
+      height: height,
+      width: double.infinity,
+      child: Center(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: 'Living the ',
+                  style: GoogleFonts.gelasio(
+                    fontSize: 26,
+                    height: 1.15,
+                    fontWeight: FontWeight.w400,
+                    color: fg.withValues(alpha: 0.95),
+                  ),
+                ),
+                TextSpan(
+                  text: 'M4 Life',
+                  style: GoogleFonts.gelasio(
+                    fontSize: 26,
+                    height: 1.15,
+                    fontWeight: FontWeight.w700,
+                    color: fg,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

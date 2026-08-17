@@ -134,7 +134,7 @@ class NotificationListScreen extends ConsumerWidget {
                         const SizedBox(height: 2),
                         Text(
                           isCp ? 'PARTNER UPDATES' : 'STAY UPDATED',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 9,
                             fontWeight: FontWeight.w700,
                             color: scheme.onSurfaceVariant.withValues(
@@ -252,7 +252,7 @@ class NotificationListScreen extends ConsumerWidget {
           const SizedBox(height: 24),
           Text(
             'NO NOTIFICATIONS',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 12,
               fontWeight: FontWeight.w900,
               color: scheme.onSurface.withValues(alpha: 0.68),
@@ -518,7 +518,7 @@ class _NotificationItem extends StatelessWidget {
                 Text(
                   notification.title.toString(),
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 22,
                     fontWeight: FontWeight.w900,
                     color: scheme.onSurface,
@@ -562,7 +562,7 @@ class _NotificationItem extends StatelessWidget {
                     ),
                     child: Text(
                       isCp ? 'ACKNOWLEDGE' : 'DONE',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 12,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 2,

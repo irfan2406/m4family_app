@@ -113,7 +113,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                       const SizedBox(width: 16),
                       Text(
                         isInvestor ? 'INVESTOR MENU' : 'MENU',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           color: Theme.of(context).colorScheme.onSurface,
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
@@ -287,7 +287,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                         ),
                         child: Text(
                           'QUICK ACTIONS',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             color: Theme.of(
                               context,
                             ).colorScheme.onSurface.withOpacity(0.68),
@@ -358,7 +358,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                           children: [
                             Text(
                               'THEME MODE',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                 color: isDark ? Colors.white70 : const Color(0xFF0F2A20),
                                 fontSize: 10,
                                 fontWeight: FontWeight.w900,
@@ -440,7 +440,7 @@ class _SidebarExitButton extends ConsumerWidget {
             ),
             title: Text(
               'Logout',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
                 fontSize: 22,
@@ -503,7 +503,7 @@ class _SidebarExitButton extends ConsumerWidget {
             const SizedBox(width: 12),
             Text(
               'LOG OUT',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 color: const Color(0xFFC65B46),
                 fontSize: 11,
                 fontWeight: FontWeight.w900,

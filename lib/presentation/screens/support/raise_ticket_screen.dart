@@ -380,7 +380,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                                 children: [
                                   Text(
                                     'RAISE TICKET',
-                                    style: GoogleFonts.ebGaramond(
+                                    style: GoogleFonts.gelasio(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w900,
                                       letterSpacing: 1.5,
@@ -406,7 +406,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
     padding: const EdgeInsets.only(left: 4),
     child: Text(
       text,
-      style: GoogleFonts.ebGaramond(
+      style: GoogleFonts.gelasio(
         fontSize: 9,
         fontWeight: FontWeight.w800,
         color: onSurface.withOpacity(0.68),

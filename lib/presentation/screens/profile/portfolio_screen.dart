@@ -143,7 +143,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
             children: [
               Text(
                 'PORTFOLIO',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 20,
                   fontWeight: FontWeight.w800,
                   color: textPrimary,
@@ -154,7 +154,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
               const SizedBox(height: 6),
               Text(
                 'MY INVESTMENTS',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 8,
                   fontWeight: FontWeight.w700,
                   color: M4Theme.premiumBlue.withValues(alpha: 0.6),
@@ -195,7 +195,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
               padding: const EdgeInsets.only(left: 4, bottom: 16),
               child: Text(
                 'CURRENT HOLDINGS',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 9,
                   fontWeight: FontWeight.w700,
                   color: (isDark ? Colors.white : Colors.black)
@@ -250,7 +250,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
               children: [
                 Text(
                   'TOTAL ASSETS',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 9,
                     fontWeight: FontWeight.w700,
                     color: muted,
@@ -261,7 +261,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                 RichText(
                   text: TextSpan(
                     text: count,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 24,
                       fontWeight: FontWeight.w800,
                       color: textPrimary,
@@ -288,7 +288,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
             children: [
               Text(
                 'COMBINED VALUE',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 9,
                   fontWeight: FontWeight.w700,
                   color: muted,
@@ -298,7 +298,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
               const SizedBox(height: 8),
               Text(
                 _formatValue(_combinedValue),
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 20,
                   fontWeight: FontWeight.w800,
                   color: _gold,
@@ -408,7 +408,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                 children: [
                   Text(
                     name.toUpperCase(),
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
                       color: textPrimary,
@@ -480,7 +480,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                         children: [
                           Text(
                             'VIEW SPECIFICATIONS',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.gelasio(
                               fontSize: 9,
                               fontWeight: FontWeight.w800,
                               color: isDark ? Colors.black : Colors.white,
@@ -605,7 +605,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                             children: [
                               Text(
                                 name.toUpperCase(),
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.gelasio(
                                   fontSize: 22,
                                   fontWeight: FontWeight.w800,
                                   color: textPrimary,
@@ -615,7 +615,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                               const SizedBox(height: 6),
                               Text(
                                 'UNIT $unit SPECIFICATIONS',
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.gelasio(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w700,
                                   color: M4Theme.premiumBlue
@@ -701,7 +701,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                                 const SizedBox(width: 8),
                                 Text(
                                   'VERIFIED PROPERTY',
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.gelasio(
                                     fontSize: 9,
                                     fontWeight: FontWeight.w800,
                                     color:
@@ -738,7 +738,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
             const SizedBox(height: 20),
             Text(
               'NO HOLDINGS YET',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
                 color: faint,
@@ -775,7 +775,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
             const SizedBox(height: 20),
             Text(
               'UNABLE TO LOAD PORTFOLIO',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
                 color: muted,
@@ -794,7 +794,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
                 ),
                 child: Text(
                   'RETRY',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
                     color: isDark ? Colors.black : Colors.white,
@@ -884,7 +884,7 @@ class _Pill extends StatelessWidget {
       ),
       child: Text(
         text.toUpperCase(),
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.gelasio(
           fontSize: 8,
           fontWeight: FontWeight.w800,
           color: fg,
@@ -914,7 +914,7 @@ class _StatusPill extends StatelessWidget {
       ),
       child: Text(
         status.toUpperCase(),
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.gelasio(
           fontSize: 8,
           fontWeight: FontWeight.w800,
           color: color,
@@ -947,7 +947,7 @@ class _DetailItem extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 8,
             fontWeight: FontWeight.w700,
             color: muted,
@@ -996,7 +996,7 @@ class _SpecItem extends StatelessWidget {
             Expanded(
               child: Text(
                 label,
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 8,
                   fontWeight: FontWeight.w700,
                   color: muted,

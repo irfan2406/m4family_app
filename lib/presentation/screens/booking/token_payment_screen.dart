@@ -331,7 +331,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                 const SizedBox(height: 24),
                 Text(
                   'BOOKING SUCCESSFUL',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 24,
                     fontWeight: FontWeight.w900,
                     color: isDark ? Colors.white : Colors.black,
@@ -341,7 +341,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                 Text(
                   'Your token payment has been received. Our team will verify the documents and contact you for the next steps.',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
                     color: (isDark ? Colors.white : Colors.black).withOpacity(
                       0.6,
@@ -365,7 +365,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                     child: Center(
                       child: Text(
                         'BACK TO HOME',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           color: isDark ? Colors.black : Colors.white,
                           fontWeight: FontWeight.w900,
                           fontSize: 10,
@@ -473,7 +473,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                       children: [
                         Text(
                           'TOKEN AMOUNT',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                             color: Colors.white38,
@@ -483,7 +483,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                         const SizedBox(height: 12),
                         Text(
                           '₹$formattedAmount',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 36,
                             fontWeight: FontWeight.w900,
                             color: Colors.white,
@@ -556,7 +556,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
               children: [
                 Text(
                   'SELECT UNIT',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     color: (isDark ? Colors.white : Colors.black).withOpacity(
@@ -615,7 +615,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                 children: [
                   Text(
                     'AVAILABLE UNITS',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 9,
                       fontWeight: FontWeight.w900,
                       color: (isDark ? Colors.white : Colors.black).withOpacity(
@@ -766,7 +766,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
               children: [
                 Text(
                   'COMPLIANCE DOCUMENTS',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     color: (isDark ? Colors.white : Colors.black).withOpacity(
@@ -1031,7 +1031,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
             const SizedBox(height: 48),
             Text(
               'PAYMENT METHOD',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 10,
                 fontWeight: FontWeight.w900,
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),

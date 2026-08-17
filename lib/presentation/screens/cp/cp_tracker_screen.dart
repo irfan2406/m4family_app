@@ -191,7 +191,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                   const SizedBox(width: 6),
                   Text(
                     'SUCCESS PIPELINE',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 14,
                       fontWeight: FontWeight.w900,
                       color: scheme.onSurface,
@@ -203,7 +203,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
               const SizedBox(height: 2),
               Text(
                 'STATEMENT & PULSE',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
                   color: scheme.onSurface.withValues(alpha: 0.68),
@@ -354,7 +354,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                     ),
                     decoration: InputDecoration(
                       hintText: 'SEARCH PROSPECT...',
-                      hintStyle: GoogleFonts.ebGaramond(
+                      hintStyle: GoogleFonts.gelasio(
                         fontSize: 12,
                         fontWeight: FontWeight.w900,
                         color: scheme.onSurface.withValues(alpha: 0.62),
@@ -617,7 +617,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                     const SizedBox(width: 8),
                     Text(
                       'VERIFICATION LIFECYCLE',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
                         color: scheme.onSurface.withValues(alpha: 0.62),
@@ -796,7 +796,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                   const SizedBox(width: 12),
                   Text(
                     DateFormat('MMM yyyy').format(_month).toUpperCase(),
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 11,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 2,

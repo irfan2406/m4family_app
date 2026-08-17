@@ -294,7 +294,7 @@ class _InvestorProfileChangePasswordScreenState
               children: [
                 Text(
                   'CREDENTIAL UPDATE',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2.5,
@@ -304,7 +304,7 @@ class _InvestorProfileChangePasswordScreenState
                 const SizedBox(height: 4),
                 Text(
                   'Security',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
                     letterSpacing: -0.3,
@@ -324,7 +324,7 @@ class _InvestorProfileChangePasswordScreenState
       padding: const EdgeInsets.only(left: 4),
       child: Text(
         label,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.gelasio(
           fontSize: 10,
           fontWeight: FontWeight.w800,
           letterSpacing: 2,
@@ -424,7 +424,7 @@ class _InvestorProfileChangePasswordScreenState
               const SizedBox(width: 8),
               Text(
                 'REQUIREMENTS',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 1.5,
@@ -507,7 +507,7 @@ class _InvestorProfileChangePasswordScreenState
                 )
               : Text(
                   'SECURE UPDATE',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 12,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,

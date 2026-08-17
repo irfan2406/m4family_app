@@ -423,14 +423,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         height: 36,
                         decoration: BoxDecoration(
                           // Toggle button background: White in Dark Mode, Black in Light Mode
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white
-                              : Colors.black,
+                          color: Colors.transparent,
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Icon(
-                          LucideIcons.moreHorizontal,
-                          // Toggle icon color: Black in Dark Mode, White in Light Mode
+                          LucideIcons.menu,
+                          // Toggle icon color: Theme.of(context).colorScheme.onSurface, White in Light Mode
                           color: Theme.of(context).brightness == Brightness.dark
                               ? Colors.black
                               : Colors.white,
@@ -559,7 +557,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                   ),
                                   child: Text(
                                     'ARTISTIC IMPRESSION',
-                                    style: GoogleFonts.ebGaramond(
+                                    style: GoogleFonts.gelasio(
                                       color: Colors.white,
                                       fontSize: 7,
                                       fontWeight: FontWeight.w900,
@@ -952,7 +950,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                       children: [
                                         Text(
                                           'FEATURED PROPERTY',
-                                          style: GoogleFonts.ebGaramond(
+                                          style: GoogleFonts.gelasio(
                                             color: const Color(0xFFC5A35B),
                                             fontSize: 9,
                                             fontWeight: FontWeight.w900,
@@ -1005,7 +1003,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                       ),
                                       child: Text(
                                         'ARTISTIC IMPRESSION',
-                                        style: GoogleFonts.ebGaramond(
+                                        style: GoogleFonts.gelasio(
                                           color: Colors.white,
                                           fontSize: 8,
                                           fontWeight: FontWeight.w900,
@@ -1118,7 +1116,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                           ),
                           child: Text(
                             'READ MORE',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.gelasio(
                               color:
                                   Theme.of(context).brightness ==
                                       Brightness.dark
@@ -1345,7 +1343,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                             )
                           : Text(
                               'SUBMIT INTEREST',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                 fontWeight: FontWeight.bold,
                                 letterSpacing: 3,
                                 fontSize: 12,
@@ -1391,7 +1389,7 @@ class _CategoryChip extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             color: isActive
                 ? (isDark ? Colors.black : Colors.white)
                 : (isDark ? Colors.white38 : Colors.black38),
@@ -1500,7 +1498,7 @@ class _ProjectCard extends StatelessWidget {
                         ),
                         child: Text(
                           displayStatus,
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             color: Colors.white,
                             fontSize: 8,
                             fontWeight: FontWeight.w700,
@@ -1527,7 +1525,7 @@ class _ProjectCard extends StatelessWidget {
                         ),
                         child: Text(
                           'ARTISTIC IMPRESSION',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             color: Colors.white,
                             fontSize: 6,
                             fontWeight: FontWeight.w900,
@@ -1594,7 +1592,7 @@ class _ProjectCard extends StatelessWidget {
                         children: [
                           Text(
                             'READ MORE',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.gelasio(
                               color: scheme.surface,
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
@@ -1777,7 +1775,7 @@ class _QuickFilterSheet extends StatelessWidget {
             children: [
               Text(
                 'QUICK FILTERS',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
                   color: Theme.of(context).colorScheme.onSurface,
@@ -1826,7 +1824,7 @@ class _QuickFilterSheet extends StatelessWidget {
               child: Center(
                 child: Text(
                   'SHOW RESULTS',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     color: isDark ? Colors.black : Colors.white,
                     fontWeight: FontWeight.w900,
                     fontSize: 12,
@@ -1856,7 +1854,7 @@ class _FilterSection extends StatelessWidget {
       children: [
         Text(
           title,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 10,
             fontWeight: FontWeight.w900,
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.68),
@@ -2235,7 +2233,7 @@ class _WebTab extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             color: isActive ? onSurface : onSurface.withOpacity(0.68),
             fontSize: 12, // 👈 Matched with web text-xs
             fontWeight: FontWeight.w900, // 👈 Matched with web font-black
@@ -2431,7 +2429,7 @@ class _MediaCard extends StatelessWidget {
                   ),
                   child: Text(
                     'ARTISTIC IMPRESSION',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       color: Colors.white,
                       fontSize: 7,
                       fontWeight: FontWeight.w900,
@@ -2550,7 +2548,7 @@ class _CommunityCard extends StatelessWidget {
                       children: [
                         Text(
                           'EXPLORE COMMUNITY',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             color: Colors.white.withOpacity(0.8),
                             fontSize: 9,
                             fontWeight: FontWeight.w700,

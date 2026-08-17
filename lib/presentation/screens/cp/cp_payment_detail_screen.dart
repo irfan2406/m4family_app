@@ -243,7 +243,7 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
             const SizedBox(height: 16),
             Text(
               '+${_amountLabel()}',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 30,
                 fontWeight: FontWeight.w900,
                 letterSpacing: -0.5,
@@ -253,7 +253,7 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
             const SizedBox(height: 6),
             Text(
               status.toUpperCase(),
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 10,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.5,

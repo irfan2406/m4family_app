@@ -196,7 +196,7 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
                     onPressed: _fetchUser,
                     child: Text(
                       'RETRY',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 11,
                         fontWeight: FontWeight.w800,
                         color: M4Theme.premiumBlue,
@@ -329,7 +329,7 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
               children: [
                 Text(
                   'CONFIGURATION',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 14,
                     fontWeight: FontWeight.w800,
                     color: textPrimary,
@@ -339,7 +339,7 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
                 const SizedBox(height: 4),
                 Text(
                   'PRIVATE OFFICE SETTINGS',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 9,
                     fontWeight: FontWeight.w800,
                     color: muted,
@@ -365,7 +365,7 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
                       child: Text(
                         'SAVE',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 9,
                           fontWeight: FontWeight.w800,
                           color: Colors.black,
@@ -383,7 +383,7 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
   Widget _sectionLabel(String text, Color muted) {
     return Text(
       text,
-      style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w900, color: muted, letterSpacing: 2.5),
+      style: GoogleFonts.gelasio(fontSize: 9, fontWeight: FontWeight.w900, color: muted, letterSpacing: 2.5),
     );
   }
 
@@ -408,7 +408,7 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
       children: [
         Text(
           label,
-          style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w800, color: muted, letterSpacing: 1.5),
+          style: GoogleFonts.gelasio(fontSize: 9, fontWeight: FontWeight.w800, color: muted, letterSpacing: 1.5),
         ),
         const SizedBox(height: 6),
         Container(
@@ -548,7 +548,7 @@ class _InvestorSettingsScreenState extends ConsumerState<InvestorSettingsScreen>
               const SizedBox(width: 8),
               Text(
                 'SIGN OUT ON ALL DEVICES',
-                style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w800, color: Colors.red, letterSpacing: 2),
+                style: GoogleFonts.gelasio(fontSize: 9, fontWeight: FontWeight.w800, color: Colors.red, letterSpacing: 2),
               ),
             ],
           ),

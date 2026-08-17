@@ -238,7 +238,7 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
               children: [
                 Text(
                   'TOTAL TAX DEDUCTED',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 9,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 2,
@@ -251,7 +251,7 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
                   children: [
                     Text(
                       fmt.format(total),
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 36,
                         fontWeight: FontWeight.w800,
                         height: 1,
@@ -261,7 +261,7 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
                     ),
                     Text(
                       '.00',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 18,
                         fontWeight: FontWeight.w400,
                         color: muted,
@@ -317,7 +317,7 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
             padding: const EdgeInsets.fromLTRB(4, 8, 4, 12),
             child: Text(
               'AVAILABLE DOCUMENTS',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 2,

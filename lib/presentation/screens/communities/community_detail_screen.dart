@@ -211,7 +211,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                         children: [
                           Text(
                             'M4 FAMILY',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.gelasio(
                               color: isDark ? Colors.white : Colors.black,
                               fontSize: 18,
                               fontWeight: FontWeight.w900,
@@ -220,7 +220,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                           ),
                           Text(
                             'DEVELOPMENTS',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.gelasio(
                               color: (isDark ? Colors.white : Colors.black)
                                   .withOpacity(0.68),
                               fontSize: 8,
@@ -234,8 +234,8 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                       Builder(
                         builder: (context) => IconButton(
                           icon: Icon(
-                            LucideIcons.moreHorizontal,
-                            color: isDark ? Colors.white : Colors.black,
+                            LucideIcons.menu,
+                            color: Theme.of(context).colorScheme.onSurface,
                             size: 28,
                           ),
                           onPressed: () => Scaffold.of(context).openDrawer(),
@@ -308,7 +308,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                             (widget.community['subtitle'] ?? '')
                                 .toString()
                                 .toUpperCase(),
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.gelasio(
                               color: const Color(0xFFC5A35B),
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
@@ -506,7 +506,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                           ),
                           child: Text(
                             'VIEW ALL',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.gelasio(
                               color: (isDark ? Colors.white : Colors.black)
                                   .withOpacity(0.68),
                               fontSize: 10,
@@ -740,7 +740,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                 )
                               : Text(
                                   'REGISTER INTEREST',
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.gelasio(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w900,
                                     letterSpacing: 3,
@@ -752,7 +752,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                       Center(
                         child: Text(
                           'EXCLUSIVE GUEST PREVIEW - LIMITED OPPORTUNITIES',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             color: (isDark ? Colors.white : Colors.black)
                                 .withOpacity(0.68),
                             fontSize: 8,
@@ -895,7 +895,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: hint.toUpperCase(),
-          hintStyle: GoogleFonts.ebGaramond(
+          hintStyle: GoogleFonts.gelasio(
             color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
             fontSize: 10,
             fontWeight: FontWeight.w900,
@@ -935,7 +935,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
           ),
           hint: Text(
             'SELECT PROPERTY / PROJECT',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               color: textColor.withValues(alpha: 0.68),
               fontSize: 10,
               fontWeight: FontWeight.w900,
@@ -956,7 +956,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                   display,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     color: textColor.withValues(alpha: 0.6),
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
@@ -971,7 +971,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
               value: 'Any',
               child: Text(
                 'ANY PROJECT / PROPERTY',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   color: textColor,
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
@@ -985,7 +985,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                 value: title,
                 child: Text(
                   title.toUpperCase(),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     color: textColor,
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
@@ -1057,7 +1057,7 @@ class _SectionHeader extends StatelessWidget {
                 const SizedBox(height: 5),
                 Text(
                   subtitle,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     color: (isDark ? Colors.white : Colors.black).withOpacity(
                       0.68,
                     ),
@@ -1126,7 +1126,7 @@ class CommunityProjectsScreen extends ConsumerWidget {
                         const SizedBox(width: 10),
                         Text(
                           'BACK',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             color: (isDark ? Colors.white : Colors.black)
                                 .withOpacity(0.68),
                             fontSize: 10,
@@ -1142,7 +1142,7 @@ class CommunityProjectsScreen extends ConsumerWidget {
                     children: [
                       Text(
                         'M4 FAMILY',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           color: isDark ? Colors.white : Colors.black,
                           fontSize: 18,
                           fontWeight: FontWeight.w900,
@@ -1286,7 +1286,7 @@ class CommunityProjectsScreen extends ConsumerWidget {
                                                 ?.toString()
                                                 .toUpperCase() ??
                                             '',
-                                        style: GoogleFonts.ebGaramond(
+                                        style: GoogleFonts.gelasio(
                                           color: Colors.white,
                                           fontSize: 22,
                                           fontWeight: FontWeight.w900,

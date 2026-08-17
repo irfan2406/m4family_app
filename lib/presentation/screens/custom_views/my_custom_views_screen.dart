@@ -106,7 +106,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
               const SizedBox(width: 5),
               Text(
                 'PORTFOLIO DASHBOARD',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 8,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 2,
@@ -182,7 +182,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
             ).animate().fadeIn(duration: 800.ms).slideY(begin: 0.2, end: 0),
             Text(
               'PERSONALISATION SUITE',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 // Web parity: dark `text-primary`, readable on the light fade.
                 color: Colors.black,
                 fontSize: 10,
@@ -329,7 +329,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                 const SizedBox(width: 12),
                 Text(
                   'SELECT UNIT TO CUSTOMIZE',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -384,7 +384,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
             child: Center(
               child: Text(
                 'NO HISTORY FOUND',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2,
@@ -418,7 +418,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                 const SizedBox(width: 12),
                 Text(
                   'SELECTION HISTORY',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -429,7 +429,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
             ),
             Text(
               '$count LOGS',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 8,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.5,
@@ -448,7 +448,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
           ),
           child: TextField(
             onChanged: (v) => setState(() => _historyQuery = v),
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 10,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.5,
@@ -464,7 +464,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                 color: fg.withOpacity(0.4),
               ),
               hintText: 'SEARCH BY PROJECT OR ID...',
-              hintStyle: GoogleFonts.ebGaramond(
+              hintStyle: GoogleFonts.gelasio(
                 fontSize: 10,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.5,
@@ -865,7 +865,7 @@ class _HistoryMeta extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 8,
             fontWeight: FontWeight.w700,
             letterSpacing: 1.5,
@@ -950,7 +950,7 @@ class _DetailDialog {
                                 Text(
                                   req['project']?['title'] ??
                                       'Standard Selection',
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.gelasio(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w900,
                                     letterSpacing: -0.5,
@@ -1398,7 +1398,7 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title,
-      style: GoogleFonts.ebGaramond(
+      style: GoogleFonts.gelasio(
         fontSize: 8,
         fontWeight: FontWeight.w900,
         letterSpacing: 2,

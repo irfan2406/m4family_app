@@ -70,7 +70,7 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                       const SizedBox(width: 10),
                       Text(
                         'INVESTOR MENU',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 2,
@@ -164,7 +164,7 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                     children: [
                       Text(
                         'THEME MODE',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 2,
@@ -221,7 +221,7 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                           const SizedBox(width: 10),
                           Text(
                             'LOGOUT',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.gelasio(
                               fontSize: 12,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 1.5,

@@ -295,7 +295,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
               const SizedBox(height: 2),
               Text(
                 'MANAGE YOUR PORTAL EMPLOYEES',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 8,
                   fontWeight: FontWeight.w900,
                   color: muted,
@@ -560,7 +560,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
           Text(
             'NO MATCHING TEAM MEMBERS',
             textAlign: TextAlign.center,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 10,
               fontWeight: FontWeight.w900,
               color: muted,

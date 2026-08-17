@@ -123,7 +123,7 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
                 ),
                 Text(
                   'PREVIOUS SELECTIONS',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 9,
                     fontWeight: FontWeight.w900,
                     color: foreground.withOpacity(0.3),
@@ -175,7 +175,7 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
         children: [
           Text(
             'SELECTION AUDIT',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 9,
               fontWeight: FontWeight.w900,
               color: foreground.withOpacity(0.45),
@@ -231,7 +231,7 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
               Text(
                 'NO CUSTOMIZATION LOGS FOUND',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   color: foreground.withOpacity(0.5),
                   fontWeight: FontWeight.w900,
                   fontSize: 11,
@@ -251,7 +251,7 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
                   padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
                   child: Text(
                     'START CUSTOMIZING',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       color: const Color(0xFFC5A35B),
                       fontWeight: FontWeight.w900,
                       fontSize: 11,
@@ -408,7 +408,7 @@ class _LogCard extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     'SELECTION SUMMARY',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 8,
                       fontWeight: FontWeight.w900,
                       color: foreground.withOpacity(0.3),
@@ -603,7 +603,7 @@ class _LogDetailDialog extends ConsumerWidget {
                   const SizedBox(height: 24),
                   Text(
                     projectName.toUpperCase(),
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 24,
                       fontWeight: FontWeight.w900,
                       color: foreground,
@@ -618,7 +618,7 @@ class _LogDetailDialog extends ConsumerWidget {
                       Flexible(
                         child: Text(
                           'LOCATION: ${space.toUpperCase()}',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                             color: foreground.withOpacity(0.5),
@@ -631,7 +631,7 @@ class _LogDetailDialog extends ConsumerWidget {
                   const SizedBox(height: 40),
                   Text(
                     'CHOSEN SPECIFICATIONS',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       color: foreground.withOpacity(0.3),
@@ -645,7 +645,7 @@ class _LogDetailDialog extends ConsumerWidget {
                   const SizedBox(height: 40),
                   Text(
                     'PROTOCOL STATUS',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       color: foreground.withOpacity(0.3),

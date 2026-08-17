@@ -138,7 +138,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
             children: [
               Text(
                 'REMOVE MEMBER',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 13,
                   fontWeight: FontWeight.w900,
                   color: isDark ? Colors.white : Colors.black,
@@ -310,7 +310,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                                 ? Brightness.dark
                                 : Brightness.light,
                             textTheme: CupertinoTextThemeData(
-                              dateTimePickerTextStyle: GoogleFonts.ebGaramond(
+                              dateTimePickerTextStyle: GoogleFonts.gelasio(
                                 color: isDark ? Colors.white : Colors.black,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
@@ -367,7 +367,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                     children: [
                       Text(
                         isEdit ? 'EDIT FAMILY MEMBER' : 'ADD FAMILY MEMBER',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 13,
                           fontWeight: FontWeight.w900,
                           color: isDark ? Colors.white : Colors.black,
@@ -616,7 +616,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
           Expanded(
             child: Text(
               'FAMILY MEMBERS',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 22,
                 fontWeight: FontWeight.w900,
                 color: textColor,
@@ -668,7 +668,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
             child: TextField(
               controller: _searchController,
               onChanged: (val) => setState(() => _searchQuery = val),
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 11,
                 fontWeight: FontWeight.w900,
                 color: textColor,
@@ -682,7 +682,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
                 hintText: 'SEARCH MEMBERS...',
-                hintStyle: GoogleFonts.ebGaramond(
+                hintStyle: GoogleFonts.gelasio(
                   fontSize: 11,
                   fontWeight: FontWeight.w900,
                   color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(
@@ -725,7 +725,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
           Text(
             'NO FAMILY MEMBERS FOUND',
             textAlign: TextAlign.center,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 11,
               fontWeight: FontWeight.w900,
               color: muted,

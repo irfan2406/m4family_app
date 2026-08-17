@@ -145,7 +145,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text('READ REPORT', style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2)),
+                            Text('READ REPORT', style: GoogleFonts.gelasio(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2)),
                             const SizedBox(width: 6),
                             const Icon(LucideIcons.arrowUpRight, size: 14),
                           ],

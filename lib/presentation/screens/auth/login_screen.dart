@@ -194,7 +194,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   const SizedBox(width: 16),
                   Text(
                     'BACK TO GUEST PORTAL',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       color: Colors.white,
                       fontWeight: FontWeight.w900,
                       fontSize: 12,
@@ -212,7 +212,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           children: [
             Text(
               'PHONE GATEWAY',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -338,7 +338,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           children: [
             Text(
               'FINAL CHECK',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -384,7 +384,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       const SizedBox(height: 4),
                       Text(
                         authState.devOtp!,
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
@@ -482,7 +482,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ? const CircularProgressIndicator(color: Color(0xFF0F2A20))
                 : Text(
                     'AUTHENTICATE TOKEN',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontWeight: FontWeight.bold,
                       letterSpacing: 2,
                     ),
@@ -496,7 +496,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               .sendOtp(_phoneController.text, _selectedRole),
           child: Text(
             'RESEND CODE',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 10,
               fontWeight: FontWeight.bold,
               color: Colors.white54,
@@ -515,7 +515,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         children: [
           Text(
             'M4 FAMILY SECURE ACCESS',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 9,
               fontWeight: FontWeight.bold,
               color: Colors.white,
@@ -578,7 +578,7 @@ class _PremiumButton extends StatelessWidget {
             const SizedBox(width: 16),
             Text(
               label,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 11,
                 fontWeight: FontWeight.bold,
                 color: isPrimary ? const Color(0xFF0F2A20) : Colors.white,
@@ -614,7 +614,7 @@ class _LuxuryInputField extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 9,
             fontWeight: FontWeight.bold,
             color: Colors.white54,

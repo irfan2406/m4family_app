@@ -221,7 +221,7 @@ class _InvestorDocumentsScreenState
               children: [
                 Text(
                   'LEGAL VAULT',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
                     color: textPrimary,
@@ -235,7 +235,7 @@ class _InvestorDocumentsScreenState
                     const SizedBox(width: 5),
                     Text(
                       'SECURE REPOSITORY',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 8,
                         fontWeight: FontWeight.w700,
                         color: (isDark ? Colors.white : Colors.black)
@@ -293,7 +293,7 @@ class _InvestorDocumentsScreenState
                 ),
                 child: Text(
                   f.toUpperCase(),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 9,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1.5,
@@ -505,7 +505,7 @@ class _InvestorDocumentsScreenState
         const SizedBox(height: 24),
         Text(
           'NO DOCUMENTS FOUND',
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 10,
             fontWeight: FontWeight.w800,
             color: muted,
@@ -548,7 +548,7 @@ class _InvestorDocumentsScreenState
                 ),
                 child: Text(
                   'RETRY',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 2,
@@ -674,7 +674,7 @@ class _DocumentDetail extends StatelessWidget {
                     ),
                     child: Text(
                       'SECURED ${type.toUpperCase()}',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 8,
                         fontWeight: FontWeight.w800,
                         color: _gold,
@@ -685,7 +685,7 @@ class _DocumentDetail extends StatelessWidget {
                   const SizedBox(height: 12),
                   Text(
                     (doc['title'] ?? 'DOCUMENT').toString().toUpperCase(),
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
                       color: textPrimary,
@@ -718,7 +718,7 @@ class _DocumentDetail extends StatelessWidget {
                   const SizedBox(height: 20),
                   Text(
                     'VERIFICATION STATUS',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 8,
                       fontWeight: FontWeight.w800,
                       color: muted,
@@ -744,7 +744,7 @@ class _DocumentDetail extends StatelessWidget {
                         const SizedBox(width: 8),
                         Text(
                           'ENCRYPTED & VERIFIED',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 9,
                             fontWeight: FontWeight.w800,
                             color: const Color(0xFFC5A35B),
@@ -759,7 +759,7 @@ class _DocumentDetail extends StatelessWidget {
                     const SizedBox(height: 20),
                     Text(
                       'DOCUMENT OVERVIEW',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 8,
                         fontWeight: FontWeight.w800,
                         color: muted,
@@ -790,7 +790,7 @@ class _DocumentDetail extends StatelessWidget {
                       icon: const Icon(LucideIcons.eye, size: 18),
                       label: Text(
                         'OPEN SECURE LINK',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1.5,
@@ -860,7 +860,7 @@ class _MetaTile extends StatelessWidget {
                 child: Text(
                   label,
                   overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 7,
                     fontWeight: FontWeight.w800,
                     color: muted,

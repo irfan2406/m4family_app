@@ -201,7 +201,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
           children: [
             Text(
               'CONTACT US',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
                 color: isDark ? Colors.white : Colors.black,
@@ -211,7 +211,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
             const SizedBox(height: 2),
             Text(
               'INSTITUTIONAL SUPPORT',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 9,
                 fontWeight: FontWeight.w800,
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
@@ -229,7 +229,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
       padding: const EdgeInsets.only(left: 8),
       child: Text(
         text,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.gelasio(
           fontSize: 9,
           fontWeight: FontWeight.w800,
           color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
@@ -361,7 +361,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                         const SizedBox(width: 8),
                         Text(
                           'DIRECTIONS',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 9,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 1.5,
@@ -396,7 +396,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                         const SizedBox(width: 8),
                         Text(
                           'CALL NOW',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 9,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 1.5,
@@ -516,7 +516,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                       const SizedBox(width: 8),
                       Text(
                         'OPEN MAP',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           color: isDark ? Colors.white : Colors.black,
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
@@ -640,7 +640,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                     const SizedBox(height: 3),
                     Text(
                       label,
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 9,
                         fontWeight: FontWeight.w800,
                         color: (isDark ? Colors.white : Colors.black)

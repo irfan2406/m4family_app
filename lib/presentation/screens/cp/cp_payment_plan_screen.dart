@@ -131,7 +131,7 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                     children: [
                       Text(
                         'CHOOSE PLAN',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 22,
                           fontWeight: FontWeight.w900,
                           letterSpacing: -0.5,
@@ -141,7 +141,7 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                       const SizedBox(height: 2),
                       Text(
                         'SELECT YOUR PREFERRED SCHEDULE',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 8,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 2,
@@ -231,7 +231,7 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                                       children: [
                                         Text(
                                           'COMPARE PLANS',
-                                          style: GoogleFonts.ebGaramond(
+                                          style: GoogleFonts.gelasio(
                                             fontSize: 11,
                                             fontWeight: FontWeight.w900,
                                             letterSpacing: 1.5,
@@ -279,7 +279,7 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                                 child: Center(
                                   child: Text(
                                     'DOWNLOAD ALL PAYMENT PLANS (PDF)',
-                                    style: GoogleFonts.ebGaramond(
+                                    style: GoogleFonts.gelasio(
                                       fontSize: 9,
                                       fontWeight: FontWeight.w900,
                                       letterSpacing: 2,
@@ -366,7 +366,7 @@ class _PaymentPlanCard extends StatelessWidget {
                   ),
                   child: Text(
                     'MOST POPULAR',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 8,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 2,
@@ -389,7 +389,7 @@ class _PaymentPlanCard extends StatelessWidget {
                           children: [
                             Text(
                               (plan['name'] ?? 'Plan').toString().toUpperCase(),
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 22,
                                 fontWeight: FontWeight.w900,
                                 height: 1.1,

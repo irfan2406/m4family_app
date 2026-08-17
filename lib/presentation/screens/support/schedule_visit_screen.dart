@@ -381,7 +381,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
               child: Text(
                 '* PICK-UP AND DROP FACILITY INCLUDED FOR PREMIUM TIER MEMBERS.',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 8,
                   fontWeight: FontWeight.w900,
                   color: Theme.of(
@@ -401,7 +401,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
   Widget _buildLabel(String label) {
     return Text(
       label,
-      style: GoogleFonts.ebGaramond(
+      style: GoogleFonts.gelasio(
         fontSize: 10,
         fontWeight: FontWeight.w900,
         color: Theme.of(context).colorScheme.onSurface.withOpacity(0.65),
@@ -703,7 +703,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
                 children: [
                   Text(
                     'SECURE BOOKING',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontWeight: FontWeight.w900,
                       fontSize: 13,
                       letterSpacing: 2,

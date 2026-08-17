@@ -140,7 +140,7 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                       children: [
                         Text(
                           'M4 CUSTOM VIEWS',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 16,
                             fontWeight: FontWeight.w900,
                             color: Theme.of(context).colorScheme.onSurface,
@@ -149,7 +149,7 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                         ),
                         Text(
                           'PERSONALISATION SUITE',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 8,
                             fontWeight: FontWeight.w900,
                             color: Theme.of(
@@ -178,7 +178,7 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                           ),
                         ),
                         child: Icon(
-                          LucideIcons.moreHorizontal,
+                          LucideIcons.menu,
                           size: 20,
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
@@ -237,7 +237,7 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                                 children: [
                                   Text(
                                     'PERSONALISE',
-                                    style: GoogleFonts.ebGaramond(
+                                    style: GoogleFonts.gelasio(
                                       fontSize: 22,
                                       fontWeight: FontWeight.w400,
                                       color: Theme.of(
@@ -259,7 +259,7 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                                   ),
                                   Text(
                                     'YOUR LEGACY',
-                                    style: GoogleFonts.ebGaramond(
+                                    style: GoogleFonts.gelasio(
                                       fontSize: 28,
                                       fontWeight: FontWeight.w900,
                                       color: Theme.of(
@@ -302,7 +302,7 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                         children: [
                           Text(
                             'OVERVIEW',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.gelasio(
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
                               letterSpacing: 3,
@@ -427,7 +427,7 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                                           : null,
                                       child: Text(
                                         'BACK',
-                                        style: GoogleFonts.ebGaramond(
+                                        style: GoogleFonts.gelasio(
                                           fontSize: 10,
                                           fontWeight: FontWeight.w900,
                                           color: activeStep > 0
@@ -550,7 +550,7 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                                           activeStep < 3
                                               ? 'NEXT STEP'
                                               : 'CONFIRM SELECTIONS',
-                                          style: GoogleFonts.ebGaramond(
+                                          style: GoogleFonts.gelasio(
                                             fontSize: 9,
                                             fontWeight: FontWeight.w900,
                                             color: Theme.of(
@@ -693,7 +693,7 @@ class _ProjectSelectionStep extends ConsumerWidget {
       children: [
         Text(
           'PROJECT &\nUNIT',
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 28,
             fontWeight: FontWeight.w300,
             color: Theme.of(context).colorScheme.onSurface,
@@ -764,7 +764,7 @@ class _ProjectSelectionStep extends ConsumerWidget {
             const SizedBox(width: 8),
             Text(
               'PROJECT SELECTION',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 10,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 2,
@@ -827,7 +827,7 @@ class _ProjectSelectionStep extends ConsumerWidget {
                           const SizedBox(height: 4),
                           Text(
                             p['location']?['name']?.toUpperCase() ?? 'LOCATION',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.gelasio(
                               fontSize: 8,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 2,
@@ -867,7 +867,7 @@ class _ProjectSelectionStep extends ConsumerWidget {
             const SizedBox(width: 8),
             Text(
               'UNIT CONFIGURATION',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 10,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 2,
@@ -1117,7 +1117,7 @@ class _SpaceSelectionStep extends ConsumerWidget {
             child: Text(
               'SELECT SPACE',
               maxLines: 1,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 28,
                 fontWeight: FontWeight.w300,
                 color: scheme.onSurface,
@@ -1336,7 +1336,7 @@ class _MaterialsSelectionStep extends ConsumerWidget {
       children: [
         Text(
           'CHOOSE\nMATERIALS',
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 28,
             fontWeight: FontWeight.w300,
             color: scheme.onSurface,
@@ -1507,7 +1507,7 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                               children: [
                                 Text(
                                   (cat['title']?.toUpperCase() ?? 'CATEGORY'),
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.gelasio(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w900,
                                     letterSpacing: 2,
@@ -1724,7 +1724,7 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                   children: [
                     Text(
                       'READY TO PROCEED?',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 3,
@@ -1756,7 +1756,7 @@ class _MaterialsSelectionStep extends ConsumerWidget {
                           children: [
                             Text(
                               'FINALISE SELECTIONS',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 2,
@@ -1804,7 +1804,7 @@ class _FinaliseStep extends ConsumerWidget {
       children: [
         Text(
           'FINALISE',
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 28,
             fontWeight: FontWeight.w300,
             color: Theme.of(context).colorScheme.onSurface,
@@ -1843,7 +1843,7 @@ class _FinaliseStep extends ConsumerWidget {
                   children: [
                     Text(
                       'ITEM',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 2,
@@ -1854,7 +1854,7 @@ class _FinaliseStep extends ConsumerWidget {
                     ),
                     Text(
                       'SELECTION',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 2,
@@ -2040,7 +2040,7 @@ class _PremiumMaterialsSection extends StatelessWidget {
       children: [
         Text(
           'THE COLLECTION',
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 10,
             fontWeight: FontWeight.w900,
             letterSpacing: 4,
@@ -2051,7 +2051,7 @@ class _PremiumMaterialsSection extends StatelessWidget {
         Text(
           'PREMIUM\nMATERIALS',
           textAlign: TextAlign.center,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 32,
             fontWeight: FontWeight.w300,
             color: Theme.of(context).colorScheme.onSurface,
@@ -2125,7 +2125,7 @@ class _PremiumMaterialsSection extends StatelessWidget {
                           const SizedBox(height: 4),
                           Text(
                             mat['count']!,
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.gelasio(
                               fontSize: 7,
                               fontWeight: FontWeight.bold,
                               color: Theme.of(
@@ -2182,7 +2182,7 @@ class _ConsultationSection extends ConsumerWidget {
                   children: [
                     Text(
                       'Book a Consultation',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).colorScheme.onSurface,
@@ -2317,7 +2317,7 @@ class _ConsultationSection extends ConsumerWidget {
                           )
                         : Text(
                             'SEND REQUEST',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.gelasio(
                               fontSize: 12,
                               fontWeight: FontWeight.w900,
                               color: Theme.of(context).colorScheme.surface,
@@ -2391,7 +2391,7 @@ class _ConsultationSection extends ConsumerWidget {
         children: [
           Text(
             'GET IN TOUCH',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 10,
               fontWeight: FontWeight.w900,
               letterSpacing: 4,
@@ -2402,7 +2402,7 @@ class _ConsultationSection extends ConsumerWidget {
           Text(
             'READY TO\nSTART\nYOUR\nJOURNEY?',
             textAlign: TextAlign.center,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 32,
               fontWeight: FontWeight.w300,
               color: Theme.of(context).colorScheme.onSurface,

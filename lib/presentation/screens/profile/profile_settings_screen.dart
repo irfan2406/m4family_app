@@ -180,7 +180,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                   data: CupertinoThemeData(
                     brightness: isDark ? Brightness.dark : Brightness.light,
                     textTheme: CupertinoTextThemeData(
-                      dateTimePickerTextStyle: GoogleFonts.ebGaramond(
+                      dateTimePickerTextStyle: GoogleFonts.gelasio(
                         color: isDark ? Colors.white : Colors.black,
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -325,7 +325,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                       padding: const EdgeInsets.only(left: 4, bottom: 16),
                       child: Text(
                         'ACCOUNT DETAILS',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 9,
                           fontWeight: FontWeight.w800,
                           color: isDark ? Colors.white38 : Colors.black38,
@@ -534,7 +534,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           Text(
             name.toUpperCase(),
             textAlign: TextAlign.center,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 18,
               fontWeight: FontWeight.w900,
               color: isDark ? Colors.white : Colors.black,
@@ -545,7 +545,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
           Text(
             email.toUpperCase(),
             textAlign: TextAlign.center,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 9,
               fontWeight: FontWeight.w800,
               color: isDark ? Colors.white38 : Colors.black45,
@@ -563,7 +563,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       child: Center(
         child: Text(
           initial,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             textStyle: const TextStyle(inherit: true),
             fontSize: 32,
             fontWeight: FontWeight.w800,
@@ -588,7 +588,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
             child: Center(
               child: Text(
                 'SETTINGS',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   textStyle: const TextStyle(inherit: true),
                   fontSize: 14,
                   fontWeight: FontWeight.w800,
@@ -775,7 +775,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       children: [
         Text(
           "NOTIFICATION PREFERENCES",
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             textStyle: const TextStyle(inherit: true),
             fontSize: 9,
             fontWeight: FontWeight.w800,
@@ -894,7 +894,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
         ),
         child: Text(
           'DEACTIVATE ACCOUNT',
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             textStyle: const TextStyle(inherit: true),
             fontSize: 9,
             fontWeight: FontWeight.w900,

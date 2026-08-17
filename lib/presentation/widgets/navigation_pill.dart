@@ -39,8 +39,11 @@ class NavigationPill extends StatelessWidget {
             decoration: BoxDecoration(
               // Frosted glass: translucent deep-green on the green screens,
               // translucent white on the cream screens. Icons stay crisp.
+              // Follow the surface behind the pill (deep-green on the showcase
+              // screens, navy in dark mode) instead of a hardcoded navy, so the
+              // frosted glass matches every portal's background.
               color: isDark
-                  ? M4Theme.navyBackground.withOpacity(0.5)
+                  ? Theme.of(context).scaffoldBackgroundColor.withOpacity(0.5)
                   : Colors.white.withOpacity(0.92),
               borderRadius: BorderRadius.circular(35),
               border: Border.all(

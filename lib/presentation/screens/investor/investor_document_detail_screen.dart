@@ -209,7 +209,7 @@ class _InvestorDocumentDetailScreenState
           Text(
             title,
             textAlign: TextAlign.center,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 14,
               fontWeight: FontWeight.w800,
               color: textPrimary,
@@ -328,7 +328,7 @@ class _InvestorDocumentDetailScreenState
                   ),
                   child: Text(
                     'SECURED ${type.toUpperCase()}',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 8,
                       fontWeight: FontWeight.w800,
                       color: _gold,
@@ -339,7 +339,7 @@ class _InvestorDocumentDetailScreenState
                 const SizedBox(height: 12),
                 Text(
                   title.toUpperCase(),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 20,
                     fontWeight: FontWeight.w800,
                     color: textPrimary,
@@ -383,7 +383,7 @@ class _InvestorDocumentDetailScreenState
                 // ── Verification status ───────────────────────────────
                 Text(
                   'VERIFICATION STATUS',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 8,
                     fontWeight: FontWeight.w800,
                     color: muted,
@@ -421,7 +421,7 @@ class _InvestorDocumentDetailScreenState
                 // ── Description / overview ────────────────────────────
                 Text(
                   'DOCUMENT OVERVIEW',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 8,
                     fontWeight: FontWeight.w800,
                     color: muted,
@@ -543,7 +543,7 @@ class _PrimaryButton extends StatelessWidget {
         icon: Icon(icon, size: 18),
         label: Text(
           label,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 11,
             fontWeight: FontWeight.w900,
             letterSpacing: 1.5,

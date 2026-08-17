@@ -10,6 +10,7 @@ import 'dart:typed_data';
 import 'package:m4_mobile/presentation/widgets/guest_sidebar_menu.dart';
 import 'package:m4_mobile/core/network/api_client.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:m4_mobile/presentation/screens/projects/guest_project_detail_screen.dart';
 import 'package:m4_mobile/presentation/screens/projects/project_list_screen.dart';
 import 'package:m4_mobile/presentation/screens/communities/community_detail_screen.dart';
@@ -38,6 +39,86 @@ class GuestHomeData {
 }
 
 final guestHomeCacheProvider = StateProvider<GuestHomeData?>((ref) => null);
+
+/// Placeholder media cards shown when the backend returns no media, so the
+/// Media tab isn't blank. (Unchanged content — only lifted out of the fetch
+/// method so both the fetch and the prefetch-skip path can reuse it.)
+const List<Map<String, dynamic>> _dummyMedia = [
+  {
+    '_id': 'dummy1',
+    'title': 'CLÉDOR LUXURY LIVING',
+    'thumbnail':
+        'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80',
+    'description':
+        'Discover the epitome of refinement in our latest architectural masterpiece.',
+    'slug': 'cledor-luxury-living',
+  },
+  {
+    '_id': 'dummy2',
+    'title': 'OCEAN VIEW RESIDENCES',
+    'thumbnail':
+        'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
+    'description':
+        'Where horizon meets home. Experience coastal elegance like never before.',
+    'slug': 'ocean-view-residences',
+  },
+  {
+    '_id': 'dummy3',
+    'title': 'URBAN SANCTUARY',
+    'thumbnail':
+        'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80',
+    'description': 'A peaceful retreat in the heart of the city.',
+    'slug': 'urban-sanctuary',
+  },
+];
+
+/// When the guest catalog was last warmed by [prefetchGuestHome]. Lets the
+/// dashboard skip its immediate refetch right after launch (the data is already
+/// fresh), so prefetching costs no extra API calls overall.
+final guestPrefetchAtProvider = StateProvider<DateTime?>((ref) => null);
+
+/// Warms the guest-home catalog cache in the background — e.g. during the
+/// onboarding splash animation — so the guest home renders with data instantly
+/// instead of showing a spinner. Fires the same three catalog requests in
+/// parallel, mirrors the dashboard's parse logic, and is a no-op on error.
+/// Skipped for signed-in users (they land on their own portal, not the guest
+/// home), so it never adds wasted calls.
+Future<void> prefetchGuestHome(WidgetRef ref) async {
+  if (ref.read(guestHomeCacheProvider) != null) return;
+  try {
+    const storage = FlutterSecureStorage();
+    final token = await storage.read(key: 'jwt_token');
+    if (token != null && token.isNotEmpty) return; // signed in → not guest home
+
+    final api = ref.read(apiClientProvider);
+    List<dynamic> pick(dynamic res) {
+      final d = res.data;
+      if (d is Map && d['data'] is List) return d['data'] as List;
+      if (d is List) return d;
+      return [];
+    }
+    Future<List<dynamic>> safe(Future Function() call) async {
+      try {
+        return pick(await call());
+      } catch (_) {
+        return [];
+      }
+    }
+
+    final results = await Future.wait([
+      safe(api.getProjects),
+      safe(api.getCommunities),
+      safe(() => api.getContent('media')),
+    ]);
+    if (results.every((r) => r.isEmpty)) return;
+    ref.read(guestHomeCacheProvider.notifier).state = GuestHomeData(
+      projects: results[0],
+      communities: results[1],
+      media: results[2],
+    );
+    ref.read(guestPrefetchAtProvider.notifier).state = DateTime.now();
+  } catch (_) {}
+}
 
 class GuestDashboardScreen extends ConsumerStatefulWidget {
   const GuestDashboardScreen({super.key});
@@ -82,7 +163,20 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       _media = cached.media;
       _loading = false;
     }
-    _fetchData();
+    // If the onboarding prefetch just warmed the catalog (< 15s ago), the data
+    // is already fresh — skip the redundant immediate refetch so prefetching
+    // adds no extra network calls. Any later visit refreshes as before.
+    final prefetchAt = ref.read(guestPrefetchAtProvider);
+    final justPrefetched = cached != null &&
+        prefetchAt != null &&
+        DateTime.now().difference(prefetchAt).inSeconds < 15;
+    if (justPrefetched) {
+      // Media dummies are normally added by _fetchData; ensure they're present
+      // when we skip it so the media tab isn't empty on first paint.
+      if (_media.isEmpty) _media = _dummyMedia;
+    } else {
+      _fetchData();
+    }
     _heroTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
       if (mounted && _projects.isNotEmpty) {
         setState(
@@ -135,10 +229,29 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
       // ANY one of projects/communities/media failed or timed out, all three
       // came back empty — which is why Communities showed nothing on slower
       // connections. Now each populates on its own.
+      // All three still start in parallel (fastest total time), but we reveal
+      // the page as soon as PROJECTS arrive (they drive the hero + featured
+      // sections) instead of blocking the whole screen on the slowest request —
+      // communities/media then stream into their tabs a moment later.
+      final projectsFuture = _safeList(apiClient.getProjects);
+      final communitiesFuture = _safeList(apiClient.getCommunities);
+      final mediaFuture = _safeList(() => apiClient.getContent('media'));
+
+      unawaited(
+        projectsFuture.then((projects) {
+          if (mounted && projects.isNotEmpty) {
+            setState(() {
+              _projects = projects;
+              _loading = false;
+            });
+          }
+        }),
+      );
+
       final results = await Future.wait([
-        _safeList(apiClient.getProjects),
-        _safeList(apiClient.getCommunities),
-        _safeList(() => apiClient.getContent('media')),
+        projectsFuture,
+        communitiesFuture,
+        mediaFuture,
       ]);
 
       if (mounted) {
@@ -152,34 +265,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
 
           // 💡 Add dummy content if media is empty to fill blank space
           if (_media.isEmpty) {
-            _media = [
-              {
-                '_id': 'dummy1',
-                'title': 'CLÉDOR LUXURY LIVING',
-                'thumbnail':
-                    'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80',
-                'description':
-                    'Discover the epitome of refinement in our latest architectural masterpiece.',
-                'slug': 'cledor-luxury-living',
-              },
-              {
-                '_id': 'dummy2',
-                'title': 'OCEAN VIEW RESIDENCES',
-                'thumbnail':
-                    'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80',
-                'description':
-                    'Where horizon meets home. Experience coastal elegance like never before.',
-                'slug': 'ocean-view-residences',
-              },
-              {
-                '_id': 'dummy3',
-                'title': 'URBAN SANCTUARY',
-                'thumbnail':
-                    'https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80',
-                'description': 'A peaceful retreat in the heart of the city.',
-                'slug': 'urban-sanctuary',
-              },
-            ];
+            _media = _dummyMedia;
           }
           _loading = false;
         });
@@ -283,7 +369,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
               const SizedBox(height: 18),
               Text(
                 'M4 FAMILY',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 11,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 5,
@@ -348,16 +434,12 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                         width: 56,
                         height: 36,
                         decoration: BoxDecoration(
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white
-                              : Colors.black,
+                          color: Colors.transparent,
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Icon(
-                          LucideIcons.moreHorizontal,
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.black
-                              : Colors.white,
+                          LucideIcons.menu,
+                          color: Theme.of(context).colorScheme.onSurface,
                           size: 24,
                         ),
                       ),
@@ -467,7 +549,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                                   ),
                                   child: Text(
                                     'ARTISTIC IMPRESSION',
-                                    style: GoogleFonts.ebGaramond(
+                                    style: GoogleFonts.gelasio(
                                       color: Colors.white,
                                       fontSize: 7,
                                       fontWeight: FontWeight.w900,
@@ -643,7 +725,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                           children: [
                             Text(
                               tab.toUpperCase(),
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                 color: isSelected
                                     ? (isDark ? Colors.white : Colors.black)
                                     : (isDark ? Colors.white : Colors.black)
@@ -1068,7 +1150,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                     ),
                     child: Text(
                       'ARTISTIC IMPRESSION',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         color: Colors.white,
                         fontSize: 7,
                         fontWeight: FontWeight.w900,
@@ -1087,7 +1169,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                     children: [
                       Text(
                         'FEATURED PROPERTY',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           color: const Color(0xFFC5A35B),
                           fontSize: 9,
                           fontWeight: FontWeight.w900,
@@ -1194,7 +1276,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                     child: Center(
                       child: Text(
                         'READ MORE',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           color: isDark ? Colors.black : Colors.white,
                           fontWeight: FontWeight.w900,
                           fontSize: 12,
@@ -1246,7 +1328,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         Text(
           label,
           textAlign: TextAlign.center,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             color: isDark ? Colors.white : Colors.black,
             fontSize: 9,
             fontWeight: FontWeight.w800,

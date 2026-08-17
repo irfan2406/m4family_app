@@ -107,13 +107,13 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                     height: 36,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Colors.black,
+                      color: Colors.transparent,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
-                      LucideIcons.moreHorizontal,
+                      LucideIcons.menu,
                       size: 18,
-                      color: isDark ? Colors.black : Colors.white,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                 ),
@@ -160,7 +160,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                       ),
                       child: Text(
                         (job['department'] ?? '').toString().toUpperCase(),
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           color: isDark ? Colors.white70 : Colors.black87,
                           fontSize: 9,
                           fontWeight: FontWeight.w900,
@@ -173,7 +173,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                     // Job Title
                     Text(
                       (job['title'] ?? '').toString().toUpperCase(),
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         color: isDark ? Colors.white : Colors.black,
                         fontWeight: FontWeight.w900,
                         fontSize: 32,
@@ -207,7 +207,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                     // Job Description
                     Text(
                       'ROLE OVERVIEW',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         color: (isDark ? Colors.white : Colors.black)
                             .withOpacity(0.6),
                         fontSize: 10,
@@ -267,7 +267,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                                 ),
                                 child: Text(
                                   item.toString().toUpperCase(),
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.gelasio(
                                     color: isDark ? Colors.black : Colors.white,
                                     fontWeight: FontWeight.w900,
                                     fontSize: 9,
@@ -344,7 +344,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
               children: [
                 Text(
                   'APPLY FOR THIS POSITION',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontWeight: FontWeight.w900,
                     fontSize: 11,
                     letterSpacing: 1.5,
@@ -363,7 +363,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
   Widget _buildSectionHeader(String title, bool isDark) {
     return Text(
       title,
-      style: GoogleFonts.ebGaramond(
+      style: GoogleFonts.gelasio(
         color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),
         fontSize: 10,
         fontWeight: FontWeight.w900,
@@ -510,7 +510,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
               text.toUpperCase(),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 color: isDark ? Colors.white70 : Colors.black54,
                 fontSize: 9,
                 fontWeight: FontWeight.w900,

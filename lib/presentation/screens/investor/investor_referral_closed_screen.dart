@@ -166,7 +166,7 @@ class _InvestorReferralClosedScreenState
                 Text(
                   'SUCCESS VAULT',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 13,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -177,7 +177,7 @@ class _InvestorReferralClosedScreenState
                 Text(
                   'CLOSED CONVERSIONS',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 3,
@@ -211,7 +211,7 @@ class _InvestorReferralClosedScreenState
               const SizedBox(width: 8),
               Text(
                 '${_referrals.length} CONVERTED',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 9,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2,
@@ -283,7 +283,7 @@ class _InvestorReferralClosedScreenState
                     const SizedBox(height: 4),
                     Text(
                       project.toUpperCase(),
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 9,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1.5,
@@ -314,7 +314,7 @@ class _InvestorReferralClosedScreenState
                         const SizedBox(width: 5),
                         Text(
                           'UNIT CONFIG',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 7,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 1.5,
@@ -342,7 +342,7 @@ class _InvestorReferralClosedScreenState
                 children: [
                   Text(
                     'REWARD EARNED',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 7,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1.5,
@@ -370,7 +370,7 @@ class _InvestorReferralClosedScreenState
                 const SizedBox(width: 6),
                 Text(
                   'CLOSED $date',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.5,
@@ -423,7 +423,7 @@ class _InvestorReferralClosedScreenState
           Text(
             'NO CLOSED REFERRALS YET',
             textAlign: TextAlign.center,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 10,
               fontWeight: FontWeight.w900,
               letterSpacing: 2,
@@ -445,7 +445,7 @@ class _InvestorReferralClosedScreenState
           const SizedBox(height: 16),
           Text(
             'COULD NOT LOAD SUCCESS VAULT',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 10,
               fontWeight: FontWeight.w900,
               letterSpacing: 2,
@@ -463,7 +463,7 @@ class _InvestorReferralClosedScreenState
               ),
               child: Text(
                 'RETRY',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2,

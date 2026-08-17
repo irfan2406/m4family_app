@@ -220,13 +220,13 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                     height: 36,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Colors.black,
+                      color: Colors.transparent,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
-                      LucideIcons.moreHorizontal,
+                      LucideIcons.menu,
                       size: 18,
-                      color: isDark ? Colors.black : Colors.white,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                 ),
@@ -281,7 +281,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                     Text(
                       (widget.job['title'] ?? '').toString().toUpperCase(),
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         color: isDark ? Colors.white : Colors.black,
                         fontWeight: FontWeight.w900,
                         fontSize: 22,
@@ -294,7 +294,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                       (widget.job['location'] ?? 'MUMBAI')
                           .toString()
                           .toUpperCase(),
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         color: (isDark ? Colors.white : Colors.black)
                             .withOpacity(0.68),
                         fontSize: 10,
@@ -397,7 +397,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                         _resumeFile != null
                             ? _resumeFile!.path.split('/').last.toUpperCase()
                             : 'SELECT PDF DOCUMENT',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           color: isDark ? Colors.white : Colors.black,
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
@@ -430,7 +430,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                         )
                       : Text(
                           'SUBMIT APPLICATION',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 12,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 2,

@@ -62,7 +62,7 @@ class _CpResidentialConnectScreenState
             ),
             Text(
               'INSTITUTIONAL CONCIERGE',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 8,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 2,
@@ -180,7 +180,7 @@ class _SectionHeader extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 4),
       child: Text(
         label,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.gelasio(
           fontSize: 10,
           fontWeight: FontWeight.w800,
           letterSpacing: 3,
@@ -263,7 +263,7 @@ class _PropertyCardState extends State<_PropertyCard> {
                           'CROWN RESIDENCES',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 18,
                             fontWeight: FontWeight.w800,
                             color: scheme.onSurface,
@@ -296,7 +296,7 @@ class _PropertyCardState extends State<_PropertyCard> {
                     ),
                     child: Text(
                       'VERIFIED',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 8,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1.5,
@@ -313,7 +313,7 @@ class _PropertyCardState extends State<_PropertyCard> {
                 children: [
                   Text(
                     'ASSET UTILIZATION',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 10,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 2,
@@ -322,7 +322,7 @@ class _PropertyCardState extends State<_PropertyCard> {
                   ),
                   Text(
                     '85% ACTIVE',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 10,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 2,
@@ -630,7 +630,7 @@ class _CommunityChatCard extends StatelessWidget {
                           children: [
                             Text(
                               'GLOBAL LOUNGE',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w800,
                                 letterSpacing: 3,
@@ -641,7 +641,7 @@ class _CommunityChatCard extends StatelessWidget {
                             const SizedBox(height: 6),
                             Text(
                               'RESIDENT LINK',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w800,
                                 letterSpacing: -0.5,
@@ -674,7 +674,7 @@ class _CommunityChatCard extends StatelessWidget {
                       ),
                       child: Text(
                         'INITIATE SECURE LINK',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 11,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 3,

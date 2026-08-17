@@ -178,7 +178,7 @@ class _InvestorPortfolioScreenState
             children: [
               Text(
                 'PORTFOLIO',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 20,
                   fontWeight: FontWeight.w800,
                   color: textPrimary,
@@ -189,7 +189,7 @@ class _InvestorPortfolioScreenState
               const SizedBox(height: 6),
               Text(
                 'MY INVESTMENTS',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 8,
                   fontWeight: FontWeight.w700,
                   color: M4Theme.premiumBlue.withValues(alpha: 0.6),
@@ -251,7 +251,7 @@ class _InvestorPortfolioScreenState
       padding: const EdgeInsets.only(left: 4),
       child: Text(
         text,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.gelasio(
           fontSize: 9,
           fontWeight: FontWeight.w700,
           color: (isDark ? Colors.white : const Color(0xFF163A2C)).withValues(alpha: 0.5),
@@ -294,7 +294,7 @@ class _InvestorPortfolioScreenState
               const SizedBox(width: 8),
               Text(
                 'PORTFOLIO VALUATION',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 9,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2.5,
@@ -310,7 +310,7 @@ class _InvestorPortfolioScreenState
               Flexible(
                 child: Text(
                   _formatValue(_currentValue),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 32,
                     fontWeight: FontWeight.w900,
                     color: Colors.white,
@@ -357,7 +357,7 @@ class _InvestorPortfolioScreenState
           const SizedBox(height: 6),
           Text(
             'CURRENT MARKET VALUE',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 9,
               fontWeight: FontWeight.w800,
               letterSpacing: 2,
@@ -396,7 +396,7 @@ class _InvestorPortfolioScreenState
       children: [
         Text(
           label,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 8,
             fontWeight: FontWeight.w800,
             letterSpacing: 1.5,
@@ -505,7 +505,7 @@ class _InvestorPortfolioScreenState
           const SizedBox(height: 4),
           Text(
             label,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 8,
               fontWeight: FontWeight.w700,
               color: muted,
@@ -726,7 +726,7 @@ class _InvestorPortfolioScreenState
                 children: [
                   Text(
                     name.toUpperCase(),
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
                       color: textPrimary,
@@ -806,7 +806,7 @@ class _InvestorPortfolioScreenState
                             children: [
                               Text(
                                 'VIEW PERFORMANCE',
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.gelasio(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w800,
                                   color:
@@ -943,7 +943,7 @@ class _InvestorPortfolioScreenState
                             children: [
                               Text(
                                 name.toUpperCase(),
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.gelasio(
                                   fontSize: 22,
                                   fontWeight: FontWeight.w800,
                                   color: textPrimary,
@@ -963,7 +963,7 @@ class _InvestorPortfolioScreenState
                                       location.toUpperCase(),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.ebGaramond(
+                                      style: GoogleFonts.gelasio(
                                         fontSize: 9,
                                         fontWeight: FontWeight.w700,
                                         color: M4Theme.premiumBlue
@@ -1012,7 +1012,7 @@ class _InvestorPortfolioScreenState
                                   children: [
                                     Text(
                                       'NET RETURN',
-                                      style: GoogleFonts.ebGaramond(
+                                      style: GoogleFonts.gelasio(
                                         fontSize: 8,
                                         fontWeight: FontWeight.w800,
                                         color: muted,
@@ -1022,7 +1022,7 @@ class _InvestorPortfolioScreenState
                                     const SizedBox(height: 4),
                                     Text(
                                       '${gains >= 0 ? '+' : '-'}${_formatValue(gains.abs())}',
-                                      style: GoogleFonts.ebGaramond(
+                                      style: GoogleFonts.gelasio(
                                         fontSize: 18,
                                         fontWeight: FontWeight.w900,
                                         color: gains >= 0 ? _green : _amber,
@@ -1033,7 +1033,7 @@ class _InvestorPortfolioScreenState
                               ),
                               Text(
                                 '${roi >= 0 ? '+' : ''}${roi.toStringAsFixed(1)}%',
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.gelasio(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w900,
                                   color: gains >= 0 ? _green : _amber,
@@ -1110,7 +1110,7 @@ class _InvestorPortfolioScreenState
                                 const SizedBox(width: 8),
                                 Text(
                                   'VERIFIED INVESTMENT',
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.gelasio(
                                     fontSize: 9,
                                     fontWeight: FontWeight.w800,
                                     color:
@@ -1147,7 +1147,7 @@ class _InvestorPortfolioScreenState
             const SizedBox(height: 20),
             Text(
               'NO INVESTMENTS YET',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
                 color: faint,
@@ -1177,7 +1177,7 @@ class _InvestorPortfolioScreenState
                 ),
                 child: Text(
                   'EXPLORE OPPORTUNITIES',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
                     color: isDark ? Colors.black : Colors.white,
@@ -1205,7 +1205,7 @@ class _InvestorPortfolioScreenState
             const SizedBox(height: 20),
             Text(
               'UNABLE TO LOAD PORTFOLIO',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
                 color: muted,
@@ -1224,7 +1224,7 @@ class _InvestorPortfolioScreenState
                 ),
                 child: Text(
                   'RETRY',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
                     color: isDark ? Colors.black : Colors.white,
@@ -1386,7 +1386,7 @@ class _Pill extends StatelessWidget {
       ),
       child: Text(
         text.toUpperCase(),
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.gelasio(
           fontSize: 8,
           fontWeight: FontWeight.w800,
           color: fg,
@@ -1419,7 +1419,7 @@ class _StatusPill extends StatelessWidget {
       ),
       child: Text(
         status.toUpperCase(),
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.gelasio(
           fontSize: 8,
           fontWeight: FontWeight.w800,
           color: color,
@@ -1492,7 +1492,7 @@ class _DetailItem extends StatelessWidget {
       children: [
         Text(
           label,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 8,
             fontWeight: FontWeight.w700,
             color: muted,
@@ -1541,7 +1541,7 @@ class _SpecItem extends StatelessWidget {
             Expanded(
               child: Text(
                 label,
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 8,
                   fontWeight: FontWeight.w700,
                   color: muted,

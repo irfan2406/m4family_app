@@ -97,7 +97,7 @@ class _CpUpdatesScreenState extends ConsumerState<CpUpdatesScreen> {
         backgroundColor: scheme.surface,
         elevation: 0,
         leading: IconButton(icon: const Icon(LucideIcons.arrowLeft), onPressed: () => context.pop()),
-        title: Text('UPDATES', style: GoogleFonts.ebGaramond(fontWeight: FontWeight.w900, letterSpacing: 2)),
+        title: Text('UPDATES', style: GoogleFonts.gelasio(fontWeight: FontWeight.w900, letterSpacing: 2)),
       ),
       body: _loading
           ? Center(child: CircularProgressIndicator(color: accent))

@@ -132,16 +132,11 @@ class _CpForgotPasswordScreenState extends ConsumerState<CpForgotPasswordScreen>
     final fromGuest = GoRouterState.of(context).uri.queryParameters['from'] == 'guest';
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xFF0F2A20),
       body: Stack(
         fit: StackFit.expand,
         children: [
-          Positioned.fill(child: Image.asset('assets/login-bg.png', fit: BoxFit.cover)),
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(colors: [Colors.black.withValues(alpha: 0.55), Colors.black.withValues(alpha: 0.88)]),
-            ),
-          ),
+          const Positioned.fill(child: ColoredBox(color: Color(0xFF0F2A20))),
           SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -155,7 +150,7 @@ class _CpForgotPasswordScreenState extends ConsumerState<CpForgotPasswordScreen>
                         onPressed: () => context.go('/home'),
                         child: Text(
                           'BACK TO GUEST PORTAL',
-                          style: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 2),
+                          style: GoogleFonts.gelasio(fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 2, color: Colors.white),
                         ),
                       ),
                     ),
@@ -181,7 +176,7 @@ class _CpForgotPasswordScreenState extends ConsumerState<CpForgotPasswordScreen>
                         : _step == 1
                             ? 'VERIFY CODE'
                             : 'NEW PASSWORD',
-                    style: GoogleFonts.ebGaramond(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white),
+                    style: GoogleFonts.gelasio(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                   const SizedBox(height: 24),
                   if (_step == 0) ...[
@@ -194,7 +189,7 @@ class _CpForgotPasswordScreenState extends ConsumerState<CpForgotPasswordScreen>
                         labelStyle: const TextStyle(color: Colors.white54),
                         prefixIcon: const Icon(LucideIcons.mail, color: Colors.white54),
                         filled: true,
-                        fillColor: Colors.black.withValues(alpha: 0.4),
+                        fillColor: Colors.white.withValues(alpha: 0.06),
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
                       ),
                     ),
@@ -202,7 +197,8 @@ class _CpForgotPasswordScreenState extends ConsumerState<CpForgotPasswordScreen>
                     FilledButton(
                       onPressed: _loading ? null : _sendEmail,
                       style: FilledButton.styleFrom(
-                        backgroundColor: Color(0xFFC5A35B),
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color(0xFF0F2A20),
                         minimumSize: const Size(double.infinity, 52),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                       ),
@@ -210,7 +206,7 @@ class _CpForgotPasswordScreenState extends ConsumerState<CpForgotPasswordScreen>
                           ? const SizedBox(
                               width: 22,
                               height: 22,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                              child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF0F2A20)),
                             )
                           : const Text('SEND CODE'),
                     ),
@@ -260,7 +256,8 @@ class _CpForgotPasswordScreenState extends ConsumerState<CpForgotPasswordScreen>
                     FilledButton(
                       onPressed: _goPasswordStep,
                       style: FilledButton.styleFrom(
-                        backgroundColor: Color(0xFFC5A35B),
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color(0xFF0F2A20),
                         minimumSize: const Size(double.infinity, 52),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                       ),
@@ -277,7 +274,7 @@ class _CpForgotPasswordScreenState extends ConsumerState<CpForgotPasswordScreen>
                         labelStyle: const TextStyle(color: Colors.white54),
                         prefixIcon: const Icon(LucideIcons.lock, color: Colors.white54),
                         filled: true,
-                        fillColor: Colors.black.withValues(alpha: 0.4),
+                        fillColor: Colors.white.withValues(alpha: 0.06),
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
                       ),
                     ),
@@ -291,7 +288,7 @@ class _CpForgotPasswordScreenState extends ConsumerState<CpForgotPasswordScreen>
                         labelStyle: const TextStyle(color: Colors.white54),
                         prefixIcon: const Icon(LucideIcons.lock, color: Colors.white54),
                         filled: true,
-                        fillColor: Colors.black.withValues(alpha: 0.4),
+                        fillColor: Colors.white.withValues(alpha: 0.06),
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
                       ),
                     ),
@@ -299,7 +296,8 @@ class _CpForgotPasswordScreenState extends ConsumerState<CpForgotPasswordScreen>
                     FilledButton(
                       onPressed: _loading ? null : _resetPassword,
                       style: FilledButton.styleFrom(
-                        backgroundColor: Color(0xFFC5A35B),
+                        backgroundColor: Colors.white,
+                        foregroundColor: const Color(0xFF0F2A20),
                         minimumSize: const Size(double.infinity, 52),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                       ),
@@ -307,7 +305,7 @@ class _CpForgotPasswordScreenState extends ConsumerState<CpForgotPasswordScreen>
                           ? const SizedBox(
                               width: 22,
                               height: 22,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                              child: CircularProgressIndicator(strokeWidth: 2, color: Color(0xFF0F2A20)),
                             )
                           : const Text('UPDATE PASSWORD'),
                     ),

@@ -189,7 +189,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                 const SizedBox(height: 32),
                 Text(
                   'PAYMENT SUCCESSFUL',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 22,
                     fontWeight: FontWeight.w900,
                     color: isDark ? Colors.white : Colors.black,
@@ -219,7 +219,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                   child: Center(
                     child: Text(
                       'GO TO DASHBOARD',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         color: isDark ? Colors.black : Colors.white,
                         fontWeight: FontWeight.w900,
                         fontSize: 11,
@@ -306,7 +306,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                       children: [
                         Text(
                           'TOKEN AMOUNT',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                             color: Colors.white.withValues(alpha: 0.68),
@@ -316,7 +316,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                         const SizedBox(height: 12),
                         Text(
                           '₹$_tokenAmount',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 36,
                             fontWeight: FontWeight.w900,
                             color: Colors.white,
@@ -365,7 +365,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
               const SizedBox(height: 16),
               Text(
                 _projectName.toUpperCase(),
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
                   color: muted,
@@ -378,7 +378,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
             const SizedBox(height: 48),
             Text(
               'PAYMENT METHOD',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 10,
                 fontWeight: FontWeight.w900,
                 color: muted,

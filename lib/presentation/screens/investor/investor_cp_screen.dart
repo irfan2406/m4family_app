@@ -100,7 +100,7 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
             ),
             Text(
               'ID: CP-9021 • M4 PARTNER',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 8,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 2,
@@ -156,7 +156,7 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
               Expanded(
                 child: Text(
                   'REGISTERED LEADS',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 2,
@@ -173,7 +173,7 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
                 ),
                 child: Text(
                   '${filtered.length} ACTIVE',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 8,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1.5,
@@ -208,7 +208,7 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
                     const SizedBox(height: 12),
                     Text(
                       'NO LEADS FOUND',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 10,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 2,
@@ -328,7 +328,7 @@ class _StatCard extends StatelessWidget {
               children: [
                 Text(
                   stat.label.toUpperCase(),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 9,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1.5,
@@ -338,7 +338,7 @@ class _StatCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   stat.value,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
                     color: textPrimary,
@@ -425,7 +425,7 @@ class _LeadCard extends StatelessWidget {
                       lead.project.toUpperCase(),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 10,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1.5,
@@ -466,7 +466,7 @@ class _LeadCard extends StatelessWidget {
                     icon: const Icon(LucideIcons.phone, size: 16, color: _gold),
                     label: Text(
                       'CALL CLIENT',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 9,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1.5,
@@ -490,7 +490,7 @@ class _LeadCard extends StatelessWidget {
                     icon: Icon(LucideIcons.refreshCw, size: 16, color: bg),
                     label: Text(
                       'UPDATE STATUS',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 9,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1.5,
@@ -558,7 +558,7 @@ class _RegisterCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     'REGISTER NEW LEAD',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
                       letterSpacing: -0.5,
@@ -595,7 +595,7 @@ class _RegisterCard extends StatelessWidget {
                 ),
                 child: Text(
                   'REGISTER LEAD',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 2,
@@ -691,7 +691,7 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
                     children: [
                       Text(
                         'Register New Lead',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 18,
                           fontWeight: FontWeight.w800,
                           color: textPrimary,
@@ -700,7 +700,7 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
                       const SizedBox(height: 2),
                       Text(
                         'HIGH PRIORITY REGISTRATION',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 8,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 2,
@@ -770,7 +770,7 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
                 ),
                 child: Text(
                   'SUBMIT LEAD',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 11,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 2,
@@ -787,7 +787,7 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
 
   Widget _label(String text, Color muted) => Text(
         text,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.gelasio(
           fontSize: 9,
           fontWeight: FontWeight.w800,
           letterSpacing: 1.5,

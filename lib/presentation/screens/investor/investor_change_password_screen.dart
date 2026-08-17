@@ -342,7 +342,7 @@ class _InvestorChangePasswordScreenState
               children: [
                 Text(
                   'SECURITY SETTINGS',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2.5,
@@ -352,7 +352,7 @@ class _InvestorChangePasswordScreenState
                 const SizedBox(height: 4),
                 Text(
                   'Change Password',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
                     letterSpacing: -0.3,
@@ -372,7 +372,7 @@ class _InvestorChangePasswordScreenState
       padding: const EdgeInsets.only(left: 4),
       child: Text(
         label,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.gelasio(
           fontSize: 10,
           fontWeight: FontWeight.w800,
           letterSpacing: 2,
@@ -473,7 +473,7 @@ class _InvestorChangePasswordScreenState
           const SizedBox(height: 6),
           Text(
             'STRENGTH: $_strengthLabel',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 9,
               fontWeight: FontWeight.w800,
               letterSpacing: 1.5,
@@ -544,7 +544,7 @@ class _InvestorChangePasswordScreenState
               const SizedBox(width: 8),
               Text(
                 'REQUIREMENTS',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 10,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 1.5,
@@ -627,7 +627,7 @@ class _InvestorChangePasswordScreenState
                 )
               : Text(
                   'UPDATE PASSWORD',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 12,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,

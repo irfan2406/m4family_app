@@ -170,7 +170,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
             child: Text(
               'REFERRAL & REWARDS',
               textAlign: TextAlign.center,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 16,
                 fontWeight: FontWeight.w900,
                 color: textPrimary,
@@ -209,7 +209,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
         children: [
           Text(
             'MY REFERRAL IDENTITY CODE',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 9,
               fontWeight: FontWeight.w900,
               letterSpacing: 2,
@@ -229,7 +229,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
               children: [
                 Text(
                   code,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 3,
@@ -280,7 +280,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
         children: [
           Text(
             label,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 8,
               fontWeight: FontWeight.w900,
               letterSpacing: 1.5,
@@ -290,7 +290,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
           const SizedBox(height: 10),
           Text(
             value,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 24,
               fontWeight: FontWeight.w900,
               color: textPrimary,
@@ -328,7 +328,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
           children: [
             Text(
               'REDEEM REWARDS',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 11,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 2,
@@ -402,7 +402,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
             const SizedBox(height: 14),
             Text(
               label,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 9,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.5,
@@ -421,7 +421,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
       children: [
         Text(
           title,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 9,
             fontWeight: FontWeight.w900,
             letterSpacing: 2,
@@ -488,7 +488,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                 const SizedBox(height: 2),
                 Text(
                   project.toUpperCase(),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.5,
@@ -629,7 +629,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
       child: Center(
         child: Text(
           label,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 10,
             fontWeight: FontWeight.w900,
             letterSpacing: 2,
@@ -652,7 +652,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
             Text(
               'FAILED TO LOAD REWARD HUB',
               textAlign: TextAlign.center,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 11,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.5,
@@ -670,7 +670,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                 ),
                 child: Text(
                   'RETRY',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -734,7 +734,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                     const SizedBox(height: 28),
                     Text(
                       'NEW\nREFERRAL',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 24,
                         fontWeight: FontWeight.w900,
                         color: textPrimary,
@@ -744,7 +744,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                     const SizedBox(height: 8),
                     Text(
                       'REFER & EARN REWARDS',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 9,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 2,
@@ -902,7 +902,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
                               )
                             : Text(
                                 'SUBMIT REFERRAL',
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.gelasio(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w900,
                                   letterSpacing: 2,
@@ -925,7 +925,7 @@ class _InvestorReferralScreenState extends ConsumerState<InvestorReferralScreen>
   Widget _formLabel(String text, Color textPrimary) {
     return Text(
       text,
-      style: GoogleFonts.ebGaramond(
+      style: GoogleFonts.gelasio(
         fontSize: 9,
         fontWeight: FontWeight.w900,
         letterSpacing: 1.5,

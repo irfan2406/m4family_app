@@ -69,7 +69,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
         ),
         title: Text(
           'REDEEM POINTS',
-          style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), 
+          style: GoogleFonts.gelasio(textStyle: const TextStyle(inherit: true), 
             color: isDark ? Colors.white : Colors.black,
             fontSize: 14,
             fontWeight: FontWeight.w900,
@@ -88,7 +88,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
             const SizedBox(height: 24),
             Text(
               'REDEMPTION MATRIX',
-              style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), 
+              style: GoogleFonts.gelasio(textStyle: const TextStyle(inherit: true), 
                 color: isDark ? Colors.white24 : Colors.black26,
                 fontSize: 10,
                 fontWeight: FontWeight.w800,
@@ -126,7 +126,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
         children: [
           Text(
             'AVAILABLE BALANCE',
-            style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), 
+            style: GoogleFonts.gelasio(textStyle: const TextStyle(inherit: true), 
               color: isDark ? Colors.white24 : Colors.black26,
               fontSize: 10,
               fontWeight: FontWeight.w800,
@@ -139,7 +139,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
             children: [
               Text(
                 widget.walletBalance.toStringAsFixed(0),
-                style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), 
+                style: GoogleFonts.gelasio(textStyle: const TextStyle(inherit: true), 
                   color: isDark ? Colors.white : Colors.black,
                   fontSize: 48,
                   fontWeight: FontWeight.w900,
@@ -251,7 +251,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
           padding: const EdgeInsets.only(left: 10, bottom: 10, top: 10),
           child: Text(
             'REDEEM VOLUME',
-            style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), 
+            style: GoogleFonts.gelasio(textStyle: const TextStyle(inherit: true), 
               color: isDark ? Colors.white24 : Colors.black26,
               fontSize: 10,
               fontWeight: FontWeight.w800,
@@ -269,7 +269,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
             controller: _amountController,
             keyboardType: TextInputType.number,
             textAlign: TextAlign.center,
-            style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), 
+            style: GoogleFonts.gelasio(textStyle: const TextStyle(inherit: true), 
               color: isDark ? Colors.white : Colors.black,
               fontSize: 24,
               fontWeight: FontWeight.w800,
@@ -392,7 +392,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
                   const SizedBox(width: 10),
                   Text(
                     'CONFIRM REDEMPTION',
-                    style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), 
+                    style: GoogleFonts.gelasio(textStyle: const TextStyle(inherit: true), 
                       color: isDark ? Colors.black : Colors.white,
                       fontSize: 12,
                       fontWeight: FontWeight.w900,

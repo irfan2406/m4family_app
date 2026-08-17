@@ -108,7 +108,7 @@ class _GuestCustomViewsScreenState
                 ),
                 Text(
                   'M4 CUSTOM SHOWCASE',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     color: (isDark ? Colors.white : Colors.black).withOpacity(
                       0.68,
                     ),
@@ -131,12 +131,12 @@ class _GuestCustomViewsScreenState
                     ),
                     padding: const EdgeInsets.symmetric(horizontal: 14),
                     decoration: BoxDecoration(
-                      color: isDark ? Colors.white : Colors.black,
+                      color: Colors.transparent,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Icon(
-                      LucideIcons.moreHorizontal,
-                      color: isDark ? Colors.black : Colors.white,
+                      LucideIcons.menu,
+                      color: Theme.of(context).colorScheme.onSurface,
                       size: 18,
                     ),
                   ),
@@ -254,7 +254,7 @@ class _GuestCustomViewsScreenState
                               alignment: Alignment.bottomLeft,
                               child: Text(
                                 cat['title']!,
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.gelasio(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w900,
                                   color: Colors.white,

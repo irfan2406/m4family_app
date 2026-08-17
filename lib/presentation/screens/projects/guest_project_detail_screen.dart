@@ -179,7 +179,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                     onPressed: () => Navigator.pop(sheetCtx),
                     child: Text('CANCEL', style: GoogleFonts.ebGaramond(fontSize: 11, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : Colors.black54, letterSpacing: 1)),
                   ),
-                  Text('SCHEDULE', style: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 2)),
+                  Text('SCHEDULE', style: GoogleFonts.gelasio(fontSize: 10, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, letterSpacing: 2)),
                   TextButton(
                     onPressed: () => Navigator.pop(sheetCtx, temp),
                     child: Text('DONE', style: GoogleFonts.ebGaramond(fontSize: 11, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 1)),
@@ -391,7 +391,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                   children: [
                      Text(
                       _leadType == 'VC' ? 'BOOK A VIDEO CALL' : 'BOOK A SITE VISIT',
-                      style: GoogleFonts.ebGaramond(fontSize: 26, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, height: 1.1, letterSpacing: -1),
+                      style: GoogleFonts.gelasio(fontSize: 26, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black, height: 1.1, letterSpacing: -1),
                     ),
                     const SizedBox(height: 16),
                     Text(
@@ -408,7 +408,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                     
                     const SizedBox(height: 28),
                     // Visit Type toggle (web parity)
-                    Text('VISIT TYPE', style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : Colors.black54, letterSpacing: 1.5)),
+                    Text('VISIT TYPE', style: GoogleFonts.gelasio(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : Colors.black54, letterSpacing: 1.5)),
                     const SizedBox(height: 10),
                     Container(
                       padding: const EdgeInsets.all(4),
@@ -442,7 +442,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                     ),
                     const SizedBox(height: 20),
                     // Schedule date + time (web parity: IOSDateTimePicker)
-                    Text('SCHEDULE', style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : Colors.black54, letterSpacing: 1.5)),
+                    Text('SCHEDULE', style: GoogleFonts.gelasio(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : Colors.black54, letterSpacing: 1.5)),
                     const SizedBox(height: 10),
                     GestureDetector(
                       onTap: () async {
@@ -483,7 +483,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                     ),
                     const SizedBox(height: 20),
                     // Additional notes (web parity)
-                    Text('ADDITIONAL NOTES', style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : Colors.black54, letterSpacing: 1.5)),
+                    Text('ADDITIONAL NOTES', style: GoogleFonts.gelasio(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white54 : Colors.black54, letterSpacing: 1.5)),
                     const SizedBox(height: 10),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 6),
@@ -550,7 +550,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                         child: Center(
                           child: Text(
                             'CONFIRM BOOKING',
-                            style: GoogleFonts.ebGaramond(color: isDark ? Colors.black : Colors.white, fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1.5)
+                            style: GoogleFonts.gelasio(color: isDark ? Colors.black : Colors.white, fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 1.5)
                           )
                         ),
                       ),
@@ -908,7 +908,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
               decoration: BoxDecoration(color: Colors.black, borderRadius: BorderRadius.circular(4)),
               child: Text(
                 (project?['status']?.toString().toUpperCase() ?? 'ONGOING'),
-                style: GoogleFonts.ebGaramond(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.5),
+                style: GoogleFonts.gelasio(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.5),
               ),
             ),
           ),
@@ -939,7 +939,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                     ),
                     const SizedBox(width: 8),
                     _SquareAction(
-                      icon: LucideIcons.moreHorizontal, 
+                      icon: LucideIcons.menu, 
                       onTap: () => _scaffoldKey.currentState?.openDrawer()
                     ),
                   ],
@@ -994,7 +994,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
         const SizedBox(width: 16),
         Text(
           title.toUpperCase(), 
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 12, 
             fontWeight: FontWeight.w900, 
             color: isDark ? Colors.white : Colors.black, 
@@ -1146,7 +1146,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                   child: Center(
                     child: Text(
                       'BOOK NOW',
-                      style: GoogleFonts.ebGaramond(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 2),
+                      style: GoogleFonts.gelasio(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 2),
                     ),
                   ),
                 ),
@@ -1215,7 +1215,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('INITIALIZE YOUR PREMIUM EXPERIENCE', style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 1.5)),
+                Text('INITIALIZE YOUR PREMIUM EXPERIENCE', style: GoogleFonts.gelasio(fontSize: 9, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 1.5)),
                 const SizedBox(height: 24),
                 _InterestInput(hint: 'FULL NAME *', controller: _nameController),
                 const SizedBox(height: 16),
@@ -1234,7 +1234,7 @@ class _GuestProjectDetailScreenState extends ConsumerState<GuestProjectDetailScr
                       color: isDark ? Colors.white : Colors.black,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Center(child: Text('REGISTER INTEREST', style: GoogleFonts.ebGaramond(color: isDark ? Colors.black : Colors.white, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2))),
+                    child: Center(child: Text('REGISTER INTEREST', style: GoogleFonts.gelasio(color: isDark ? Colors.black : Colors.white, fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2))),
                   ),
                 ),
               ],
@@ -1389,7 +1389,7 @@ class _OverviewActionCard extends StatelessWidget {
               children: [
                 Text(
                   label.toUpperCase(), 
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     color: isDark ? Colors.white38 : Colors.black38, 
                     fontSize: 8, 
                     fontWeight: FontWeight.w900, 
@@ -1586,7 +1586,7 @@ class _SectionHeader extends StatelessWidget {
   const _SectionHeader({required this.title});
   @override
   Widget build(BuildContext context) {
-    return Text(title.toUpperCase(), style: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 2));
+    return Text(title.toUpperCase(), style: GoogleFonts.gelasio(fontSize: 10, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue, letterSpacing: 2));
   }
 }
 
@@ -1786,7 +1786,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('${overallProgress.toInt()}%', style: GoogleFonts.ebGaramond(fontSize: 22, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black)),
+                      Text('${overallProgress.toInt()}%', style: GoogleFonts.gelasio(fontSize: 22, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black)),
                       Text('OVERALL', style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 1)),
                     ],
                   ),
@@ -1799,7 +1799,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
             // Timeline Slider
             Row(
               children: [
-                Text('2026', style: GoogleFonts.ebGaramond(fontSize: 18, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue)),
+                Text('2026', style: GoogleFonts.gelasio(fontSize: 18, fontWeight: FontWeight.w900, color: M4Theme.premiumBlue)),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Stack(
@@ -1939,7 +1939,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('PHASE TRACKING', style: GoogleFonts.ebGaramond(fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 2)),
+                    Text('PHASE TRACKING', style: GoogleFonts.gelasio(fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 2)),
                     Text('REAL-TIME DEVELOPMENT STATUS', style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.bold, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 0.5)),
                   ],
                 ),
@@ -2406,7 +2406,7 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
                           onTap: () => setState(() => _currentStep--),
                           child: Text(
                             'BACK',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.gelasio(
                               color: Colors.white.withOpacity(0.6),
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
@@ -2434,7 +2434,7 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
                           ),
                           child: Text(
                             _currentStep == 3 ? 'CLOSE EXPLORER' : 'CONTINUE',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.gelasio(
                               color: Colors.black,
                               fontSize: 9,
                               fontWeight: FontWeight.w900,
@@ -2502,7 +2502,7 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
           const SizedBox(height: 16),
           Text(
             'DISCOVER THE UNSEEN',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               color: Colors.white70,
               fontSize: 9,
               fontWeight: FontWeight.w900,
@@ -2532,7 +2532,7 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
           children: [
             Text(
               'THE VISION',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 color: M4Theme.premiumBlue,
                 fontSize: 10,
                 fontWeight: FontWeight.w900,
@@ -2564,7 +2564,7 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
         children: [
           Text(
             'VISUAL DISCOVERY',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               color: Colors.white,
               fontSize: 12,
               fontWeight: FontWeight.w900,
@@ -2653,7 +2653,7 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
           Text(
             'YOUR JOURNEY STARTS HERE',
             textAlign: TextAlign.center,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               color: Colors.white,
               fontSize: 16,
               fontWeight: FontWeight.w900,
@@ -2685,7 +2685,7 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
               ),
               child: Text(
                 'BOOK VIDEO CALL',
-                style: GoogleFonts.ebGaramond(fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 2),
+                style: GoogleFonts.gelasio(fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 2),
               ),
             ),
           ),
@@ -2702,7 +2702,7 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
               ),
               child: Text(
                 'CONTINUE TO SITE VISIT',
-                style: GoogleFonts.ebGaramond(fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 2),
+                style: GoogleFonts.gelasio(fontSize: 11, fontWeight: FontWeight.w900, letterSpacing: 2),
               ),
             ),
           ),

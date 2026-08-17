@@ -229,7 +229,7 @@ class _InvestorInstallmentsScreenState
                       children: [
                         Text(
                           'INSTALLMENT SCHEDULE',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 20,
                             fontWeight: FontWeight.w900,
                             letterSpacing: -0.5,
@@ -239,7 +239,7 @@ class _InvestorInstallmentsScreenState
                         const SizedBox(height: 2),
                         Text(
                           'PAYMENT PLAN',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 8,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 2,
@@ -383,7 +383,7 @@ class _InvestorInstallmentsScreenState
       children: [
         Text(
           label,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 8,
             fontWeight: FontWeight.w900,
             letterSpacing: 1.5,
@@ -594,7 +594,7 @@ class _InvestorInstallmentsScreenState
             Text(
               'NO INSTALLMENTS FOUND',
               textAlign: TextAlign.center,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 11,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.5,
@@ -632,7 +632,7 @@ class _InvestorInstallmentsScreenState
             Text(
               'COULD NOT LOAD SCHEDULE',
               textAlign: TextAlign.center,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 11,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.5,
@@ -661,7 +661,7 @@ class _InvestorInstallmentsScreenState
                 ),
                 child: Text(
                   'RETRY',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.5,

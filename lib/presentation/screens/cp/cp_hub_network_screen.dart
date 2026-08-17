@@ -130,7 +130,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                       ),
                       TextButton(
                         onPressed: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Events coming soon'))),
-                        child: Text('VIEW ALL', style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1.6, color: purple)),
+                        child: Text('VIEW ALL', style: GoogleFonts.gelasio(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1.6, color: purple)),
                       ),
                     ],
                   ),
@@ -179,7 +179,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                                   minimumSize: const Size.fromHeight(36),
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                                 ),
-                                child: Text('RSVP NOW', style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2)),
+                                child: Text('RSVP NOW', style: GoogleFonts.gelasio(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2)),
                               ),
                             ],
                           ),
@@ -200,7 +200,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                       ),
                       TextButton(
                         onPressed: () => context.push('/cp/referral'),
-                        child: Text('VIEW ALL REFERRALS', style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1.6, color: purple)),
+                        child: Text('VIEW ALL REFERRALS', style: GoogleFonts.gelasio(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 1.6, color: purple)),
                       ),
                     ],
                   ),
@@ -326,7 +326,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
             value,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: GoogleFonts.ebGaramond(fontSize: 18, fontWeight: FontWeight.w900),
+            style: GoogleFonts.gelasio(fontSize: 18, fontWeight: FontWeight.w900),
           ),
           const SizedBox(height: 4),
           Text(

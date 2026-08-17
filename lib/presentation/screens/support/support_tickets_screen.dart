@@ -208,7 +208,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
               const SizedBox(height: 16),
               Text(
                 'LOG CATEGORY',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2,
@@ -323,7 +323,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
             children: [
               Text(
                 'OPERATIONAL LOGS',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 14,
                   fontWeight: FontWeight.w900,
                   color: scheme.onSurface,
@@ -333,7 +333,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
               const SizedBox(height: 2),
               Text(
                 'FULL AUDIT HISTORY',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 8,
                   fontWeight: FontWeight.w900,
                   color: scheme.onSurface.withValues(alpha: 0.68),
@@ -794,7 +794,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                           ),
                           child: Text(
                             '${log['id']} • ${(log['type'] as String).toUpperCase()}',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.gelasio(
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
                               color: const Color(0xFF666666),
@@ -828,7 +828,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                         const SizedBox(height: 36),
                         Text(
                           'LOG SUMMARY',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 11,
                             fontWeight: FontWeight.w900,
                             color: labelGrey,
@@ -860,7 +860,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                         const SizedBox(height: 36),
                         Text(
                           'STRUCTURAL DATA',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 11,
                             fontWeight: FontWeight.w900,
                             color: labelGrey,
@@ -951,7 +951,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                         ),
                         child: Text(
                           'BACK TO OPERATIONAL LOGS',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 11,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 1.5,
@@ -987,7 +987,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
         children: [
           Text(
             label,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 10,
               fontWeight: FontWeight.w900,
               color: const Color(0xFF6B6B6B),

@@ -282,16 +282,12 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                         width: 56,
                         height: 36,
                         decoration: BoxDecoration(
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.white
-                              : Colors.black,
+                          color: Colors.transparent,
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Icon(
-                          LucideIcons.moreHorizontal,
-                          color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.black
-                              : Colors.white,
+                          LucideIcons.menu,
+                          color: Theme.of(context).colorScheme.onSurface,
                           size: 24,
                         ),
                       ),
@@ -446,7 +442,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                                         ),
                                         child: Text(
                                           'ARTISTIC IMPRESSION',
-                                          style: GoogleFonts.ebGaramond(
+                                          style: GoogleFonts.gelasio(
                                             color: Colors.white,
                                             fontSize: 7,
                                             fontWeight: FontWeight.w900,
@@ -697,7 +693,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                           children: [
                             Text(
                               tab.toUpperCase(),
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                 color: isSelected
                                     ? (isDark ? Colors.white : Colors.black)
                                     : (isDark ? Colors.white : Colors.black)
@@ -1120,7 +1116,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                         children: [
                           Text(
                             'READ MORE',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.gelasio(
                               color: isDark ? Colors.black : Colors.white,
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
@@ -1225,7 +1221,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                     ),
                     child: Text(
                       'ARTISTIC IMPRESSION',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         color: Colors.white,
                         fontSize: 7,
                         fontWeight: FontWeight.w900,
@@ -1244,7 +1240,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                     children: [
                       Text(
                         'FEATURED PROPERTY',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           color: const Color(0xFFC4A484),
                           fontSize: 9,
                           fontWeight: FontWeight.w700,
@@ -1257,7 +1253,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                       // weight, text-4xl, tracking-tight.
                       Text(
                         (project['title'] ?? '').toString(),
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           color: Theme.of(context).colorScheme.onSurface,
                           fontSize: 36,
                           fontWeight: FontWeight.w300,
@@ -1362,7 +1358,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                     child: Center(
                       child: Text(
                         'READ MORE',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           color: isDark ? Colors.black : Colors.white,
                           fontWeight: FontWeight.w900,
                           fontSize: 12,
@@ -1414,7 +1410,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         Text(
           label,
           textAlign: TextAlign.center,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             color: isDark ? Colors.white : Colors.black,
             fontSize: 9,
             fontWeight: FontWeight.w800,

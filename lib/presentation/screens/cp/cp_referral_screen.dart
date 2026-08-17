@@ -92,7 +92,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                     child: Text(
                       'REFERRAL & REWARDS',
                       textAlign: TextAlign.center,
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 16,
                         fontWeight: FontWeight.w900,
                         color: scheme.onSurface,
@@ -133,7 +133,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                             // ─── Active Referrals ────────────────
                             Text(
                               'ACTIVE REFERRALS',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 9,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 2,
@@ -193,7 +193,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                 // Label
                 Text(
                   'WALLET BALANCE',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -209,7 +209,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                   children: [
                     Text(
                       _formatNumber(pts),
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 48,
                         fontWeight: FontWeight.w900,
                         color: scheme.onSurface,
@@ -221,7 +221,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                       padding: const EdgeInsets.only(bottom: 4),
                       child: Text(
                         'PTS',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 18,
                           fontWeight: FontWeight.w900,
                           color: scheme.onSurface.withValues(alpha: 0.68),
@@ -237,7 +237,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                 // Value line
                 Text(
                   'VALUE: AED ${_formatNumber(pts)}',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -277,7 +277,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                       children: [
                         Text(
                           'REDEEM NOW',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 11,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 2,
@@ -364,7 +364,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
             const SizedBox(height: 14),
             Text(
               label,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 9,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.5,
@@ -393,7 +393,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
         child: Center(
           child: Text(
             'NO REFERRALS YET',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 10,
               fontWeight: FontWeight.w900,
               letterSpacing: 2,
@@ -453,7 +453,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                   const SizedBox(height: 2),
                   Text(
                     project.toUpperCase(),
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 8,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1.5,
@@ -535,7 +535,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                   // Title
                   Text(
                     'NEW\nREFERRAL',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 24,
                       fontWeight: FontWeight.w900,
                       color: scheme.onSurface,
@@ -545,7 +545,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                   const SizedBox(height: 8),
                   Text(
                     'REFER & EARN REWARDS',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 9,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 2,
@@ -684,7 +684,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                           ? SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: scheme.surface))
                           : Text(
                               'SUBMIT REFERRAL',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 2,
@@ -706,7 +706,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
   Widget _buildFormLabel(String text, ColorScheme scheme) {
     return Text(
       text,
-      style: GoogleFonts.ebGaramond(
+      style: GoogleFonts.gelasio(
         fontSize: 9,
         fontWeight: FontWeight.w900,
         letterSpacing: 1.5,

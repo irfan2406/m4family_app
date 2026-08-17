@@ -115,7 +115,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                 const SizedBox(height: 40),
                 Text(
                   'REQUEST REGISTERED',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 24,
                     fontWeight: FontWeight.w900,
                     letterSpacing: -1,
@@ -125,7 +125,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                 Text(
                   'Your inquiry has been secured. Our premium sales associate will contact you shortly with the institutional brochure.',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
                     color: isDark ? Colors.white38 : Colors.black38,
                     fontWeight: FontWeight.w900,
@@ -154,7 +154,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                     child: Center(
                       child: Text(
                         'RETURN TO PROJECT',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           color: isDark ? Colors.black : Colors.white,
                           fontWeight: FontWeight.w900,
                           fontSize: 10,
@@ -204,7 +204,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
             ),
             Text(
               'INSTITUTIONAL PROTOCOL',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 8,
                 color: (isDark ? Colors.white : Colors.black).withOpacity(0.68),
                 fontWeight: FontWeight.w900,
@@ -287,7 +287,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                           children: [
                             Text(
                               'PRIORITY INTEREST',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 1.5,
@@ -380,7 +380,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
                               children: [
                                 Text(
                                   'AUTHORIZE INQUIRY',
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.gelasio(
                                     color: isDark ? Colors.black : Colors.white,
                                     fontWeight: FontWeight.w900,
                                     fontSize: 11,
@@ -431,7 +431,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
       padding: const EdgeInsets.only(left: 6, bottom: 12),
       child: Text(
         label,
-        style: GoogleFonts.ebGaramond(
+        style: GoogleFonts.gelasio(
           fontSize: 9,
           fontWeight: FontWeight.w900,
           color: (isDark ? Colors.white : Colors.black).withOpacity(0.6),

@@ -143,7 +143,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
               // header — just the title.
               Text(
                 'SUPPORT HUB',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
                   color: scheme.onSurface,
@@ -164,7 +164,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
       children: [
         Text(
           'SUPPORT MATRIX',
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 9,
             fontWeight: FontWeight.w900,
             color: scheme.onSurface,
@@ -239,7 +239,7 @@ class _SupportScreenState extends ConsumerState<SupportScreen> {
           children: [
             Text(
               'OPERATIONAL LOGS',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 10,
                 fontWeight: FontWeight.w900,
                 color: scheme.onSurface,

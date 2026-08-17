@@ -112,7 +112,7 @@ class CpBookingStartScreen extends ConsumerWidget {
                   // Header
                   Text(
                     'HOW CAN\nWE HELP?',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 36,
                       fontWeight: FontWeight.w900,
                       color: textPrimary,
@@ -126,7 +126,7 @@ class CpBookingStartScreen extends ConsumerWidget {
                   // Subtitle
                   Text(
                     'INTERESTED IN ${projectTitle.toUpperCase()}?\nCHOOSE HOW YOU\'D LIKE TO PROCEED.',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 10,
                       color: textPrimary.withValues(alpha: 0.68),
                       fontWeight: FontWeight.w900,

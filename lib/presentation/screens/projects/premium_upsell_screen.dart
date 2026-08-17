@@ -123,7 +123,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
                             Text(
                               'UNLOCK ${featureTitle.toUpperCase()}',
                               textAlign: TextAlign.center,
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                                 color: textPrimary,
@@ -159,7 +159,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
                         Text(
                           'ELITE MEMBERSHIP BENEFITS',
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 9,
                             fontWeight: FontWeight.bold,
                             color: muted,
@@ -262,7 +262,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
                                 children: [
                                   Text(
                                     'LIFETIME PASS',
-                                    style: GoogleFonts.ebGaramond(
+                                    style: GoogleFonts.gelasio(
                                       fontSize: 9,
                                       fontWeight: FontWeight.bold,
                                       color: subtle,
@@ -276,7 +276,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
                                     children: [
                                       Text(
                                         '₹4,999',
-                                        style: GoogleFonts.ebGaramond(
+                                        style: GoogleFonts.gelasio(
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold,
                                           color: bg, // contrasts with foreground container
@@ -316,7 +316,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
                                       ),
                                       child: Text(
                                         'UPGRADE TO ELITE',
-                                        style: GoogleFonts.ebGaramond(
+                                        style: GoogleFonts.gelasio(
                                           fontSize: 10,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.white,
@@ -347,7 +347,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
                               child: Text(
                                 'MAYBE LATER',
                                 textAlign: TextAlign.center,
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.gelasio(
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,
                                   color: subtle,

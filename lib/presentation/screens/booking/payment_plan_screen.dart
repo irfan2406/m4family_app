@@ -197,7 +197,7 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
                             children: [
                               Text(
                                 'COMPARE PLANS',
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.gelasio(
                                   fontSize: 10,
                                   fontWeight: FontWeight.w900,
                                   letterSpacing: 1.5,
@@ -308,7 +308,7 @@ class _PaymentPlanCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       (plan['name'] ?? 'Plan').toString().toUpperCase(),
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 26,
                         fontWeight: FontWeight.w900,
                         color: isDark ? Colors.white : Colors.black,

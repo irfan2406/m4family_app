@@ -111,7 +111,7 @@ class ProjectListScreen extends ConsumerWidget {
                       children: [
                         Text(
                           'REFINE SEARCH',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 22,
                             fontWeight: FontWeight.w900,
                             color: Theme.of(context).colorScheme.onSurface,
@@ -249,7 +249,7 @@ class ProjectListScreen extends ConsumerWidget {
                         ),
                         child: Text(
                           'APPLY SEARCH MATRIX',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 12,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 1.5,
@@ -343,7 +343,7 @@ class ProjectListScreen extends ConsumerWidget {
                                   'DISCOVER CURATED LUXURY',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.gelasio(
                                     fontSize: 8,
                                     fontWeight: FontWeight.w700,
                                     color: Theme.of(
@@ -357,7 +357,7 @@ class ProjectListScreen extends ConsumerWidget {
                                   'DISCOVER',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.gelasio(
                                     fontSize: 8,
                                     fontWeight: FontWeight.w700,
                                     color: Theme.of(
@@ -656,7 +656,7 @@ class ProjectListScreen extends ConsumerWidget {
                               ),
                               child: Text(
                                 'RETRY',
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.gelasio(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w900,
                                   color: isDark ? Colors.black : Colors.white,
@@ -750,7 +750,7 @@ class _ProjectGridItem extends StatelessWidget {
                 ),
                 child: Text(
                   'ARTISTIC IMPRESSION',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 7,
                     fontWeight: FontWeight.w900,
                     color: Colors.white.withOpacity(0.6),
@@ -778,7 +778,7 @@ class _ProjectGridItem extends StatelessWidget {
                         (project['title'] ?? 'M4 PROJECT')
                             .toString()
                             .toUpperCase(),
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 20,
                           fontWeight: FontWeight.w800,
                           color: Colors.white,
@@ -799,7 +799,7 @@ class _ProjectGridItem extends StatelessWidget {
                           Expanded(
                             child: Text(
                               locationLabel.toUpperCase(),
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 9,
                                 color: Colors.white70,
                                 fontWeight: FontWeight.w900,
@@ -1002,7 +1002,7 @@ class _FilterSection extends StatelessWidget {
       children: [
         Text(
           title,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 10,
             fontWeight: FontWeight.w900,
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.75),

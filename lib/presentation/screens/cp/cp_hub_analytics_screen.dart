@@ -85,7 +85,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
           : ListView(
               padding: const EdgeInsets.fromLTRB(20, 10, 20, 24),
               children: [
-                Text('PORTFOLIO PERFORMANCE', style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2.4, color: scheme.onSurface.withValues(alpha: 0.68))),
+                Text('PORTFOLIO PERFORMANCE', style: GoogleFonts.gelasio(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2.4, color: scheme.onSurface.withValues(alpha: 0.68))),
                 const SizedBox(height: 14),
                 _rangeTabs(scheme, selected: _range, onPick: (v) => setState(() => _range = v)),
                 const SizedBox(height: 16),
@@ -125,7 +125,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('BACKEND (CP PERFORMANCE)', style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2, color: scheme.onSurface.withValues(alpha: 0.68))),
+                        Text('BACKEND (CP PERFORMANCE)', style: GoogleFonts.gelasio(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2, color: scheme.onSurface.withValues(alpha: 0.68))),
                         const SizedBox(height: 10),
                         _kv('Total leads', '${_data!['totalLeads'] ?? 0}', scheme),
                         _kv('Bookings / conversions', '${_data!['totalConversions'] ?? 0}', scheme),
@@ -299,7 +299,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                   child: Text(
                     _monthShort((m['_id'] ?? '').toString()),
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.8, color: scheme.onSurface.withValues(alpha: 0.68)),
+                    style: GoogleFonts.gelasio(fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.8, color: scheme.onSurface.withValues(alpha: 0.68)),
                   ),
                 ),
             ],

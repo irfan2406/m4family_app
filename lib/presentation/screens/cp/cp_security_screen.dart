@@ -225,7 +225,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
           const SizedBox(height: 16),
           Text(
             'Account Protected',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 18,
               fontWeight: FontWeight.w700,
               color: textPrimary,
@@ -253,7 +253,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
   Widget _sectionLabel(String label, Color muted) {
     return Text(
       label,
-      style: GoogleFonts.ebGaramond(
+      style: GoogleFonts.gelasio(
         fontSize: 10,
         fontWeight: FontWeight.bold,
         letterSpacing: 2,
@@ -452,7 +452,7 @@ class _CpSecurityScreenState extends ConsumerState<CpSecurityScreen> {
           ),
           child: Text(
             'SIGN OUT OF ALL DEVICES',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 10,
               fontWeight: FontWeight.bold,
               letterSpacing: 2,

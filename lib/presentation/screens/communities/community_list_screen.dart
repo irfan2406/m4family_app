@@ -100,7 +100,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                         children: [
                           Text(
                             'M4 FAMILY',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.gelasio(
                               color: isDark ? Colors.white : Colors.black,
                               fontSize: 18,
                               fontWeight: FontWeight.w900,
@@ -109,7 +109,7 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                           ),
                           Text(
                             'DEVELOPMENTS',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.gelasio(
                               color: (isDark ? Colors.white : Colors.black)
                                   .withOpacity(0.6),
                               fontSize: 8,
@@ -129,12 +129,12 @@ class _CommunityListScreenState extends ConsumerState<CommunityListScreen> {
                         height: 36,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: isDark ? Colors.white : Colors.black,
+                          color: Colors.transparent,
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Icon(
-                          LucideIcons.moreHorizontal,
-                          color: isDark ? Colors.black : Colors.white,
+                          LucideIcons.menu,
+                          color: Theme.of(context).colorScheme.onSurface,
                           size: 18,
                         ),
                       ),

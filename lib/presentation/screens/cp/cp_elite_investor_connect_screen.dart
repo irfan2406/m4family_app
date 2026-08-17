@@ -93,7 +93,7 @@ class _CpEliteInvestorConnectScreenState extends ConsumerState<CpEliteInvestorCo
             ),
             Text(
               'INSTITUTIONAL PORTFOLIO ENGINE',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 8,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 2,
@@ -116,7 +116,7 @@ class _CpEliteInvestorConnectScreenState extends ConsumerState<CpEliteInvestorCo
                     children: [
                       Text(
                         'PERFORMANCE METRICS',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 4,
@@ -131,7 +131,7 @@ class _CpEliteInvestorConnectScreenState extends ConsumerState<CpEliteInvestorCo
                         ),
                         child: Text(
                           'REAL-TIME DATA',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 8,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 1.5,
@@ -149,7 +149,7 @@ class _CpEliteInvestorConnectScreenState extends ConsumerState<CpEliteInvestorCo
                   // ── High-Yield Ventures ─────────────────────────────────
                   Text(
                     'HIGH-YIELD VENTURES',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 10,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 4,
@@ -239,7 +239,7 @@ class _CpEliteInvestorConnectScreenState extends ConsumerState<CpEliteInvestorCo
                   children: [
                     Text(
                       s.label.toUpperCase(),
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 11,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 3,
@@ -253,7 +253,7 @@ class _CpEliteInvestorConnectScreenState extends ConsumerState<CpEliteInvestorCo
                         Flexible(
                           child: Text(
                             s.value.toUpperCase(),
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.gelasio(
                               fontSize: 28,
                               fontWeight: FontWeight.w900,
                               height: 1,
@@ -362,7 +362,7 @@ class _CpEliteInvestorConnectScreenState extends ConsumerState<CpEliteInvestorCo
                         ),
                         child: Text(
                           o.roi.toUpperCase(),
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 1.5,
@@ -382,7 +382,7 @@ class _CpEliteInvestorConnectScreenState extends ConsumerState<CpEliteInvestorCo
                   children: [
                     Text(
                       o.title.toUpperCase(),
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 22,
                         fontWeight: FontWeight.w900,
                         letterSpacing: -1,
@@ -398,7 +398,7 @@ class _CpEliteInvestorConnectScreenState extends ConsumerState<CpEliteInvestorCo
                         Flexible(
                           child: Text(
                             o.type.toUpperCase(),
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.gelasio(
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
                               letterSpacing: 1.5,
@@ -421,7 +421,7 @@ class _CpEliteInvestorConnectScreenState extends ConsumerState<CpEliteInvestorCo
                             children: [
                               Text(
                                 'INSTITUTIONAL ENTRY',
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.gelasio(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w900,
                                   letterSpacing: 3,
@@ -431,7 +431,7 @@ class _CpEliteInvestorConnectScreenState extends ConsumerState<CpEliteInvestorCo
                               const SizedBox(height: 6),
                               Text(
                                 o.minTicket.toUpperCase(),
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.gelasio(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w900,
                                   letterSpacing: -1,
@@ -531,7 +531,7 @@ class _CpEliteInvestorConnectScreenState extends ConsumerState<CpEliteInvestorCo
                           children: [
                             Text(
                               'WEALTH CONCIERGE',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: -1,
@@ -542,7 +542,7 @@ class _CpEliteInvestorConnectScreenState extends ConsumerState<CpEliteInvestorCo
                             const SizedBox(height: 6),
                             Text(
                               'GLOBAL STRATEGY DESK',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 1.5,
@@ -571,7 +571,7 @@ class _CpEliteInvestorConnectScreenState extends ConsumerState<CpEliteInvestorCo
                       ),
                       child: Text(
                         'SCHEDULE PROTOCOL CALL',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 3,
@@ -633,7 +633,7 @@ class _CommitButtonState extends State<_CommitButton> {
           ),
           child: Text(
             'COMMIT FUNDS',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 10,
               fontWeight: FontWeight.w900,
               letterSpacing: 2,

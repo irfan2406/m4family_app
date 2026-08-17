@@ -823,7 +823,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         ),
                         child: Text(
                           status,
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 8,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 2,
@@ -908,7 +908,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         // Title + location (dark, below hero — web parity)
                         Text(
                           title.toUpperCase(),
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 22,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 0.4,
@@ -1249,7 +1249,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           Text(
             label.toUpperCase(),
             textAlign: TextAlign.center,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 8,
               fontWeight: FontWeight.w900,
               letterSpacing: 1.5,
@@ -1291,7 +1291,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         const SizedBox(width: 10),
         Text(
           title.toUpperCase(),
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 13,
             fontWeight: FontWeight.w900,
             letterSpacing: 3,
@@ -1524,7 +1524,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               children: [
                 Text(
                   'ESTIMATED COMPLETION DATE',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 9,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 2,
@@ -1534,7 +1534,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                 const SizedBox(height: 6),
                 Text(
                   est,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 28,
                     fontWeight: FontWeight.w900,
                     letterSpacing: -1,
@@ -1594,7 +1594,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                       children: [
                         Text(
                           '$pct%',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 22,
                             fontWeight: FontWeight.w900,
                           ),
@@ -1836,7 +1836,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       children: [
         Text(
           '2026',
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 20,
             fontWeight: FontWeight.w900,
             color: accent,
@@ -1895,7 +1895,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               children: [
                 Text(
                   'PHASE TRACKING',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 13,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -2087,7 +2087,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
         children: [
           Text(
             'Registration',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 18,
               fontWeight: FontWeight.w600,
             ),
@@ -2197,7 +2197,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                   )
                 : Text(
                     'PROCEED',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontWeight: FontWeight.w900,
                       letterSpacing: 3,
                     ),
@@ -2274,7 +2274,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               ),
               child: Text(
                 'BOOK VISIT',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontWeight: FontWeight.w900,
                   fontSize: 12,
                   letterSpacing: 2,
@@ -2369,7 +2369,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
               icon: const Icon(LucideIcons.mapPin, size: 16),
               label: Text(
                 'VIEW ON MAPS',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 9,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2,
@@ -2597,7 +2597,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                             )
                           : Text(
                               'SUBMIT',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 3,
                               ),
@@ -2678,7 +2678,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     final isLight = scheme.brightness == Brightness.light;
     return InputDecoration(
       hintText: hint,
-      hintStyle: GoogleFonts.ebGaramond(
+      hintStyle: GoogleFonts.gelasio(
         fontSize: 10,
         fontWeight: FontWeight.w900,
         letterSpacing: 1.8,

@@ -132,7 +132,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
           ),
           Text(
             'REWARDS HUB',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               color: foreground,
               fontSize: 14,
               fontWeight: FontWeight.w900,
@@ -180,7 +180,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
               children: [
                 Text(
                   'M4 REWARD POINTS',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     color: cardFg.withOpacity(0.4),
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
@@ -193,7 +193,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                   children: [
                     Text(
                       NumberFormat('#,###').format(_walletBalance),
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         color: cardFg,
                         fontSize: 48,
                         fontWeight: FontWeight.w900,
@@ -333,7 +333,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
       children: [
         Text(
           title,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             color: foreground.withOpacity(0.3),
             fontSize: 10,
             fontWeight: FontWeight.w800,
@@ -353,7 +353,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
           padding: const EdgeInsets.symmetric(vertical: 40),
           child: Text(
             'NO ACTIVE LEADS',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
               fontSize: 10,
               fontWeight: FontWeight.w900,
@@ -457,7 +457,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
           padding: const EdgeInsets.symmetric(vertical: 40),
           child: Text(
             'NO RECENT HISTORY',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
               fontSize: 10,
               fontWeight: FontWeight.w900,
@@ -564,12 +564,12 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                 children: [
                   Text(
                     'REFER FRIEND',
-                    style: GoogleFonts.ebGaramond(color: foreground, fontSize: 24, fontWeight: FontWeight.w900),
+                    style: GoogleFonts.gelasio(color: foreground, fontSize: 24, fontWeight: FontWeight.w900),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'ADD TO YOUR SUCCESS MATRIX',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       color: foreground.withOpacity(0.3),
                       fontSize: 9,
                       fontWeight: FontWeight.w900,
@@ -738,7 +738,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                         ? CircularProgressIndicator(color: theme.colorScheme.surface, strokeWidth: 2)
                         : Text(
                             'SUBMIT',
-                            style: GoogleFonts.ebGaramond(color: theme.colorScheme.surface, fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 2),
+                            style: GoogleFonts.gelasio(color: theme.colorScheme.surface, fontSize: 12, fontWeight: FontWeight.w900, letterSpacing: 2),
                           ),
                     ),
                   ),

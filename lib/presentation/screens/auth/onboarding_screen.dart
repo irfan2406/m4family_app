@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
+import 'package:m4_mobile/presentation/screens/home/guest_dashboard_screen.dart'
+    show prefetchGuestHome;
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -24,6 +26,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> with Single
     // parallel with the animation. By the time we navigate to /home, the auth
     // state is already resolved and the home renders instantly — no extra wait.
     ref.read(authProvider);
+    // Also warm the guest catalog during the splash animation so the guest
+    // home shows data immediately instead of a spinner. Fire-and-forget; the
+    // dashboard skips its own refetch when it finds this fresh prefetch, so no
+    // extra API calls are made overall. Skipped automatically for signed-in
+    // users.
+    prefetchGuestHome(ref);
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1800),

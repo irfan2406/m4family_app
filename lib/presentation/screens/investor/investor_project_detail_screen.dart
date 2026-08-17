@@ -303,7 +303,7 @@ class _InvestorProjectDetailScreenState
                       children: [
                         Text(
                           headerLabel,
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                               fontSize: 30,
                               fontWeight: FontWeight.w900,
                               color: isDark ? Colors.white : Colors.black,
@@ -588,7 +588,7 @@ class _InvestorProjectDetailScreenState
                             child: Center(
                               child: Text(
                                 _submitting ? 'SUBMITTING...' : ctaLabel,
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.gelasio(
                                     color: isDark
                                         ? Colors.black
                                         : Colors.white,
@@ -741,7 +741,7 @@ class _InvestorProjectDetailScreenState
                           color: isDark ? Colors.white : Colors.black,
                           borderRadius: BorderRadius.circular(30)),
                       child: Text('GO BACK',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
                               color: isDark ? Colors.black : Colors.white,
@@ -853,7 +853,7 @@ class _InvestorProjectDetailScreenState
                 Text(
                   (project['title']?.toString() ?? 'Project Name')
                       .toUpperCase(),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                       color: isDark ? Colors.white : Colors.black,
                       fontSize: 32,
                       height: 1.0,
@@ -1352,7 +1352,7 @@ class _InvestorProjectDetailScreenState
                                   letterSpacing: 1)),
                           const SizedBox(height: 12),
                           Text(estimated.toUpperCase(),
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                   fontSize: 34,
                                   fontWeight: FontWeight.w900,
                                   height: 1.0,
@@ -1412,7 +1412,7 @@ class _InvestorProjectDetailScreenState
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text('${overall.toInt()}%',
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.gelasio(
                                       fontSize: 20,
                                       fontWeight: FontWeight.w900,
                                       color: isDark
@@ -1775,7 +1775,7 @@ class _InvestorProjectDetailScreenState
                         borderRadius: BorderRadius.circular(20)),
                     child: Center(
                       child: Text('INVEST IN THIS PROJECT NOW',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                               fontSize: 11,
                               fontWeight: FontWeight.w900,
                               color: isDark ? Colors.black : Colors.white,
@@ -1881,7 +1881,7 @@ class _InvestorProjectDetailScreenState
             width: 40, height: 1.5, color: isDark ? Colors.white : Colors.black),
         const SizedBox(width: 16),
         Text(title.toUpperCase(),
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
                 fontSize: 12,
                 fontWeight: FontWeight.w900,
                 color: isDark ? Colors.white : Colors.black,
@@ -2096,7 +2096,7 @@ class _ActionCard extends StatelessWidget {
               children: [
                 Text(label.toUpperCase(),
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                         color: isDark ? Colors.white38 : Colors.black38,
                         fontSize: 8,
                         fontWeight: FontWeight.w900,

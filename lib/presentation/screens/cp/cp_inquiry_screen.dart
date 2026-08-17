@@ -281,7 +281,7 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
                         )
                       : Text(
                           'SUBMIT INTEREST',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontWeight: FontWeight.w800,
                             fontSize: 13,
                             letterSpacing: 2,

@@ -234,7 +234,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
           ),
           child: Text(
             'FY $y',
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 10,
               fontWeight: FontWeight.w900,
               letterSpacing: 1.6,
@@ -278,7 +278,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
             children: [
               Text(
                 'TOTAL TAX DEDUCTED',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 9,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 1.6,
@@ -288,7 +288,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
               const SizedBox(height: 10),
               Text(
                 _formatAed(total),
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 26,
                   fontWeight: FontWeight.w900,
                   letterSpacing: -0.5,

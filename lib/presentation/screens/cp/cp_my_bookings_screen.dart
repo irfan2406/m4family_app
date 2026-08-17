@@ -350,7 +350,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                 ),
                 child: Text(
                   status.toUpperCase(),
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 9,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.8,
@@ -447,7 +447,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                         'MILESTONE PAYMENT PROGRESSION',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 9,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 2.0,
@@ -561,7 +561,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                   ),
                   child: Text(
                     'CP-TRK / ${id.substring(id.length - (id.length >= 8 ? 8 : id.length)).toUpperCase()}',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 8,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1.5,
@@ -592,7 +592,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
 
     final labelW = Text(
       label,
-      style: GoogleFonts.ebGaramond(
+      style: GoogleFonts.gelasio(
         fontSize: 9,
         fontWeight: FontWeight.w900,
         letterSpacing: 2.4,
@@ -846,7 +846,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                                 const SizedBox(height: 4),
                                 Text(
                                   'STATUS: ACTIVE TRACKING',
-                                  style: GoogleFonts.ebGaramond(
+                                  style: GoogleFonts.gelasio(
                                     fontSize: 9,
                                     fontWeight: FontWeight.w900,
                                     letterSpacing: 2.8,
@@ -904,7 +904,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                                           Text(
                                             'NO ACTIVE BOOKINGS DISCOVERED YET',
                                             textAlign: TextAlign.center,
-                                            style: GoogleFonts.ebGaramond(
+                                            style: GoogleFonts.gelasio(
                                               fontSize: 10,
                                               fontWeight: FontWeight.w900,
                                               letterSpacing: 2.8,
@@ -918,7 +918,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                                                 context.push('/cp/visits'),
                                             child: Text(
                                               'CHECK SCHEDULED VISITS',
-                                              style: GoogleFonts.ebGaramond(
+                                              style: GoogleFonts.gelasio(
                                                 fontSize: 10,
                                                 fontWeight: FontWeight.w900,
                                                 letterSpacing: 2.4,

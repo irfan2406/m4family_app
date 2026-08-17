@@ -90,7 +90,7 @@ class _DeactivateAccountScreenState extends ConsumerState<DeactivateAccountScree
             ),
             Text(
               'PURGE PROTOCOL',
-              style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), color: isDark ? Colors.white24 : Colors.black26, fontSize: 8, fontWeight: FontWeight.w800, letterSpacing: 2),
+              style: GoogleFonts.gelasio(textStyle: const TextStyle(inherit: true), color: isDark ? Colors.white24 : Colors.black26, fontSize: 8, fontWeight: FontWeight.w800, letterSpacing: 2),
             ),
           ],
         ),
@@ -154,7 +154,7 @@ class _DeactivateAccountScreenState extends ConsumerState<DeactivateAccountScree
                 children: [
                   Text(
                     'PURGE SCOPE',
-                    style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), color: isDark ? Colors.white38 : Colors.black38, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.5),
+                    style: GoogleFonts.gelasio(textStyle: const TextStyle(inherit: true), color: isDark ? Colors.white38 : Colors.black38, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.5),
                   ),
                   const SizedBox(height: 16),
                   ...[
@@ -198,22 +198,22 @@ class _DeactivateAccountScreenState extends ConsumerState<DeactivateAccountScree
                 children: [
                   Text(
                     'CONFIRMATION',
-                    style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), color: isDark ? Colors.white38 : Colors.black38, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.5),
+                    style: GoogleFonts.gelasio(textStyle: const TextStyle(inherit: true), color: isDark ? Colors.white38 : Colors.black38, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.5),
                   ),
                   const SizedBox(height: 16),
                   
                   Text(
                     'TYPE DELETE',
-                    style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), color: const Color(0xFFC65B46), fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.5),
+                    style: GoogleFonts.gelasio(textStyle: const TextStyle(inherit: true), color: const Color(0xFFC65B46), fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.5),
                   ),
                   const SizedBox(height: 8),
                   TextField(
                     controller: _confirmController,
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), color: const Color(0xFFC65B46), fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 4),
+                    style: GoogleFonts.gelasio(textStyle: const TextStyle(inherit: true), color: const Color(0xFFC65B46), fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 4),
                     decoration: InputDecoration(
                       hintText: "DELETE",
-                      hintStyle: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), color: const Color(0xFFC65B46).withOpacity(0.1), fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 4),
+                      hintStyle: GoogleFonts.gelasio(textStyle: const TextStyle(inherit: true), color: const Color(0xFFC65B46).withOpacity(0.1), fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 4),
                       filled: true,
                       fillColor: (isDark ? Colors.white : Colors.black).withOpacity(0.02),
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
@@ -274,7 +274,7 @@ class _DeactivateAccountScreenState extends ConsumerState<DeactivateAccountScree
                       ),
                       child: _isDeleting 
                         ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                        : Text('EXECUTE PURGE', style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2)),
+                        : Text('EXECUTE PURGE', style: GoogleFonts.gelasio(textStyle: const TextStyle(inherit: true), fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 2)),
                     ),
                   ),
                 ],
@@ -286,7 +286,7 @@ class _DeactivateAccountScreenState extends ConsumerState<DeactivateAccountScree
               onPressed: () => context.pop(),
               child: Text(
                 'ABORT PROTOCOL',
-                style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), color: isDark ? Colors.white30 : Colors.black26, fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2),
+                style: GoogleFonts.gelasio(textStyle: const TextStyle(inherit: true), color: isDark ? Colors.white30 : Colors.black26, fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2),
               ),
             ),
           ],

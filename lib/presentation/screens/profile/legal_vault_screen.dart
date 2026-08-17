@@ -105,7 +105,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
             child: Center(
               child: Text(
                 'LEGAL VAULT',
-                style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), 
+                style: GoogleFonts.gelasio(textStyle: const TextStyle(inherit: true), 
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white : Colors.black,
@@ -155,7 +155,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
               children: [
                 Text(
                   'ENCRYPTED STORAGE',
-                  style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), 
+                  style: GoogleFonts.gelasio(textStyle: const TextStyle(inherit: true), 
                     fontSize: 8,
                     fontWeight: FontWeight.w800,
                     color: isDark ? Colors.white38 : Colors.black38,
@@ -276,7 +276,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
         const SizedBox(height: 24),
         Text(
           'NO DOCUMENTS FOUND',
-          style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), 
+          style: GoogleFonts.gelasio(textStyle: const TextStyle(inherit: true), 
             fontSize: 10,
             fontWeight: FontWeight.w800,
             color: (isDark ? Colors.white : Colors.black).withOpacity(0.2),
@@ -318,12 +318,12 @@ class _DocumentDetailSheet extends StatelessWidget {
           Text(
             (doc['name'] ?? 'DOCUMENT').toUpperCase(),
             textAlign: TextAlign.center,
-            style: GoogleFonts.ebGaramond(fontSize: 18, fontWeight: FontWeight.w800, color: isDark ? Colors.white : Colors.black),
+            style: GoogleFonts.gelasio(fontSize: 18, fontWeight: FontWeight.w800, color: isDark ? Colors.white : Colors.black),
           ),
           const SizedBox(height: 8),
           Text(
             'SECURE DOCUMENT ACCESS',
-            style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w800, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 2),
+            style: GoogleFonts.gelasio(fontSize: 9, fontWeight: FontWeight.w800, color: isDark ? Colors.white38 : Colors.black38, letterSpacing: 2),
           ),
           const SizedBox(height: 32),
           _DetailRow(label: 'ADDED ON', value: DateFormat('d MMM yyyy').format(DateTime.parse(doc['createdAt'])).toUpperCase(), isDark: isDark, icon: LucideIcons.calendar),
@@ -408,7 +408,7 @@ class _ActionButton extends StatelessWidget {
       child: ElevatedButton.icon(
         onPressed: onTap,
         icon: Icon(icon, size: 18),
-        label: Text(label, style: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
+        label: Text(label, style: GoogleFonts.gelasio(fontSize: 10, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
         style: ElevatedButton.styleFrom(
           backgroundColor: isPrimary ? (isDark ? Colors.white : Colors.black) : (isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF)),
           foregroundColor: isPrimary ? (isDark ? Colors.black : Colors.white) : (isDark ? Colors.white54 : Colors.black54),

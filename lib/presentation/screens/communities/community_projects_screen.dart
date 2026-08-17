@@ -145,7 +145,7 @@ class _CommunityProjectsListScreenState
                               (_community?['title'] ?? '')
                                   .toString()
                                   .toUpperCase(),
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 30,
                                 fontWeight: FontWeight.w900,
                                 color: textPrimary,
@@ -156,7 +156,7 @@ class _CommunityProjectsListScreenState
                             const SizedBox(height: 10),
                             Text(
                               'DISCOVER ALL PROJECTS IN THIS COMMUNITY',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w700,
                                 color: muted,
@@ -269,7 +269,7 @@ class _GlassHeaderDelegate extends SliverPersistentHeaderDelegate {
                     const SizedBox(width: 8),
                     Text(
                       'BACK',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
                         color: muted,
@@ -286,7 +286,7 @@ class _GlassHeaderDelegate extends SliverPersistentHeaderDelegate {
                 children: [
                   Text(
                     'M4 FAMILY',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 18,
                       fontWeight: FontWeight.w900,
                       color: textPrimary,
@@ -297,7 +297,7 @@ class _GlassHeaderDelegate extends SliverPersistentHeaderDelegate {
                   const SizedBox(height: 4),
                   Text(
                     'COMMUNITY PORTFOLIO',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 8,
                       fontWeight: FontWeight.w700,
                       color: muted,
@@ -435,7 +435,7 @@ class _ProjectCard extends StatelessWidget {
                   ),
                   child: Text(
                     status.toUpperCase(),
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 9,
                       fontWeight: FontWeight.w900,
                       color: Colors.white,
@@ -455,7 +455,7 @@ class _ProjectCard extends StatelessWidget {
                 children: [
                   Text(
                     (project['title'] ?? '').toString().toUpperCase(),
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 24,
                       fontWeight: FontWeight.w900,
                       color: Colors.white,
@@ -477,7 +477,7 @@ class _ProjectCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           location.toUpperCase(),
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 8,
                             fontWeight: FontWeight.w700,
                             color: Colors.white.withValues(alpha: 0.6),
@@ -500,7 +500,7 @@ class _ProjectCard extends StatelessWidget {
                     const SizedBox(height: 14),
                     Text(
                       'STARTING FROM',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 7,
                         fontWeight: FontWeight.w900,
                         color: Colors.white.withValues(alpha: 0.68),
@@ -529,7 +529,7 @@ class _ProjectCard extends StatelessWidget {
                 left: 28,
                 child: Text(
                   '* ARTISTIC IMPRESSION',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 6,
                     fontWeight: FontWeight.w700,
                     color: Colors.white.withValues(alpha: 0.3),
@@ -599,7 +599,7 @@ class _EmptyState extends StatelessWidget {
           Text(
             'NO PROJECTS FOUND IN THIS COMMUNITY',
             textAlign: TextAlign.center,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 12,
               fontWeight: FontWeight.w900,
               color: muted,
@@ -622,7 +622,7 @@ class _EmptyState extends StatelessWidget {
             ),
             child: Text(
               'RETURN',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 10,
                 fontWeight: FontWeight.w900,
                 color: isDark ? Colors.white : Colors.black,
@@ -667,7 +667,7 @@ class _ErrorState extends StatelessWidget {
             Text(
               'UNABLE TO LOAD PROJECTS',
               textAlign: TextAlign.center,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 12,
                 fontWeight: FontWeight.w900,
                 color: isDark ? Colors.white : Colors.black,
@@ -705,7 +705,7 @@ class _ErrorState extends StatelessWidget {
               ),
               child: Text(
                 'GO BACK',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
                   color: isDark ? Colors.white : Colors.black,

@@ -98,7 +98,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
             child: Center(
               child: Text(
                 'MY PROPERTY',
-                style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), 
+                style: GoogleFonts.gelasio(textStyle: const TextStyle(inherit: true), 
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white : Colors.black,
@@ -133,7 +133,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
             children: [
               Text(
                 'PORTFOLIO OVERVIEW',
-                style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), 
+                style: GoogleFonts.gelasio(textStyle: const TextStyle(inherit: true), 
                   fontSize: 8,
                   fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white38 : Colors.black38,
@@ -156,7 +156,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
             children: [
               Text(
                 'TOTAL VALUE',
-                style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), 
+                style: GoogleFonts.gelasio(textStyle: const TextStyle(inherit: true), 
                   fontSize: 8,
                   fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white38 : Colors.black38,
@@ -273,7 +273,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('PAYMENT PROGRESS', style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white24 : Colors.black26, letterSpacing: 1.5)),
+                        Text('PAYMENT PROGRESS', style: GoogleFonts.gelasio(fontSize: 8, fontWeight: FontWeight.w900, color: isDark ? Colors.white24 : Colors.black26, letterSpacing: 1.5)),
                         Text('$paymentPercent% PAID', style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w900, color: const Color(0xFFC5A35B))),
                       ],
                     ),
@@ -314,7 +314,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
         const SizedBox(height: 24),
         Text(
           'NO PROPERTY RECORDS FOUND',
-          style: GoogleFonts.ebGaramond(textStyle: const TextStyle(inherit: true), 
+          style: GoogleFonts.gelasio(textStyle: const TextStyle(inherit: true), 
             fontSize: 10,
             fontWeight: FontWeight.w800,
             color: (isDark ? Colors.white : Colors.black).withOpacity(0.2),

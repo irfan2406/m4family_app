@@ -144,7 +144,7 @@ class _InvestorPaymentsScreenState extends ConsumerState<InvestorPaymentsScreen>
             ),
             Text(
               'FINANCIAL LEDGER',
-              style: GoogleFonts.ebGaramond(color: muted, fontWeight: FontWeight.w900, fontSize: 8, letterSpacing: 3),
+              style: GoogleFonts.gelasio(color: muted, fontWeight: FontWeight.w900, fontSize: 8, letterSpacing: 3),
             ),
           ],
         ),
@@ -200,7 +200,7 @@ class _InvestorPaymentsScreenState extends ConsumerState<InvestorPaymentsScreen>
         children: [
           Text(
             label,
-            style: GoogleFonts.ebGaramond(color: muted, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.5),
+            style: GoogleFonts.gelasio(color: muted, fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1.5),
           ),
           const SizedBox(height: 6),
           Text(

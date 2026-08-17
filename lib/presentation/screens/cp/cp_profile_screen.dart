@@ -150,7 +150,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                     children: [
                       Text(
                         'MY PROFILE',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
                           color: scheme.onSurface,
@@ -208,7 +208,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                   const SizedBox(height: 32),
                   Text(
                     'TEAM & ACCESS',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 9,
                       fontWeight: FontWeight.w700,
                       color: scheme.onSurfaceVariant,
@@ -224,7 +224,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                   const SizedBox(height: 28),
                   Text(
                     'QUICK ACTIONS',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 9,
                       fontWeight: FontWeight.w700,
                       color: scheme.onSurface,
@@ -332,7 +332,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                             const SizedBox(width: 8),
                             Text(
                               'LOG OUT',
-                              style: GoogleFonts.ebGaramond(
+                              style: GoogleFonts.gelasio(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w800,
                                 color: scheme.error,
@@ -433,7 +433,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                         name.toUpperCase(),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 21,
                           fontWeight: FontWeight.w700,
                           color: scheme.onSurface,

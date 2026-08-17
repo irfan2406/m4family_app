@@ -295,7 +295,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                     const SizedBox(width: 6),
                     Text(
                       'SUPPORT AGENT ONLINE',
-                      style: GoogleFonts.ebGaramond(
+                      style: GoogleFonts.gelasio(
                         fontSize: 8,
                         fontWeight: FontWeight.w900,
                         color: muted,
@@ -318,7 +318,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
             ),
             child: Text(
               _statusLabel,
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 8,
                 fontWeight: FontWeight.w900,
                 color: _isOpen ? Color(0xFFC5A35B) : const Color(0xFFC5A35B),
@@ -441,7 +441,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
             ),
             child: Text(
               DateFormat('EEEE, MMM d').format(DateTime.now()).toUpperCase(),
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 8,
                 fontWeight: FontWeight.w900,
                 color: muted,
@@ -467,7 +467,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                 const SizedBox(width: 8),
                 Text(
                   'SECURE CONSULTATION',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     color: muted,
@@ -564,7 +564,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
               children: [
                 Text(
                   time,
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     color: muted,

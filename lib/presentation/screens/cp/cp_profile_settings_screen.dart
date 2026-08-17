@@ -621,7 +621,7 @@ class _CpProfileSettingsScreenState
       children: [
         Text(
           label.toUpperCase(),
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 8,
             fontWeight: FontWeight.w800,
             letterSpacing: 1.5,
@@ -633,7 +633,7 @@ class _CpProfileSettingsScreenState
           obscureText: true,
           keyboardType: TextInputType.number,
           textAlign: TextAlign.center,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontWeight: FontWeight.w700,
             letterSpacing: 6,
           ),
@@ -674,7 +674,7 @@ class _CpProfileSettingsScreenState
                   const SizedBox(height: 16),
                   Text(
                     'ESTABLISHING SECURE CONNECTION...',
-                    style: GoogleFonts.ebGaramond(
+                    style: GoogleFonts.gelasio(
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 3,
@@ -854,7 +854,7 @@ class _CpProfileSettingsScreenState
         const SizedBox(width: 8),
         Text(
           title,
-          style: GoogleFonts.ebGaramond(
+          style: GoogleFonts.gelasio(
             fontSize: 10,
             fontWeight: FontWeight.w900,
             letterSpacing: 2.5,
@@ -980,7 +980,7 @@ class _CpProfileSettingsScreenState
                 const SizedBox(height: 10),
                 Text(
                   'ACCOUNT AVATAR',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
@@ -1285,7 +1285,7 @@ class _CpProfileSettingsScreenState
           padding: const EdgeInsets.only(left: 4, bottom: 8),
           child: Text(
             label,
-            style: GoogleFonts.ebGaramond(
+            style: GoogleFonts.gelasio(
               fontSize: 9,
               fontWeight: FontWeight.w900,
               letterSpacing: 2,
@@ -1318,7 +1318,7 @@ class _CpProfileSettingsScreenState
             children: [
               Text(
                 'CHANGE ACCESS PASSCODE',
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 1.5,
@@ -1363,7 +1363,7 @@ class _CpProfileSettingsScreenState
                 )
               : Text(
                   'SECURITY LOGOUT (ALL DEVICES)',
-                  style: GoogleFonts.ebGaramond(
+                  style: GoogleFonts.gelasio(
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.5,
@@ -1389,7 +1389,7 @@ class _CpProfileSettingsScreenState
             )
           : Text(
               'DELETE ACCOUNT PERMANENTLY',
-              style: GoogleFonts.ebGaramond(
+              style: GoogleFonts.gelasio(
                 fontSize: 8,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 2.5,

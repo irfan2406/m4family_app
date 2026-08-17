@@ -105,6 +105,18 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // CP "Dashboard landing" is a green showcase screen (same rule as CP Home /
+    // Projects): deep-green surface + white typography in light mode, navy in
+    // dark. Reached as a standalone route, so it wraps itself in the showcase
+    // theme instead of inheriting the shell's.
+    final bool appIsDark = Theme.of(context).brightness == Brightness.dark;
+    return Theme(
+      data: appIsDark ? M4Theme.darkThemeNavy : M4Theme.darkTheme,
+      child: Builder(builder: _buildBody),
+    );
+  }
+
+  Widget _buildBody(BuildContext context) {
     final user = ref.watch(authProvider).user;
     final projectsAsync = ref.watch(projectsProvider);
     final scheme = Theme.of(context).colorScheme;
@@ -162,16 +174,12 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                         width: 56,
                         height: 36,
                         decoration: BoxDecoration(
-                          color: Theme.of(context).brightness == Brightness.dark 
-                              ? Colors.white 
-                              : Colors.black,
+                          color: Colors.transparent,
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Icon(
-                          LucideIcons.moreHorizontal, 
-                          color: Theme.of(context).brightness == Brightness.dark 
-                              ? Colors.black 
-                              : Colors.white, 
+                          LucideIcons.menu, 
+                          color: Theme.of(context).colorScheme.onSurface, 
                           size: 24
                         ),
                       ),
@@ -248,7 +256,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                               ),
                               child: Text(
                                 'ARTISTIC IMPRESSION',
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.gelasio(
                                   color: Colors.white,
                                   fontSize: 7,
                                   fontWeight: FontWeight.w900,
@@ -321,7 +329,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('AVAILABLE COMMISSION', style: GoogleFonts.ebGaramond(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2.5, color: Colors.white70)),
+              Text('AVAILABLE COMMISSION', style: GoogleFonts.gelasio(fontSize: 9, fontWeight: FontWeight.w900, letterSpacing: 2.5, color: Colors.white70)),
               const Icon(LucideIcons.wallet, color: Colors.white, size: 24),
             ],
           ),
@@ -331,7 +339,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
             textBaseline: TextBaseline.alphabetic,
             children: [
               Text('AED ', style: GoogleFonts.ebGaramond(fontSize: 16, fontWeight: FontWeight.w900, color: Colors.white54)),
-              Text(_balance().toString(), style: GoogleFonts.ebGaramond(fontSize: 48, fontWeight: FontWeight.w900, color: Colors.white, height: 1)),
+              Text(_balance().toString(), style: GoogleFonts.gelasio(fontSize: 48, fontWeight: FontWeight.w900, color: Colors.white, height: 1)),
             ],
           ),
           const SizedBox(height: 32),
@@ -462,7 +470,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
         style: GoogleFonts.ebGaramond(fontSize: 14, fontWeight: FontWeight.w700),
         decoration: InputDecoration(
           hintText: 'SEARCH PROSPECTS...',
-          hintStyle: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.black12, letterSpacing: 2),
+          hintStyle: GoogleFonts.gelasio(fontSize: 10, fontWeight: FontWeight.w900, color: Colors.black12, letterSpacing: 2),
           filled: true,
           fillColor: scheme.surfaceContainer,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
@@ -489,7 +497,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(_leadName(lead).toLowerCase(), style: GoogleFonts.ebGaramond(fontSize: 20, fontWeight: FontWeight.w800, letterSpacing: -0.5)), Text(_leadProject(lead).toUpperCase(), style: GoogleFonts.ebGaramond(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.black45, letterSpacing: 1.5))]),
+                  Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(_leadName(lead).toLowerCase(), style: GoogleFonts.gelasio(fontSize: 20, fontWeight: FontWeight.w800, letterSpacing: -0.5)), Text(_leadProject(lead).toUpperCase(), style: GoogleFonts.gelasio(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.black45, letterSpacing: 1.5))]),
                   Container(padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6), decoration: BoxDecoration(color: const Color(0xFFC5A35B).withOpacity(0.15), borderRadius: BorderRadius.circular(99)), child: Text(status.replaceAll('_', ' ').toUpperCase(), style: GoogleFonts.ebGaramond(fontSize: 8, fontWeight: FontWeight.w900, color: const Color(0xFFC5A35B), letterSpacing: 1))),
                 ],
               ),

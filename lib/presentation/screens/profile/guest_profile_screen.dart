@@ -65,7 +65,7 @@ class GuestProfileScreen extends ConsumerWidget {
                       const SizedBox(width: 16),
                       Text(
                         'MY PROFILE',
-                        style: GoogleFonts.ebGaramond(
+                        style: GoogleFonts.gelasio(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                           color: textPrimary,
@@ -118,7 +118,7 @@ class GuestProfileScreen extends ConsumerWidget {
                                 child: Center(
                                   child: Text(
                                     '?',
-                                    style: GoogleFonts.ebGaramond(
+                                    style: GoogleFonts.gelasio(
                                       fontSize: 30,
                                       fontWeight: FontWeight.bold,
                                       color: textMuted,
@@ -129,7 +129,7 @@ class GuestProfileScreen extends ConsumerWidget {
                               const SizedBox(height: 24),
                               Text(
                                 'GUEST USER',
-                                style: GoogleFonts.ebGaramond(
+                                style: GoogleFonts.gelasio(
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,
                                   color: textPrimary,
@@ -170,7 +170,7 @@ class GuestProfileScreen extends ConsumerWidget {
                         Center(
                           child: Text(
                             'WHY JOIN M4 FAMILY?',
-                            style: GoogleFonts.ebGaramond(
+                            style: GoogleFonts.gelasio(
                               fontSize: 10,
                               fontWeight: FontWeight.w700,
                               color: textMuted,
@@ -200,7 +200,7 @@ class GuestProfileScreen extends ConsumerWidget {
                         // Preferences
                         Text(
                           'PREFERENCES',
-                          style: GoogleFonts.ebGaramond(
+                          style: GoogleFonts.gelasio(
                             fontSize: 9,
                             fontWeight: FontWeight.w700,
                             color: textMuted,
@@ -294,7 +294,7 @@ class GuestProfileScreen extends ConsumerWidget {
                                   const SizedBox(width: 8),
                                   Text(
                                     'INVESTOR LOGIN',
-                                    style: GoogleFonts.ebGaramond(
+                                    style: GoogleFonts.gelasio(
                                       fontSize: 10,
                                       fontWeight: FontWeight.w900,
                                       color: const Color(0xFFC5A35B),
@@ -403,7 +403,7 @@ class _PrimaryButton extends StatelessWidget {
               const SizedBox(width: 8),
               Text(
                 label,
-                style: GoogleFonts.ebGaramond(
+                style: GoogleFonts.gelasio(
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
                   color: fg,
