@@ -322,7 +322,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
 
     if (_isSuccess) {
       return Scaffold(
-        backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
+        backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(40),
@@ -390,7 +390,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
 
     return Scaffold(
       backgroundColor: isDark
-          ? const Color(0xFF0F1115)
+          ? const Color(0xFF141B3A)
           : const Color(0xFFF9FAFB),
       extendBody: true,
       bottomNavigationBar: NavigationPill(

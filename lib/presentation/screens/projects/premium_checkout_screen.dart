@@ -84,7 +84,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? const Color(0xFF0F1115) : Colors.white;
+    final bg = isDark ? const Color(0xFF141B3A) : Colors.white;
     final textPrimary = isDark ? Colors.white : Colors.black;
 
     return Scaffold(

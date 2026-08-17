@@ -47,7 +47,7 @@ class BookingStartScreen extends ConsumerWidget {
     ];
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
       extendBody: true,
       bottomNavigationBar: NavigationPill(
         currentIndex: -1,

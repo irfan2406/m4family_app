@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
+import 'package:m4_mobile/core/utils/app_toast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/presentation/screens/auth/login_screen.dart';
@@ -160,6 +161,7 @@ class M4FamilyApp extends ConsumerWidget {
     return MaterialApp.router(
       title: 'M4 Family',
       debugShowCheckedModeBanner: false,
+      scaffoldMessengerKey: rootScaffoldMessengerKey,
       theme: M4Theme.lightTheme,
       darkTheme: M4Theme.darkThemeNavy, // dark mode = deep navy (#0B1026)
       themeMode: themeMode,

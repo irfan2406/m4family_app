@@ -85,12 +85,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     });
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xFF0F2A20),
       body: Stack(
         fit: StackFit.expand,
         children: [
           // Solid black background (no photo).
-          const Positioned.fill(child: ColoredBox(color: Colors.black)),
+          const Positioned.fill(child: ColoredBox(color: Color(0xFF0F2A20))),
 
           // Main Content
           SafeArea(
@@ -161,14 +161,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         _PremiumButton(
           label: 'CHANNEL PARTNER',
           icon: LucideIcons.sparkles,
-          iconColor: Colors.purpleAccent,
+          iconColor: Colors.white,
           onTap: () => context.push('/auth/cp/login'),
         ),
         const SizedBox(height: 12),
         _PremiumButton(
           label: 'INVESTOR PORTAL',
           icon: LucideIcons.trendingUp,
-          iconColor: Colors.amber,
+          iconColor: Colors.white,
           onTap: () => setState(() {
             _selectedRole = 'INVESTOR';
             _step = 1;

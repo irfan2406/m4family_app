@@ -261,7 +261,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
               ? const RadialGradient(
                   center: Alignment.topCenter,
                   radius: 2.5,
-                  colors: [Color(0xFF0F1115), Colors.black],
+                  colors: [Color(0xFF141B3A), Color(0xFF0B1026)],
                 )
               : null,
         ),
@@ -1245,7 +1245,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
           // Web parity: a centered floating card with margins on every edge,
           // rounded on all corners — not a full-width bottom sheet.
           return Dialog(
-            backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
+            backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
             insetPadding: const EdgeInsets.symmetric(
               horizontal: 20,
               vertical: 44,

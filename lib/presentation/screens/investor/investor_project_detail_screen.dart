@@ -355,7 +355,7 @@ class _InvestorProjectDetailScreenState
               maxHeight: MediaQuery.of(sheetContext).size.height * 0.9,
             ),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF0F1115) : Colors.white,
+              color: isDark ? const Color(0xFF141B3A) : Colors.white,
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(40),
               ),
@@ -1769,7 +1769,7 @@ class _InvestorProjectDetailScreenState
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: isDark
-                                    ? const Color(0xFF0A0E16)
+                                    ? const Color(0xFF0B1026)
                                     : Colors.white,
                                 border: Border.all(
                                   color: isDark ? Colors.white : Colors.black,

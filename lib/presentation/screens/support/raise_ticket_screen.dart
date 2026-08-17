@@ -129,7 +129,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
     const amber = Color(0xFFF59E0B);
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
       extendBody: true,
       // Web parity: persistent bottom nav (this screen is pushed over the shell,
       // so a tab tap returns to the shell and selects that tab).

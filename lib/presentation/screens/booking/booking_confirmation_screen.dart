@@ -144,7 +144,7 @@ class _BookingConfirmationScreenState
 
     if (_loading) {
       return Scaffold(
-        backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
+        backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
         body: const Center(
           child: CircularProgressIndicator(color: M4Theme.premiumBlue),
         ),
@@ -152,7 +152,7 @@ class _BookingConfirmationScreenState
     }
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
       body: Stack(
         children: [
           // Decorative background circles

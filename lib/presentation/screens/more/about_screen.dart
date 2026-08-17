@@ -28,7 +28,7 @@ class _AboutScreenState extends State<AboutScreen> {
 
     return Scaffold(
       backgroundColor: isDark
-          ? const Color(0xFF0F1115)
+          ? const Color(0xFF141B3A)
           : const Color(0xFFF9FAFB),
       appBar: AppBar(
         backgroundColor: Colors.transparent,

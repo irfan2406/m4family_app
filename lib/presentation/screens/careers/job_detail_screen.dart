@@ -114,7 +114,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
               ? const RadialGradient(
                   center: Alignment.topCenter,
                   radius: 2.0,
-                  colors: [Color(0xFF0F1115), Colors.black],
+                  colors: [Color(0xFF141B3A), Color(0xFF0B1026)],
                 )
               : null,
         ),

@@ -203,7 +203,7 @@ class _InvestorRelationsScreenState
               ? const RadialGradient(
                   center: Alignment.topCenter,
                   radius: 2.5,
-                  colors: [Color(0xFF0F1115), Colors.black],
+                  colors: [Color(0xFF141B3A), Color(0xFF0B1026)],
                 )
               : null,
         ),

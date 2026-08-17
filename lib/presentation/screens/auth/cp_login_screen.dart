@@ -36,11 +36,11 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
     });
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xFF0F2A20),
       body: Stack(
         fit: StackFit.expand,
         children: [
-          const Positioned.fill(child: ColoredBox(color: Colors.black)),
+          const Positioned.fill(child: ColoredBox(color: Color(0xFF0F2A20))),
           SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 32),

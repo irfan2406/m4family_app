@@ -357,7 +357,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       builder: (context) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF0F1115) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : Colors.white,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
           border: Border.all(
             color: isDark
@@ -595,7 +595,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       barrierColor: Colors.black.withOpacity(0.55),
       builder: (context) => StatefulBuilder(
         builder: (context, setModalState) => Dialog(
-          backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
+          backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
           insetPadding: const EdgeInsets.symmetric(
             horizontal: 20,
             vertical: 40,
@@ -1345,7 +1345,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     }
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
       body: Stack(
         children: [
           SingleChildScrollView(

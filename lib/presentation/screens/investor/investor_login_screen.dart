@@ -18,8 +18,9 @@ class InvestorLoginScreen extends ConsumerStatefulWidget {
 }
 
 class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
-  static const _gold = Color(0xFFFFD700);
-  static const _amber = Color(0xFFF59E0B);
+  static const _gold = Colors.white;
+  static const _amber = Colors.white;
+  static const _deepGreen = Color(0xFF0F2A20);
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -79,7 +80,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
     );
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xFF0F2A20),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 28),
@@ -200,7 +201,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
             onPressed: () => setState(() => _step = 1),
             style: FilledButton.styleFrom(
               backgroundColor: _amber,
-              foregroundColor: Colors.black,
+              foregroundColor: _deepGreen,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -219,7 +220,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
                 Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.1),
+                    color: _deepGreen.withValues(alpha: 0.12),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(LucideIcons.arrowRight, size: 18),
@@ -344,7 +345,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
             onPressed: loading ? null : _submit,
             style: FilledButton.styleFrom(
               backgroundColor: _amber,
-              foregroundColor: Colors.black,
+              foregroundColor: _deepGreen,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
@@ -356,10 +357,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
                       const SizedBox(
                         width: 18,
                         height: 18,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.black,
-                        ),
+                        child: CircularProgressIndicator(strokeWidth: 2, color: _deepGreen),
                       ),
                       const SizedBox(width: 12),
                       Text(
@@ -386,7 +384,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
                       Container(
                         padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: 0.1),
+                          color: _deepGreen.withValues(alpha: 0.12),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(LucideIcons.arrowRight, size: 18),
@@ -432,7 +430,7 @@ class _FeaturePill extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: const Color(0xFFF59E0B)),
+          Icon(icon, size: 14, color: Colors.white),
           const SizedBox(width: 8),
           Text(
             label,
@@ -492,7 +490,7 @@ class _Field extends StatelessWidget {
           inputFormatters: inputFormatters,
           // Field sits on a black background — force a visible amber cursor
           // (default cursor inherits the light-theme primary and is invisible).
-          cursorColor: const Color(0xFFF59E0B),
+          cursorColor: Colors.white,
           cursorWidth: 2,
           cursorRadius: const Radius.circular(2),
           style: const TextStyle(
@@ -521,7 +519,7 @@ class _Field extends StatelessWidget {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
               borderSide: const BorderSide(
-                color: Color(0xFFF59E0B),
+                color: Colors.white,
                 width: 1.2,
               ),
             ),

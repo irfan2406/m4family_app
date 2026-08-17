@@ -204,7 +204,7 @@ class _CpForgotPasswordScreenState
         GoRouterState.of(context).uri.queryParameters['from'] == 'guest';
 
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xFF0F2A20),
       body: Stack(
         fit: StackFit.expand,
         children: [

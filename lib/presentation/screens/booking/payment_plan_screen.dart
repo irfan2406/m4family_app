@@ -71,7 +71,7 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
       extendBody: true,
       bottomNavigationBar: NavigationPill(
         currentIndex: -1,

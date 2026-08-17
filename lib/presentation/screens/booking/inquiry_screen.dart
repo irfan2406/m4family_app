@@ -102,7 +102,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
 
     if (_isSuccess) {
       return Scaffold(
-        backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
+        backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(40),
@@ -182,7 +182,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
     }
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xFF0F1115) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
       extendBody: true,
       bottomNavigationBar: NavigationPill(
         currentIndex: -1,
