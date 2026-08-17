@@ -62,7 +62,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                 'Exit App',
                 style: GoogleFonts.gelasio(
                   fontSize: 20,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white : const Color(0xFFF4EFE3),
                 ),
               ),
@@ -158,7 +158,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
             child: Container(
               decoration: BoxDecoration(
                 color: isDark
-                    ? Colors.black.withOpacity(0.8)
+                    ? const Color(0xFFF4EFE3).withValues(alpha: 0.92)
                     : const Color(0xFF0F2A20).withValues(alpha: 0.72),
                 border: Border(
                   right: BorderSide(
@@ -505,9 +505,9 @@ class _MenuItem extends StatelessWidget {
               ? (isDark ? Colors.white : const Color(0xFFF4EFE3))
               : (isDark
                     ? Colors.white.withOpacity(0.7)
-                    : Colors.black.withOpacity(0.8)),
-          fontSize: 15,
-          fontWeight: isActive ? FontWeight.w800 : FontWeight.w700,
+                    : const Color(0xFFF4EFE3).withValues(alpha: 0.92)),
+          fontSize: 16.5,
+          fontWeight: isActive ? FontWeight.w900 : FontWeight.w800,
           letterSpacing: -0.2,
         ),
       ),
@@ -565,8 +565,8 @@ class _DropdownMenuItem extends StatelessWidget {
               color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(
                 isOpen ? 1.0 : 0.8,
               ),
-              fontSize: 15,
-              fontWeight: FontWeight.w700,
+              fontSize: 16.5,
+              fontWeight: FontWeight.w800,
               letterSpacing: -0.2,
             ),
           ),
@@ -613,7 +613,7 @@ class _SubItem extends StatelessWidget {
           style: GoogleFonts.ebGaramond(
             color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(0.85),
             fontSize: 13,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w800,
           ),
         ),
       ),
@@ -654,8 +654,8 @@ class _QuickActionItem extends StatelessWidget {
         label,
         style: GoogleFonts.ebGaramond(
           color: (isDark ? Colors.white : const Color(0xFFF4EFE3)).withOpacity(0.8),
-          fontSize: 15,
-          fontWeight: FontWeight.w700,
+          fontSize: 16.5,
+          fontWeight: FontWeight.w800,
           letterSpacing: -0.2,
         ),
       ),

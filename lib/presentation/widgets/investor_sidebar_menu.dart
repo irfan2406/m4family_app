@@ -78,7 +78,7 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                 'Logout',
                 style: GoogleFonts.gelasio(
                   fontSize: 20,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w800,
                   color: isDark ? Colors.white : const Color(0xFFF4EFE3),
                 ),
               ),
@@ -525,7 +525,7 @@ class _SidebarItem extends StatelessWidget {
                 label,
                 style: GoogleFonts.ebGaramond(
                   fontSize: 13,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w800,
                   color: isActive
                       ? gold
                       : (isDark ? Colors.white : const Color(0xFF1E293B)),

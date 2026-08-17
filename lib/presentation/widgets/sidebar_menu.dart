@@ -582,7 +582,7 @@ class _SidebarItem extends StatelessWidget {
               style: GoogleFonts.ebGaramond(
                 color: isActive ? activeColor : onSurface.withOpacity(0.65),
                 fontSize: 14,
-                fontWeight: isActive ? FontWeight.w900 : FontWeight.w700,
+                fontWeight: isActive ? FontWeight.w900 : FontWeight.w800,
                 letterSpacing: -0.2,
               ),
             ),
@@ -674,7 +674,7 @@ class _SidebarSubItem extends StatelessWidget {
         style: GoogleFonts.ebGaramond(
           color: onSurface.withOpacity(0.85),
           fontSize: 12.5,
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w800,
         ),
       ),
     );
