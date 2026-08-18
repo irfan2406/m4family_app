@@ -187,13 +187,18 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBody: true,
       drawer: const ConditionalDrawer(),
-      bottomNavigationBar: NavigationPill(
-        currentIndex: -1,
-        onTap: (i) {
-          ref.read(navigationProvider.notifier).state = i;
-          Navigator.of(context).popUntil((r) => r.isFirst);
-        },
-      ),
+      // Own nav pill ONLY when pushed standalone (from the menu). As a tab
+      // inside GuestMainShell the shell already draws one — rendering both
+      // stacked two navigation bars on top of each other.
+      bottomNavigationBar: Navigator.of(context).canPop()
+          ? NavigationPill(
+              currentIndex: -1,
+              onTap: (i) {
+                ref.read(navigationProvider.notifier).state = i;
+                Navigator.of(context).popUntil((r) => r.isFirst);
+              },
+            )
+          : null,
       body: _isLoading
           ? Center(
               child: CircularProgressIndicator(
