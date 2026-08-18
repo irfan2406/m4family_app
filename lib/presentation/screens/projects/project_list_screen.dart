@@ -734,7 +734,7 @@ class _ProjectGridItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(40),
         boxShadow: [
           BoxShadow(
-            color: (isDark ? Colors.black : Color(0xFF163A2C)).withOpacity(
+            color: (isDark ? Colors.transparent : Color(0xFF163A2C)).withOpacity(
               isDark ? 0.3 : 0.05,
             ),
             blurRadius: 20,
@@ -890,7 +890,7 @@ class _ProjectListRowItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: (isDark ? Colors.black : Color(0xFF163A2C)).withOpacity(
+            color: (isDark ? Colors.transparent : Color(0xFF163A2C)).withOpacity(
               isDark ? 0.3 : 0.04,
             ),
             blurRadius: 20,
