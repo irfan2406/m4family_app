@@ -170,7 +170,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
               child: Container(
-                color: (isDark ? Colors.black : Colors.white).withOpacity(0.6),
+                color: isDark ? Colors.black.withOpacity(0.6) : const Color(0xFF0F2A20).withValues(alpha: 0.72),
               ),
             ),
           ),
@@ -240,8 +240,8 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                           context,
                         ).copyWith(dividerColor: Colors.transparent),
                         child: ExpansionTile(
-                          iconColor: const Color(0xFF9333EA),
-                          collapsedIconColor: const Color(0xFF9333EA),
+                          iconColor: const Color(0xFFF4EFE3),
+                          collapsedIconColor: const Color(0xFFF4EFE3),
                           onExpansionChanged: (_) {},
                           tilePadding: EdgeInsets.zero,
                           title: _SidebarItem(
@@ -453,17 +453,17 @@ class _SidebarItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    const purple = Color(0xFF9333EA); // purple-600
+    const purple = const Color(0xFFF4EFE3); // purple-600
     // Web parity: active → purple icon tile; inactive → slate tile + slate-400
     // icon.
     final iconBg = isActive
         ? (isDark
               ? purple.withOpacity(0.25)
-              : const Color(0xFFF3E8FF)) // purple-100
+              : Colors.white.withValues(alpha: 0.14)) // purple-100
         : (isDark
-              ? const Color(0xFF1E293B)
-              : const Color(0xFFF8FAFC)); // slate-800 / slate-50
-    final iconColor = isActive ? purple : const Color(0xFF94A3B8); // slate-400
+              ? const Color(0xFFF4EFE3)
+              : Colors.white.withValues(alpha: 0.10)); // slate-800 / slate-50
+    final iconColor = isActive ? purple : const Color(0xFFF4EFE3).withValues(alpha: 0.75); // slate-400
 
     return InkWell(
       onTap: onTap,
@@ -493,7 +493,7 @@ class _SidebarItem extends StatelessWidget {
                   letterSpacing: -0.2,
                   color: isActive
                       ? purple
-                      : (isDark ? Colors.white70 : const Color(0xFF1E293B)),
+                      : (isDark ? Colors.white70 : const Color(0xFFF4EFE3)),
                 ),
               ),
             ),

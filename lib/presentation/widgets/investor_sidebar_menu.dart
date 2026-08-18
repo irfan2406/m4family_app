@@ -528,7 +528,7 @@ class _SidebarItem extends StatelessWidget {
                   fontWeight: FontWeight.w800,
                   color: isActive
                       ? gold
-                      : (isDark ? Colors.white : const Color(0xFF1E293B)),
+                      : (isDark ? Colors.white : const Color(0xFFF4EFE3)),
                 ),
               ),
             ),
@@ -599,7 +599,7 @@ class _SidebarSubItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final fg = isDark ? Colors.white : const Color(0xFF1E293B);
+    final fg = isDark ? Colors.white : const Color(0xFFF4EFE3);
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
