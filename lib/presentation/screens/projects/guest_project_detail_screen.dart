@@ -815,7 +815,7 @@ class _GuestProjectDetailScreenState
       barrierColor: Colors.black.withValues(alpha: 0.6),
       builder: (context) => StatefulBuilder(
         builder: (context, setModalState) => Dialog(
-          backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
+          backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
           // Web parity: a centered floating card with margins on every edge,
           // rounded on all corners — not a full-width bottom sheet.
           insetPadding: const EdgeInsets.symmetric(
@@ -1428,7 +1428,7 @@ class _GuestProjectDetailScreenState
 
     if (_isLoading && project == null) {
       return Scaffold(
-        backgroundColor: isDark ? Colors.black : Colors.white,
+        backgroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
         body: Center(
           child: CircularProgressIndicator(color: M4Theme.premiumBlue),
         ),
@@ -1437,7 +1437,7 @@ class _GuestProjectDetailScreenState
 
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: isDark ? M4Theme.background : Colors.white,
+      backgroundColor: isDark ? M4Theme.background : const Color(0xFFF4EFE3),
       drawer: SidebarMenu(),
       body: Stack(
         children: [
