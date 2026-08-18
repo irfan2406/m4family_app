@@ -1752,6 +1752,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                   ],
           ),
           child: TextField(
+            cursorColor: Theme.of(context).brightness == Brightness.dark ? Colors.white : Theme.of(context).colorScheme.onSurface,
             controller: controller,
             keyboardType: keyboardType,
             inputFormatters: inputFormatters,

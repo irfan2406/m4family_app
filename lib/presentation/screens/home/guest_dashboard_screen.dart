@@ -2123,6 +2123,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                   ],
           ),
           child: TextField(
+            cursorColor: Theme.of(context).brightness == Brightness.dark ? Colors.white : Theme.of(context).colorScheme.onSurface,
             controller: controller,
             onChanged: onChanged,
             keyboardType: keyboardType,

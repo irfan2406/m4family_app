@@ -2235,6 +2235,7 @@ class _GlassSearchField extends StatelessWidget {
               const SizedBox(width: 15),
               Expanded(
                 child: TextField(
+                  cursorColor: Theme.of(context).brightness == Brightness.dark ? Colors.white : Theme.of(context).colorScheme.onSurface,
                   onChanged: onChanged,
                   style: GoogleFonts.ebGaramond(
                     color: Colors.black,
