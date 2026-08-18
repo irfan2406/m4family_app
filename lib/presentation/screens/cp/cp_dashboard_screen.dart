@@ -227,7 +227,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                 children: [
                   // ⭐️ Tagline (Living the M4 Life)
                   Transform.translate(
-                    offset: const Offset(0, -60),
+                    offset: const Offset(0, 0),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 0),
                       child: M4Theme.taglineWordmark(context, height: 300),

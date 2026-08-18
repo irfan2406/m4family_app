@@ -573,16 +573,13 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Tagline (Living the M4 Life) — script image, not text.
-                Transform.translate(
-                  offset: const Offset(0, -50),
-                  child: M4Theme.taglineWordmark(context, height: 200),
-                ),
+                M4Theme.taglineWordmark(context, height: 200),
 
                 // Hero carousel (4:3, auto-cycle, badge, dots).
                 // Was -110, which pulled the hero up until it touched the
                 // "Living the M4 Life" logo — leave it breathing room.
                 Transform.translate(
-                  offset: const Offset(0, -70),
+                  offset: const Offset(0, 0),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
                     child: Builder(
