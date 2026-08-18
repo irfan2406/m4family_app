@@ -383,7 +383,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
     Color muted,
     Color border,
   ) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.06) : const Color(0xFFF4EFE3);
     final id = emp['_id']?.toString() ?? '';
     final name = (emp['name'] ?? '').toString();
     final phone = (emp['phone'] ?? '').toString();
