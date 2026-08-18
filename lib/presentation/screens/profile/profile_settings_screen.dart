@@ -168,7 +168,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                           style: GoogleFonts.ebGaramond(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
-                            color: Colors.blue,
+                            color: const Color(0xFFC5A35B),
                           ),
                         ),
                       ),

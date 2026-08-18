@@ -405,7 +405,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                 style: GoogleFonts.ebGaramond(
                   fontSize: 16,
                   fontWeight: FontWeight.w900,
-                  color: Colors.white54,
+                  color: Colors.white70,
                 ),
               ),
               Text(
@@ -448,7 +448,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
               style: GoogleFonts.ebGaramond(
                 fontSize: 8,
                 fontWeight: FontWeight.w900,
-                color: Colors.white60,
+                color: Colors.white70,
                 letterSpacing: 1,
               ),
             ),
@@ -604,7 +604,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                     Text(
                       'FROM 18% YOY',
                       style: GoogleFonts.ebGaramond(
-                        color: Colors.white60,
+                        color: Colors.white70,
                         fontWeight: FontWeight.w800,
                         fontSize: 8,
                         letterSpacing: 1,

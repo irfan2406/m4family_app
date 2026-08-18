@@ -494,7 +494,7 @@ class _InvestorReferralScreenState
             fontSize: 9,
             fontWeight: FontWeight.w900,
             letterSpacing: 2,
-            color: textPrimary.withValues(alpha: 0.4),
+            color: textPrimary.withValues(alpha: 0.72),
           ),
         ),
         const Spacer(),
@@ -666,7 +666,7 @@ class _InvestorReferralScreenState
                   style: GoogleFonts.ebGaramond(
                     fontSize: 8,
                     fontWeight: FontWeight.w700,
-                    color: textPrimary.withValues(alpha: 0.4),
+                    color: textPrimary.withValues(alpha: 0.72),
                   ),
                 ),
               ],
@@ -689,7 +689,7 @@ class _InvestorReferralScreenState
                   style: GoogleFonts.ebGaramond(
                     fontSize: 7,
                     fontWeight: FontWeight.w900,
-                    color: textPrimary.withValues(alpha: 0.35),
+                    color: textPrimary.withValues(alpha: 0.72),
                   ),
                 ),
             ],
@@ -719,7 +719,7 @@ class _InvestorReferralScreenState
             fontSize: 10,
             fontWeight: FontWeight.w900,
             letterSpacing: 2,
-            color: textPrimary.withValues(alpha: 0.15),
+            color: textPrimary.withValues(alpha: 0.72),
           ),
         ),
       ),
@@ -846,7 +846,7 @@ class _InvestorReferralScreenState
                         fontSize: 9,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 2,
-                        color: textPrimary.withValues(alpha: 0.3),
+                        color: textPrimary.withValues(alpha: 0.72),
                       ),
                     ),
                     const SizedBox(height: 32),
@@ -882,7 +882,7 @@ class _InvestorReferralScreenState
                               style: GoogleFonts.ebGaramond(
                                 fontSize: 10,
                                 fontWeight: FontWeight.w800,
-                                color: textPrimary.withValues(alpha: 0.4),
+                                color: textPrimary.withValues(alpha: 0.72),
                               ),
                             ),
                           ),
@@ -899,7 +899,7 @@ class _InvestorReferralScreenState
                                   style: GoogleFonts.ebGaramond(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w800,
-                                    color: textPrimary.withValues(alpha: 0.3),
+                                    color: textPrimary.withValues(alpha: 0.72),
                                   ),
                                 ),
                                 dropdownColor: isDark
@@ -1073,7 +1073,7 @@ class _InvestorReferralScreenState
         fontSize: 9,
         fontWeight: FontWeight.w900,
         letterSpacing: 1.5,
-        color: textPrimary.withValues(alpha: 0.4),
+        color: textPrimary.withValues(alpha: 0.72),
       ),
     );
   }
@@ -1111,7 +1111,7 @@ class _InvestorReferralScreenState
           hintStyle: GoogleFonts.ebGaramond(
             fontSize: 12,
             fontWeight: FontWeight.w700,
-            color: textPrimary.withValues(alpha: 0.25),
+            color: textPrimary.withValues(alpha: 0.72),
           ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(horizontal: 20),

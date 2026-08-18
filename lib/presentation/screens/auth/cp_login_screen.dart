@@ -154,7 +154,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                     style: GoogleFonts.ebGaramond(
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
-                      color: Colors.white54,
+                      color: Colors.white70,
                       letterSpacing: 2,
                     ),
                   ),
@@ -184,7 +184,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                           style: GoogleFonts.ebGaramond(
                             fontSize: 10,
                             fontWeight: FontWeight.w800,
-                            color: Colors.white54,
+                            color: Colors.white70,
                             letterSpacing: 1.5,
                           ),
                         ),
@@ -322,7 +322,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                     style: GoogleFonts.ebGaramond(
                       fontSize: 10,
                       fontWeight: FontWeight.w800,
-                      color: Colors.white38,
+                      color: Colors.white70,
                       letterSpacing: 2,
                       height: 1.6,
                     ),
@@ -370,7 +370,7 @@ class _FieldState extends State<_Field> {
           style: GoogleFonts.ebGaramond(
             fontSize: 9,
             fontWeight: FontWeight.bold,
-            color: Colors.white54,
+            color: Colors.white70,
             letterSpacing: 2,
           ),
         ),

@@ -336,7 +336,7 @@ class _BlogCard extends ConsumerWidget {
                             style: GoogleFonts.ebGaramond(
                               fontSize: 9,
                               fontWeight: FontWeight.w700,
-                              color: scheme.onSurface.withOpacity(0.4),
+                              color: scheme.onSurface.withOpacity(0.72),
                             ),
                           ),
                         ],

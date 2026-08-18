@@ -1273,7 +1273,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                           style: GoogleFonts.gelasio(
                             color: Theme.of(context).colorScheme.onSurface,
                             fontSize: 36,
-                            fontWeight: FontWeight.w300,
+                            fontWeight: FontWeight.w500,
                             height: 1,
                             letterSpacing: -0.5,
                           ),

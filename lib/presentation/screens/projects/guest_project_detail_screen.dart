@@ -3604,7 +3604,7 @@ class _FilterChip extends StatelessWidget {
                     fontWeight: FontWeight.w900,
                     color: isActive
                         ? Colors.white
-                        : Colors.black.withValues(alpha: 0.4),
+                        : Colors.black.withValues(alpha: 0.72),
                     letterSpacing: 1.0,
                   ),
                 ),
@@ -4174,7 +4174,7 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
           Text(
             'Swipe to explore design details.',
             style: GoogleFonts.ebGaramond(
-              color: Colors.white38,
+              color: Colors.white70,
               fontSize: 10,
               fontWeight: FontWeight.w600,
             ),
@@ -4274,7 +4274,7 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
             'Select a booking mode to interact with our developers.',
             textAlign: TextAlign.center,
             style: GoogleFonts.ebGaramond(
-              color: Colors.white38,
+              color: Colors.white70,
               fontSize: 10,
               fontWeight: FontWeight.w600,
             ),

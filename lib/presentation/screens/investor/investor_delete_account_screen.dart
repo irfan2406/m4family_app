@@ -514,7 +514,7 @@ class _InvestorDeleteAccountScreenState
                 fontSize: 16,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 3,
-                color: muted.withValues(alpha: 0.4),
+                color: muted.withValues(alpha: 0.72),
               ),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(
@@ -577,7 +577,7 @@ class _InvestorDeleteAccountScreenState
               hintStyle: GoogleFonts.ebGaramond(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
-                color: muted.withValues(alpha: 0.4),
+                color: muted.withValues(alpha: 0.72),
               ),
               border: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(

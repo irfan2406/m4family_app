@@ -414,8 +414,8 @@ class _SectionTitle extends StatelessWidget {
           fontSize: 11,
           fontWeight: FontWeight.w900,
           color: isDark
-              ? Colors.white.withOpacity(0.25)
-              : Colors.black.withOpacity(0.4),
+              ? Colors.white.withOpacity(0.72)
+              : Colors.black.withOpacity(0.72),
           letterSpacing: 2,
         ),
       ),

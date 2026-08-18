@@ -642,7 +642,7 @@ class _TicketDetailSheet extends StatelessWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: (isResolved ? Colors.green : Colors.blue).withOpacity(
+                  color: (isResolved ? Colors.green : const Color(0xFFC5A35B)).withOpacity(
                     0.1,
                   ),
                   borderRadius: BorderRadius.circular(8),
@@ -650,7 +650,7 @@ class _TicketDetailSheet extends StatelessWidget {
                 child: Text(
                   ticket.status.toUpperCase(),
                   style: GoogleFonts.ebGaramond(
-                    color: isResolved ? Colors.green : Colors.blue,
+                    color: isResolved ? Colors.green : const Color(0xFFC5A35B),
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                   ),

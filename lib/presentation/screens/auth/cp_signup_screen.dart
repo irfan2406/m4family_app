@@ -251,7 +251,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                     style: GoogleFonts.gelasio(
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
-                      color: Colors.white54,
+                      color: Colors.white70,
                       letterSpacing: 2,
                     ),
                   ),
@@ -379,7 +379,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                       style: GoogleFonts.gelasio(
                         fontSize: 10,
                         fontWeight: FontWeight.w800,
-                        color: Colors.white54,
+                        color: Colors.white70,
                         letterSpacing: 2,
                       ),
                     ),
@@ -439,7 +439,7 @@ class _CpField extends StatelessWidget {
             style: GoogleFonts.gelasio(
               fontSize: 9,
               fontWeight: FontWeight.bold,
-              color: Colors.white54,
+              color: Colors.white70,
               letterSpacing: 2,
             ),
           ),

@@ -532,7 +532,7 @@ class _ProjectCard extends StatelessWidget {
                   style: GoogleFonts.gelasio(
                     fontSize: 6,
                     fontWeight: FontWeight.w700,
-                    color: Colors.white.withValues(alpha: 0.3),
+                    color: Colors.white.withValues(alpha: 0.72),
                     letterSpacing: 2,
                   ),
                 ),

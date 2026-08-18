@@ -675,7 +675,7 @@ class _ProjectSelectionStep extends ConsumerWidget {
           'PROJECT &\nUNIT',
           style: GoogleFonts.gelasio(
             fontSize: 28,
-            fontWeight: FontWeight.w300,
+            fontWeight: FontWeight.w500,
             color: Theme.of(context).colorScheme.onSurface,
             height: 1.1,
           ),
@@ -1099,7 +1099,7 @@ class _SpaceSelectionStep extends ConsumerWidget {
               maxLines: 1,
               style: GoogleFonts.gelasio(
                 fontSize: 28,
-                fontWeight: FontWeight.w300,
+                fontWeight: FontWeight.w500,
                 color: scheme.onSurface,
                 height: 1.1,
               ),
@@ -1318,7 +1318,7 @@ class _MaterialsSelectionStep extends ConsumerWidget {
           'CHOOSE\nMATERIALS',
           style: GoogleFonts.gelasio(
             fontSize: 28,
-            fontWeight: FontWeight.w300,
+            fontWeight: FontWeight.w500,
             color: scheme.onSurface,
             height: 1.1,
           ),
@@ -1786,7 +1786,7 @@ class _FinaliseStep extends ConsumerWidget {
           'FINALISE',
           style: GoogleFonts.gelasio(
             fontSize: 28,
-            fontWeight: FontWeight.w300,
+            fontWeight: FontWeight.w500,
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
@@ -2033,7 +2033,7 @@ class _PremiumMaterialsSection extends StatelessWidget {
           textAlign: TextAlign.center,
           style: GoogleFonts.gelasio(
             fontSize: 32,
-            fontWeight: FontWeight.w300,
+            fontWeight: FontWeight.w500,
             color: Theme.of(context).colorScheme.onSurface,
             height: 1.1,
           ),
@@ -2403,7 +2403,7 @@ class _ConsultationSection extends ConsumerWidget {
             textAlign: TextAlign.center,
             style: GoogleFonts.gelasio(
               fontSize: 32,
-              fontWeight: FontWeight.w300,
+              fontWeight: FontWeight.w500,
               color: Theme.of(context).colorScheme.onSurface,
               height: 1.1,
             ),

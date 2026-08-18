@@ -862,7 +862,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
                           color: (isDark ? Colors.white : Color(0xFF163A2C))
-                              .withOpacity(0.45),
+                              .withOpacity(0.72),
                         ),
                         filled: true,
                         fillColor: (isDark ? Colors.white : Color(0xFF163A2C))
@@ -2000,7 +2000,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
             style: GoogleFonts.gelasio(
               fontSize: 10,
               fontWeight: FontWeight.w900,
-              color: Colors.black38,
+              color: const Color(0xFF5E6B60),
               letterSpacing: 2,
             ),
           ),
@@ -2844,7 +2844,7 @@ class _OverviewPremiumCard extends StatelessWidget {
             style: GoogleFonts.ebGaramond(
               fontSize: 8,
               fontWeight: FontWeight.bold,
-              color: Colors.black.withOpacity(0.4),
+              color: Colors.black.withOpacity(0.72),
             ),
           ),
         ],
@@ -3143,7 +3143,7 @@ class _InventoryItem extends StatelessWidget {
                         '${unit['type']} • ${unit['area']} SQFT',
                         style: GoogleFonts.ebGaramond(
                           fontSize: 11,
-                          color: Colors.black.withOpacity(0.38),
+                          color: Colors.black.withOpacity(0.72),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -3165,7 +3165,7 @@ class _InventoryItem extends StatelessWidget {
                       'EXCL. TAXES',
                       style: GoogleFonts.ebGaramond(
                         fontSize: 8,
-                        color: Colors.black.withOpacity(0.24),
+                        color: Colors.black.withOpacity(0.72),
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.5,
                       ),
@@ -3276,7 +3276,7 @@ class _ConstructionUpdateCard extends StatelessWidget {
                       update['date']?.toString() ?? '',
                       style: GoogleFonts.ebGaramond(
                         fontSize: 10,
-                        color: Colors.black.withOpacity(0.4),
+                        color: Colors.black.withOpacity(0.72),
                       ),
                     ),
                   ],
@@ -3378,7 +3378,7 @@ class _DocumentItem extends StatelessWidget {
                     '$type • $size',
                     style: GoogleFonts.ebGaramond(
                       fontSize: 9,
-                      color: Colors.black.withOpacity(0.4),
+                      color: Colors.black.withOpacity(0.72),
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -3456,7 +3456,7 @@ class _FilterChip extends StatelessWidget {
                     fontWeight: FontWeight.w900,
                     color: isActive
                         ? Colors.white
-                        : Colors.black.withOpacity(0.4),
+                        : Colors.black.withOpacity(0.72),
                     letterSpacing: 1.0,
                   ),
                 ),
@@ -4638,7 +4638,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                             (isDark
                                                     ? Colors.white
                                                     : Color(0xFF163A2C))
-                                                .withOpacity(0.45),
+                                                .withOpacity(0.72),
                                       ),
                                     ),
                                   ),

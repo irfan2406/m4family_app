@@ -178,7 +178,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
           style: GoogleFonts.gelasio(
             fontSize: 10,
             fontWeight: FontWeight.w700,
-            color: Colors.white54,
+            color: Colors.white70,
             letterSpacing: 3,
           ),
         ),
@@ -244,7 +244,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
               style: GoogleFonts.gelasio(
                 fontSize: 9,
                 fontWeight: FontWeight.w800,
-                color: Colors.white38,
+                color: Colors.white70,
                 letterSpacing: 2.5,
               ),
             ),
@@ -309,7 +309,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
           style: GoogleFonts.gelasio(
             fontSize: 9,
             fontWeight: FontWeight.w700,
-            color: Colors.white54,
+            color: Colors.white70,
             letterSpacing: 2.5,
           ),
         ),
@@ -401,7 +401,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
             style: GoogleFonts.gelasio(
               fontSize: 9,
               fontWeight: FontWeight.w800,
-              color: Colors.white38,
+              color: Colors.white70,
               letterSpacing: 2,
               height: 1.6,
             ),
@@ -478,7 +478,7 @@ class _Field extends StatelessWidget {
           style: GoogleFonts.gelasio(
             fontSize: 9,
             fontWeight: FontWeight.bold,
-            color: Colors.white54,
+            color: Colors.white70,
             letterSpacing: 2,
           ),
         ),
@@ -499,7 +499,7 @@ class _Field extends StatelessWidget {
           ),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.35)),
+            hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.72)),
             prefixIcon: Icon(icon, color: Colors.white54),
             suffixIcon: suffix,
             filled: true,

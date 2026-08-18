@@ -248,7 +248,7 @@ class _InvestorPurgeCacheScreenState
                 fontSize: 8,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 4,
-                color: textPrimary.withValues(alpha: 0.2),
+                color: textPrimary.withValues(alpha: 0.72),
               ),
             ),
           ),

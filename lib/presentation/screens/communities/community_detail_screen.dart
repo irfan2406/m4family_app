@@ -294,12 +294,12 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                               // Web: `text-3xl font-light tracking-tight` — a
                               // light serif, not the heavy weight we had.
                               fontSize: 34,
-                              fontWeight: FontWeight.w300,
+                              fontWeight: FontWeight.w500,
                               letterSpacing: -0.8,
                               color: Colors.white,
                               height: 1.05,
                               shadows: const [
-                                Shadow(blurRadius: 12, color: Colors.black38),
+                                Shadow(blurRadius: 12, color: const Color(0xFF5E6B60)),
                               ],
                             ),
                           ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.2),
@@ -645,7 +645,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                                     .toUpperCase(),
                                                 style:
                                                     GoogleFonts.ebGaramond(
-                                                      color: Colors.white54,
+                                                      color: Colors.white70,
                                                       fontSize: 8,
                                                       fontWeight:
                                                           FontWeight.bold,
@@ -1357,7 +1357,7 @@ class CommunityProjectsScreen extends ConsumerWidget {
                                                 .toString()
                                                 .toUpperCase(),
                                             style: GoogleFonts.ebGaramond(
-                                              color: Colors.white54,
+                                              color: Colors.white70,
                                               fontSize: 9,
                                               fontWeight: FontWeight.bold,
                                               letterSpacing: 1,
@@ -1400,7 +1400,7 @@ class CommunityProjectsScreen extends ConsumerWidget {
                                       Text(
                                         '* ARTISTIC IMPRESSION',
                                         style: GoogleFonts.ebGaramond(
-                                          color: Colors.white.withOpacity(0.2),
+                                          color: Colors.white.withOpacity(0.72),
                                           fontSize: 6,
                                           fontWeight: FontWeight.bold,
                                           letterSpacing: 1,

@@ -840,7 +840,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                                 color: isSelected
                                     ? (isDark ? Colors.white : Color(0xFF163A2C))
                                     : (isDark ? Colors.white : Color(0xFF163A2C))
-                                          .withValues(alpha: 0.4),
+                                          .withValues(alpha: 0.72),
                                 fontSize: 12,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 2,

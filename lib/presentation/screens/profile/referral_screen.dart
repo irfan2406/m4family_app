@@ -199,7 +199,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                 Text(
                   'M4 REWARD POINTS',
                   style: GoogleFonts.gelasio(
-                    color: cardFg.withOpacity(0.4),
+                    color: cardFg.withOpacity(0.72),
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1.5,
@@ -225,7 +225,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                       child: Text(
                         'PTS',
                         style: GoogleFonts.ebGaramond(
-                          color: cardFg.withOpacity(0.4),
+                          color: cardFg.withOpacity(0.72),
                           fontSize: 14,
                           fontWeight: FontWeight.w900,
                         ),
@@ -366,7 +366,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
             Text(
               label,
               style: GoogleFonts.ebGaramond(
-                color: foreground.withOpacity(0.4),
+                color: foreground.withOpacity(0.72),
                 fontSize: 8,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1.2,
@@ -385,7 +385,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
         Text(
           title,
           style: GoogleFonts.gelasio(
-            color: foreground.withOpacity(0.3),
+            color: foreground.withOpacity(0.72),
             fontSize: 10,
             fontWeight: FontWeight.w800,
             letterSpacing: 1.5,
@@ -405,7 +405,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
           child: Text(
             'NO ACTIVE LEADS',
             style: GoogleFonts.gelasio(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.72),
               fontSize: 10,
               fontWeight: FontWeight.w900,
               letterSpacing: 2,
@@ -459,7 +459,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                       Text(
                         project.toString().toUpperCase(),
                         style: GoogleFonts.ebGaramond(
-                          color: foreground.withOpacity(0.3),
+                          color: foreground.withOpacity(0.72),
                           fontSize: 8,
                           fontWeight: FontWeight.w900,
                           fontStyle: FontStyle.italic,
@@ -503,7 +503,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                 Text(
                   'EST. REWARD',
                   style: GoogleFonts.ebGaramond(
-                    color: foreground.withOpacity(0.3),
+                    color: foreground.withOpacity(0.72),
                     fontSize: 7,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1,
@@ -534,7 +534,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
           child: Text(
             'NO RECENT HISTORY',
             style: GoogleFonts.gelasio(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.72),
               fontSize: 10,
               fontWeight: FontWeight.w900,
               letterSpacing: 2,
@@ -587,7 +587,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
               Text(
                 DateFormat('dd/MM/yyyy').format(date),
                 style: GoogleFonts.ebGaramond(
-                  color: foreground.withOpacity(0.3),
+                  color: foreground.withOpacity(0.72),
                   fontSize: 7,
                   fontWeight: FontWeight.w800,
                 ),
@@ -611,7 +611,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
               Text(
                 'STATUS: $status',
                 style: GoogleFonts.ebGaramond(
-                  color: foreground.withOpacity(0.2),
+                  color: foreground.withOpacity(0.72),
                   fontSize: 6,
                   fontWeight: FontWeight.w900,
                 ),
@@ -670,7 +670,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                   Text(
                     'ADD TO YOUR SUCCESS MATRIX',
                     style: GoogleFonts.gelasio(
-                      color: foreground.withOpacity(0.3),
+                      color: foreground.withOpacity(0.72),
                       fontSize: 9,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 3,
@@ -684,7 +684,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                       Text(
                         'SELECT PROJECT',
                         style: GoogleFonts.ebGaramond(
-                          color: foreground.withOpacity(0.4),
+                          color: foreground.withOpacity(0.72),
                           fontSize: 8,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1,
@@ -713,7 +713,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                                     : selectedProjectName.toUpperCase(),
                                 style: GoogleFonts.ebGaramond(
                                   color: selectedProjectName.isEmpty
-                                      ? foreground.withOpacity(0.4)
+                                      ? foreground.withOpacity(0.72)
                                       : foreground,
                                   fontSize: 10,
                                   fontWeight: FontWeight.w900,
@@ -754,7 +754,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                                         child: Text(
                                           'No projects available',
                                           style: TextStyle(
-                                            color: foreground.withOpacity(0.38),
+                                            color: foreground.withOpacity(0.72),
                                           ),
                                         ),
                                       ),
@@ -980,7 +980,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
         Text(
           label,
           style: GoogleFonts.ebGaramond(
-            color: foreground.withOpacity(0.4),
+            color: foreground.withOpacity(0.72),
             fontSize: 8,
             fontWeight: FontWeight.w900,
             letterSpacing: 1,
@@ -1035,7 +1035,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                   decoration: InputDecoration(
                     hintText: hint,
                     hintStyle: GoogleFonts.ebGaramond(
-                      color: foreground.withOpacity(0.2),
+                      color: foreground.withOpacity(0.72),
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                     ),

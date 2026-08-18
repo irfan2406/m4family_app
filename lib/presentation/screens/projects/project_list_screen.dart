@@ -378,7 +378,7 @@ class ProjectListScreen extends ConsumerWidget {
                                     fontWeight: FontWeight.w700,
                                     color: Theme.of(
                                       context,
-                                    ).colorScheme.onSurface.withOpacity(0.45),
+                                    ).colorScheme.onSurface.withOpacity(0.72),
                                     letterSpacing: 1.5,
                                   ),
                                 ),
@@ -392,7 +392,7 @@ class ProjectListScreen extends ConsumerWidget {
                                     fontWeight: FontWeight.w700,
                                     color: Theme.of(
                                       context,
-                                    ).colorScheme.onSurface.withOpacity(0.45),
+                                    ).colorScheme.onSurface.withOpacity(0.72),
                                     letterSpacing: 2,
                                   ),
                                 ),
@@ -951,7 +951,7 @@ class _ProjectListRowItem extends StatelessWidget {
                           fontSize: 11,
                           color: Theme.of(
                             context,
-                          ).colorScheme.onSurface.withOpacity(0.4),
+                          ).colorScheme.onSurface.withOpacity(0.72),
                           fontWeight: FontWeight.w600,
                         ),
                         maxLines: 1,

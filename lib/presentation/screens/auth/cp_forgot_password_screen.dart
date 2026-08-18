@@ -286,7 +286,7 @@ class _CpForgotPasswordScreenState
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         labelText: 'Email',
-                        labelStyle: const TextStyle(color: Colors.white54),
+                        labelStyle: const TextStyle(color: Colors.white70),
                         prefixIcon: const Icon(
                           LucideIcons.mail,
                           color: Colors.white54,
@@ -394,7 +394,7 @@ class _CpForgotPasswordScreenState
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         labelText: 'New password',
-                        labelStyle: const TextStyle(color: Colors.white54),
+                        labelStyle: const TextStyle(color: Colors.white70),
                         prefixIcon: const Icon(
                           LucideIcons.lock,
                           color: Colors.white54,
@@ -413,7 +413,7 @@ class _CpForgotPasswordScreenState
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         labelText: 'Confirm password',
-                        labelStyle: const TextStyle(color: Colors.white54),
+                        labelStyle: const TextStyle(color: Colors.white70),
                         prefixIcon: const Icon(
                           LucideIcons.lock,
                           color: Colors.white54,

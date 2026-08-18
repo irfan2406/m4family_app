@@ -220,7 +220,7 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
                         fontSize: 10,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 2,
-                        color: textPrimary.withValues(alpha: 0.3),
+                        color: textPrimary.withValues(alpha: 0.72),
                       ),
                     ),
                   ],

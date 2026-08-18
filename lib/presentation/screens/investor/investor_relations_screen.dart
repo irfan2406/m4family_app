@@ -252,7 +252,7 @@ class _InvestorRelationsScreenState
           style: GoogleFonts.gelasio(
             color: isDark ? Colors.white : Color(0xFF163A2C),
             fontSize: 36,
-            fontWeight: FontWeight.w300,
+            fontWeight: FontWeight.w500,
             letterSpacing: -0.5,
             height: 1.1,
           ),
@@ -324,7 +324,7 @@ class _InvestorRelationsScreenState
           style: GoogleFonts.gelasio(
             color: isDark ? Colors.white : Color(0xFF163A2C),
             fontSize: 28,
-            fontWeight: FontWeight.w300,
+            fontWeight: FontWeight.w500,
             letterSpacing: -0.5,
             height: 1.15,
           ),
@@ -458,7 +458,7 @@ class _InvestorRelationsScreenState
           style: GoogleFonts.gelasio(
             color: isDark ? Colors.white : Color(0xFF163A2C),
             fontSize: 24,
-            fontWeight: FontWeight.w300,
+            fontWeight: FontWeight.w500,
             letterSpacing: -0.5,
           ),
         ),
@@ -466,7 +466,7 @@ class _InvestorRelationsScreenState
         Text(
           'FOR ANY INVESTOR RELATION RELATED QUESTIONS OR QUERIES PLEASE CONTACT VIA BELOW EMAIL',
           style: GoogleFonts.gelasio(
-            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.38),
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.72),
             fontSize: 9,
             fontWeight: FontWeight.w800,
             letterSpacing: 1.5,
@@ -597,7 +597,7 @@ class _InvestorRelationsScreenState
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: GoogleFonts.ebGaramond(
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.24),
+          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.72),
           fontWeight: FontWeight.w500,
           fontSize: 14,
         ),
@@ -643,7 +643,7 @@ class _InvestorRelationsScreenState
       decoration: InputDecoration(
         hintText: 'Message',
         hintStyle: GoogleFonts.ebGaramond(
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.24),
+          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.72),
           fontWeight: FontWeight.w500,
           fontSize: 14,
         ),

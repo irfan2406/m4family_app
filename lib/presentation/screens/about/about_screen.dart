@@ -869,7 +869,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                   Text(
                     'THE COLLECTIVE',
                     style: GoogleFonts.gelasio(
-                      color: Colors.white60,
+                      color: Colors.white70,
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 3,

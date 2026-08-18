@@ -380,7 +380,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
             textStyle: const TextStyle(inherit: true),
             fontSize: 10,
             fontWeight: FontWeight.w800,
-            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.2),
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.72),
             letterSpacing: 2,
           ),
         ),

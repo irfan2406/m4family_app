@@ -442,7 +442,7 @@ class _SidebarExitButton extends ConsumerWidget {
                 onPressed: () => Navigator.pop(context),
                 child: Text(
                   'CANCEL',
-                  style: GoogleFonts.ebGaramond(color: Colors.blueAccent),
+                  style: GoogleFonts.ebGaramond(color: const Color(0xFFC5A35B)),
                 ),
               ),
               TextButton(

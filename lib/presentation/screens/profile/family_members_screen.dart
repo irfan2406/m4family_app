@@ -356,7 +356,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                                     fontWeight: FontWeight.w800,
                                     color: dobDisplay.isEmpty
                                         ? (isDark ? Colors.white : Color(0xFF163A2C))
-                                              .withValues(alpha: 0.35)
+                                              .withValues(alpha: 0.72)
                                         : (isDark
                                               ? Colors.white
                                               : Color(0xFF163A2C)),
@@ -934,7 +934,7 @@ class _DialogLabel extends StatelessWidget {
         style: GoogleFonts.ebGaramond(
           fontSize: 8,
           fontWeight: FontWeight.w900,
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.45),
+          color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.72),
           letterSpacing: 1,
         ),
       ),

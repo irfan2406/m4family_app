@@ -390,7 +390,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
               'NO ACTIVE VACANCIES CURRENTLY AVAILABLE',
               textAlign: TextAlign.center,
               style: GoogleFonts.ebGaramond(
-                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.3),
+                color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.72),
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 2,

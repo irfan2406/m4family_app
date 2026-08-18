@@ -234,7 +234,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               style: GoogleFonts.ebGaramond(
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
-                color: Colors.white54,
+                color: Colors.white70,
                 letterSpacing: 1,
               ),
             ),
@@ -254,7 +254,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           'A secure one-time access token will be dispatched via WhatsApp for identity validation.',
           style: GoogleFonts.ebGaramond(
             fontSize: 10,
-            color: Colors.white38,
+            color: Colors.white70,
             height: 1.5,
           ),
         ),
@@ -374,7 +374,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               style: GoogleFonts.ebGaramond(
                 fontSize: 10,
                 fontWeight: FontWeight.w600,
-                color: Colors.white54,
+                color: Colors.white70,
                 letterSpacing: 1,
               ),
             ),
@@ -522,7 +522,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             style: GoogleFonts.gelasio(
               fontSize: 10,
               fontWeight: FontWeight.bold,
-              color: Colors.white54,
+              color: Colors.white70,
               letterSpacing: 2,
             ),
           ),
@@ -638,7 +638,7 @@ class _LuxuryInputField extends StatelessWidget {
           style: GoogleFonts.gelasio(
             fontSize: 9,
             fontWeight: FontWeight.bold,
-            color: Colors.white54,
+            color: Colors.white70,
             letterSpacing: 1.5,
           ),
         ),

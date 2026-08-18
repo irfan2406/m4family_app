@@ -398,9 +398,9 @@ class _TicketPreviewItem extends StatelessWidget {
     final isOpen =
         status.toLowerCase() == 'open' || status.toLowerCase() == 'in progress';
     final badgeBg = isOpen
-        ? Colors.blueAccent.withOpacity(0.1)
+        ? const Color(0xFFC5A35B).withOpacity(0.1)
         : Colors.greenAccent.withOpacity(0.12);
-    final badgeFg = isOpen ? Colors.blueAccent : Colors.greenAccent;
+    final badgeFg = isOpen ? const Color(0xFFC5A35B) : Colors.greenAccent;
     return ClipRRect(
       borderRadius: BorderRadius.circular(24),
       child: BackdropFilter(
@@ -433,7 +433,7 @@ class _TicketPreviewItem extends StatelessWidget {
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.blueAccent.withOpacity(0.1),
+                            color: const Color(0xFFC5A35B).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(6),
                           ),
                           child: Text(
@@ -441,7 +441,7 @@ class _TicketPreviewItem extends StatelessWidget {
                                 ? '—'
                                 : id.substring(0, id.length.clamp(0, 8)),
                             style: GoogleFonts.ebGaramond(
-                              color: Colors.blueAccent,
+                              color: const Color(0xFFC5A35B),
                               fontSize: 8,
                               fontWeight: FontWeight.w900,
                             ),

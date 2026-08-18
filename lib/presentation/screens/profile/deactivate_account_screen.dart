@@ -299,7 +299,7 @@ class _DeactivateAccountScreenState
                       hintText: "DELETE",
                       hintStyle: GoogleFonts.gelasio(
                         textStyle: const TextStyle(inherit: true),
-                        color: const Color(0xFFEF4444).withOpacity(0.1),
+                        color: const Color(0xFFEF4444).withOpacity(0.72),
                         fontSize: 16,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 4,

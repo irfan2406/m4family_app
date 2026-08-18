@@ -418,7 +418,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
             textStyle: const TextStyle(inherit: true),
             fontSize: 10,
             fontWeight: FontWeight.w800,
-            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.2),
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.72),
             letterSpacing: 2,
           ),
         ),
@@ -435,7 +435,7 @@ class _StatusBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = status.toLowerCase() == 'confirmed'
         ? const Color(0xFF22C55E)
-        : Colors.blueAccent;
+        : const Color(0xFFC5A35B);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(

@@ -314,7 +314,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: (_isOpen ? Colors.blue : const Color(0xFF22C55E))
+              color: (_isOpen ? const Color(0xFFC5A35B) : const Color(0xFF22C55E))
                   .withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: border),
@@ -324,7 +324,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
               style: GoogleFonts.gelasio(
                 fontSize: 8,
                 fontWeight: FontWeight.w900,
-                color: _isOpen ? Colors.blue : const Color(0xFF22C55E),
+                color: _isOpen ? const Color(0xFFC5A35B) : const Color(0xFF22C55E),
                 letterSpacing: 2,
               ),
             ),

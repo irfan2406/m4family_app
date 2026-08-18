@@ -112,7 +112,7 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                       style: GoogleFonts.gelasio(
                         color: Theme.of(
                           context,
-                        ).colorScheme.onSurface.withOpacity(0.4),
+                        ).colorScheme.onSurface.withOpacity(0.72),
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 2,
@@ -139,7 +139,7 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                           style: GoogleFonts.ebGaramond(
                             color: Theme.of(
                               context,
-                            ).colorScheme.onSurface.withOpacity(0.38),
+                            ).colorScheme.onSurface.withOpacity(0.72),
                             fontSize: 13,
                           ),
                         ),
@@ -254,7 +254,7 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                                   style: GoogleFonts.ebGaramond(
                                     color:
                                         (isDark ? Colors.white : Color(0xFF163A2C))
-                                            .withOpacity(0.4),
+                                            .withOpacity(0.72),
                                     fontSize: 8,
                                     fontWeight: FontWeight.w900,
                                     letterSpacing: 1,
@@ -270,7 +270,7 @@ class _PagesListScreenState extends ConsumerState<PagesListScreen> {
                                 'DYNAMIC CONTENT',
                                 style: GoogleFonts.ebGaramond(
                                   color: (isDark ? Colors.white : Color(0xFF163A2C))
-                                      .withOpacity(0.3),
+                                      .withOpacity(0.72),
                                   fontSize: 9,
                                   fontWeight: FontWeight.w800,
                                   letterSpacing: 1,

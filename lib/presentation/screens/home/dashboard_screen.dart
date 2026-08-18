@@ -181,7 +181,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             // Was Colors.white10 — invisible on the light background.
             color: Theme.of(
               context,
-            ).colorScheme.onSurface.withValues(alpha: 0.4),
+            ).colorScheme.onSurface.withValues(alpha: 0.72),
             fontSize: 10,
             fontWeight: FontWeight.w900,
             letterSpacing: 1.5,
@@ -711,7 +711,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                               style: GoogleFonts.gelasio(
                                 color: Theme.of(
                                   context,
-                                ).colorScheme.onSurface.withValues(alpha: 0.4),
+                                ).colorScheme.onSurface.withValues(alpha: 0.72),
                                 fontSize: 10,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 1.5,
@@ -2404,7 +2404,7 @@ class _UpdateCard extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     color: Theme.of(
                       context,
-                    ).colorScheme.onSurface.withOpacity(0.3),
+                    ).colorScheme.onSurface.withOpacity(0.72),
                   ),
                 ),
               ],

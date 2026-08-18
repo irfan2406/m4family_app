@@ -482,7 +482,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                           style: GoogleFonts.gelasio(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
-                            color: Colors.white38,
+                            color: Colors.white70,
                             letterSpacing: 2,
                           ),
                         ),

@@ -122,7 +122,7 @@ class _PageDetailScreenState extends ConsumerState<PageDetailScreen> {
                         'SYNCING SECURE CONTENT...',
                         style: GoogleFonts.gelasio(
                           color: (isDark ? Colors.white : Color(0xFF163A2C))
-                              .withOpacity(0.4),
+                              .withOpacity(0.72),
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 2,

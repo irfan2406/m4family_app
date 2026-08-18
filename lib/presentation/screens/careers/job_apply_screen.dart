@@ -517,7 +517,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: GoogleFonts.ebGaramond(
-            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.4),
+            color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.72),
             fontWeight: FontWeight.bold,
             fontSize: 13,
           ),

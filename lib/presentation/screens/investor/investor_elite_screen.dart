@@ -458,7 +458,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                 fontSize: 10,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 2,
-                color: textPrimary.withValues(alpha: 0.2),
+                color: textPrimary.withValues(alpha: 0.72),
               ),
             ),
           ],

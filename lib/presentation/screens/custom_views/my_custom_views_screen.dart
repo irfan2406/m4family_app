@@ -176,7 +176,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                     style: GoogleFonts.gelasio(
                       color: Colors.black,
                       fontSize: 30,
-                      fontWeight: FontWeight.w300,
+                      fontWeight: FontWeight.w500,
                       letterSpacing: -0.5,
                     ),
                   ),
