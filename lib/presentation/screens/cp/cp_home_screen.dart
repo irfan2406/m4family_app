@@ -1727,7 +1727,11 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
       children: [
         Container(
           decoration: BoxDecoration(
-            color: isDark ? Colors.black : Colors.white,
+            // Frosted field: translucent white on the green/navy surfaces, cream on
+            // the light ones - never a solid black box.
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.08)
+                : const Color(0xFFF4EFE3),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: hasError
