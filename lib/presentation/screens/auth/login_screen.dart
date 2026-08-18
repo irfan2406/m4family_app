@@ -386,9 +386,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.amber.withOpacity(0.1),
+              color: const Color(0xFFC5A35B).withOpacity(0.1),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.amber.withOpacity(0.3)),
+              border: Border.all(color: const Color(0xFFC5A35B).withOpacity(0.3)),
             ),
             child: Row(
               children: [
@@ -399,7 +399,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       const Text(
                         '⚡ DEV MODE — SIMULATED OTP',
                         style: TextStyle(
-                          color: Colors.amber,
+                          color: const Color(0xFFC5A35B),
                           fontSize: 8,
                           fontWeight: FontWeight.bold,
                         ),
@@ -410,7 +410,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         style: GoogleFonts.gelasio(
                           fontSize: 24,
                           fontWeight: FontWeight.bold,
-                          color: Colors.amber,
+                          color: const Color(0xFFC5A35B),
                           letterSpacing: 4,
                         ),
                       ),
@@ -426,12 +426,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     }
                   },
                   style: TextButton.styleFrom(
-                    backgroundColor: Colors.amber.withOpacity(0.2),
+                    backgroundColor: const Color(0xFFC5A35B).withOpacity(0.2),
                   ),
                   child: const Text(
                     'AUTO-FILL',
                     style: TextStyle(
-                      color: Colors.amber,
+                      color: const Color(0xFFC5A35B),
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
                     ),

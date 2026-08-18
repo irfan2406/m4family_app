@@ -73,10 +73,10 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.purple.withValues(alpha: 0.2),
+                          color: const Color(0xFFC5A35B).withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
-                            color: Colors.purple.withValues(alpha: 0.35),
+                            color: const Color(0xFFC5A35B).withValues(alpha: 0.35),
                           ),
                         ),
                         child: const Icon(
@@ -419,7 +419,7 @@ class _FieldState extends State<_Field> {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(24),
               borderSide: BorderSide(
-                color: Colors.purpleAccent.withValues(alpha: 0.6),
+                color: const Color(0xFFC5A35B).withValues(alpha: 0.6),
               ),
             ),
           ),
