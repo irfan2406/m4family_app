@@ -139,7 +139,7 @@ class _InvestorSecurityScreenState
     final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
     final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
     final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);

@@ -171,7 +171,7 @@ class _InvestorReferralActiveScreenState
 
   // ─── List ────────────────────────────────────────────────────────────────
   Widget _buildList(bool isDark, Color textPrimary, Color muted, Color border) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
 
     return RefreshIndicator(
       onRefresh: _load,

@@ -463,7 +463,7 @@ class _InvestorSettingsScreenState
     TextInputType? keyboardType,
     List<TextInputFormatter>? inputFormatters,
   }) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: isDark ? 0.08 : 0.06,
     );
@@ -567,7 +567,7 @@ class _InvestorSettingsScreenState
     required bool value,
     required ValueChanged<bool> onChanged,
   }) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: isDark ? 0.08 : 0.06,
     );

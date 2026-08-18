@@ -262,7 +262,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
     required String label,
     required List<Widget> children,
   }) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -313,7 +313,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
     required bool value,
     required ValueChanged<bool> onChanged,
   }) {
-    final tileBg = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final tileBg = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final tileBorder = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);

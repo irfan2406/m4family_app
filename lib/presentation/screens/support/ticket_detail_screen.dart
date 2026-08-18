@@ -192,7 +192,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
+    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
     final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
     final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: 0.68,
@@ -654,7 +654,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
     Color muted,
     Color border,
   ) {
-    final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     return Container(
       padding: EdgeInsets.fromLTRB(
         16,

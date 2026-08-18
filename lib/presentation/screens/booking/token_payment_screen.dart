@@ -227,7 +227,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
     final id = name.split(' ')[0].toLowerCase();
     final isActive = _selectedMethod == id;
     final onSurface = isDark ? Colors.white : Color(0xFF163A2C);
-    final surface = isDark ? Colors.black : Colors.white;
+    final surface = isDark ? Colors.black : const Color(0xFFF4EFE3);
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: GestureDetector(

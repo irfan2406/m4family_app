@@ -90,7 +90,7 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
+    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
     final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
     final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: 0.68,
@@ -361,7 +361,7 @@ class _PaymentPlanCard extends StatelessWidget {
     final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: 0.68,
     );
-    final cardBg = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final cardBg = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
     final border = popular
         ? M4Theme.premiumBlue.withValues(alpha: 0.4)
         : (isDark

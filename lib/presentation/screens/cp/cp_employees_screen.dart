@@ -401,7 +401,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
                 colors: [Color(0xFF141B3A), Color(0xFF141B3A)],
               )
             : null,
-        color: isDark ? null : Colors.white,
+        color: isDark ? null : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: isDark ? Colors.white.withValues(alpha: 0.08) : border,
@@ -634,7 +634,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
   void _confirmDelete(String id, String name, Color textPrimary, Color muted) {
     if (id.isEmpty) return;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final dialogBg = isDark ? const Color(0xFF141B3A) : Colors.white;
+    final dialogBg = isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3);
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -691,7 +691,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
   /// Add (existing == null) or edit employee dialog.
   void _openEmployeeDialog({dynamic existing}) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final dialogBg = isDark ? const Color(0xFF141B3A) : Colors.white;
+    final dialogBg = isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3);
     final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
     final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: 0.62,

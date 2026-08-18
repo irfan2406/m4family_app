@@ -167,7 +167,7 @@ class _DateTimeWheelSheetState extends State<_DateTimeWheelSheet> {
   @override
   Widget build(BuildContext context) {
     final isDark = widget.isDark;
-    final bg = isDark ? const Color(0xFF141B3A) : Colors.white;
+    final bg = isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3);
     final txt = isDark ? Colors.white : Color(0xFF163A2C);
     // Defensive clamp so the day wheel never renders fewer rows than _day.
     if (_day > _daysInMonth) _day = _daysInMonth;

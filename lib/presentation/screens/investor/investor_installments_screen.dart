@@ -476,7 +476,7 @@ class _InvestorInstallmentsScreenState
     required Color muted,
   }) {
     final color = _statusColor(item.status);
-    final cardBg = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
+    final cardBg = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
 
     return Container(
       padding: const EdgeInsets.all(16),
