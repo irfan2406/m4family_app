@@ -473,11 +473,13 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                                 .toString()
                                 .toUpperCase(),
                             style: GoogleFonts.ebGaramond(
-                              fontSize: 13,
+                              fontSize: 12,
                               fontWeight: FontWeight.w900,
                               color: scheme.onSurface,
                               letterSpacing: 0.5,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                           Row(
                             children: [
@@ -492,7 +494,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                                     .toString()
                                     .toUpperCase(),
                                 style: GoogleFonts.ebGaramond(
-                                  fontSize: 12.5,
+                                  fontSize: 10.5,
                                   fontWeight: FontWeight.w900,
                                   color: scheme.onSurface.withValues(
                                     alpha: 0.62,
