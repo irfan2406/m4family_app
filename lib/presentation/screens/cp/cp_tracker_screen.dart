@@ -489,17 +489,21 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                                 color: scheme.onSurface.withValues(alpha: 0.3),
                               ),
                               const SizedBox(width: 4),
-                              Text(
-                                (t['project'] ?? 'PROJECT')
-                                    .toString()
-                                    .toUpperCase(),
-                                style: GoogleFonts.ebGaramond(
-                                  fontSize: 10.5,
-                                  fontWeight: FontWeight.w900,
-                                  color: scheme.onSurface.withValues(
-                                    alpha: 0.62,
+                              Flexible(
+                                child: Text(
+                                  (t['project'] ?? 'PROJECT')
+                                      .toString()
+                                      .toUpperCase(),
+                                  style: GoogleFonts.ebGaramond(
+                                    fontSize: 10.5,
+                                    fontWeight: FontWeight.w900,
+                                    color: scheme.onSurface.withValues(
+                                      alpha: 0.62,
+                                    ),
+                                    letterSpacing: 1,
                                   ),
-                                  letterSpacing: 1,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ],
