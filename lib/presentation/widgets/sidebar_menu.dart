@@ -38,7 +38,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
     // glass sidebar.
     final accentColor = isInvestor
         ? const Color(0xFFC5A35B)
-        : Theme.of(context).colorScheme.onSurface;
+        : const Color(0xFFF4EFE3);
 
     void navigateTo(int index) {
       final currentIndex = ref.read(navigationProvider);
@@ -573,14 +573,14 @@ class _SidebarItem extends StatelessWidget {
               ),
               child: Icon(
                 icon,
-                color: isActive ? activeColor : onSurface.withOpacity(0.4),
+                color: isActive ? activeColor : const Color(0xFFF4EFE3).withValues(alpha: 0.85),
                 size: 18,
               ),
             ),
             title: Text(
               label,
               style: GoogleFonts.ebGaramond(
-                color: isActive ? activeColor : onSurface.withOpacity(0.65),
+                color: isActive ? activeColor : const Color(0xFFF4EFE3),
                 fontSize: 14,
                 fontWeight: isActive ? FontWeight.w900 : FontWeight.w800,
                 letterSpacing: -0.2,
@@ -628,7 +628,7 @@ class _SidebarDropdown extends StatelessWidget {
           onTap: onToggle,
           trailing: Icon(
             isOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown,
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
+            color: const Color(0xFFF4EFE3).withValues(alpha: 0.85),
             size: 16,
           ),
         ),
@@ -667,7 +667,7 @@ class _SidebarSubItem extends StatelessWidget {
           color: onSurface.withOpacity(0.06),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Icon(icon, color: onSurface.withOpacity(0.6), size: 15),
+        child: Icon(icon, color: const Color(0xFFF4EFE3).withValues(alpha: 0.9), size: 15),
       ),
       title: Text(
         label,

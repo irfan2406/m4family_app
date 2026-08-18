@@ -42,7 +42,9 @@ class SideMenuButton extends StatelessWidget {
         ),
         child: Icon(
           LucideIcons.menu,
-          color: Theme.of(context).colorScheme.onSurface,
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.white
+              : Theme.of(context).colorScheme.onSurface,
           size: 24,
         ),
       ),
