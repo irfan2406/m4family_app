@@ -466,14 +466,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
-                      color: Colors.white.withOpacity(0.1),
+                      color: Colors.white.withOpacity(0.4),
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: const BorderSide(color: Colors.white),
                   ),
-                  fillColor: Colors.white.withOpacity(0.05),
+                  fillColor: Colors.white.withOpacity(0.12),
                   filled: true,
                 ),
                 onChanged: (value) => _onOtpChanged(value, index),
