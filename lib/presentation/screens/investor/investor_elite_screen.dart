@@ -366,7 +366,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
         child: Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.08),
+            color: const Color(0xFFF4EFE3).withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
           ),
