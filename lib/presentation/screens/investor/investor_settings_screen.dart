@@ -506,7 +506,10 @@ class _InvestorSettingsScreenState
                           color: fieldColor,
                         ),
                         decoration: const InputDecoration(
+                          filled: false,
                           border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
                           isDense: true,
                           contentPadding: EdgeInsets.symmetric(vertical: 16),
                         ),
