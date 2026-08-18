@@ -48,12 +48,12 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                 width: 52,
                 height: 52,
                 decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.12),
+                  color: const Color(0xFFC65B46).withOpacity(0.12),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   LucideIcons.logOut,
-                  color: Colors.red,
+                  color: const Color(0xFFC65B46),
                   size: 24,
                 ),
               ),
@@ -115,7 +115,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                         height: 48,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: Colors.red,
+                          color: const Color(0xFFC65B46),
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Text(
@@ -422,9 +422,9 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                     width: double.infinity,
                     height: 60,
                     decoration: BoxDecoration(
-                      color: Colors.red.withOpacity(0.12),
+                      color: const Color(0xFFC65B46).withOpacity(0.12),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.red.withOpacity(0.1)),
+                      border: Border.all(color: const Color(0xFFC65B46).withOpacity(0.1)),
                     ),
                     child: InkWell(
                       onTap: _confirmExit,
@@ -434,14 +434,14 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                         children: [
                           const Icon(
                             LucideIcons.logOut,
-                            color: Colors.red,
+                            color: const Color(0xFFC65B46),
                             size: 20,
                           ),
                           const SizedBox(width: 12),
                           Text(
                             'EXIT APP',
                             style: GoogleFonts.ebGaramond(
-                              color: Colors.red,
+                              color: const Color(0xFFC65B46),
                               fontWeight: FontWeight.w900,
                               fontSize: 13,
                               letterSpacing: 1,

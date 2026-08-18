@@ -458,7 +458,7 @@ class _SidebarExitButton extends ConsumerWidget {
                 child: Text(
                   'LOGOUT',
                   style: GoogleFonts.ebGaramond(
-                    color: Colors.redAccent,
+                    color: const Color(0xFFC65B46),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -471,12 +471,12 @@ class _SidebarExitButton extends ConsumerWidget {
         width: double.infinity,
         height: 56, // 👈 Match web h-14 (14 * 4 = 56)
         decoration: BoxDecoration(
-          color: Colors.red.withOpacity(0.08),
+          color: const Color(0xFFC65B46).withOpacity(0.08),
           borderRadius: BorderRadius.circular(16), // 👈 Web rounded-2xl
-          border: Border.all(color: Colors.red.withOpacity(0.2), width: 1),
+          border: Border.all(color: const Color(0xFFC65B46).withOpacity(0.2), width: 1),
           boxShadow: [
             BoxShadow(
-              color: Colors.red.withOpacity(0.05),
+              color: const Color(0xFFC65B46).withOpacity(0.05),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),

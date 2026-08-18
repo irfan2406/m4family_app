@@ -64,12 +64,12 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                 width: 52,
                 height: 52,
                 decoration: BoxDecoration(
-                  color: Colors.red.withValues(alpha: 0.12),
+                  color: const Color(0xFFC65B46).withValues(alpha: 0.12),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   LucideIcons.logOut,
-                  color: Colors.red,
+                  color: const Color(0xFFC65B46),
                   size: 24,
                 ),
               ),
@@ -131,7 +131,7 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                         height: 48,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: Colors.red,
+                          color: const Color(0xFFC65B46),
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Text(
@@ -445,7 +445,7 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                           const Icon(
                             LucideIcons.logOut,
                             size: 18,
-                            color: Colors.red,
+                            color: const Color(0xFFC65B46),
                           ),
                           const SizedBox(width: 10),
                           Text(
@@ -454,7 +454,7 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                               fontSize: 12,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 1.5,
-                              color: Colors.red,
+                              color: const Color(0xFFC65B46),
                             ),
                           ),
                         ],

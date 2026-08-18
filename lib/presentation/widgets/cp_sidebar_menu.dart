@@ -56,12 +56,12 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                 width: 52,
                 height: 52,
                 decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.12),
+                  color: const Color(0xFFC65B46).withOpacity(0.12),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   LucideIcons.logOut,
-                  color: Colors.red,
+                  color: const Color(0xFFC65B46),
                   size: 24,
                 ),
               ),
@@ -123,7 +123,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                         height: 48,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: Colors.red,
+                          color: const Color(0xFFC65B46),
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Text(
@@ -401,7 +401,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                       decoration: BoxDecoration(
                         // Web parity: bg-red-50 (light) / red-900/10 (dark).
                         color: isDark
-                            ? Colors.red.withOpacity(0.1)
+                            ? const Color(0xFFC65B46).withOpacity(0.1)
                             : const Color(0xFFFBF7EF),
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -411,7 +411,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                           const Icon(
                             LucideIcons.logOut,
                             size: 18,
-                            color: Colors.red,
+                            color: const Color(0xFFC65B46),
                           ),
                           const SizedBox(width: 10),
                           Text(
@@ -420,7 +420,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                               fontSize: 12,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 1.5,
-                              color: Colors.red,
+                              color: const Color(0xFFC65B46),
                             ),
                           ),
                         ],
