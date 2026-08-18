@@ -122,7 +122,9 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
   }
 
   Future<void> _load({bool retried = false}) async {
-    setState(() => _loading = true);
+    // Only show the blocking spinner when there is nothing to display yet;
+    // otherwise the cached list stays on screen while we refresh behind it.
+    if (_list.isEmpty) setState(() => _loading = true);
     try {
       final res = await ref
           .read(apiClientProvider)
@@ -200,7 +202,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
             // pops off the background via the shadow), not a grey tint. In dark
             // mode it uses the home page's neutral card colour (0xFF141B3A) so
             // every card across the app reads as one cohesive system.
-            color: isDark ? const Color(0xFF141B3A) : Colors.white,
+            color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
             borderRadius: BorderRadius.circular(40),
             border: Border.all(color: border),
             boxShadow: [
@@ -864,19 +866,6 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
                                     fontWeight: FontWeight.w900,
                                     letterSpacing: -0.2,
                                     color: scheme.onSurface,
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  'STATUS: ACTIVE TRACKING',
-                                  style: GoogleFonts.gelasio(
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.w900,
-                                    letterSpacing: 2.8,
-                                    fontStyle: FontStyle.italic,
-                                    color: scheme.onSurface.withValues(
-                                      alpha: 0.68,
-                                    ),
                                   ),
                                 ),
                               ],
