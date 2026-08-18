@@ -49,7 +49,7 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
         child: Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF141B3A) : const Color(0xFF0F2A20).withValues(alpha: 0.72),
+            color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: isDark
@@ -79,7 +79,7 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                 style: GoogleFonts.gelasio(
                   fontSize: 20,
                   fontWeight: FontWeight.w800,
-                  color: isDark ? Colors.white : const Color(0xFFF4EFE3),
+                  color: isDark ? Colors.white : const Color(0xFF163A2C),
                 ),
               ),
               const SizedBox(height: 8),
@@ -88,7 +88,7 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                 textAlign: TextAlign.center,
                 style: GoogleFonts.ebGaramond(
                   fontSize: 13,
-                  color: isDark ? Colors.white60 : Colors.grey[600],
+                  color: isDark ? Colors.white60 : const Color(0xFF163A2C).withValues(alpha: 0.78),
                 ),
               ),
               const SizedBox(height: 22),
