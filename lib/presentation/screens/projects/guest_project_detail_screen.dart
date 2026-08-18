@@ -3333,7 +3333,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                         fontSize: 12,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 2,
-                        color: isDark ? Colors.white : const Color(0xFF141B3A),
+                        color: isDark ? Colors.white : const Color(0xFF163A2C),
                       ),
                     ),
                     Text(

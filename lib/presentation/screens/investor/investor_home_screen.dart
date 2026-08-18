@@ -1794,7 +1794,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
             onTap: _submitting ? () {} : _submitInterest,
             child: Container(
               decoration: BoxDecoration(
-                color: isDark ? Colors.white : const Color(0xFF141B3A),
+                color: isDark ? Colors.white : const Color(0xFF163A2C),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Center(

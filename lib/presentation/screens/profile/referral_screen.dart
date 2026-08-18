@@ -165,7 +165,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
   Widget _buildPremiumRewardsCard() {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final cardBg = isDark ? theme.cardColor : const Color(0xFF141B3A);
+    final cardBg = isDark ? theme.cardColor : const Color(0xFF0F2A20);
     final cardFg = Colors.white;
 
     return Container(
