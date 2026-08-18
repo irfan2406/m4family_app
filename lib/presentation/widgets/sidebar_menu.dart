@@ -98,7 +98,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                       Text(
                         isInvestor ? 'INVESTOR MENU' : 'MENU',
                         style: GoogleFonts.gelasio(
-                          color: Theme.of(context).colorScheme.onSurface,
+                          color: Colors.white,
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 4,
