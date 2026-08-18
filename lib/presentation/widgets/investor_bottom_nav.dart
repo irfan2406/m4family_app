@@ -25,11 +25,12 @@ class InvestorBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    // Frosted glass follows the surface behind it: deep-green on the showcase
-    // tabs, navy in dark mode, near-white on the cream tabs.
+    // Frosted glass follows the surface behind it on BOTH themes: deep-green on
+    // the showcase tabs, navy in dark mode, cream on the cream tabs - so the bar
+    // is never an opaque white slab.
     final surface = isDark
         ? Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.5)
-        : Colors.white.withValues(alpha: 0.95);
+        : Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.62);
     final border = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: 0.08,
     );
