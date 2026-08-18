@@ -418,7 +418,9 @@ class _SidebarExitButton extends ConsumerWidget {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            backgroundColor: const Color(0xFF141B3A),
+            backgroundColor: Theme.of(context).brightness == Brightness.dark
+                ? const Color(0xFF141B3A)
+                : const Color(0xFFF4EFE3),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
