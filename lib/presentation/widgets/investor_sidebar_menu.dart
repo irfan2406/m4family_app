@@ -21,7 +21,7 @@ class InvestorSidebarMenu extends ConsumerStatefulWidget {
 }
 
 class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
-  static const _gold = Color(0xFFE8850C);
+  static const _gold = const Color(0xFFF4EFE3);
   bool _isContentOpen = false;
   bool _isCustomViewsOpen = false;
 
@@ -103,7 +103,7 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                         decoration: BoxDecoration(
                           color: isDark
                               ? Colors.white.withValues(alpha: 0.06)
-                              : const Color(0xFFF3F4F6),
+                              : Colors.white.withValues(alpha: 0.10),
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
                             color: isDark
@@ -178,9 +178,7 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
               child: Container(
-                color: (isDark ? Colors.black : Colors.white).withValues(
-                  alpha: 0.6,
-                ),
+                color: isDark ? Colors.black.withValues(alpha: 0.6) : const Color(0xFF0F2A20).withValues(alpha: 0.72),
               ),
             ),
           ),
@@ -491,7 +489,7 @@ class _SidebarItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    const gold = Color(0xFFE8850C);
+    const gold = const Color(0xFFF4EFE3);
 
     return InkWell(
       onTap: onTap,

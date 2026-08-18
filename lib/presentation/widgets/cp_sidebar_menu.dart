@@ -95,7 +95,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                         decoration: BoxDecoration(
                           color: isDark
                               ? Colors.white.withOpacity(0.06)
-                              : const Color(0xFFF3F4F6),
+                              : Colors.white.withValues(alpha: 0.10),
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
                             color: isDark
