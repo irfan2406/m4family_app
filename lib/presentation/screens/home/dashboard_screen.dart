@@ -2003,7 +2003,7 @@ class _PremiumInputField extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 22,
-                  vertical: 16,
+                  vertical: 9,
                 ),
                 decoration: BoxDecoration(
                   // Web parity: white field with a soft shadow.
