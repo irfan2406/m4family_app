@@ -44,7 +44,7 @@ class NavigationPill extends StatelessWidget {
               // frosted glass matches every portal's background.
               color: isDark
                   ? Theme.of(context).scaffoldBackgroundColor.withOpacity(0.5)
-                  : Colors.white.withOpacity(0.92),
+                  : Theme.of(context).scaffoldBackgroundColor.withOpacity(0.62),
               borderRadius: BorderRadius.circular(35),
               border: Border.all(
                 color: (isDark ? M4Theme.cream : M4Theme.deepGreen)
