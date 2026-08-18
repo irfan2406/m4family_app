@@ -419,7 +419,7 @@ class _FieldState extends State<_Field> {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(24),
               borderSide: BorderSide(
-                color: const Color(0xFFC5A35B).withValues(alpha: 0.6),
+                color: Colors.white.withValues(alpha: 0.85),
               ),
             ),
           ),

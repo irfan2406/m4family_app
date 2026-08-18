@@ -45,7 +45,9 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
   }
 
   Future<void> _load() async {
-    setState(() => _loading = true);
+    // Keep any rows already on screen visible while refreshing - showing the
+    // blocking spinner every time is what made this feel slow.
+    if (_trackers.isEmpty) setState(() => _loading = true);
     try {
       final api = ref.read(apiClientProvider);
       final qp = <String, dynamic>{};
