@@ -449,10 +449,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         ),
                         child: Icon(
                           LucideIcons.menu,
-                          // Toggle icon color: Theme.of(context).colorScheme.onSurface, White in Light Mode
+                          // White on the dark navy surfaces, theme ink on cream.
                           color: Theme.of(context).brightness == Brightness.dark
-                              ? Colors.black
-                              : Colors.white,
+                              ? Colors.white
+                              : Theme.of(context).colorScheme.onSurface,
                           size: 24,
                         ),
                       ),
