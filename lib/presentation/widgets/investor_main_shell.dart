@@ -43,10 +43,13 @@ class InvestorMainShell extends ConsumerWidget {
       backgroundColor: navTheme.scaffoldBackgroundColor,
       drawer: const InvestorSidebarMenu(),
       body: IndexedStack(index: idx, children: screens),
-      bottomNavigationBar: InvestorBottomNav(
-        currentIndex: idx,
-        onTap: (i) =>
-            ref.read(investorNavigationIndexProvider.notifier).state = i,
+      bottomNavigationBar: Theme(
+        data: navTheme,
+        child: InvestorBottomNav(
+          currentIndex: idx,
+          onTap: (i) =>
+              ref.read(investorNavigationIndexProvider.notifier).state = i,
+        ),
       ),
     );
   }
