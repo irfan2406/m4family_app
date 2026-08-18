@@ -2527,7 +2527,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
         height: 80,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(30),
           boxShadow: [
             BoxShadow(
@@ -2815,7 +2815,7 @@ class _OverviewPremiumCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.6),
+        color: const Color(0xFFF4EFE3).withOpacity(0.6),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: Colors.white.withOpacity(0.6)),
       ),
@@ -3346,7 +3346,7 @@ class _DocumentItem extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.6),
+          color: const Color(0xFFF4EFE3).withOpacity(0.6),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: Colors.white.withOpacity(0.6)),
         ),
@@ -3492,7 +3492,7 @@ class _TopIconButton extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.8),
+              color: const Color(0xFFF4EFE3).withOpacity(0.8),
               borderRadius: BorderRadius.circular(15),
               border: Border.all(color: Colors.black.withOpacity(0.05)),
             ),

@@ -664,7 +664,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                         width: 35,
                                         height: 35,
                                         decoration: const BoxDecoration(
-                                          color: Colors.white,
+                                          color: const Color(0xFFF4EFE3),
                                           shape: BoxShape.circle,
                                         ),
                                         child: const Icon(
@@ -862,7 +862,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                     width: 50,
                                     height: 50,
                                     decoration: BoxDecoration(
-                                      color: Colors.white,
+                                      color: const Color(0xFFF4EFE3),
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     child: const Icon(
@@ -1302,7 +1302,7 @@ class CommunityProjectsScreen extends ConsumerWidget {
                                   vertical: 6,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.1),
+                                  color: const Color(0xFFF4EFE3).withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(10),
                                   border: Border.all(
                                     color: Colors.white.withOpacity(0.2),
@@ -1416,7 +1416,7 @@ class CommunityProjectsScreen extends ConsumerWidget {
                                   width: 50,
                                   height: 50,
                                   decoration: const BoxDecoration(
-                                    color: Colors.white,
+                                    color: const Color(0xFFF4EFE3),
                                     shape: BoxShape.circle,
                                   ),
                                   child: const Icon(

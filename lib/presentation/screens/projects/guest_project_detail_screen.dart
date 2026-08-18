@@ -2014,7 +2014,7 @@ class _GuestProjectDetailScreenState
       child: Container(
         height: 80,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(40),
           boxShadow: [
             BoxShadow(
@@ -4037,7 +4037,7 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
                             vertical: 12,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: const Color(0xFFF4EFE3),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
@@ -4130,7 +4130,7 @@ class _CinematicTourOverlayState extends State<_CinematicTourOverlay> {
       child: Container(
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.08),
+          color: const Color(0xFFF4EFE3).withOpacity(0.08),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(color: Colors.white.withOpacity(0.15), width: 1.5),
         ),
