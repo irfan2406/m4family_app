@@ -429,7 +429,7 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
                       height: 56,
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.9),
+                        color: const Color(0xFFC65B46).withValues(alpha: 0.14),
                         borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           BoxShadow(
