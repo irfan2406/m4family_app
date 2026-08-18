@@ -260,7 +260,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                                 gradient: const LinearGradient(
                                   begin: Alignment.centerLeft,
                                   end: Alignment.centerRight,
-                                  colors: [Color(0xFFC5A35B), Color(0xFFC5A35B)],
+                                  colors: [Color(0xFFF4EFE3), Color(0xFFFBF7EF)],
                                 ),
                                 borderRadius: BorderRadius.circular(32),
                               ),
@@ -285,7 +285,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                                             Text(
                                               'AUTHORIZE ACCESS',
                                               style: GoogleFonts.ebGaramond(
-                                                color: Colors.white,
+                                                color: const Color(0xFF0F2A20),
                                                 fontWeight: FontWeight.w800,
                                                 fontSize: 13,
                                                 letterSpacing: 1.5,
@@ -294,7 +294,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                                             Container(
                                               padding: const EdgeInsets.all(6),
                                               decoration: BoxDecoration(
-                                                color: Colors.white.withOpacity(
+                                                color: const Color(0xFF0F2A20).withOpacity(
                                                   0.2,
                                                 ),
                                                 shape: BoxShape.circle,
