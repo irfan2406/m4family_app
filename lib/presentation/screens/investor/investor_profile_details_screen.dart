@@ -534,7 +534,7 @@ class _InvestorProfileDetailsScreenState
                         height: 26,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: Colors.white,
+                          color: const Color(0xFFF4EFE3),
                         ),
                       ),
                     ),

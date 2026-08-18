@@ -260,7 +260,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                     height: 64,
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: const Color(0xFFF4EFE3),
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
@@ -311,7 +311,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
       child: Text(
         label,
         style: GoogleFonts.ebGaramond(
-          color: Colors.white,
+          color: const Color(0xFFF4EFE3),
           fontSize: 8,
           fontWeight: FontWeight.w900,
           letterSpacing: 0.5,

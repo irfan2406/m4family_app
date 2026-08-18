@@ -396,7 +396,7 @@ class _InvestorReferralActiveScreenState
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2,
-                  color: Colors.white,
+                  color: const Color(0xFFF4EFE3),
                 ),
               ),
             ),

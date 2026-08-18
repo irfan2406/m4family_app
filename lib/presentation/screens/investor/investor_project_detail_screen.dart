@@ -806,7 +806,7 @@ class _InvestorProjectDetailScreenState
                   ),
                   child: const Icon(
                     LucideIcons.x,
-                    color: Colors.white,
+                    color: const Color(0xFFF4EFE3),
                     size: 20,
                   ),
                 ),
@@ -1027,7 +1027,7 @@ class _InvestorProjectDetailScreenState
               child: Text(
                 (project['status']?.toString().toUpperCase() ?? 'ONGOING'),
                 style: GoogleFonts.ebGaramond(
-                  color: Colors.white,
+                  color: const Color(0xFFF4EFE3),
                   fontSize: 9,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 1,
@@ -1913,7 +1913,7 @@ class _InvestorProjectDetailScreenState
                         style: GoogleFonts.ebGaramond(
                           fontSize: 8,
                           fontWeight: FontWeight.w900,
-                          color: Colors.white,
+                          color: const Color(0xFFF4EFE3),
                           letterSpacing: 1,
                         ),
                       ),
@@ -2751,7 +2751,7 @@ class _MediaThumb extends StatelessWidget {
                   label,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.ebGaramond(
-                    color: Colors.white,
+                    color: const Color(0xFFF4EFE3),
                     fontSize: 8,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 0.5,

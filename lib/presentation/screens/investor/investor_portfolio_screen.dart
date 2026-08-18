@@ -330,7 +330,7 @@ class _InvestorPortfolioScreenState
                   style: GoogleFonts.gelasio(
                     fontSize: 32,
                     fontWeight: FontWeight.w900,
-                    color: Colors.white,
+                    color: const Color(0xFFF4EFE3),
                     height: 1.0,
                     letterSpacing: -1,
                   ),

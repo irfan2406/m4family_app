@@ -664,7 +664,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                                 child: Text(
                                   'ARTISTIC IMPRESSION',
                                   style: GoogleFonts.gelasio(
-                                    color: Colors.white,
+                                    color: const Color(0xFFF4EFE3),
                                     fontSize: 7,
                                     fontWeight: FontWeight.w900,
                                     letterSpacing: 1.5,
@@ -954,7 +954,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                       child: Text(
                         status.toUpperCase(),
                         style: GoogleFonts.ebGaramond(
-                          color: Colors.white,
+                          color: const Color(0xFFF4EFE3),
                           fontSize: 8,
                           fontWeight: FontWeight.w500,
                           letterSpacing: 1,
@@ -977,7 +977,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                       child: Text(
                         'ARTISTIC IMPRESSION',
                         style: GoogleFonts.ebGaramond(
-                          color: Colors.white,
+                          color: const Color(0xFFF4EFE3),
                           fontSize: 6.5,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 1.2,
@@ -1169,13 +1169,13 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                       // (CLEDOR / SKAI); Communities use the large serif.
                       style: isMedia
                           ? GoogleFonts.gelasio(
-                              color: Colors.white,
+                              color: const Color(0xFFF4EFE3),
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
                               letterSpacing: 2,
                             )
                           : GoogleFonts.gelasio(
-                              color: Colors.white,
+                              color: const Color(0xFFF4EFE3),
                               fontSize: 22,
                               fontWeight: FontWeight.w400,
                               letterSpacing: -0.5,
@@ -1208,7 +1208,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                           Text(
                             'EXPLORE COMMUNITY',
                             style: GoogleFonts.ebGaramond(
-                              color: Colors.white,
+                              color: const Color(0xFFF4EFE3),
                               fontSize: 10,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 1.2,
@@ -1218,7 +1218,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                             width: 44,
                             height: 44,
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: const Color(0xFFF4EFE3),
                               shape: BoxShape.circle,
                               boxShadow: [
                                 BoxShadow(
@@ -1344,7 +1344,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                       child: Text(
                         'ARTISTIC IMPRESSION',
                         style: GoogleFonts.gelasio(
-                          color: Colors.white,
+                          color: const Color(0xFFF4EFE3),
                           fontSize: 7,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1.5,

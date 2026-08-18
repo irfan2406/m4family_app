@@ -144,7 +144,7 @@ class _DeactivateAccountScreenState
                     ),
                     child: const Icon(
                       LucideIcons.alertTriangle,
-                      color: Colors.white,
+                      color: const Color(0xFFF4EFE3),
                       size: 24,
                     ),
                   ),
@@ -413,7 +413,7 @@ class _DeactivateAccountScreenState
                               height: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: Colors.white,
+                                color: const Color(0xFFF4EFE3),
                               ),
                             )
                           : Text(

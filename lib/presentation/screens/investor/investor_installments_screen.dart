@@ -688,7 +688,7 @@ class _InvestorInstallmentsScreenState
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.5,
-                    color: Colors.white,
+                    color: const Color(0xFFF4EFE3),
                   ),
                 ),
               ),

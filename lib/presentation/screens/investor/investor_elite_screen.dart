@@ -305,7 +305,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                               style: GoogleFonts.gelasio(
                                 fontSize: 22,
                                 fontWeight: FontWeight.w900,
-                                color: Colors.white,
+                                color: const Color(0xFFF4EFE3),
                               ),
                             ),
                           ],
@@ -388,7 +388,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                 style: GoogleFonts.ebGaramond(
                   fontSize: 14,
                   fontWeight: FontWeight.w800,
-                  color: Colors.white,
+                  color: const Color(0xFFF4EFE3),
                 ),
               ),
             ],

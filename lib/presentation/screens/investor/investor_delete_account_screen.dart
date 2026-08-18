@@ -153,7 +153,7 @@ class _InvestorDeleteAccountScreenState
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 1,
-                  color: Colors.white,
+                  color: const Color(0xFFF4EFE3),
                 ),
               ),
             ),
@@ -682,7 +682,7 @@ class _InvestorDeleteAccountScreenState
                   height: 22,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: Colors.white,
+                    color: const Color(0xFFF4EFE3),
                   ),
                 )
               : Row(
@@ -690,7 +690,7 @@ class _InvestorDeleteAccountScreenState
                   children: [
                     const Icon(
                       LucideIcons.trash2,
-                      color: Colors.white,
+                      color: const Color(0xFFF4EFE3),
                       size: 16,
                     ),
                     const SizedBox(width: 12),
@@ -700,7 +700,7 @@ class _InvestorDeleteAccountScreenState
                         fontSize: 11,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1.5,
-                        color: Colors.white,
+                        color: const Color(0xFFF4EFE3),
                       ),
                     ),
                   ],

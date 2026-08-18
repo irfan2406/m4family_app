@@ -367,7 +367,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(100),
           ),
-          backgroundColor: Colors.white,
+          backgroundColor: const Color(0xFFF4EFE3),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

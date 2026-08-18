@@ -146,7 +146,7 @@ class _InvestorPurgeCacheScreenState
             style: GoogleFonts.ebGaramond(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: Colors.white,
+              color: const Color(0xFFF4EFE3),
             ),
           ),
         ),
@@ -599,7 +599,7 @@ class _InvestorPurgeCacheScreenState
                 height: 22,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  color: Colors.white,
+                  color: const Color(0xFFF4EFE3),
                 ),
               )
             : Row(
@@ -608,7 +608,7 @@ class _InvestorPurgeCacheScreenState
                   Icon(
                     allDone ? LucideIcons.checkCircle : LucideIcons.trash2,
                     size: 18,
-                    color: Colors.white,
+                    color: const Color(0xFFF4EFE3),
                   ),
                   const SizedBox(width: 10),
                   Text(
@@ -617,7 +617,7 @@ class _InvestorPurgeCacheScreenState
                       fontSize: 12,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1.5,
-                      color: Colors.white,
+                      color: const Color(0xFFF4EFE3),
                     ),
                   ),
                 ],

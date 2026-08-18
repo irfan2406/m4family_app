@@ -155,7 +155,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
           style: GoogleFonts.gelasio(
             fontSize: 38,
             fontWeight: FontWeight.w900,
-            color: Colors.white,
+            color: const Color(0xFFF4EFE3),
             height: 1.0,
             letterSpacing: -1,
           ),
@@ -285,7 +285,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
                     style: GoogleFonts.gelasio(
                       fontSize: 22,
                       fontWeight: FontWeight.w900,
-                      color: Colors.white,
+                      color: const Color(0xFFF4EFE3),
                       height: 1.0,
                     ),
                   ),
@@ -437,7 +437,7 @@ class _FeaturePill extends StatelessWidget {
             style: GoogleFonts.gelasio(
               fontSize: 9,
               fontWeight: FontWeight.w700,
-              color: Colors.white,
+              color: const Color(0xFFF4EFE3),
               letterSpacing: 1.5,
             ),
           ),
@@ -494,7 +494,7 @@ class _Field extends StatelessWidget {
           cursorWidth: 2,
           cursorRadius: const Radius.circular(2),
           style: const TextStyle(
-            color: Colors.white,
+            color: const Color(0xFFF4EFE3),
             fontWeight: FontWeight.w600,
           ),
           decoration: InputDecoration(
@@ -519,7 +519,7 @@ class _Field extends StatelessWidget {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
               borderSide: const BorderSide(
-                color: Colors.white,
+                color: const Color(0xFFF4EFE3),
                 width: 1.2,
               ),
             ),
