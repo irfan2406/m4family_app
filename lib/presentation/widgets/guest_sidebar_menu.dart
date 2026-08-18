@@ -158,7 +158,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
             child: Container(
               decoration: BoxDecoration(
                 color: isDark
-                    ? const Color(0xFFF4EFE3).withValues(alpha: 0.92)
+                    ? const Color(0xFF0B1026).withValues(alpha: 0.82)
                     : const Color(0xFF0F2A20).withValues(alpha: 0.72),
                 border: Border(
                   right: BorderSide(
