@@ -152,7 +152,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
       margin: const EdgeInsets.all(24),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
@@ -235,7 +235,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
                     fontSize: 9,
                     fontWeight: FontWeight.w800,
                     color: _selectedFilter == f
-                        ? (isDark ? Colors.black : Colors.white)
+                        ? (isDark ? Colors.black : const Color(0xFFF4EFE3))
                         : (isDark ? Colors.white54 : Color(0xFF5E6B60)),
                   ),
                   selectedColor: isDark ? Colors.white : Color(0xFF163A2C),
@@ -264,7 +264,7 @@ class _LegalVaultScreenState extends ConsumerState<LegalVaultScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
@@ -398,7 +398,7 @@ class _DocumentDetailSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
       ),
       padding: const EdgeInsets.all(32),
@@ -591,9 +591,9 @@ class _ActionButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: isPrimary
               ? (isDark ? Colors.white : Color(0xFF163A2C))
-              : (isDark ? const Color(0xFF141B3A) : Colors.white),
+              : (isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3)),
           foregroundColor: isPrimary
-              ? (isDark ? Colors.black : Colors.white)
+              ? (isDark ? Colors.black : const Color(0xFFF4EFE3))
               : (isDark ? Colors.white54 : Color(0xFF5E6B60)),
           elevation: isPrimary ? 8 : 0,
           shape: RoundedRectangleBorder(
@@ -629,7 +629,7 @@ class _IconButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),

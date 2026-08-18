@@ -128,7 +128,7 @@ class _InvestorDocumentDetailScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
+    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
 
     return Scaffold(
       backgroundColor: Colors.black.withValues(alpha: 0.6),
@@ -307,7 +307,7 @@ class _InvestorDocumentDetailScreenState
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: (isDark ? Colors.black : Colors.white).withValues(
+                      color: (isDark ? Colors.black : const Color(0xFFF4EFE3)).withValues(
                         alpha: 0.4,
                       ),
                       shape: BoxShape.circle,
@@ -566,7 +566,7 @@ class _PrimaryButton extends StatelessWidget {
         ),
         style: ElevatedButton.styleFrom(
           backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
-          foregroundColor: isDark ? Colors.black : Colors.white,
+          foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18),

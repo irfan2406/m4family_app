@@ -1485,7 +1485,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                       child: Text(
                         'READ MORE',
                         style: GoogleFonts.gelasio(
-                          color: isDark ? Colors.black : Colors.white,
+                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                           fontWeight: FontWeight.w900,
                           fontSize: 12,
                           letterSpacing: 3,
@@ -1755,7 +1755,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
               value: _agreedToTerms,
               onChanged: (val) => setState(() => _agreedToTerms = val ?? false),
               activeColor: isDark ? Colors.white : Color(0xFF163A2C),
-              checkColor: isDark ? Colors.black : Colors.white,
+              checkColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
               side: BorderSide(color: isDark ? Colors.white24 : Colors.black26),
             ),
             Expanded(
@@ -1800,12 +1800,12 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
               child: Center(
                 child: _submitting
                     ? CircularProgressIndicator(
-                        color: isDark ? Colors.black : Colors.white,
+                        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                       )
                     : Text(
                         'SUBMIT INTEREST',
                         style: GoogleFonts.ebGaramond(
-                          color: isDark ? Colors.black : Colors.white,
+                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                           fontWeight: FontWeight.w400,
                           letterSpacing: 2,
                         ),
@@ -1838,7 +1838,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
       children: [
         Container(
           decoration: BoxDecoration(
-            color: isDark ? Colors.black : Colors.white,
+            color: isDark ? Colors.black : const Color(0xFFF4EFE3),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: hasError

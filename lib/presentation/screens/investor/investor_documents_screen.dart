@@ -167,7 +167,7 @@ class _InvestorDocumentsScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
+    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
     final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
 
     return Scaffold(
@@ -318,7 +318,7 @@ class _InvestorDocumentsScreenState
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1.5,
                     color: selected
-                        ? (isDark ? Colors.black : Colors.white)
+                        ? (isDark ? Colors.black : const Color(0xFFF4EFE3))
                         : (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                             alpha: 0.5,
                           ),
@@ -590,7 +590,7 @@ class _InvestorDocumentsScreenState
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 2,
-                    color: isDark ? Colors.black : Colors.white,
+                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                   ),
                 ),
               ),
@@ -655,7 +655,7 @@ class _DocumentDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = isDark ? Colors.black : Colors.white;
+    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
     final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
     final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     final border = isDark
@@ -844,7 +844,7 @@ class _DocumentDetail extends StatelessWidget {
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: textPrimary,
-                        foregroundColor: isDark ? Colors.black : Colors.white,
+                        foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18),

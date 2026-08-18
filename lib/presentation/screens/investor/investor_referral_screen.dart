@@ -105,7 +105,7 @@ class _InvestorReferralScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
+    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
     final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
 
     return Scaffold(
@@ -384,14 +384,14 @@ class _InvestorReferralScreenState
                 fontSize: 11,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 2,
-                color: isDark ? Colors.black : Colors.white,
+                color: isDark ? Colors.black : const Color(0xFFF4EFE3),
               ),
             ),
             const SizedBox(width: 12),
             Icon(
               LucideIcons.gift,
               size: 18,
-              color: isDark ? Colors.black : Colors.white,
+              color: isDark ? Colors.black : const Color(0xFFF4EFE3),
             ),
           ],
         ),
@@ -768,7 +768,7 @@ class _InvestorReferralScreenState
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
-                    color: isDark ? Colors.black : Colors.white,
+                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                   ),
                 ),
               ),
@@ -808,7 +808,7 @@ class _InvestorReferralScreenState
                 bottom: MediaQuery.of(ctx).viewInsets.bottom + 32,
               ),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF141B3A) : Colors.white,
+                color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(40),
                 ),
@@ -1041,7 +1041,7 @@ class _InvestorReferralScreenState
                                 height: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  color: isDark ? Colors.black : Colors.white,
+                                  color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                                 ),
                               )
                             : Text(
@@ -1050,7 +1050,7 @@ class _InvestorReferralScreenState
                                   fontSize: 10,
                                   fontWeight: FontWeight.w900,
                                   letterSpacing: 2,
-                                  color: isDark ? Colors.black : Colors.white,
+                                  color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                                 ),
                               ),
                       ),

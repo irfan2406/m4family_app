@@ -70,7 +70,7 @@ class _DeactivateAccountScreenState
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? Colors.black : Colors.white,
+      backgroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -83,7 +83,7 @@ class _DeactivateAccountScreenState
             ),
             onPressed: () => context.pop(),
             style: IconButton.styleFrom(
-              backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
+              backgroundColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -187,7 +187,7 @@ class _DeactivateAccountScreenState
               width: double.infinity,
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF141B3A) : Colors.white,
+                color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(
                   color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
@@ -251,7 +251,7 @@ class _DeactivateAccountScreenState
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF141B3A) : Colors.white,
+                color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(
                   color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(

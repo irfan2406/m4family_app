@@ -123,7 +123,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(30),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(30),
         border: Border.all(
           color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
@@ -210,7 +210,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
         margin: const EdgeInsets.only(bottom: 15),
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(25),
           border: Border.all(
             color: isSelected
@@ -300,7 +300,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
         ),
         Container(
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF141B3A) : Colors.white,
+            color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
@@ -459,7 +459,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: isDark ? Colors.black : Colors.white,
+                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                   ),
                 )
               : Row(
@@ -467,7 +467,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
                   children: [
                     Icon(
                       LucideIcons.gift,
-                      color: isDark ? Colors.black : Colors.white,
+                      color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                       size: 16,
                     ),
                     const SizedBox(width: 10),
@@ -475,7 +475,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
                       'CONFIRM REDEMPTION',
                       style: GoogleFonts.gelasio(
                         textStyle: const TextStyle(inherit: true),
-                        color: isDark ? Colors.black : Colors.white,
+                        color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                         fontSize: 12,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 2,

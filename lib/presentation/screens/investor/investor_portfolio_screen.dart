@@ -140,7 +140,7 @@ class _InvestorPortfolioScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
+    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
 
     return Scaffold(
       backgroundColor: bg,
@@ -729,7 +729,7 @@ class _InvestorPortfolioScreenState
                           end: Alignment.bottomCenter,
                           colors: [
                             Colors.transparent,
-                            (isDark ? Colors.black : Colors.white).withValues(
+                            (isDark ? Colors.black : const Color(0xFFF4EFE3)).withValues(
                               alpha: 0.9,
                             ),
                           ],
@@ -846,7 +846,7 @@ class _InvestorPortfolioScreenState
                                 style: GoogleFonts.gelasio(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w800,
-                                  color: isDark ? Colors.black : Colors.white,
+                                  color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                                   letterSpacing: 1.5,
                                 ),
                               ),
@@ -854,7 +854,7 @@ class _InvestorPortfolioScreenState
                               Icon(
                                 LucideIcons.maximize2,
                                 size: 13,
-                                color: isDark ? Colors.black : Colors.white,
+                                color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                               ),
                             ],
                           ),
@@ -925,7 +925,7 @@ class _InvestorPortfolioScreenState
 
     final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
     final muted = textPrimary.withValues(alpha: 0.5);
-    final sheetBg = isDark ? const Color(0xFF141B3A) : Colors.white;
+    final sheetBg = isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3);
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -1154,7 +1154,7 @@ class _InvestorPortfolioScreenState
                                 Icon(
                                   LucideIcons.shieldCheck,
                                   size: 16,
-                                  color: isDark ? Colors.black : Colors.white,
+                                  color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
@@ -1162,7 +1162,7 @@ class _InvestorPortfolioScreenState
                                   style: GoogleFonts.gelasio(
                                     fontSize: 9,
                                     fontWeight: FontWeight.w800,
-                                    color: isDark ? Colors.black : Colors.white,
+                                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                                     letterSpacing: 2,
                                   ),
                                 ),
@@ -1231,7 +1231,7 @@ class _InvestorPortfolioScreenState
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
-                    color: isDark ? Colors.black : Colors.white,
+                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                     letterSpacing: 2,
                   ),
                 ),
@@ -1280,7 +1280,7 @@ class _InvestorPortfolioScreenState
                   style: GoogleFonts.gelasio(
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
-                    color: isDark ? Colors.black : Colors.white,
+                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                     letterSpacing: 2,
                   ),
                 ),

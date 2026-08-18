@@ -355,7 +355,7 @@ class _InvestorProjectDetailScreenState
               maxHeight: MediaQuery.of(sheetContext).size.height * 0.9,
             ),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF141B3A) : Colors.white,
+              color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(40),
               ),
@@ -721,7 +721,7 @@ class _InvestorProjectDetailScreenState
                               child: Text(
                                 _submitting ? 'SUBMITTING...' : ctaLabel,
                                 style: GoogleFonts.gelasio(
-                                  color: isDark ? Colors.black : Colors.white,
+                                  color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                                   fontSize: 11,
                                   fontWeight: FontWeight.w900,
                                   letterSpacing: 2,
@@ -822,7 +822,7 @@ class _InvestorProjectDetailScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : Colors.white;
+    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
 
     if (_isLoading) {
       return Scaffold(
@@ -895,7 +895,7 @@ class _InvestorProjectDetailScreenState
                         style: GoogleFonts.gelasio(
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
-                          color: isDark ? Colors.black : Colors.white,
+                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                           letterSpacing: 1.5,
                         ),
                       ),
@@ -2503,7 +2503,7 @@ class _InvestorProjectDetailScreenState
                         style: GoogleFonts.gelasio(
                           fontSize: 11,
                           fontWeight: FontWeight.w900,
-                          color: isDark ? Colors.black : Colors.white,
+                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                           letterSpacing: 2,
                         ),
                       ),
@@ -3036,7 +3036,7 @@ class _AssetButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final fg = filled
-        ? (isDark ? Colors.black : Colors.white)
+        ? (isDark ? Colors.black : const Color(0xFFF4EFE3))
         : (isDark ? Colors.white : Color(0xFF163A2C));
     return GestureDetector(
       onTap: onTap,
@@ -3159,7 +3159,7 @@ class _WalkthroughCard extends StatelessWidget {
                 style: GoogleFonts.ebGaramond(
                   fontSize: 7.5,
                   fontWeight: FontWeight.w900,
-                  color: isDark ? Colors.black : Colors.white,
+                  color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                   letterSpacing: 1.0,
                 ),
               ),

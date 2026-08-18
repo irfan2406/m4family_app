@@ -17,7 +17,7 @@ class GuestProfileScreen extends ConsumerWidget {
     final themeMode = ref.watch(themeProvider);
     final bool isDarkMode = themeMode == ThemeMode.dark;
 
-    final Color bg = isDark ? Colors.black : Colors.white;
+    final Color bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
     final Color textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
     final Color textMuted = isDark
         ? Colors.white.withValues(alpha: 0.5)
@@ -413,7 +413,7 @@ class _PrimaryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final Color fg = filled
-        ? (isDark ? Colors.black : Colors.white)
+        ? (isDark ? Colors.black : const Color(0xFFF4EFE3))
         : (isDark ? Colors.white : Color(0xFF163A2C));
     final Color bg = filled
         ? (isDark ? Colors.white : Color(0xFF163A2C))

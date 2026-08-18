@@ -99,7 +99,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
             fontWeight: FontWeight.w800,
             color: isError
                 ? Colors.white
-                : (isDark ? Colors.black : Colors.white),
+                : (isDark ? Colors.black : const Color(0xFFF4EFE3)),
             letterSpacing: 0.5,
           ),
         ),
@@ -117,7 +117,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
         child: Container(
           padding: const EdgeInsets.all(28),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF141B3A) : Colors.white,
+            color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
             borderRadius: BorderRadius.circular(40),
             border: Border.all(
               color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
@@ -259,7 +259,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(32),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF141B3A) : Colors.white,
+                    color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
                     borderRadius: BorderRadius.circular(40),
                     border: Border.all(
                       color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
@@ -447,7 +447,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = ref.watch(themeProvider) == ThemeMode.dark;
-    final bg = isDark ? Colors.black : Colors.white;
+    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
     final textColor = isDark ? Colors.white : Color(0xFF163A2C);
 
     final filtered = _familyMembers.where((m) {
@@ -855,7 +855,7 @@ class _HeaderIconButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(11),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
@@ -1042,7 +1042,7 @@ class _RelationDropdown extends StatelessWidget {
               alpha: 0.4,
             ),
           ),
-          dropdownColor: isDark ? const Color(0xFF141B3A) : Colors.white,
+          dropdownColor: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(16),
           style: GoogleFonts.ebGaramond(
             fontSize: 12,
@@ -1095,7 +1095,7 @@ class _DialogButton extends StatelessWidget {
       bg = destructive
           ? const Color(0xFFC65B46)
           : (isDark ? Colors.white : Color(0xFF163A2C));
-      fg = destructive ? Colors.white : (isDark ? Colors.black : Colors.white);
+      fg = destructive ? Colors.white : (isDark ? Colors.black : const Color(0xFFF4EFE3));
     } else {
       bg = Colors.transparent;
       fg = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.6);

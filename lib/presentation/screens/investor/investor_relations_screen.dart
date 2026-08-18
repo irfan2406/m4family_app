@@ -177,7 +177,7 @@ class _InvestorRelationsScreenState
             ),
           ],
         ),
-        backgroundColor: (isDark ? Colors.black : Colors.white).withOpacity(
+        backgroundColor: (isDark ? Colors.black : const Color(0xFFF4EFE3)).withOpacity(
           0.8,
         ),
         flexibleSpace: ClipRRect(
@@ -415,7 +415,7 @@ class _InvestorRelationsScreenState
             onPressed: _isSubmitting ? null : _submitInquiry,
             style: ElevatedButton.styleFrom(
               backgroundColor: isDark ? Colors.white : Color(0xFF163A2C),
-              foregroundColor: isDark ? Colors.black : Colors.white,
+              foregroundColor: isDark ? Colors.black : const Color(0xFFF4EFE3),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -427,7 +427,7 @@ class _InvestorRelationsScreenState
                     height: 20,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: isDark ? Colors.black : Colors.white,
+                      color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                     ),
                   )
                 : Text(
@@ -530,7 +530,7 @@ class _InvestorRelationsScreenState
                   ),
                   child: Icon(
                     icon,
-                    color: isDark ? Colors.black : Colors.white,
+                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                     size: 24,
                   ),
                 ),
@@ -704,7 +704,7 @@ class _InvestorRelationsScreenState
             child: value
                 ? Icon(
                     LucideIcons.check,
-                    color: isDark ? Colors.black : Colors.white,
+                    color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                     size: 14,
                   )
                 : null,
