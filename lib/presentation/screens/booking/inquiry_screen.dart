@@ -491,7 +491,10 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
           letterSpacing: 0.5,
         ),
         decoration: InputDecoration(
+          filled: false,
           border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
           hintText: hint,
           hintStyle: GoogleFonts.ebGaramond(
             fontSize: 12,

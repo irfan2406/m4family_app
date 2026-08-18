@@ -664,7 +664,10 @@ class _LuxuryInputField extends StatelessWidget {
               hintText: hint,
               hintStyle: TextStyle(color: Colors.white.withOpacity(0.62)),
               prefixIcon: Icon(icon, color: Colors.white54, size: 20),
+              filled: false,
               border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 20,
                 vertical: 16,

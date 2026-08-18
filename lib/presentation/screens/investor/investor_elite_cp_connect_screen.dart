@@ -277,7 +277,10 @@ class _InvestorEliteCpConnectScreenState
             color: scheme.onSurface.withValues(alpha: 0.72),
           ),
           prefixIcon: Icon(LucideIcons.search, size: 20, color: scheme.primary),
+          filled: false,
           border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 8,
             vertical: 18,

@@ -1132,7 +1132,10 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               color: isDark ? Colors.white : Color(0xFF163A2C),
             ),
             decoration: InputDecoration(
+              filled: false,
               border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
               icon: Icon(
                 icon,
                 color: isDark ? Colors.white24 : Colors.black26,

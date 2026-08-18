@@ -916,7 +916,10 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
           fontWeight: FontWeight.bold,
         ),
         decoration: InputDecoration(
+          filled: false,
           border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
           hintText: hint.toUpperCase(),
           hintStyle: GoogleFonts.gelasio(
             color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.68),

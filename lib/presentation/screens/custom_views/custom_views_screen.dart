@@ -1039,7 +1039,10 @@ class _UnitDetailFieldState extends ConsumerState<_UnitDetailField> {
             decoration: InputDecoration(
               isCollapsed: true,
               contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+              filled: false,
               border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
               hintText: widget.hint,
               hintStyle: GoogleFonts.ebGaramond(
                 fontSize: 12,
@@ -2367,7 +2370,10 @@ class _ConsultationSection extends ConsumerWidget {
             color: Theme.of(context).colorScheme.onSurface.withOpacity(0.24),
             size: 18,
           ),
+          filled: false,
           border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 20,
             vertical: 12,

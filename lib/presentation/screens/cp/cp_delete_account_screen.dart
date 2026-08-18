@@ -494,7 +494,10 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
                 letterSpacing: 3,
                 color: muted.withValues(alpha: 0.68),
               ),
+              filled: false,
               border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 18,
                 vertical: 16,
@@ -557,7 +560,10 @@ class _CpDeleteAccountScreenState extends ConsumerState<CpDeleteAccountScreen> {
                 fontWeight: FontWeight.w700,
                 color: muted.withValues(alpha: 0.68),
               ),
+              filled: false,
               border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 18,
                 vertical: 16,

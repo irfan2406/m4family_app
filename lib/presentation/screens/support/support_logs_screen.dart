@@ -211,7 +211,10 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
                           fontWeight: FontWeight.w800,
                           letterSpacing: 0.5,
                         ),
+                        filled: false,
                         border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
                         contentPadding: const EdgeInsets.symmetric(
                           vertical: 12,
                         ),

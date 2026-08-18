@@ -319,7 +319,10 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
             onChanged: (val) => setState(() {}),
             decoration: const InputDecoration(
               hintText: '0000',
+              filled: false,
               border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
               contentPadding: EdgeInsets.symmetric(vertical: 20),
             ),
           ),

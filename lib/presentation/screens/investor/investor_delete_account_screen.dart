@@ -516,7 +516,10 @@ class _InvestorDeleteAccountScreenState
                 letterSpacing: 3,
                 color: muted.withValues(alpha: 0.72),
               ),
+              filled: false,
               border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 18,
                 vertical: 16,
@@ -579,7 +582,10 @@ class _InvestorDeleteAccountScreenState
                 fontWeight: FontWeight.w700,
                 color: muted.withValues(alpha: 0.72),
               ),
+              filled: false,
               border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 18,
                 vertical: 16,

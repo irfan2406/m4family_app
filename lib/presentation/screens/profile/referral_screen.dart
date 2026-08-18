@@ -1039,7 +1039,10 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                       fontSize: 10,
                       fontWeight: FontWeight.w900,
                     ),
+                    filled: false,
                     border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 20),
                     suffixIcon: isDropdown
                         ? Icon(

@@ -184,7 +184,10 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
               size: 16,
               color: foreground.withOpacity(0.24),
             ),
+            filled: false,
             border: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            focusedBorder: InputBorder.none,
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 20,
               vertical: 15,

@@ -711,7 +711,10 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                   : (isDark ? Colors.white70 : Color(0xFF163A2C)),
             ),
             decoration: const InputDecoration(
+              filled: false,
               border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
               contentPadding: EdgeInsets.symmetric(
                 horizontal: 20,
                 vertical: 16,

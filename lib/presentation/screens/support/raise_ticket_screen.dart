@@ -440,7 +440,10 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
           fontWeight: FontWeight.w700,
           color: onSurface.withOpacity(0.68),
         ),
+        filled: false,
         border: InputBorder.none,
+        enabledBorder: InputBorder.none,
+        focusedBorder: InputBorder.none,
         isDense: true,
         contentPadding: const EdgeInsets.symmetric(vertical: 14),
       );

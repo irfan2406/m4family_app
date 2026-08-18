@@ -544,7 +544,10 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
             decoration: InputDecoration(
               isCollapsed: true,
               contentPadding: const EdgeInsets.symmetric(vertical: 18),
+              filled: false,
               border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
               prefixIcon: Icon(
                 LucideIcons.search,
                 size: 16,

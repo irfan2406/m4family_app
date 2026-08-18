@@ -645,7 +645,10 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
           color: isDark ? Colors.white : Color(0xFF163A2C),
         ),
         decoration: InputDecoration(
+          filled: false,
           border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
           hintText: hint,
           hintStyle: GoogleFonts.ebGaramond(
             fontSize: 12,

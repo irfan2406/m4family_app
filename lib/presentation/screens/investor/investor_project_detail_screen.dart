@@ -682,7 +682,10 @@ class _InvestorProjectDetailScreenState
                               color: isDark ? Colors.white : Color(0xFF163A2C),
                             ),
                             decoration: InputDecoration(
+                              filled: false,
                               border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
                               hintText:
                                   'SPECIFIC REQUIREMENTS, PICKUP DETAILS, ETC...',
                               hintStyle: GoogleFonts.ebGaramond(
@@ -3249,7 +3252,10 @@ class _InquiryField extends StatelessWidget {
           color: isDark ? Colors.white : Color(0xFF163A2C),
         ),
         decoration: InputDecoration(
+          filled: false,
           border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
           hintText: hint,
           hintStyle: GoogleFonts.ebGaramond(
             fontSize: 9,

@@ -694,7 +694,10 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                     color: muted.withValues(alpha: 0.6),
                     letterSpacing: 1,
                   ),
+                  filled: false,
                   border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 18,
                     vertical: 14,

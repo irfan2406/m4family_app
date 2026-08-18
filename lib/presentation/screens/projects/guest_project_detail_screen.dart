@@ -1109,7 +1109,10 @@ class _GuestProjectDetailScreenState
                               color: isDark ? Colors.white : Color(0xFF163A2C),
                             ),
                             decoration: InputDecoration(
+                              filled: false,
                               border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
                               hintText:
                                   'SPECIFIC REQUIREMENTS, PICKUP DETAILS, ETC...',
                               hintStyle: GoogleFonts.ebGaramond(
@@ -1253,7 +1256,10 @@ class _GuestProjectDetailScreenState
           color: isDark ? Colors.white : Color(0xFF163A2C),
         ),
         decoration: InputDecoration(
+          filled: false,
           border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
           hintText: label,
           // Web parity: clearly-legible slate-blue placeholder text.
           hintStyle: GoogleFonts.ebGaramond(
@@ -2370,7 +2376,10 @@ class _InterestInput extends StatelessWidget {
           color: isDark ? Colors.white : Color(0xFF163A2C),
         ),
         decoration: InputDecoration(
+          filled: false,
           border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
           hintText: hint,
           hintStyle: GoogleFonts.ebGaramond(
             fontSize: 12,

@@ -270,7 +270,10 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
             color: muted,
           ),
           prefixIcon: const Icon(LucideIcons.search, size: 20, color: _gold),
+          filled: false,
           border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 8,
             vertical: 18,
@@ -866,7 +869,10 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
             fontWeight: FontWeight.w600,
             color: muted,
           ),
+          filled: false,
           border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 16,

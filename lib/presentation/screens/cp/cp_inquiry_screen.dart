@@ -343,7 +343,10 @@ class _CpInquiryScreenState extends ConsumerState<CpInquiryScreen> {
             horizontal: 24,
             vertical: 20,
           ),
+          filled: false,
           border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
         ),
       ),
     );
