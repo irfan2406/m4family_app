@@ -592,7 +592,10 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
               decoration: InputDecoration(
                 isCollapsed: true,
                 contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                filled: false,
                 border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
                 hintText: 'SEARCH MEMBERS...',
                 hintStyle: GoogleFonts.gelasio(
                   fontSize: 11,
@@ -978,7 +981,10 @@ class _DialogInput extends StatelessWidget {
             horizontal: 16,
             vertical: 16,
           ),
+          filled: false,
           border: InputBorder.none,
+          enabledBorder: InputBorder.none,
+          focusedBorder: InputBorder.none,
           hintText: hint,
           hintStyle: GoogleFonts.ebGaramond(
             fontSize: 12,
