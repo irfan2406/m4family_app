@@ -79,7 +79,7 @@ class _CpForgotPasswordScreenState
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('DEV: recovery code $dev'),
-              backgroundColor: Colors.amber.shade900,
+              backgroundColor: const Color(0xFFC65B46),
             ),
           );
         }
@@ -302,7 +302,8 @@ class _CpForgotPasswordScreenState
                     FilledButton(
                       onPressed: _loading ? null : _sendEmail,
                       style: FilledButton.styleFrom(
-                        backgroundColor: Colors.purple.shade600,
+                        backgroundColor: const Color(0xFFF4EFE3),
+                        foregroundColor: const Color(0xFF0F2A20),
                         minimumSize: const Size(double.infinity, 52),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
@@ -326,16 +327,16 @@ class _CpForgotPasswordScreenState
                         margin: const EdgeInsets.only(bottom: 16),
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.amber.withValues(alpha: 0.15),
+                          color: const Color(0xFFC5A35B).withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: Colors.amber.withValues(alpha: 0.4),
+                            color: const Color(0xFFC5A35B).withValues(alpha: 0.4),
                           ),
                         ),
                         child: Text(
                           'DEV: code $_devOtp',
                           style: const TextStyle(
-                            color: Colors.amber,
+                            color: const Color(0xFFC5A35B),
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -378,7 +379,8 @@ class _CpForgotPasswordScreenState
                     FilledButton(
                       onPressed: _goPasswordStep,
                       style: FilledButton.styleFrom(
-                        backgroundColor: Colors.purple.shade600,
+                        backgroundColor: const Color(0xFFF4EFE3),
+                        foregroundColor: const Color(0xFF0F2A20),
                         minimumSize: const Size(double.infinity, 52),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
@@ -429,7 +431,8 @@ class _CpForgotPasswordScreenState
                     FilledButton(
                       onPressed: _loading ? null : _resetPassword,
                       style: FilledButton.styleFrom(
-                        backgroundColor: Colors.purple.shade600,
+                        backgroundColor: const Color(0xFFF4EFE3),
+                        foregroundColor: const Color(0xFF0F2A20),
                         minimumSize: const Size(double.infinity, 52),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),

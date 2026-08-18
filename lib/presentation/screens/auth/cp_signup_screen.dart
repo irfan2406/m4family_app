@@ -329,7 +329,8 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
                     child: FilledButton(
                       onPressed: _submitting ? null : _submit,
                       style: FilledButton.styleFrom(
-                        backgroundColor: Colors.purple.shade600,
+                        backgroundColor: const Color(0xFFF4EFE3),
+                        foregroundColor: const Color(0xFF0F2A20),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(32),
                         ),
@@ -401,7 +402,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
       style: GoogleFonts.gelasio(
         fontSize: 10,
         fontWeight: FontWeight.bold,
-        color: Colors.purpleAccent.withValues(alpha: 0.7),
+        color: const Color(0xFFC5A35B),
         letterSpacing: 2,
       ),
     ),
