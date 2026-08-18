@@ -383,7 +383,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     if (!_agreedToTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
+          backgroundColor: Color(0xFFC65B46),
           content: Text('Please agree to the Privacy Policy'),
         ),
       );
@@ -421,7 +421,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: const Color(0xFFE24B4A),
+          backgroundColor: const Color(0xFFC65B46),
           content: Text('Submission failed: $e'),
         ),
       );
@@ -1422,7 +1422,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     double errorIconSize = 64,
   }) {
     Widget errorBox() => Container(
-      color: const Color(0xFF1A1A1A),
+      color: const Color(0xFF141B3A),
       child: Center(
         child: Icon(errorIcon, color: Colors.white24, size: errorIconSize),
       ),
@@ -1633,7 +1633,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                         Text(
                           'FEATURED PROPERTY',
                           style: GoogleFonts.ebGaramond(
-                            color: const Color(0xFFC5A358),
+                            color: const Color(0xFFC5A35B),
                             fontSize: 9,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 2.5,
@@ -2094,7 +2094,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final hasError = errorText != null;
-    const errorColor = Color(0xFFE24B4A);
+    const errorColor = Color(0xFFC65B46);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

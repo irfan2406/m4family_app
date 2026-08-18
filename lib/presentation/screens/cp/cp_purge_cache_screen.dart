@@ -22,10 +22,10 @@ class CpPurgeCacheScreen extends ConsumerStatefulWidget {
 }
 
 class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
-  static const _red = Color(0xFFEF4444);
-  static const _amber = Color(0xFFF59E0B);
-  static const _green = Color(0xFF10B981);
-  static const _gold = Color(0xFFFFD700);
+  static const _red = Color(0xFFC65B46);
+  static const _amber = Color(0xFFC5A35B);
+  static const _green = Color(0xFF163A2C);
+  static const _gold = Color(0xFFC5A35B);
 
   bool _purging = false;
   bool _done = false;
@@ -91,7 +91,7 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
       setState(() => _done = true);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: const Color(0xFF10B981),
+          backgroundColor: const Color(0xFF163A2C),
           content: Text(
             'Cache purged. The app cache has been rebuilt.',
             style: GoogleFonts.ebGaramond(fontSize: 12),
@@ -102,7 +102,7 @@ class _CpPurgeCacheScreenState extends ConsumerState<CpPurgeCacheScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: const Color(0xFFE24B4A),
+          backgroundColor: const Color(0xFFC65B46),
           content: Text(
             'Purge failed: $e',
             style: GoogleFonts.ebGaramond(fontSize: 12),

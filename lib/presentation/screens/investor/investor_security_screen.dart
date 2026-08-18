@@ -21,9 +21,9 @@ class InvestorSecurityScreen extends ConsumerStatefulWidget {
 
 class _InvestorSecurityScreenState
     extends ConsumerState<InvestorSecurityScreen> {
-  static const _green = Color(0xFF22C55E);
-  static const _blue = Color(0xFF3B82F6);
-  static const _amber = Color(0xFFF59E0B);
+  static const _green = Color(0xFF163A2C);
+  static const _blue = Color(0xFFC5A35B);
+  static const _amber = Color(0xFFC5A35B);
 
   bool _biometricEnabled = true;
   bool _twoFactorEnabled = true;
@@ -117,7 +117,7 @@ class _InvestorSecurityScreenState
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: const Color(0xFFE24B4A),
+        backgroundColor: const Color(0xFFC65B46),
         content: Text(msg, style: GoogleFonts.ebGaramond(fontSize: 12)),
       ),
     );
@@ -166,7 +166,7 @@ class _InvestorSecurityScreenState
                   height: 6,
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
-                    color: Color(0xFFFFD700),
+                    color: Color(0xFFC5A35B),
                   ),
                 ),
                 const SizedBox(width: 8),

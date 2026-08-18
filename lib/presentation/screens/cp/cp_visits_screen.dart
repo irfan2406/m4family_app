@@ -145,7 +145,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(
               ok
                   ? 'Admin notified'
@@ -161,7 +161,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFFE24B4A),
+            backgroundColor: Color(0xFFC65B46),
             content: Text('Failed to send notification'),
           ),
         );
@@ -179,7 +179,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              backgroundColor: const Color(0xFF10B981),
+              backgroundColor: const Color(0xFF163A2C),
               content: Text('Status updated to $status'),
             ),
           );
@@ -190,7 +190,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              backgroundColor: const Color(0xFFE24B4A),
+              backgroundColor: const Color(0xFFC65B46),
               content: Text(msg ?? 'Update failed'),
             ),
           );
@@ -203,7 +203,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(m ?? 'Error'),
           ),
         );
@@ -894,7 +894,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
       if (!ok && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text('No app found to open $scheme'),
           ),
         );
@@ -903,7 +903,7 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFFE24B4A),
+            backgroundColor: Color(0xFFC65B46),
             content: Text('Could not open'),
           ),
         );
@@ -1093,19 +1093,19 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
     String label;
     switch (status) {
       case 'NEW':
-        base = const Color(0xFF3B82F6); // blue
+        base = const Color(0xFFC5A35B); // blue
         label = 'NEW VISIT';
         break;
       case 'INTERESTED':
-        base = const Color(0xFFF59E0B); // amber
+        base = const Color(0xFFC5A35B); // amber
         label = 'INTERESTED';
         break;
       case 'NOT_INTERESTED':
-        base = const Color(0xFFEF4444); // red
+        base = const Color(0xFFC65B46); // red
         label = 'NOT INTERESTED';
         break;
       case 'CLOSED':
-        base = const Color(0xFF10B981); // green
+        base = const Color(0xFF163A2C); // green
         label = 'CLOSED / BOOKING';
         break;
       default:
@@ -1295,13 +1295,13 @@ class _CpVisitsScreenState extends ConsumerState<CpVisitsScreen> {
       decoration: BoxDecoration(
         color: isReady
             ? (scheme.brightness == Brightness.dark
-                  ? const Color(0xFF10251E)
-                  : const Color(0xFFF1FBF6))
+                  ? const Color(0xFF141B3A)
+                  : const Color(0xFFFBF7EF))
             : scheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(28),
         border: Border.all(
           color: isReady
-              ? const Color(0xFF10B981).withValues(alpha: 0.35)
+              ? const Color(0xFF163A2C).withValues(alpha: 0.35)
               : (scheme.brightness == Brightness.dark
                     ? Colors.white.withValues(alpha: 0.07)
                     : scheme.outlineVariant.withValues(alpha: 0.55)),

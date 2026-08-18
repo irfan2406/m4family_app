@@ -22,7 +22,7 @@ class InvestorInstallmentsScreen extends ConsumerStatefulWidget {
 
 class _InvestorInstallmentsScreenState
     extends ConsumerState<InvestorInstallmentsScreen> {
-  static const Color _gold = Color(0xFFFFD700);
+  static const Color _gold = Color(0xFFC5A35B);
 
   bool _loading = true;
   bool _error = false;
@@ -153,11 +153,11 @@ class _InvestorInstallmentsScreenState
   Color _statusColor(String status) {
     switch (status) {
       case 'PAID':
-        return const Color(0xFF34D399); // green
+        return const Color(0xFF163A2C); // green
       case 'OVERDUE':
-        return const Color(0xFFF87171); // red
+        return const Color(0xFFC65B46); // red
       default:
-        return const Color(0xFFFBBF24); // amber
+        return const Color(0xFFC65B46); // amber
     }
   }
 
@@ -369,7 +369,7 @@ class _InvestorInstallmentsScreenState
             child: _statTile(
               label: 'PAID',
               value: _formatAmount(totalPaid),
-              color: const Color(0xFF34D399),
+              color: const Color(0xFF163A2C),
               muted: muted,
             ),
           ),
@@ -379,7 +379,7 @@ class _InvestorInstallmentsScreenState
             child: _statTile(
               label: 'DUE / REMAINING',
               value: _formatAmount(totalDue),
-              color: const Color(0xFFFBBF24),
+              color: const Color(0xFFC65B46),
               muted: muted,
             ),
           ),
@@ -435,7 +435,7 @@ class _InvestorInstallmentsScreenState
         runSpacing: 8,
         children: _filters.map((f) {
           final active = _activeFilter == f;
-          const activeColor = Color(0xFFFBBF24);
+          const activeColor = Color(0xFFC65B46);
           return GestureDetector(
             onTap: () => setState(() => _activeFilter = f),
             child: Container(

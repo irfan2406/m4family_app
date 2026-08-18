@@ -34,9 +34,9 @@ class InvestorPortfolioScreen extends ConsumerStatefulWidget {
 
 class _InvestorPortfolioScreenState
     extends ConsumerState<InvestorPortfolioScreen> {
-  static const Color _gold = Color(0xFFFFD700);
-  static const Color _green = Color(0xFF22C55E);
-  static const Color _amber = Color(0xFFF59E0B);
+  static const Color _gold = Color(0xFFC5A35B);
+  static const Color _green = Color(0xFF163A2C);
+  static const Color _amber = Color(0xFFC5A35B);
 
   bool _isLoading = true;
   bool _hasError = false;
@@ -291,7 +291,7 @@ class _InvestorPortfolioScreenState
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF1A1A1A), Color(0xFF0A0A0A)],
+          colors: [Color(0xFF141B3A), Color(0xFF141B3A)],
         ),
         border: Border.all(color: _gold.withValues(alpha: 0.25)),
         boxShadow: [
@@ -564,8 +564,8 @@ class _InvestorPortfolioScreenState
       _gold,
       M4Theme.premiumBlue,
       _green,
-      const Color(0xFF8B5CF6),
-      const Color(0xFFEC4899),
+      const Color(0xFFC5A35B),
+      const Color(0xFFC65B46),
       _amber,
     ];
 
@@ -925,7 +925,7 @@ class _InvestorPortfolioScreenState
 
     final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
     final muted = textPrimary.withValues(alpha: 0.5);
-    final sheetBg = isDark ? const Color(0xFF0A0A0A) : Colors.white;
+    final sheetBg = isDark ? const Color(0xFF141B3A) : Colors.white;
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -1467,7 +1467,7 @@ class _StatusPill extends StatelessWidget {
         s.contains('ready') ||
         s.contains('confirmed') ||
         s.contains('completed');
-    final color = positive ? const Color(0xFF22C55E) : const Color(0xFFF59E0B);
+    final color = positive ? const Color(0xFF163A2C) : const Color(0xFFC5A35B);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
@@ -1495,7 +1495,7 @@ class _RoiBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final positive = roi >= 0;
-    final color = positive ? const Color(0xFF22C55E) : const Color(0xFFF59E0B);
+    final color = positive ? const Color(0xFF163A2C) : const Color(0xFFC5A35B);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(

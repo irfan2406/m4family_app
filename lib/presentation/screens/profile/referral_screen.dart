@@ -165,7 +165,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
   Widget _buildPremiumRewardsCard() {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final cardBg = isDark ? theme.cardColor : const Color(0xFF09090B);
+    final cardBg = isDark ? theme.cardColor : const Color(0xFF141B3A);
     final cardFg = Colors.white;
 
     return Container(
@@ -243,7 +243,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                     const Spacer(),
                     _buildPill(
                       'CASH: ₹${NumberFormat('#,###').format(_cashBalance)}',
-                      const Color(0xFF10B981),
+                      const Color(0xFF163A2C),
                     ),
                   ],
                 ),
@@ -336,7 +336,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
             Clipboard.setData(ClipboardData(text: _referralCode));
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                backgroundColor: Color(0xFF10B981),
+                backgroundColor: Color(0xFF163A2C),
                 content: Text('App link & code copied!'),
               ),
             );
@@ -512,7 +512,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                 Text(
                   '${NumberFormat('#,###').format(points)} PTS',
                   style: GoogleFonts.ebGaramond(
-                    color: const Color(0xFFF59E0B),
+                    color: const Color(0xFFC5A35B),
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     fontStyle: FontStyle.italic,
@@ -602,7 +602,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                 style: GoogleFonts.ebGaramond(
                   color: isRedemption
                       ? Colors.redAccent
-                      : const Color(0xFF10B981),
+                      : const Color(0xFF163A2C),
                   fontSize: 10,
                   fontWeight: FontWeight.w900,
                   fontStyle: FontStyle.italic,
@@ -901,7 +901,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                                 if (mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      backgroundColor: const Color(0xFFE24B4A),
+                                      backgroundColor: const Color(0xFFC65B46),
                                       content: Text(
                                         response.data['message'] ??
                                             'Submission failed.',
@@ -914,7 +914,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                               if (mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    backgroundColor: Color(0xFFE24B4A),
+                                    backgroundColor: Color(0xFFC65B46),
                                     content: Text(
                                       'Submission error. Check your connection.',
                                     ),

@@ -63,7 +63,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
     final scheme = Theme.of(context).colorScheme;
     final isLight = scheme.brightness == Brightness.light;
     final accent = isLight ? Colors.black : scheme.primary;
-    const purple = Color(0xFFA855F7); // web hue
+    const purple = Color(0xFFC5A35B); // web hue
 
     final totalLeads = _asDouble(_data?['totalLeads']);
     final totalConv = _asDouble(_data?['totalConversions']);
@@ -175,7 +175,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                   scheme,
                   label: 'Residential Luxury',
                   value: 25,
-                  color: const Color(0xFF60A5FA),
+                  color: const Color(0xFFC5A35B),
                 ),
                 _allocRow(
                   scheme,
@@ -271,7 +271,7 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color: selected == r
-                        ? const Color(0xFFA855F7)
+                        ? const Color(0xFFC5A35B)
                         : Colors.transparent,
                   ),
                   child: Text(
@@ -338,8 +338,8 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                   trendUp ? LucideIcons.trendingUp : LucideIcons.activity,
                   size: 12,
                   color: trendUp
-                      ? const Color(0xFF34D399)
-                      : const Color(0xFFF87171),
+                      ? const Color(0xFF163A2C)
+                      : const Color(0xFFC65B46),
                 ),
                 const SizedBox(width: 4),
                 Text(
@@ -348,8 +348,8 @@ class _CpHubAnalyticsScreenState extends ConsumerState<CpHubAnalyticsScreen> {
                     fontSize: 9,
                     fontWeight: FontWeight.w900,
                     color: trendUp
-                        ? const Color(0xFF34D399)
-                        : const Color(0xFFF87171),
+                        ? const Color(0xFF163A2C)
+                        : const Color(0xFFC65B46),
                   ),
                 ),
               ],

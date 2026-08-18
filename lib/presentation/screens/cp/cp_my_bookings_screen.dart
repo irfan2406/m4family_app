@@ -159,7 +159,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
   ) {
     final s = status.toLowerCase();
     if (s.contains('confirmed') || s.contains('allotted')) {
-      const fg = Color(0xFF10B981);
+      const fg = Color(0xFF163A2C);
       return (
         bg: fg.withValues(alpha: 0.10),
         border: fg.withValues(alpha: 0.20),
@@ -167,7 +167,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
       );
     }
     if (s.contains('pending')) {
-      const fg = Color(0xFF9333EA);
+      const fg = Color(0xFFC5A35B);
       return (
         bg: fg.withValues(alpha: 0.10),
         border: fg.withValues(alpha: 0.20),
@@ -198,9 +198,9 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
           decoration: BoxDecoration(
             // Web parity: glass-card is a bright WHITE card in light mode (it
             // pops off the background via the shadow), not a grey tint. In dark
-            // mode it uses the home page's neutral card colour (0xFF15171C) so
+            // mode it uses the home page's neutral card colour (0xFF141B3A) so
             // every card across the app reads as one cohesive system.
-            color: isDark ? const Color(0xFF15171C) : Colors.white,
+            color: isDark ? const Color(0xFF141B3A) : Colors.white,
             borderRadius: BorderRadius.circular(40),
             border: Border.all(color: border),
             boxShadow: [
@@ -560,7 +560,7 @@ class _CpMyBookingsScreenState extends ConsumerState<CpMyBookingsScreen> {
               // client's digits, prefixed 91 when it's a 10-digit number.
               _pillButton(
                 icon: LucideIcons.messageCircle,
-                iconColor: const Color(0xFF10B981),
+                iconColor: const Color(0xFF163A2C),
                 onTap: (clientPhone.isNotEmpty && clientPhone != 'N/A')
                     ? () {
                         final clean = clientPhone.replaceAll(RegExp(r'\D'), '');

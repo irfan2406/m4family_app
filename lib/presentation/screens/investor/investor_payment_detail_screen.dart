@@ -31,8 +31,8 @@ class InvestorPaymentDetailScreen extends ConsumerStatefulWidget {
 
 class _InvestorPaymentDetailScreenState
     extends ConsumerState<InvestorPaymentDetailScreen> {
-  static const _gold = Color(0xFFFFD700);
-  static const _green = Color(0xFF10B981);
+  static const _gold = Color(0xFFC5A35B);
+  static const _green = Color(0xFF163A2C);
 
   Map<String, dynamic>? _payment;
   bool _loading = true;
@@ -103,7 +103,7 @@ class _InvestorPaymentDetailScreenState
   void _downloadReceipt() {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        backgroundColor: Color(0xFFE24B4A),
+        backgroundColor: Color(0xFFC65B46),
         content: Text('Receipt export is not available yet.'),
       ),
     );
@@ -112,7 +112,7 @@ class _InvestorPaymentDetailScreenState
   void _share() {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        backgroundColor: Color(0xFFE24B4A),
+        backgroundColor: Color(0xFFC65B46),
         content: Text('Sharing is not available yet.'),
       ),
     );
@@ -121,7 +121,7 @@ class _InvestorPaymentDetailScreenState
   void _getHelp() {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        backgroundColor: Color(0xFF10B981),
+        backgroundColor: Color(0xFF163A2C),
         content: Text('Support ticket created'),
       ),
     );

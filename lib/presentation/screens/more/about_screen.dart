@@ -29,7 +29,7 @@ class _AboutScreenState extends State<AboutScreen> {
     return Scaffold(
       backgroundColor: isDark
           ? const Color(0xFF141B3A)
-          : const Color(0xFFF9FAFB),
+          : const Color(0xFFC5A35B),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,

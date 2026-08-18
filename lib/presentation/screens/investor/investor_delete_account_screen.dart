@@ -28,8 +28,8 @@ class InvestorDeleteAccountScreen extends ConsumerStatefulWidget {
 
 class _InvestorDeleteAccountScreenState
     extends ConsumerState<InvestorDeleteAccountScreen> {
-  static const Color _danger = Color(0xFFEF4444);
-  static const Color _dangerDeep = Color(0xFFDC2626);
+  static const Color _danger = Color(0xFFC65B46);
+  static const Color _dangerDeep = Color(0xFFC65B46);
   static const String _confirmWord = 'DELETE';
 
   final TextEditingController _confirmCtrl = TextEditingController();

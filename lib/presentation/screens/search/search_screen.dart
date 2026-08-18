@@ -341,9 +341,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                         if (_query.status.isNotEmpty)
                           _FilterBadge(
                             text: _query.status,
-                            background: const Color(0xFFF59E0B),
+                            background: const Color(0xFFC5A35B),
                             foreground: Colors.black,
-                            border: const Color(0xFFF59E0B),
+                            border: const Color(0xFFC5A35B),
                           ),
                         ...summaryTags.map(
                           (tag) => _FilterBadge(

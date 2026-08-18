@@ -20,7 +20,7 @@ class InvestorCpScreen extends ConsumerStatefulWidget {
 }
 
 class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
 
   final _search = TextEditingController();
   String _q = '';
@@ -300,7 +300,7 @@ class _Lead {
 // STAT CARD — premium glass row with icon circle + value
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 class _StatCard extends StatelessWidget {
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
   final _Stat stat;
   final Color textPrimary;
   final Color muted;
@@ -382,7 +382,7 @@ class _StatCard extends StatelessWidget {
 // LEAD CARD — premium glass card with status badge + actions
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 class _LeadCard extends StatelessWidget {
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
   final _Lead lead;
   final Color textPrimary;
   final Color muted;
@@ -537,7 +537,7 @@ class _LeadCard extends StatelessWidget {
 // REGISTER CARD — dark CTA to register a new lead
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 class _RegisterCard extends StatelessWidget {
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
   final bool isDark;
   final Color textPrimary;
   final Color bg;
@@ -646,7 +646,7 @@ class _LeadFormSheet extends StatefulWidget {
 }
 
 class _LeadFormSheetState extends State<_LeadFormSheet> {
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
   final _name = TextEditingController();
   final _mobile = TextEditingController();
   String _project = 'M4 Prestige';
@@ -664,7 +664,7 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        backgroundColor: Color(0xFF10B981),
+        backgroundColor: Color(0xFF163A2C),
         content: Text('Lead registered successfully.'),
       ),
     );
@@ -757,7 +757,7 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
                   value: _project,
                   isExpanded: true,
                   dropdownColor: isDark
-                      ? const Color(0xFF111111)
+                      ? const Color(0xFF141B3A)
                       : Colors.white,
                   icon: Icon(LucideIcons.chevronDown, size: 18, color: muted),
                   style: GoogleFonts.ebGaramond(

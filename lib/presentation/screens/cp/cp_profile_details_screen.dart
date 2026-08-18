@@ -24,7 +24,7 @@ class CpProfileDetailsScreen extends ConsumerStatefulWidget {
 
 class _CpProfileDetailsScreenState
     extends ConsumerState<CpProfileDetailsScreen> {
-  static const _purple = Color(0xFF9333EA);
+  static const _purple = Color(0xFFC5A35B);
 
   final _name = TextEditingController();
   final _email = TextEditingController();
@@ -149,7 +149,7 @@ class _CpProfileDetailsScreenState
           setState(() => _editing = false);
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              backgroundColor: Color(0xFF10B981),
+              backgroundColor: Color(0xFF163A2C),
               content: Text('Profile updated successfully'),
             ),
           );
@@ -160,7 +160,7 @@ class _CpProfileDetailsScreenState
             : null;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(msg ?? 'Update failed'),
           ),
         );
@@ -172,7 +172,7 @@ class _CpProfileDetailsScreenState
             : null;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(m ?? e.message ?? 'Network error'),
           ),
         );
@@ -196,7 +196,7 @@ class _CpProfileDetailsScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFFE24B4A),
+            backgroundColor: Color(0xFFC65B46),
             content: Text('File too large (max 2MB)'),
           ),
         );
@@ -216,7 +216,7 @@ class _CpProfileDetailsScreenState
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              backgroundColor: Color(0xFFE24B4A),
+              backgroundColor: Color(0xFFC65B46),
               content: Text('Upload failed'),
             ),
           );
@@ -233,7 +233,7 @@ class _CpProfileDetailsScreenState
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              backgroundColor: Color(0xFF10B981),
+              backgroundColor: Color(0xFF163A2C),
               content: Text('Profile photo updated'),
             ),
           );
@@ -245,7 +245,7 @@ class _CpProfileDetailsScreenState
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              backgroundColor: const Color(0xFFE24B4A),
+              backgroundColor: const Color(0xFFC65B46),
               content: Text(msg ?? 'Update failed'),
             ),
           );
@@ -258,7 +258,7 @@ class _CpProfileDetailsScreenState
             : null;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(m ?? 'Upload failed'),
           ),
         );

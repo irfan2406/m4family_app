@@ -20,7 +20,7 @@ class InvestorEliteScreen extends ConsumerStatefulWidget {
 }
 
 class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
 
   bool _loading = true;
   List<Map<String, dynamic>> _documents = [];
@@ -136,7 +136,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
   void _toast(String msg) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(backgroundColor: const Color(0xFFE24B4A), content: Text(msg)),
+      SnackBar(backgroundColor: const Color(0xFFC65B46), content: Text(msg)),
     );
   }
 
@@ -240,7 +240,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF27272A), Color(0xFF18181B), Colors.black],
+          colors: [Color(0xFF141B3A), Color(0xFF141B3A), Colors.black],
         ),
         borderRadius: BorderRadius.circular(32),
         boxShadow: [

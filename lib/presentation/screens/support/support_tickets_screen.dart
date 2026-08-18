@@ -148,16 +148,16 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
   Color _statusColor(String status) {
     final s = status.toLowerCase();
     if (s == 'completed' || s == 'verified' || s == 'success') {
-      return const Color(0xFF16A34A); // green
+      return const Color(0xFF163A2C); // green
     }
     if (s == 'open' || s == 'active') {
-      return const Color(0xFF2563EB); // blue
+      return const Color(0xFFC5A35B); // blue
     }
-    return const Color(0xFF6B7280); // grey
+    return const Color(0xFFC5A35B); // grey
   }
 
   void _showFilterSheet(ColorScheme scheme) {
-    const sheetBg = Color(0xFF0D0D0D);
+    const sheetBg = Color(0xFF141B3A);
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
@@ -234,7 +234,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                     child: Container(
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: active ? const Color(0xFF1A1A24) : Colors.white,
+                        color: active ? const Color(0xFF141B3A) : Colors.white,
                         borderRadius: BorderRadius.circular(18),
                         border: active
                             ? Border.all(
@@ -761,9 +761,9 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
     final statusColor = _statusColor(log['status'] as String);
     final details = (log['details'] as Map).cast<String, dynamic>();
 
-    const sheetBg = Color(0xFF0D0D0D);
-    const labelGrey = Color(0xFF8A8A8A);
-    const summaryText = Color(0xFF9A9A9A);
+    const sheetBg = Color(0xFF141B3A);
+    const labelGrey = Color(0xFFFBF7EF);
+    const summaryText = Color(0xFFFBF7EF);
 
     // Full-screen page (web parity — the log detail is its own page, not a
     // half-height sheet).
@@ -797,7 +797,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                             style: GoogleFonts.gelasio(
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
-                              color: const Color(0xFF666666),
+                              color: const Color(0xFFFBF7EF),
                               letterSpacing: 2,
                             ),
                           ),
@@ -870,7 +870,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                         const SizedBox(height: 16),
                         Container(
                           decoration: BoxDecoration(
-                            color: const Color(0xFFECECEE),
+                            color: const Color(0xFFC5A35B),
                             borderRadius: BorderRadius.circular(26),
                           ),
                           clipBehavior: Clip.antiAlias,
@@ -939,7 +939,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
                       child: ElevatedButton(
                         onPressed: () => Navigator.pop(ctx),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF1A1A24),
+                          backgroundColor: const Color(0xFF141B3A),
                           foregroundColor: Colors.white,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
@@ -990,7 +990,7 @@ class _SupportTicketsScreenState extends ConsumerState<SupportTicketsScreen> {
             style: GoogleFonts.gelasio(
               fontSize: 10,
               fontWeight: FontWeight.w900,
-              color: const Color(0xFF6B6B6B),
+              color: const Color(0xFFFBF7EF),
               letterSpacing: 1.5,
             ),
           ),

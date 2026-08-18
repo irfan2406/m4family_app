@@ -23,7 +23,7 @@ class CpEmployeesScreen extends ConsumerStatefulWidget {
 class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
   // Web parity: the CP accent is purple (only the header dot uses it); the
   // icons/buttons are neutral grey, not gold.
-  static const Color _purple = Color(0xFF9333EA);
+  static const Color _purple = Color(0xFFC5A35B);
 
   bool _loading = true;
   String? _error;
@@ -85,8 +85,8 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: isSuccess
-            ? const Color(0xFF10B981)
-            : const Color(0xFFE24B4A),
+            ? const Color(0xFF163A2C)
+            : const Color(0xFFC65B46),
         content: Text(msg, style: GoogleFonts.ebGaramond(fontSize: 12)),
       ),
     );
@@ -395,7 +395,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
             ? const LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [Color(0xFF1C2029), Color(0xFF121419)],
+                colors: [Color(0xFF141B3A), Color(0xFF141B3A)],
               )
             : null,
         color: isDark ? null : Colors.white,
@@ -631,7 +631,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
   void _confirmDelete(String id, String name, Color textPrimary, Color muted) {
     if (id.isEmpty) return;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final dialogBg = isDark ? const Color(0xFF111111) : Colors.white;
+    final dialogBg = isDark ? const Color(0xFF141B3A) : Colors.white;
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -688,7 +688,7 @@ class _CpEmployeesScreenState extends ConsumerState<CpEmployeesScreen> {
   /// Add (existing == null) or edit employee dialog.
   void _openEmployeeDialog({dynamic existing}) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final dialogBg = isDark ? const Color(0xFF111111) : Colors.white;
+    final dialogBg = isDark ? const Color(0xFF141B3A) : Colors.white;
     final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
     final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
       alpha: 0.62,

@@ -410,7 +410,7 @@ class _TicketPreviewItem extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: isDark
-                ? const Color(0xFF18181B).withOpacity(0.8)
+                ? const Color(0xFF141B3A).withOpacity(0.8)
                 : Colors.white.withOpacity(0.6),
             borderRadius: BorderRadius.circular(24),
             border: Border.all(

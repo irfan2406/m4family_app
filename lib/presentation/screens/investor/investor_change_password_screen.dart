@@ -24,7 +24,7 @@ class InvestorChangePasswordScreen extends ConsumerStatefulWidget {
 
 class _InvestorChangePasswordScreenState
     extends ConsumerState<InvestorChangePasswordScreen> {
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
 
   final _current = TextEditingController();
   final _newPass = TextEditingController();
@@ -78,11 +78,11 @@ class _InvestorChangePasswordScreenState
     switch (_strength) {
       case 0:
       case 1:
-        return const Color(0xFFEF4444);
+        return const Color(0xFFC65B46);
       case 2:
-        return const Color(0xFFF59E0B);
+        return const Color(0xFFC5A35B);
       case 3:
-        return const Color(0xFF10B981);
+        return const Color(0xFF163A2C);
       default:
         return _gold;
     }
@@ -495,8 +495,8 @@ class _InvestorChangePasswordScreenState
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   Widget _matchFeedback(Color muted) {
     final matches = _confirm.text == _newPass.text && _newPass.text.isNotEmpty;
-    const green = Color(0xFF10B981);
-    const red = Color(0xFFEF4444);
+    const green = Color(0xFF163A2C);
+    const red = Color(0xFFC65B46);
     return Padding(
       padding: const EdgeInsets.only(left: 4),
       child: Row(
@@ -568,7 +568,7 @@ class _InvestorChangePasswordScreenState
   }
 
   Widget _requirementRow(String label, bool met, Color muted) {
-    const green = Color(0xFF10B981);
+    const green = Color(0xFF163A2C);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(

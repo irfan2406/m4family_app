@@ -85,7 +85,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
       if (res.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFF10B981),
+            backgroundColor: Color(0xFF163A2C),
             content: Text('Status updated'),
           ),
         );
@@ -95,7 +95,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
       if (mounted)
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text('$e'),
           ),
         );
@@ -764,7 +764,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF14B8A6).withOpacity(0.15),
+                      color: const Color(0xFFFBF7EF).withOpacity(0.15),
                       borderRadius: BorderRadius.circular(99),
                     ),
                     child: Text(
@@ -772,7 +772,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                       style: GoogleFonts.ebGaramond(
                         fontSize: 8,
                         fontWeight: FontWeight.w900,
-                        color: const Color(0xFF14B8A6),
+                        color: const Color(0xFFFBF7EF),
                         letterSpacing: 1,
                       ),
                     ),
@@ -807,7 +807,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
                     child: Container(
                       height: 4,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF14B8A6),
+                        color: const Color(0xFFFBF7EF),
                         borderRadius: BorderRadius.circular(2),
                       ),
                     ),

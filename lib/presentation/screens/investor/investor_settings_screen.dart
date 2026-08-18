@@ -21,7 +21,7 @@ class InvestorSettingsScreen extends ConsumerStatefulWidget {
 
 class _InvestorSettingsScreenState
     extends ConsumerState<InvestorSettingsScreen> {
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
 
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();

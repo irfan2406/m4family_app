@@ -129,7 +129,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
         return Container(
           height: 350,
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF09090B) : Colors.white,
+            color: isDark ? const Color(0xFF141B3A) : Colors.white,
             borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
             border: Border.all(
               color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
@@ -289,7 +289,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFFE24B4A),
+            backgroundColor: Color(0xFFC65B46),
             content: Text('Failed to upload profile picture'),
           ),
         );
@@ -306,8 +306,8 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
 
     return Scaffold(
       backgroundColor: isDark
-          ? const Color(0xFF09090B)
-          : const Color(0xFFF8FAFC),
+          ? const Color(0xFF141B3A)
+          : const Color(0xFFFBF7EF),
       extendBody: true,
       bottomNavigationBar: NavigationPill(
         currentIndex: -1,
@@ -352,7 +352,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                     Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF18181B) : Colors.white,
+                        color: isDark ? const Color(0xFF141B3A) : Colors.white,
                         borderRadius: BorderRadius.circular(32),
                         border: Border.all(
                           color: (isDark ? Colors.white : Color(0xFF163A2C))
@@ -454,7 +454,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF18181B) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : Colors.white,
         borderRadius: BorderRadius.circular(40),
         border: Border.all(
           color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
@@ -536,7 +536,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
                         shape: BoxShape.circle,
                         border: Border.all(
                           color: isDark
-                              ? const Color(0xFF18181B)
+                              ? const Color(0xFF141B3A)
                               : Colors.white,
                           width: 3,
                         ),
@@ -689,7 +689,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
             // Flat inset input — the single shadow lives on the outer card.
             color: isDark
                 ? Colors.white.withOpacity(0.03)
-                : const Color(0xFFF8FAFC),
+                : const Color(0xFFFBF7EF),
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.06),
@@ -751,7 +751,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
               // Flat inset input — the single shadow lives on the outer card.
               color: isDark
                   ? Colors.white.withOpacity(0.03)
-                  : const Color(0xFFF8FAFC),
+                  : const Color(0xFFFBF7EF),
               borderRadius: BorderRadius.circular(14),
               border: Border.all(
                 color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.06),
@@ -813,7 +813,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF18181B) : Colors.white,
+            color: isDark ? const Color(0xFF141B3A) : Colors.white,
             borderRadius: BorderRadius.circular(32),
             border: Border.all(
               color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
@@ -911,7 +911,7 @@ class _ProfileSettingsScreenState extends ConsumerState<ProfileSettingsScreen> {
       child: TextButton(
         onPressed: () => GoRouter.of(context).push('/profile/deactivate'),
         style: TextButton.styleFrom(
-          foregroundColor: const Color(0xFFEF4444).withOpacity(0.75),
+          foregroundColor: const Color(0xFFC65B46).withOpacity(0.75),
           padding: const EdgeInsets.symmetric(vertical: 18),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -948,7 +948,7 @@ class _IconButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF18181B) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),

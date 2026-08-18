@@ -94,7 +94,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: const Color(0xFFE24B4A),
+        backgroundColor: const Color(0xFFC65B46),
         content: Text(message),
       ),
     );
@@ -370,7 +370,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                             children: [
                               const Icon(
                                 LucideIcons.shieldCheck,
-                                color: Color(0xFFFFD700),
+                                color: Color(0xFFC5A35B),
                                 size: 14,
                               ),
                               const SizedBox(width: 8),
@@ -379,7 +379,7 @@ class _CpTokenPaymentScreenState extends ConsumerState<CpTokenPaymentScreen> {
                                 style: GoogleFonts.ebGaramond(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w900,
-                                  color: const Color(0xFFFFD700),
+                                  color: const Color(0xFFC5A35B),
                                   letterSpacing: 1,
                                 ),
                               ),

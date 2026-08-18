@@ -127,7 +127,7 @@ class _InvestorReferralScreenState
                       onRefresh: _load,
                       color: isDark ? Colors.white : Color(0xFF163A2C),
                       backgroundColor: isDark
-                          ? const Color(0xFF1C1C1E)
+                          ? const Color(0xFF141B3A)
                           : Colors.white,
                       child: SingleChildScrollView(
                         physics: const AlwaysScrollableScrollPhysics(),
@@ -680,7 +680,7 @@ class _InvestorReferralScreenState
                 style: GoogleFonts.ebGaramond(
                   fontSize: 12,
                   fontWeight: FontWeight.w900,
-                  color: isDebit ? Colors.redAccent : const Color(0xFF10B981),
+                  color: isDebit ? Colors.redAccent : const Color(0xFF163A2C),
                 ),
               ),
               if (status.isNotEmpty)
@@ -808,7 +808,7 @@ class _InvestorReferralScreenState
                 bottom: MediaQuery.of(ctx).viewInsets.bottom + 32,
               ),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF18181B) : Colors.white,
+                color: isDark ? const Color(0xFF141B3A) : Colors.white,
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(40),
                 ),
@@ -903,7 +903,7 @@ class _InvestorReferralScreenState
                                   ),
                                 ),
                                 dropdownColor: isDark
-                                    ? const Color(0xFF1C1C1E)
+                                    ? const Color(0xFF141B3A)
                                     : Colors.white,
                                 icon: Icon(
                                   LucideIcons.chevronDown,

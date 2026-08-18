@@ -117,7 +117,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
       setState(() => _sending = false);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
+          backgroundColor: Color(0xFFC65B46),
           content: Text('Failed to send message'),
         ),
       );
@@ -291,7 +291,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
                       width: 6,
                       height: 6,
                       decoration: const BoxDecoration(
-                        color: Color(0xFF22C55E),
+                        color: Color(0xFF163A2C),
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -314,7 +314,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: (_isOpen ? const Color(0xFFC5A35B) : const Color(0xFF22C55E))
+              color: (_isOpen ? const Color(0xFFC5A35B) : const Color(0xFF163A2C))
                   .withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: border),
@@ -324,7 +324,7 @@ class _TicketDetailScreenState extends ConsumerState<TicketDetailScreen> {
               style: GoogleFonts.gelasio(
                 fontSize: 8,
                 fontWeight: FontWeight.w900,
-                color: _isOpen ? const Color(0xFFC5A35B) : const Color(0xFF22C55E),
+                color: _isOpen ? const Color(0xFFC5A35B) : const Color(0xFF163A2C),
                 letterSpacing: 2,
               ),
             ),

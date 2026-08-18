@@ -96,7 +96,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
     if (validationError != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: const Color(0xFFE24B4A),
+          backgroundColor: const Color(0xFFC65B46),
           content: Text(validationError),
         ),
       );
@@ -141,7 +141,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text('Submission failed: $e'),
           ),
         );
@@ -258,7 +258,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                       placeholder: (context, url) =>
                           Container(color: Colors.black12),
                       errorWidget: (context, url, error) => Container(
-                        color: const Color(0xFF1A1A1A),
+                        color: const Color(0xFF141B3A),
                         child: const Center(
                           child: Icon(
                             LucideIcons.building2,
@@ -309,7 +309,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                 .toString()
                                 .toUpperCase(),
                             style: GoogleFonts.gelasio(
-                              color: const Color(0xFFC6A355),
+                              color: const Color(0xFFFBF7EF),
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
                               letterSpacing: 3,
@@ -558,7 +558,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                                           Container(color: Colors.black12),
                                       errorWidget: (context, url, error) =>
                                           Container(
-                                            color: const Color(0xFF1A1A1A),
+                                            color: const Color(0xFF141B3A),
                                             child: const Center(
                                               child: Icon(
                                                 LucideIcons.building2,
@@ -816,7 +816,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
                               placeholder: (context, url) =>
                                   Container(color: Colors.black54),
                               errorWidget: (context, url, error) => Container(
-                                color: const Color(0xFF1A1A1A),
+                                color: const Color(0xFF141B3A),
                                 child: const Center(
                                   child: Icon(
                                     LucideIcons.building2,
@@ -982,7 +982,7 @@ class _CommunityDetailScreenState extends ConsumerState<CommunityDetailScreen> {
     return PopupMenuButton<String>(
       offset: const Offset(0, 64),
       constraints: const BoxConstraints(minWidth: 240),
-      color: isDark ? const Color(0xFF111111) : Colors.white,
+      color: isDark ? const Color(0xFF141B3A) : Colors.white,
       elevation: 8,
       // Web popup: `rounded-2xl border shadow-2xl`.
       shape: RoundedRectangleBorder(
@@ -1265,7 +1265,7 @@ class CommunityProjectsScreen extends ConsumerWidget {
                             placeholder: (context, url) =>
                                 Container(color: Colors.black12),
                             errorWidget: (context, url, error) => Container(
-                              color: const Color(0xFF1A1A1A),
+                              color: const Color(0xFF141B3A),
                               child: const Center(
                                 child: Icon(
                                   LucideIcons.building2,

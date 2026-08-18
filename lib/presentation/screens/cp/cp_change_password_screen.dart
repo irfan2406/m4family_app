@@ -21,8 +21,8 @@ class CpChangePasswordScreen extends ConsumerStatefulWidget {
 
 class _CpChangePasswordScreenState
     extends ConsumerState<CpChangePasswordScreen> {
-  static const _purple = Color(0xFF9333EA);
-  static const _indigo = Color(0xFF4F46E5);
+  static const _purple = Color(0xFFC5A35B);
+  static const _indigo = Color(0xFF141B3A);
 
   final _current = TextEditingController();
   final _newPass = TextEditingController();
@@ -446,7 +446,7 @@ class _CpChangePasswordScreenState
   }
 
   Widget _requirementRow(String label, bool met, Color muted) {
-    const green = Color(0xFF10B981);
+    const green = Color(0xFF163A2C);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(

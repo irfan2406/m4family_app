@@ -106,7 +106,7 @@ class _BookingConfirmationScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFF10B981),
+            backgroundColor: Color(0xFF163A2C),
             content: Text('Receipt copied to clipboard'),
           ),
         );
@@ -126,7 +126,7 @@ class _BookingConfirmationScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFF10B981),
+            backgroundColor: Color(0xFF163A2C),
             content: Text('Booking details copied to clipboard'),
           ),
         );
@@ -540,7 +540,7 @@ class _BookingConfirmationScreenState
                         vertical: 8,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                        color: const Color(0xFF163A2C).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: Row(
@@ -548,7 +548,7 @@ class _BookingConfirmationScreenState
                         children: [
                           const Icon(
                             LucideIcons.checkCircle2,
-                            color: Color(0xFF10B981),
+                            color: Color(0xFF163A2C),
                             size: 12,
                           ),
                           const SizedBox(width: 6),
@@ -557,7 +557,7 @@ class _BookingConfirmationScreenState
                             style: GoogleFonts.gelasio(
                               fontSize: 8,
                               fontWeight: FontWeight.w900,
-                              color: const Color(0xFF10B981),
+                              color: const Color(0xFF163A2C),
                               letterSpacing: 2,
                             ),
                           ),

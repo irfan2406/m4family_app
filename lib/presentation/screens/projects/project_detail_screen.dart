@@ -73,7 +73,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       ..clearSnackBars()
       ..showSnackBar(
         SnackBar(
-          backgroundColor: const Color(0xFF10B981),
+          backgroundColor: const Color(0xFF163A2C),
           duration: const Duration(milliseconds: 1100),
           behavior: SnackBarBehavior.fixed,
           content: Text(
@@ -189,8 +189,8 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
                 color: success
-                    ? const Color(0xFF10B981)
-                    : const Color(0xFFE24B4A),
+                    ? const Color(0xFF163A2C)
+                    : const Color(0xFFC65B46),
                 borderRadius: BorderRadius.circular(14),
                 boxShadow: [
                   BoxShadow(
@@ -407,7 +407,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               icon: LucideIcons.messageSquare,
               title: 'SEND INQUIRY',
               desc: 'Get detailed brochure and pricing via email/WhatsApp.',
-              color: const Color(0xFF3B82F6),
+              color: const Color(0xFFC5A35B),
               onTap: () {
                 Navigator.pop(context);
                 _showRequestDetailsDialog(project, null, 'General');
@@ -418,7 +418,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               icon: LucideIcons.calendar,
               title: 'SCHEDULE SITE VISIT',
               desc: 'Book a personalized tour with our project manager.',
-              color: const Color(0xFF10B981),
+              color: const Color(0xFF163A2C),
               onTap: () {
                 Navigator.pop(context);
                 _showRequestDetailsDialog(project, null, 'Site Visit');
@@ -429,7 +429,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
               icon: LucideIcons.creditCard,
               title: 'TOKEN BOOKING',
               desc: 'Lock your preferred unit with a refundable token amount.',
-              color: const Color(0xFFF59E0B),
+              color: const Color(0xFFC5A35B),
               onTap: () {
                 Navigator.pop(context);
                 _showRequestDetailsDialog(project, 'TOKEN BOOKING', 'General');
@@ -495,7 +495,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E1F21) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : Colors.white,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
             color: isDark
@@ -996,7 +996,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
       context: context,
       barrierColor: Colors.black.withOpacity(0.55),
       builder: (dCtx) => Dialog(
-        backgroundColor: isDark ? const Color(0xFF0B111E) : Colors.white,
+        backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
         insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
         child: Padding(
@@ -2091,7 +2091,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
                 fontWeight: FontWeight.w700,
                 color: isDark
                     ? Colors.white.withOpacity(0.9)
-                    : const Color(0xFF1E293B),
+                    : const Color(0xFF141B3A),
                 letterSpacing: 0.3,
                 height: 1.15,
               ),
@@ -2666,7 +2666,7 @@ class _ProjectDetailScreenState extends ConsumerState<ProjectDetailScreen>
     }
     return Icon(
       _getAmenityIcon(name),
-      color: const Color(0xFFDFBA6B),
+      color: const Color(0xFFC5A35B),
       size: size,
     );
   }
@@ -2715,7 +2715,7 @@ class _OverviewActionCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E1F21) : const Color(0xFFF8F9FA),
+          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFC5A35B),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isDark
@@ -2974,7 +2974,7 @@ class _FloorPlanItem extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: isDark
-            ? const Color(0xFF1E1F21)
+            ? const Color(0xFF141B3A)
             : Color(0xFF163A2C).withOpacity(0.04),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
@@ -3099,7 +3099,7 @@ class _InventoryItem extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: isDark
-              ? const Color(0xFF1E1F21)
+              ? const Color(0xFF141B3A)
               : Colors.white.withOpacity(0.6),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
@@ -3594,7 +3594,7 @@ class _LocationMapState extends State<_LocationMap> {
         'referrerpolicy="no-referrer-when-downgrade"></iframe></body></html>';
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0xFFE5E3DF))
+      ..setBackgroundColor(const Color(0xFFFBF7EF))
       ..loadHtmlString(html);
   }
 
@@ -3635,14 +3635,14 @@ class _LocationMapState extends State<_LocationMap> {
                         style: GoogleFonts.ebGaramond(
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
-                          color: const Color(0xFF2563EB),
+                          color: const Color(0xFFC5A35B),
                         ),
                       ),
                       const SizedBox(width: 4),
                       const Icon(
                         LucideIcons.externalLink,
                         size: 12,
-                        color: Color(0xFF2563EB),
+                        color: Color(0xFFC5A35B),
                       ),
                     ],
                   ),
@@ -3661,7 +3661,7 @@ class _LocationMapState extends State<_LocationMap> {
                     vertical: 9,
                   ),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E1F21) : Colors.white,
+                    color: isDark ? const Color(0xFF141B3A) : Colors.white,
                     borderRadius: BorderRadius.circular(30),
                     boxShadow: [
                       BoxShadow(
@@ -3804,7 +3804,7 @@ class _HeroMediaThumb extends StatelessWidget {
         width: 68,
         height: 68,
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E1F21) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : Colors.white,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(
             color: isDark
@@ -3826,7 +3826,7 @@ class _HeroMediaThumb extends StatelessWidget {
           children: [
             if (isVR)
               Container(
-                color: isDark ? const Color(0xFF1E1F21) : Colors.white,
+                color: isDark ? const Color(0xFF141B3A) : Colors.white,
                 child: Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -3949,7 +3949,7 @@ class _MultimediaAssetCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1F21) : const Color(0xFFF4F4F5),
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
           color: isDark
@@ -4119,7 +4119,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
       decoration: BoxDecoration(
         color: isDark
             ? Colors.white.withOpacity(0.03)
-            : const Color(0xFFF8FAFC),
+            : const Color(0xFFFBF7EF),
         borderRadius: BorderRadius.circular(40),
         border: Border.all(
           color: isDark
@@ -4249,7 +4249,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                     height: 12,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: isDark ? const Color(0xFF1E1F21) : Colors.white,
+                      color: isDark ? const Color(0xFF141B3A) : Colors.white,
                       border: Border.all(
                         color: isDark ? Colors.white : Color(0xFF163A2C),
                         width: 2,
@@ -4355,7 +4355,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                       'Upcoming');
                                   final s = status.toLowerCase();
                                   final bg = s == 'completed'
-                                      ? const Color(0xFF22C55E)
+                                      ? const Color(0xFF163A2C)
                                       : s == 'in progress'
                                       ? (isDark ? Colors.white : Color(0xFF163A2C))
                                       : (isDark
@@ -4406,7 +4406,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                 fontWeight: FontWeight.w900,
                                 color: isDark
                                     ? Colors.white
-                                    : const Color(0xFF0F172A),
+                                    : const Color(0xFF141B3A),
                                 letterSpacing: 1,
                               ),
                             ),
@@ -4587,7 +4587,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                   final status = phase['status']?.toString() ?? 'Upcoming';
                   final s = status.toLowerCase();
                   final dotColor = s == 'completed'
-                      ? const Color(0xFF22C55E)
+                      ? const Color(0xFF163A2C)
                       : s == 'in progress'
                       ? (isDark ? Colors.white : Color(0xFF163A2C))
                       : (isDark ? Colors.white38 : Colors.black26);

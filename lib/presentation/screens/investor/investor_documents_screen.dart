@@ -25,7 +25,7 @@ class InvestorDocumentsScreen extends ConsumerStatefulWidget {
 
 class _InvestorDocumentsScreenState
     extends ConsumerState<InvestorDocumentsScreen> {
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
   static const _filters = [
     'All',
     'Agreement',
@@ -151,7 +151,7 @@ class _InvestorDocumentsScreenState
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFFE24B4A),
+            backgroundColor: Color(0xFFC65B46),
             content: Text('Secure link not available for this document'),
           ),
         );
@@ -651,7 +651,7 @@ class _DocumentDetail extends StatelessWidget {
     required this.rounded,
   });
 
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
 
   @override
   Widget build(BuildContext context) {
@@ -773,10 +773,10 @@ class _DocumentDetail extends StatelessWidget {
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF22C55E).withValues(alpha: 0.1),
+                      color: const Color(0xFF163A2C).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: const Color(0xFF22C55E).withValues(alpha: 0.25),
+                        color: const Color(0xFF163A2C).withValues(alpha: 0.25),
                       ),
                     ),
                     child: Row(
@@ -785,7 +785,7 @@ class _DocumentDetail extends StatelessWidget {
                         const Icon(
                           LucideIcons.shieldCheck,
                           size: 14,
-                          color: Color(0xFF22C55E),
+                          color: Color(0xFF163A2C),
                         ),
                         const SizedBox(width: 8),
                         Text(
@@ -793,7 +793,7 @@ class _DocumentDetail extends StatelessWidget {
                           style: GoogleFonts.gelasio(
                             fontSize: 9,
                             fontWeight: FontWeight.w800,
-                            color: const Color(0xFF22C55E),
+                            color: const Color(0xFF163A2C),
                             letterSpacing: 1.5,
                           ),
                         ),
@@ -876,7 +876,7 @@ class _MetaTile extends StatelessWidget {
     required this.isDark,
   });
 
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
 
   @override
   Widget build(BuildContext context) {

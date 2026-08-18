@@ -7,7 +7,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/presentation/providers/auth_provider.dart';
 
-const Color _gold = Color(0xFFFFD700);
+const Color _gold = Color(0xFFC5A35B);
 
 /// Web `/investor/elite/investor-connect` — "Investor Connect": the curated
 /// investor network / community. Surfaces network stats, active co-investors,
@@ -603,7 +603,7 @@ class _InvestorEliteInvestorConnectScreenState
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      backgroundColor: const Color(0xFF10B981),
+                      backgroundColor: const Color(0xFF163A2C),
                       content: Text(
                         'Connection request sent to ${p.name} — demo',
                       ),
@@ -918,7 +918,7 @@ class _InvestorEliteInvestorConnectScreenState
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            backgroundColor: Color(0xFFE24B4A),
+                            backgroundColor: Color(0xFFC65B46),
                             content: Text('Requesting an introduction — demo'),
                           ),
                         );

@@ -333,7 +333,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                   clipBehavior: Clip.antiAlias,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(18),
-                    color: const Color(0xFFC4D82E),
+                    color: const Color(0xFFFBF7EF),
                   ),
                   child: hasPhoto
                       ? CachedNetworkImage(

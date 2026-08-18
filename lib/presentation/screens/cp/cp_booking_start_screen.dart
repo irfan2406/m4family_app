@@ -29,7 +29,7 @@ class CpBookingStartScreen extends ConsumerWidget {
         'title': 'SEND INQUIRY',
         'desc': 'Get detailed brochure and pricing via email/WhatsApp.',
         'icon': LucideIcons.messageSquare,
-        'color': const Color(0xFF3B82F6),
+        'color': const Color(0xFFC5A35B),
         'route': '/cp/booking/inquiry',
       },
       {
@@ -37,7 +37,7 @@ class CpBookingStartScreen extends ConsumerWidget {
         'title': 'SCHEDULE SITE VISIT',
         'desc': 'Book a personalized tour with our project manager.',
         'icon': LucideIcons.calendar,
-        'color': const Color(0xFF10B981),
+        'color': const Color(0xFF163A2C),
         'route': '/cp/booking/site-visit',
       },
       {
@@ -45,7 +45,7 @@ class CpBookingStartScreen extends ConsumerWidget {
         'title': 'TOKEN BOOKING',
         'desc': 'Lock your preferred unit with a refundable token amount.',
         'icon': LucideIcons.creditCard,
-        'color': const Color(0xFF8B5CF6),
+        'color': const Color(0xFFC5A35B),
         'route': '/cp/booking/payment-plan',
       },
     ];

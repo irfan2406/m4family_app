@@ -49,7 +49,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
       isScrollControlled: true,
       builder: (sheetCtx) => Container(
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF0B111E) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : Colors.white,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         ),
         padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
@@ -152,7 +152,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
     if (_selectedProjectId == null || _scheduledAt == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
+          backgroundColor: Color(0xFFC65B46),
           content: Text('Please fill in all required fields'),
         ),
       );
@@ -187,7 +187,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
       if (response.data['status'] == true) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFF10B981),
+            backgroundColor: Color(0xFF163A2C),
             content: Text(
               'Visit scheduled successfully! We will contact you soon.',
             ),
@@ -197,7 +197,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(
               response.data['message'] ?? 'Failed to schedule visit',
             ),
@@ -208,7 +208,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: const Color(0xFFE24B4A),
+          backgroundColor: const Color(0xFFC65B46),
           content: Text('Error: $e'),
         ),
       );
@@ -434,7 +434,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
     // draw a drop shadow, so this wraps the field in a shadowed Container.
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF15171C) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.06),
@@ -509,7 +509,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF15171C) : Colors.white,
+              color: isDark ? const Color(0xFF141B3A) : Colors.white,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: _isProjectDropdownOpen
@@ -562,7 +562,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
             margin: const EdgeInsets.only(top: 8),
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF111111) : Colors.white,
+              color: isDark ? const Color(0xFF141B3A) : Colors.white,
               borderRadius: BorderRadius.circular(16),
               boxShadow: isDark
                   ? null
@@ -636,7 +636,7 @@ class _ScheduleVisitScreenState extends ConsumerState<ScheduleVisitScreen> {
         height: 56,
         padding: const EdgeInsets.symmetric(horizontal: 20),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF15171C) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.06),

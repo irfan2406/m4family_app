@@ -131,7 +131,7 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
   void _toast(String msg) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(backgroundColor: const Color(0xFFE24B4A), content: Text(msg)),
+      SnackBar(backgroundColor: const Color(0xFFC65B46), content: Text(msg)),
     );
   }
 
@@ -229,14 +229,14 @@ class _CpEliteScreenState extends ConsumerState<CpEliteScreen> {
   // ELITE STATUS CARD — dark gradient (parity web from-zinc-800→black)
   // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   Widget _buildEliteCard(bool isDark) {
-    const gold = Color(0xFFFFD700);
+    const gold = Color(0xFFC5A35B);
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF27272A), Color(0xFF18181B), Colors.black],
+          colors: [Color(0xFF141B3A), Color(0xFF141B3A), Colors.black],
         ),
         borderRadius: BorderRadius.circular(32),
         boxShadow: [

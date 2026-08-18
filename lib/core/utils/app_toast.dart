@@ -16,9 +16,9 @@ class AppToast {
   AppToast._();
 
   /// Error red with strong contrast against white text.
-  static const Color errorColor = Color(0xFFD32F2F);
-  static const Color successColor = Color(0xFF2E7D32);
-  static const Color infoColor = Color(0xFF323232);
+  static const Color errorColor = Color(0xFFC65B46);
+  static const Color successColor = Color(0xFF163A2C);
+  static const Color infoColor = Color(0xFF141B3A);
 
   // Collapse rapid duplicate error toasts (e.g. a global handler and a screen
   // both reacting to the same failure) into one.

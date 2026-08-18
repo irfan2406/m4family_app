@@ -78,7 +78,7 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
   void _downloadReceipt() {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        backgroundColor: Color(0xFFE24B4A),
+        backgroundColor: Color(0xFFC65B46),
         content: Text('Receipt export is not available yet.'),
       ),
     );
@@ -236,7 +236,7 @@ class _CpPaymentDetailScreenState extends ConsumerState<CpPaymentDetailScreen> {
   }
 
   Widget _content(bool isDark, Color textPrimary, Color muted) {
-    const green = Color(0xFF10B981);
+    const green = Color(0xFF163A2C);
     final status = (_commission?['status'] ?? '').toString();
     final fullId = (_commission?['_id'] ?? widget.commissionId).toString();
 

@@ -52,7 +52,7 @@ class _CpForgotPasswordScreenState
     if (emailErr != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: const Color(0xFFE24B4A),
+          backgroundColor: const Color(0xFFC65B46),
           content: Text(emailErr),
         ),
       );
@@ -71,7 +71,7 @@ class _CpForgotPasswordScreenState
         });
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFF10B981),
+            backgroundColor: Color(0xFF163A2C),
             content: Text('Security code sent!'),
           ),
         );
@@ -86,7 +86,7 @@ class _CpForgotPasswordScreenState
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(res.data['message']?.toString() ?? 'Failed'),
           ),
         );
@@ -98,7 +98,7 @@ class _CpForgotPasswordScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(msg ?? 'User not found'),
           ),
         );
@@ -113,7 +113,7 @@ class _CpForgotPasswordScreenState
     if (code.length != 6) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
+          backgroundColor: Color(0xFFC65B46),
           content: Text('Enter the complete 6-digit code'),
         ),
       );
@@ -128,7 +128,7 @@ class _CpForgotPasswordScreenState
     if (np.isEmpty || cp.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
+          backgroundColor: Color(0xFFC65B46),
           content: Text('Please fill in all fields'),
         ),
       );
@@ -137,7 +137,7 @@ class _CpForgotPasswordScreenState
     if (np != cp) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
+          backgroundColor: Color(0xFFC65B46),
           content: Text('Passwords do not match'),
         ),
       );
@@ -146,7 +146,7 @@ class _CpForgotPasswordScreenState
     if (np.length < 8) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
+          backgroundColor: Color(0xFFC65B46),
           content: Text('Password must be at least 8 characters'),
         ),
       );
@@ -166,7 +166,7 @@ class _CpForgotPasswordScreenState
       if (res.statusCode == 200 && res.data['status'] == true) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFF10B981),
+            backgroundColor: Color(0xFF163A2C),
             content: Text('Password updated. You can login.'),
           ),
         );
@@ -176,7 +176,7 @@ class _CpForgotPasswordScreenState
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(res.data['message']?.toString() ?? 'Reset failed'),
           ),
         );
@@ -188,7 +188,7 @@ class _CpForgotPasswordScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(msg ?? 'Reset failed'),
           ),
         );

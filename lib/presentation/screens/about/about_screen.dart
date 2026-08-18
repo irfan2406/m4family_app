@@ -1296,7 +1296,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                           // Web parity: muted gray subtitle, not solid black.
                           color: isDark
                               ? Colors.white54
-                              : const Color(0xFF6B7280),
+                              : const Color(0xFFC5A35B),
                           fontSize: 12,
                           height: 1.5,
                           fontWeight: FontWeight.w500,
@@ -1342,17 +1342,17 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                             vertical: 12,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFFE24B4A).withOpacity(0.12),
+                            color: const Color(0xFFC65B46).withOpacity(0.12),
                             borderRadius: BorderRadius.circular(14),
                             border: Border.all(
-                              color: const Color(0xFFE24B4A).withOpacity(0.4),
+                              color: const Color(0xFFC65B46).withOpacity(0.4),
                             ),
                           ),
                           child: Row(
                             children: [
                               const Icon(
                                 LucideIcons.alertCircle,
-                                color: Color(0xFFE24B4A),
+                                color: Color(0xFFC65B46),
                                 size: 18,
                               ),
                               const SizedBox(width: 10),
@@ -1360,7 +1360,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                                 child: Text(
                                   submitError!,
                                   style: GoogleFonts.ebGaramond(
-                                    color: const Color(0xFFE24B4A),
+                                    color: const Color(0xFFC65B46),
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -1396,7 +1396,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         backgroundColor: const Color(
-                                          0xFFE24B4A,
+                                          0xFFC65B46,
                                         ),
                                         content: Text(vErr),
                                       ),
@@ -1430,7 +1430,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                                         context,
                                       ).showSnackBar(
                                         const SnackBar(
-                                          backgroundColor: Color(0xFF10B981),
+                                          backgroundColor: Color(0xFF163A2C),
                                           content: Text(
                                             'Enquiry submitted successfully! We will contact you soon.',
                                           ),
@@ -1504,7 +1504,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
         label,
         style: GoogleFonts.ebGaramond(
           // Web parity: muted slate-gray field labels.
-          color: isDark ? Colors.white54 : const Color(0xFF8A93A5),
+          color: isDark ? Colors.white54 : const Color(0xFFC5A35B),
           fontSize: 10,
           fontWeight: FontWeight.w700,
           letterSpacing: 1.2,
@@ -1525,11 +1525,11 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     // border only while focused (matches the reference popup).
     final fill = isDark
         ? Colors.white.withOpacity(0.04)
-        : const Color(0xFFF3F4F6);
+        : const Color(0xFFC5A35B);
     final baseBorder = isDark
         ? Colors.white.withOpacity(0.06)
         : Colors.transparent;
-    const gold = Color(0xFFC5A358);
+    const gold = Color(0xFFC5A35B);
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
@@ -1542,7 +1542,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: GoogleFonts.ebGaramond(
-          color: isDark ? Colors.white38 : const Color(0xFF9AA1AD),
+          color: isDark ? Colors.white38 : const Color(0xFFC5A35B),
           fontSize: 14,
           fontWeight: FontWeight.w500,
         ),

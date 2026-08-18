@@ -26,8 +26,8 @@ class InvestorDocumentDetailScreen extends ConsumerStatefulWidget {
 
 class _InvestorDocumentDetailScreenState
     extends ConsumerState<InvestorDocumentDetailScreen> {
-  static const Color _gold = Color(0xFFFFD700);
-  static const Color _green = Color(0xFF22C55E);
+  static const Color _gold = Color(0xFFC5A35B);
+  static const Color _green = Color(0xFF163A2C);
 
   bool _isLoading = true;
   bool _hasError = false;

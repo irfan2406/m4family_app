@@ -193,7 +193,7 @@ class _InvestorProjectDetailScreenState
       ..clearSnackBars()
       ..showSnackBar(
         SnackBar(
-          backgroundColor: const Color(0xFF10B981),
+          backgroundColor: const Color(0xFF163A2C),
           duration: const Duration(milliseconds: 1100),
           behavior: SnackBarBehavior.fixed,
           content: Text(
@@ -606,7 +606,7 @@ class _InvestorProjectDetailScreenState
                               decoration: BoxDecoration(
                                 color: isDark
                                     ? Colors.white.withValues(alpha: 0.03)
-                                    : const Color(0xFFF8FAFC),
+                                    : const Color(0xFFFBF7EF),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
                                   color: isDark
@@ -665,7 +665,7 @@ class _InvestorProjectDetailScreenState
                           decoration: BoxDecoration(
                             color: isDark
                                 ? Colors.white.withValues(alpha: 0.03)
-                                : const Color(0xFFF8FAFC),
+                                : const Color(0xFFFBF7EF),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: isDark
@@ -1110,7 +1110,7 @@ class _InvestorProjectDetailScreenState
               decoration: BoxDecoration(
                 color: isDark
                     ? Colors.white.withValues(alpha: 0.06)
-                    : const Color(0xFFF1F5F9),
+                    : const Color(0xFFFBF7EF),
                 borderRadius: BorderRadius.circular(30),
                 border: Border.all(
                   color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
@@ -1441,7 +1441,7 @@ class _InvestorProjectDetailScreenState
                             : Container(
                                 color: isDark
                                     ? Colors.white.withValues(alpha: 0.04)
-                                    : const Color(0xFFF4F4F5),
+                                    : const Color(0xFFFBF7EF),
                                 child: Center(
                                   child: Icon(
                                     LucideIcons.layoutGrid,
@@ -1552,7 +1552,7 @@ class _InvestorProjectDetailScreenState
                   decoration: BoxDecoration(
                     color: isDark
                         ? Colors.white.withValues(alpha: 0.03)
-                        : const Color(0xFFF4F4F5),
+                        : const Color(0xFFFBF7EF),
                     borderRadius: BorderRadius.circular(32),
                     border: Border.all(
                       color: isDark
@@ -1617,7 +1617,7 @@ class _InvestorProjectDetailScreenState
             decoration: BoxDecoration(
               color: isDark
                   ? Colors.white.withValues(alpha: 0.03)
-                  : const Color(0xFFF8FAFC),
+                  : const Color(0xFFFBF7EF),
               borderRadius: BorderRadius.circular(40),
               border: Border.all(
                 color: isDark
@@ -2289,7 +2289,7 @@ class _InvestorProjectDetailScreenState
               decoration: BoxDecoration(
                 color: isDark
                     ? Colors.white.withValues(alpha: 0.03)
-                    : const Color(0xFFF1F5F9),
+                    : const Color(0xFFFBF7EF),
                 borderRadius: BorderRadius.circular(32),
                 border: Border.all(
                   color: isDark
@@ -2537,7 +2537,7 @@ class _InvestorProjectDetailScreenState
               decoration: BoxDecoration(
                 color: isDark
                     ? Colors.white.withValues(alpha: 0.03)
-                    : const Color(0xFFF4F4F5),
+                    : const Color(0xFFFBF7EF),
                 borderRadius: BorderRadius.circular(32),
                 border: Border.all(
                   color: isDark
@@ -2574,7 +2574,7 @@ class _InvestorProjectDetailScreenState
                         ),
                         decoration: BoxDecoration(
                           color: isDark
-                              ? const Color(0xFF1E293B)
+                              ? const Color(0xFF141B3A)
                               : Colors.white.withValues(alpha: 0.9),
                           borderRadius: BorderRadius.circular(30),
                         ),
@@ -3191,7 +3191,7 @@ class _RoundIcon extends StatelessWidget {
         decoration: BoxDecoration(
           color: isDark
               ? Colors.white.withValues(alpha: 0.05)
-              : const Color(0xFFF4F4F5),
+              : const Color(0xFFFBF7EF),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: isDark
@@ -3231,7 +3231,7 @@ class _InquiryField extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark
             ? Colors.white.withValues(alpha: 0.03)
-            : const Color(0xFFF8FAFC),
+            : const Color(0xFFFBF7EF),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isDark

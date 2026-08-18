@@ -86,7 +86,7 @@ class _AppSettingsScreenState extends ConsumerState<AppSettingsScreen> {
     _darkMode = themeMode == ThemeMode.dark;
     final isDark = themeMode == ThemeMode.dark;
 
-    final bg = isDark ? const Color(0xFF09090B) : const Color(0xFFF8FAFC);
+    final bg = isDark ? const Color(0xFF141B3A) : const Color(0xFFFBF7EF);
 
     return Scaffold(
       backgroundColor: bg,
@@ -398,7 +398,7 @@ class _IconButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF18181B) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(

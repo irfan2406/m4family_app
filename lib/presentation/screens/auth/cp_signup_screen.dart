@@ -60,7 +60,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
         _confirmPassword.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
+          backgroundColor: Color(0xFFC65B46),
           content: Text('Please fill in all required fields'),
         ),
       );
@@ -74,7 +74,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
     if (formatErr != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: const Color(0xFFE24B4A),
+          backgroundColor: const Color(0xFFC65B46),
           content: Text(formatErr),
         ),
       );
@@ -83,7 +83,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
     if (_password.text != _confirmPassword.text) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
+          backgroundColor: Color(0xFFC65B46),
           content: Text('Passwords do not match'),
         ),
       );
@@ -109,7 +109,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
       if (res.statusCode == 201 && res.data['status'] == true) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFF10B981),
+            backgroundColor: Color(0xFF163A2C),
             content: Text('Registration successful! Please login.'),
           ),
         );
@@ -119,7 +119,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(
               res.data['message']?.toString() ?? 'Registration failed',
             ),
@@ -133,7 +133,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(msg ?? e.message ?? 'Registration failed'),
           ),
         );
@@ -142,7 +142,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(e.toString()),
           ),
         );

@@ -581,7 +581,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
     }
     return ShaderMask(
       shaderCallback: (bounds) => const LinearGradient(
-        colors: [Color(0xFF2F4A73), Color(0xFFB08D3E)],
+        colors: [Color(0xFF141B3A), Color(0xFFFBF7EF)],
         begin: Alignment.centerLeft,
         end: Alignment.centerRight,
       ).createShader(bounds),
@@ -674,7 +674,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                   style: GoogleFonts.gelasio(
                     color: isDark
                         ? Colors.white.withOpacity(0.7)
-                        : const Color(0xFF3E5C86),
+                        : const Color(0xFF141B3A),
                     fontSize: 9,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 2,
@@ -705,7 +705,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
     } else if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: const Color(0xFFE24B4A),
+          backgroundColor: const Color(0xFFC65B46),
           content: Text('Could not open $url'),
         ),
       );

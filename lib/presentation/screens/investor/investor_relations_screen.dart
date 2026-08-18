@@ -140,7 +140,7 @@ class _InvestorRelationsScreenState
             fontSize: 12,
           ),
         ),
-        backgroundColor: isError ? Colors.redAccent : const Color(0xFF10B981),
+        backgroundColor: isError ? Colors.redAccent : const Color(0xFF163A2C),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),

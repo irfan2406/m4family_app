@@ -21,7 +21,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
   List<dynamic> _reports = const [];
   bool _loading = true;
 
-  static const Color _gold = Color(0xFFFFD700);
+  static const Color _gold = Color(0xFFC5A35B);
   static const years = ['2024', '2023', '2022'];
 
   @override
@@ -136,13 +136,13 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
     switch (type) {
       case 'XLSX':
       case 'CSV':
-        return const Color(0xFF34D399); // green — spreadsheets
+        return const Color(0xFF163A2C); // green — spreadsheets
       case 'DOC':
-        return const Color(0xFF818CF8); // indigo — docs
+        return const Color(0xFFC5A35B); // indigo — docs
       case 'IMG':
-        return const Color(0xFFF59E0B); // amber — images
+        return const Color(0xFFC5A35B); // amber — images
       default:
-        return const Color(0xFF60A5FA); // blue — pdf
+        return const Color(0xFFC5A35B); // blue — pdf
     }
   }
 
@@ -399,7 +399,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: const Color(0xFFE24B4A),
+          backgroundColor: const Color(0xFFC65B46),
           content: Text(
             'Summary will be available soon',
             style: GoogleFonts.ebGaramond(fontSize: 12),
@@ -544,7 +544,7 @@ class _CpHubReportsScreenState extends ConsumerState<CpHubReportsScreen> {
     final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     showModalBottomSheet(
       context: context,
-      backgroundColor: isDark ? const Color(0xFF111111) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),

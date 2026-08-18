@@ -176,7 +176,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : Colors.white,
         borderRadius: BorderRadius.circular(40),
         boxShadow: [
           BoxShadow(
@@ -552,7 +552,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                 bottom: MediaQuery.of(ctx).viewInsets.bottom + 32,
               ),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF18181B) : Colors.white,
+                color: isDark ? const Color(0xFF141B3A) : Colors.white,
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(40),
                 ),
@@ -634,7 +634,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                                   ),
                                 ),
                                 dropdownColor: isDark
-                                    ? const Color(0xFF1C1C1E)
+                                    ? const Color(0xFF141B3A)
                                     : Colors.white,
                                 icon: Icon(
                                   LucideIcons.chevronDown,
@@ -740,7 +740,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    backgroundColor: const Color(0xFFE24B4A),
+                                    backgroundColor: const Color(0xFFC65B46),
                                     content: Text(
                                       res.data['message']?.toString() ??
                                           'Failed',
@@ -752,7 +752,7 @@ class _CpReferralScreenState extends ConsumerState<CpReferralScreen> {
                               if (mounted) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    backgroundColor: Color(0xFFE24B4A),
+                                    backgroundColor: Color(0xFFC65B46),
                                     content: Text('Submission error.'),
                                   ),
                                 );

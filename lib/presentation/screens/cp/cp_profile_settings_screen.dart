@@ -26,8 +26,8 @@ class CpProfileSettingsScreen extends ConsumerStatefulWidget {
 
 class _CpProfileSettingsScreenState
     extends ConsumerState<CpProfileSettingsScreen> {
-  static const _purple = Color(0xFF9333EA);
-  static const _indigo = Color(0xFF4F46E5);
+  static const _purple = Color(0xFFC5A35B);
+  static const _indigo = Color(0xFF141B3A);
 
   final _first = TextEditingController();
   final _last = TextEditingController();
@@ -136,7 +136,7 @@ class _CpProfileSettingsScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFFE24B4A),
+            backgroundColor: Color(0xFFC65B46),
             content: Text('File too large (max 2MB)'),
           ),
         );
@@ -156,7 +156,7 @@ class _CpProfileSettingsScreenState
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              backgroundColor: Color(0xFFE24B4A),
+              backgroundColor: Color(0xFFC65B46),
               content: Text('Upload failed'),
             ),
           );
@@ -173,7 +173,7 @@ class _CpProfileSettingsScreenState
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              backgroundColor: Color(0xFF10B981),
+              backgroundColor: Color(0xFF163A2C),
               content: Text('Profile photo updated'),
             ),
           );
@@ -185,7 +185,7 @@ class _CpProfileSettingsScreenState
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              backgroundColor: const Color(0xFFE24B4A),
+              backgroundColor: const Color(0xFFC65B46),
               content: Text(msg ?? 'Update failed'),
             ),
           );
@@ -198,7 +198,7 @@ class _CpProfileSettingsScreenState
             : null;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(m ?? 'Upload failed'),
           ),
         );
@@ -279,8 +279,8 @@ class _CpProfileSettingsScreenState
         SnackBar(
           content: Text(message),
           backgroundColor: success
-              ? const Color(0xFF10B981)
-              : const Color(0xFFE24B4A),
+              ? const Color(0xFF163A2C)
+              : const Color(0xFFC65B46),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -305,7 +305,7 @@ class _CpProfileSettingsScreenState
       isScrollControlled: true,
       builder: (sheetCtx) => Container(
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF0B111E) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : Colors.white,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         ),
         padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
@@ -445,7 +445,7 @@ class _CpProfileSettingsScreenState
             : null;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(msg ?? 'Failed'),
           ),
         );
@@ -454,7 +454,7 @@ class _CpProfileSettingsScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(e.message ?? 'Error'),
           ),
         );
@@ -507,7 +507,7 @@ class _CpProfileSettingsScreenState
             : null;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(msg ?? 'Failed'),
           ),
         );
@@ -516,7 +516,7 @@ class _CpProfileSettingsScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(e.message ?? 'Error'),
           ),
         );
@@ -540,7 +540,7 @@ class _CpProfileSettingsScreenState
               if (_newPass.text.length < 4) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    backgroundColor: Color(0xFFE24B4A),
+                    backgroundColor: Color(0xFFC65B46),
                     content: Text('Passcode must be at least 4 digits'),
                   ),
                 );
@@ -549,7 +549,7 @@ class _CpProfileSettingsScreenState
               if (_newPass.text != _confPass.text) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    backgroundColor: Color(0xFFE24B4A),
+                    backgroundColor: Color(0xFFC65B46),
                     content: Text('New passcodes do not match'),
                   ),
                 );
@@ -574,7 +574,7 @@ class _CpProfileSettingsScreenState
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        backgroundColor: Color(0xFF10B981),
+                        backgroundColor: Color(0xFF163A2C),
                         content: Text('Passcode updated successfully'),
                       ),
                     );
@@ -586,7 +586,7 @@ class _CpProfileSettingsScreenState
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        backgroundColor: const Color(0xFFE24B4A),
+                        backgroundColor: const Color(0xFFC65B46),
                         content: Text(msg ?? 'Failed to update passcode'),
                       ),
                     );
@@ -599,7 +599,7 @@ class _CpProfileSettingsScreenState
                       : null;
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      backgroundColor: const Color(0xFFE24B4A),
+                      backgroundColor: const Color(0xFFC65B46),
                       content: Text(m ?? 'Error updating passcode'),
                     ),
                   );
@@ -949,7 +949,7 @@ class _CpProfileSettingsScreenState
         // the Performance Tracker / home cards) — the old translucent fill let
         // the navy page show through and read as a muddy tint.
         color: Theme.of(context).brightness == Brightness.dark
-            ? const Color(0xFF15171C)
+            ? const Color(0xFF141B3A)
             : Colors.white,
         boxShadow: [
           BoxShadow(
@@ -1168,10 +1168,10 @@ class _CpProfileSettingsScreenState
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF10B981).withValues(alpha: 0.1),
+                      color: const Color(0xFF163A2C).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(999),
                       border: Border.all(
-                        color: const Color(0xFF10B981).withValues(alpha: 0.25),
+                        color: const Color(0xFF163A2C).withValues(alpha: 0.25),
                       ),
                     ),
                     child: Row(
@@ -1180,7 +1180,7 @@ class _CpProfileSettingsScreenState
                         const Icon(
                           LucideIcons.check,
                           size: 12,
-                          color: Color(0xFF10B981),
+                          color: Color(0xFF163A2C),
                         ),
                         const SizedBox(width: 4),
                         Text(
@@ -1188,7 +1188,7 @@ class _CpProfileSettingsScreenState
                           style: GoogleFonts.ebGaramond(
                             fontSize: 8,
                             fontWeight: FontWeight.w900,
-                            color: const Color(0xFF10B981),
+                            color: const Color(0xFF163A2C),
                             letterSpacing: 0.5,
                           ),
                         ),

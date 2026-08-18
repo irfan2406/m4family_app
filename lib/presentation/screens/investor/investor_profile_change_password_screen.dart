@@ -26,7 +26,7 @@ class InvestorProfileChangePasswordScreen extends ConsumerStatefulWidget {
 
 class _InvestorProfileChangePasswordScreenState
     extends ConsumerState<InvestorProfileChangePasswordScreen> {
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
 
   final _current = TextEditingController();
   final _newPass = TextEditingController();
@@ -449,7 +449,7 @@ class _InvestorProfileChangePasswordScreenState
   }
 
   Widget _requirementRow(String label, bool met, Color muted) {
-    const green = Color(0xFF10B981);
+    const green = Color(0xFF163A2C);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
@@ -495,7 +495,7 @@ class _InvestorProfileChangePasswordScreenState
           width: double.infinity,
           height: 54,
           decoration: BoxDecoration(
-            gradient: const LinearGradient(colors: [_gold, Color(0xFFE6B800)]),
+            gradient: const LinearGradient(colors: [_gold, Color(0xFFC65B46)]),
             borderRadius: BorderRadius.circular(14),
             boxShadow: [
               BoxShadow(

@@ -22,7 +22,7 @@ class CpPaymentPlanScreen extends ConsumerStatefulWidget {
 }
 
 class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
-  static const Color _gold = Color(0xFFFFD700);
+  static const Color _gold = Color(0xFFC5A35B);
 
   List<dynamic> _plans = [];
   bool _loading = true;
@@ -289,7 +289,7 @@ class _CpPaymentPlanScreenState extends ConsumerState<CpPaymentPlanScreen> {
                               onTap: () {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    backgroundColor: Color(0xFFE24B4A),
+                                    backgroundColor: Color(0xFFC65B46),
                                     content: Text(
                                       'Payment plan PDF will be available soon.',
                                     ),

@@ -83,7 +83,7 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: const Color(0xFFE24B4A),
+        backgroundColor: const Color(0xFFC65B46),
         content: Text(msg, style: GoogleFonts.ebGaramond(fontSize: 12)),
       ),
     );
@@ -183,16 +183,16 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: selected ? const Color(0xFF8B5CF6) : card,
+                    color: selected ? const Color(0xFFC5A35B) : card,
                     borderRadius: BorderRadius.circular(10),
                     border: Border.all(
-                      color: selected ? const Color(0xFF8B5CF6) : border,
+                      color: selected ? const Color(0xFFC5A35B) : border,
                     ),
                     boxShadow: selected
                         ? [
                             BoxShadow(
                               color: const Color(
-                                0xFF8B5CF6,
+                                0xFFC5A35B,
                               ).withValues(alpha: 0.3),
                               blurRadius: 15,
                             ),
@@ -390,7 +390,7 @@ class _CpTaxReportsScreenState extends ConsumerState<CpTaxReportsScreen> {
     Color card,
     Color border,
   ) {
-    const red = Color(0xFFEF4444);
+    const red = Color(0xFFC65B46);
     final id = m['id']?.toString() ?? '';
     final name = m['name']?.toString() ?? 'Statement';
     final date = m['date']?.toString() ?? '';

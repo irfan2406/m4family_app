@@ -74,7 +74,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
         ..hideCurrentSnackBar()
         ..showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFFE24B4A),
+            backgroundColor: Color(0xFFC65B46),
             content: Text('Please fill in subject, category and message'),
             behavior: SnackBarBehavior.floating,
             duration: Duration(milliseconds: 1800),
@@ -96,7 +96,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFF10B981),
+            backgroundColor: const Color(0xFF163A2C),
             content: Text(
               ok ? 'Ticket raised successfully!' : 'Failed to raise ticket',
             ),
@@ -111,7 +111,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
         ..hideCurrentSnackBar()
         ..showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFFE24B4A),
+            backgroundColor: Color(0xFFC65B46),
             content: Text('Failed to raise ticket'),
             behavior: SnackBarBehavior.floating,
             duration: Duration(milliseconds: 1800),
@@ -126,7 +126,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final onSurface = isDark ? Colors.white : Color(0xFF163A2C);
-    const amber = Color(0xFFF59E0B);
+    const amber = Color(0xFFC5A35B);
 
     return Scaffold(
       backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
@@ -274,7 +274,7 @@ class _RaiseTicketScreenState extends ConsumerState<RaiseTicketScreen> {
                             size: 18,
                           ),
                           dropdownColor: isDark
-                              ? const Color(0xFF1A1A1A)
+                              ? const Color(0xFF141B3A)
                               : Colors.white,
                           borderRadius: BorderRadius.circular(16),
                           items: _categories.entries

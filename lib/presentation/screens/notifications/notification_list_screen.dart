@@ -20,14 +20,14 @@ import 'package:m4_mobile/presentation/widgets/cp_bottom_nav.dart';
 ({IconData icon, Color fg}) _iconFor(String? type) {
   switch ((type ?? 'default').toLowerCase()) {
     case 'success':
-      return (icon: LucideIcons.checkCircle, fg: const Color(0xFF16A34A));
+      return (icon: LucideIcons.checkCircle, fg: const Color(0xFF163A2C));
     case 'alert':
-      return (icon: LucideIcons.alertTriangle, fg: const Color(0xFFF59E0B));
+      return (icon: LucideIcons.alertTriangle, fg: const Color(0xFFC5A35B));
     case 'promotion':
-      return (icon: LucideIcons.percent, fg: const Color(0xFF9333EA));
+      return (icon: LucideIcons.percent, fg: const Color(0xFFC5A35B));
     default:
       // Web parity: default type shows a Bell in blue-600 / blue-50 bg.
-      return (icon: LucideIcons.bell, fg: const Color(0xFF2563EB)); // blue-600
+      return (icon: LucideIcons.bell, fg: const Color(0xFFC5A35B)); // blue-600
   }
 }
 
@@ -43,7 +43,7 @@ class NotificationListScreen extends ConsumerWidget {
         .toString()
         .toLowerCase();
     final isCp = role == 'cp';
-    const purple = Color(0xFF9333EA);
+    const purple = Color(0xFFC5A35B);
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -275,7 +275,7 @@ class _NotificationItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    const purple = Color(0xFF9333EA);
+    const purple = Color(0xFFC5A35B);
     final accent = isCp ? purple : scheme.primary;
 
     // Web parity: date only — "Mar 14, 2026" uppercased (no time).
@@ -411,7 +411,7 @@ class _NotificationItem extends StatelessWidget {
   ) {
     final scheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    const purple = Color(0xFF9333EA);
+    const purple = Color(0xFFC5A35B);
     final accent = isCp ? purple : scheme.primary;
 
     showDialog(
@@ -424,7 +424,7 @@ class _NotificationItem extends StatelessWidget {
             margin: const EdgeInsets.symmetric(horizontal: 32),
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF18181B) : Colors.white,
+              color: isDark ? const Color(0xFF141B3A) : Colors.white,
               borderRadius: BorderRadius.circular(32),
               border: Border.all(
                 color: scheme.outlineVariant.withValues(alpha: 0.2),

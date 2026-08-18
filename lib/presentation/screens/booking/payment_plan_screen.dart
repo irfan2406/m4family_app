@@ -59,7 +59,7 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
           'description': 'Construction linked payment schedule.',
           'benefit': 'Lower upfront cost',
           'icon': LucideIcons.zap,
-          'color': const Color(0xFF3B82F6),
+          'color': const Color(0xFFC5A35B),
         },
       ];
       _isLoading = false;
@@ -128,8 +128,8 @@ class _PaymentPlanScreenState extends ConsumerState<PaymentPlanScreen> {
                         ? LucideIcons.zap
                         : LucideIcons.shieldCheck;
                     final color = isZap
-                        ? const Color(0xFF3B82F6)
-                        : const Color(0xFFF59E0B);
+                        ? const Color(0xFFC5A35B)
+                        : const Color(0xFFC5A35B);
                     final benefit =
                         plan['name']?.toString().contains('Down') == true
                         ? 'MAX SAVINGS'

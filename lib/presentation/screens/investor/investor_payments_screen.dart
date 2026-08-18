@@ -19,8 +19,8 @@ class InvestorPaymentsScreen extends ConsumerStatefulWidget {
 
 class _InvestorPaymentsScreenState
     extends ConsumerState<InvestorPaymentsScreen> {
-  static const _gold = Color(0xFFFFD700);
-  static const _green = Color(0xFF22C55E);
+  static const _gold = Color(0xFFC5A35B);
+  static const _green = Color(0xFF163A2C);
 
   bool _loading = true;
   bool _error = false;
@@ -394,7 +394,7 @@ class _InvestorPaymentsScreenState
     if (statusUpper == 'PAID') {
       statusColor = _green;
     } else if (statusUpper == 'PENDING') {
-      statusColor = const Color(0xFFF59E0B);
+      statusColor = const Color(0xFFC5A35B);
     } else {
       statusColor = muted;
     }

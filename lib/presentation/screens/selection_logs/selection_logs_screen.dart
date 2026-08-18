@@ -293,7 +293,7 @@ class _SelectionLogsScreenState extends ConsumerState<SelectionLogsScreen> {
                   child: Text(
                     'START CUSTOMIZING',
                     style: GoogleFonts.gelasio(
-                      color: const Color(0xFFFFD700),
+                      color: const Color(0xFFC5A35B),
                       fontWeight: FontWeight.w900,
                       fontSize: 11,
                       letterSpacing: 1.5,
@@ -382,7 +382,7 @@ class _LogCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: (isDark ? const Color(0xFF0F172A) : Color(0xFF163A2C)).withOpacity(
+        color: (isDark ? const Color(0xFF141B3A) : Color(0xFF163A2C)).withOpacity(
           isDark ? 0.4 : 0.05,
         ),
         borderRadius: BorderRadius.circular(24),
@@ -516,7 +516,7 @@ class _LogCard extends StatelessWidget {
   Widget _buildStatusBadge(String status) {
     Color color = Colors.orangeAccent;
     if (['APPROVED', 'COMPLETED'].contains(status))
-      color = const Color(0xFF10B981);
+      color = const Color(0xFF163A2C);
     if (['REJECTED'].contains(status)) color = Colors.redAccent;
 
     return Container(
@@ -720,7 +720,7 @@ class _LogDetailDialog extends ConsumerWidget {
                       Icon(
                         LucideIcons.mapPin,
                         size: 14,
-                        color: const Color(0xFFFFD700).withOpacity(0.6),
+                        color: const Color(0xFFC5A35B).withOpacity(0.6),
                       ),
                       const SizedBox(width: 8),
                       Flexible(
@@ -880,7 +880,7 @@ class _LogDetailDialog extends ConsumerWidget {
   Widget _buildStatusBadge(String status) {
     Color color = Colors.orangeAccent;
     if (['APPROVED', 'COMPLETED'].contains(status))
-      color = const Color(0xFF10B981);
+      color = const Color(0xFF163A2C);
     if (['REJECTED'].contains(status)) color = Colors.redAccent;
 
     return Container(

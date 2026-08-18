@@ -131,7 +131,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
             fontSize: 12,
           ),
         ),
-        backgroundColor: isError ? Colors.redAccent : const Color(0xFF10B981),
+        backgroundColor: isError ? Colors.redAccent : const Color(0xFF163A2C),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
@@ -232,7 +232,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
               ? const RadialGradient(
                   center: Alignment.topCenter,
                   radius: 2.5,
-                  colors: [Color(0xFF111319), Colors.black],
+                  colors: [Color(0xFF141B3A), Colors.black],
                 )
               : null,
         ),
@@ -286,7 +286,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                         // Web parity: location shown in the M4 slate-blue accent.
                         color: isDark
                             ? Colors.white.withOpacity(0.7)
-                            : const Color(0xFF3E5C86),
+                            : const Color(0xFF141B3A),
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 3,
@@ -522,7 +522,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
             fontSize: 13,
           ),
           filled: true,
-          fillColor: isDark ? const Color(0xFF0F1219) : Colors.white,
+          fillColor: isDark ? const Color(0xFF141B3A) : Colors.white,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 24,
             vertical: 24,
@@ -535,7 +535,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20),
-            borderSide: const BorderSide(color: Color(0xFFC5A358), width: 1.5),
+            borderSide: const BorderSide(color: Color(0xFFC5A35B), width: 1.5),
           ),
         ),
       ),

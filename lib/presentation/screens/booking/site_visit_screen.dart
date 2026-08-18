@@ -61,7 +61,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
       isScrollControlled: true,
       builder: (sheetCtx) => Container(
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF0B111E) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : Colors.white,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         ),
         padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
@@ -165,7 +165,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
     if (_selectedDate == null || _selectedTime == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
+          backgroundColor: Color(0xFFC65B46),
           content: Text('Please select a date and time'),
         ),
       );
@@ -197,7 +197,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(res.data['message'] ?? 'Failed to schedule visit'),
           ),
         );
@@ -205,7 +205,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
+          backgroundColor: Color(0xFFC65B46),
           content: Text('Error scheduling visit. Please try again.'),
         ),
       );
@@ -436,7 +436,7 @@ class _SiteVisitScreenState extends ConsumerState<SiteVisitScreen> {
                             size: 18,
                           ),
                           dropdownColor: isDark
-                              ? const Color(0xFF1C1C1E)
+                              ? const Color(0xFF141B3A)
                               : Colors.white,
                           items: projects.map((p) {
                             return DropdownMenuItem<String>(

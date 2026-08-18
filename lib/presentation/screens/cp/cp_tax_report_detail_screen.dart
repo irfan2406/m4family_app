@@ -81,7 +81,7 @@ class _CpTaxReportDetailScreenState
     final name = _report?['name']?.toString() ?? 'document';
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: const Color(0xFFE24B4A),
+        backgroundColor: const Color(0xFFC65B46),
         content: Text(
           'Downloading $name...',
           style: GoogleFonts.ebGaramond(fontSize: 12),
@@ -221,8 +221,8 @@ class _CpTaxReportDetailScreenState
   }
 
   Widget _content(bool isDark, Color textPrimary, Color muted) {
-    const red = Color(0xFFEF4444);
-    const green = Color(0xFF10B981);
+    const red = Color(0xFFC65B46);
+    const green = Color(0xFF163A2C);
 
     return RefreshIndicator(
       color: M4Theme.premiumBlue,
@@ -458,7 +458,7 @@ class _CpTaxReportDetailScreenState
   }
 
   Widget _secureWarning(bool isDark, Color textPrimary, Color muted) {
-    const gold = Color(0xFFFFD700);
+    const gold = Color(0xFFC5A35B);
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(

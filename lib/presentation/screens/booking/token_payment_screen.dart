@@ -89,7 +89,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: const Color(0xFFE24B4A),
+        backgroundColor: const Color(0xFFC65B46),
         content: Text(message),
       ),
     );
@@ -201,7 +201,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text('Payment failed: ${e.toString()}'),
           ),
         );
@@ -391,7 +391,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
     return Scaffold(
       backgroundColor: isDark
           ? const Color(0xFF141B3A)
-          : const Color(0xFFF9FAFB),
+          : const Color(0xFFC5A35B),
       extendBody: true,
       bottomNavigationBar: NavigationPill(
         currentIndex: -1,
@@ -450,7 +450,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                           begin: Alignment.bottomLeft,
                           end: Alignment.topRight,
                           colors: [
-                            const Color(0xFF1B2233).withOpacity(0.7),
+                            const Color(0xFF141B3A).withOpacity(0.7),
                             Colors.transparent,
                           ],
                         ),
@@ -721,7 +721,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                             size: 18,
                           ),
                           dropdownColor: isDark
-                              ? const Color(0xFF1A1C20)
+                              ? const Color(0xFF141B3A)
                               : Colors.white,
                           style: GoogleFonts.ebGaramond(
                             fontSize: 11,
@@ -998,19 +998,19 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                     decoration: BoxDecoration(
                       color: isDark
                           ? Colors.orange.withOpacity(0.05)
-                          : const Color(0xFFFFF7ED),
+                          : const Color(0xFFFBF7EF),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
                         color: isDark
                             ? Colors.orange.withOpacity(0.2)
-                            : const Color(0xFFFED7AA),
+                            : const Color(0xFFFBF7EF),
                       ),
                     ),
                     child: Row(
                       children: [
                         const Icon(
                           LucideIcons.alertCircle,
-                          color: Color(0xFFF97316),
+                          color: Color(0xFFC65B46),
                           size: 18,
                         ),
                         const SizedBox(width: 16),
@@ -1022,7 +1022,7 @@ class _TokenPaymentScreenState extends ConsumerState<TokenPaymentScreen> {
                               fontWeight: FontWeight.w900,
                               color: isDark
                                   ? Colors.orange.withOpacity(0.8)
-                                  : const Color(0xFF9A3412),
+                                  : const Color(0xFFC65B46),
                               height: 1.4,
                             ),
                           ),

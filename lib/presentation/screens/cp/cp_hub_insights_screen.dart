@@ -76,7 +76,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
     final scheme = Theme.of(context).colorScheme;
     final isLight = scheme.brightness == Brightness.light;
     final accent = isLight ? Colors.black : scheme.primary;
-    const purple = Color(0xFFA855F7);
+    const purple = Color(0xFFC5A35B);
 
     final rate = _data?['conversionRate']?.toString() ?? '0%';
     final leads = _data?['totalLeads'] ?? 0;
@@ -130,7 +130,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(18),
                     gradient: const LinearGradient(
-                      colors: [Color(0xFFA855F7), Color(0xFF7C3AED)],
+                      colors: [Color(0xFFC5A35B), Color(0xFF141B3A)],
                     ),
                     boxShadow: [
                       BoxShadow(
@@ -180,7 +180,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
                         onPressed: () =>
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                backgroundColor: Color(0xFFE24B4A),
+                                backgroundColor: Color(0xFFC65B46),
                                 content: Text('Report coming soon'),
                               ),
                             ),
@@ -252,7 +252,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              backgroundColor: Color(0xFFE24B4A),
+              backgroundColor: Color(0xFFC65B46),
               content: Text('Content coming soon'),
             ),
           );
@@ -297,7 +297,7 @@ class _CpHubInsightsScreenState extends ConsumerState<CpHubInsightsScreen> {
                           fontSize: 8,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1.3,
-                          color: const Color(0xFFA855F7),
+                          color: const Color(0xFFC5A35B),
                         ),
                       ),
                     ),

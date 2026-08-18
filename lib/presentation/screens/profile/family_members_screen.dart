@@ -88,8 +88,8 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
       SnackBar(
         behavior: SnackBarBehavior.floating,
         backgroundColor: isError
-            ? const Color(0xFFEF4444)
-            : const Color(0xFF10B981),
+            ? const Color(0xFFC65B46)
+            : const Color(0xFF163A2C),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         margin: const EdgeInsets.all(16),
         content: Text(
@@ -117,7 +117,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
         child: Container(
           padding: const EdgeInsets.all(28),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF09090B) : Colors.white,
+            color: isDark ? const Color(0xFF141B3A) : Colors.white,
             borderRadius: BorderRadius.circular(40),
             border: Border.all(
               color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
@@ -259,7 +259,7 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(32),
                   decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF09090B) : Colors.white,
+                    color: isDark ? const Color(0xFF141B3A) : Colors.white,
                     borderRadius: BorderRadius.circular(40),
                     border: Border.all(
                       color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
@@ -855,7 +855,7 @@ class _HeaderIconButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(11),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF18181B) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
@@ -1042,7 +1042,7 @@ class _RelationDropdown extends StatelessWidget {
               alpha: 0.4,
             ),
           ),
-          dropdownColor: isDark ? const Color(0xFF18181B) : Colors.white,
+          dropdownColor: isDark ? const Color(0xFF141B3A) : Colors.white,
           borderRadius: BorderRadius.circular(16),
           style: GoogleFonts.ebGaramond(
             fontSize: 12,
@@ -1093,7 +1093,7 @@ class _DialogButton extends StatelessWidget {
     final Color fg;
     if (filled) {
       bg = destructive
-          ? const Color(0xFFEF4444)
+          ? const Color(0xFFC65B46)
           : (isDark ? Colors.white : Color(0xFF163A2C));
       fg = destructive ? Colors.white : (isDark ? Colors.black : Colors.white);
     } else {

@@ -492,7 +492,7 @@ class _CpEliteInvestorConnectScreenState
                           onTap: () {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                backgroundColor: Color(0xFFE24B4A),
+                                backgroundColor: Color(0xFFC65B46),
                                 content: Text(
                                   'Contact your RM for allocation — demo',
                                 ),
@@ -622,7 +622,7 @@ class _CpEliteInvestorConnectScreenState
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            backgroundColor: Color(0xFFE24B4A),
+                            backgroundColor: Color(0xFFC65B46),
                             content: Text('Scheduling protocol call — demo'),
                           ),
                         );

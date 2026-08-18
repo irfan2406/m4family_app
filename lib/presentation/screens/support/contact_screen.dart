@@ -61,7 +61,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
     if (validationError != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: const Color(0xFFE24B4A),
+          backgroundColor: const Color(0xFFC65B46),
           content: Text(validationError),
         ),
       );
@@ -70,7 +70,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
     if (!_agreedToPrivacy) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
+          backgroundColor: Color(0xFFC65B46),
           content: Text('Please agree to the Privacy Policy'),
         ),
       );
@@ -91,7 +91,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Thank you! We will get in touch with you shortly.'),
-          backgroundColor: Color(0xFF10B981),
+          backgroundColor: Color(0xFF163A2C),
         ),
       );
       _nameController.clear();
@@ -103,7 +103,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: const Color(0xFFE24B4A),
+          backgroundColor: const Color(0xFFC65B46),
           content: Text('Error: $e'),
         ),
       );
@@ -476,7 +476,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Color(0xFFC5A358), width: 1.6),
+          borderSide: const BorderSide(color: Color(0xFFC5A35B), width: 1.6),
         ),
       ),
     );
@@ -632,7 +632,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                   style: GoogleFonts.gelasio(
                     color: isDark
                         ? Colors.white.withOpacity(0.7)
-                        : const Color(0xFF3E5C86),
+                        : const Color(0xFF141B3A),
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 2,

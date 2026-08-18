@@ -284,7 +284,7 @@ class _InvestorReferralActiveScreenState
                   const Icon(
                     LucideIcons.trendingUp,
                     size: 12,
-                    color: Color(0xFF10B981),
+                    color: Color(0xFF163A2C),
                   ),
                   const SizedBox(width: 6),
                   Text(

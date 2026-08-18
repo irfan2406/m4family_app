@@ -40,7 +40,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
     if (email.isEmpty || pw.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
+          backgroundColor: Color(0xFFC65B46),
           content: Text('Please provide your Email and Password'),
         ),
       );
@@ -50,7 +50,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
     if (emailErr != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: const Color(0xFFE24B4A),
+          backgroundColor: const Color(0xFFC65B46),
           content: Text(emailErr),
         ),
       );
@@ -62,7 +62,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
     if (!mounted) return;
     if (err != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(backgroundColor: const Color(0xFFE24B4A), content: Text(err)),
+        SnackBar(backgroundColor: const Color(0xFFC65B46), content: Text(err)),
       );
     }
   }

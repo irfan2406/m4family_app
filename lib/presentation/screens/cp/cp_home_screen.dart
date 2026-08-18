@@ -227,7 +227,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(msg),
-          backgroundColor: const Color(0xFFE24B4A),
+          backgroundColor: const Color(0xFFC65B46),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -585,7 +585,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
     double errorIconSize = 64,
   }) {
     Widget errorBox() => Container(
-      color: const Color(0xFF1A1A1A),
+      color: const Color(0xFF141B3A),
       child: Center(
         child: Icon(errorIcon, color: Colors.white24, size: errorIconSize),
       ),
@@ -992,7 +992,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
         width: 288,
         margin: const EdgeInsets.only(right: 20, bottom: 10),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF15171C) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : Colors.white,
           borderRadius: BorderRadius.circular(32),
           border: Border.all(
             color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
@@ -1258,7 +1258,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                         Text(
                           'FEATURED PROPERTY',
                           style: GoogleFonts.gelasio(
-                            color: const Color(0xFFC4A484),
+                            color: const Color(0xFFFBF7EF),
                             fontSize: 9,
                             fontWeight: FontWeight.w700,
                             letterSpacing: 1.8,
@@ -1656,7 +1656,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
               checkColor: isDark ? Colors.black : Colors.white,
               side: BorderSide(
                 color: _termsError
-                    ? const Color(0xFFE24B4A)
+                    ? const Color(0xFFC65B46)
                     : (isDark ? Colors.white24 : Colors.black26),
                 width: _termsError ? 1.8 : 1,
               ),
@@ -1666,7 +1666,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
                 "I've read and agree to the Privacy Policy",
                 style: GoogleFonts.ebGaramond(
                   color: _termsError
-                      ? const Color(0xFFE24B4A)
+                      ? const Color(0xFFC65B46)
                       : (isDark ? Colors.white54 : Color(0xFF5E6B60)),
                   fontSize: 11,
                   letterSpacing: 1,
@@ -1721,7 +1721,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final hasError = errorText != null;
-    const errorColor = Color(0xFFE24B4A);
+    const errorColor = Color(0xFFC65B46);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

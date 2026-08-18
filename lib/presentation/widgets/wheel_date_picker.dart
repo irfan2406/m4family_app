@@ -96,7 +96,7 @@ class _WheelDatePickerSheetState extends State<_WheelDatePickerSheet> {
 
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF09090B) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : Colors.white,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
       ),
       child: SafeArea(
@@ -219,7 +219,7 @@ class _WheelDatePickerSheetState extends State<_WheelDatePickerSheet> {
                           borderRadius: BorderRadius.circular(18),
                           color: isDark
                               ? Colors.white
-                              : const Color(0xFF0B1120),
+                              : const Color(0xFF141B3A),
                         ),
                         child: Text(
                           'CONFIRM',

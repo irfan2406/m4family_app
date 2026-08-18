@@ -266,7 +266,7 @@ class _CareersScreenState extends ConsumerState<CareersScreen> {
         Text(
           subheading,
           style: GoogleFonts.gelasio(
-            color: isDark ? Colors.white : const Color(0xFF2B3A55),
+            color: isDark ? Colors.white : const Color(0xFF141B3A),
             fontSize: 24,
             fontWeight: FontWeight.w600,
             letterSpacing: -0.5,

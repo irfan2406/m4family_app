@@ -27,7 +27,7 @@ class PortfolioScreen extends ConsumerStatefulWidget {
 }
 
 class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
-  static const Color _gold = Color(0xFFFFD700);
+  static const Color _gold = Color(0xFFC5A35B);
 
   bool _isLoading = true;
   bool _hasError = false;
@@ -560,7 +560,7 @@ class _PortfolioScreenState extends ConsumerState<PortfolioScreen> {
 
     final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
     final muted = textPrimary.withValues(alpha: 0.5);
-    final sheetBg = isDark ? const Color(0xFF0A0A0A) : Colors.white;
+    final sheetBg = isDark ? const Color(0xFF141B3A) : Colors.white;
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)
         : Colors.black.withValues(alpha: 0.06);
@@ -922,7 +922,7 @@ class _StatusPill extends StatelessWidget {
         status.toLowerCase().contains('ready') ||
         status.toLowerCase().contains('confirmed') ||
         status.toLowerCase().contains('move');
-    final color = ready ? const Color(0xFF22C55E) : const Color(0xFFF59E0B);
+    final color = ready ? const Color(0xFF163A2C) : const Color(0xFFC5A35B);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(

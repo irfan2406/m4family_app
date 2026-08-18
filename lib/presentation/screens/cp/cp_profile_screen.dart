@@ -131,7 +131,7 @@ class _CpProfileScreenState extends ConsumerState<CpProfileScreen> {
                     center: const Alignment(-0.8, -1),
                     radius: 1.2,
                     colors: [
-                      const Color(0xFF3B6FB5).withValues(alpha: 0.10),
+                      const Color(0xFFC5A35B).withValues(alpha: 0.10),
                       Colors.transparent,
                     ],
                   ),

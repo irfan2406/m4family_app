@@ -52,7 +52,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
     if (validationError != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: const Color(0xFFE24B4A),
+          backgroundColor: const Color(0xFFC65B46),
           content: Text(validationError),
         ),
       );
@@ -79,7 +79,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(res.data['message'] ?? 'Failed to send inquiry'),
           ),
         );
@@ -87,7 +87,7 @@ class _InquiryScreenState extends ConsumerState<InquiryScreen> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
+          backgroundColor: Color(0xFFC65B46),
           content: Text('Error sending inquiry. Please try again.'),
         ),
       );

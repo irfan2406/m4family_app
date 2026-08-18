@@ -24,7 +24,7 @@ class PremiumCheckoutScreen extends ConsumerStatefulWidget {
 enum _CheckoutStep { details, processing, success }
 
 class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
-  static const Color _gold = Color(0xFFFFD700);
+  static const Color _gold = Color(0xFFC5A35B);
 
   _CheckoutStep _step = _CheckoutStep.details;
 
@@ -326,7 +326,7 @@ class _PremiumCheckoutScreenState extends ConsumerState<PremiumCheckoutScreen> {
               children: [
                 Icon(
                   LucideIcons.shieldCheck,
-                  color: const Color(0xFF22C55E).withValues(alpha: 0.6),
+                  color: const Color(0xFF163A2C).withValues(alpha: 0.6),
                   size: 28,
                 ),
                 const SizedBox(width: 14),

@@ -461,7 +461,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         decoration: BoxDecoration(
           color: isOverMedia
               ? Colors.black.withOpacity(0.3)
-              : (isBlack ? const Color(0xFF0A0A0A) : scheme.surface),
+              : (isBlack ? const Color(0xFF141B3A) : scheme.surface),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isOverMedia
@@ -496,7 +496,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         width: double.infinity,
         height: 65,
         decoration: BoxDecoration(
-          color: const Color(0xFF0A0A0A),
+          color: const Color(0xFF141B3A),
           borderRadius: BorderRadius.circular(35),
           boxShadow: [
             BoxShadow(
@@ -617,13 +617,13 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
     Color color;
     switch (status.toUpperCase()) {
       case 'TODAY':
-        color = const Color(0xFFFFD700);
+        color = const Color(0xFFC5A35B);
         break;
       case 'ENDED':
         color = isDark ? Colors.white38 : Color(0xFF5E6B60);
         break;
       case 'CANCELLED':
-        color = const Color(0xFFEF4444);
+        color = const Color(0xFFC65B46);
         break;
       case 'UPCOMING':
       default:
@@ -900,7 +900,7 @@ class _ContentDetailScreenState extends ConsumerState<ContentDetailScreen> {
         width: double.infinity,
         height: 65,
         decoration: BoxDecoration(
-          color: const Color(0xFF0A0A0A),
+          color: const Color(0xFF141B3A),
           borderRadius: BorderRadius.circular(35),
           boxShadow: [
             BoxShadow(

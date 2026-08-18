@@ -20,7 +20,7 @@ class InvestorTaxReportsScreen extends ConsumerStatefulWidget {
 
 class _InvestorTaxReportsScreenState
     extends ConsumerState<InvestorTaxReportsScreen> {
-  static const Color _gold = Color(0xFFFFD700);
+  static const Color _gold = Color(0xFFC5A35B);
 
   List<dynamic> _rows = [];
   bool _loading = true;
@@ -101,7 +101,7 @@ class _InvestorTaxReportsScreenState
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: const Color(0xFFE24B4A),
+        backgroundColor: const Color(0xFFC65B46),
         content: Text(msg, style: GoogleFonts.ebGaramond(fontSize: 12)),
       ),
     );
@@ -453,7 +453,7 @@ class _InvestorTaxReportsScreenState
     Color card,
     Color border,
   ) {
-    const red = Color(0xFFEF4444);
+    const red = Color(0xFFC65B46);
     final id = m['id']?.toString() ?? '';
     final name = m['name']?.toString() ?? 'Statement';
     final date = m['date']?.toString() ?? '';

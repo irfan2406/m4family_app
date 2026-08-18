@@ -22,8 +22,8 @@ class InvestorReferralClosedScreen extends ConsumerStatefulWidget {
 
 class _InvestorReferralClosedScreenState
     extends ConsumerState<InvestorReferralClosedScreen> {
-  static const _gold = Color(0xFFFFD700);
-  static const _emerald = Color(0xFF10B981);
+  static const _gold = Color(0xFFC5A35B);
+  static const _emerald = Color(0xFF163A2C);
 
   // Statuses considered closed/credited (the only ones shown here).
   static const _closedStatuses = [

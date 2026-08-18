@@ -57,8 +57,8 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
 
     return Scaffold(
       backgroundColor: isDark
-          ? const Color(0xFF09090B)
-          : const Color(0xFFF8FAFC),
+          ? const Color(0xFF141B3A)
+          : const Color(0xFFFBF7EF),
       body: SafeArea(
         child: Column(
           children: [
@@ -139,7 +139,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF18181B) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : Colors.white,
         borderRadius: BorderRadius.circular(32),
         border: Border.all(
           color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
@@ -202,7 +202,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                   textStyle: const TextStyle(inherit: true),
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
-                  color: const Color(0xFF22C55E),
+                  color: const Color(0xFF163A2C),
                 ),
               ),
             ],
@@ -220,7 +220,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF18181B) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : Colors.white,
         borderRadius: BorderRadius.circular(32),
         border: Border.all(
           color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
@@ -367,7 +367,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                           style: GoogleFonts.ebGaramond(
                             fontSize: 9,
                             fontWeight: FontWeight.w900,
-                            color: const Color(0xFF22C55E),
+                            color: const Color(0xFF163A2C),
                           ),
                         ),
                       ],
@@ -386,7 +386,7 @@ class _MyPropertyScreenState extends ConsumerState<MyPropertyScreen> {
                         widthFactor: (paymentPercent / 100).clamp(0.05, 1.0),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: const Color(0xFF22C55E),
+                            color: const Color(0xFF163A2C),
                             borderRadius: BorderRadius.circular(3),
                           ),
                         ),
@@ -434,7 +434,7 @@ class _StatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = status.toLowerCase() == 'confirmed'
-        ? const Color(0xFF22C55E)
+        ? const Color(0xFF163A2C)
         : const Color(0xFFC5A35B);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -513,7 +513,7 @@ class _IconButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF18181B) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),

@@ -65,7 +65,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    const purple = Color(0xFFA855F7);
+    const purple = Color(0xFFC5A35B);
 
     const events = [
       {
@@ -123,7 +123,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                           icon: LucideIcons.wallet,
                           label: 'COMMISSION',
                           value: 'AED ${_formatNumber(_balance())}',
-                          accent: const Color(0xFFFFD700),
+                          accent: const Color(0xFFC5A35B),
                         ),
                       ),
                     ],
@@ -154,7 +154,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                         onPressed: () =>
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                backgroundColor: Color(0xFFE24B4A),
+                                backgroundColor: Color(0xFFC65B46),
                                 content: Text('Events coming soon'),
                               ),
                             ),
@@ -235,7 +235,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                             onPressed: () =>
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    backgroundColor: Color(0xFF10B981),
+                                    backgroundColor: Color(0xFF163A2C),
                                     content: Text('RSVP received'),
                                   ),
                                 ),
@@ -354,8 +354,8 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                                   shape: BoxShape.circle,
                                   gradient: LinearGradient(
                                     colors: [
-                                      Color(0xFFA855F7),
-                                      Color(0xFF6D28D9),
+                                      Color(0xFFC5A35B),
+                                      Color(0xFF141B3A),
                                     ],
                                   ),
                                 ),
@@ -437,7 +437,7 @@ class _CpHubNetworkScreenState extends ConsumerState<CpHubNetworkScreen> {
                           onPressed: () =>
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  backgroundColor: Color(0xFFE24B4A),
+                                  backgroundColor: Color(0xFFC65B46),
                                   content: Text('Forum coming soon'),
                                 ),
                               ),

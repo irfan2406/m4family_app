@@ -980,7 +980,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                                           'FEATURED PROPERTY',
                                           // Was 9px — too small to read.
                                           style: GoogleFonts.gelasio(
-                                            color: const Color(0xFFD4B871),
+                                            color: const Color(0xFFC5A35B),
                                             fontSize: 11,
                                             fontWeight: FontWeight.w900,
                                             letterSpacing: 2,
@@ -1782,7 +1782,7 @@ class _QuickFilterSheet extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF070708) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : Colors.white,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(35),
           topRight: Radius.circular(35),
@@ -1985,7 +1985,7 @@ class _PremiumInputField extends StatelessWidget {
     this.inputFormatters,
   });
 
-  static const _errorColor = Color(0xFFE24B4A);
+  static const _errorColor = Color(0xFFC65B46);
 
   @override
   Widget build(BuildContext context) {
@@ -2112,7 +2112,7 @@ class _PremiumDropdownField extends StatelessWidget {
             child: DropdownButtonHideUnderline(
               child: DropdownButtonFormField<String>(
                 value: value,
-                dropdownColor: isDark ? const Color(0xFF0F0F11) : Colors.white,
+                dropdownColor: isDark ? const Color(0xFF141B3A) : Colors.white,
                 style: GoogleFonts.ebGaramond(
                   color: Theme.of(context).colorScheme.onSurface,
                   fontSize: 13,

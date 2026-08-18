@@ -236,7 +236,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
             LucideIcons.briefcase,
             'BOOKINGS',
             '${s['totalTrackers'] ?? 0}',
-            const Color(0xFF3B82F6),
+            const Color(0xFFC5A35B),
             scheme,
           ),
           const SizedBox(width: 10),
@@ -253,7 +253,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
             LucideIcons.wallet,
             'SETTLED',
             fmt.format(1000),
-            const Color(0xFF10B981),
+            const Color(0xFF163A2C),
             scheme,
           ),
           const SizedBox(width: 10),
@@ -261,7 +261,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
             LucideIcons.calendar,
             'VISITS',
             '${_meetings.length}',
-            const Color(0xFFF59E0B),
+            const Color(0xFFC5A35B),
             scheme,
           ),
         ],
@@ -574,7 +574,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                         Expanded(
                           child: _infoCol(
                             'FINANCIAL PULSE',
-                            const Color(0xFF10B981),
+                            const Color(0xFF163A2C),
                             [('VISITS', _val(t['visits'], '0'))],
                             scheme,
                           ),
@@ -716,7 +716,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
     bool highlight,
     ColorScheme scheme,
   ) {
-    const green = Color(0xFF10B981);
+    const green = Color(0xFF163A2C);
     // Web parity: active (non-highlight) uses text-primary (dark), not purple.
     final dark = scheme.onSurface;
     Color bg;

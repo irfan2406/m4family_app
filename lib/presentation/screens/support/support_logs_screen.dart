@@ -60,8 +60,8 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
 
     return Scaffold(
       backgroundColor: isDark
-          ? const Color(0xFF09090B)
-          : const Color(0xFFF8FAFC),
+          ? const Color(0xFF141B3A)
+          : const Color(0xFFFBF7EF),
       body: SafeArea(
         child: Stack(
           children: [
@@ -279,7 +279,7 @@ class _SupportLogsScreenState extends ConsumerState<SupportLogsScreen> {
   void _showCategoryFilter(bool isDark) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: isDark ? const Color(0xFF111111) : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -465,10 +465,10 @@ class _TicketCard extends StatelessWidget {
     final isHighPriority = ticket.priority.toLowerCase() == 'high';
 
     final statusColor = isResolved
-        ? const Color(0xFF22C55E)
+        ? const Color(0xFF163A2C)
         : isPending
-        ? const Color(0xFFF59E0B)
-        : const Color(0xFF3B82F6);
+        ? const Color(0xFFC5A35B)
+        : const Color(0xFFC5A35B);
 
     return GestureDetector(
       onTap: onTap,
@@ -594,7 +594,7 @@ class _TicketDetailSheet extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF111111) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : Colors.white,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(40)),
       ),
       padding: const EdgeInsets.all(32),

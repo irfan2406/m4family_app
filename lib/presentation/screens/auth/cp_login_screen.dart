@@ -142,7 +142,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                         TextSpan(
                           text: 'PARTNER',
                           style: GoogleFonts.ebGaramond(
-                            color: const Color(0xFF60A5FA),
+                            color: const Color(0xFFC5A35B),
                             fontWeight: FontWeight.w700,
                             fontSize: 10,
                             letterSpacing: 2,
@@ -198,7 +198,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                           style: GoogleFonts.ebGaramond(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
-                            color: const Color(0xFFC13BF5),
+                            color: const Color(0xFFC5A35B),
                             letterSpacing: 1.5,
                           ),
                         ),
@@ -230,7 +230,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                                         context,
                                       ).showSnackBar(
                                         const SnackBar(
-                                          backgroundColor: Color(0xFFE24B4A),
+                                          backgroundColor: Color(0xFFC65B46),
                                           content: Text(
                                             'Please enter both CP ID and password',
                                           ),
@@ -248,7 +248,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                                       ).showSnackBar(
                                         SnackBar(
                                           backgroundColor: const Color(
-                                            0xFFE24B4A,
+                                            0xFFC65B46,
                                           ),
                                           content: Text(err),
                                         ),
@@ -260,7 +260,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                                 gradient: const LinearGradient(
                                   begin: Alignment.centerLeft,
                                   end: Alignment.centerRight,
-                                  colors: [Color(0xFF9F45F0), Color(0xFFC13BF5)],
+                                  colors: [Color(0xFFC5A35B), Color(0xFFC5A35B)],
                                 ),
                                 borderRadius: BorderRadius.circular(32),
                               ),

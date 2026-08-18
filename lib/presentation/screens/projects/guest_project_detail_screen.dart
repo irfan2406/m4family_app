@@ -28,7 +28,7 @@ final Map<String, Uint8List> _detailB64Cache = {};
 
 /// Web parity: the booking dialog's accent (subtitle, section labels, schedule
 /// row, field placeholders) is a premium slate-blue, not gray.
-const Color _kBookingBlue = Color(0xFF2B4C7E);
+const Color _kBookingBlue = Color(0xFF141B3A);
 
 /// Web parity: bespoke date+time wheel picker — separate Day | Month | Year |
 /// Hour | Minute | AM/PM columns under a "SELECT DATE & TIME" header. Returns
@@ -167,7 +167,7 @@ class _DateTimeWheelSheetState extends State<_DateTimeWheelSheet> {
   @override
   Widget build(BuildContext context) {
     final isDark = widget.isDark;
-    final bg = isDark ? const Color(0xFF0B111E) : Colors.white;
+    final bg = isDark ? const Color(0xFF141B3A) : Colors.white;
     final txt = isDark ? Colors.white : Color(0xFF163A2C);
     // Defensive clamp so the day wheel never renders fewer rows than _day.
     if (_day > _daysInMonth) _day = _daysInMonth;
@@ -569,8 +569,8 @@ class _GuestProjectDetailScreenState
           ),
         ),
         backgroundColor: isError
-            ? const Color(0xFFDC2626)
-            : const Color(0xFF10B981),
+            ? const Color(0xFFC65B46)
+            : const Color(0xFF163A2C),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
@@ -777,7 +777,7 @@ class _GuestProjectDetailScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFFE24B4A),
+            backgroundColor: Color(0xFFC65B46),
             content: Text('Could not launch virtual tour link'),
           ),
         );
@@ -815,7 +815,7 @@ class _GuestProjectDetailScreenState
       barrierColor: Colors.black.withValues(alpha: 0.6),
       builder: (context) => StatefulBuilder(
         builder: (context, setModalState) => Dialog(
-          backgroundColor: isDark ? const Color(0xFF0B111E) : Colors.white,
+          backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
           // Web parity: a centered floating card with margins on every edge,
           // rounded on all corners — not a full-width bottom sheet.
           insetPadding: const EdgeInsets.symmetric(
@@ -1029,7 +1029,7 @@ class _GuestProjectDetailScreenState
                             decoration: BoxDecoration(
                               color: isDark
                                   ? Colors.white.withValues(alpha: 0.03)
-                                  : const Color(0xFFF8FAFC),
+                                  : const Color(0xFFFBF7EF),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
                                 color: isDark
@@ -1092,7 +1092,7 @@ class _GuestProjectDetailScreenState
                           decoration: BoxDecoration(
                             color: isDark
                                 ? Colors.white.withValues(alpha: 0.03)
-                                : const Color(0xFFF8FAFC),
+                                : const Color(0xFFFBF7EF),
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: isDark
@@ -1131,7 +1131,7 @@ class _GuestProjectDetailScreenState
                               vertical: 12,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFDC2626),
+                              color: const Color(0xFFC65B46),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
@@ -1235,7 +1235,7 @@ class _GuestProjectDetailScreenState
       decoration: BoxDecoration(
         color: isDark
             ? Colors.white.withValues(alpha: 0.03)
-            : const Color(0xFFF8FAFC),
+            : const Color(0xFFFBF7EF),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isDark
@@ -1529,7 +1529,7 @@ class _GuestProjectDetailScreenState
                         style: GoogleFonts.gelasio(
                           color: isDark
                               ? Colors.white
-                              : const Color(0xFF09090B),
+                              : const Color(0xFF141B3A),
                           fontSize: 24,
                           height: 1.0,
                           fontWeight: FontWeight.w800,
@@ -1669,7 +1669,7 @@ class _GuestProjectDetailScreenState
   /// Cledor's heroImage) — CachedNetworkImage can only fetch network URLs.
   Widget _heroImage(String src) {
     Widget errorBox() => Container(
-      color: const Color(0xFF1A1A1A),
+      color: const Color(0xFF141B3A),
       child: const Center(
         child: Icon(LucideIcons.building2, color: Colors.white24, size: 40),
       ),
@@ -2112,7 +2112,7 @@ class _GuestProjectDetailScreenState
           Container(
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF0B111E) : Colors.white,
+              color: isDark ? const Color(0xFF141B3A) : Colors.white,
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
                 color: isDark
@@ -2218,7 +2218,7 @@ class _GuestProjectDetailScreenState
                   decoration: BoxDecoration(
                     color: isDark
                         ? Colors.white.withValues(alpha: 0.03)
-                        : const Color(0xFFF1F5F9),
+                        : const Color(0xFFFBF7EF),
                     borderRadius: BorderRadius.circular(32),
                     border: Border.all(
                       color: isDark
@@ -2352,7 +2352,7 @@ class _InterestInput extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark
             ? Colors.white.withValues(alpha: 0.03)
-            : const Color(0xFFF8FAFC),
+            : const Color(0xFFFBF7EF),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: isDark
@@ -2515,7 +2515,7 @@ class _BottomIconAction extends StatelessWidget {
         decoration: BoxDecoration(
           color: isDark
               ? Colors.white.withValues(alpha: 0.05)
-              : const Color(0xFFF4F4F5),
+              : const Color(0xFFFBF7EF),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isDark
@@ -2886,7 +2886,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
       decoration: BoxDecoration(
         color: isDark
             ? Colors.white.withValues(alpha: 0.03)
-            : const Color(0xFFF8FAFC),
+            : const Color(0xFFFBF7EF),
         borderRadius: BorderRadius.circular(40),
         border: Border.all(
           color: isDark
@@ -3127,8 +3127,8 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                   placeholder: (c, u) => Container(
                                     height: 220,
                                     color: isDark
-                                        ? const Color(0xFF1E293B)
-                                        : const Color(0xFFF1F5F9),
+                                        ? const Color(0xFF141B3A)
+                                        : const Color(0xFFFBF7EF),
                                     child: Icon(
                                       LucideIcons.image,
                                       color: isDark
@@ -3157,8 +3157,8 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                       : Container(
                                           height: 220,
                                           color: isDark
-                                              ? const Color(0xFF1E293B)
-                                              : const Color(0xFFF1F5F9),
+                                              ? const Color(0xFF141B3A)
+                                              : const Color(0xFFFBF7EF),
                                           child: Icon(
                                             LucideIcons.image,
                                             color: isDark
@@ -3179,13 +3179,13 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                     // Web parity: green=done, blue=active,
                                     // light pill w/ dark text = upcoming.
                                     final badgeBg = done
-                                        ? const Color(0xFF22C55E)
+                                        ? const Color(0xFF163A2C)
                                         : (active
                                               ? M4Theme.premiumBlue
                                               : Colors.white);
                                     final badgeTxt = (done || active)
                                         ? Colors.white
-                                        : const Color(0xFF0F172A);
+                                        : const Color(0xFF141B3A);
                                     return Container(
                                       padding: const EdgeInsets.symmetric(
                                         horizontal: 10,
@@ -3230,7 +3230,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                   fontWeight: FontWeight.bold,
                                   color: isDark
                                       ? Colors.white
-                                      : const Color(0xFF0F172A),
+                                      : const Color(0xFF141B3A),
                                   letterSpacing: 1,
                                 ),
                               ),
@@ -3333,7 +3333,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                         fontSize: 12,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 2,
-                        color: isDark ? Colors.white : const Color(0xFF1E293B),
+                        color: isDark ? Colors.white : const Color(0xFF141B3A),
                       ),
                     ),
                     Text(
@@ -3343,7 +3343,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                         fontWeight: FontWeight.bold,
                         color: isDark
                             ? Colors.white38
-                            : const Color(0xFF94A3B8),
+                            : const Color(0xFFC5A35B),
                         letterSpacing: 0.5,
                       ),
                     ),
@@ -3428,7 +3428,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                               decoration: BoxDecoration(
                                 color: isDark
                                     ? Colors.white.withValues(alpha: 0.05)
-                                    : const Color(0xFFF1F5F9),
+                                    : const Color(0xFFFBF7EF),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Center(
@@ -3460,7 +3460,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                       fontWeight: FontWeight.w900,
                                       color: isDark
                                           ? Colors.white
-                                          : const Color(0xFF1E293B),
+                                          : const Color(0xFF141B3A),
                                     ),
                                   ),
                                   Row(
@@ -3501,7 +3501,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                                 fontWeight: FontWeight.w900,
                                 color: isDark
                                     ? Colors.white
-                                    : const Color(0xFF0F172A),
+                                    : const Color(0xFF141B3A),
                               ),
                             ),
                           ],
@@ -3515,7 +3515,7 @@ class _ConstructionDashboardCard extends ConsumerWidget {
                               decoration: BoxDecoration(
                                 color: isDark
                                     ? Colors.white.withValues(alpha: 0.05)
-                                    : const Color(0xFFF1F5F9),
+                                    : const Color(0xFFFBF7EF),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
@@ -3677,7 +3677,7 @@ class _LocationMapState extends State<_LocationMap> {
     super.initState();
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0xFF0B111E));
+      ..setBackgroundColor(const Color(0xFF141B3A));
 
     final locEncoded = Uri.encodeComponent(widget.location);
     final htmlContent =
@@ -3714,10 +3714,10 @@ class _LocationMapState extends State<_LocationMap> {
     return Container(
       height: 280,
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0B111E) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : Colors.white,
         borderRadius: BorderRadius.circular(40),
         border: Border.all(
-          color: isDark ? const Color(0xFF0B111E) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : Colors.white,
           width: 4,
         ),
         boxShadow: [
@@ -3745,7 +3745,7 @@ class _LocationMapState extends State<_LocationMap> {
                 ),
                 decoration: BoxDecoration(
                   color: isDark
-                      ? const Color(0xFF0B111E)
+                      ? const Color(0xFF141B3A)
                       : Colors.white.withValues(alpha: 0.95),
                   borderRadius: BorderRadius.circular(30),
                   border: Border.all(

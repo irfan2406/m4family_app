@@ -21,7 +21,7 @@ class M4Theme {
 
   /// Warm cream used for text / surfaces on the green theme.
   static const Color cream = Color(0xFFF4EFE3);
-  static const Color creamMuted = Color(0xFFE9E1CF);
+  static const Color creamMuted = Color(0xFFFBF7EF);
 
   /// Deep forest greens.
   static const Color deepGreen = Color(0xFF0F2A20);

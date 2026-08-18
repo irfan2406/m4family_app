@@ -115,7 +115,7 @@ class GuestProfileScreen extends ConsumerWidget {
                                   shape: BoxShape.circle,
                                   color: isDark
                                       ? Colors.white.withValues(alpha: 0.04)
-                                      : const Color(0xFFF4F4F5),
+                                      : const Color(0xFFFBF7EF),
                                   border: Border.all(
                                     color: borderColor,
                                     width: 2,
@@ -235,7 +235,7 @@ class GuestProfileScreen extends ConsumerWidget {
                                 decoration: BoxDecoration(
                                   color: isDark
                                       ? Colors.white.withValues(alpha: 0.05)
-                                      : const Color(0xFFF4F4F5),
+                                      : const Color(0xFFFBF7EF),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(color: borderColor),
                                 ),
@@ -302,12 +302,12 @@ class GuestProfileScreen extends ConsumerWidget {
                             height: 56,
                             decoration: BoxDecoration(
                               color: const Color(
-                                0xFFFFD700,
+                                0xFFC5A35B,
                               ).withValues(alpha: 0.08),
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
                                 color: const Color(
-                                  0xFFFFD700,
+                                  0xFFC5A35B,
                                 ).withValues(alpha: 0.25),
                               ),
                             ),
@@ -318,7 +318,7 @@ class GuestProfileScreen extends ConsumerWidget {
                                   const Icon(
                                     LucideIcons.trendingUp,
                                     size: 16,
-                                    color: Color(0xFFD4A93B),
+                                    color: Color(0xFFC65B46),
                                   ),
                                   const SizedBox(width: 8),
                                   Text(
@@ -326,7 +326,7 @@ class GuestProfileScreen extends ConsumerWidget {
                                     style: GoogleFonts.gelasio(
                                       fontSize: 10,
                                       fontWeight: FontWeight.w900,
-                                      color: const Color(0xFFD4A93B),
+                                      color: const Color(0xFFC65B46),
                                       letterSpacing: 1.5,
                                     ),
                                   ),
@@ -474,7 +474,7 @@ class _CircleButton extends StatelessWidget {
           shape: BoxShape.circle,
           color: isDark
               ? Colors.white.withValues(alpha: 0.05)
-              : const Color(0xFFF4F4F5),
+              : const Color(0xFFFBF7EF),
           border: Border.all(
             color: isDark
                 ? Colors.white.withValues(alpha: 0.08)

@@ -391,7 +391,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
     if (!_agreedToTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Color(0xFFE24B4A),
+          backgroundColor: Color(0xFFC65B46),
           content: Text('Please agree to the Privacy Policy'),
         ),
       );
@@ -437,7 +437,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
       if (mounted)
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             // Was 'Submission failed: $e', which printed the whole
             // DioException (status-code explanation, MDN link and all) at the
             // user. The backend sends an empty error body, so translate it.
@@ -1363,7 +1363,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                         Text(
                           'FEATURED PROPERTY',
                           style: GoogleFonts.gelasio(
-                            color: const Color(0xFFC5A358),
+                            color: const Color(0xFFC5A35B),
                             fontSize: 9,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 2.5,
@@ -1794,7 +1794,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
             onTap: _submitting ? () {} : _submitInterest,
             child: Container(
               decoration: BoxDecoration(
-                color: isDark ? Colors.white : const Color(0xFF0B1120),
+                color: isDark ? Colors.white : const Color(0xFF141B3A),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Center(
@@ -1832,7 +1832,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
   }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final hasError = errorText != null;
-    const errorColor = Color(0xFFE24B4A);
+    const errorColor = Color(0xFFC65B46);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

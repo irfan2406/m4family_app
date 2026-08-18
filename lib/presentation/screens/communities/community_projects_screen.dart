@@ -513,7 +513,7 @@ class _ProjectCard extends StatelessWidget {
                       style: GoogleFonts.ebGaramond(
                         fontSize: 16,
                         fontWeight: FontWeight.w900,
-                        color: const Color(0xFFC4A484),
+                        color: const Color(0xFFFBF7EF),
                         letterSpacing: -0.2,
                       ),
                     ),

@@ -258,7 +258,7 @@ Widget _communityImagePlaceholder() => Container(
     gradient: LinearGradient(
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
-      colors: [Color(0xFFEDEEF1), Color(0xFFD7D9DE)],
+      colors: [Color(0xFFC5A35B), Color(0xFFC5A35B)],
     ),
   ),
   child: Center(

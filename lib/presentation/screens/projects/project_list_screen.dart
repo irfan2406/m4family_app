@@ -23,7 +23,7 @@ import 'package:m4_mobile/presentation/widgets/cp_sidebar_menu.dart';
 /// (CachedNetworkImage can only fetch network URLs). Used by the project cards.
 Widget _projListImage(String url, {BoxFit fit = BoxFit.cover}) {
   Widget errorBox() => Container(
-    color: const Color(0xFF1A1A1A),
+    color: const Color(0xFF141B3A),
     child: const Center(
       child: Icon(LucideIcons.building2, color: Colors.white24, size: 40),
     ),
@@ -89,7 +89,7 @@ class ProjectListScreen extends ConsumerWidget {
             return Container(
               height: MediaQuery.of(context).size.height * 0.85,
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF111111) : Colors.white,
+                color: isDark ? const Color(0xFF141B3A) : Colors.white,
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(40),
                 ),
@@ -730,7 +730,7 @@ class _ProjectGridItem extends StatelessWidget {
       height:
           200, // Enforce 16:9 aspect ratio parity with web (approx for mobile width)
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF18181B) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : Colors.white,
         borderRadius: BorderRadius.circular(40),
         boxShadow: [
           BoxShadow(
@@ -886,7 +886,7 @@ class _ProjectListRowItem extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF18181B) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : Colors.white,
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(

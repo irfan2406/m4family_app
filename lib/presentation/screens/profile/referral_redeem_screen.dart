@@ -123,7 +123,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(30),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF0A0C10) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : Colors.white,
         borderRadius: BorderRadius.circular(30),
         border: Border.all(
           color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
@@ -210,7 +210,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
         margin: const EdgeInsets.only(bottom: 15),
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF080A0E) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : Colors.white,
           borderRadius: BorderRadius.circular(25),
           border: Border.all(
             color: isSelected
@@ -300,7 +300,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
         ),
         Container(
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF080A0E) : Colors.white,
+            color: isDark ? const Color(0xFF141B3A) : Colors.white,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
@@ -398,7 +398,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        backgroundColor: const Color(0xFF10B981),
+                        backgroundColor: const Color(0xFF163A2C),
                         content: Text(
                           response.data['message'] ??
                               'Redemption Request Submitted',
@@ -414,7 +414,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        backgroundColor: const Color(0xFFE24B4A),
+                        backgroundColor: const Color(0xFFC65B46),
                         content: Text(
                           response.data['message'] ?? 'Redemption failed',
                         ),
@@ -431,7 +431,7 @@ class _ReferralRedeemScreenState extends ConsumerState<ReferralRedeemScreen> {
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      backgroundColor: const Color(0xFFE24B4A),
+                      backgroundColor: const Color(0xFFC65B46),
                       content: Text(errorMessage),
                     ),
                   );

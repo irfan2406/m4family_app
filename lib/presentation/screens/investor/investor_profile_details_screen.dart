@@ -28,7 +28,7 @@ class InvestorProfileDetailsScreen extends ConsumerStatefulWidget {
 
 class _InvestorProfileDetailsScreenState
     extends ConsumerState<InvestorProfileDetailsScreen> {
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
 
   final _name = TextEditingController();
   final _email = TextEditingController();
@@ -159,7 +159,7 @@ class _InvestorProfileDetailsScreenState
           setState(() => _editing = false);
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              backgroundColor: Color(0xFF10B981),
+              backgroundColor: Color(0xFF163A2C),
               content: Text('Profile updated successfully'),
             ),
           );
@@ -170,7 +170,7 @@ class _InvestorProfileDetailsScreenState
             : null;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(msg ?? 'Update failed'),
           ),
         );
@@ -182,7 +182,7 @@ class _InvestorProfileDetailsScreenState
             : null;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(m ?? e.message ?? 'Network error'),
           ),
         );
@@ -206,7 +206,7 @@ class _InvestorProfileDetailsScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFFE24B4A),
+            backgroundColor: Color(0xFFC65B46),
             content: Text('File too large (max 2MB)'),
           ),
         );
@@ -226,7 +226,7 @@ class _InvestorProfileDetailsScreenState
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              backgroundColor: Color(0xFFE24B4A),
+              backgroundColor: Color(0xFFC65B46),
               content: Text('Upload failed'),
             ),
           );
@@ -243,7 +243,7 @@ class _InvestorProfileDetailsScreenState
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              backgroundColor: Color(0xFF10B981),
+              backgroundColor: Color(0xFF163A2C),
               content: Text('Profile photo updated'),
             ),
           );
@@ -255,7 +255,7 @@ class _InvestorProfileDetailsScreenState
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              backgroundColor: const Color(0xFFE24B4A),
+              backgroundColor: const Color(0xFFC65B46),
               content: Text(msg ?? 'Update failed'),
             ),
           );
@@ -268,7 +268,7 @@ class _InvestorProfileDetailsScreenState
             : null;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(m ?? 'Upload failed'),
           ),
         );

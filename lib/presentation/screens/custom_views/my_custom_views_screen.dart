@@ -10,7 +10,7 @@ import 'package:m4_mobile/presentation/providers/my_custom_views_provider.dart';
 
 // Web parity: the Portfolio Suite uses an orange accent (title highlight,
 // active tab, section icons) instead of the neutral foreground colour.
-const Color _kPortfolioOrange = Color(0xFFF97316);
+const Color _kPortfolioOrange = Color(0xFFC65B46);
 
 class MyCustomViewsScreen extends ConsumerStatefulWidget {
   const MyCustomViewsScreen({super.key});
@@ -579,7 +579,7 @@ class _UnitCard extends ConsumerWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF18181B) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : Colors.white,
         borderRadius: BorderRadius.circular(32),
         border: Border.all(
           color: isDark
@@ -829,7 +829,7 @@ class _HistoryCard extends StatelessWidget {
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: isDark
-              ? const Color(0xFF18181B).withOpacity(0.4)
+              ? const Color(0xFF141B3A).withOpacity(0.4)
               : Colors.white,
           borderRadius: BorderRadius.circular(28),
           border: Border.all(
@@ -1538,17 +1538,17 @@ class _StatusBadge extends StatelessWidget {
     switch (status.toLowerCase()) {
       case 'approved':
       case 'closed':
-        return const Color(0xFF22C55E); // green-500
+        return const Color(0xFF163A2C); // green-500
       case 'completed':
       case 'reviewed':
       case 'contacted':
-        return const Color(0xFF3B82F6); // blue-500
+        return const Color(0xFFC5A35B); // blue-500
       case 'rejected':
-        return const Color(0xFFEF4444); // red-500
+        return const Color(0xFFC65B46); // red-500
       case 'requested':
       case 'pending':
       case 'submitted':
-        return const Color(0xFFF59E0B); // amber-500
+        return const Color(0xFFC5A35B); // amber-500
       default:
         return Colors.grey;
     }

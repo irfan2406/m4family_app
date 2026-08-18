@@ -19,7 +19,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
     this.featureTitle = 'Immersive VR Tour',
   });
 
-  static const _gold = Color(0xFFFFD700);
+  static const _gold = Color(0xFFC5A35B);
 
   void _back(BuildContext context) {
     if (Navigator.of(context).canPop()) {
@@ -52,7 +52,7 @@ class PremiumUpsellScreen extends ConsumerWidget {
     final bg = isDark ? Colors.black : Colors.white;
     final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
     final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
-    const subtle = Color(0xFF666666);
+    const subtle = Color(0xFFFBF7EF);
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : Colors.white;
     final border = isDark
         ? Colors.white.withValues(alpha: 0.08)

@@ -30,7 +30,7 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
     );
     final scheme = Theme.of(context).colorScheme;
     final isLight = scheme.brightness == Brightness.light;
-    const purple = Color(0xFFA855F7);
+    const purple = Color(0xFFC5A35B);
 
     return Scaffold(
       appBar: AppBar(
@@ -101,7 +101,7 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
                       const Icon(
                         LucideIcons.trendingUp,
                         size: 14,
-                        color: Color(0xFF34D399),
+                        color: Color(0xFF163A2C),
                       ),
                       const SizedBox(width: 8),
                       Text(
@@ -110,7 +110,7 @@ class _CpHubCalculatorScreenState extends State<CpHubCalculatorScreen> {
                           fontSize: 10,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1.2,
-                          color: const Color(0xFF34D399),
+                          color: const Color(0xFF163A2C),
                         ),
                       ),
                     ],

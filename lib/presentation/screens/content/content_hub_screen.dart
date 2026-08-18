@@ -147,7 +147,7 @@ class _ContentHubScreenState extends ConsumerState<ContentHubScreen> {
             center: Alignment.topLeft,
             radius: 1.5,
             colors: isDark
-                ? [const Color(0xFF1A1A1A), const Color(0xFF0A0A0A)]
+                ? [const Color(0xFF141B3A), const Color(0xFF141B3A)]
                 : [scheme.surface, scheme.surfaceContainerLowest],
           ),
         ),

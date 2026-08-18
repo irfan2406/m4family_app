@@ -345,7 +345,7 @@ class _CustomViewsScreenState extends ConsumerState<CustomViewsScreen> {
                       padding: const EdgeInsets.all(28),
                       decoration: BoxDecoration(
                         color: Theme.of(context).brightness == Brightness.dark
-                            ? const Color(0xFF18181B)
+                            ? const Color(0xFF141B3A)
                             : Colors.white.withValues(alpha: 0.5),
                         borderRadius: BorderRadius.circular(40),
                         border: Border.all(
@@ -2235,7 +2235,7 @@ class _ConsultationSection extends ConsumerWidget {
                           if (vErr != null) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                backgroundColor: const Color(0xFFE24B4A),
+                                backgroundColor: const Color(0xFFC65B46),
                                 content: Text(vErr),
                               ),
                             );

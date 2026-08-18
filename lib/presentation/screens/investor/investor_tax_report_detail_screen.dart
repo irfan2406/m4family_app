@@ -81,7 +81,7 @@ class _InvestorTaxReportDetailScreenState
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: const Color(0xFFE24B4A),
+        backgroundColor: const Color(0xFFC65B46),
         content: Text(
           'Opening $_name...',
           style: GoogleFonts.ebGaramond(fontSize: 12),
@@ -94,7 +94,7 @@ class _InvestorTaxReportDetailScreenState
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: const Color(0xFFE24B4A),
+        backgroundColor: const Color(0xFFC65B46),
         content: Text(
           'Downloading $_name...',
           style: GoogleFonts.ebGaramond(fontSize: 12),
@@ -239,7 +239,7 @@ class _InvestorTaxReportDetailScreenState
   }
 
   Widget _content(bool isDark, Color textPrimary, Color muted) {
-    const red = Color(0xFFEF4444);
+    const red = Color(0xFFC65B46);
 
     return RefreshIndicator(
       color: M4Theme.premiumBlue,
@@ -354,8 +354,8 @@ class _InvestorTaxReportDetailScreenState
   }
 
   Widget _badgesRow() {
-    const green = Color(0xFF10B981);
-    const gold = Color(0xFFFFD700);
+    const green = Color(0xFF163A2C);
+    const gold = Color(0xFFC5A35B);
     return Wrap(
       spacing: 10,
       runSpacing: 10,
@@ -394,8 +394,8 @@ class _InvestorTaxReportDetailScreenState
   }
 
   Widget _statusGrid(bool isDark, Color textPrimary, Color muted) {
-    const green = Color(0xFF10B981);
-    const amber = Color(0xFFF59E0B);
+    const green = Color(0xFF163A2C);
+    const amber = Color(0xFFC5A35B);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -532,7 +532,7 @@ class _InvestorTaxReportDetailScreenState
   }
 
   Widget _secureNote(bool isDark, Color muted) {
-    const gold = Color(0xFFFFD700);
+    const gold = Color(0xFFC5A35B);
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -593,7 +593,7 @@ class _InvestorTaxReportDetailScreenState
   }
 
   Widget _downloadButton() {
-    const gold = Color(0xFFFFD700);
+    const gold = Color(0xFFC5A35B);
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton.icon(

@@ -312,7 +312,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       ..clearSnackBars()
       ..showSnackBar(
         SnackBar(
-          backgroundColor: const Color(0xFF10B981),
+          backgroundColor: const Color(0xFF163A2C),
           duration: const Duration(milliseconds: 1100),
           behavior: SnackBarBehavior.fixed,
           content: Text(
@@ -345,7 +345,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     if (url == null || url.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: const Color(0xFFE24B4A),
+          backgroundColor: const Color(0xFFC65B46),
           content: Text(message),
         ),
       );
@@ -570,7 +570,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
       isScrollControlled: true,
       builder: (sheetCtx) => Container(
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF0B111E) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : Colors.white,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         ),
         padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
@@ -987,7 +987,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
-                                      backgroundColor: Color(0xFFE24B4A),
+                                      backgroundColor: Color(0xFFC65B46),
                                       content: Text(
                                         '360° Virtual Tour coming soon',
                                       ),
@@ -1164,7 +1164,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                                   : Colors.white.withValues(alpha: 0.08),
                             ),
                             color: scheme.brightness == Brightness.light
-                                ? const Color(0xFFF8FAFC)
+                                ? const Color(0xFFFBF7EF)
                                 : Colors.white.withValues(alpha: 0.03),
                           ),
                           child: Column(
@@ -1895,7 +1895,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              backgroundColor: Color(0xFFE24B4A),
+                              backgroundColor: Color(0xFFC65B46),
                               content: Text('No progress images available'),
                             ),
                           );
@@ -2301,7 +2301,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
           DropdownButtonFormField<String>(
             initialValue: _regEmployeeId,
             isExpanded: true,
-            dropdownColor: isLight ? Colors.white : const Color(0xFF17212F),
+            dropdownColor: isLight ? Colors.white : const Color(0xFF141B3A),
             borderRadius: BorderRadius.circular(16),
             elevation: 4,
             iconEnabledColor: scheme.onSurface.withValues(alpha: 0.55),
@@ -2342,7 +2342,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                   style: GoogleFonts.ebGaramond(
                     fontSize: 13,
                     fontWeight: FontWeight.w800,
-                    color: const Color(0xFFEAA33E),
+                    color: const Color(0xFFC65B46),
                   ),
                 ),
               ),
@@ -2478,7 +2478,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        backgroundColor: Color(0xFFE24B4A),
+                        backgroundColor: Color(0xFFC65B46),
                         content: Text('Contact not available'),
                       ),
                     );
@@ -2715,7 +2715,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                       isExpanded: true,
                       dropdownColor: scheme.brightness == Brightness.light
                           ? Colors.white
-                          : const Color(0xFF17212F),
+                          : const Color(0xFF141B3A),
                       borderRadius: BorderRadius.circular(16),
                       elevation: 4,
                       iconEnabledColor: scheme.onSurface.withValues(
@@ -2766,7 +2766,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                       isExpanded: true,
                       dropdownColor: scheme.brightness == Brightness.light
                           ? Colors.white
-                          : const Color(0xFF17212F),
+                          : const Color(0xFF141B3A),
                       borderRadius: BorderRadius.circular(16),
                       elevation: 4,
                       iconEnabledColor: scheme.onSurface.withValues(
@@ -2809,7 +2809,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
                             style: GoogleFonts.ebGaramond(
                               fontSize: 13,
                               fontWeight: FontWeight.w800,
-                              color: const Color(0xFFEAA33E),
+                              color: const Color(0xFFC65B46),
                             ),
                           ),
                         ),
@@ -2985,8 +2985,8 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
             ),
           ),
           backgroundColor: success
-              ? const Color(0xFF10B981)
-              : const Color(0xFFE24B4A),
+              ? const Color(0xFF163A2C)
+              : const Color(0xFFC65B46),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
@@ -3020,7 +3020,7 @@ class _CpProjectDetailScreenState extends ConsumerState<CpProjectDetailScreen> {
     String? errorText,
   }) {
     final isLight = scheme.brightness == Brightness.light;
-    const errorColor = Color(0xFFE24B4A);
+    const errorColor = Color(0xFFC65B46);
     return InputDecoration(
       hintText: hint,
       errorText: errorText,

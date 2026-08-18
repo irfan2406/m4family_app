@@ -49,7 +49,7 @@ class _InvestorSidebarMenuState extends ConsumerState<InvestorSidebarMenu> {
         child: Container(
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF15171C) : const Color(0xFF0F2A20).withValues(alpha: 0.72),
+            color: isDark ? const Color(0xFF141B3A) : const Color(0xFF0F2A20).withValues(alpha: 0.72),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: isDark

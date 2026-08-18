@@ -748,7 +748,7 @@ class _AcceleratorCard extends StatelessWidget {
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            backgroundColor: Color(0xFFE24B4A),
+                            backgroundColor: Color(0xFFC65B46),
                             content: Text('Yield structures coming soon.'),
                           ),
                         );

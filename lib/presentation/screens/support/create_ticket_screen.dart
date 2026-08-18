@@ -55,7 +55,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            backgroundColor: Color(0xFF10B981),
+            backgroundColor: Color(0xFF163A2C),
             content: Text('Ticket raised successfully!'),
           ),
         );
@@ -64,7 +64,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
         final error = ref.read(supportProvider).error;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            backgroundColor: const Color(0xFFE24B4A),
+            backgroundColor: const Color(0xFFC65B46),
             content: Text(error ?? 'Failed to raise ticket'),
           ),
         );
@@ -79,8 +79,8 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
 
     return Scaffold(
       backgroundColor: isDark
-          ? const Color(0xFF09090B)
-          : const Color(0xFFF8FAFC),
+          ? const Color(0xFF141B3A)
+          : const Color(0xFFFBF7EF),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -298,7 +298,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Color(0xFF3B82F6), width: 1.5),
+          borderSide: const BorderSide(color: Color(0xFFC5A35B), width: 1.5),
         ),
         errorStyle: GoogleFonts.ebGaramond(
           fontSize: 10,
@@ -324,7 +324,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: _isCategoryOpen
-                    ? const Color(0xFF3B82F6)
+                    ? const Color(0xFFC5A35B)
                     : (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
               ),
             ),
@@ -365,7 +365,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF111111) : Colors.white,
+                  color: isDark ? const Color(0xFF141B3A) : Colors.white,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
@@ -399,7 +399,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                         ),
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? const Color(0xFF3B82F6).withOpacity(0.1)
+                              ? const Color(0xFFC5A35B).withOpacity(0.1)
                               : Colors.transparent,
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -407,7 +407,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                           category.toUpperCase(),
                           style: GoogleFonts.ebGaramond(
                             color: isSelected
-                                ? const Color(0xFF3B82F6)
+                                ? const Color(0xFFC5A35B)
                                 : (isDark ? Colors.white38 : Color(0xFF5E6B60)),
                             fontSize: 10,
                             fontWeight: isSelected
@@ -443,7 +443,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: _isPriorityOpen
-                    ? const Color(0xFF3B82F6)
+                    ? const Color(0xFFC5A35B)
                     : (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.05),
               ),
             ),
@@ -484,7 +484,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
               child: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: isDark ? const Color(0xFF111111) : Colors.white,
+                  color: isDark ? const Color(0xFF141B3A) : Colors.white,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
@@ -518,7 +518,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                         ),
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? const Color(0xFF3B82F6).withOpacity(0.1)
+                              ? const Color(0xFFC5A35B).withOpacity(0.1)
                               : Colors.transparent,
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -526,7 +526,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
                           priority.toUpperCase(),
                           style: GoogleFonts.ebGaramond(
                             color: isSelected
-                                ? const Color(0xFF3B82F6)
+                                ? const Color(0xFFC5A35B)
                                 : (isDark ? Colors.white38 : Color(0xFF5E6B60)),
                             fontSize: 10,
                             fontWeight: isSelected

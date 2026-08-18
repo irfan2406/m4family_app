@@ -83,7 +83,7 @@ class _DeactivateAccountScreenState
             ),
             onPressed: () => context.pop(),
             style: IconButton.styleFrom(
-              backgroundColor: isDark ? const Color(0xFF18181B) : Colors.white,
+              backgroundColor: isDark ? const Color(0xFF141B3A) : Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -100,7 +100,7 @@ class _DeactivateAccountScreenState
               'DEACTIVATE',
               style: GoogleFonts.ebGaramond(
                 textStyle: const TextStyle(inherit: true),
-                color: const Color(0xFFEF4444),
+                color: const Color(0xFFC65B46),
                 fontSize: 14,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 1,
@@ -127,10 +127,10 @@ class _DeactivateAccountScreenState
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: const Color(0xFFEF4444).withOpacity(0.05),
+                color: const Color(0xFFC65B46).withOpacity(0.05),
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(
-                  color: const Color(0xFFEF4444).withOpacity(0.1),
+                  color: const Color(0xFFC65B46).withOpacity(0.1),
                 ),
               ),
               child: Row(
@@ -139,7 +139,7 @@ class _DeactivateAccountScreenState
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: const Color(0xFFEF4444),
+                      color: const Color(0xFFC65B46),
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: const Icon(
@@ -157,7 +157,7 @@ class _DeactivateAccountScreenState
                           'CRITICAL WARNING',
                           style: GoogleFonts.ebGaramond(
                             textStyle: const TextStyle(inherit: true),
-                            color: const Color(0xFFEF4444),
+                            color: const Color(0xFFC65B46),
                             fontSize: 11,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 0.5,
@@ -168,7 +168,7 @@ class _DeactivateAccountScreenState
                           'Final action. All institutional ties, documents, and historical data will be permanently purged.',
                           style: GoogleFonts.ebGaramond(
                             textStyle: const TextStyle(inherit: true),
-                            color: const Color(0xFFEF4444).withOpacity(0.6),
+                            color: const Color(0xFFC65B46).withOpacity(0.6),
                             fontSize: 9,
                             fontWeight: FontWeight.w800,
                             height: 1.4,
@@ -187,7 +187,7 @@ class _DeactivateAccountScreenState
               width: double.infinity,
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF18181B) : Colors.white,
+                color: isDark ? const Color(0xFF141B3A) : Colors.white,
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(
                   color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
@@ -224,7 +224,7 @@ class _DeactivateAccountScreenState
                             width: 4,
                             height: 4,
                             decoration: const BoxDecoration(
-                              color: Color(0xFFEF4444),
+                              color: Color(0xFFC65B46),
                               shape: BoxShape.circle,
                             ),
                           ),
@@ -251,7 +251,7 @@ class _DeactivateAccountScreenState
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF18181B) : Colors.white,
+                color: isDark ? const Color(0xFF141B3A) : Colors.white,
                 borderRadius: BorderRadius.circular(24),
                 border: Border.all(
                   color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(
@@ -278,7 +278,7 @@ class _DeactivateAccountScreenState
                     'TYPE DELETE',
                     style: GoogleFonts.gelasio(
                       textStyle: const TextStyle(inherit: true),
-                      color: const Color(0xFFEF4444),
+                      color: const Color(0xFFC65B46),
                       fontSize: 8,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1.5,
@@ -290,7 +290,7 @@ class _DeactivateAccountScreenState
                     textAlign: TextAlign.center,
                     style: GoogleFonts.gelasio(
                       textStyle: const TextStyle(inherit: true),
-                      color: const Color(0xFFEF4444),
+                      color: const Color(0xFFC65B46),
                       fontSize: 16,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 4,
@@ -299,7 +299,7 @@ class _DeactivateAccountScreenState
                       hintText: "DELETE",
                       hintStyle: GoogleFonts.gelasio(
                         textStyle: const TextStyle(inherit: true),
-                        color: const Color(0xFFEF4444).withOpacity(0.72),
+                        color: const Color(0xFFC65B46).withOpacity(0.72),
                         fontSize: 16,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 4,
@@ -330,7 +330,7 @@ class _DeactivateAccountScreenState
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
                           color: _agreedToTerms
-                              ? const Color(0xFFEF4444).withOpacity(0.4)
+                              ? const Color(0xFFC65B46).withOpacity(0.4)
                               : Colors.transparent,
                         ),
                       ),
@@ -341,7 +341,7 @@ class _DeactivateAccountScreenState
                             value: _agreedToTerms,
                             onChanged: (val) =>
                                 setState(() => _agreedToTerms = val ?? false),
-                            activeColor: const Color(0xFFEF4444),
+                            activeColor: const Color(0xFFC65B46),
                             checkColor: Colors.white,
                             side: BorderSide(
                               color: (isDark ? Colors.white : Color(0xFF163A2C))
@@ -377,7 +377,7 @@ class _DeactivateAccountScreenState
                         _error,
                         style: GoogleFonts.ebGaramond(
                           textStyle: const TextStyle(inherit: true),
-                          color: const Color(0xFFEF4444),
+                          color: const Color(0xFFC65B46),
                           fontSize: 8,
                           fontWeight: FontWeight.w900,
                         ),
@@ -397,10 +397,10 @@ class _DeactivateAccountScreenState
                           ? _handleDelete
                           : null,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFEF4444),
+                        backgroundColor: const Color(0xFFC65B46),
                         foregroundColor: Colors.white,
                         disabledBackgroundColor: const Color(
-                          0xFFEF4444,
+                          0xFFC65B46,
                         ).withOpacity(0.1),
                         elevation: 0,
                         shape: RoundedRectangleBorder(

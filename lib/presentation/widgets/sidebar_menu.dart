@@ -37,7 +37,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
     // not white — a hardcoded white active state is invisible on the light
     // glass sidebar.
     final accentColor = isInvestor
-        ? const Color(0xFFC5A358)
+        ? const Color(0xFFC5A35B)
         : Theme.of(context).colorScheme.onSurface;
 
     void navigateTo(int index) {
@@ -418,7 +418,7 @@ class _SidebarExitButton extends ConsumerWidget {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            backgroundColor: const Color(0xFF18181B),
+            backgroundColor: const Color(0xFF141B3A),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
@@ -483,12 +483,12 @@ class _SidebarExitButton extends ConsumerWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(LucideIcons.logOut, color: Color(0xFFEF4444), size: 16),
+            const Icon(LucideIcons.logOut, color: Color(0xFFC65B46), size: 16),
             const SizedBox(width: 12),
             Text(
               'LOG OUT',
               style: GoogleFonts.gelasio(
-                color: const Color(0xFFEF4444),
+                color: const Color(0xFFC65B46),
                 fontSize: 11,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 4,
