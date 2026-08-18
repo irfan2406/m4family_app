@@ -2421,7 +2421,7 @@ class _OverviewActionCard extends StatelessWidget {
         height: 140,
         padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 8),
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.05) : Colors.white,
+          color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(32),
           border: Border.all(
             color: isDark
