@@ -305,7 +305,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
       decoration: BoxDecoration(
-        color: isDark ? Colors.black.withOpacity(0.3) : Theme.of(context).scaffoldBackgroundColor,
+        color: isDark ? const Color(0xFF0B1026) : Theme.of(context).scaffoldBackgroundColor,
         border: Border(
           bottom: BorderSide(color: Colors.white.withOpacity(0.05)),
         ),
@@ -367,7 +367,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                               color: isActive
                                   ? colorScheme.primary
                                   : isCompleted
-                                  ? (isDark ? Colors.black : Colors.white)
+                                  ? (isDark ? const Color(0xFF141B3A) : Colors.white)
                                   : (isDark
                                         ? Colors.white.withOpacity(0.05)
                                         : Colors.black.withOpacity(0.04)),
@@ -396,7 +396,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
                             child: Icon(
                               step['icon'],
                               color: isActive
-                                  ? (isDark ? Colors.black : Colors.white)
+                                  ? (isDark ? const Color(0xFF141B3A) : Colors.white)
                                   : isCompleted
                                   ? colorScheme.primary
                                   : (isDark ? Colors.white60 : Color(0xFF5E6B60)),
