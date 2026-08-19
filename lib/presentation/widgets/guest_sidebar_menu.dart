@@ -572,7 +572,7 @@ class _DropdownMenuItem extends StatelessWidget {
           ),
           trailing: Icon(
             isOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown,
-            color: isDark ? Colors.white30 : Colors.black26,
+            color: const Color(0xFFF4EFE3),
             size: 18,
           ),
         ),

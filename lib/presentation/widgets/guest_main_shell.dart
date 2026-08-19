@@ -92,13 +92,6 @@ class _GuestNavigationPill extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 48),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(100),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.22 : 0.10),
-            blurRadius: 18,
-            offset: const Offset(0, 6),
-          ),
-        ],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(100),
