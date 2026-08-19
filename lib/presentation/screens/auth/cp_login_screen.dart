@@ -142,7 +142,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                         TextSpan(
                           text: 'PARTNER',
                           style: GoogleFonts.ebGaramond(
-                            color: const Color(0xFFC5A35B),
+                            color: const Color(0xFFF4EFE3),
                             fontWeight: FontWeight.w700,
                             fontSize: 10,
                             letterSpacing: 2,
@@ -198,7 +198,7 @@ class _CpLoginScreenState extends ConsumerState<CpLoginScreen> {
                           style: GoogleFonts.ebGaramond(
                             fontSize: 10,
                             fontWeight: FontWeight.w900,
-                            color: const Color(0xFFC5A35B),
+                            color: const Color(0xFFF4EFE3),
                             letterSpacing: 1.5,
                           ),
                         ),

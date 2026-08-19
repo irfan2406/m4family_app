@@ -402,7 +402,7 @@ class _CpSignupScreenState extends ConsumerState<CpSignupScreen> {
       style: GoogleFonts.gelasio(
         fontSize: 10,
         fontWeight: FontWeight.bold,
-        color: const Color(0xFFC5A35B),
+        color: const Color(0xFFF4EFE3),
         letterSpacing: 2,
       ),
     ),
@@ -472,6 +472,12 @@ class _CpField extends StatelessWidget {
                 borderRadius: BorderRadius.circular(14),
                 borderSide: BorderSide(
                   color: Colors.white.withValues(alpha: 0.12),
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: BorderSide(
+                  color: Colors.white.withValues(alpha: 0.55),
                 ),
               ),
             ),
