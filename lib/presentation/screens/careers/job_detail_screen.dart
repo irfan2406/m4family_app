@@ -199,8 +199,8 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                     Text(
                       'JOB DESCRIPTION',
                       style: GoogleFonts.gelasio(
-                        color: (isDark ? Colors.white : Color(0xFF163A2C))
-                            .withOpacity(0.6),
+                        color: (isDark ? Colors.white : const Color(0xFF163A2C))
+                            .withOpacity(0.9),
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 3,
@@ -241,8 +241,8 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                     Text(
                       'DIRECT RECRUITMENT CONTACT',
                       style: GoogleFonts.gelasio(
-                        color: (isDark ? Colors.white : Color(0xFF163A2C))
-                            .withOpacity(0.6),
+                        color: (isDark ? Colors.white : const Color(0xFF163A2C))
+                            .withOpacity(0.9),
                         fontSize: 10,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 3,
@@ -388,7 +388,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
     return Text(
       title,
       style: GoogleFonts.gelasio(
-        color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.6),
+        color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.9),
         fontSize: 10,
         fontWeight: FontWeight.w900,
         letterSpacing: 3,
@@ -569,7 +569,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
       return Text(
         'Details for this role will be shared during the interview process.',
         style: style.copyWith(
-          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.6),
+          color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.9),
         ),
       );
     }
@@ -673,10 +673,10 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
                   label,
                   style: GoogleFonts.gelasio(
                     color: isDark
-                        ? Colors.white.withOpacity(0.7)
-                        : const Color(0xFF141B3A),
-                    fontSize: 9,
-                    fontWeight: FontWeight.w800,
+                        ? Colors.white.withOpacity(0.85)
+                        : const Color(0xFF163A2C),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
                     letterSpacing: 2,
                   ),
                 ),
