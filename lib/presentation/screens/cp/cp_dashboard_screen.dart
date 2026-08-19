@@ -130,7 +130,7 @@ class _CpDashboardScreenState extends ConsumerState<CpDashboardScreen> {
               (s) => ListTile(
                 title: Text(s.replaceAll('_', ' ')),
                 trailing: s == current
-                    ? const Icon(Icons.check, size: 18)
+                    ? const Icon(LucideIcons.check, size: 18)
                     : null,
                 onTap: () {
                   Navigator.pop(ctx);

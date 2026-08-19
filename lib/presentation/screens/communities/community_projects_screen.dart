@@ -383,7 +383,7 @@ class _ProjectCard extends StatelessWidget {
               placeholder: (context, url) => Container(color: Colors.black12),
               errorWidget: (context, url, error) => Container(
                 color: Colors.black26,
-                child: const Icon(Icons.error, color: Colors.white24),
+                child: const Icon(LucideIcons.alertCircle, color: Colors.white38),
               ),
             ),
 
