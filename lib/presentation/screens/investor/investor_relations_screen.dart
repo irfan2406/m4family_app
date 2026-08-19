@@ -177,9 +177,7 @@ class _InvestorRelationsScreenState
             ),
           ],
         ),
-        backgroundColor: (isDark ? const Color(0xFF0B1026) : const Color(0xFFF4EFE3)).withOpacity(
-          0.8,
-        ),
+        backgroundColor: isDark ? const Color(0xFF0B1026) : const Color(0xFFF4EFE3),
         flexibleSpace: ClipRRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),

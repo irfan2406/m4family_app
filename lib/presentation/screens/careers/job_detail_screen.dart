@@ -53,9 +53,7 @@ class _JobDetailScreenState extends ConsumerState<JobDetailScreen> {
             ),
           ],
         ),
-        backgroundColor: (isDark ? const Color(0xFF0B1026) : Theme.of(context).scaffoldBackgroundColor).withOpacity(
-          0.8,
-        ),
+        backgroundColor: isDark ? const Color(0xFF0B1026) : Theme.of(context).scaffoldBackgroundColor,
         flexibleSpace: ClipRRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),

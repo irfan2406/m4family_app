@@ -78,9 +78,7 @@ class _GuestCustomViewsScreenState
           // 🔝 Premium Header
           SliverAppBar(
             pinned: true,
-            backgroundColor: (isDark ? const Color(0xFF0B1026) : Colors.white).withOpacity(
-              0.8,
-            ),
+            backgroundColor: isDark ? const Color(0xFF0B1026) : Colors.white,
             elevation: 0,
             leadingWidth: 72,
             toolbarHeight: 80,
