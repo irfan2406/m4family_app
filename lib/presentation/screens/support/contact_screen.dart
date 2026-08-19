@@ -476,7 +476,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: Color(0xFFC5A35B), width: 1.6),
+          borderSide: BorderSide(color: isDark ? const Color(0xFFF4EFE3) : const Color(0xFF163A2C), width: 1.6),
         ),
       ),
     );

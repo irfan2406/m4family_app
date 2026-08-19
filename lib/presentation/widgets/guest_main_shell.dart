@@ -107,8 +107,8 @@ class _GuestNavigationPill extends StatelessWidget {
           end: Alignment.bottomCenter,
           colors: isDark
               ? [
-                  Colors.white.withValues(alpha: 0.10),
-                  Colors.white.withValues(alpha: 0.02),
+                  Colors.white.withValues(alpha: 0.05),
+                  Colors.white.withValues(alpha: 0.01),
                 ]
               : [
                   Colors.white.withValues(alpha: 0.72),
