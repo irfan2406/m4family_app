@@ -92,16 +92,6 @@ class _GuestNavigationPill extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 48),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(100),
-        // Soft float: a wide, very low-opacity shadow lifts the glass off the
-        // page without the dark halo a tight shadow produces.
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF0F2A20).withValues(alpha: isDark ? 0.28 : 0.10),
-            blurRadius: 28,
-            spreadRadius: -6,
-            offset: const Offset(0, 10),
-          ),
-        ],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(100),
