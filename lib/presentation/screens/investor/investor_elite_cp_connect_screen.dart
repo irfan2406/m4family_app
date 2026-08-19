@@ -105,7 +105,7 @@ class _InvestorEliteCpConnectScreenState
             Text(
               'INSTITUTIONAL CP NETWORK',
               style: GoogleFonts.gelasio(
-                fontSize: 8,
+                fontSize: 10,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 2,
                 color: scheme.primary,
@@ -190,7 +190,7 @@ class _InvestorEliteCpConnectScreenState
                     child: Text(
                       'TOP TIER',
                       style: GoogleFonts.gelasio(
-                        fontSize: 8,
+                        fontSize: 10,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1.5,
                         color: scheme.primary,
@@ -383,7 +383,7 @@ class _StatCardState extends State<_StatCard> {
                     Text(
                       widget.stat.label.toUpperCase(),
                       style: GoogleFonts.gelasio(
-                        fontSize: 9,
+                        fontSize: 11,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1.5,
                         color: widget.muted,
@@ -569,7 +569,7 @@ class _PartnerCardState extends State<_PartnerCard> {
                     Text(
                       '${p.activeProjects} OPS',
                       style: GoogleFonts.ebGaramond(
-                        fontSize: 9,
+                        fontSize: 11,
                         fontWeight: FontWeight.w700,
                         color: scheme.onSurface.withValues(alpha: 0.72),
                       ),
@@ -596,7 +596,7 @@ class _PartnerCardState extends State<_PartnerCard> {
                       label: Text(
                         'TRANSMIT',
                         style: GoogleFonts.gelasio(
-                          fontSize: 9,
+                          fontSize: 11,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 1.5,
                           color: scheme.onSurface,
@@ -628,7 +628,7 @@ class _PartnerCardState extends State<_PartnerCard> {
                       label: Text(
                         'LINK-UP',
                         style: GoogleFonts.gelasio(
-                          fontSize: 9,
+                          fontSize: 11,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 1.5,
                           color: scheme.surface,
@@ -738,7 +738,7 @@ class _AcceleratorCard extends StatelessWidget {
                     'Prestige-tier residential clusters in core markets.',
                     style: GoogleFonts.ebGaramond(
                       fontSize: 10,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
                       height: 1.6,
                       color: scheme.surface.withValues(alpha: 0.7),
                     ),

@@ -190,7 +190,7 @@ class _InvestorPaymentDetailScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
     final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
     final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
 
@@ -450,7 +450,7 @@ class _InvestorPaymentDetailScreenState
             _descriptionLabel(),
             style: GoogleFonts.ebGaramond(
               fontSize: 13,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
               height: 1.5,
               color: textPrimary.withValues(alpha: 0.8),
             ),
@@ -603,7 +603,7 @@ class _InvestorPaymentDetailScreenState
         textAlign: TextAlign.right,
         style: GoogleFonts.ebGaramond(
           fontSize: 12,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w600,
           color: textPrimary,
         ),
       ),
@@ -641,7 +641,7 @@ class _InvestorPaymentDetailScreenState
       text,
       style: GoogleFonts.ebGaramond(
         fontSize: 12,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w600,
         color: textPrimary,
       ),
     );

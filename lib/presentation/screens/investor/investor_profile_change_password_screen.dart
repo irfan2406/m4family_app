@@ -133,7 +133,7 @@ class _InvestorProfileChangePasswordScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
     final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
     final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
@@ -297,7 +297,7 @@ class _InvestorProfileChangePasswordScreenState
                 Text(
                   'CREDENTIAL UPDATE',
                   style: GoogleFonts.gelasio(
-                    fontSize: 8,
+                    fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2.5,
                     color: _gold.withValues(alpha: 0.8),
@@ -364,7 +364,7 @@ class _InvestorProfileChangePasswordScreenState
         hintText: hint,
         hintStyle: GoogleFonts.ebGaramond(
           fontSize: 14,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w600,
           color: muted,
         ),
         filled: true,

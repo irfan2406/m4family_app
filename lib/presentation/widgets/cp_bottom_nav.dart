@@ -71,7 +71,7 @@ class CpBottomNav extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 2,
-                        vertical: 10,
+                        vertical: 6,
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,

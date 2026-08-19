@@ -242,7 +242,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
             Text(
               'INSTITUTIONAL GRADE SECURITY',
               style: GoogleFonts.gelasio(
-                fontSize: 9,
+                fontSize: 11,
                 fontWeight: FontWeight.w800,
                 color: Colors.white70,
                 letterSpacing: 2.5,
@@ -307,7 +307,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
         Text(
           'SECURE INSTITUTIONAL ACCESS GATEWAY',
           style: GoogleFonts.gelasio(
-            fontSize: 9,
+            fontSize: 11,
             fontWeight: FontWeight.w700,
             color: Colors.white70,
             letterSpacing: 2.5,
@@ -399,7 +399,7 @@ class _InvestorLoginScreenState extends ConsumerState<InvestorLoginScreen> {
             'INVESTOR PORTAL v3.0\nPOWERED BY M4 FAMILY CAPITAL',
             textAlign: TextAlign.center,
             style: GoogleFonts.gelasio(
-              fontSize: 9,
+              fontSize: 11,
               fontWeight: FontWeight.w800,
               color: Colors.white70,
               letterSpacing: 2,
@@ -435,7 +435,7 @@ class _FeaturePill extends StatelessWidget {
           Text(
             label,
             style: GoogleFonts.gelasio(
-              fontSize: 9,
+              fontSize: 11,
               fontWeight: FontWeight.w700,
               color: const Color(0xFFF4EFE3),
               letterSpacing: 1.5,
@@ -476,7 +476,7 @@ class _Field extends StatelessWidget {
         Text(
           label,
           style: GoogleFonts.gelasio(
-            fontSize: 9,
+            fontSize: 11,
             fontWeight: FontWeight.bold,
             color: Colors.white70,
             letterSpacing: 2,

@@ -82,7 +82,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
       isScrollControlled: true,
       builder: (sheetCtx) => Container(
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         ),
         padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
@@ -262,7 +262,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
             style: GoogleFonts.ebGaramond(
               fontSize: 12.5,
               fontWeight: FontWeight.w600,
-              color: Colors.white,
+              color: const Color(0xFFF4EFE3),
             ),
           ),
           backgroundColor: success
@@ -351,7 +351,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                   decoration: BoxDecoration(
                     color: Theme.of(context).brightness == Brightness.dark
                         ? const Color(0xFF141B3A)
-                        : Colors.black,
+                        : const Color(0xFF0F2A20),
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: Colors.white.withOpacity(0.08)),
                   ),
@@ -486,7 +486,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
     // draw a drop shadow, so this wraps the field in a shadowed Container.
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF141B3A) : Colors.white,
+        color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.06),
@@ -561,7 +561,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF141B3A) : Colors.white,
+              color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: _isProjectDropdownOpen
@@ -614,7 +614,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
             margin: const EdgeInsets.only(top: 8),
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF141B3A) : Colors.white,
+              color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
               borderRadius: BorderRadius.circular(16),
               boxShadow: isDark
                   ? null
@@ -691,7 +691,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF141B3A) : Colors.white,
+              color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: _isEmployeeDropdownOpen
@@ -746,7 +746,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
             margin: const EdgeInsets.only(top: 8),
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xFF141B3A) : Colors.white,
+              color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
               borderRadius: BorderRadius.circular(16),
               boxShadow: isDark
                   ? null
@@ -820,7 +820,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
         height: 56,
         padding: const EdgeInsets.symmetric(horizontal: 20),
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF141B3A) : Colors.white,
+          color: isDark ? const Color(0xFF141B3A) : const Color(0xFFF4EFE3),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.06),
@@ -875,7 +875,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
         style: ElevatedButton.styleFrom(
           backgroundColor: Theme.of(context).brightness == Brightness.dark
               ? Colors.white
-              : Colors.black,
+              : const Color(0xFF0F2A20),
           foregroundColor: Theme.of(context).brightness == Brightness.dark
               ? Colors.black
               : Colors.white,
@@ -892,7 +892,7 @@ class _CpSiteVisitScreenState extends ConsumerState<CpSiteVisitScreen> {
                   strokeWidth: 2,
                   color: Theme.of(context).brightness == Brightness.dark
                       ? Colors.black
-                      : Colors.white,
+                      : const Color(0xFFF4EFE3),
                 ),
               )
             : Row(

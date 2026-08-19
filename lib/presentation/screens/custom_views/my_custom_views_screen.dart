@@ -10,7 +10,9 @@ import 'package:m4_mobile/presentation/providers/my_custom_views_provider.dart';
 
 // Web parity: the Portfolio Suite uses an orange accent (title highlight,
 // active tab, section icons) instead of the neutral foreground colour.
-const Color _kPortfolioOrange = Color(0xFFC65B46);
+// Portfolio accent: M4 deep green (was coral, which read as off-brand orange
+// against the cream page and the bright hero photo).
+const Color _kPortfolioOrange = Color(0xFF0F2A20);
 
 class MyCustomViewsScreen extends ConsumerStatefulWidget {
   const MyCustomViewsScreen({super.key});
@@ -174,7 +176,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
                   TextSpan(
                     text: 'ELITE ',
                     style: GoogleFonts.gelasio(
-                      color: Colors.black,
+                      color: Color(0xFF0F2A20),
                       fontSize: 30,
                       fontWeight: FontWeight.w500,
                       letterSpacing: -0.5,
@@ -197,7 +199,7 @@ class _MyCustomViewsScreenState extends ConsumerState<MyCustomViewsScreen> {
               style: GoogleFonts.gelasio(
                 // Web parity: orange `text-primary`, readable on the light fade.
                 color: _kPortfolioOrange,
-                fontSize: 10,
+                fontSize: 12,
                 fontWeight: FontWeight.w900,
                 letterSpacing: 3,
               ),

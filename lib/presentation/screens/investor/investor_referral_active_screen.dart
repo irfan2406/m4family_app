@@ -80,7 +80,7 @@ class _InvestorReferralActiveScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
     final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
     final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     final border = isDark
@@ -154,7 +154,7 @@ class _InvestorReferralActiveScreenState
                   'LEAD MATRIX',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.gelasio(
-                    fontSize: 8,
+                    fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 3,
                     color: muted,
@@ -188,7 +188,7 @@ class _InvestorReferralActiveScreenState
               Text(
                 '${_referrals.length} IN PIPELINE',
                 style: GoogleFonts.gelasio(
-                  fontSize: 9,
+                  fontSize: 11,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2,
                   color: muted,
@@ -248,7 +248,7 @@ class _InvestorReferralActiveScreenState
                     Text(
                       project.toUpperCase(),
                       style: GoogleFonts.gelasio(
-                        fontSize: 9,
+                        fontSize: 11,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1.5,
                         color: muted,
@@ -290,7 +290,7 @@ class _InvestorReferralActiveScreenState
                   Text(
                     'PIPELINE STATUS',
                     style: GoogleFonts.gelasio(
-                      fontSize: 8,
+                      fontSize: 10,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 1.5,
                       color: muted,
@@ -325,7 +325,7 @@ class _InvestorReferralActiveScreenState
       child: Text(
         status.toUpperCase(),
         style: GoogleFonts.ebGaramond(
-          fontSize: 8,
+          fontSize: 10,
           fontWeight: FontWeight.w900,
           letterSpacing: 1,
           color: M4Theme.premiumBlue,

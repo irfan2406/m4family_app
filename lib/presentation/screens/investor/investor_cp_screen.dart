@@ -70,7 +70,7 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
     final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
     final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
@@ -103,7 +103,7 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
             Text(
               'ID: CP-9021 • M4 PARTNER',
               style: GoogleFonts.gelasio(
-                fontSize: 8,
+                fontSize: 10,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 2,
                 color: _gold,
@@ -177,7 +177,7 @@ class _InvestorCpScreenState extends ConsumerState<InvestorCpScreen> {
                 child: Text(
                   '${filtered.length} ACTIVE',
                   style: GoogleFonts.gelasio(
-                    fontSize: 8,
+                    fontSize: 10,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1.5,
                     color: _gold,
@@ -346,7 +346,7 @@ class _StatCard extends StatelessWidget {
                 Text(
                   stat.label.toUpperCase(),
                   style: GoogleFonts.gelasio(
-                    fontSize: 9,
+                    fontSize: 11,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1.5,
                     color: muted,
@@ -465,7 +465,7 @@ class _LeadCard extends StatelessWidget {
                 child: Text(
                   lead.status.toUpperCase(),
                   style: GoogleFonts.ebGaramond(
-                    fontSize: 8,
+                    fontSize: 10,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1,
                     color: _gold,
@@ -486,7 +486,7 @@ class _LeadCard extends StatelessWidget {
                     label: Text(
                       'CALL CLIENT',
                       style: GoogleFonts.gelasio(
-                        fontSize: 9,
+                        fontSize: 11,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1.5,
                         color: textPrimary,
@@ -511,7 +511,7 @@ class _LeadCard extends StatelessWidget {
                     label: Text(
                       'UPDATE STATUS',
                       style: GoogleFonts.gelasio(
-                        fontSize: 9,
+                        fontSize: 11,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1.5,
                         color: bg,
@@ -600,7 +600,7 @@ class _RegisterCard extends StatelessWidget {
               'track it through visit, booking and payout.',
               style: GoogleFonts.ebGaramond(
                 fontSize: 10,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
                 height: 1.6,
                 color: bg.withValues(alpha: 0.7),
               ),
@@ -676,7 +676,7 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
   @override
   Widget build(BuildContext context) {
     final isDark = widget.isDark;
-    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
     final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
     final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     final card = isDark
@@ -730,7 +730,7 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
                       Text(
                         'HIGH PRIORITY REGISTRATION',
                         style: GoogleFonts.gelasio(
-                          fontSize: 8,
+                          fontSize: 10,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 2,
                           color: _gold,
@@ -832,7 +832,7 @@ class _LeadFormSheetState extends State<_LeadFormSheet> {
   Widget _label(String text, Color muted) => Text(
     text,
     style: GoogleFonts.gelasio(
-      fontSize: 9,
+      fontSize: 11,
       fontWeight: FontWeight.w800,
       letterSpacing: 1.5,
       color: muted,

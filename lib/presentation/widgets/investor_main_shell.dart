@@ -37,7 +37,13 @@ class InvestorMainShell extends ConsumerWidget {
     // Nav + scaffold follow the active tab's surface.
     final ThemeData navTheme = appIsDark
         ? M4Theme.darkThemeNavy
-        : ((idx == 0 || idx == 1) ? M4Theme.darkTheme : M4Theme.lightTheme);
+        : ((idx == 0 || idx == 1)
+              ? M4Theme.darkTheme
+              // Investor light tabs sit on a deeper warm greige than the other
+              // portals' cream, so the cream cards read as raised surfaces.
+              : M4Theme.lightTheme.copyWith(
+                  scaffoldBackgroundColor: const Color(0xFFD4CFBC),
+                ));
 
     return Scaffold(
       backgroundColor: navTheme.scaffoldBackgroundColor,

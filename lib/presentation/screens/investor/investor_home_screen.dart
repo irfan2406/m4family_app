@@ -662,7 +662,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                                   'ARTISTIC IMPRESSION',
                                   style: GoogleFonts.gelasio(
                                     color: const Color(0xFFF4EFE3),
-                                    fontSize: 7,
+                                    fontSize: 9,
                                     fontWeight: FontWeight.w900,
                                     letterSpacing: 1.5,
                                   ),
@@ -706,7 +706,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
             ),
           ),
           SliverPadding(
-            padding: const EdgeInsets.only(bottom: 32),
+            padding: const EdgeInsets.only(bottom: 120),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
                 // Pull the tabs up under the hero, but keep them tappable: the
@@ -720,7 +720,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const SizedBox(height: 60),
+                        const SizedBox(height: 84),
                         _buildTabsSection(),
                       ],
                     ),
@@ -760,7 +760,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
           'OUR PHILOSOPHY',
           style: GoogleFonts.gelasio(
             fontSize: 32,
-            fontWeight: FontWeight.w400,
+            fontWeight: FontWeight.w600,
             color: Theme.of(context).colorScheme.onSurface,
             letterSpacing: -0.5,
           ),
@@ -774,7 +774,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                 context,
               ).colorScheme.onSurface.withValues(alpha: 0.82),
               fontSize: 14,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
               height: 1.8,
             ),
             children: [
@@ -952,8 +952,8 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                         status.toUpperCase(),
                         style: GoogleFonts.ebGaramond(
                           color: const Color(0xFFF4EFE3),
-                          fontSize: 8,
-                          fontWeight: FontWeight.w500,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 1,
                         ),
                       ),
@@ -997,7 +997,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                     style: GoogleFonts.gelasio(
                       color: scheme.onSurface,
                       fontSize: 20,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -1017,7 +1017,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                           style: GoogleFonts.ebGaramond(
                             color: scheme.onSurface.withValues(alpha: 0.55),
                             fontSize: 10,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
                             letterSpacing: 1.5,
                           ),
                         ),
@@ -1174,7 +1174,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                           : GoogleFonts.gelasio(
                               color: const Color(0xFFF4EFE3),
                               fontSize: 22,
-                              fontWeight: FontWeight.w400,
+                              fontWeight: FontWeight.w600,
                               letterSpacing: -0.5,
                             ),
                     ),
@@ -1262,7 +1262,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
             'FEATURED PROPERTY',
             style: GoogleFonts.gelasio(
               fontSize: 32,
-              fontWeight: FontWeight.w400,
+              fontWeight: FontWeight.w600,
               color: Theme.of(context).colorScheme.onSurface,
               letterSpacing: -0.5,
             ),
@@ -1342,7 +1342,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                         'ARTISTIC IMPRESSION',
                         style: GoogleFonts.gelasio(
                           color: const Color(0xFFF4EFE3),
-                          fontSize: 7,
+                          fontSize: 9,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 1.5,
                         ),
@@ -1361,7 +1361,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                           'FEATURED PROPERTY',
                           style: GoogleFonts.gelasio(
                             color: const Color(0xFFC5A35B),
-                            fontSize: 9,
+                            fontSize: 11,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 2.5,
                           ),
@@ -1375,7 +1375,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                           style: GoogleFonts.playfairDisplay(
                             color: Colors.black,
                             fontSize: 44,
-                            fontWeight: FontWeight.w400,
+                            fontWeight: FontWeight.w600,
                             height: 1,
                             letterSpacing: -1,
                           ),
@@ -1393,7 +1393,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.ebGaramond(
                             color: Colors.white.withValues(alpha: 0.8),
-                            fontSize: 9,
+                            fontSize: 11,
                             height: 1.6,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 1.2,
@@ -1482,7 +1482,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                       child: Text(
                         'READ MORE',
                         style: GoogleFonts.gelasio(
-                          color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+                          color: isDark ? const Color(0xFF1C4535) : const Color(0xFFF4EFE3),
                           fontWeight: FontWeight.w900,
                           fontSize: 12,
                           letterSpacing: 3,
@@ -1534,7 +1534,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
           textAlign: TextAlign.center,
           style: GoogleFonts.gelasio(
             color: isDark ? Colors.white : Color(0xFF163A2C),
-            fontSize: 9,
+            fontSize: 11,
             fontWeight: FontWeight.w800,
             letterSpacing: 1.5,
           ),
@@ -1553,7 +1553,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
           'EXPLORE, CONNECT\nAND ENGAGE WITH US',
           style: GoogleFonts.gelasio(
             fontSize: 32,
-            fontWeight: FontWeight.w400,
+            fontWeight: FontWeight.w600,
             color: Theme.of(context).colorScheme.onSurface,
             letterSpacing: -1,
             height: 1.1,
@@ -1682,7 +1682,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                   alpha: 0.5,
                 ),
                 fontSize: 11,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
                 height: 1.4,
               ),
             ),
@@ -1703,7 +1703,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
           style: GoogleFonts.gelasio(
             color: isDark ? Colors.white : Color(0xFF163A2C),
             fontSize: 32,
-            fontWeight: FontWeight.w400,
+            fontWeight: FontWeight.w600,
             letterSpacing: -1,
             height: 1.1,
           ),
@@ -1803,7 +1803,7 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
                         'SUBMIT INTEREST',
                         style: GoogleFonts.ebGaramond(
                           color: isDark ? Colors.black : const Color(0xFFF4EFE3),
-                          fontWeight: FontWeight.w400,
+                          fontWeight: FontWeight.w600,
                           letterSpacing: 2,
                         ),
                       ),
@@ -1835,7 +1835,9 @@ class _InvestorHomeScreenState extends ConsumerState<InvestorHomeScreen> {
       children: [
         Container(
           decoration: BoxDecoration(
-            color: isDark ? Colors.black : const Color(0xFFF4EFE3),
+            color: isDark
+                ? const Color(0xFF1C4535)
+                : const Color(0xFFF4EFE3),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: hasError

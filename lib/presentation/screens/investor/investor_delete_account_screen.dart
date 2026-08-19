@@ -119,7 +119,7 @@ class _InvestorDeleteAccountScreenState
             'digital legacy within M4. This action cannot be undone.',
             style: GoogleFonts.ebGaramond(
               fontSize: 12,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
               color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                 alpha: 0.7,
               ),
@@ -215,7 +215,7 @@ class _InvestorDeleteAccountScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
     final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
     final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
@@ -305,7 +305,7 @@ class _InvestorDeleteAccountScreenState
                   'PURGE PROTOCOL',
                   textAlign: TextAlign.center,
                   style: GoogleFonts.gelasio(
-                    fontSize: 8,
+                    fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 2,
                     color: muted,
@@ -368,7 +368,7 @@ class _InvestorDeleteAccountScreenState
             style: GoogleFonts.ebGaramond(
               fontSize: 12,
               height: 1.55,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
               color: _danger.withValues(alpha: 0.85),
             ),
           ),
@@ -382,7 +382,7 @@ class _InvestorDeleteAccountScreenState
     return Text(
       text,
       style: GoogleFonts.gelasio(
-        fontSize: 9,
+        fontSize: 11,
         fontWeight: FontWeight.w900,
         letterSpacing: 2,
         color: muted,
@@ -440,7 +440,7 @@ class _InvestorDeleteAccountScreenState
                           _purgeScope[i]['subtitle'] as String,
                           style: GoogleFonts.ebGaramond(
                             fontSize: 10,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
                             height: 1.3,
                             color: muted,
                           ),
@@ -480,7 +480,7 @@ class _InvestorDeleteAccountScreenState
           child: Text(
             'TYPE "$_confirmWord" TO CONFIRM',
             style: GoogleFonts.gelasio(
-              fontSize: 9,
+              fontSize: 11,
               fontWeight: FontWeight.w800,
               letterSpacing: 1.5,
               color: muted,
@@ -553,7 +553,7 @@ class _InvestorDeleteAccountScreenState
           child: Text(
             'CREDENTIAL AUTHORIZATION',
             style: GoogleFonts.gelasio(
-              fontSize: 9,
+              fontSize: 11,
               fontWeight: FontWeight.w800,
               letterSpacing: 1.5,
               color: muted,
@@ -648,7 +648,7 @@ class _InvestorDeleteAccountScreenState
                 style: GoogleFonts.ebGaramond(
                   fontSize: 11,
                   height: 1.5,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w600,
                   color: textPrimary.withValues(alpha: 0.8),
                 ),
               ),

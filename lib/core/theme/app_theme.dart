@@ -34,7 +34,7 @@ class M4Theme {
   // ===================================================================
   // LIGHT (:root) — CREAM
   // ===================================================================
-  static const Color lightBackground = Color(0xFFF3EDE0); // warm cream
+  static const Color lightBackground = Color(0xFFD4CFBC); // warm greige page
   static const Color lightForeground = Color(0xFF15271E); // dark green-black
   static const Color lightCard = Color(0xFFF4EFE3); // warm cream card (never white)
   static const Color lightPrimary = Color(0xFF15271E); // dark green fill

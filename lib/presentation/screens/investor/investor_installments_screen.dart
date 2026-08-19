@@ -188,7 +188,7 @@ class _InvestorInstallmentsScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
     final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
     final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     final border = isDark
@@ -254,7 +254,7 @@ class _InvestorInstallmentsScreenState
                         Text(
                           'PAYMENT PLAN',
                           style: GoogleFonts.gelasio(
-                            fontSize: 8,
+                            fontSize: 10,
                             fontWeight: FontWeight.w900,
                             letterSpacing: 2,
                             color: muted,
@@ -400,7 +400,7 @@ class _InvestorInstallmentsScreenState
         Text(
           label,
           style: GoogleFonts.gelasio(
-            fontSize: 8,
+            fontSize: 10,
             fontWeight: FontWeight.w900,
             letterSpacing: 1.5,
             color: muted,
@@ -454,7 +454,7 @@ class _InvestorInstallmentsScreenState
               child: Text(
                 (f == 'All' ? 'All' : _statusLabel(f)).toUpperCase(),
                 style: GoogleFonts.ebGaramond(
-                  fontSize: 9,
+                  fontSize: 11,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 1,
                   color: active ? activeColor : muted,
@@ -530,8 +530,8 @@ class _InvestorInstallmentsScreenState
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.ebGaramond(
-                    fontSize: 9,
-                    fontWeight: FontWeight.w500,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
                     color: muted,
                   ),
                 ),
@@ -547,8 +547,8 @@ class _InvestorInstallmentsScreenState
                     Text(
                       item.dueDate,
                       style: GoogleFonts.ebGaramond(
-                        fontSize: 9,
-                        fontWeight: FontWeight.w500,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
                         color: muted,
                       ),
                     ),
@@ -581,7 +581,7 @@ class _InvestorInstallmentsScreenState
                 child: Text(
                   _statusLabel(item.status).toUpperCase(),
                   style: GoogleFonts.ebGaramond(
-                    fontSize: 8,
+                    fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 0.8,
                     color: color,
@@ -625,7 +625,7 @@ class _InvestorInstallmentsScreenState
               textAlign: TextAlign.center,
               style: GoogleFonts.ebGaramond(
                 fontSize: 10,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
                 height: 1.5,
                 color: muted,
               ),
@@ -666,7 +666,7 @@ class _InvestorInstallmentsScreenState
               textAlign: TextAlign.center,
               style: GoogleFonts.ebGaramond(
                 fontSize: 10,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
                 color: muted,
               ),
             ),

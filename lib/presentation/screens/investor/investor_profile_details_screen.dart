@@ -281,7 +281,7 @@ class _InvestorProfileDetailsScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
     final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
     final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
@@ -436,7 +436,7 @@ class _InvestorProfileDetailsScreenState
                 Text(
                   'MANAGE YOUR PERSONAL DETAILS',
                   style: GoogleFonts.gelasio(
-                    fontSize: 8,
+                    fontSize: 10,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.5,
                     color: muted,
@@ -575,7 +575,7 @@ class _InvestorProfileDetailsScreenState
             child: Text(
               'PLATINUM MEMBER',
               style: GoogleFonts.gelasio(
-                fontSize: 9,
+                fontSize: 11,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 2,
                 color: _gold,
@@ -613,7 +613,7 @@ class _InvestorProfileDetailsScreenState
           child: Text(
             label,
             style: GoogleFonts.gelasio(
-              fontSize: 9,
+              fontSize: 11,
               fontWeight: FontWeight.w800,
               letterSpacing: 1.5,
               color: muted,
@@ -694,7 +694,7 @@ class _InvestorProfileDetailsScreenState
           child: Text(
             'DATE OF BIRTH',
             style: GoogleFonts.gelasio(
-              fontSize: 9,
+              fontSize: 11,
               fontWeight: FontWeight.w800,
               letterSpacing: 1.5,
               color: muted,

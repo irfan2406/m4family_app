@@ -57,7 +57,17 @@ class GuestMainShell extends ConsumerWidget {
           ref.read(drawerOpenProvider.notifier).state = isOpen,
       body: Stack(
         children: [
-          IndexedStack(index: currentIndex, children: screens),
+          // The pill floats above the content, so tell the screens how much
+          // room it takes: their scroll views add this as bottom inset and the
+          // last card can scroll clear of the nav instead of hiding under it.
+          MediaQuery(
+            data: MediaQuery.of(context).copyWith(
+              padding: MediaQuery.of(context).padding.copyWith(
+                bottom: MediaQuery.of(context).padding.bottom + _navFootprint,
+              ),
+            ),
+            child: IndexedStack(index: currentIndex, children: screens),
+          ),
           if (!isDrawerOpen)
             Align(
               alignment: Alignment.bottomCenter,
@@ -75,6 +85,9 @@ class GuestMainShell extends ConsumerWidget {
     );
   }
 }
+
+/// Height the floating pill occupies: 62px bar + 48px bottom margin.
+const double _navFootprint = 110;
 
 class _GuestNavigationPill extends StatelessWidget {
   final int currentIndex;

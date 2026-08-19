@@ -404,7 +404,7 @@ class _InvestorProjectDetailScreenState
                         Text(
                           'A BESPOKE SHOWCASE OF LUXURY AT ${title.toUpperCase()}.',
                           style: GoogleFonts.ebGaramond(
-                            fontSize: 9,
+                            fontSize: 11,
                             color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                             fontWeight: FontWeight.w900,
                             letterSpacing: 1,
@@ -441,7 +441,7 @@ class _InvestorProjectDetailScreenState
                           Text(
                             'PREFERRED PLAN',
                             style: GoogleFonts.ebGaramond(
-                              fontSize: 8,
+                              fontSize: 10,
                               fontWeight: FontWeight.w900,
                               color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                               letterSpacing: 1,
@@ -485,7 +485,7 @@ class _InvestorProjectDetailScreenState
                                   child: Text(
                                     n.toUpperCase(),
                                     style: GoogleFonts.ebGaramond(
-                                      fontSize: 8,
+                                      fontSize: 10,
                                       fontWeight: FontWeight.w900,
                                       color: isActive
                                           ? Colors.white
@@ -506,7 +506,7 @@ class _InvestorProjectDetailScreenState
                           Text(
                             'VISIT TYPE',
                             style: GoogleFonts.ebGaramond(
-                              fontSize: 8,
+                              fontSize: 10,
                               fontWeight: FontWeight.w900,
                               color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                               letterSpacing: 1,
@@ -550,7 +550,7 @@ class _InvestorProjectDetailScreenState
                                               ? 'VIDEO CALL'
                                               : 'SITE VISIT',
                                           style: GoogleFonts.ebGaramond(
-                                            fontSize: 9,
+                                            fontSize: 11,
                                             fontWeight: FontWeight.w900,
                                             color: localType == t
                                                 ? (isDark
@@ -627,7 +627,7 @@ class _InvestorProjectDetailScreenState
                                         ? 'SELECT DATE & TIME'
                                         : _formatSchedule(scheduledAt!),
                                     style: GoogleFonts.ebGaramond(
-                                      fontSize: 9,
+                                      fontSize: 11,
                                       fontWeight: FontWeight.w900,
                                       color: scheduledAt == null
                                           ? (isDark
@@ -650,7 +650,7 @@ class _InvestorProjectDetailScreenState
                         Text(
                           'ADDITIONAL NOTES',
                           style: GoogleFonts.ebGaramond(
-                            fontSize: 8,
+                            fontSize: 10,
                             fontWeight: FontWeight.w900,
                             color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                             letterSpacing: 1,
@@ -689,7 +689,7 @@ class _InvestorProjectDetailScreenState
                               hintText:
                                   'SPECIFIC REQUIREMENTS, PICKUP DETAILS, ETC...',
                               hintStyle: GoogleFonts.ebGaramond(
-                                fontSize: 9,
+                                fontSize: 11,
                                 fontWeight: FontWeight.w900,
                                 color: isDark ? Colors.white24 : Colors.black26,
                                 letterSpacing: 1,
@@ -825,7 +825,7 @@ class _InvestorProjectDetailScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
 
     if (_isLoading) {
       return Scaffold(
@@ -1031,7 +1031,7 @@ class _InvestorProjectDetailScreenState
                 (project['status']?.toString().toUpperCase() ?? 'ONGOING'),
                 style: GoogleFonts.ebGaramond(
                   color: const Color(0xFFF4EFE3),
-                  fontSize: 9,
+                  fontSize: 11,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 1,
                 ),
@@ -1284,7 +1284,7 @@ class _InvestorProjectDetailScreenState
                 Text(
                   'STARTING PRICE',
                   style: GoogleFonts.ebGaramond(
-                    fontSize: 8,
+                    fontSize: 10,
                     fontWeight: FontWeight.w900,
                     color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                     letterSpacing: 1,
@@ -1344,7 +1344,7 @@ class _InvestorProjectDetailScreenState
       Text(
         'DOCUMENTS',
         style: GoogleFonts.ebGaramond(
-          fontSize: 8,
+          fontSize: 10,
           fontWeight: FontWeight.w900,
           color: isDark ? Colors.white38 : Color(0xFF5E6B60),
           letterSpacing: 1,
@@ -1479,7 +1479,7 @@ class _InvestorProjectDetailScreenState
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: GoogleFonts.ebGaramond(
-                                fontSize: 8,
+                                fontSize: 10,
                                 fontWeight: FontWeight.w900,
                                 color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                                 letterSpacing: 0.5,
@@ -1574,7 +1574,7 @@ class _InvestorProjectDetailScreenState
                           name,
                           textAlign: TextAlign.center,
                           style: GoogleFonts.ebGaramond(
-                            fontSize: 9,
+                            fontSize: 11,
                             fontWeight: FontWeight.w900,
                             color: isDark ? Colors.white : Color(0xFF163A2C),
                             letterSpacing: 1,
@@ -1668,11 +1668,11 @@ class _InvestorProjectDetailScreenState
                                 : TextOverflow.ellipsis,
                             style: GoogleFonts.ebGaramond(
                               // Was 10 / 50% — too faint. Larger + darker.
-                              fontSize: 11,
+                              fontSize: 13,
                               fontWeight: FontWeight.w600,
                               height: 1.6,
                               color: (isDark ? Colors.white : Color(0xFF163A2C))
-                                  .withValues(alpha: 0.7),
+                                  .withValues(alpha: 0.9),
                             ),
                           ),
                           const SizedBox(height: 8),
@@ -1728,10 +1728,10 @@ class _InvestorProjectDetailScreenState
                               Text(
                                 'OVERALL',
                                 style: GoogleFonts.ebGaramond(
-                                  fontSize: 8,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.w900,
                                   color: (isDark ? Colors.white : Color(0xFF163A2C))
-                                      .withValues(alpha: 0.6),
+                                      .withValues(alpha: 0.85),
                                   letterSpacing: 1,
                                 ),
                               ),
@@ -1914,7 +1914,7 @@ class _InvestorProjectDetailScreenState
                       child: Text(
                         status,
                         style: GoogleFonts.ebGaramond(
-                          fontSize: 8,
+                          fontSize: 10,
                           fontWeight: FontWeight.w900,
                           color: const Color(0xFFF4EFE3),
                           letterSpacing: 1,
@@ -2031,7 +2031,7 @@ class _InvestorProjectDetailScreenState
                 Text(
                   'REAL-TIME DEVELOPMENT STATUS',
                   style: GoogleFonts.ebGaramond(
-                    fontSize: 8,
+                    fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1,
                     color: isDark ? Colors.white38 : Color(0xFF5E6B60),
@@ -2055,7 +2055,7 @@ class _InvestorProjectDetailScreenState
               child: Text(
                 '${phases.length} MILESTONES',
                 style: GoogleFonts.ebGaramond(
-                  fontSize: 8,
+                  fontSize: 10,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 1,
                   color: isDark ? Colors.white : Color(0xFF163A2C),
@@ -2150,7 +2150,7 @@ class _InvestorProjectDetailScreenState
                               Text(
                                 status.toUpperCase(),
                                 style: GoogleFonts.ebGaramond(
-                                  fontSize: 8,
+                                  fontSize: 10,
                                   fontWeight: FontWeight.w900,
                                   letterSpacing: 1,
                                   color: statusColor,
@@ -2360,7 +2360,7 @@ class _InvestorProjectDetailScreenState
                                           .toUpperCase() ??
                                       'INSTALLMENT',
                                   style: GoogleFonts.ebGaramond(
-                                    fontSize: 9,
+                                    fontSize: 11,
                                     fontWeight: FontWeight.w900,
                                     color: isDark ? Colors.white : Color(0xFF163A2C),
                                     letterSpacing: 0.5,
@@ -2369,7 +2369,7 @@ class _InvestorProjectDetailScreenState
                                 Text(
                                   'INSTALLMENT ${item['installmentNumber'] ?? ''}',
                                   style: GoogleFonts.ebGaramond(
-                                    fontSize: 8,
+                                    fontSize: 10,
                                     fontWeight: FontWeight.bold,
                                     color: isDark
                                         ? Colors.white38
@@ -2398,7 +2398,7 @@ class _InvestorProjectDetailScreenState
                         child: Text(
                           'INQUIRE ABOUT THIS PLAN',
                           style: GoogleFonts.ebGaramond(
-                            fontSize: 9,
+                            fontSize: 11,
                             fontWeight: FontWeight.w900,
                             color: isDark ? Colors.white : Color(0xFF163A2C),
                             letterSpacing: 1,
@@ -2468,7 +2468,7 @@ class _InvestorProjectDetailScreenState
                           Text(
                             'CONNECT WITH OUR WEALTH ADVISORS',
                             style: GoogleFonts.ebGaramond(
-                              fontSize: 8,
+                              fontSize: 10,
                               fontWeight: FontWeight.w900,
                               color: isDark ? Colors.white38 : Color(0xFF5E6B60),
                               letterSpacing: 1,
@@ -2593,7 +2593,7 @@ class _InvestorProjectDetailScreenState
                             Text(
                               'VIEW ON MAPS',
                               style: GoogleFonts.ebGaramond(
-                                fontSize: 8,
+                                fontSize: 10,
                                 fontWeight: FontWeight.w900,
                                 color: isDark ? Colors.white : Color(0xFF163A2C),
                                 letterSpacing: 1,
@@ -2755,7 +2755,7 @@ class _MediaThumb extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: GoogleFonts.ebGaramond(
                     color: const Color(0xFFF4EFE3),
-                    fontSize: 8,
+                    fontSize: 10,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 0.5,
                   ),
@@ -2904,7 +2904,7 @@ class _ActionCard extends StatelessWidget {
                   // Was 8px / 38% — too small & faint. Larger + darker.
                   style: GoogleFonts.gelasio(
                     color: isDark ? Colors.white70 : Color(0xFF5E6B60),
-                    fontSize: 9,
+                    fontSize: 11,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 1.5,
                   ),
@@ -3258,7 +3258,7 @@ class _InquiryField extends StatelessWidget {
           focusedBorder: InputBorder.none,
           hintText: hint,
           hintStyle: GoogleFonts.ebGaramond(
-            fontSize: 9,
+            fontSize: 11,
             fontWeight: FontWeight.w900,
             color: isDark ? Colors.white24 : Colors.black26,
             letterSpacing: 1,

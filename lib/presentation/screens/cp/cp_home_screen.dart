@@ -508,7 +508,7 @@ class _CpHomeScreenState extends ConsumerState<CpHomeScreen> {
             ),
           ),
           SliverPadding(
-            padding: const EdgeInsets.only(bottom: 32),
+            padding: const EdgeInsets.only(bottom: 120),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
                 Padding(

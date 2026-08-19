@@ -140,7 +140,7 @@ class _InvestorPortfolioScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
 
     return Scaffold(
       backgroundColor: bg,
@@ -206,7 +206,7 @@ class _InvestorPortfolioScreenState
               Text(
                 'MY INVESTMENTS',
                 style: GoogleFonts.gelasio(
-                  fontSize: 8,
+                  fontSize: 10,
                   fontWeight: FontWeight.w700,
                   color: M4Theme.premiumBlue.withValues(alpha: 0.6),
                   letterSpacing: 3,
@@ -241,22 +241,24 @@ class _InvestorPortfolioScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildSummaryCard(isDark),
-            const SizedBox(height: 16),
-            _buildPerformanceStrip(isDark),
-            const SizedBox(height: 28),
-            if (_holdings.isNotEmpty) ...[
+            // Web parity: with nothing invested yet the page is just the invitation
+            // to explore. The valuation card, performance tiles and breakdown only
+            // appear once there are real holdings to report.
+            if (_holdings.isEmpty)
+              _buildEmptyState(isDark)
+            else ...[
+              _buildSummaryCard(isDark),
+              const SizedBox(height: 16),
+              _buildPerformanceStrip(isDark),
+              const SizedBox(height: 28),
               _sectionLabel('CAPITAL ALLOCATION', isDark),
               const SizedBox(height: 16),
               _buildAllocationCard(isDark),
               const SizedBox(height: 28),
-            ],
-            _sectionLabel('INVESTMENT BREAKDOWN', isDark),
-            const SizedBox(height: 16),
-            if (_holdings.isEmpty)
-              _buildEmptyState(isDark)
-            else
+              _sectionLabel('INVESTMENT BREAKDOWN', isDark),
+              const SizedBox(height: 16),
               ..._holdings.map((h) => _buildHoldingCard(h, isDark)),
+            ],
           ],
         ),
       ),
@@ -269,7 +271,7 @@ class _InvestorPortfolioScreenState
       child: Text(
         text,
         style: GoogleFonts.gelasio(
-          fontSize: 9,
+          fontSize: 11,
           fontWeight: FontWeight.w700,
           color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5),
           letterSpacing: 3,
@@ -312,7 +314,7 @@ class _InvestorPortfolioScreenState
               Text(
                 'PORTFOLIO VALUATION',
                 style: GoogleFonts.gelasio(
-                  fontSize: 9,
+                  fontSize: 11,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 2.5,
                   color: Colors.white.withValues(alpha: 0.6),
@@ -379,7 +381,7 @@ class _InvestorPortfolioScreenState
           Text(
             'CURRENT MARKET VALUE',
             style: GoogleFonts.gelasio(
-              fontSize: 9,
+              fontSize: 11,
               fontWeight: FontWeight.w800,
               letterSpacing: 2,
               color: Colors.white.withValues(alpha: 0.72),
@@ -427,7 +429,7 @@ class _InvestorPortfolioScreenState
         Text(
           label,
           style: GoogleFonts.gelasio(
-            fontSize: 8,
+            fontSize: 10,
             fontWeight: FontWeight.w800,
             letterSpacing: 1.5,
             color: Colors.white.withValues(alpha: 0.72),
@@ -539,7 +541,7 @@ class _InvestorPortfolioScreenState
           Text(
             label,
             style: GoogleFonts.gelasio(
-              fontSize: 8,
+              fontSize: 10,
               fontWeight: FontWeight.w700,
               color: muted,
               letterSpacing: 1.5,
@@ -783,7 +785,7 @@ class _InvestorPortfolioScreenState
                         child: Text(
                           location.toUpperCase(),
                           style: GoogleFonts.ebGaramond(
-                            fontSize: 9,
+                            fontSize: 11,
                             fontWeight: FontWeight.w700,
                             color: muted,
                             letterSpacing: 0.5,
@@ -844,7 +846,7 @@ class _InvestorPortfolioScreenState
                               Text(
                                 'VIEW PERFORMANCE',
                                 style: GoogleFonts.gelasio(
-                                  fontSize: 9,
+                                  fontSize: 11,
                                   fontWeight: FontWeight.w800,
                                   color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                                   letterSpacing: 1.5,
@@ -1008,7 +1010,7 @@ class _InvestorPortfolioScreenState
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.gelasio(
-                                        fontSize: 9,
+                                        fontSize: 11,
                                         fontWeight: FontWeight.w700,
                                         color: M4Theme.premiumBlue.withValues(
                                           alpha: 0.7,
@@ -1061,7 +1063,7 @@ class _InvestorPortfolioScreenState
                                     Text(
                                       'NET RETURN',
                                       style: GoogleFonts.gelasio(
-                                        fontSize: 8,
+                                        fontSize: 10,
                                         fontWeight: FontWeight.w800,
                                         color: muted,
                                         letterSpacing: 2,
@@ -1160,7 +1162,7 @@ class _InvestorPortfolioScreenState
                                 Text(
                                   'VERIFIED INVESTMENT',
                                   style: GoogleFonts.gelasio(
-                                    fontSize: 9,
+                                    fontSize: 11,
                                     fontWeight: FontWeight.w800,
                                     color: isDark ? Colors.black : const Color(0xFFF4EFE3),
                                     letterSpacing: 2,
@@ -1185,7 +1187,7 @@ class _InvestorPortfolioScreenState
 
   // ─── Empty / error states ────────────────────────────────────────────────────
   Widget _buildEmptyState(bool isDark) {
-    final faint = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.2);
+    final faint = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.55);
     return Padding(
       padding: const EdgeInsets.only(top: 32),
       child: Center(
@@ -1196,7 +1198,7 @@ class _InvestorPortfolioScreenState
             Text(
               'NO INVESTMENTS YET',
               style: GoogleFonts.gelasio(
-                fontSize: 11,
+                fontSize: 13,
                 fontWeight: FontWeight.w800,
                 color: faint,
                 letterSpacing: 2,
@@ -1207,8 +1209,8 @@ class _InvestorPortfolioScreenState
               'Your portfolio holdings will appear here.',
               textAlign: TextAlign.center,
               style: GoogleFonts.ebGaramond(
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
                 color: (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
                   alpha: 0.35,
                 ),
@@ -1445,7 +1447,7 @@ class _Pill extends StatelessWidget {
       child: Text(
         text.toUpperCase(),
         style: GoogleFonts.gelasio(
-          fontSize: 8,
+          fontSize: 10,
           fontWeight: FontWeight.w800,
           color: fg,
           letterSpacing: 1.5,
@@ -1478,7 +1480,7 @@ class _StatusPill extends StatelessWidget {
       child: Text(
         status.toUpperCase(),
         style: GoogleFonts.gelasio(
-          fontSize: 8,
+          fontSize: 10,
           fontWeight: FontWeight.w800,
           color: color,
           letterSpacing: 1.5,
@@ -1551,7 +1553,7 @@ class _DetailItem extends StatelessWidget {
         Text(
           label,
           style: GoogleFonts.gelasio(
-            fontSize: 8,
+            fontSize: 10,
             fontWeight: FontWeight.w700,
             color: muted,
             letterSpacing: 1.5,
@@ -1600,7 +1602,7 @@ class _SpecItem extends StatelessWidget {
               child: Text(
                 label,
                 style: GoogleFonts.gelasio(
-                  fontSize: 8,
+                  fontSize: 10,
                   fontWeight: FontWeight.w700,
                   color: muted,
                   letterSpacing: 1.5,

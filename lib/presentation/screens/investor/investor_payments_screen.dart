@@ -147,7 +147,7 @@ class _InvestorPaymentsScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
     final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
     final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     final border = isDark
@@ -180,7 +180,7 @@ class _InvestorPaymentsScreenState
               style: GoogleFonts.gelasio(
                 color: muted,
                 fontWeight: FontWeight.w900,
-                fontSize: 8,
+                fontSize: 10,
                 letterSpacing: 3,
               ),
             ),
@@ -261,7 +261,7 @@ class _InvestorPaymentsScreenState
             label,
             style: GoogleFonts.gelasio(
               color: muted,
-              fontSize: 8,
+              fontSize: 10,
               fontWeight: FontWeight.w900,
               letterSpacing: 1.5,
             ),
@@ -292,14 +292,14 @@ class _InvestorPaymentsScreenState
       style: GoogleFonts.ebGaramond(
         color: textPrimary,
         fontSize: 15,
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w600,
       ),
       decoration: InputDecoration(
         hintText: 'Search transactions...',
         hintStyle: GoogleFonts.ebGaramond(
           color: muted,
           fontSize: 13,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w600,
         ),
         prefixIcon: Icon(LucideIcons.search, size: 18, color: muted),
         filled: true,
@@ -347,7 +347,7 @@ class _InvestorPaymentsScreenState
               f.toUpperCase(),
               style: GoogleFonts.ebGaramond(
                 color: selected ? _gold : muted,
-                fontSize: 9,
+                fontSize: 11,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 1,
               ),
@@ -454,7 +454,7 @@ class _InvestorPaymentsScreenState
                         overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.ebGaramond(
                           color: muted,
-                          fontSize: 9,
+                          fontSize: 11,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.5,
                         ),
@@ -474,7 +474,7 @@ class _InvestorPaymentsScreenState
                         shortId,
                         style: GoogleFonts.ebGaramond(
                           color: muted,
-                          fontSize: 9,
+                          fontSize: 11,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.5,
                         ),
@@ -511,7 +511,7 @@ class _InvestorPaymentsScreenState
                   statusUpper.isEmpty ? '—' : statusUpper,
                   style: GoogleFonts.ebGaramond(
                     color: statusColor,
-                    fontSize: 8,
+                    fontSize: 10,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 0.5,
                   ),
@@ -549,7 +549,7 @@ class _InvestorPaymentsScreenState
             style: GoogleFonts.ebGaramond(
               color: muted,
               fontSize: 11,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],
@@ -581,7 +581,7 @@ class _InvestorPaymentsScreenState
               style: GoogleFonts.ebGaramond(
                 color: muted,
                 fontSize: 11,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 20),

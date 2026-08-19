@@ -123,7 +123,7 @@ class _CpTrackerScreenState extends ConsumerState<CpTrackerScreen> {
                       onRefresh: _load,
                       color: Colors.black,
                       child: ListView(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 120),
                         children: [
                           const SizedBox(height: 12),
                           _buildStatBar(scheme, fmt),

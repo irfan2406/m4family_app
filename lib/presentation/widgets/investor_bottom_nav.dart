@@ -25,39 +25,39 @@ class InvestorBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    // Frosted glass follows the surface behind it on BOTH themes: deep-green on
-    // the showcase tabs, navy in dark mode, cream on the cream tabs - so the bar
-    // is never an opaque white slab.
-    final surface = isDark
-        ? Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.5)
-        : Theme.of(context).scaffoldBackgroundColor.withValues(alpha: 0.62);
-    final border = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(
-      alpha: 0.08,
-    );
+    // Nav icons carry the brand: forest green on the cream surfaces, cream
+    // on navy, instead of a washed-out 38% grey.
+    final navIcon = isDark ? const Color(0xFFF4EFE3) : const Color(0xFF163A2C);
 
     return SafeArea(
       top: false,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+        padding: const EdgeInsets.fromLTRB(36, 0, 36, 24),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(40),
           child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            filter: ImageFilter.blur(sigmaX: 32, sigmaY: 32),
             child: Container(
               height: 62,
               padding: const EdgeInsets.symmetric(horizontal: 8),
-              decoration: BoxDecoration(
-                color: surface,
-                borderRadius: BorderRadius.circular(40),
-                border: Border.all(color: border),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: isDark ? 0.0 : 0.1),
-                    blurRadius: 28,
-                    offset: const Offset(0, 14),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(40),
+                  // Pure glass: no colour tint at all - just a faint white sheen over
+                  // the blur, so whatever is behind shows through in its own colour
+                  // rather than being washed navy.
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.white.withValues(alpha: isDark ? 0.14 : 0.20),
+                      Colors.white.withValues(alpha: isDark ? 0.05 : 0.08),
+                    ],
                   ),
-                ],
-              ),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: isDark ? 0.18 : 0.28),
+                    width: 0.8,
+                  ),
+                ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: List.generate(_icons.length, (i) {
@@ -69,33 +69,26 @@ class InvestorBottomNav extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 6,
-                        vertical: 10,
+                        vertical: 6,
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          // Figma: the selected tab is a solid deep-green disc with a cream
+                          // glyph; unselected tabs are the bare icon on the glass.
                           Container(
-                            padding: const EdgeInsets.all(8),
+                            padding: const EdgeInsets.all(9),
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(14),
-                              color: active
-                                  ? onSurf.withValues(
-                                      alpha: isDark ? 0.12 : 0.08,
-                                    )
-                                  : null,
-                              border: active
-                                  ? Border.all(
-                                      color: onSurf.withValues(alpha: 0.12),
-                                    )
-                                  : null,
+                              shape: BoxShape.circle,
+                              color: active ? const Color(0xFF0F2A20) : Colors.transparent,
                             ),
                             child: Icon(
                               _icons[i],
                               size: 22,
                               color: active
-                                  ? onSurf
-                                  : onSurf.withValues(alpha: 0.38),
+                                  ? const Color(0xFFF4EFE3)
+                                  : navIcon.withValues(alpha: 0.72),
                             ),
                           ),
                           const SizedBox(height: 4),

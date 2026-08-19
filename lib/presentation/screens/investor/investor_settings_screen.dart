@@ -21,7 +21,9 @@ class InvestorSettingsScreen extends ConsumerStatefulWidget {
 
 class _InvestorSettingsScreenState
     extends ConsumerState<InvestorSettingsScreen> {
-  static const _gold = Color(0xFFC5A35B);
+  // Accent for this screen: M4 deep green. Gold is an accent token, not a
+  // button/toggle fill - as a primary surface it read as off-brand tan.
+  static const _gold = Color(0xFF0F2A20);
 
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
@@ -110,7 +112,7 @@ class _InvestorSettingsScreenState
         Validators.phoneError(_phoneController.text);
     if (vErr != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(vErr), backgroundColor: Colors.red.shade700),
+        SnackBar(content: Text(vErr), backgroundColor: const Color(0xFFC65B46)),
       );
       return;
     }
@@ -138,7 +140,7 @@ class _InvestorSettingsScreenState
     setState(() => _saving = false);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        backgroundColor: ok ? _gold : Colors.red,
+        backgroundColor: ok ? _gold : const Color(0xFFC65B46),
         content: Text(
           ok
               ? 'Preferences updated securely'
@@ -171,7 +173,7 @@ class _InvestorSettingsScreenState
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Sign out', style: TextStyle(color: Colors.red)),
+            child: const Text('Sign out', style: TextStyle(color: Color(0xFFC65B46))),
           ),
         ],
       ),
@@ -190,7 +192,7 @@ class _InvestorSettingsScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
     final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
     final muted = textPrimary.withValues(alpha: 0.5);
 
@@ -392,7 +394,7 @@ class _InvestorSettingsScreenState
                 Text(
                   'PRIVATE OFFICE SETTINGS',
                   style: GoogleFonts.gelasio(
-                    fontSize: 9,
+                    fontSize: 11,
                     fontWeight: FontWeight.w800,
                     color: muted,
                     letterSpacing: 2,
@@ -424,7 +426,7 @@ class _InvestorSettingsScreenState
                       child: Text(
                         'SAVE',
                         style: GoogleFonts.gelasio(
-                          fontSize: 9,
+                          fontSize: 11,
                           fontWeight: FontWeight.w800,
                           color: Colors.black,
                           letterSpacing: 1.5,
@@ -442,7 +444,7 @@ class _InvestorSettingsScreenState
     return Text(
       text,
       style: GoogleFonts.gelasio(
-        fontSize: 9,
+        fontSize: 11,
         fontWeight: FontWeight.w900,
         color: muted,
         letterSpacing: 2.5,
@@ -475,7 +477,7 @@ class _InvestorSettingsScreenState
         Text(
           label,
           style: GoogleFonts.gelasio(
-            fontSize: 9,
+            fontSize: 11,
             fontWeight: FontWeight.w800,
             color: muted,
             letterSpacing: 1.5,
@@ -542,7 +544,7 @@ class _InvestorSettingsScreenState
                   child: Text(
                     'VERIFIED',
                     style: GoogleFonts.ebGaramond(
-                      fontSize: 8,
+                      fontSize: 10,
                       fontWeight: FontWeight.w800,
                       color: _gold,
                       letterSpacing: 1,
@@ -609,7 +611,7 @@ class _InvestorSettingsScreenState
                 Text(
                   subtitle,
                   style: GoogleFonts.ebGaramond(
-                    fontSize: 8,
+                    fontSize: 10,
                     fontWeight: FontWeight.w800,
                     color: muted,
                     letterSpacing: 1,
@@ -640,20 +642,20 @@ class _InvestorSettingsScreenState
           alignment: Alignment.center,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.red.withValues(alpha: 0.2)),
-            color: Colors.red.withValues(alpha: 0.05),
+            border: Border.all(color: const Color(0xFFC65B46).withValues(alpha: 0.2)),
+            color: const Color(0xFFC65B46).withValues(alpha: 0.05),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(LucideIcons.logOut, size: 16, color: Colors.red),
+              const Icon(LucideIcons.logOut, size: 16, color: Color(0xFFC65B46)),
               const SizedBox(width: 8),
               Text(
                 'SIGN OUT ON ALL DEVICES',
                 style: GoogleFonts.gelasio(
-                  fontSize: 9,
+                  fontSize: 11,
                   fontWeight: FontWeight.w800,
-                  color: Colors.red,
+                  color: Color(0xFFC65B46),
                   letterSpacing: 2,
                 ),
               ),

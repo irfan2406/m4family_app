@@ -167,7 +167,7 @@ class _InvestorDocumentsScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
     final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
 
     return Scaffold(
@@ -251,7 +251,7 @@ class _InvestorDocumentsScreenState
                     Text(
                       'SECURE REPOSITORY',
                       style: GoogleFonts.gelasio(
-                        fontSize: 8,
+                        fontSize: 10,
                         fontWeight: FontWeight.w700,
                         color: (isDark ? Colors.white : Color(0xFF163A2C))
                             .withValues(alpha: 0.5),
@@ -314,7 +314,7 @@ class _InvestorDocumentsScreenState
                 child: Text(
                   f.toUpperCase(),
                   style: GoogleFonts.gelasio(
-                    fontSize: 9,
+                    fontSize: 11,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1.5,
                     color: selected
@@ -425,7 +425,7 @@ class _InvestorDocumentsScreenState
                       Text(
                         _formatDate(doc['createdAt']).toUpperCase(),
                         style: GoogleFonts.ebGaramond(
-                          fontSize: 8,
+                          fontSize: 10,
                           fontWeight: FontWeight.w700,
                           color: muted,
                           letterSpacing: 1,
@@ -446,7 +446,7 @@ class _InvestorDocumentsScreenState
                           (doc['size'] ?? '').toString().toUpperCase(),
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.ebGaramond(
-                            fontSize: 8,
+                            fontSize: 10,
                             fontWeight: FontWeight.w700,
                             color: _gold.withValues(alpha: 0.7),
                             letterSpacing: 1,
@@ -655,7 +655,7 @@ class _DocumentDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
     final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
     final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     final border = isDark
@@ -716,7 +716,7 @@ class _DocumentDetail extends StatelessWidget {
                     child: Text(
                       'SECURED ${type.toUpperCase()}',
                       style: GoogleFonts.gelasio(
-                        fontSize: 8,
+                        fontSize: 10,
                         fontWeight: FontWeight.w800,
                         color: _gold,
                         letterSpacing: 1.5,
@@ -760,7 +760,7 @@ class _DocumentDetail extends StatelessWidget {
                   Text(
                     'VERIFICATION STATUS',
                     style: GoogleFonts.gelasio(
-                      fontSize: 8,
+                      fontSize: 10,
                       fontWeight: FontWeight.w800,
                       color: muted,
                       letterSpacing: 2,
@@ -791,7 +791,7 @@ class _DocumentDetail extends StatelessWidget {
                         Text(
                           'ENCRYPTED & VERIFIED',
                           style: GoogleFonts.gelasio(
-                            fontSize: 9,
+                            fontSize: 11,
                             fontWeight: FontWeight.w800,
                             color: const Color(0xFF163A2C),
                             letterSpacing: 1.5,
@@ -806,7 +806,7 @@ class _DocumentDetail extends StatelessWidget {
                     Text(
                       'DOCUMENT OVERVIEW',
                       style: GoogleFonts.gelasio(
-                        fontSize: 8,
+                        fontSize: 10,
                         fontWeight: FontWeight.w800,
                         color: muted,
                         letterSpacing: 2,
@@ -906,7 +906,7 @@ class _MetaTile extends StatelessWidget {
                   label,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.gelasio(
-                    fontSize: 7,
+                    fontSize: 9,
                     fontWeight: FontWeight.w800,
                     color: muted,
                     letterSpacing: 1.5,

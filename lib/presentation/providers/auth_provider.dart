@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -88,13 +89,39 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       final response = await _apiClient.getCurrentUser();
       if (response.statusCode == 200 || response.statusCode == 201) {
-        state = state.copyWith(
-          status: AuthStatus.authenticated,
-          user: response.data['data'] ?? response.data,
+        final user = response.data['data'] ?? response.data;
+        state = state.copyWith(status: AuthStatus.authenticated, user: user);
+        // Cache the profile so a later network blip cannot cost the session.
+        unawaited(
+          _storage.write(key: 'cached_user', value: jsonEncode(user)),
         );
       }
+    } on DioException catch (e) {
+      // A 401 means the token really is dead - stay unauthenticated so the
+      // user signs in again. Anything else (timeout, no connection, 5xx) must
+      // NOT sign them out: restore the cached profile, otherwise the app falls
+      // through to the guest shell and looks like a spontaneous logout.
+      if (e.response?.statusCode == 401) return;
+      await _restoreCachedUser();
     } catch (_) {
-      // If fetchMe fails, might need to logout but for now just ignore
+      await _restoreCachedUser();
+    }
+  }
+
+  /// Re-authenticates from the cached profile when the network is unavailable
+  /// but a token is still stored.
+  Future<void> _restoreCachedUser() async {
+    if (!mounted || state.status == AuthStatus.authenticated) return;
+    try {
+      final token = await _storage.read(key: 'jwt_token');
+      if (token == null) return;
+      final raw = await _storage.read(key: 'cached_user');
+      if (raw == null) return;
+      final user = jsonDecode(raw) as Map<String, dynamic>;
+      if (!mounted) return;
+      state = state.copyWith(status: AuthStatus.authenticated, user: user);
+    } catch (_) {
+      // Cache unreadable - leave the state alone rather than guess.
     }
   }
 

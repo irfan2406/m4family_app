@@ -171,7 +171,7 @@ class _InvestorRelationsScreenState
               style: GoogleFonts.gelasio(
                 color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.5),
                 fontWeight: FontWeight.w900,
-                fontSize: 9,
+                fontSize: 11,
                 letterSpacing: 4,
               ),
             ),
@@ -250,7 +250,7 @@ class _InvestorRelationsScreenState
           style: GoogleFonts.gelasio(
             color: isDark ? Colors.white : Color(0xFF163A2C),
             fontSize: 36,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w600,
             letterSpacing: -0.5,
             height: 1.1,
           ),
@@ -270,7 +270,7 @@ class _InvestorRelationsScreenState
                         0.6,
                       ),
                       fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
                       height: 1.6,
                     ),
                   ),
@@ -322,7 +322,7 @@ class _InvestorRelationsScreenState
           style: GoogleFonts.gelasio(
             color: isDark ? Colors.white : Color(0xFF163A2C),
             fontSize: 28,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w600,
             letterSpacing: -0.5,
             height: 1.15,
           ),
@@ -368,7 +368,7 @@ class _InvestorRelationsScreenState
           'PREFERRED MODE OF CONTACT:',
           style: GoogleFonts.gelasio(
             color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.54),
-            fontSize: 9,
+            fontSize: 11,
             fontWeight: FontWeight.w900,
             letterSpacing: 2,
           ),
@@ -456,7 +456,7 @@ class _InvestorRelationsScreenState
           style: GoogleFonts.gelasio(
             color: isDark ? Colors.white : Color(0xFF163A2C),
             fontSize: 24,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w600,
             letterSpacing: -0.5,
           ),
         ),
@@ -465,7 +465,7 @@ class _InvestorRelationsScreenState
           'FOR ANY INVESTOR RELATION RELATED QUESTIONS OR QUERIES PLEASE CONTACT VIA BELOW EMAIL',
           style: GoogleFonts.gelasio(
             color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.72),
-            fontSize: 9,
+            fontSize: 11,
             fontWeight: FontWeight.w800,
             letterSpacing: 1.5,
             height: 1.6,
@@ -542,7 +542,7 @@ class _InvestorRelationsScreenState
                         style: GoogleFonts.gelasio(
                           color: (isDark ? Colors.white : Color(0xFF163A2C))
                               .withOpacity(0.54),
-                          fontSize: 9,
+                          fontSize: 11,
                           fontWeight: FontWeight.w900,
                           letterSpacing: 2,
                         ),
@@ -589,14 +589,14 @@ class _InvestorRelationsScreenState
           : Validators.nameFormatters,
       style: GoogleFonts.ebGaramond(
         color: isDark ? Colors.white : Color(0xFF163A2C),
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w600,
         fontSize: 15,
       ),
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: GoogleFonts.ebGaramond(
           color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.72),
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w600,
           fontSize: 14,
         ),
         filled: true,
@@ -635,14 +635,14 @@ class _InvestorRelationsScreenState
       maxLines: 5,
       style: GoogleFonts.ebGaramond(
         color: isDark ? Colors.white : Color(0xFF163A2C),
-        fontWeight: FontWeight.w500,
+        fontWeight: FontWeight.w600,
         fontSize: 15,
       ),
       decoration: InputDecoration(
         hintText: 'Message',
         hintStyle: GoogleFonts.ebGaramond(
           color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.72),
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w600,
           fontSize: 14,
         ),
         filled: true,
@@ -714,7 +714,7 @@ class _InvestorRelationsScreenState
               style: GoogleFonts.ebGaramond(
                 color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.6),
                 fontSize: 13,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),

@@ -120,7 +120,7 @@ class _InvestorTaxReportDetailScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
     final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
     final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
 
@@ -175,7 +175,7 @@ class _InvestorTaxReportDetailScreenState
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.ebGaramond(
-                    fontSize: 9,
+                    fontSize: 11,
                     letterSpacing: 1.5,
                     fontWeight: FontWeight.w600,
                     color: muted,
@@ -382,7 +382,7 @@ class _InvestorTaxReportDetailScreenState
           Text(
             label,
             style: GoogleFonts.ebGaramond(
-              fontSize: 9,
+              fontSize: 11,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.2,
               color: color,
@@ -455,7 +455,7 @@ class _InvestorTaxReportDetailScreenState
           Text(
             label,
             style: GoogleFonts.ebGaramond(
-              fontSize: 9,
+              fontSize: 11,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.2,
               color: muted,
@@ -522,7 +522,7 @@ class _InvestorTaxReportDetailScreenState
             style: GoogleFonts.ebGaramond(
               fontSize: 13,
               height: 1.55,
-              fontWeight: FontWeight.w400,
+              fontWeight: FontWeight.w600,
               color: textPrimary.withValues(alpha: 0.85),
             ),
           ),
@@ -553,7 +553,7 @@ class _InvestorTaxReportDetailScreenState
               style: GoogleFonts.ebGaramond(
                 fontSize: 11,
                 height: 1.5,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
                 color: muted,
               ),
             ),

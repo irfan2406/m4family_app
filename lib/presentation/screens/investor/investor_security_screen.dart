@@ -136,7 +136,7 @@ class _InvestorSecurityScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
     final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
     final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
@@ -185,7 +185,7 @@ class _InvestorSecurityScreenState
               child: Text(
                 'ACCOUNT PROTECTION',
                 style: GoogleFonts.ebGaramond(
-                  fontSize: 9,
+                  fontSize: 11,
                   letterSpacing: 1.5,
                   fontWeight: FontWeight.w600,
                   color: muted,
@@ -328,7 +328,7 @@ class _InvestorSecurityScreenState
               textAlign: TextAlign.center,
               style: GoogleFonts.ebGaramond(
                 fontSize: 11,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
                 height: 1.4,
                 color: muted,
               ),
@@ -402,7 +402,7 @@ class _InvestorSecurityScreenState
                     subtitle,
                     style: GoogleFonts.ebGaramond(
                       fontSize: 10,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w600,
                       color: muted,
                     ),
                   ),
@@ -523,7 +523,7 @@ class _InvestorSecurityScreenState
                   login['device'] ?? '',
                   style: GoogleFonts.ebGaramond(
                     fontSize: 12,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                     color: textPrimary,
                   ),
                 ),
@@ -532,8 +532,8 @@ class _InvestorSecurityScreenState
                   Text(
                     meta,
                     style: GoogleFonts.ebGaramond(
-                      fontSize: 9,
-                      fontWeight: FontWeight.w500,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
                       color: muted,
                     ),
                   ),
@@ -554,7 +554,7 @@ class _InvestorSecurityScreenState
             child: Text(
               status.toUpperCase(),
               style: GoogleFonts.ebGaramond(
-                fontSize: 8,
+                fontSize: 10,
                 fontWeight: FontWeight.bold,
                 letterSpacing: 1,
                 color: isActive ? _green : muted,
@@ -595,7 +595,7 @@ class _InvestorSecurityScreenState
             textAlign: TextAlign.center,
             style: GoogleFonts.ebGaramond(
               fontSize: 11,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
               color: muted,
             ),
           ),

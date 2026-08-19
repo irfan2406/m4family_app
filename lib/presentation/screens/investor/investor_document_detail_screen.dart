@@ -128,7 +128,7 @@ class _InvestorDocumentDetailScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
 
     return Scaffold(
       backgroundColor: Colors.black.withValues(alpha: 0.6),
@@ -228,7 +228,7 @@ class _InvestorDocumentDetailScreenState
             textAlign: TextAlign.center,
             style: GoogleFonts.ebGaramond(
               fontSize: 11,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w600,
               color: muted,
               height: 1.5,
             ),
@@ -338,7 +338,7 @@ class _InvestorDocumentDetailScreenState
                   child: Text(
                     'SECURED ${type.toUpperCase()}',
                     style: GoogleFonts.gelasio(
-                      fontSize: 8,
+                      fontSize: 10,
                       fontWeight: FontWeight.w800,
                       color: _gold,
                       letterSpacing: 1.5,
@@ -393,7 +393,7 @@ class _InvestorDocumentDetailScreenState
                 Text(
                   'VERIFICATION STATUS',
                   style: GoogleFonts.gelasio(
-                    fontSize: 8,
+                    fontSize: 10,
                     fontWeight: FontWeight.w800,
                     color: muted,
                     letterSpacing: 1.5,
@@ -422,7 +422,7 @@ class _InvestorDocumentDetailScreenState
                       Text(
                         'ENCRYPTED & VERIFIED',
                         style: GoogleFonts.ebGaramond(
-                          fontSize: 9,
+                          fontSize: 11,
                           fontWeight: FontWeight.w800,
                           color: _green,
                           letterSpacing: 1,
@@ -437,7 +437,7 @@ class _InvestorDocumentDetailScreenState
                 Text(
                   'DOCUMENT OVERVIEW',
                   style: GoogleFonts.gelasio(
-                    fontSize: 8,
+                    fontSize: 10,
                     fontWeight: FontWeight.w800,
                     color: muted,
                     letterSpacing: 1.5,
@@ -448,7 +448,7 @@ class _InvestorDocumentDetailScreenState
                   '"$description"',
                   style: GoogleFonts.ebGaramond(
                     fontSize: 11,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                     fontStyle: FontStyle.italic,
                     color: muted,
                     height: 1.6,
@@ -512,7 +512,7 @@ class _MetaCell extends StatelessWidget {
               Text(
                 label,
                 style: GoogleFonts.ebGaramond(
-                  fontSize: 7,
+                  fontSize: 9,
                   fontWeight: FontWeight.w800,
                   color: muted,
                   letterSpacing: 1,

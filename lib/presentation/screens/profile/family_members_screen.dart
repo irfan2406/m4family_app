@@ -447,7 +447,9 @@ class _FamilyMembersScreenState extends ConsumerState<FamilyMembersScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = ref.watch(themeProvider) == ThemeMode.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final bg = isDark
+        ? Colors.black
+        : Theme.of(context).scaffoldBackgroundColor;
     final textColor = isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C);
 
     final filtered = _familyMembers.where((m) {

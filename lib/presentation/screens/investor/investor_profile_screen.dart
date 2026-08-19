@@ -78,7 +78,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
     final textPrimary = isDark ? const Color(0xFFF4EFE3) : Color(0xFF163A2C);
     final muted = textPrimary.withValues(alpha: 0.5);
 
@@ -402,7 +402,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.ebGaramond(
-                                  fontSize: 8,
+                                  fontSize: 10,
                                   fontWeight: FontWeight.w900,
                                   color: bg,
                                   letterSpacing: 1,
@@ -421,7 +421,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                             Text(
                               'BORN: $born',
                               style: GoogleFonts.ebGaramond(
-                                fontSize: 9,
+                                fontSize: 11,
                                 fontWeight: FontWeight.w800,
                                 color: textPrimary.withValues(alpha: 0.7),
                                 letterSpacing: 0.8,
@@ -475,7 +475,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
     return Text(
       text,
       style: GoogleFonts.gelasio(
-        fontSize: 9,
+        fontSize: 11,
         fontWeight: FontWeight.w900,
         color: muted,
         letterSpacing: 2.5,
@@ -540,7 +540,7 @@ class _InvestorProfileScreenState extends ConsumerState<InvestorProfileScreen> {
                     Text(
                       subtitle.toUpperCase(),
                       style: GoogleFonts.ebGaramond(
-                        fontSize: 8,
+                        fontSize: 10,
                         fontWeight: FontWeight.w800,
                         color: muted,
                         letterSpacing: 1,

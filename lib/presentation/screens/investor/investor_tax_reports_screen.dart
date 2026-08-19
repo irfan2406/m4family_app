@@ -110,7 +110,7 @@ class _InvestorTaxReportsScreenState
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
     final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
     final muted = (isDark ? Colors.white : Color(0xFF163A2C)).withValues(alpha: 0.5);
     final card = isDark ? Colors.white.withValues(alpha: 0.03) : const Color(0xFFF4EFE3);
@@ -143,7 +143,7 @@ class _InvestorTaxReportsScreenState
             Text(
               'FISCAL COMPLIANCE',
               style: GoogleFonts.ebGaramond(
-                fontSize: 9,
+                fontSize: 11,
                 letterSpacing: 1.5,
                 fontWeight: FontWeight.w600,
                 color: muted,
@@ -328,7 +328,7 @@ class _InvestorTaxReportsScreenState
                 Text(
                   'TOTAL TAX DEDUCTED',
                   style: GoogleFonts.gelasio(
-                    fontSize: 9,
+                    fontSize: 11,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 2,
                     color: muted,
@@ -352,7 +352,7 @@ class _InvestorTaxReportsScreenState
                       '.00',
                       style: GoogleFonts.gelasio(
                         fontSize: 18,
-                        fontWeight: FontWeight.w400,
+                        fontWeight: FontWeight.w600,
                         color: muted,
                       ),
                     ),
@@ -377,7 +377,7 @@ class _InvestorTaxReportsScreenState
                   label: Text(
                     'DOWNLOAD SUMMARY',
                     style: GoogleFonts.ebGaramond(
-                      fontSize: 9,
+                      fontSize: 11,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1,
                     ),
@@ -529,8 +529,8 @@ class _InvestorTaxReportsScreenState
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: GoogleFonts.ebGaramond(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w500,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
                                   letterSpacing: 1,
                                   color: muted,
                                 ),
@@ -553,8 +553,8 @@ class _InvestorTaxReportsScreenState
                               Text(
                                 size.toUpperCase(),
                                 style: GoogleFonts.ebGaramond(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w500,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
                                   letterSpacing: 1,
                                   color: muted,
                                 ),

@@ -143,7 +143,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bg = isDark ? Colors.black : const Color(0xFFF4EFE3);
+    final bg = isDark ? Colors.black : const Color(0xFFD4CFBC);
     final textPrimary = isDark ? Colors.white : Color(0xFF163A2C);
 
     return Scaffold(
@@ -376,7 +376,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
               Text(
                 label.toUpperCase(),
                 style: GoogleFonts.gelasio(
-                  fontSize: 8,
+                  fontSize: 10,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 1.5,
                   color: Colors.white.withValues(alpha: 0.7),
@@ -408,7 +408,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
         Text(
           'DOCUMENT REPOSITORY',
           style: GoogleFonts.gelasio(
-            fontSize: 9,
+            fontSize: 11,
             fontWeight: FontWeight.w900,
             letterSpacing: 2,
             color: textPrimary.withValues(alpha: 0.5),
@@ -423,7 +423,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
           child: Text(
             'M4 SECURE',
             style: GoogleFonts.gelasio(
-              fontSize: 8,
+              fontSize: 10,
               fontWeight: FontWeight.w900,
               letterSpacing: 1.5,
               color: textPrimary.withValues(alpha: 0.5),
@@ -552,7 +552,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                       Text(
                         meta[i].toUpperCase(),
                         style: GoogleFonts.ebGaramond(
-                          fontSize: 8,
+                          fontSize: 10,
                           fontWeight: FontWeight.w800,
                           letterSpacing: 0.8,
                           color: muted,
@@ -661,7 +661,7 @@ class _InvestorEliteScreenState extends ConsumerState<InvestorEliteScreen> {
                         'All documents downloaded contain a unique user watermark for security. Unauthorized sharing is strictly prohibited.',
                         style: GoogleFonts.ebGaramond(
                           fontSize: 10,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w600,
                           height: 1.4,
                           color: textPrimary.withValues(alpha: 0.5),
                         ),

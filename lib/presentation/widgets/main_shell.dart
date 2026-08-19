@@ -81,12 +81,21 @@ class _MainShellState extends ConsumerState<MainShell> {
         },
         body: Stack(
           children: [
-            IndexedStack(
-              index: currentIndex,
-              children: [
-                for (int i = 0; i < _screens.length; i++)
-                  showcase(i, _screens[i]),
-              ],
+            // The pill floats above the content, so reserve its footprint: the
+            // screens add it as a bottom inset and the last card clears the nav.
+            MediaQuery(
+              data: MediaQuery.of(context).copyWith(
+                padding: MediaQuery.of(context).padding.copyWith(
+                  bottom: MediaQuery.of(context).padding.bottom + 110,
+                ),
+              ),
+              child: IndexedStack(
+                  index: currentIndex,
+                  children: [
+                    for (int i = 0; i < _screens.length; i++)
+                      showcase(i, _screens[i]),
+                  ],
+                ),
             ),
             if (!_isDrawerOpen)
               Align(
