@@ -177,6 +177,41 @@ class M4Theme {
     useMaterial3: true,
     brightness: Brightness.light,
     scaffoldBackgroundColor: lightBackground,
+    // No default Material blue: text selection, switches, checks, radios,
+    // sliders and progress indicators all resolve to the M4 green palette.
+    textSelectionTheme: const TextSelectionThemeData(
+      cursorColor: forestGreen,
+      selectionColor: Color(0x3D163A2C),
+      selectionHandleColor: forestGreen,
+    ),
+    switchTheme: SwitchThemeData(
+      thumbColor: WidgetStateProperty.resolveWith(
+        (s) => s.contains(WidgetState.selected) ? cream : lightMutedFg,
+      ),
+      trackColor: WidgetStateProperty.resolveWith(
+        (s) => s.contains(WidgetState.selected)
+            ? forestGreen
+            : const Color(0x33163A2C),
+      ),
+    ),
+    checkboxTheme: CheckboxThemeData(
+      fillColor: WidgetStateProperty.resolveWith(
+        (s) => s.contains(WidgetState.selected) ? forestGreen : Colors.transparent,
+      ),
+      checkColor: const WidgetStatePropertyAll(cream),
+      side: const BorderSide(color: forestGreen, width: 1.5),
+    ),
+    radioTheme: RadioThemeData(
+      fillColor: WidgetStateProperty.resolveWith(
+        (s) => s.contains(WidgetState.selected) ? forestGreen : lightMutedFg,
+      ),
+    ),
+    sliderTheme: const SliderThemeData(
+      activeTrackColor: forestGreen,
+      thumbColor: forestGreen,
+      inactiveTrackColor: Color(0x33163A2C),
+    ),
+    progressIndicatorTheme: const ProgressIndicatorThemeData(color: forestGreen),
     colorScheme:
         const ColorScheme.light(
           primary: lightPrimary,
@@ -390,6 +425,40 @@ class M4Theme {
     useMaterial3: true,
     brightness: Brightness.dark,
     scaffoldBackgroundColor: darkBackground,
+    // No default Material blue in dark mode either - cream/gold interactions.
+    textSelectionTheme: const TextSelectionThemeData(
+      cursorColor: cream,
+      selectionColor: Color(0x3DF4EFE3),
+      selectionHandleColor: cream,
+    ),
+    switchTheme: SwitchThemeData(
+      thumbColor: WidgetStateProperty.resolveWith(
+        (s) => s.contains(WidgetState.selected) ? cream : Colors.white54,
+      ),
+      trackColor: WidgetStateProperty.resolveWith(
+        (s) => s.contains(WidgetState.selected)
+            ? gold
+            : const Color(0x33FFFFFF),
+      ),
+    ),
+    checkboxTheme: CheckboxThemeData(
+      fillColor: WidgetStateProperty.resolveWith(
+        (s) => s.contains(WidgetState.selected) ? gold : Colors.transparent,
+      ),
+      checkColor: const WidgetStatePropertyAll(Color(0xFF0B1026)),
+      side: const BorderSide(color: cream, width: 1.5),
+    ),
+    radioTheme: RadioThemeData(
+      fillColor: WidgetStateProperty.resolveWith(
+        (s) => s.contains(WidgetState.selected) ? gold : Colors.white54,
+      ),
+    ),
+    sliderTheme: const SliderThemeData(
+      activeTrackColor: gold,
+      thumbColor: gold,
+      inactiveTrackColor: Color(0x33FFFFFF),
+    ),
+    progressIndicatorTheme: const ProgressIndicatorThemeData(color: cream),
     colorScheme:
         const ColorScheme.dark(
           primary: darkPrimary,

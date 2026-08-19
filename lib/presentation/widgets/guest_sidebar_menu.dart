@@ -407,7 +407,7 @@ class _GuestSidebarMenuState extends ConsumerState<GuestSidebarMenu> {
                             ),
                           ),
                           child: Icon(
-                            isDark ? LucideIcons.sparkles : LucideIcons.moon,
+                            isDark ? LucideIcons.moon : LucideIcons.sun,
                             color: isDark ? Colors.white : const Color(0xFFF4EFE3),
                             size: 18,
                           ),

@@ -372,7 +372,7 @@ class _SidebarMenuState extends ConsumerState<SidebarMenu> {
                                 child: Icon(
                                   isDark
                                       ? LucideIcons.moon
-                                      : LucideIcons.sparkles,
+                                      : LucideIcons.sun,
                                   color: isDark ? Colors.white : const Color(0xFFF4EFE3),
                                   size: 18,
                                 ),

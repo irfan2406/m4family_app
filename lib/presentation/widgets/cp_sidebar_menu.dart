@@ -380,7 +380,7 @@ class _CpSidebarMenuState extends ConsumerState<CpSidebarMenu> {
                           // Web parity: light mode → Sparkles, dark → Moon
                           // (resolvedTheme === "dark" ? Moon : Sparkles).
                           child: Icon(
-                            isDark ? LucideIcons.moon : LucideIcons.sparkles,
+                            isDark ? LucideIcons.moon : LucideIcons.sun,
                             color: isDark ? Colors.white : const Color(0xFFF4EFE3),
                             size: 18,
                           ),
