@@ -177,7 +177,7 @@ class _InvestorRelationsScreenState
             ),
           ],
         ),
-        backgroundColor: (isDark ? Colors.black : const Color(0xFFF4EFE3)).withOpacity(
+        backgroundColor: (isDark ? const Color(0xFF0B1026) : const Color(0xFFF4EFE3)).withOpacity(
           0.8,
         ),
         flexibleSpace: ClipRRect(

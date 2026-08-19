@@ -195,7 +195,7 @@ class _AboutScreenState extends ConsumerState<AboutScreen> {
             ),
           ],
         ),
-        backgroundColor: (isDark ? Colors.black : Theme.of(context).scaffoldBackgroundColor).withOpacity(
+        backgroundColor: (isDark ? const Color(0xFF0B1026) : Theme.of(context).scaffoldBackgroundColor).withOpacity(
           0.8,
         ),
         flexibleSpace: ClipRRect(
