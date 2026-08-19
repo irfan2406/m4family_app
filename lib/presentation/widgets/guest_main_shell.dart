@@ -98,7 +98,7 @@ class _GuestNavigationPill extends StatelessWidget {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
           child: Container(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
         // Frosted glass: a translucent tint over the 30px blur, with a top-down
         // reflection so the bar reads as glass rather than a flat panel.
@@ -180,8 +180,8 @@ class _NavIcon extends StatelessWidget {
     return _ScaleButton(
       onTap: onTap,
       child: Container(
-        width: 56,
-        height: 56,
+        width: 50,
+        height: 50,
         decoration: BoxDecoration(
           color: isActive
               ? (isDark ? Colors.white : Color(0xFF163A2C))

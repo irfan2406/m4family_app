@@ -34,7 +34,7 @@ class NavigationPill extends StatelessWidget {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
           child: Container(
-            height: 70,
+            height: 62,
             padding: const EdgeInsets.symmetric(horizontal: 25),
             decoration: BoxDecoration(
               // Frosted glass: translucent deep-green on the green screens,

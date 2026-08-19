@@ -42,7 +42,7 @@ class CpBottomNav extends StatelessWidget {
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
             child: Container(
-              height: 74,
+              height: 62,
               padding: const EdgeInsets.symmetric(horizontal: 8),
               decoration: BoxDecoration(
                 color: surface,
