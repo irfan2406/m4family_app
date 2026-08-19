@@ -287,7 +287,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                         color: isDark
                             ? Colors.white.withOpacity(0.7)
                             : const Color(0xFF141B3A),
-                        fontSize: 10,
+                        fontSize: 12,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 3,
                       ),
@@ -412,7 +412,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
                             textAlign: TextAlign.center,
                             style: GoogleFonts.gelasio(
                               color: isDark ? Colors.white : Color(0xFF163A2C),
-                              fontSize: 10,
+                              fontSize: 12,
                               fontWeight: FontWeight.w900,
                               letterSpacing: 2,
                             ),
@@ -468,7 +468,7 @@ class _JobApplyScreenState extends ConsumerState<JobApplyScreen> {
         text,
         style: GoogleFonts.ebGaramond(
           color: (isDark ? Colors.white : Color(0xFF163A2C)).withOpacity(0.6),
-          fontSize: 10,
+          fontSize: 12,
           fontWeight: FontWeight.w900,
           letterSpacing: 1,
         ),

@@ -320,7 +320,7 @@ class M4Theme {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: gold, width: 1.5),
+        borderSide: const BorderSide(color: forestGreen, width: 1.5),
       ),
       hintStyle: TextStyle(color: lightMutedFg.withOpacity(0.8)),
     ),
@@ -568,7 +568,7 @@ class M4Theme {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: gold, width: 1.5),
+        borderSide: const BorderSide(color: cream, width: 1.5),
       ),
       hintStyle: TextStyle(color: darkMutedFg.withOpacity(0.8)),
     ),
