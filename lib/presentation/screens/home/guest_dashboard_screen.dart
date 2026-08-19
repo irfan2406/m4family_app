@@ -1001,7 +1001,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                     stops: const [0.55, 1.0],
                     colors: [
                       Colors.transparent,
-                      Colors.black.withValues(alpha: 0.7),
+                      const Color(0xFF0F2A20).withValues(alpha: 0.82),
                     ],
                   ),
                 ),
@@ -1047,7 +1047,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.6),
+                      color: const Color(0xFF0F2A20).withValues(alpha: 0.72),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: Colors.white.withValues(alpha: 0.1),
@@ -1254,7 +1254,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
         width: MediaQuery.of(context).size.width * 0.68,
         margin: const EdgeInsets.only(right: 16, bottom: 10),
         decoration: BoxDecoration(
-          color: scheme.surface,
+          color: const Color(0xFF0F2A20),
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
@@ -1422,7 +1422,7 @@ class _GuestDashboardScreenState extends ConsumerState<GuestDashboardScreen> {
     double errorIconSize = 64,
   }) {
     Widget errorBox() => Container(
-      color: const Color(0xFF141B3A),
+      color: const Color(0xFF0F2A20),
       child: Center(
         child: Icon(errorIcon, color: Colors.white24, size: errorIconSize),
       ),
