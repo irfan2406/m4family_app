@@ -50,7 +50,7 @@ class CpBottomNav extends StatelessWidget {
                 border: Border.all(color: border),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.1),
+                    color: Colors.black.withValues(alpha: isDark ? 0.0 : 0.1),
                     blurRadius: 28,
                     offset: const Offset(0, 14),
                   ),

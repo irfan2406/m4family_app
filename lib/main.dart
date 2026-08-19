@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:m4_mobile/core/theme/app_theme.dart';
 import 'package:m4_mobile/core/utils/app_toast.dart';
@@ -132,6 +133,11 @@ void main() async {
   debugRepaintRainbowEnabled = false;
 
   WidgetsFlutterBinding.ensureInitialized();
+  // Transparent status bar so the navy (dark) / cream (light) scaffold shows
+  // through - no black strip at the top.
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+  );
 
   // .env MUST stay awaited: OnboardingScreen.initState reads authProvider,
   // whose ApiClient calls dotenv.get() — loading it lazily would throw. It is

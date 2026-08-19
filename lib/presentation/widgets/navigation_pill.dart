@@ -23,7 +23,7 @@ class NavigationPill extends StatelessWidget {
         borderRadius: BorderRadius.circular(35),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.4 : 0.08),
+            color: Colors.black.withOpacity(isDark ? 0.0 : 0.08),
             blurRadius: 30,
             offset: const Offset(0, 15),
           ),
