@@ -92,6 +92,16 @@ class _GuestNavigationPill extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 48),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(100),
+        // Soft float: a wide, very low-opacity shadow lifts the glass off the
+        // page without the dark halo a tight shadow produces.
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF0F2A20).withValues(alpha: isDark ? 0.28 : 0.10),
+            blurRadius: 28,
+            spreadRadius: -6,
+            offset: const Offset(0, 10),
+          ),
+        ],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(100),
@@ -100,13 +110,26 @@ class _GuestNavigationPill extends StatelessWidget {
           child: Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: isDark
-            ? Theme.of(context).scaffoldBackgroundColor.withOpacity(0.5)
-            : Colors.white.withOpacity(0.92),
+        // Frosted glass: a translucent tint over the 30px blur, with a top-down
+        // reflection so the bar reads as glass rather than a flat panel.
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: isDark
+              ? [
+                  Colors.white.withValues(alpha: 0.10),
+                  Colors.white.withValues(alpha: 0.02),
+                ]
+              : [
+                  Colors.white.withValues(alpha: 0.72),
+                  Colors.white.withValues(alpha: 0.38),
+                ],
+        ),
         borderRadius: BorderRadius.circular(100),
         border: Border.all(
-          color: (isDark ? M4Theme.cream : M4Theme.deepGreen)
-              .withOpacity(isDark ? 0.14 : 0.28),
+          color: (isDark ? M4Theme.cream : Colors.white)
+              .withValues(alpha: isDark ? 0.16 : 0.65),
+          width: 1.2,
         ),
       ),
       child: Row(
