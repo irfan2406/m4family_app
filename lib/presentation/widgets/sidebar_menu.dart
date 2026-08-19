@@ -626,7 +626,7 @@ class _SidebarDropdown extends StatelessWidget {
           isActive: isOpen,
           // Theme-aware active colour: black in light mode, white in dark
           // (was hardcoded white → invisible/wrong on the light sidebar).
-          activeColor: Theme.of(context).colorScheme.onSurface,
+          activeColor: Colors.white,
           onTap: onToggle,
           trailing: Icon(
             isOpen ? LucideIcons.chevronUp : LucideIcons.chevronDown,
@@ -666,7 +666,7 @@ class _SidebarSubItem extends StatelessWidget {
         width: 32,
         height: 32,
         decoration: BoxDecoration(
-          color: onSurface.withOpacity(0.06),
+          color: Colors.white.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(icon, color: const Color(0xFFF4EFE3).withValues(alpha: 0.9), size: 15),
@@ -674,8 +674,8 @@ class _SidebarSubItem extends StatelessWidget {
       title: Text(
         label,
         style: GoogleFonts.ebGaramond(
-          color: onSurface.withOpacity(0.85),
-          fontSize: 12.5,
+          color: const Color(0xFFF4EFE3),
+          fontSize: 14,
           fontWeight: FontWeight.w800,
         ),
       ),
